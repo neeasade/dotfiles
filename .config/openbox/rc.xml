@@ -27,11 +27,11 @@
   <placement>
     <policy>Smart</policy>
     <!-- 'Smart' or 'UnderMouse' -->
-    <monitor>Primary</monitor>
+    <monitor>Active</monitor>
     <!-- with Smart placement on a multi-monitor system, try to place new windows
        on: 'Any' - any monitor, 'Mouse' - where the mouse is, 'Active' - where
        the active window is, 'Primary' - only on the primary monitor -->
-    <primaryMonitor>1</primaryMonitor>
+    <primaryMonitor>Active</primaryMonitor>
     <!-- The monitor where Openbox should place popup dialogs such as the
        focus cycling popup, or the desktop switch popup.  It can be an index
        from 1, specifying a particular monitor.  Or it can be one of the
@@ -174,6 +174,37 @@
     <!-- 'Left', 'Middle', 'Right' -->
   </dock>
   <keyboard>
+    <keybind key="W-r">
+      <action name="Execute">
+        <command>dmenu_run</command>
+      </action>
+    </keybind>
+    <keybind key="W-t">
+      <action name="Execute">
+        <command>urxvt</command>
+      </action>
+    </keybind>
+    <keybind key="W-e">
+      <action name="Execute">
+        <command>pcmanfm</command>
+      </action>
+    </keybind>
+    <keybind key="W-l">
+      <action name="Execute">
+        <command>slimlock</command>
+      </action>
+    </keybind>
+    <keybind key="W-w">
+      <action name="Execute">
+        <command>chromium</command>
+      </action>
+    </keybind>
+    <keybind key="W-v">
+      <action name="Execute">
+        <command>gvim</command>
+      </action>
+    </keybind>
+  
     <chainQuitKey>C-g</chainQuitKey>
     <!-- Keybindings for desktop switching -->
     <keybind key="C-A-Left">
@@ -310,16 +341,6 @@
     <keybind key="W-S-Down">
       <action name="DirectionalCycleWindows">
         <direction>down</direction>
-      </action>
-    </keybind>
-    <!-- Keybindings for running applications -->
-    <keybind key="W-e">
-      <action name="Execute">
-        <startupnotify>
-          <enabled>true</enabled>
-          <name>Konqueror</name>
-        </startupnotify>
-        <command>kfmclient openProfile filemanagement</command>
       </action>
     </keybind>
   </keyboard>
