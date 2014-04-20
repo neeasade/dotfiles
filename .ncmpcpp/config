@@ -1,0 +1,55 @@
+mpd_music_dir = "/mnt/Storage/Media/Music"
+mpd_crossfade_time = "5"
+
+# Visualizer
+visualizer_fifo_path = "/tmp/mpd.fifo"
+visualizer_output_name = "fifo"
+visualizer_type = "wave" (spectrum/wave)
+
+# Playlist
+song_columns_list_format = "$L(9)[white]{l} (20)[red]{a} (30)[green]{b}$R(20)[cyan]{t}"
+now_playing_prefix = "$b"
+#now_playing_subfix = "/$b"
+playlist_display_mode = "classic" (classic/columns)
+autocenter_mode = "no"
+centered_cursor = "no"
+cyclic_scrolling = "yes"
+mouse_list_scroll_whole_page = "no"
+#song_list_format = "{$8$9}{[%l] >> }{%t }$R{%a - %b}"
+song_list_format = " $0$8$8%l$0$8 $1|$7 $7%a$7 $1|$7 $6%t$1 $R $1%b$1"
+
+song_library_format = "{%n > }{%t}|{%f}"
+
+# Bars
+song_status_format = "{%a - }{%t - }{%b}"
+#progressbar_look = "|> "
+progressbar_look = "─╼ "
+titles_visibility = "no"
+header_visibility = "no"
+statusbar_visibility = "no" 
+
+# Browser
+browser_playlist_prefix = "$2plist »$9 "
+browser_display_mode = "classic" (classic/columns)
+
+# Colors
+discard_colors_if_item_is_selected = "yes"
+header_window_color = "black"
+volume_color = "cyan"
+state_line_color = "black"
+state_flags_color = "green"
+main_window_color = "blue"
+color1 = "cyan"
+color2 = "black"
+main_window_highlight_color = "red"
+progressbar_color = "black"
+statusbar_color = "black"
+active_column_color = "red"
+visualizer_color = "cyan"
+
+# Others
+song_window_title_format = "MPD: {%a > }{%t}{ [%b{ Disc %d}]}|{%f}"
+search_engine_display_mode = "columns" (classic/columns)
+follow_now_playing_lyrics = "yes"
+display_screens_numbers_on_start = "no"
+#  vim: set ts=2 sw=2 tw=0 :
