@@ -1,0 +1,5 @@
+~/.screenlayout/tripleMiddleVert.sh && sleep 2
+/home/neeasade/.fehbg &
+tint2 &
+conky &
+
