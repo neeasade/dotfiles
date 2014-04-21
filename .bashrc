@@ -15,6 +15,4 @@ PATH=$PATH:/home/neeasade/.gem/ruby/2.1.0/bin
 #auto-complete for pacman when using sudo:
 complete -cf sudo
 
-#generated PS1 from bashrcgenerator.com:
-
-export PS1="\[\e[00;37m\][\u][\w]\n>\[\e[0m\]"
+export PS1="┌─[\u][\w]\n└─╼"
