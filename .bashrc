@@ -16,3 +16,9 @@ PATH=$PATH:/home/neeasade/.gem/ruby/2.1.0/bin
 complete -cf sudo
 
 export PS1="┌─[\u][\w]\n└─╼"
+
+#set a mobile variable for differences in configuration between mobile/desktop.
+m=false
+case "HOME9" in
+  $HOTSNAME) m=true ;;
+esac
