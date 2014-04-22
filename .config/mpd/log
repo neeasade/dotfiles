@@ -2125,3 +2125,5 @@ Apr 20 15:25 : update: added youtube_seed/trance/Trance & Progressive - Falling 
 Apr 20 15:25 : update: added youtube_seed/trance/★ Trance & Dance - ECHOES OF SUMMER - Emotional progressive dance & vocal trance {EoT #17}-w_pAjtxdo2c.m4a
 Apr 20 15:27 : player: played "youtube_seed/dubmood/Arachno and Dubmood - Chipphopp-97aDkX4TYvQ.m4a"
 Apr 20 15:39 : player: played "itunes/Alberto Lizzo_ London Philharmonic Orche/Ludwig Van Beethoven/01 Beethoven_ Coriolan Overture, Op..m4a"
+Apr 22 17:45 : alsa_mixer: Failed to read mixer for 'default detected output': no such mixer control: PCM
+Apr 22 17:46 : output: Failed to open mixer for 'default detected output'

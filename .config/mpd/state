@@ -1,0 +1,15 @@
+sw_volume: 100
+audio_device_state:1:default detected output
+state: play
+current: 0
+time: 120
+random: 0
+repeat: 0
+single: 0
+consume: 0
+crossfade: 0
+mixrampdb: 0.000000
+mixrampdelay: -1.000000
+playlist_begin
+0:youtube_seed/eminence/Eminence - Progressive & Uplifting Trance Mix [E150]-jCC_VPwRwlU.m4a
+playlist_end
