@@ -150,8 +150,8 @@
      Many programs reserve space automatically, but you can use this in other
      cases. -->
   <margins>
-    <top>0</top>
-    <bottom>20</bottom>
+    <top>20</top>
+    <bottom>0</bottom>
     <left>0</left>
     <right>0</right>
   </margins>
@@ -204,7 +204,6 @@
         <command>gvim</command>
       </action>
     </keybind>
-  
     <chainQuitKey>C-g</chainQuitKey>
     <!-- Keybindings for desktop switching -->
     <keybind key="C-A-Left">
