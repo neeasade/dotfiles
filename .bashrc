@@ -19,6 +19,6 @@ export PS1="┌─[\u][\w]\n└─╼"
 
 #set a mobile variable for differences in configuration between mobile/desktop.
 m=false
-case "HOME9" in
-  $HOTSNAME) m=true ;;
+case "home9" in
+  $HOSTNAME) m=true ;;
 esac
