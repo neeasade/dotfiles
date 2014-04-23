@@ -5,9 +5,8 @@ URxvt*background: #3f3f3f
  
 URxvt.saveLines:32767
 URxvt.scrollBar: false
-if ($m); then 
-URxvt*font: xft:lemon:pixelsize=12;; else
- URxvt*font: xft:uushi:pixelsize=12;;
+
+URxvt*font: xft:uushi:pixelsize=12
  
 URxvt.perl-ext-common: default,matcher
 URxvt.urlLauncher: uzbl-browser
