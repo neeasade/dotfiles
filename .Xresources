@@ -59,4 +59,4 @@ xterm*color14:        #F0E68C
 xterm*color7:         #DDDDDD
 xterm*color15:        #FFFFFF
 
-URxvt.iconFile: /usr/share/icons/Numix-Circle/48x48/applications/terminal.svg
+URxvt*iconFile: /usr/share/icons/Numix-Circle/48x48/applications/terminal.svg
