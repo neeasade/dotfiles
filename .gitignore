@@ -1,2 +1,4 @@
 .config/mpd/state
 .config/mpd/pid
+.config/mpd/log
+

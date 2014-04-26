@@ -2,10 +2,14 @@
 [keybindings]
 [profiles]
   [[default]]
-    background_darkness = 0.7
+    scrollbar_position = hidden
     use_system_font = False
-    font = Terminus 10
+    background_darkness = 0.7
     background_type = transparent
+    background_image = None
+    antialias = False
+    show_titlebar = False
+    font = Tewi 9
 [layouts]
   [[default]]
     [[[child1]]]
