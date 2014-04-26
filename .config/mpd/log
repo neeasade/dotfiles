@@ -2128,3 +2128,24 @@ Apr 20 15:39 : player: played "itunes/Alberto Lizzo_ London Philharmonic Orche/L
 Apr 22 17:45 : alsa_mixer: Failed to read mixer for 'default detected output': no such mixer control: PCM
 Apr 22 17:46 : output: Failed to open mixer for 'default detected output'
 Apr 22 18:44 : player: played "youtube_seed/eminence/Eminence - Progressive & Uplifting Trance Mix [E150]-jCC_VPwRwlU.m4a"
+Apr 24 19:20 : output: Failed to open mixer for 'default detected output'
+Apr 24 19:20 : player: played "youtube_seed/eminence/Eminence - Progressive & Uplifting Trance Mix [E150]-jCC_VPwRwlU.m4a"
+Apr 24 19:21 : output: Failed to open mixer for 'default detected output'
+Apr 24 19:21 : output: Failed to open mixer for 'default detected output'
+Apr 24 19:24 : player: played "asdf.flac"
+Apr 24 19:24 : output: Failed to open mixer for 'default detected output'
+Apr 24 19:24 : player: played "youtube_seed/trance/★ Trance & Dance - ECHOES OF SUMMER - Emotional progressive dance & vocal trance {EoT #17}-w_pAjtxdo2c.m4a"
+Apr 24 19:24 : output: Failed to open mixer for 'default detected output'
+Apr 24 19:24 : player: played "youtube_seed/monstercat/Electro_-_Skifonix_-_People_Say_feat._Stella_Talpo_Monstercat_Release-fe3yTbxOL9k.m4a"
+Apr 24 19:24 : player: played "youtube_seed/monstercat/Electro_-_Soulero_-_Native_Monstercat_Release-DDKFx6N5npk.m4a"
+Apr 24 19:29 : player: played "youtube_seed/monstercat/Electro_-_Soulero_-_Pussycat_Monstercat_Release-472WnCpu0BU.m4a"
+Apr 24 19:33 : player: played "youtube_seed/monstercat/Electro_-_Soulero_-_Video_Boy_Monstercat_Release-liR1nIewOyE.m4a"
+Apr 24 19:37 : player: played "youtube_seed/monstercat/Electro_-_Stephen_Walking_-_Birthday_Cake_Monstercat_FREE_Release-5yWcgzI4gEw.m4a"
+Apr 24 19:55 : player: played "youtube_seed/monstercat/Electro_-_Stephen_Walking_-_Top_of_the_World_Monstercat_Release-Fy68No-L6Pg.m4a"
+Apr 24 19:55 : output: Failed to open mixer for 'default detected output'
+Apr 24 19:58 : player: played "5-15-2012/Starscream - Heliopause B (Termination Shock).mp3"
+Apr 25 19:42 : alsa_mixer: Failed to read mixer for 'default detected output': no such mixer control: PCM
+Apr 25 19:42 : player: played "asdf.flac"
+Apr 25 19:42 : output: Failed to open mixer for 'default detected output'
+Apr 25 19:49 : player: played "asdf.flac"
+Apr 25 19:50 : output: Failed to open mixer for 'default detected output'

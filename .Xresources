@@ -6,16 +6,19 @@ URxvt*background: #3f3f3f
 URxvt.saveLines:32767
 URxvt.scrollBar: false
 
-URxvt*font: xft:uushi:pixelsize=12
- 
+
+URxvt*font: xft:gohufont:pixelsize=12
+
+URxvt*boldFont: xft:gohufont:pixelsize=12
+
 URxvt.perl-ext-common: default,matcher
 URxvt.urlLauncher: uzbl-browser
 URxvt.matcher.button: 2
 URxvt.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
- 
+
 URxvt*colorUL: #c5f779
 URxvt*underlineColor: #c5f779
- 
+
 URxvt*color0:	#3f3f3f
 URxvt*color1:       #705050
 URxvt*color2:     #60b48a
@@ -60,3 +63,4 @@ xterm*color7:         #DDDDDD
 xterm*color15:        #FFFFFF
 
 URxvt*iconFile: /usr/share/icons/Numix-Circle/48x48/applications/terminal.svg
+
