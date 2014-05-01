@@ -12,7 +12,7 @@ URxvt*font: xft:gohufont:pixelsize=12
 URxvt*boldFont: xft:gohufont:pixelsize=12
 
 URxvt.perl-ext-common: default,matcher
-URxvt.urlLauncher: uzbl-browser
+URxvt.urlLauncher: chromium
 URxvt.matcher.button: 2
 URxvt.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
 
