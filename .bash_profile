@@ -33,3 +33,5 @@ export TODO="~/Documents/todo.txt"
 
 # Load Bash It
 #source $BASH_IT/bash_it.sh
+
+source ~/.bashrc
