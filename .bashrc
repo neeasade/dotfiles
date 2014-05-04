@@ -22,3 +22,6 @@ m=false
 case "home9" in
   $HOSTNAME) m=true ;;
 esac
+
+export PYTHONPATH=/usr/lib/python3.4/site-packages
+

@@ -3,4 +3,4 @@
 tint2 &
 conky &
 pytyle2 &
-
+mpd ~/.config/mpd/mpd.conf &

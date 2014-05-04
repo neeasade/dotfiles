@@ -1,1 +1,0 @@
-/home/neeasade/.vim/janus/vim/vimrc
