@@ -1,4 +1,3 @@
-#exec cinnamon-session
-exec openbox-session
+exec $1 
 
-[[ -f ~/.Xresources ]] && xrdb ~/.Xresources
+xrdb ~/.Xresources
