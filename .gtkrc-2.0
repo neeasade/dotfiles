@@ -1,14 +1,6 @@
 # -- THEME AUTO-WRITTEN DO NOT EDIT
 include "/usr/share/themes/iris-dark/gtk-2.0/gtkrc"
 
-style "user-font" {
-	font_name = "GohuFont 9"
-}
-
-widget_class "*" style "user-font"
-
-gtk-font-name="GohuFont 9"
-
 include "/home/neeasade/.gtkrc.mine"
 
 # -- THEME AUTO-WRITTEN DO NOT EDIT
