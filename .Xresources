@@ -11,14 +11,17 @@ URxvt*font: xft:gohufont:pixelsize=12
 URxvt*boldFont: xft:gohufont:pixelsize=12
 
 URxvt.perl-ext-common: default,matcher
-URxvt.urlLauncher: chromium
+URxvt.urlLauncher: dwb
 URxvt.matcher.button: 1
 URxvt.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
 
 URxvt*colorUL: #c5f779
 URxvt*underlineColor: #c5f779
 
-*background: #101010
+URxvt*.depth: 32
+URxvt*.background: [95]#101010
+
+
 *foreground: #d0d0d0
 *cursorColor: #d0d0d0
 *color0: #101010

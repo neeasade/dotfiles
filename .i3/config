@@ -148,3 +148,15 @@ bindsym $mod+g mode "resize"
 bar {
         status_command i3status
 }
+
+
+#startup stuff:
+exec /home/neeasade/.i3/autostart
+exec mpd /home/neeasade/.config/mpd/mpd.conf
+exec --no-startup-id i3-msg 'workspace ⋅;exec dwb'
+exec --no-startup-id i3-msg 'workspace ∴;exec urxvt -e weechat;exec urxvt -e ncmpcpp'
+
+
+
+
+

@@ -25,7 +25,11 @@ mail_spool $MAIL
 update_interval 4.0
 
 # Create own window instead of using desktop (required in nautilus)
-own_window no
+own_window yes
+own_window_transparent yes
+own_window_type desktop
+#borders
+draw_borders no
 
 # Use double buffering (reduces flicker, may not work for everyone)
 double_buffer yes
