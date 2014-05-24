@@ -1,5 +1,6 @@
 ~/.screenlayout/display.sh && sleep 2
 /home/neeasade/.fehbg &
+compton &
 tint2 &
 conky &
 pytyle2 &
