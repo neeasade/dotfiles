@@ -9,7 +9,7 @@
     background_image = None
     antialias = False
     show_titlebar = False
-    font = Tewi 9
+    font = GohuFont 10
 [layouts]
   [[default]]
     [[[child1]]]
