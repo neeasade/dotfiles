@@ -4,9 +4,9 @@ URxvt.saveLines:32767
 URxvt.scrollBar: false
 
 
-URxvt*font: xft:gohufont:pixelsize=12
+URxvt*font: xft:Terminus:pixelsize=12
 
-URxvt*boldFont: xft:gohufont:pixelsize=12
+!URxvt*boldFont: xft:gohufont:pixelsize=12
 
 URxvt.perl-ext-common: default,matcher
 URxvt.urlLauncher: dwb
