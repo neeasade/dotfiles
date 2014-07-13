@@ -14,6 +14,7 @@ set $left HDMI-0
 set $center DisplayPort-0
 set $right DVI-1
 
+
 new_window 1pixel
 new_float 1pixel
 
