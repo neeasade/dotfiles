@@ -1,3 +1,0 @@
-mpd ~/.config/mpd/mpd.conf &
-~/.fehbg &
-compton &

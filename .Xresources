@@ -4,7 +4,7 @@ URxvt.saveLines:32767
 URxvt.scrollBar: false
 
 
-URxvt*font: xft:Terminus:pixelsize=12
+URxvt*font:xft:Terminess Powerline:pixelsize=12
 
 !URxvt*boldFont: xft:gohufont:pixelsize=12
 
@@ -16,31 +16,14 @@ URxvt.matcher.pattern.1: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
 URxvt*colorUL: #c5f779
 URxvt*underlineColor: #c5f779
 
-URxvt*.background: [95]#101010
+URxvt*.background: #000000
 
-!Molokai coloscheme.
-!URxvt*foreground: #d0d0d0
-!URxvt*cursorColor: #d0d0d0
-!URxvt*color0: #101010
-!URxvt*color1: #960050
-!URxvt*color2: #66aa11
-!URxvt*color3: #c47f2c
-!URxvt*color4: #30309b
-!URxvt*color5: #7e40a5
-!URxvt*color6: #3579a8
-!URxvt*color7: #9999aa
-!URxvt*color8: #303030
-!URxvt*color9: #ff0090
-!URxvt*color10: #80ff00
-!URxvt*color11: #ffba68
-!URxvt*color12: #5f5fee
-!URxvt*color13: #bb88dd
-!URxvt*color14: #4eb4fa
-!URxvt*color15: #d0d0d0
-!base 16 default dark :
-#define base00 #151515
-#define base01 #202020
+! base 16 default dark :
+#define base00 #373737
+! check the line below for that color light.
 #define base02 #303030
+!#define base01 #202020
+#define base01 #707070
 #define base03 #505050
 #define base04 #b0b0b0
 #define base05 #d0d0d0
