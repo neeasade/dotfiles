@@ -12,7 +12,7 @@ set $ws1 00
 set $ws2 01
 set $ws3 10
 set $ws4 11
-set $ws5 win
+set $ws5 ❖
 
 new_window 1pixel
 new_float 1pixel
@@ -102,7 +102,7 @@ mode "wsrs" {
 
 
 ####   Font.   ####
-font Terminess
+font pango:Terminess Powerline 12px
 
 floating_modifier $mod
 
@@ -195,7 +195,7 @@ bar {
 #        output $center
         position top
         workspace_buttons yes
-        status_command i3status
+        status_command i3blocks
         strip_workspace_numbers yes
 }
 
