@@ -39,8 +39,8 @@
 
 # Examples of commands:
 
-#"xbindkeys_show" 
-#  control+shift + q
+"xbindkeys_show" 
+  control+shift + q
 
 # set directly keycode (here control + f with my keyboard)
 #"xterm"
@@ -62,8 +62,8 @@
 #  release+control+shift + a
 #
 ## Control + mouse button 2 release event starts rxvt
-#"rxvt"
-#  Control + b:2 + Release
+"urxvt"
+  Control + b:2 + Release
 
 ##################################
 # End of xbindkeys configuration #
