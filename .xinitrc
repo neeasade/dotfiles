@@ -25,5 +25,6 @@ export PATH=$PATH:~/.config/bar
 rm /tmp/$(ls /tmp | grep bspwm)
 
 #start bspwm and sxhkd
-sxhkd -c ~/.config/sxhkd/sxhkdrc &
-exec bspwm -c ~/.config/bspwm/bspwmrc #> .xinit.log
+#sxhkd -c ~/.config/sxhkd/sxhkdrc &
+#exec bspwm -c ~/.config/bspwm/bspwmrc #> .xinit.log
+exec $1

@@ -14,8 +14,8 @@ set $ws3 10
 set $ws4 11
 set $ws5 ❖
 
-new_window 1pixel
-new_float 1pixel
+new_window pixel 3
+new_float pixel 3
 
 
 ####   WS definitions   ####
@@ -108,12 +108,11 @@ floating_modifier $mod
 
 
 ####   Launching programs(Will need removed when xbindkeys)   ####
-bindsym $mod+r exec dmenu_run
+bindsym $mod+space exec ~/bin/dmenu_run
 bindsym $mod+Return exec urxvt
-bindsym $mod+w exec firefox-nightly
 
 # kill focused window
-bindsym $mod+Shift+q kill
+bindsym $mod+w kill
 
 #lock with blur script:
 bindsym $mod+p exec ~/.i3/lock.sh
@@ -137,7 +136,7 @@ bindsym $mod+a focus parent
 bindsym $mod+d focus child
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+#bindsym $mod+space focus mode_toggle
 
 
 ####    Window manipulation   ####
@@ -187,16 +186,27 @@ bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcu
 
 ####    Bar and colors   ####
 #window focus colors
-client.focused  #090909  #000000 #000000
-client.unfocused    #202020  #202020 #202020
+client.focused #ffffff #ffffff #ffffff
+client.unfocused #323232 #323232 #323232
 
 #Hooray a bar. 
-bar {
-#        output $center
-        position top
-        workspace_buttons yes
-        status_command i3blocks
-        strip_workspace_numbers yes
+bar 
+{
+    position top
+    workspace_buttons yes
+    status_command i3blocks
+    strip_workspace_numbers yes
+    workspace_buttons yes
+    colors
+    {
+        background #323232
+        statusline #eeffff
+#       class border bg text
+        focused_workspace  #323232 #323232 #ffffff
+        active_workspace   #323232 #323232 #999999
+        inactive_workspace #323232 #323232 #666666
+        urgent_workspace   #323232 #323232 #00ff44
+    }
 }
 
 ####   Window assignments to be used in program start   ####
