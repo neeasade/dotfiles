@@ -1,12 +1,13 @@
- 
 URxvt.saveLines:32767
 URxvt.scrollBar: false
 
 URxvt*font:xft:Terminess Powerline:pixelsize=12
-
-
-URxvt*iconFile: /usr/share/icons/Numix-Circle/48x48/apps/terminal.svg
-
+URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
+URxvt.url-select.launcher:  chromium
+URxvt.url-select.underline: true
+URxvt.keysym.M-u:           perl:url-select:select_next
+URxvt.keysym.M-Escape:      perl:keyboard-select:activate
+URxvt.keysym.M-s:           perl:keyboard-select:search
 
 URxvt.cursorColor: #FDA53C
 URxvt*background: #1f1f1f
