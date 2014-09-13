@@ -63,7 +63,7 @@
 #
 ## Control + mouse button 2 release event starts rxvt
 "urxvt"
-  Control + b:2 + Release
+  Mod4 + Return
 
 ##################################
 # End of xbindkeys configuration #

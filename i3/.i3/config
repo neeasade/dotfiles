@@ -2,7 +2,7 @@
 #
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 #note: alt=Mod1 win=Mod4
-set $mod Mod1
+set $mod Mod4
 set $left HDMI-0
 set $center DisplayPort-0
 set $right DVI-1
@@ -109,7 +109,7 @@ floating_modifier $mod
 
 ####   Launching programs(Will need removed when xbindkeys)   ####
 bindsym $mod+space exec ~/bin/dmenu_run
-bindsym $mod+Return exec urxvt
+#bindsym $mod+Return exec urxvt
 
 # kill focused window
 bindsym $mod+w kill

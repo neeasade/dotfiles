@@ -2,12 +2,12 @@ visualizer_fifo_path = "/tmp/mpd.fifo"
 visualizer_output_name = "my_fifo"
 visualizer_sync_interval = "30" 
 visualizer_in_stereo = "yes"
-visualizer_type = "spectrum" (spectrum/wave)
+visualizer_type = "wave" (spectrum/wave)
 
 # Playlist
  song_columns_list_format = "$L(9)[white]{l} (20)[red]{a} (30)[green]{b}$R(20)[cyan]{t}"
- now_playing_prefix = "$b"
-now_playing_subfix = "/$b"
+# now_playing_prefix = "$b"
+#now_playing_subfix = "/$b"
  playlist_display_mode = "classic" (classic/columns)
  autocenter_mode = "no"
 centered_cursor = "no"
