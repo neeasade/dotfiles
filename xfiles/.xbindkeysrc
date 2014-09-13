@@ -62,7 +62,7 @@
 #  release+control+shift + a
 #
 ## Control + mouse button 2 release event starts rxvt
-"urxvt"
+"urxvtc"
   Mod4 + Return
 
 ##################################
