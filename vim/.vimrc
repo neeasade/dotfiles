@@ -129,7 +129,7 @@ set background=light
 set t_Co=16
 colorscheme jellybeans
 set encoding=utf-8
-set guifont=DejaVu\ Sans\ Mono\ for\ Powerline
+set guifont=Terminus
 
 " Display extra whitespace
 set list listchars=tab:»·,trail:·

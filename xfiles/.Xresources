@@ -1,7 +1,17 @@
 URxvt.saveLines:32767
 URxvt.scrollBar: false
 
-URxvt*font:xft:Terminess Powerline:pixelsize=12
+Xft.autohint: true
+Xft.antialias: true
+Xft.hinting: true
+Xft.hintstyle: hintslight
+!Xft.dpi: 96
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+
+urxvt*font:xft:uushi:pixelsize=9:antialias=true:hinting=true
+urxvt*boldFont:xft:uushi:pixelsize=9:antialias=true:hinting=true
+
 URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
 URxvt.url-select.launcher:  chromium
 URxvt.url-select.underline: true
@@ -37,3 +47,5 @@ URxvt*foreground: #eeffff
 !white
 *color7: #DDDDDD
 *color15: #CCCCCC
+
+

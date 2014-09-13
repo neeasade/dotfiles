@@ -80,11 +80,6 @@ alt + @button{1-3}
 # wm independent hotkeys
 #
 
-alt + Return
-	urxvt
-
-alt + space
-	~/bin/dmenu_run
 
 # make sxhkd reload its configuration files:
 alt + Escape
