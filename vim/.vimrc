@@ -288,6 +288,6 @@ set guioptions-=L
 
 "airline enabling of powerline fonts
 let g:airline_powerline_fonts = 1
-
+let g:Powerline_symbols = 'fancy'
 set guioptions-=T  "remove toolbar
 
