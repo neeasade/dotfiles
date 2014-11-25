@@ -9,7 +9,8 @@
     background_image = None
     antialias = False
     show_titlebar = False
-    font = GohuFont 10
+    font = Termsyn 10
+    cursor_blink = False
 [layouts]
   [[default]]
     [[[child1]]]
