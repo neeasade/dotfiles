@@ -3,7 +3,9 @@
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
 #note: alt=Mod1 win=Mod4
 set $mod Mod4
-set $center LVDS1
+set $left HDMI-0
+set $center DisplayPort-0
+set $right DVI-1
 
 #Workspace names:
 set $ws1 00
@@ -17,6 +19,12 @@ new_float pixel 3
 
 
 ####   WS definitions   ####
+#LEFTIES
+workspace "1:$ws1" output $left
+workspace "2:$ws2" output $left
+workspace "3:$ws3" output $left
+workspace "4:$ws4" output $left
+workspace "5:$ws5" output $left
 #CENTIES
 workspace "6:$ws1" output $center
 workspace "7:$ws2" output $center
@@ -24,6 +32,11 @@ workspace "8:$ws3" output $center
 workspace "9:$ws4" output $center
 workspace "10:$ws5" output $center
 #RIGHTIES
+workspace "11:$ws1" output $right
+workspace "12:$ws2" output $right
+workspace "13:$ws3" output $right
+workspace "14:$ws4" output $right
+workspace "15:$ws5" output $right
 
 
 ####   Navigation   ####
@@ -36,6 +49,25 @@ bindsym $mod+2 workspace "7:$ws2"
 bindsym $mod+3 workspace "8:$ws3"
 bindsym $mod+4 workspace "9:$ws4"
 bindsym $mod+5 workspace "10:$ws5"
+#meant to be entered for other screen workspaces to allow key combos that have more than modifiers+key(eg Alt+i+2)
+mode "wsl" {
+        bindsym $mod+1 workspace "1:$ws1"
+        bindsym $mod+2 workspace "2:$ws2"
+        bindsym $mod+3 workspace "3:$ws3"
+        bindsym $mod+4 workspace "4:$ws4"
+        bindsym $mod+5 workspace "5:$ws5"
+        bindsym --release i mode "default"
+        bindsym --release $mod+i mode "default"
+}
+mode "wsr" {
+        bindsym $mod+1 workspace "11:$ws1"
+        bindsym $mod+2 workspace "12:$ws2"
+        bindsym $mod+3 workspace "13:$ws3"
+        bindsym $mod+4 workspace "14:$ws4"
+        bindsym $mod+5 workspace "15:$ws5"
+        bindsym --release o mode "default"
+        bindsym --release $mod+o mode "default"
+}
 
 
 ####   Window WS switching   ####
@@ -48,6 +80,25 @@ bindsym $mod+Shift+2 move container to workspace "7:$ws2"
 bindsym $mod+Shift+3 move container to workspace "8:$ws3"
 bindsym $mod+Shift+4 move container to workspace "9:$ws4"
 bindsym $mod+Shift+5 move container to workspace "10:$ws5"
+#Same as the above with shift n move modification. 
+mode "wsls" {
+        bindsym $mod+Shift+1 move container to workspace "1:$ws1"
+        bindsym $mod+Shift+2 move container to workspace "2:$ws2"
+        bindsym $mod+Shift+3 move container to workspace "3:$ws3"
+        bindsym $mod+Shift+4 move container to workspace "4:$ws4"
+        bindsym $mod+Shift+5 move container to workspace "5:$ws5"
+        bindsym --release i mode "default"
+        bindsym --release $mod+i mode "default"
+}
+mode "wsrs" {
+        bindsym $mod+Shift+1 move container to workspace "11:$ws1"
+        bindsym $mod+Shift+2 move container to workspace "12:$ws2"
+        bindsym $mod+Shift+3 move container to workspace "13:$ws3"
+        bindsym $mod+Shift+4 move container to workspace "14:$ws4"
+        bindsym $mod+Shift+5 move container to workspace "15:$ws5"
+        bindsym --release o mode "default"
+        bindsym --release $mod+o mode "default"
+}
 
 
 ####   Font.   ####
