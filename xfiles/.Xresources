@@ -9,8 +9,8 @@ Xft.hintstyle: hintslight
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
 
-urxvt*font:xft:uushi:pixelsize=9:antialias=true:hinting=true
-urxvt*boldFont:xft:uushi:pixelsize=9:antialias=true:hinting=true
+urxvt*font:xft:termsyn:pixelsize=9:antialias=true:hinting=true
+urxvt*boldFont:xft:termsyn:pixelsize=9:antialias=true:hinting=true
 
 URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
 URxvt.url-select.launcher:  chromium

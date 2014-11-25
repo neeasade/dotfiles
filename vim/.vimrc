@@ -3,7 +3,7 @@
 " Vundle Settings
 set nocompatible
 filetype off
-set rtp+=/home/neeasade/.vim/bundle/vundle
+set rtp+=/home/neeasade/.vim/bundle/vundle.vim
 call vundle#begin()
 """""""""""
 " Bundles "
