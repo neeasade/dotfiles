@@ -129,7 +129,7 @@ set background=light
 set t_Co=16
 colorscheme jellybeans
 set encoding=utf-8
-set guifont=Terminus
+set guifont=Termsyn
 
 " Display extra whitespace
 set list listchars=tab:»·,trail:·
@@ -266,7 +266,7 @@ set splitright
   let g:ycm_seed_identifiers_with_syntax = 1
   let g:ycm_filetype_identifier_grouping = 0
   
-  " fullscreen
+  " fullscreen(on windows)
   map <F9> <Esc>:call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)<CR> 
 
 "key shortcuts for tabs like in Chrome with selecing some specifically.
