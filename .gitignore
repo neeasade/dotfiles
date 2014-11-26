@@ -1,0 +1,9 @@
+#logs n stuff
+weechat/.weechat/logs
+ncmpcpp/.ncmpcpp/error.log
+
+#MPD status files
+mpd/.config/mpd/log
+mpd/.config/mpd/pid
+mpd/.config/mpd/sticker.sql
+mpd/.config/mpd/database
