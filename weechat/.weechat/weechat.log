@@ -1,0 +1,39 @@
+[2014-11-25 17:25:44] WeeChat 1.0.1 (compiled on Sep 28 2014 19:54:13)
+[2014-11-25 17:25:44] Writing configuration file sec.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file sec.conf
+[2014-11-25 17:25:44] Reading configuration file weechat.conf
+[2014-11-25 17:25:44] Writing configuration file plugins.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file plugins.conf
+[2014-11-25 17:25:44] Writing configuration file alias.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file alias.conf
+[2014-11-25 17:25:44] Writing configuration file exec.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file exec.conf
+[2014-11-25 17:25:44] Writing configuration file aspell.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file aspell.conf
+[2014-11-25 17:25:44] Writing configuration file script.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file script.conf
+[2014-11-25 17:25:44] Writing configuration file irc.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file irc.conf
+[2014-11-25 17:25:44] Writing configuration file charset.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file charset.conf
+[2014-11-25 17:25:44] Writing configuration file logger.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file logger.conf
+[2014-11-25 17:25:44] Writing configuration file relay.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file relay.conf
+[2014-11-25 17:25:44] Writing configuration file trigger.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file trigger.conf
+[2014-11-25 17:25:44] Writing configuration file xfer.conf (default options)
+[2014-11-25 17:25:44] Reading configuration file xfer.conf
+[2014-11-25 17:25:54] Writing configuration file plugins.conf
+[2014-11-25 17:25:54] Writing configuration file xfer.conf
+[2014-11-25 17:25:54] Writing configuration file trigger.conf
+[2014-11-25 17:25:54] Writing configuration file relay.conf
+[2014-11-25 17:25:54] Writing configuration file logger.conf
+[2014-11-25 17:25:54] Writing configuration file charset.conf
+[2014-11-25 17:25:54] Writing configuration file irc.conf
+[2014-11-25 17:25:54] Writing configuration file script.conf
+[2014-11-25 17:25:54] Writing configuration file aspell.conf
+[2014-11-25 17:25:54] Writing configuration file exec.conf
+[2014-11-25 17:25:54] Writing configuration file alias.conf
+[2014-11-25 17:25:54] Writing configuration file weechat.conf
+[2014-11-25 17:25:54] Writing configuration file sec.conf
