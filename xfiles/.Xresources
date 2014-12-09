@@ -19,33 +19,39 @@ URxvt.keysym.M-u:           perl:url-select:select_next
 URxvt.keysym.M-Escape:      perl:keyboard-select:activate
 URxvt.keysym.M-s:           perl:keyboard-select:search
 
-URxvt.cursorColor: #FDA53C
-URxvt*background: #1f1f1f
-URxvt*foreground: #eeffff
+! special
+*.foreground:   #a2a2a2
+*.background:   #292929
+*.cursorColor:  #a2a2a2
 
-!black
-*color0: #222222
-*color8: #666666
-!red
-*color1: #E84F4F
-*color9: #D23D3D
-!green
-*color2: #B7CE42
-*color10: #BDE077
-!yellow
-*color3: #FEA63C
-*color11: #FFE863
-!blue
-*color4: #66AABB
-*color12: #AACCBB
-!magenta
-*color5: #B7416E
-*color13: #E16A98
-!cyan
-*color6: #6D878D
-*color14: #42717B
-!white
-*color7: #DDDDDD
-*color15: #CCCCCC
+! black
+*.color0:       #4e4e4e
+*.color8:       #777777
 
+! red
+*.color1:       #a9635d
+*.color9:       #ffbbb2
 
+! green
+*.color2:       #468459
+*.color10:      #9ddeaf
+
+! yellow
+*.color3:       #84763d
+*.color11:      #e0ce91
+
+! blue
+*.color4:       #5879af
+*.color12:      #b3d1ff
+
+! magenta
+*.color5:       #9c6594
+*.color13:      #fabdf0
+
+! cyan
+*.color6:       #008592
+*.color14:      #79e0ed
+
+! white
+*.color7:       #cfcfcf
+*.color15:      #ffffff
