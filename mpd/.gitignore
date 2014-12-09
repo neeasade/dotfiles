@@ -1,5 +1,6 @@
 #MPD status files
-.config/mpd/log
 .config/mpd/pid
+.config/mpd/log
+.config/mpd/state
 .config/mpd/sticker.sql
 .config/mpd/database
