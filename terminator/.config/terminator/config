@@ -9,7 +9,7 @@
     background_image = None
     antialias = False
     show_titlebar = False
-    font = Termsyn 10
+    font = lemon 8
     cursor_blink = False
 [layouts]
   [[default]]

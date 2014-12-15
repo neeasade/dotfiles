@@ -14,8 +14,8 @@ set $ws3 10
 set $ws4 11
 set $ws5 ❖
 
-new_window pixel 3
-new_float pixel 3
+new_window pixel 1
+new_float pixel 1
 
 
 ####   WS definitions   ####
