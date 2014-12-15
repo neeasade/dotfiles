@@ -4,7 +4,8 @@
 pcmanfm -d &
 
 #Set wallpaper
-hsetroot -tile ~/.config/background/background.png &
+#hsetroot -tile ~/.config/background/background.png &
+~/.fehbg
 
 #Refresh Xresources
 xrdb -load  /home/neeasade/.Xresources &
