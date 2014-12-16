@@ -42,10 +42,6 @@
 "xbindkeys_show" 
   control+shift + q
 
-# set directly keycode (here control + f with my keyboard)
-#"xterm"
-#  c:41 + m:0x4
-
 # specify a mouse button
 #"xterm"
 #  control + b:2
@@ -65,6 +61,8 @@
 "urxvtc"
   Mod4 + Return
 
+"~/bin/dmenu_run"
+  Mod4 + space
 ##################################
 # End of xbindkeys configuration #
 ##################################

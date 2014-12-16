@@ -7,16 +7,17 @@ fi
 
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
 
-[ -e "$PANEL_FIFO" ] && rm "$PANEL_FIFO"
-mkfifo "$PANEL_FIFO"
 
-bspc config top_padding $PANEL_HEIGHT
-bspc control --subscribe > "$PANEL_FIFO" &
-xtitle -sf 'T%s' > "$PANEL_FIFO" &
-clock -sf 'S%a %H:%M' > "$PANEL_FIFO" &
+num_mon=$(bspc query -M)
 
-. panel_colors
+for i in $num_mon; do
+    [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
+    mkfifo "$PANEL_FIFO$i"
 
-cat "$PANEL_FIFO" | panel_bar | bar -g x$PANEL_HEIGHT -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" &
+    bspc control --subscribe > "$PANEL_FIFO$i" &
+    xtitle -sf 'T%s' > "$PANEL_FIFO$i" &
+    . panel_colors
+    cat "$PANEL_FIFO$i" | panel_bar | bar -g 1920x$PANEL_HEIGHT+$(expr 1920 \* $(expr $i - 1)) -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" &
+done
 
 wait
