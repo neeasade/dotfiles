@@ -8,10 +8,6 @@ num_mon=$(bspc query -M | wc -l)
 
 while read -r line ; do
 	case $line in
-		S*)
-			# clock output
-			sys_infos="%{F$COLOR_STATUS_FG}%{B$COLOR_STATUS_BG} ${line#?} %{B-}%{F-}"
-			;;
 		T*)
 			# xtitle output
 			title="%{F$COLOR_TITLE_FG}%{B$COLOR_TITLE_BG} ${line#?} %{B-}%{F-}"
