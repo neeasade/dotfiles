@@ -14,6 +14,7 @@ for i in $num_mon; do
     [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
     mkfifo "$PANEL_FIFO$i"
 
+    #|  grep -o "[Mm]$1[^mM]*T"
     bspc control --subscribe > "$PANEL_FIFO$i" &
     xtitle -sf 'T%s' > "$PANEL_FIFO$i" &
     . panel_colors

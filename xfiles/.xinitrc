@@ -28,6 +28,6 @@ export PATH=$PATH:~/.config/bar
 rm /tmp/$(ls /tmp | grep bspwm)
 
 #start bspwm and sxhkd
-sxhkd -f 100 -c /home/neeasade/.config/sxhkd/sxhkdrc &
-exec bspwm -c /home/neeasade/.config/bspwm/bspwmrc #> .xinit.log
-#exec i3
+#sxhkd -f 100 -c /home/neeasade/.config/sxhkd/sxhkdrc &
+#exec bspwm -c /home/neeasade/.config/bspwm/bspwmrc #> .xinit.log
+exec i3
