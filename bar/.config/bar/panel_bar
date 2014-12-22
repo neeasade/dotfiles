@@ -6,65 +6,68 @@
 
 num_mon=$(bspc query -M | wc -l)
 
+CBR='%{B-}'         # reset bg color
+CB1='%{B#FF66D9EF}' # blue
+CB2='%{B#FFF8F8F2}' # off white
+
+CFR='%{F-}'         # reset fg color
+CF1='%{F#FF49483E}' # dark gray
+CF2='%{F#FF66D9EF}' # blue
+CF3='%{F#FFF92672}' # violet
+CF4='%{F#FFF8F8F2}' # off white
+
+RA='%{r}'           # right align
+AC='%{A:'           # start click area
+AB=':}'             # end click area cmd
+AE='%{A}'           # end click area
+
+LT='t'              # tiled layout
+LM="f"              # monocle layout
+
+DO='O'              # occupied desktop
+DF='X'              # free desktop
+
+goto='bspc desktop -f'       # go to this desktop
+cycle='bspc desktop -l next' # cycle tiled/monocle
+
 while read -r line ; do
 	case $line in
-		T*)
-			# xtitle output
-			title="%{F$COLOR_TITLE_FG}%{B$COLOR_TITLE_BG} ${line#?} %{B-}%{F-}"
-			;;
-		W*)
-			# bspwm internal state
-			wm_infos=""
-			IFS=':'
-			set -- ${line#?}
-			while [ $# -gt 0 ] ; do
-				item=$1
-				name=${item#?}
-				case $item in
-					M*)
-						# active monitor
-						if [ $num_mon -gt 1 ] ; then
-							wm_infos="$wm_infos %{F$COLOR_ACTIVE_MONITOR_FG}%{B$COLOR_ACTIVE_MONITOR_BG} ${name} %{B-}%{F-}  "
-						fi
-						;;
-					m*)
-						# inactive monitor
-						if [ $num_mon -gt 1 ] ; then
-							wm_infos="$wm_infos %{F$COLOR_INACTIVE_MONITOR_FG}%{B$COLOR_INACTIVE_MONITOR_BG} ${name} %{B-}%{F-}  "
-						fi
-						;;
-					O*)
-						# focused occupied desktop
-						wm_infos="${wm_infos}%{F$COLOR_FOCUSED_OCCUPIED_FG}%{B$COLOR_FOCUSED_OCCUPIED_BG}%{U$COLOR_FOREGROUND}%{+u} ${name} %{-u}%{B-}%{F-}"
-						;;
-					F*)
-						# focused free desktop
-						wm_infos="${wm_infos}%{F$COLOR_FOCUSED_FREE_FG}%{B$COLOR_FOCUSED_FREE_BG}%{U$COLOR_FOREGROUND}%{+u} ${name} %{-u}%{B-}%{F-}"
-						;;
-					U*)
-						# focused urgent desktop
-						wm_infos="${wm_infos}%{F$COLOR_FOCUSED_URGENT_FG}%{B$COLOR_FOCUSED_URGENT_BG}%{U$COLOR_FOREGROUND}%{+u} ${name} %{-u}%{B-}%{F-}"
-						;;
-					o*)
-						# occupied desktop
-						wm_infos="${wm_infos}%{F$COLOR_OCCUPIED_FG}%{B$COLOR_OCCUPIED_BG} ${name} %{B-}%{F-}"
-						;;
-					f*)
-						# free desktop
-						wm_infos="${wm_infos}%{F$COLOR_FREE_FG}%{B$COLOR_FREE_BG} ${name} %{B-}%{F-}"
-						;;
-					u*)
-						# urgent desktop
-						wm_infos="${wm_infos}%{F$COLOR_URGENT_FG}%{B$COLOR_URGENT_BG} ${name} %{B-}%{F-}"
-						;;
-					L*)
-						# layout
-						wm_infos="$wm_infos  %{F$COLOR_LAYOUT_FG}%{B$COLOR_LAYOUT_BG} ${name} %{B-}%{F-}"
-						;;
+	S*)
+		sys_infos="${RA}${line#?}"
+	;;
+	T*)
+		title="${CFR} ${line#?} "
+	;;
+	W*)
+		wm_infos="${CB2}"
+		IFS=':'
+		set -- ${line#?}
+		while [ $# -gt 0 ] ; do
+			item=$1
+			name=${item#?}
+			case $item in
+			O*) wm_infos="${wm_infos}${CF2}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active occupied desktop
+			F*) wm_infos="${wm_infos}${CF2}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # active free desktop
+			U*) wm_infos="${wm_infos}${CF3}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active urgent desktop
+			o*) wm_infos="${wm_infos}${CF1}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive occupied desktop
+			f*) wm_infos="${wm_infos}${CF1}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
+			u*) wm_infos="${wm_infos}${CF3}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
+			L*)
+				# layout
+				case $name in
+				t*) # tiled
+					layout=${LT}
+				;;
+				m*) # monocle
+					layout=${LM}
+				;;
 				esac
-				shift
-			done
+				wm_infos="${wm_infos} ${CF1}${AC}${cycle}${AB}${layout}${AE} ${CBR}${CF4} - "
 			;;
+			esac
+			shift
+		done
+	;;
 	esac
-	printf "%s\n" "%{l}${wm_infos}%{c}${title}%{r}${sys_infos}"
+	printf "%s\n" "$logo $wm_infos $title $sys_infos"
 done

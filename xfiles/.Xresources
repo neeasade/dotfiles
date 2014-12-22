@@ -8,7 +8,7 @@ Xft.hintstyle: hintslight
 !Xft.dpi: 96
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
-
+Xcursor.theme:"whiteglass"
 urxvt*font:xft:termsyn:pixelsize=9:antialias=true:hinting=true
 urxvt*boldFont:xft:termsyn:pixelsize=9:antialias=true:hinting=true
 

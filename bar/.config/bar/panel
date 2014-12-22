@@ -18,7 +18,7 @@ for i in $num_mon; do
     bspc control --subscribe > "$PANEL_FIFO$i" &
     xtitle -sf 'T%s' > "$PANEL_FIFO$i" &
     . panel_colors
-    cat "$PANEL_FIFO$i" | panel_bar | bar -g 1920x$PANEL_HEIGHT+$(expr 1920 \* $(expr $i - 1)) -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" &
+    cat "$PANEL_FIFO$i" | panel_bar | bar -g 1920x$PANEL_HEIGHT+$(expr 1920 \* $(expr $i - 1)) -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" | sh &
 done
 
 wait
