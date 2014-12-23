@@ -16,7 +16,7 @@ xbindkeys &
 urxvtd &
 
 #compositing
-compton -cCb -t-1 -l-1  -o.3 -f &
+compton -cb -o.9 -f -D 5 -e0.7 &
 
 #mpd
 mpd ~/.config/mpd/mpd.conf &
@@ -29,5 +29,5 @@ rm /tmp/$(ls /tmp | grep bspwm)
 
 #start bspwm and sxhkd
 sxhkd -f 100 -c /home/neeasade/.config/sxhkd/sxhkdrc &
-exec bspwm -c /home/neeasade/.config/bspwm/bspwmrc #> .xinit.log
+exec bspwm -c /home/neeasade/.config/bspwm/bspwmrc > .xinit.log
 #exec i3

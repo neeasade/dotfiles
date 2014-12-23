@@ -1,6 +1,4 @@
-#! /bin/sh
-#
-# Example panel for LemonBoy's bar
+#!/bin/sh
 
 . panel_colors
 
@@ -8,13 +6,13 @@ num_mon=$(bspc query -M | wc -l)
 
 CBR='%{B-}'         # reset bg color
 CB1='%{B#FF66D9EF}' # blue
-CB2='%{B#FFF8F8F2}' # off white
+CB2='%{B#FF292929}' # off white
 
-CFR='%{F-}'         # reset fg color
+CFR='%{F#FFFFFFFF}'         # reset fg color
 CF1='%{F#FF49483E}' # dark gray
-CF2='%{F#FF66D9EF}' # blue
+CF2='%{F#FFFFFFFF}' # blue
 CF3='%{F#FFF92672}' # violet
-CF4='%{F#FFF8F8F2}' # off white
+CF4='%{F#FF777777}' # off white
 
 RA='%{r}'           # right align
 AC='%{A:'           # start click area
@@ -62,12 +60,12 @@ while read -r line ; do
 					layout=${LM}
 				;;
 				esac
-				wm_infos="${wm_infos} ${CF1}${AC}${cycle}${AB}${layout}${AE} ${CBR}${CF4} - "
+				wm_infos="${wm_infos} ${CF1}${AC}${cycle}${AB}${layout}${AE} ${CBR}${CF4}"
 			;;
 			esac
 			shift
 		done
 	;;
 	esac
-	printf "%s\n" "$logo $wm_infos $title $sys_infos"
+    printf "%s\n" "%{l}$wm_infos %{c}$title %{r}$sys_infos"
 done

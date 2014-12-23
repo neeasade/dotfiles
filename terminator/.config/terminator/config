@@ -7,10 +7,11 @@
     background_darkness = 0.7
     background_type = transparent
     background_image = None
-    antialias = False
-    show_titlebar = False
-    font = lemon 8
     cursor_blink = False
+    show_titlebar = False
+    antialias = False
+    font = uushi 9
+    allow_bold = False
 [layouts]
   [[default]]
     [[[child1]]]
