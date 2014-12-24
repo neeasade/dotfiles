@@ -1,4 +1,4 @@
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=24
-#PANEL_FONT_FAMILY="-*-terminus-*-*-*-*-*-*-*-*-*-*-*-*"
+PANEL_FONT_FAMILY="-xos4-terminus-*-r-*-*-*-*-*-*-*-*-*-1,-misc-dejavu sans mono-medium-r-normal--11-*-*-*-m-*-iso10646-1"
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY

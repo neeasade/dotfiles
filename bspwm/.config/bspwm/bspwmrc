@@ -1,8 +1,8 @@
 #!/bin/sh
 
-bspc config border_width        1
+bspc config border_width        3
 bspc config window_gap         12
-bspc config top_padding        15
+bspc config top_padding        32
 
 bspc config split_ratio         0.52
 bspc config borderless_monocle  true
@@ -20,7 +20,7 @@ i=1
 for monitor in $(bspc query -M); do
     bspc monitor $monitor \
         -n "$i" \
-        -d $i/{i,ii,iii}
+        -d $i/{i,ii,iii,iiii,iiiii}
     let i++
 done
 
