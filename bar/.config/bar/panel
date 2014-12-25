@@ -16,9 +16,9 @@ for i in $num_mon; do
 
     #|  grep -o "[Mm]$1[^mM]*T"
     bspc control --subscribe > "$PANEL_FIFO$i" &
-    xtitle -t 50 -sf 'T%s' > "$PANEL_FIFO$i" &
+    xtitle -t 80 -sf 'T%s' > "$PANEL_FIFO$i" &
 
-    date +S%H:%M > "$PANEL_FIFO$i" &
+    date "+S%H:%M " > "$PANEL_FIFO$i" &
 
     . panel_colors
     cat "$PANEL_FIFO$i" | panel_bar | bar -g 1350x$PANEL_HEIGHT+8+8 -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" | sh &
