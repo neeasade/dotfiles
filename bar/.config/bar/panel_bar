@@ -21,7 +21,7 @@ AE='%{A}'           # end click area
 
 LT='t'              # tiled layout
 LM="f"              # monocle layout
-
+#sound icon for laters: ░
 DO='■'              # occupied desktop
 DF='□'              # free desktop
 
