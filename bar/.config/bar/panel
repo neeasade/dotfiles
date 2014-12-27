@@ -7,8 +7,7 @@ if [ $(pgrep -cx panel) -gt 1 ] ; then
 fi
 
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
-
-
+CUR_X_OFFSET=0
 num_mon=$(bspc query -M)
 for i in $num_mon; do
     [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
@@ -20,14 +19,12 @@ for i in $num_mon; do
 
     date "+S%H:%M " > "$PANEL_FIFO$i" &
 
+    CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
+
     . panel_colors
-    cat "$PANEL_FIFO$i" | panel_bar | bar -g 1350x$PANEL_HEIGHT+8+8 -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" | sh &
+    cat "$PANEL_FIFO$i" | panel_bar | bar -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" | sh 
+    CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )
 done
 
 wait
 
-
-GetBSPWMMonWidth()
-{
-    
-}
