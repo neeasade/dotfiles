@@ -2,8 +2,6 @@
 
 . panel_colors
 
-num_mon=$(bspc query -M | wc -l)
-
 CBR='%{B-}'         # reset bg color
 CB1='%{B#FF66D9EF}' # blue
 CB2='%{B#FF292929}' # off white
