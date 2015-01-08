@@ -4,11 +4,10 @@
 pcmanfm -d &
 
 #Set wallpaper
-#hsetroot -tile ~/.config/background/background.png &
-~/.fehbg
+hsetroot -solid "#cccccc" &
 
 #Refresh Xresources
-xrdb -load  /home/neeasade/.Xresources &
+xrdb -load  /home/$USER/.Xresources &
 
 #keybindings
 xbindkeys &
