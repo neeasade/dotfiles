@@ -13,12 +13,17 @@ bspc config focus_by_distance   true
 #bspc monitor "HDMI-0" -n 2 -d IV V VI
 #bspc monitor "DVI-1" -n 3 -d VII VIII IX X
 
-desktops=(00 01 10 11)
-#-d $i/{$(echo ${desktops[@]} | tr ' ' ',')}
+desktops=$(bspc query -M)
 
+#host specific(to maintain monitor order.)
+
+if [ "$HOSTNAME"=='home27' ]; then
+    desktops="HDMI-0 DisplayPort-0 DVI-1";
+fi
+    
 i=1
-for monitor in $(bspc query -M); do
-    bspc monitor $monitor \
+for monitor in $desktops; do
+    bspc monitor "$monitor" \
         -n "$i" \
         -d $i/{i,ii,iii,iiii,iiiii}
     let i++
@@ -41,8 +46,8 @@ bspc config normal_frame_opacity 0.0
 bspc config focused_frame_opacity 0.1
 
 
-bspc rule -a Gimp desktop=^4 follow=on floating=on
 bspc rule -a mplayer2 floating=on
+bspc rule -a VLC desktop=^7 
 bspc rule -a Screenkey manage=off
 
 ~/.config/bar/panel &

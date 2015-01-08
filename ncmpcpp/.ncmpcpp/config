@@ -2,7 +2,7 @@ visualizer_fifo_path = "/tmp/mpd.fifo"
 visualizer_output_name = "my_fifo"
 visualizer_sync_interval = "30" 
 visualizer_in_stereo = "yes"
-visualizer_type = "wave" (spectrum/wave)
+visualizer_type = "spectrum" (spectrum/wave)
 
 # Playlist
  song_columns_list_format = "$L(9)[white]{l} (20)[red]{a} (30)[green]{b}$R(20)[cyan]{t}"
@@ -18,7 +18,7 @@ mouse_list_scroll_whole_page = "no"
 
  # Bars
  song_status_format = "{%a - }{%t - }{%b}"
-progressbar_look = "|> "
+#progressbar_look = "|> "
  progressbar_look = "─╼ "
  titles_visibility = "no"
  header_visibility = "no"
