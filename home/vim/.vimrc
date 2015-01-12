@@ -1,58 +1,4 @@
 
-
-" Vundle Settings
-set nocompatible
-filetype off
-set rtp+=/home/neeasade/.vim/bundle/Vundle.vim
-call vundle#begin()
-"""""""""""
-" Bundles "
-"""""""""""
-Plugin 'gmarik/Vundle.vim'
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-cucumber'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-endwise'
-Plugin 'tpope/vim-repeat'
-Plugin 'tpope/vim-dispatch'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'Lokaltog/vim-easymotion'
-Plugin 'garbas/vim-snipmate'
-Plugin 'MarcWeber/vim-addon-mw-utils'
-Plugin 'vim-scripts/tlib'
-Plugin 'honza/vim-snippets'
-Plugin 'thisivan/vim-bufexplorer'
-Plugin 'godlygeek/tabular'
-Plugin 'gregsexton/MatchTag'
-Plugin 'semmons99/vim-ruby-matchit'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'kana/vim-textobj-user'
-Plugin 'nelstrom/vim-textobj-rubyblock'
-Plugin 'vim-scripts/Auto-Pairs'
-Plugin 'terryma/vim-smooth-scroll'
-Plugin 'elzr/vim-json'
-Plugin 'scrooloose/syntastic'
-Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'ervandew/supertab'
-Plugin 'jelera/vim-javascript-syntax'
-Plugin 'Raimondi/delimitMate'
-Plugin 'airblade/vim-gitgutter'
-Plugin 'bling/vim-airline'
-Plugin 'terryma/vim-multiple-cursors'
-"""""""""""""""
-" Bundles END "
-"""""""""""""""
-call vundle#end()
-filetype plugin indent on
-
-runtime! bundle/snipmate-snippets/support_functions.vim
-runtime macros/matchit.vim
-
-" autocmd BufWritePre * :%s/\s\+$//e
-
 set title
 set hidden
 
@@ -127,7 +73,7 @@ set foldcolumn=0
 " Look and Feel settings
 set background=light
 set t_Co=16
-colorscheme jellybeans
+colorscheme twilight
 set encoding=utf-8
 set guifont=Termsyn
 
@@ -228,46 +174,6 @@ set splitright
 	vmap = =gv
 
   au BufRead,BufNewFile Capfile set filetype=ruby
-
-" 3RD-PARTY PLUGINS SETTINGS
-
-  " Buffer Explorer
-  let g:bufExplorerDefaultHelp=0       " Do not show default help.
-  let g:bufExplorerShowRelativePath=1  " Show relative paths.
-
-  " NERD tree
-    let g:NERDTreeChristmasTree = 1
-    let g:NERDTreeCaseSensitiveSort = 1
-    let g:NERDTreeQuitOnOpen = 1
-    let g:NERDTreeWinPos = 'left'
-    let g:NERDTreeWinSize = 50
-    let g:NERDTreeShowBookmarks = 1
-    let g:NERDTreeDirArrows=1
-    map <F2> :NERDTreeToggle<CR>
-
-  " Slime
-  let g:slime_target = "tmux"
-  let g:slime_paste_file = "$HOME/.slime_paste"
-
-  " vim-smooth-scroll
-  noremap <silent> <c-u> :call smooth_scroll#up(&scroll, 0, 2)<CR>
-  noremap <silent> <c-d> :call smooth_scroll#down(&scroll, 0, 2)<CR>
-  noremap <silent> <c-b> :call smooth_scroll#up(&scroll*2, 0, 4)<CR>
-  noremap <silent> <c-f> :call smooth_scroll#down(&scroll*2, 0, 4)<CR>
-
-  " SnipMate
-  imap <C-J> <esc>a<Plug>snipMateNextOrTrigger
-  smap <C-J> <Plug>snipMateNextOrTrigger
-
-  " YouCompleteMe
-  let g:ycm_filetype_blacklist = {}
-  let g:ycm_complete_in_comments = 1
-  let g:ycm_collect_identifiers_from_comments_and_strings = 1
-  let g:ycm_seed_identifiers_with_syntax = 1
-  let g:ycm_filetype_identifier_grouping = 0
-  
-  " fullscreen(on windows)
-  map <F9> <Esc>:call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)<CR> 
 
 "key shortcuts for tabs like in Chrome with selecing some specifically.
 map <C-S-]> gt

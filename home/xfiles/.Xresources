@@ -1,0 +1,42 @@
+URxvt.saveLines:32767
+URxvt.scrollBar: false
+
+Xft.autohint: true
+Xft.antialias: true
+Xft.hinting: true
+Xft.hintstyle: hintslight
+
+Xft.rgba: rgb
+Xft.lcdfilter: lcddefault
+Xcursor.theme:"whiteglass"
+urxvt*font:xft:EnvyCodeR:pixelsize=10,style=regular
+urxvt*boldFont:xft:EnvyCodeR:pixelsize=10
+
+URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
+URxvt.url-select.launcher:  chromium
+URxvt.url-select.underline: true
+URxvt.keysym.M-u:           perl:url-select:select_next
+URxvt.keysym.M-Escape:      perl:keyboard-select:activate
+URxvt.keysym.M-s:           perl:keyboard-select:search
+
+! special
+*.foreground:   #a2a2a2
+*.background:   #292929
+*.cursorColor:  #a2a2a2
+ 
+*.color0:	#141414
+*.color1:   #cf6a4c
+*.color2:   #839061
+*.color3:   #cda869
+*.color4:   #7587a6
+*.color5:   #9b859d
+*.color6:   #05a6b3
+*.color7:   #709080
+ 
+*.color8:   #cc9393
+*.color9:   #7f9f7f
+*.color10:  #f0dfaf
+*.color11:  #9b859d
+*.color12:  #7587a6
+*.color13:  #0ae6e6
+*.color14:  #ffffff
