@@ -18,20 +18,14 @@ complete -cf sudo
 #export PS1="┌─[\u][\w]\n└─╼"
 #export PS1="───"
 
-#set a mobile variable for differences in configuration between mobile/desktop.
-m=false
-case "home9" in
-  $HOSTNAME) m=true ;;
-esac
-
 prompt () {
 	_ERR=$?
 	_UID=$(id -u)
 	_JOB=$(jobs | wc -l)
 
-	[ $_UID -eq 0 ] && echo -n '[31m━' || echo -n '[30m─'
-	[ $_JOB -ne 0 ] && echo -n '[32m─' || echo -n '[30m─'
-	[ $_ERR -ne 0 ] && echo -n '[33m─' || echo -n '[30m─'
+	[ $_UID -eq 0 ] && echo -n '[31m━' || echo -n -e '\033[01;30m─'
+	[ $_JOB -ne 0 ] && echo -n '[32m─' || echo -n -e '\033[01;30m─'
+	[ $_ERR -ne 0 ] && echo -n '[32m─' || echo -n -e '\033[01;30m─'
 	
 	echo -n '[0m'
 }
