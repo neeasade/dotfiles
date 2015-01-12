@@ -4,7 +4,7 @@
 pcmanfm -d &
 
 #Set wallpaper
-hsetroot -solid "#cccccc" &
+hsetroot -solid "#2ac4ba" &
 
 #Refresh Xresources
 xrdb -load  /home/$USER/.Xresources &
