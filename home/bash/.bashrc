@@ -10,7 +10,7 @@ alias ls='ls --color=auto'
 PATH=$PATH:~/bin:~/.config/bar
 
 #add the dir for gem execs to path:
-PATH=$PATH:/home/neeasade/.gem/ruby/2.1.0/bin
+PATH=$PATH:/home/neeasade/.gem/ruby/2.2.0/bin
 
 #auto-complete for pacman when using sudo:
 complete -cf sudo
