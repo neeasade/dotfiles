@@ -24,7 +24,7 @@ The programs used here are located in the depends.txt file. You could install th
 ```
 for i in $(cat depends.txt); do <your package manager install command here> $i; done
 ```
-this is independent per target directory.
+this is independent per target directory. This list has only been tested with Arch Linux and there are a number of packages that live in the Aur. Also, there are configuration files for programs that are not in te depends.txt with the idea that you only need to install what's used(this primarily affects WM choice, bspwm is installed but i3 and openbox are not in that list, even though there are configuration files for them.)
 
 
 ##Management
