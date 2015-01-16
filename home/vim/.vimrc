@@ -2,6 +2,9 @@
 set title
 set hidden
 
+" Auto remove all whitespace on :w
+autocmd BufWritePre * :%s/\s\+$//e
+
 " Numbers
 set number
 set numberwidth=4
