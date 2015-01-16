@@ -49,7 +49,7 @@ if [ "$HOSTNAME"=='home27' ]; then
     desktops="HDMI-0 DisplayPort-0 DVI-1";
 fi
 
-#Make 5 desktops per monitor
+#rename all the monitors to numbers and create 5 workspaces on each
 i=1
 for monitor in $desktops; do
     bspc monitor "$monitor" \

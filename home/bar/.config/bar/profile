@@ -4,7 +4,7 @@
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=24
 #Terminus for main font, dejavu for the unicode characters.
-PANEL_FONT_FAMILY="-xos4-terminus-*-r-*-*-*-*-*-*-*-*-*-1,-misc-dejavu sans mono-medium-r-normal--11-*-*-*-m-*-iso10646-1"
+PANEL_FONT_FAMILY="-*-terminus-*-*-*-*-*-*-*-*-*-*-*-*,-misc-dejavu sans mono-medium-r-normal--11-*-*-*-m-*-iso10646-1"
 PANEL_GAP=8
 
 
