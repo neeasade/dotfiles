@@ -9,7 +9,7 @@ Neeasade's dotfiles
 ![Screenshot](http://i.imgur.com/ceexx19.png)
 
 ##Multihead
-Currently I have attempted to make the bar work dynamically with multihead setups, as that is what I have on my home computer. However, it will only work if the vertical tops are aligned acress all monitors.
+Currently one bar is made per monitor, with the same information being shown on each with the exception of the workspaces, those that are shown are monitor specific.
 
 ##TODO
 *   better multihead support
