@@ -1,3 +1,4 @@
+#!/bin/sh
 
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
@@ -7,8 +8,7 @@ PANEL_FONT_FAMILY="-xos4-terminus-*-r-*-*-*-*-*-*-*-*-*-1,-misc-dejavu sans mono
 PANEL_GAP=8
 
 
-if( $BSPWM_GAPS = false ); then
-    PANEL_GAP=0
+if [ "$BSPWM_GAPS" = false ]; then
     PANEL_GAP=0
 fi
 
