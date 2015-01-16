@@ -7,6 +7,7 @@ if [ $(pgrep -cx panel) -gt 1 ] ; then
 fi
 
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
+#Track the current offset for making multiple bars per monitor.
 CUR_X_OFFSET=0
 num_mon=$(bspc query -M | sort)
 
@@ -15,6 +16,10 @@ for i in $num_mon; do
 
     mkfifo "$PANEL_FIFO$i"
 
+    #This greps out the bspc control section of the current monitor we are on
+    #this is why sorting the `bspc query -M` above is important.
+    #the while loop in the middle appends 'W' to the start because the panel_bar
+    #script assumes input from a 'regular' bspc control --subscribe command
     bspc control --subscribe |\
         grep -oE "[Mm]$i[^TM]*[TM]" --line-buffered |\
         while read line; do echo W$line; done \
@@ -24,11 +29,19 @@ for i in $num_mon; do
 
     date "+S%H:%M " > "$PANEL_FIFO$i" &
 
+    #Grep for current monitor width (will be first number regex match from bspc query command below)
     CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
 
     . panel_colors
+
+    #IMO the below looks kinda scary, but a large reason for the length
+    #is the verbose variable names :)
+    #
+    #This will account for bar gap settings and current monitor offsets.
     cat "$PANEL_FIFO$i" | panel_bar |\
         bar -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_FAMILY" -F "$COLOR_FOREGROUND" -B "$COLOR_BACKGROUND" | sh &
+
+    #Increment the x offset for the next monitor.
     CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )
 done
 
