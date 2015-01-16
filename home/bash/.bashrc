@@ -23,11 +23,9 @@ prompt () {
 	_UID=$(id -u)
 	_JOB=$(jobs | wc -l)
 
-	[ $_UID -eq 0 ] && echo -n '[31m━' || echo -n -e '\033[01;30m─'
-	[ $_JOB -ne 0 ] && echo -n '[32m─' || echo -n -e '\033[01;30m─'
-	[ $_ERR -ne 0 ] && echo -n '[32m─' || echo -n -e '\033[01;30m─'
-	
-	echo -n '[0m'
+	[ $_UID -eq 0 ] && echo -n '━' || echo -n -e '─'
+	[ $_JOB -ne 0 ] && echo -n '!' || echo -n -e '─'
+	[ $_ERR -ne 0 ] && echo -n '!' || echo -n -e '─'
 }
 
 PS1='$(prompt) '
