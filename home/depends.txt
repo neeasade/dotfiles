@@ -1,0 +1,11 @@
+base-devel
+bspwm
+sxhkd
+dmenu
+bar-aint-recursive
+rxvt-unicode
+xtitle-git
+termsyn
+ttf-dejavu
+
+
