@@ -7,5 +7,7 @@ rxvt-unicode
 xtitle-git
 termsyn
 ttf-dejavu
+compton
+terminus-font
 
 
