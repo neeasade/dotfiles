@@ -31,5 +31,5 @@ this is independent per target directory. This list has only been tested with Ar
 These files are managed with GNU [stow](http://www.gnu.org/software/stow/manual/stow.html), which should be available via your package manager of choice. Stow is a symlink-farm management program. It allows for mass symlinking out of a 'master' directory(Here you can see I use the users home directory and the base('/') directory. The deploy scripts in these directories run stow with a target parent directory indicated by name. if you are reading this you are probably interested in only the dotfiles for your home directory.
 
 ##Misc:
-*   The philosophy for the prompt was take from [dcat](http://dcat.iotek.org/prompt/)
+*   The philosophy for the prompt was taken from [dcat](http://dcat.iotek.org/prompt/)
 
