@@ -1,5 +1,5 @@
 #!/bin/bash
 
 for i in $(ls -d */); do
-    stow -t / $i;
+    sudo stow -t / $i;
 done
