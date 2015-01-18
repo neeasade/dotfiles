@@ -1,0 +1,25 @@
+#!/bin/sh
+
+bspc rule -a mplayer2 floating=on
+bspc rule -a Screenkey manage=off
+
+~/.config/bar/panel &
+
+
+desktops=$(bspc query -M)
+
+#host specific(to maintain monitor order.)
+if [ "$HOSTNAME"=='home27' ]; then
+    desktops="HDMI-0 DisplayPort-0 DVI-1";
+fi
+
+#rename all the monitors to numbers and create 5 workspaces on each
+i=1
+for monitor in $desktops; do
+    bspc monitor "$monitor" \
+        -n "$i" \
+        -d $i/{i,ii,iii,iiii,iiiii}
+    let i++
+done
+
+
