@@ -1,7 +1,7 @@
 #!/bin/sh
 
-#Enable/disable gaps on both windows and bar
-export BSPWM_GAPS=true
+#Enable/disable gaps on both windows and bar(if it is not already defined)
+if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
 
 #Get panel height
 . ~/.config/bar/profile
@@ -36,4 +36,38 @@ bspc config urgent_border_color "#FFFF00"
 bspc config normal_frame_opacity 0.0
 bspc config focused_frame_opacity 0.1
 
-. desktops
+
+bspc rule -a mplayer2 floating=on
+bspc rule -a Screenkey manage=off
+
+#pkill $(pgrep -cx panel)
+killall panel
+~/.config/bar/panel &
+
+desktops=$(bspc query -M)
+
+#things to do the first time thisis run(all the monitors have not been renamed to numbers yet)
+echo "$desktops" | grep -q "[a-zA-Z]"
+if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
+
+if [ "$IsInitialRun" = true ]; then
+    #host specific(to maintain monitor order.)
+    if [ "$HOSTNAME"=='home27' ]; then
+        desktops="HDMI-0 DisplayPort-0 DVI-1";
+    fi
+    RenameCommand='-n "$i"'
+fi
+
+#rename all the monitors to numbers and create 5 workspaces on each
+i=1
+
+for monitor in $desktops; do
+    if [ "$IsInitialRun" = true ]; then
+        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii}
+    else
+        bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
+    fi
+    let i++
+done
+
+
