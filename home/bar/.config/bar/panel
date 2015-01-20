@@ -12,7 +12,7 @@ fi
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
 #Track the current offset for making multiple bars per monitor.
 CUR_X_OFFSET=0
-num_mon=$(bspc query -M | sort)
+num_mon=$(bspc query -M)
 
 for i in $num_mon; do
     [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
