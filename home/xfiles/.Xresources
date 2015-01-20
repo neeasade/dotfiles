@@ -18,12 +18,13 @@ URxvt.url-select.underline: true
 URxvt.keysym.M-u:           perl:url-select:select_next
 URxvt.keysym.M-Escape:      perl:keyboard-select:activate
 URxvt.keysym.M-s:           perl:keyboard-select:search
+URxvt.urgentOnBell:         true
 
 ! special
 *.foreground:   #a2a2a2
 *.background:   #292929
 *.cursorColor:  #a2a2a2
- 
+
 *.color0:	#141414
 *.color1:   #cf6a4c
 *.color2:   #839061
@@ -32,7 +33,7 @@ URxvt.keysym.M-s:           perl:keyboard-select:search
 *.color5:   #9b859d
 *.color6:   #05a6b3
 *.color7:   #709080
- 
+
 *.color8:   #cc9393
 *.color9:   #7f9f7f
 *.color10:  #f0dfaf
