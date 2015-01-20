@@ -1,4 +1,4 @@
-~/.screenlayout/display.sh 
+~/.screenlayout/display.sh
 
 #pcmanfm daemon
 pcmanfm -d &
@@ -15,7 +15,7 @@ xbindkeys &
 urxvtd &
 
 #compositing
-compton -cb -o.9 -f -D 5 -e0.7 &
+compton -Ccb -o.9 -f -D 5 -e0.7 &
 
 #mpd
 mpd ~/.config/mpd/mpd.conf &

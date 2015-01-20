@@ -9,5 +9,6 @@ termsyn
 ttf-dejavu
 compton
 terminus-font
+hsetroot
 
 
