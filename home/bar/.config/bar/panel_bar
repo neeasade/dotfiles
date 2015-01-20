@@ -1,15 +1,13 @@
 #!/bin/sh
 
-. panel_colors
-
 CBR='%{B-}'         # reset bg color
 CB1='%{B#FF66D9EF}' # blue
 CB2='%{B#FF292929}' # off white
 
 CFR='%{F#FFFFFFFF}'         # reset fg color
 CF1='%{F#FF49483E}' # dark gray
-CF2='%{F#FFFFFFFF}' # blue
-CF3='%{F#FFF92672}' # violet
+CF2='%{F#FFFFFFFF}' # white
+CF3='%{F#FFFFFF00}' # yello
 CF4='%{F#FF777777}' # off white
 
 RA='%{r}'           # right align
