@@ -8,7 +8,7 @@ xtitle-git
 termsyn
 ttf-dejavu
 compton
-terminus-font
+bdf-tewi-git
 hsetroot
 vim
 bash
