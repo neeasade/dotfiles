@@ -4,7 +4,8 @@
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=24
 #Terminus for main font, dejavu for the unicode characters.
-PANEL_FONT_FAMILY="-*-terminus-*-*-*-*-*-*-*-*-*-*-*-*,-misc-dejavu sans mono-medium-r-normal--11-*-*-*-m-*-iso10646-1"
+PANEL_FONT_FAMILY="-*-tewi-medium-*-*-*-*-*-*-*-*-*-*-*"
+
 PANEL_GAP=8
 
 
@@ -13,4 +14,3 @@ if [ "$BSPWM_GAPS" = false ]; then
 fi
 
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
-

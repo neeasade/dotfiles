@@ -9,8 +9,8 @@ Xft.hintstyle: hintslight
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
 Xcursor.theme:"whiteglass"
-urxvt*font:xft:Termsyn:pixelsize=9,style=regular
-urxvt*boldFont:xft:Termsyn:pixelsize=9,style=regular
+urxvt*font:xft:Tewi:pixelsize=11,style=regular
+urxvt*boldFont:xft:Tewi:pixelsize=11,style=regular
 
 URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
 URxvt.url-select.launcher:  chromium
