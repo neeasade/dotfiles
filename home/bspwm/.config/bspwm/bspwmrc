@@ -52,11 +52,11 @@ if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
 
 if [ "$IsInitialRun" = true ]; then
     #host specific(to maintain monitor order.)
-    if [ "$HOSTNAME"=='home27' ]; then
+    if [ "$HOSTNAME" == 'home27' ]; then
         desktops="HDMI-0 DisplayPort-0 DVI-1";
     fi
-    RenameCommand='-n "$i"'
 fi
+
 
 #rename all the monitors to numbers and create 5 workspaces on each
 i=1
