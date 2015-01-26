@@ -63,5 +63,5 @@ while read -r line ; do
 		done
 	;;
 	esac
-    printf "%s\n" "%{c}$wm_infos %{l}$title %{r}$sys_infos"
+    printf "%s\n" " %{l}$title %{r}$sys_infos %{c}$wm_infos"
 done
