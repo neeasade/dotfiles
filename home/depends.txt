@@ -13,3 +13,6 @@ hsetroot
 vim
 bash
 tmux
+mpd
+mpc
+ncmpcpp
