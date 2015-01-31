@@ -2,8 +2,7 @@
 
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=24
-#Terminus for main font, dejavu for the unicode characters.
+PANEL_HEIGHT=16
 PANEL_FONT_FAMILY="-*-tewi-medium-*-*-*-*-*-*-*-*-*-*-*"
 
 PANEL_GAP=8

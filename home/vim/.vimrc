@@ -76,7 +76,6 @@ set foldcolumn=0
 " Look and Feel settings
 set background=light
 set t_Co=16
-colorscheme twilight
 set encoding=utf-8
 set guifont=Termsyn
 

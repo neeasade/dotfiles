@@ -8,9 +8,13 @@ battery() {
     BATC=/sys/class/power_supply/BAT0/capacity
     BATS=/sys/class/power_supply/BAT0/status
 
-    test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
-
-    sed -n p $BATC
+    #Check if there is a battery on the cyrrent computer we are on.
+    if [ -f $BATC ]; then
+        test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
+        sed -n p $BATC
+    else
+       echo "NO BATT"
+    fi
 }
 
 volume() {
@@ -46,12 +50,13 @@ nowplaying() {
 }
 
 # This loop will fill a buffer with our infos, and output it to stdout.
+delim=//
 while :; do
-    buf="S"
-    buf="${buf} ⭯ $(nowplaying) -"
-    buf="${buf} $(network) -"
-    buf="${buf} ⭦ $(memused)%% -"
-    buf="${buf} ◂⋑ $(volume)%% - "
+    buf="S" buf="${buf} $(battery) $delim "
+    buf="${buf} ⭯ $(nowplaying) $delim "
+    buf="${buf} $(network) $delim "
+    buf="${buf} ⭦ $(memused)%% $delim "
+    buf="${buf} ◂⋑ $(volume)%% $delim "
     buf="${buf} ⭧ $(clock)"
 
     echo $buf
