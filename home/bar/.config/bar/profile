@@ -2,7 +2,7 @@
 
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=13
+PANEL_HEIGHT=12
 PANEL_FONT_FAMILY="-*-tewi-medium-*-*-*-*-*-*-*-*-*-*-*"
 
 PANEL_GAP=8
@@ -12,4 +12,15 @@ if [ "$BSPWM_GAPS" = false ]; then
     PANEL_GAP=0
 fi
 
+pFG=#ffa7a7a7
+pBG=#ff1e1e1e
+pUrgent=#ffffff00
+pActive=#ffffffff
+pRest=#ffa2a2a2
+
+#Alternating powerline colors:
+pS1=#ff1e1e1e
+pS2=#ff323537
+
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
+export pFG pBG pUrgent pActive pRest  pS1 pS2

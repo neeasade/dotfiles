@@ -8,7 +8,7 @@ Xft.hintstyle: hintslight
 
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
-Xcursor.theme:"whiteglass"
+Xcursor.theme:ArchCursorTheme
 urxvt*font:xft:Tewi:pixelsize=11,style=regular
 urxvt*boldFont:xft:Tewi:pixelsize=11,style=regular
 
@@ -20,24 +20,44 @@ URxvt.keysym.M-Escape:      perl:keyboard-select:activate
 URxvt.keysym.M-s:           perl:keyboard-select:search
 URxvt.urgentOnBell:         true
 
-! special
-*.foreground:   #a2a2a2
-*.background:   #292929
-*.cursorColor:  #a2a2a2
+! Base16 Twilight
+! Scheme: David Hart (http://hart-dev.com)
 
-*.color0:	#141414
-*.color1:   #cf6a4c
-*.color2:   #839061
-*.color3:   #cda869
-*.color4:   #7587a6
-*.color5:   #9b859d
-*.color6:   #05a6b3
-*.color7:   #709080
+#define base00 #1e1e1e
+#define base01 #323537
+#define base02 #464b50
+#define base03 #5f5a60
+#define base04 #838184
+#define base05 #a7a7a7
+#define base06 #c3c3c3
+#define base07 #ffffff
+#define base08 #cf6a4c
+#define base09 #cda869
+#define base0A #f9ee98
+#define base0B #8f9d6a
+#define base0C #afc4db
+#define base0D #7587a6
+#define base0E #9b859d
+#define base0F #9b703f
 
-*.color8:   #cc9393
-*.color9:   #7f9f7f
-*.color10:  #f0dfaf
-*.color11:  #9b859d
-*.color12:  #7587a6
-*.color13:  #0ae6e6
-*.color14:  #ffffff
+*.foreground:   base05
+*.background:   base00
+*.cursorColor:  base05
+
+*.color0:       base00
+*.color1:       base08
+*.color2:       base0B
+*.color3:       base0A
+*.color4:       base0D
+*.color5:       base0E
+*.color6:       base0C
+*.color7:       base05
+
+*.color8:       base03
+*.color9:       base09
+*.color10:      base01
+*.color11:      base02
+*.color12:      base04
+*.color13:      base06
+*.color14:      base0F
+*.color15:      base07

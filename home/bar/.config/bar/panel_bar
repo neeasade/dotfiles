@@ -1,22 +1,20 @@
 #!/bin/sh
 
-CBR='%{B-}'         # reset bg color
-CB1='%{B#FF66D9EF}' # blue
-CB2='%{B#FF505050}'
+pBG="%{B$pBG}"         # reset bg color
+pFG="%{F$pFG}"         # reset fg color
 
-CFR='%{F#FFFFFFFF}'         # reset fg color
-CF1='%{F#FFa2a2a2}' # dark gray
-CF2='%{F#FFFFFFFF}' # white
-CF3='%{F#FFFFFF00}' # yello
-CF4='%{F#FF505050}' # off white
+
+pBGS1="%{B$pS1}"  # bg shade 1
+pBGS2="%{B$pS2}"  # bg shade 2
+
+pFGS1="%{F$pS1}"  # fg shade 1
+pFGS2="%{F$pS2}"  # fg shade 2
+
 
 RA='%{r}'           # right align
 AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
-
-LT='t'              # tiled layout
-LM="f"              # monocle layout
 
 DO='■'              # occupied desktop
 DF='□'              # free desktop
@@ -27,31 +25,30 @@ cycle='bspc desktop -l next' # cycle tiled/monocle
 while read -r line ; do
 	case $line in
 	S*)
-		sys_infos="${RA}${line#?}"
+		sys_infos="${line#?}"
 	;;
 	T*)
-		title="${CF4}${CB2}${CFR} ${line#?} ${CF4}${CBR}⮀"
+		title="${pFGS1}${pBGS1}${pFG} ${line#?} ${pFGS1}${pBG}⮀"
 	;;
 	W*)
-		wm_infos="${CB2}"
+		wm_infos="${pBGS2}"
 		IFS=':'
 		set -- ${line#?}
 		while [ $# -gt 0 ] ; do
 			item=$1
 			name=${item#?}
 			case $item in
-			O*) wm_infos="${wm_infos}${CF2}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active occupied desktop
-			F*) wm_infos="${wm_infos}${CF2}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # active free desktop
-			U*) wm_infos="${wm_infos}${CF3}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active urgent desktop
-			o*) wm_infos="${wm_infos}${CF1}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive occupied desktop
-			f*) wm_infos="${wm_infos}${CF1}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
-			u*) wm_infos="${wm_infos}${CF3}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
-			L*)
-			;;
+			O*) wm_infos="${wm_infos}%{F$pActive}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active occupied desktop
+			F*) wm_infos="${wm_infos}%{F$pActive}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # active free desktop
+			U*) wm_infos="${wm_infos}%{F$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active urgent desktop
+			o*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive occupied desktop
+			f*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
+			u*) wm_infos="${wm_infos}%{F$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
 			esac
 			shift
 		done
+        wm_infos="$wm_infos${pBG}${pFGS2}⮀"
 	;;
 	esac
-    printf "%s\n" " %{c}$title %{r}$sys_infos %{l}$wm_infos${CBR}%{F#FF505050}⮀${CF4}"
+    printf "%s\n" "%{r}$sys_infos %{l}$wm_infos %{c}$title"
 done
