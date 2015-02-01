@@ -63,9 +63,9 @@ i=1
 
 for monitor in $desktops; do
     if [ "$IsInitialRun" = true ]; then
-        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii}
+        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii,iiiiii}
     else
-        bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
+        bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii,iiiiii}
     fi
     let i++
 done

@@ -2,13 +2,13 @@
 
 CBR='%{B-}'         # reset bg color
 CB1='%{B#FF66D9EF}' # blue
-CB2='%{B#FF292929}' # off white
+CB2='%{B#FF505050}'
 
 CFR='%{F#FFFFFFFF}'         # reset fg color
-CF1='%{F#FF49483E}' # dark gray
+CF1='%{F#FFa2a2a2}' # dark gray
 CF2='%{F#FFFFFFFF}' # white
 CF3='%{F#FFFFFF00}' # yello
-CF4='%{F#FF777777}' # off white
+CF4='%{F#FF505050}' # off white
 
 RA='%{r}'           # right align
 AC='%{A:'           # start click area
@@ -17,7 +17,7 @@ AE='%{A}'           # end click area
 
 LT='t'              # tiled layout
 LM="f"              # monocle layout
-#sound icon for laters: ░
+
 DO='■'              # occupied desktop
 DF='□'              # free desktop
 
@@ -30,7 +30,7 @@ while read -r line ; do
 		sys_infos="${RA}${line#?}"
 	;;
 	T*)
-		title="${CFR} ${line#?} "
+		title="${CF4}${CB2}${CFR} ${line#?} ${CF4}${CBR}⮀"
 	;;
 	W*)
 		wm_infos="${CB2}"
@@ -47,21 +47,11 @@ while read -r line ; do
 			f*) wm_infos="${wm_infos}${CF1}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
 			u*) wm_infos="${wm_infos}${CF3}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
 			L*)
-				# layout
-				case $name in
-				t*) # tiled
-					layout=${LT}
-				;;
-				m*) # monocle
-					layout=${LM}
-				;;
-				esac
-				wm_infos="${wm_infos} ${CF1}${AC}${cycle}${AB}${layout}${AE} ${CBR}${CF4}"
 			;;
 			esac
 			shift
 		done
 	;;
 	esac
-    printf "%s\n" " %{l}$title %{r}$sys_infos %{c}$wm_infos"
+    printf "%s\n" " %{c}$title %{r}$sys_infos %{l}$wm_infos${CBR}%{F#FF505050}⮀${CF4}"
 done

@@ -13,17 +13,13 @@ battery() {
         test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
         sed -n p $BATC
     else
-       echo "NO BATT"
+        #yeah
+        echo "+0"
     fi
 }
 
 volume() {
     amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p'
-}
-
-memused() {
-    read t f <<< `grep -E 'Mem(Total|Free)' /proc/meminfo |awk '{print $2}'`
-    bc <<< "scale=2; 100 - $f / $t * 100" | cut -d. -f1
 }
 
 network() {
@@ -40,7 +36,7 @@ network() {
     #int=eth0
 
     ping -c 1 8.8.8.8 >/dev/null 2>&1 &&
-        echo "$int ✔" || echo "$int ✖"
+        echo "✔" || echo "✖"
 }
 
 nowplaying() {
@@ -50,13 +46,14 @@ nowplaying() {
 }
 
 # This loop will fill a buffer with our infos, and output it to stdout.
-delim=//
+delim=%{F#FF404040}⮂%{B#FF404040}%{F#FFFFFFFF}
+delim2=%{F#FF505050}⮂%{B#FF505050}%{F#FFFFFFFF}
 while :; do
-    buf="S" buf="${buf} $(battery) $delim "
-    buf="${buf} ⭯ $(nowplaying) $delim "
-    buf="${buf} $(network) $delim "
-    buf="${buf} ⭦ $(memused)%% $delim "
-    buf="${buf} ◂⋑ $(volume)%% $delim "
+    buf="S $delim2"
+    buf="${buf} ⭫ $(battery) $delim "
+    buf="${buf} ⭯ $(nowplaying) $delim2 "
+    buf="${buf} ⇅ $(network) $delim "
+    buf="${buf} ◂⋑ $(volume)%% $delim2 "
     buf="${buf} ⭧ $(clock)"
 
     echo $buf

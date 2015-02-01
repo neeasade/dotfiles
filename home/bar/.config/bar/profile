@@ -2,7 +2,7 @@
 
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=16
+PANEL_HEIGHT=13
 PANEL_FONT_FAMILY="-*-tewi-medium-*-*-*-*-*-*-*-*-*-*-*"
 
 PANEL_GAP=8
