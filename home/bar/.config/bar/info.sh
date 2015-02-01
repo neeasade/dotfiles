@@ -46,8 +46,16 @@ nowplaying() {
 }
 
 # This loop will fill a buffer with our infos, and output it to stdout.
-delim=%{F#FF404040}⮂%{B#FF404040}%{F#FFFFFFFF}
-delim2=%{F#FF505050}⮂%{B#FF505050}%{F#FFFFFFFF}
+pBGS1="%{B$pS1}"  # bg shade 1
+pBGS2="%{B$pS2}"  # bg shade 2
+
+pFGS1="%{F$pS1}"  # fg shade 1
+pFGS2="%{F$pS2}"  # fg shade 2
+
+pFG="%{F$pFG}"    # reset fg color
+
+delim=${pFGS1}⮂${pBGS1}${pFG}
+delim2=${pFGS2}⮂${pBGS2}${pFG}
 while :; do
     buf="S $delim2"
     buf="${buf} ⭫ $(battery) $delim "
