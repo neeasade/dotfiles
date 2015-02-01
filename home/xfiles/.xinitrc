@@ -15,7 +15,7 @@ xbindkeys &
 urxvtd &
 
 #compositing
-compton -Ccb -o.9 -f -D 5 -e0.7 &
+compton &
 
 #mpd
 mpd ~/.config/mpd/mpd.conf &
