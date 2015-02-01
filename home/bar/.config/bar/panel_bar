@@ -28,7 +28,7 @@ while read -r line ; do
 		sys_infos="${line#?}"
 	;;
 	T*)
-		title="${pFGS1}${pBGS1}${pFG} ${line#?} ${pFGS1}${pBG}⮀"
+		title="${pFGS2}${pBGS2}${pFG} ${line#?} ${pFGS2}${pBG}⮀"
 	;;
 	W*)
 		wm_infos="${pBGS2}"
