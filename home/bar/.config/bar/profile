@@ -18,7 +18,7 @@ pUrgent=#ffffff00
 pActive=#ffffffff
 pRest=#ffa2a2a2
 
-#Alternating powerline colors:
+#Alternating powerline colors(pS2 is the primary color of these 2)
 pS1=#ff1e1e1e
 pS2=#ff323537
 
