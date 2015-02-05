@@ -4,7 +4,7 @@ Neeasade's dotfiles
 ##Information
 *   WM - bspwm
 *   term emulator - urxvt
-*   font - termsyn
+*   font - tewi
 [imgur album](http://imgur.com/a/hYQkg)
 ![Screenshot](http://i.imgur.com/ceexx19.png)
 
@@ -12,12 +12,9 @@ Neeasade's dotfiles
 Currently one bar is made per monitor, with the same information being shown on each with the exception of the workspaces, those that are shown are monitor specific.
 
 ##TODO
-*   better multihead support
-*   add information to bar(currently there is only a clock, xtitle, and workspace indicators
-*   better fallback support(eg font fallback in Xresources)
-*   change bar to XFT bar for and use pretty icons n shit in the bar
 *   add base dotfiles
 *   document things within the dotfiles themselves
+*   improve the deploy scripts to back up existing files and be 'nice'
 
 ##Dependencies
 The programs used here are located in the depends.txt file. You could install them all at once with something like:
@@ -32,4 +29,6 @@ These files are managed with GNU [stow](http://www.gnu.org/software/stow/manual/
 
 ##Misc:
 *   The philosophy for the prompt was taken from [dcat](http://dcat.iotek.org/prompt/)
+*   Bulk of the information in the bar is gathered by [z3bra's](http://z3bra.org) example
+*   the compton setting is modified from [dkeg's](https://bitbucket.orgdkeg/current/src/) config
 
