@@ -8,7 +8,6 @@ Xft.hintstyle: hintslight
 
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
-Xcursor.theme:ArchCursorTheme
 urxvt*font:xft:Tewi:pixelsize=11,style=regular
 urxvt*boldFont:xft:Tewi:pixelsize=11,style=regular
 
