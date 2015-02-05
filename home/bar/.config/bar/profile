@@ -21,6 +21,7 @@ pRest=#ffa2a2a2
 #Alternating powerline colors(pS2 is the primary color of these 2)
 pS1=#ff1e1e1e
 pS2=#ff323537
+pS2=#ff464b50
 
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
 export pFG pBG pUrgent pActive pRest  pS1 pS2

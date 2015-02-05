@@ -34,8 +34,12 @@ super + y
 super + m
 	bspc window -s biggest
 
-super + {_,shift + }{h,j,k,l}
-	bspc window -{f,s} {left,down,up,right}
+#todo: edit this to account for floating window status and switch monitors accordingly
+super + shift + {h,j,k,l}
+	bspc window -s {left,down,up,right}
+
+super +  {h,j,k,l}
+	bspc window -f {left,down,up,right}
 
 super + {_,shift + }c
 	bspc window -f {next,prev}
