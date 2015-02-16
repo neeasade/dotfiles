@@ -41,6 +41,7 @@ bspc config focused_locked_border_color "#FFFFFF"
 
 #rules
 bspc rule -a mplayer2 floating=on
+bspc rule -a gimp floating=on
 bspc rule -a Screenkey manage=off
 
 killall panel
