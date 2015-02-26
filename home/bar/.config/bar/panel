@@ -28,7 +28,7 @@ for i in $num_mon; do
         while read line; do echo W$line; done \
             > "$PANEL_FIFO$i" &
 
-    xtitle -t 80 -sf 'T%s' > "$PANEL_FIFO$i" &
+    xtitle -t 80 -sf 'T%s' > "$PANEL_FIFO$i" &
 
     info.sh > "$PANEL_FIFO$i" &
 

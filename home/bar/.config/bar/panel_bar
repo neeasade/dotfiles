@@ -28,7 +28,8 @@ while read -r line ; do
 		sys_infos="${line#?}"
 	;;
 	T*)
-		title="${pFGS2}${pBGS2}${pFG} ${line#?} ${pFGS2}${pBG}⮀"
+        #title="${pFGS2}${pBGS2}${pFG} ${line#?} ${pFGS2}${pBG}⮀"
+        title="${pFG} ${line#?} "
 	;;
 	W*)
 		wm_infos="${pBGS2}"
@@ -50,5 +51,5 @@ while read -r line ; do
         wm_infos="$wm_infos${pBG}${pFGS2}⮀"
 	;;
 	esac
-    printf "%s\n" "%{r}$sys_infos %{l}$wm_infos %{c}$title"
+    printf "%s\n" "%{r}$sys_infos %{l}$wm_infos$title"
 done
