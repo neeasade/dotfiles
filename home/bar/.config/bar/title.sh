@@ -5,6 +5,8 @@
 #The one argument will be the monitor that this is for.
 CUR_MON=$1;
 
+WIN_DELIM=">>";
+
 update() {
 #Current monitors shown desktop
 CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
@@ -44,28 +46,36 @@ else
 fi
 
 if [ "$CUR_MON_TILED" = true ]; then
-    xprop -id "$WIN_SOURCE" | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"";
-    echo -n ">>";
+    winName $WIN_SOURCE
 elif [ "$CUR_MON_TILED" = false ]; then
     #If current window is floating, return xtitle.
     FLOAT_STATUS=$(bspc query -W -w focused.floating);
     if [ ! -z $FLOAT_STATUS ]; then
-        xprop -id $WIN_SOURCE | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"";
-        echo -n ">>";
+        winName $WIN_SOURCE
     else
         for i in $(bspc query -W -d $CUR_MON_DESK); do
-            if [ "$i" = "$WIN_SOURCE" ]; then
-                echo -n "A";
-            fi;
-            echo -n "$( xprop -id $i | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"" )";
-            echo -n ">>";
+           winName $i
         done
     fi;
 fi;
 }
 
+#print the name of the window based on id, by greping xprop
+winName() {
+    echo -n "$WIN_DELIM";
+    if [ "$1" = "$WIN_SOURCE" ]; then
+        echo -n "A";
+    else
+        echo -n "X";
+    fi;
+
+    echo -n "$( xprop -id $1 | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"" )";
+    echo -n "//";
+    echo -n "$1";
+}
+
 while :; do
     title="T$(update)";
-    echo $title | rev | cut -c 3- | rev
+    echo $title #| rev | cut -c 3- | rev
     sleep 0.2
 done
