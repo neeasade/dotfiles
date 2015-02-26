@@ -76,6 +76,6 @@ winName() {
 
 while :; do
     title="T$(update)";
-    echo $title #| rev | cut -c 3- | rev
-    sleep 0.2
+    echo $title
+    sleep 0.06
 done
