@@ -74,12 +74,14 @@ winName() {
     fi;
 
     #set a max length for the window title
-    winName="$( xprop -id $1 | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"" )";
-    winNameCharCount=$(echo -n "$winName" | wc -c);
+#    winName="$( xprop -id $1 | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"" )";
+#    winNameCharCount=$(echo -n "$winName" | wc -c);
 
-    if [ "$winNameCharCount" -gt "$maxWinNameLen" ]; then
-        winName="$(echo -n "$winName" | rev | cut -c $(expr $winNameCharCount - $maxWinNameLen)- | rev)";
-    fi
+#    if [ "$winNameCharCount" -gt "$maxWinNameLen" ]; then
+#        winName="$(echo -n "$winName" | rev | cut -c $(expr $winNameCharCount - $maxWinNameLen)- | rev)";
+#    fi
+
+    winName="$(xtitle -t $maxWinNameLen $1)"
 
     echo -n "$winName";
     echo -n "//";
@@ -88,8 +90,20 @@ winName() {
 
 #todo: monitor for bspc -H last item change, then refresh title, instead of constantly like this, uses alot of cpu
 #possibly use xtitle instead of grepping xprop as well.
+
+#Get current last touched for this desktop:
+ACT_WIN="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 | grep -oE "[0-9]x.+" )";
+
 while :; do
-    title="T$(update)";
-    echo $title
-    sleep 0.1
+
+    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
+
+    #Update ACT_WIN
+    CUR_WIN="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 | grep -oE "[0-9]x.+" )";
+    if [ "$ACT_WIN" != "$CUR_WIN" ]; then
+        ACT_WIN=$CUR_WIN
+        title="T$(update)";
+        echo $title
+    fi
+   sleep 0.1
 done
