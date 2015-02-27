@@ -40,9 +40,9 @@ network() {
 }
 
 nowplaying() {
-    cur=`mpc current | grep -oE '/([^/]+)\.'`
+    cur=`mpc current`
     # this line allow to choose whether the output will scroll or not
-    test -n "$cur" && cat <<< $cur || echo "stopped"
+    test -n "$cur" && `skroll -n 20 -d0.5 -r` <<< $cur || echo "stopped"
 }
 
 # This loop will fill a buffer with our infos, and output it to stdout.
@@ -65,7 +65,6 @@ while :; do
     buf="${buf} ⭧ $(clock)"
 
     echo $buf
-    # use `nowplaying scroll` to get a scrolling output!
     sleep 1 # The HUD will be updated every second
 done
 
