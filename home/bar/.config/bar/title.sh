@@ -5,6 +5,7 @@
 #The one argument will be the monitor that this is for.
 CUR_MON=$1;
 
+maxWinNameLen=30;
 WIN_DELIM=">>";
 
 update() {
@@ -17,7 +18,9 @@ CUR_MON_TILED=$( bspc query -d $CUR_MON_DESK -T | grep "T - \*");
 if [ -z "$CUR_MON_TILED" ]; then export CUR_MON_TILED=false; else export CUR_MON_TILED=true; fi;
 
 #Is this the currently active monitor?
-if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then export IS_ACT_MON=true; else export IS_ACT_MON=false; fi;
+#if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then export IS_ACT_MON=true; else export IS_ACT_MON=false; fi;
+
+export IS_ACT_MON=true;
 
 #echo Active desktop: $CUR_MON_DESK
 #echo Tiling status: $CUR_MON_TILED
@@ -63,19 +66,30 @@ fi;
 #print the name of the window based on id, by greping xprop
 winName() {
     echo -n "$WIN_DELIM";
+
     if [ "$1" = "$WIN_SOURCE" ]; then
         echo -n "A";
     else
         echo -n "X";
     fi;
 
-    echo -n "$( xprop -id $1 | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"" )";
+    #set a max length for the window title
+    winName="$( xprop -id $1 | grep "WM_NAME(UTF" | grep -oE "\".*\"" | tr -d "\"" )";
+    winNameCharCount=$(echo -n "$winName" | wc -c);
+
+    if [ "$winNameCharCount" -gt "$maxWinNameLen" ]; then
+        winName="$(echo -n "$winName" | rev | cut -c $(expr $winNameCharCount - $maxWinNameLen)- | rev)";
+    fi
+
+    echo -n "$winName";
     echo -n "//";
     echo -n "$1";
 }
 
+#todo: monitor for bspc -H last item change, then refresh title, instead of constantly like this, uses alot of cpu
+#possibly use xtitle instead of grepping xprop as well.
 while :; do
     title="T$(update)";
     echo $title
-    sleep 0.06
+    sleep 0.1
 done
