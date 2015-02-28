@@ -1,5 +1,10 @@
 #!/bin/sh
 
+#get the value of a color from the current xrdb load configuration
+getXresColor() {
+    echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-z0-9]{6}" | cut -c 2- )";
+}
+
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=12
@@ -12,16 +17,18 @@ if [ "$BSPWM_GAPS" = false ]; then
     PANEL_GAP=0
 fi
 
-pFG=#ffa7a7a7
-pBG=#ff1e1e1e
+pFG=#ff$(getXresColor foreground)
+pBG=#ff$(getXresColor background)
+
 pUrgent=#ffffff00
-pActive=#ffffffff
+pActive=#ff$(getXresColor color15)
 pRest=#ffa2a2a2
+pRest=#ff$(getXresColor color13)
 
 #Alternating powerline colors(pS2 is the primary color of these 2)
-pS1=#ff1e1e1e
-pS2=#ff323537
-pS2=#ff464b50
+pS1=#ff$(getXresColor background)
+pS2=#ff$(getXresColor color11)
 
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
 export pFG pBG pUrgent pActive pRest  pS1 pS2
+
