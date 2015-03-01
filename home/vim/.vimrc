@@ -51,7 +51,8 @@ set foldcolumn=0
 
 " Look and Feel settings
 set background=dark
-colorscheme base16-twilight
+let g:hybrid_use_Xresources = 1
+colorscheme hybrid
 set t_Co=16
 set encoding=utf-8
 
