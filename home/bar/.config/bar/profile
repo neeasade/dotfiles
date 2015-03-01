@@ -2,7 +2,7 @@
 
 #get the value of a color from the current xrdb load configuration
 getXresColor() {
-    echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-z0-9]{6}" | cut -c 2- )";
+    echo -n "$( xrdb -query | grep  "\*$1:" | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
 }
 
 #settings to be used in bar files.
@@ -22,12 +22,11 @@ pBG=#ff$(getXresColor background)
 
 pUrgent=#ffffff00
 pActive=#ff$(getXresColor color15)
-pRest=#ffa2a2a2
-pRest=#ff$(getXresColor color13)
+pRest=#ff$(getXresColor color6)
 
 #Alternating powerline colors(pS2 is the primary color of these 2)
 pS1=#ff$(getXresColor background)
-pS2=#ff$(getXresColor color11)
+pS2=#ff$(getXresColor color8)
 
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
 export pFG pBG pUrgent pActive pRest  pS1 pS2
