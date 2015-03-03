@@ -29,8 +29,6 @@ while read -r line ; do
 		sys_infos="${line#?}"
 	;;
 	T*)
-        #title="${pFGS2}${pBGS2}${pFG} ${line#?} ${pFGS2}${pBG}⮀"
-        #title="${pFG} ${line#?} "
         title="${pFGS2}"
 		IFS='>>'
         set -- ${line#?}
