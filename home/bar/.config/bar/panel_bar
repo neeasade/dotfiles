@@ -29,7 +29,7 @@ while read -r line ; do
 		sys_infos="${line#?}"
 	;;
 	T*)
-        title="${pFGS2}"
+        title="%{F$pRest}"
 		IFS='>>'
         set -- ${line#?}
 		while [ $# -gt 0 ] ; do
@@ -40,8 +40,8 @@ while read -r line ; do
             #form of $name will be window title // window id.
             #split and use for clickable focus areas
             case $item in
-            A*) title="${title}${pBGS2}${pFG} ${winTitle} ${AE}${pBG}";; #active window
-            X*) title="${title}${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}${pFG}";; #inactive window in monocle
+            A*) title="${title}${pFG}${pBGS2} ${winTitle} ${AE}${pBG}%{F$pRest}";; #active window
+            X*) title="${title}${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}";; #inactive window in monocle
             esac
             shift
         done
