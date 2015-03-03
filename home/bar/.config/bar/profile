@@ -7,11 +7,10 @@ getXresColor() {
 
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=12
+PANEL_HEIGHT=20
 PANEL_FONT_FAMILY="-*-tewi-medium-*-*-*-*-*-*-*-*-*-*-*"
 
 PANEL_GAP=8
-
 
 if [ "$BSPWM_GAPS" = false ]; then
     PANEL_GAP=0
