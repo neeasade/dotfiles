@@ -49,13 +49,10 @@ nowplaying() {
 pBGS1="%{B$pS1}"  # bg shade 1
 pBGS2="%{B$pS2}"  # bg shade 2
 
-pFGS1="%{F$pS1}"  # fg shade 1
-pFGS2="%{F$pS2}"  # fg shade 2
-
 pFG="%{F$pFG}"    # reset fg color
 
-delim=${pFGS1}${pBGS1}${pFG}
-delim2=${pFGS2}${pBGS2}${pFG}
+delim=${pBGS1}${pFG}
+delim2=${pBGS2}${pFG}
 while :; do
     buf="S $delim2"
     buf="${buf} ⭫ $(battery) $delim "
