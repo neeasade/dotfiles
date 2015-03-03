@@ -70,6 +70,7 @@ winName() {
 }
 
 while :; do
+
     CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
     #Update ACT_WIN
     CUR_WIN="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 )";

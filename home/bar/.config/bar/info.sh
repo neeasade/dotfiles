@@ -54,8 +54,8 @@ pFGS2="%{F$pS2}"  # fg shade 2
 
 pFG="%{F$pFG}"    # reset fg color
 
-delim=${pFGS1}⮂${pBGS1}${pFG}
-delim2=${pFGS2}⮂${pBGS2}${pFG}
+delim=${pFGS1}${pBGS1}${pFG}
+delim2=${pFGS2}${pBGS2}${pFG}
 while :; do
     buf="S $delim2"
     buf="${buf} ⭫ $(battery) $delim "
