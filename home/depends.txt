@@ -2,7 +2,7 @@ base-devel
 bspwm
 sxhkd
 dmenu
-bar-aint-recursive
+bar-aint-recursive-git
 rxvt-unicode
 xtitle-git
 termsyn
