@@ -42,7 +42,8 @@ network() {
 nowplaying() {
     cur=`mpc current`
     # this line allow to choose whether the output will scroll or not
-    test -n "$cur" && `skroll -n 20 -d0.5 -r` <<< $cur || echo "stopped"
+    #test -n "$cur" && `skroll -n 20 -d0.5 -r` <<< $cur || echo "stopped"
+    echo $cur
 }
 
 # This loop will fill a buffer with our infos, and output it to stdout.
@@ -51,8 +52,8 @@ pBGS2="%{B$pS2}"  # bg shade 2
 
 pFG="%{F$pFG}"    # reset fg color
 
-delim=${pBGS1}${pFG}
-delim2=${pBGS2}${pFG}
+delim="${pBGS1}%{e} %{n}${pFG}"
+delim2="${pBGS2}%{e} %{n}${pFG}"
 while :; do
     buf="S $delim2"
     buf="${buf} ⭫ $(battery) $delim "
