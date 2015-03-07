@@ -1,13 +1,13 @@
 #!/bin/sh
 
+export BATC=/sys/class/power_supply/BAT0/capacity
+
 clock() {
     date '+%H:%M'
 }
 
 battery() {
-    BATC=/sys/class/power_supply/BAT0/capacity
     BATS=/sys/class/power_supply/BAT0/status
-
     #Check if there is a battery on the cyrrent computer we are on.
     if [ -f $BATC ]; then
         test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
@@ -39,26 +39,22 @@ network() {
         echo "✔" || echo "✖"
 }
 
-nowplaying() {
-    cur=`mpc current`
-    # this line allow to choose whether the output will scroll or not
-    #test -n "$cur" && `skroll -n 20 -d0.5 -r` <<< $cur || echo "stopped"
-    echo $cur
-}
-
 # This loop will fill a buffer with our infos, and output it to stdout.
 pBGS1="%{B$pS1}"  # bg shade 1
 pBGS2="%{B$pS2}"  # bg shade 2
 
 pFG="%{F$pFG}"    # reset fg color
 
-delim="${pBGS1}%{e} %{n}${pFG}"
-delim2="${pBGS2}%{e} %{n}${pFG}"
+delim="${pBGS1}%{q} %{n}${pFG}"
+delim2="${pBGS2}%{q} %{n}${pFG}"
+
 while :; do
-    buf="S $delim2"
-    buf="${buf} ⭫ $(battery) $delim "
-    buf="${buf} ⭯ $(nowplaying) $delim2 "
-    buf="${buf} ⇅ $(network) $delim "
+    buf="S$delim2"
+    if [ -f $BATC ]; then
+        buf="${buf} ⭫ $(battery) $delim "
+    else
+        buf="${buf} ⇅ $(network) $delim "
+    fi
     buf="${buf} ◂⋑ $(volume)%% $delim2 "
     buf="${buf} ⭧ $(clock)"
 
