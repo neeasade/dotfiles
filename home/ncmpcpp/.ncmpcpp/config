@@ -3,7 +3,7 @@ visualizer_output_name = "my_fifo"
 visualizer_sync_interval = "25"
 visualizer_in_stereo = "yes"
 visualizer_type = "spectrum" (spectrum/wave)
-visualizer_look="▌▌"
+visualizer_look="⣿⡇"
 
 # Playlist
 song_columns_list_format = "$L(9)[white]{l} (20)[red]{a} (30)[green]{b}$R(20)[cyan]{t}"
@@ -19,7 +19,8 @@ song_library_format = "{%n > }{%t}|{%f}"
 
 # Bars
 song_status_format = "{%a - }{%t - }{%b}"
-progressbar_look = "─╼"
+#progressbar_look = "─╼"
+progressbar_look = "▪▪▫"
 titles_visibility = "no"
 header_visibility = "no"
 statusbar_visibility = "no"
@@ -34,3 +35,14 @@ song_window_title_format = "MPD: {%a > }{%t}{ [%b{ Disc %d}]}|{%f}"
 search_engine_display_mode = "columns" (classic/columns)
 follow_now_playing_lyrics = "yes"
 #display_screens_numbers_on_start="no"
+
+#colors
+colors_enabled = yes
+color1 = "white"
+color2 = "green"
+progressbar_color = "cyan"
+progressbar_elapsed_color = "cyan"
+statusbar_color = "white"
+alternative_ui_separator_color = "black"
+active_column_color = "black"           ###
+visualizer_color = "magenta"

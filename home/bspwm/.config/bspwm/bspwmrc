@@ -9,7 +9,7 @@ if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
 
 #get the value of a color from the current xrdb load configuration
 getXresColor() {
-    echo -n "$( xrdb -query | grep  "\*$1:" | grep -oE "#[a-zA-Z0-9]{6}" )";
+    echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-zA-Z0-9]{6}" )";
 }
 
 #GAP specific options
