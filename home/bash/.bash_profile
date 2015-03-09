@@ -6,12 +6,9 @@
 # Add rvm gems and nginx to the path
 export PATH=$PATH:~/.gem/ruby/1.8/bin:/opt/nginx/sbin
 
-# Your place for hosting Git repos. I use this for private repos.
-export GIT_HOSTING='nathanisom27@bitbucket.com'
-
 # Set my editor and git editor
-export EDITOR="/usr/bin/gvim"
-export GIT_EDITOR='/usr/bin/gvim'
+export EDITOR="/usr/bin/vim"
+export GIT_EDITOR='/usr/bin/vim'
 
 # Set the path nginx
 export NGINX_PATH='/opt/nginx'
@@ -23,6 +20,6 @@ export IRC_CLIENT='irssi'
 
 # Set this to the command you use for todo.txt-cli
 
-export TODO="~/Documents/todo.txt"
+export TODO="~/.todo.txt"
 
 source ~/.bashrc

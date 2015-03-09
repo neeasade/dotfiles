@@ -45,8 +45,8 @@ pBGS2="%{B$pS2}"  # bg shade 2
 
 pFG="%{F$pFG}"    # reset fg color
 
-delim="${pBGS1}%{q} %{n}${pFG}"
-delim2="${pBGS2}%{q} %{n}${pFG}"
+delim="${pBGS1}%{e} %{n}${pFG}"
+delim2="${pBGS2}%{e} %{n}${pFG}"
 
 while :; do
     buf="S$delim2"
