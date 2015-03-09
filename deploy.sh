@@ -1,5 +1,5 @@
 for i in $(ls -d */); do
     cd $i;
-    ./deploy.sh;
+        ./deploy.sh;
     cd ..
 done
