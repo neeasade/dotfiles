@@ -4,7 +4,11 @@
 # first argument: user who's home dir to target, assumes /home/$user
 # if a second argument exists, will force-resolve conflicts, storing old files in a folder
 
-lUser=$1
+if [ -z $1 ]; then
+    lUser=$USER
+else
+    lUser=$1
+fi
 
 for i in $(ls -d */); do
     #see if there will be any file conflicts:
