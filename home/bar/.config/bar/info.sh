@@ -1,5 +1,9 @@
 #!/bin/sh
+# info.sh
+# Output general information with formatted background colors in bar-aint-recursive format
+# TODO: If Verbose_bar has a value in bar/profile, will output more information
 
+# default location for a battery capacity
 export BATC=/sys/class/power_supply/BAT0/capacity
 
 clock() {
@@ -39,12 +43,13 @@ network() {
         echo "✔" || echo "✖"
 }
 
-# This loop will fill a buffer with our infos, and output it to stdout.
+
 pBGS1="%{B$pS1}"  # bg shade 1
 pBGS2="%{B$pS2}"  # bg shade 2
 
 pFG="%{F$pFG}"    # reset fg color
 
+# The {e} and {n} bar commands are specific to this slant fork: http://github.com/neeasade/bar
 delim="${pBGS1}%{e} %{n}${pFG}"
 delim2="${pBGS2}%{e} %{n}${pFG}"
 

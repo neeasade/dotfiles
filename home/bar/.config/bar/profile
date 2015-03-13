@@ -1,4 +1,6 @@
 #!/bin/sh
+# profile
+# Set values to be referenced in other bar scripts.
 
 #get the value of a color from the current xrdb load configuration
 getXresColor() {
@@ -15,17 +17,18 @@ PANEL_GAP=8
 if [ "$BSPWM_GAPS" = false ]; then
     PANEL_GAP=0
 fi
-
-pFG=#ff$(getXresColor foreground)
-pBG=#ff$(getXresColor background)
-
+# Workspace colors
 pUrgent=#ffffff00
 pActive=#ff$(getXresColor color15)
 pRest=#ff$(getXresColor color6)
 
-#Alternating powerline colors(pS2 is the primary color of these 2)
+
+# Bar colors
 pS1=#ff$(getXresColor background)
 pS2=#ff$(getXresColor color8)
+pFG=#ff$(getXresColor foreground)
+pBG=#ff$(getXresColor background)
+
 
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
 export pFG pBG pUrgent pActive pRest  pS1 pS2

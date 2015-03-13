@@ -1,8 +1,13 @@
-#
-# A script to determine title form for tabbed vs not tabbed in bspwm
+#!/bin/sh
+# A script to determine title form for different window modes in bspwm
 # dependencies: xtitle
 # Neeasade
-#
+# Arguments: The name of the monitor in bspc to watch over
+
+# behavior:
+# output a parsable format similar to bspc control for a separate script to interprete.
+# if active window is floating or in a tiled workspace, just output title for active window.
+# if active window is in monocle mode, list all the windows in active workspace with windowIDs associated.
 
 #The one argument will be the monitor that this is for.
 CUR_MON=$1;
