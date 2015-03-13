@@ -1,6 +1,10 @@
 #!/bin/sh
+# panel
+# Start the panel for bspwm
+
 . profile
 
+# Kill the panel if it is currently running
 if [ $(pgrep -cx panel) -gt 1 ] ; then
 	printf "%s\n" "The panel is already running."
     while [[ $(pgrep -c "panel") != 0 ]]
@@ -8,43 +12,47 @@ if [ $(pgrep -cx panel) -gt 1 ] ; then
         pkill -n -9 "panel"
     done
 fi
-
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
-#Track the current offset for making multiple bars per monitor.
+
+# Track the current offset for making multiple bars per monitor, so we can make bars with specific geometries.
 CUR_X_OFFSET=0
+
+# Get the number of monitors we will be making bars for
 num_mon=$(bspc query -M)
 
 for i in $num_mon; do
+    # remove any open panel fifo, and then create one
     [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
-
     mkfifo "$PANEL_FIFO$i"
 
-    #This greps out the bspc control section of the current monitor we are on
-    #this is why sorting the `bspc query -M` above is important.
-    #the while loop in the middle appends 'W' to the start because the panel_bar
-    #script assumes input from a 'regular' bspc control --subscribe command
+    # This greps out the bspc control section of the current monitor we are on.
+    # The while loop in the middle appends 'W' to the start because the panel_bar
+    # script assumes input from a 'regular' bspc control --subscribe command
     bspc control --subscribe |\
         grep -oE "[Mm]$i[^TM]*[TM]" --line-buffered |\
         while read line; do echo W$line; done \
             > "$PANEL_FIFO$i" &
 
+    # title.sh allows for a tabbing feature like in i3, but can be a little more
+    # processor intensive. Substitute the xtitle command here if you just want
+    # the current active window name to be displayed.
     #xtitle -t 80 -sf 'T>>A%s//' > "$PANEL_FIFO$i" &
     title.sh $i > "$PANEL_FIFO$i" &
 
+    # info.sh will display a clock, sound level, and a battery/network status depending on laptop/desktop.
     info.sh > "$PANEL_FIFO$i" &
 
-    #Grep for current monitor width (will be first number regex match from bspc query command below)
+    # Grep for current monitor width (will be first number regex match from bspc query command below).
     CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
 
-    #IMO the below looks kinda scary, but a large reason for the length
-    #is the verbose variable names :)
-    #
-    #This will account for bar gap settings and current monitor offsets.
+
+    # The nested expr statements account for gap settings and current offset.
+    # PANEL_GAP value is set in profile.
     cat "$PANEL_FIFO$i" | panel_bar |\
         bar-aint-recursive -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_FAMILY" -F "$pFG" -B "$pBG"   | sh &
 
 
-    #Increment the x offset for the next monitor.
+    # Increment the x offset for the next monitor.
     CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )
 done
 
