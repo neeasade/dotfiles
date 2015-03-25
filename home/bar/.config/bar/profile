@@ -10,7 +10,7 @@ getXresColor() {
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=18
-PANEL_FONT_FAMILY="-*-tewi-medium-*-*-*-*-*-*-*-*-*-*-*"
+PANEL_FONT_FAMILY="xft:Dejavu Sans Mono:pixelsize=12:Regular"
 
 PANEL_GAP=8
 
@@ -24,10 +24,11 @@ pRest=#ff$(getXresColor color6)
 
 
 # Bar colors
-pS1=#ff$(getXresColor background)
-pS2=#ff$(getXresColor color8)
+pS1=#ff$(getXresColor color11)
+pS2=#ff$(getXresColor color10)
 pFG=#ff$(getXresColor foreground)
 pBG=#ff$(getXresColor background)
+pBG=$pS1
 
 
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP

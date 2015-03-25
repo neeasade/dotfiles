@@ -1,15 +1,19 @@
 URxvt.saveLines:32767
 URxvt.scrollBar: false
 
-Xft.autohint: true
-Xft.antialias: true
-Xft.hinting: true
-Xft.hintstyle: hintslight
+urxvt*font: xft:Dejavu Sans Mono:pixelsize=12,style=regular
+urxvt*boldFont: xft:Dejavu Sans Mono:pixelsize=12,style=regular
 
-Xft.rgba: rgb
+Xft.antialias: 1
+Xft.autohint: 0
+Xft.dpi: 96
+Xft.hinting: 1
+Xft.hintstyle: hintfull
 Xft.lcdfilter: lcddefault
-urxvt*font:xft:Tewi:pixelsize=11,style=regular
-urxvt*boldFont:xft:Tewi:pixelsize=11,style=regular
+Xft.rgba: rgb
+
+! uncomment the below to fix really wide spacing with truetype fonts
+URxvt.letterSpace: -1
 
 URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
 URxvt.url-select.launcher:  chromium
@@ -19,27 +23,27 @@ URxvt.keysym.M-Escape:      perl:keyboard-select:activate
 URxvt.keysym.M-s:           perl:keyboard-select:search
 URxvt.keysym.M-c:           perl:clipboard:copy
 URxvt.urgentOnBell:         true
-URxvt.internalBorder:         4
+URxvt.internalBorder:         3
 
-! Base16 Default
-! Scheme: Chris Kempson (http://chriskempson.com)
+! Base16 Twilight
+! Scheme: David Hart (http://hart-dev.com)
 
-#define base00 #181818
-#define base01 #282828
-#define base02 #383838
-#define base03 #585858
-#define base04 #b8b8b8
-#define base05 #d8d8d8
-#define base06 #e8e8e8
-#define base07 #f8f8f8
-#define base08 #ab4642
-#define base09 #dc9656
-#define base0A #f7ca88
-#define base0B #a1b56c
-#define base0C #86c1b9
-#define base0D #7cafc2
-#define base0E #ba8baf
-#define base0F #a16946
+#define base00 #1e1e1e
+#define base01 #323537
+#define base02 #464b50
+#define base03 #5f5a60
+#define base04 #838184
+#define base05 #a7a7a7
+#define base06 #c3c3c3
+#define base07 #ffffff
+#define base08 #cf6a4c
+#define base09 #cda869
+#define base0A #f9ee98
+#define base0B #8f9d6a
+#define base0C #afc4db
+#define base0D #7587a6
+#define base0E #9b859d
+#define base0F #9b703f
 
 *.foreground:   base05
 *.background:   base00
@@ -62,3 +66,4 @@ URxvt.internalBorder:         4
 *.color13:      base06
 *.color14:      base0F
 *.color15:      base07
+

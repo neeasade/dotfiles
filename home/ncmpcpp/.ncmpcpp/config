@@ -3,7 +3,9 @@ visualizer_output_name = "my_fifo"
 visualizer_sync_interval = "25"
 visualizer_in_stereo = "yes"
 visualizer_type = "spectrum" (spectrum/wave)
-visualizer_look="⣿⡇"
+#visualizer_look="⣿⡇"
+visualizer_look="++"
+
 
 # Playlist
 song_columns_list_format = "$L(9)[white]{l} (20)[red]{a} (30)[green]{b}$R(20)[cyan]{t}"
