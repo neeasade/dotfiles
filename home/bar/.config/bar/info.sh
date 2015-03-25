@@ -50,20 +50,20 @@ pBGS2="%{B$pS2}"  # bg shade 2
 pFG="%{F$pFG}"    # reset fg color
 
 # The {e} and {n} bar commands are specific to this slant fork: http://github.com/neeasade/bar
-delim="${pBGS1}%{e} %{n}${pFG}"
-delim2="${pBGS2}%{e} %{n}${pFG}"
+delim="${pBGS1}%{E5}    ${pFG}"
+delim2="${pBGS2}%{E5}    ${pFG}"
 
 while :; do
     buf="S$delim2"
     if [ -f $BATC ]; then
-        buf="${buf} ⭫ $(battery) $delim "
+        buf="${buf} $(battery) $delim "
     else
         buf="${buf} ⇅ $(network) $delim "
     fi
-    buf="${buf} ◂⋑ $(volume)%% $delim2 "
-    buf="${buf} ⭧ $(clock)"
+    buf="${buf} vol $(volume) $delim2 "
+    buf="${buf} $(clock)"
 
-    echo $buf
+    echo "$buf"
     sleep 1 # The HUD will be updated every second
 done
 

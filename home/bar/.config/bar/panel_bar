@@ -16,8 +16,8 @@ AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
-DO='■'              # occupied desktop
-DF='□'              # free desktop
+DO='▪'              # occupied desktop
+DF='▫'              # free desktop
 
 goto='bspc desktop -f'       # go to this desktop
 cycle='bspc desktop -l next' # cycle tiled/monocle
@@ -41,7 +41,7 @@ while read -r line ; do
             #split and use for clickable focus areas
             if [ ! -z "$winTitle" ]; then
                 case $item in
-                A*) title="${title}${pFG}${pBGS2}%{q} %{n} ${winTitle} ${AE}%{Q} %{n}${pBG}%{F$pRest}";; #active window
+                A*) title="${title}%{F$pActive}${pBGS2}%{E5}     ${winTitle} ${AE}%{d5}     ${pBG}%{F$pRest}";; #active window
                 X*) title="${title}${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}";; #inactive window in monocle
                 esac
             fi;
@@ -66,7 +66,7 @@ while read -r line ; do
 			shift
 		done
         #wm_infos="$wm_infos${pBG} "
-        wm_infos="$wm_infos%{E} %{n}${pBG} "
+        wm_infos="$wm_infos%{d5}     ${pBG} "
 	;;
 	esac
     printf "%s\n" "%{r}$sys_infos %{l}$wm_infos$title"
