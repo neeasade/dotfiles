@@ -10,18 +10,20 @@ else
     lUser=$1
 fi
 
-for i in $(ls -d */); do
-    #see if there will be any file conflicts:
-    stow -n -t /home/$lUser/ $i 2>> tmp.txt
-done
-
-cat tmp.txt | grep "WARNING" -v > conflicts.txt
-
-#remove conflicts if it is empty:
-if [ ! -s conflicts.txt ]; then
+#clear old conflicts file if it exists
+if [ -f conflicts.txt ]; then
     rm conflicts.txt
 fi
 
+for i in $(ls -d */); do
+    #see if there will be any file conflicts:
+    stow -n -t /home/$lUser/ $i 2>&1 >/dev/null |  grep -E "WARNING|All operations aborted." -v >> conflicts.txt
+done
+
+#remove conflicts if it is empty(file was created because we directed output to it(even if that output is empty):
+if [ ! -s conflicts.txt ]; then
+    rm conflicts.txt
+fi
 
 if [ -f conflicts.txt ];then
     if [ -z "$2" ]; then
@@ -35,13 +37,17 @@ if [ -f conflicts.txt ];then
         prefix=/home/$lUser
         #cut off the 'directory:'
         conflictFile=$(echo $conflictName | cut -c 12-)
-        mv $prefix/$conflictFile ../HOMEconflictFiles/$conflictFile
+        #make a dir if needed
+        cfDir=$(echo $conflictFile | grep -oE ".+/")
+        if [ ! -z "$cfDir" ]; then
+            mkdir -p "../HOMEconflictFiles/$cfDir"
+        fi
+       mv $prefix/$conflictFile ../HOMEconflictFiles/$conflictFile
     done
 
     echo conflicts moved to ../HOMEconflictFiles/$conflictFile
 fi
 
-rm tmp.txt
 rm conflicts.txt 2> /dev/null
 
 #conflicts resolved if we reach this point, proceed like normal:

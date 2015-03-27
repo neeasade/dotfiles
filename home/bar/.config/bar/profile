@@ -24,8 +24,8 @@ pRest=#ff$(getXresColor color6)
 
 
 # Bar colors
-pS1=#ff$(getXresColor color11)
-pS2=#ff$(getXresColor color10)
+pS1=#ff$(getXresColor color10)
+pS2=#ff$(getXresColor color11)
 pFG=#ff$(getXresColor foreground)
 pBG=#ff$(getXresColor background)
 pBG=$pS1
