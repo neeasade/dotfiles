@@ -3,18 +3,21 @@ Neeasade's dotfiles
 
 ##Information
 *   WM - bspwm
+*   Panel - lemonbar for with slants and xft support
 *   term emulator - urxvt
-*   font - tewi
-[imgur album](http://imgur.com/a/hYQkg)
-![Screenshot](http://i.imgur.com/ceexx19.png)
-
-##Multihead
-Currently one bar is made per monitor, with the same information being shown on each with the exception of the workspaces, those that are shown are monitor specific.
+*   font - Dejavu Sans Mono
+[imgur album](http://imgur.com/a/SkD5f)
+![Screenshot](http://i.imgur.com/8tTVtjx.png)
 
 ##TODO
 *   add base dotfiles
-*   document things within the dotfiles themselves
-*   improve the deploy scripts to back up existing files and be 'nice'
+*   better document things within the dotfiles themselves
+
+##Multihead
+6 desktops are made per monitor, and super + # will focuse on that desktop. A panel is created per desktop, with workspace status for that monitor. Additionally, the title on a monitor is for the last active window on a desktop, as determined by a change in bspc window focus history. This behavior can be changed in the title.sh script.
+
+##Tabbing
+One feature of this setup is a 'tabbed' display in bar when a desktop is in monocle mode. The active window title is highlighted and the other window titles are clickable on the bar to focus them, though you may also cycle through them with the appropriate key combination. This idea came after a user complained about no i3-like tab mode in bspwm in a thread discussing bspwm's flexibility.
 
 ##Dependencies
 The programs used here are located in the depends.txt file. You could install them all at once with something like:
@@ -25,7 +28,7 @@ this is independent per target directory. This list has only been tested with Ar
 
 
 ##Management
-These files are managed with GNU [stow](http://www.gnu.org/software/stow/manual/stow.html), which should be available via your package manager of choice. Stow is a symlink-farm management program. It allows for mass symlinking out of a 'master' directory(Here you can see I use the users home directory and the base('/') directory. The deploy scripts in these directories run stow with a target parent directory indicated by name. if you are reading this you are probably interested in only the dotfiles for your home directory.
+These files are managed with GNU [stow](http://www.gnu.org/software/stow/manual/stow.html), which should be available via your package manager of choice. Stow is a symlink-farm management program. It allows for mass symlinking out of a 'master' directory(Here you can see I use the users home directory and the base('/') directory. The deploy scripts in these directories run stow with a target parent directory indicated by name. if you are reading this you are probably interested in only the dotfiles for your home directory. The deploy scripts handle file conflict, stopping if there is an existing file in a place where a symlink would go. If the force flag is set with a deploy script and it finds conflicts, it will store the original files in a directory here should you still need them.
 
 ##Misc:
 *   The philosophy for the prompt was taken from [dcat](http://dcat.iotek.org/prompt/)
