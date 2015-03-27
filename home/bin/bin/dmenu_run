@@ -1,0 +1,4 @@
+MON_HEIGHT=$( bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 2 | tail -n 1 )
+HALF_HEIGHT=$(expr $MON_HEIGHT / 2)
+
+dmenu_run -o .8 -y $HALF_HEIGHT -x -i -q -p ">" -dim 0.5
