@@ -39,7 +39,17 @@ super + shift + {h,j,k,l}
 	bspc window -s {left,down,up,right}
 
 super +  {h,j,k,l}
-	bspc window -f {left,down,up,right}
+    dir={left,down,up,right}; \
+	if ! bspc window -f $dir; then \
+        bspc config pointer_follows_monitor true; \
+        if [ $dir = "right" ]; then \
+            bspc monitor -f $(expr $(bspc query -M -m) + 1); \
+        elif [ $dir = "left" ]; then \
+            bspc monitor -f $(expr $(bspc query -M -m) - 1); \
+        fi; \
+        bspc config pointer_follows_monitor false; \
+    fi
+
 
 super + {_,shift + }c
 	bspc window -f {next,prev}

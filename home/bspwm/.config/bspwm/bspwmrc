@@ -1,16 +1,30 @@
 #!/bin/sh
 
-#Enable/disable gaps on both windows and bar(if it is not already defined)
+#Toggle a default gap setting if it's not already set.
 if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
 
 #Get panel height
 . ~/.config/bar/profile
 
-
 #get the value of a color from the current xrdb load configuration
 getXresColor() {
     echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-zA-Z0-9]{6}" )";
 }
+
+# Visual options
+BW=5
+bspc config border_width $BW
+bspc config split_ratio              0.6
+bspc config normal_frame_opacity     0.0
+bspc config focused_frame_opacity    0.1
+
+#colors
+bspc config normal_border_color "$(getXresColor color10)"
+bspc config active_border_color "$(getXresColor color8)"
+bspc config focused_border_color "$(getXresColor foreground)"
+bspc config presel_border_color "$(getXresColor color8)"
+bspc config urgent_border_color "#FFFF00"
+bspc config focused_locked_border_color "#FFFFFF"
 
 #GAP specific options
 if [ "$BSPWM_GAPS" = true ]; then
@@ -20,30 +34,25 @@ if [ "$BSPWM_GAPS" = true ]; then
     bspc config gapless_monocle    false
 else
     bspc config window_gap         0
-    bspc config top_padding        $PANEL_HEIGHT
+    bspc config top_padding        $(expr $PANEL_HEIGHT + $BW)
     bspc config borderless_monocle  true
     bspc config gapless_monocle     true
+
+    #overlapping borders
+    bspc config window_gap -$BW
+    for side in right bottom left ; do
+        bspc config ${side}_padding $BW
+    done
 fi
 
-# Visual options
-#THICK BORDERS FOR LYFE
-bspc config border_width        5
-bspc config split_ratio         0.52
+#focus options:
 bspc config focus_follows_pointer true
-bspc config focus_follows_monitor true
+bspc config pointer_follows_monitor false
+bspc config pointer_follows_focus true
+
+#behavior settings
 bspc config auto_alternate true
 bspc config auto_cancel true
-bspc config normal_frame_opacity 0.0
-bspc config focused_frame_opacity 0.1
-
-#colors
-bspc config normal_border_color "$(getXresColor color10)"
-bspc config active_border_color "$(getXresColor color8)"
-
-bspc config focused_border_color "$(getXresColor foreground)"
-bspc config presel_border_color "$(getXresColor color8)"
-bspc config urgent_border_color "#FFFF00"
-bspc config focused_locked_border_color "#FFFFFF"
 
 #rules
 bspc rule -a mplayer2 floating=on
@@ -59,15 +68,6 @@ desktops=$(bspc query -M)
 echo "$desktops" | grep -q "[a-zA-Z]"
 if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
 
-if [ "$IsInitialRun" = true ]; then
-
-    #this if condition is to set the monitors in the correct order on my home setyp(where the hostname is home27)
-    if [ "$HOSTNAME" == 'home27' ]; then
-        desktops="HDMI-0 DisplayPort-0 DVI-1";
-    fi
-fi
-
-
 #rename all the monitors to numbers and create 5 workspaces on each
 i=1
 
@@ -79,5 +79,10 @@ for monitor in $desktops; do
     fi
     let i++
 done
+
+
+#if [ "$IsInitialRun" = true ]; then
+    #TODO: insert autostart program script reference here
+#fi
 
 
