@@ -9,8 +9,8 @@ getXresColor() {
 
 #settings to be used in bar files.
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=18
-PANEL_FONT_FAMILY="xft:Dejavu Sans Mono:pixelsize=12:Regular"
+PANEL_HEIGHT=22
+PANEL_FONT_FAMILY="Dejavu Sans-8"
 
 PANEL_GAP=8
 

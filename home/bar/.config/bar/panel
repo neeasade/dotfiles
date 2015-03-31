@@ -1,6 +1,6 @@
 #!/bin/sh
 # panel
-# Start the panel for bspwm
+# Start a panel on every monitor
 
 . profile
 
@@ -14,7 +14,7 @@ if [ $(pgrep -cx panel) -gt 1 ] ; then
 fi
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
 
-# Track the current offset for making multiple bars per monitor, so we can make bars with specific geometries.
+# Track the current offset for making a bar per monitor, so we can make bars with specific geometries.
 CUR_X_OFFSET=0
 
 # Get the number of monitors we will be making bars for
@@ -33,10 +33,11 @@ for i in $num_mon; do
         while read line; do echo W$line; done \
             > "$PANEL_FIFO$i" &
 
-    # title.sh allows for a tabbing feature like in i3, but can be a little more
-    # processor intensive. Substitute the xtitle command here if you just want
-    # the current active window name to be displayed.
-    #xtitle -t 80 -sf 'T>>A%s//' > "$PANEL_FIFO$i" &
+    # title.sh allows for a tabbing feature like in i3, and handles multihead titles
+    # in a more natural manner, but can be a little more processor intensive.
+    # Substitute the xtitle command here if you just want the current active window
+    # name to be displayed.
+    #xtitle -t 80 -sf 'T>>A%s//' > "$PANEL_FIFO$i" &
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh will display a clock, sound level, and a battery/network status depending on laptop/desktop.
@@ -45,12 +46,10 @@ for i in $num_mon; do
     # Grep for current monitor width (will be first number regex match from bspc query command below).
     CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
 
-
     # The nested expr statements account for gap settings and current offset.
     # PANEL_GAP value is set in profile.
     cat "$PANEL_FIFO$i" | panel_bar |\
         bar-aint-recursive -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_FAMILY" -F "$pFG" -B "$pBG"   | sh &
-
 
     # Increment the x offset for the next monitor.
     CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )
