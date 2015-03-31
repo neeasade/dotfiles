@@ -47,8 +47,9 @@ fi
 
 #focus options:
 bspc config focus_follows_pointer true
-bspc config pointer_follows_monitor false
+bspc config pointer_follows_monitor true
 bspc config pointer_follows_focus true
+bspc config focus_by_distance true
 
 #behavior settings
 bspc config auto_alternate true
@@ -73,9 +74,9 @@ i=1
 
 for monitor in $desktops; do
     if [ "$IsInitialRun" = true ]; then
-        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii,iiiiii}
+        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii}
     else
-        bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii,iiiiii}
+        bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
     fi
     let i++
 done
