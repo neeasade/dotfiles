@@ -11,15 +11,10 @@ clock() {
 }
 
 battery() {
+    # if we reach here is assumed this computer has a battery.
     BATS=/sys/class/power_supply/BAT0/status
-    #Check if there is a battery on the cyrrent computer we are on.
-    if [ -f $BATC ]; then
-        test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
-        sed -n p $BATC
-    else
-        #yeah
-        echo "+0"
-    fi
+    test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
+    sed -n p $BATC
 }
 
 volume() {
@@ -37,19 +32,11 @@ network() {
     fi
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
 
-    #int=eth0
-
     ping -c 1 8.8.8.8 >/dev/null 2>&1 &&
         echo "✔" || echo "✖"
 }
 
-
-pBGS1="%{B$pS1}"  # bg shade 1
-pBGS2="%{B$pS2}"  # bg shade 2
-
-pFG="%{F$pFG}"    # reset fg color
-
-# The {e} and {n} bar commands are specific to this slant fork: http://github.com/neeasade/bar
+# The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
 delim="${pBGS1}%{E3}   ${pFG}"
 delim2="${pBGS2}%{E3}   ${pFG}"
 

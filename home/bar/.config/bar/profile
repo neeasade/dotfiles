@@ -2,34 +2,36 @@
 # profile
 # Set values to be referenced in other bar scripts.
 
-#get the value of a color from the current xrdb load configuration
+# get the value of a color from the current xrdb load configuration
 getXresColor() {
     echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
 }
 
-#settings to be used in bar files.
+# Panel display settings
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=22
 PANEL_FONT_FAMILY="Dejavu Sans-8"
-
 PANEL_GAP=8
+[ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
+export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
 
-if [ "$BSPWM_GAPS" = false ]; then
-    PANEL_GAP=0
-fi
+# Panel colors
+pBGS1="%{B#ff$(getXresColor color10)}"
+pBGS2="%{B#ff$(getXresColor color11)}"
+pFG="%{F#ff$(getXresColor foreground)}"
+pBG=$pBGS1
+export pBGS1 pBGS2 pFG pBG
+
 # Workspace colors
 pUrgent=#ffffff00
 pActive=#ff$(getXresColor color15)
 pRest=#ff$(getXresColor color6)
+export pUrgent pActive pRest
 
-
-# Bar colors
-pS1=#ff$(getXresColor color10)
-pS2=#ff$(getXresColor color11)
-pFG=#ff$(getXresColor foreground)
-pBG=$pS1
-
-
-export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
-export pFG pBG pUrgent pActive pRest  pS1 pS2
+# Workspace variables
+DO='▪'              # occupied desktop
+DF='▫'              # free desktop
+DT='◫'              # tiling mode desktop
+DM='□'              # monocle mode desktop
+export DO DF DT DM
 

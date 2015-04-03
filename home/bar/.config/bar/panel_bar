@@ -2,72 +2,59 @@
 # panel_bar
 # a script to interpret panel fifo information(workspace/window titles/system info)
 
-. profile
-
-pBG="%{B$pBG}"         # reset bg color
-pFG="%{F$pFG}"         # reset fg color
-
-pBGS2="%{B$pS2}"  # bg shade 2
-
+# clickable area aliases
 AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
-DO='▪'              # occupied desktop
-DF='▫'              # free desktop
-
-DT='◫'               # tiling mode desktop
-DM='□'               # monocle mode desktop
-
+# Shell commands for clickable areas
 goto='bspc desktop -f'       # go to this desktop
 cycle='bspc desktop -l next' # cycle tiled/monocle
-winfocus='bspc window -f '    #focus on a window
+winfocus='bspc window -f '   # focus on a window
 
 while read -r line ; do
-	case $line in
-	S*)
-		sys_infos="${line#?}"
-	;;
-	T*)
+    case $line in
+    S*)
+        sys_infos="${line#?}"
+    ;;
+    T*)
         title="%{F$pRest}"
-		IFS='>>'
+        IFS='>>'
         set -- ${line#?}
-		while [ $# -gt 0 ] ; do
+        while [ $# -gt 0 ] ; do
             item=$1
             name=${item#?}
+            # form of $name will be window title // window id.
+            # split and use for clickable focus areas
             winTitle="$(echo $name | grep -oE ".*//" | rev | cut -c 3- | rev)"
             winID="$(echo $name | grep -oE "//.*" | cut -c 3-)"
-            #form of $name will be window title // window id.
-            #split and use for clickable focus areas
-            if [ ! -z "$winTitle" ]; then
-                case $item in
+            case $item in
                 A*) title="${title}${pBGS2}%{E3}   %{F$pActive}${winTitle} %{d3}   ${pBG}%{F$pRest}";; #active window
                 X*) title="${title}${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}";; #inactive window in monocle
-                esac
-            fi;
+            esac
             shift
         done
-	;;
-	W*)
-		wm_infos="${pBGS2}"
-		IFS=':'
-		set -- ${line#?}
-		while [ $# -gt 0 ] ; do
-			item=$1
-			name=${item#?}
-			case $item in
-			O*) wm_infos="${wm_infos}%{F$pActive}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active occupied desktop
-			F*) wm_infos="${wm_infos}%{F$pActive}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # active free desktop
-			U*) wm_infos="${wm_infos}%{F$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active urgent desktop
-			o*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive occupied desktop
-			f*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
-			u*) wm_infos="${wm_infos}%{F$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
-            L*) wm_infos="${wm_infos}${AC}${cycle}${AB} $([[ $name == "T" ]] && echo $DT || echo $DM) ${AE}";; # toggle tiling/monocle mode on a desktop
-			esac
-			shift
-		done
+    ;;
+    W*)
+        wm_infos=""
+        IFS=':'
+        set -- ${line#?}
+        while [ $# -gt 0 ] ; do
+            item=$1
+            name=${item#?}
+            case $item in
+                O*) wm_infos="${wm_infos}%{F$pActive}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active occupied desktop
+                F*) wm_infos="${wm_infos}%{F$pActive}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # active free desktop
+                U*) wm_infos="${wm_infos}%{F$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active urgent desktop
+                o*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive occupied desktop
+                f*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
+                u*) wm_infos="${wm_infos}%{F$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
+                L*) wm_infos="${wm_infos}${AC}${cycle}${AB} $([[ $name == "T" ]] && echo $DT || echo $DM) ${AE}";; # Tiling/Monocle indicator, clickable toggle.
+            esac
+            shift
+        done
         wm_infos="$wm_infos%{d3}   ${pBG}"
-	;;
-	esac
+    ;;
+    esac
     printf "%s\n" "%{r}$sys_infos %{l}$wm_infos$title"
 done
