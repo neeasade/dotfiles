@@ -2,9 +2,6 @@
 # bspwm hotkeys
 #
 
-super + alt + Escape
-	bspc quit
-
 super + w
 	bspc window -c
 
@@ -23,11 +20,6 @@ super + {grave,Tab}
 super + apostrophe
 	bspc window -s last
 
-super + {o,i}
-	bspc control --record-history off; \
-	bspc window {older,newer} -f; \
-	bspc control --record-history on
-
 super + y
 	bspc window -w last.manual
 
@@ -39,6 +31,8 @@ super + shift + {h,j,k,l}
 	bspc window -s {left,down,up,right}
 
 super +  {h,j,k,l}
+    bspc config pointer_follows_monitor true; \
+    bspc config pointer_follows_focus true; \
     dir={left,down,up,right}; \
 	if ! bspc window -f $dir; then \
         if [ $dir = "right" ]; then \
@@ -46,7 +40,9 @@ super +  {h,j,k,l}
         elif [ $dir = "left" ]; then \
             bspc monitor -f $dir; \
         fi; \
-    fi
+    fi; \
+    bspc config pointer_follows_monitor false; \
+    bspc config pointer_follows_focus false
 
 
 super + {_,shift + }c
@@ -68,20 +64,20 @@ super + alt + {h,j,k,l}
 	bspc window -e {left -25,down +25,up -25,right +25}
 
 super + alt + shift + {h,j,k,l}
-	bspc window -e {right -25,up +10,down -10,left +10}
+	bspc window -e {right -25,up +25,down -25,left +25}
 
 super + ctrl + {1-9}
 	bspc window -r 0.{1-9}
 
 super + {1-9}
 	D={1-9}; \
-	CUR_MON=$(bspc query --desktops --desktop  focused | grep -o "[0-9]"); \
+	CUR_MON=$(bspc query -M -m); \
 	DESK_REF=$(printf "%0.si" $(seq 1 $D)); \
 	bspc desktop -f $CUR_MON/$DESK_REF
 
 super + shift + {1-9}
 	D={1-9}; \
-	CUR_MON=$(bspc query --desktops --desktop  focused | grep -o "[0-9]"); \
+	CUR_MON=$(bspc query -M -m); \
 	DESK_REF=$(printf "%0.si" $(seq 1 $D)); \
 	bspc window -d $CUR_MON/$DESK_REF
 
@@ -103,16 +99,26 @@ super + d
 
 super + shift + q
     bspc quit
+
+super + semicolon
+    bspc desktop -R 90
 #
 # wm independent hotkeys
 #
+super + p
+    slimlock
+
+super + o
+    firefox
+
+super + e
+    pcmanfm
 
 super + Return
     urxvtc
 
 super + space
     ~/bin/dmenu_run
-
 
 # make sxhkd reload its configuration files:
 super + Escape
