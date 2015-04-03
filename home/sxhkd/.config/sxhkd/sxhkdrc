@@ -65,10 +65,10 @@ super + ctrl + {_,shift + }space
 	bspc {window -p cancel,desktop -c}
 
 super + alt + {h,j,k,l}
-	bspc window -e {left -10,down +10,up -10,right +10}
+	bspc window -e {left -25,down +25,up -25,right +25}
 
 super + alt + shift + {h,j,k,l}
-	bspc window -e {right -10,up +10,down -10,left +10}
+	bspc window -e {right -25,up +10,down -10,left +10}
 
 super + ctrl + {1-9}
 	bspc window -r 0.{1-9}
