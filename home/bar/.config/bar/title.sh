@@ -9,36 +9,36 @@
 # if active window is floating or in a tiled workspace, just output title for active window.
 # if active window is in monocle mode, list all the windows in active workspace with windowIDs associated.
 
-#The one argument will be the monitor that this is for.
+# The one argument will be the monitor that this is for.
 CUR_MON=$1;
 
 ###OPTIONS###
-#Maxium window title length
+# Maxium window title length
 maxWinNameLen=30;
-#The delimiter to separate window sections
+# The delimiter to separate window sections
 WIN_DELIM=">>";
-#The delimiter to separate the window name from the window in a window section.
+# The delimiter to separate the window name from the window in a window section.
 WIN_ID_DELIM="//";
-#The interval, in seconds, to check if an update is needed and then call update()
+# The interval, in seconds, to check if an update is needed and then call update()
 WIN_REFRESH_DELAY=0.1;
 
 update() {
-    #Current monitor's shown desktop
+    # Current monitor's shown desktop
     CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
 
-    #get tiling status of focused desktop on that monitor
+    # get tiling status of focused desktop on that monitor
     CUR_MON_TILED=$( bspc query -d $CUR_MON_DESK -T | grep "T - \*");
 
     if [ -z "$CUR_MON_TILED" ]; then export CUR_MON_TILED=false; else export CUR_MON_TILED=true; fi;
 
-    #Is this the currently active monitor?
+    # Is this the currently active monitor?
     if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then export IS_ACT_MON=true; else export IS_ACT_MON=false; fi;
 
-    #define an 'active' window source to use for this desktop based on weather or not it's the focused monitor.
+    # define an 'active' window source to use for this desktop based on weather or not it's the focused monitor.
     if [ "$IS_ACT_MON" = true ]; then
         export WIN_SOURCE="$(bspc query -W -w focused)";
     else
-        #Last history object on this monitor should contain last active window.
+        # Last history object on this monitor should contain last active window.
         export WIN_SOURCE="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 | grep -oE "[0-9]x.+" )";
     fi
 
@@ -56,8 +56,8 @@ update() {
     fi;
 }
 
-#print the name of the window based on id, by using xtitle
-#will be prefixed with a 'A' or 'X' depending on if it's the 'active' window for this monitor
+# print the name of the window based on id, by using xtitle
+# will be prefixed with a 'A' or 'X' depending on if it's the 'active' window for this monitor
 winName() {
     echo -n "$WIN_DELIM";
 
@@ -75,7 +75,6 @@ winName() {
 }
 
 while :; do
-
     CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
     #Update ACT_WIN
     CUR_WIN="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 )";
