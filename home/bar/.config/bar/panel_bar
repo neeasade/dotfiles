@@ -2,6 +2,8 @@
 # panel_bar
 # a script to interpret panel fifo information(workspace/window titles/system info)
 
+. profile
+
 pBG="%{B$pBG}"         # reset bg color
 pFG="%{F$pFG}"         # reset fg color
 
@@ -39,7 +41,7 @@ while read -r line ; do
             #split and use for clickable focus areas
             if [ ! -z "$winTitle" ]; then
                 case $item in
-                A*) title="${title}%{F$pActive}${pBGS2}%{E5}     ${winTitle} %{d5}     ${pBG}%{F$pRest}";; #active window
+                A*) title="${title}${pBGS2}%{E3}   %{F$pActive}${winTitle} %{d3}   ${pBG}%{F$pRest}";; #active window
                 X*) title="${title}${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}";; #inactive window in monocle
                 esac
             fi;
@@ -64,7 +66,7 @@ while read -r line ; do
 			esac
 			shift
 		done
-        wm_infos="$wm_infos%{d5}     ${pBG}"
+        wm_infos="$wm_infos%{d3}   ${pBG}"
 	;;
 	esac
     printf "%s\n" "%{r}$sys_infos %{l}$wm_infos$title"

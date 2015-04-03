@@ -50,8 +50,8 @@ pBGS2="%{B$pS2}"  # bg shade 2
 pFG="%{F$pFG}"    # reset fg color
 
 # The {e} and {n} bar commands are specific to this slant fork: http://github.com/neeasade/bar
-delim="${pBGS1}%{E5}    ${pFG}"
-delim2="${pBGS2}%{E5}    ${pFG}"
+delim="${pBGS1}%{E3}   ${pFG}"
+delim2="${pBGS2}%{E3}   ${pFG}"
 
 while :; do
     buf="S$delim2"
