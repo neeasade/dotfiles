@@ -45,8 +45,8 @@ fi
 
 #focus options:
 bspc config focus_follows_pointer true
-bspc config pointer_follows_monitor true
-bspc config pointer_follows_focus true
+bspc config pointer_follows_monitor false;
+bspc config pointer_follows_focus false;
 bspc config focus_by_distance true
 
 #behavior settings
@@ -80,8 +80,8 @@ for monitor in $desktops; do
 done
 
 
-#if [ "$IsInitialRun" = true ]; then
-    #TODO: insert autostart program script reference here
-#fi
+if [ "$IsInitialRun" = true ]; then
+    ~/.config/bspwm/.autostart.sh # not kept in dotfiles because machine dependent
+fi
 
 
