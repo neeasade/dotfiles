@@ -15,8 +15,6 @@ getXresColor() {
 BW=5
 bspc config border_width $BW
 bspc config split_ratio              0.6
-bspc config normal_frame_opacity     0.0
-bspc config focused_frame_opacity    0.1
 
 #colors
 bspc config normal_border_color "$(getXresColor color10)"
