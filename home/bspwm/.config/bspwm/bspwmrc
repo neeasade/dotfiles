@@ -12,7 +12,8 @@ getXresColor() {
 }
 
 # Visual options
-BW=5
+BW=5        #border width
+WG=12       #window gap
 bspc config border_width $BW
 bspc config split_ratio              0.6
 
@@ -24,9 +25,24 @@ bspc config presel_border_color "$(getXresColor color8)"
 bspc config urgent_border_color "#FFFF00"
 bspc config focused_locked_border_color "#FFFFFF"
 
-#GAP specific options
+#focus options:
+bspc config focus_follows_pointer true
+bspc config pointer_follows_monitor false
+bspc config pointer_follows_focus false
+bspc config focus_by_distance true
+
+#behavior settings
+bspc config auto_alternate true
+bspc config auto_cancel true
+
+#rules
+bspc rule -a mplayer2 floating=on
+bspc rule -a gimp floating=on
+bspc rule -a Screenkey manage=off
+
+# set window spacing according to gap settings:
 if [ "$BSPWM_GAPS" = true ]; then
-    bspc config window_gap         12
+    bspc config window_gap         $WG
     bspc config top_padding        $(expr $PANEL_HEIGHT + $PANEL_GAP)
     bspc config borderless_monocle false
     bspc config gapless_monocle    false
@@ -43,27 +59,13 @@ else
     done
 fi
 
-#focus options:
-bspc config focus_follows_pointer true
-bspc config pointer_follows_monitor false;
-bspc config pointer_follows_focus false;
-bspc config focus_by_distance true
-
-#behavior settings
-bspc config auto_alternate true
-bspc config auto_cancel true
-
-#rules
-bspc rule -a mplayer2 floating=on
-bspc rule -a gimp floating=on
-bspc rule -a Screenkey manage=off
 
 killall panel
 ~/.config/bar/panel &
 
 desktops=$(bspc query -M)
 
-#things to do the first time thisis run(all the monitors have not been renamed to numbers yet)
+#determine if this is initial run by seeing if monitors have been renamed to numbers yet
 echo "$desktops" | grep -q "[a-zA-Z]"
 if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
 
@@ -73,15 +75,9 @@ i=1
 for monitor in $desktops; do
     if [ "$IsInitialRun" = true ]; then
         bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii}
+        ~/.config/bspwm/.autostart.sh
     else
         bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
     fi
     let i++
 done
-
-
-if [ "$IsInitialRun" = true ]; then
-    ~/.config/bspwm/.autostart.sh # not kept in dotfiles because machine dependent
-fi
-
-
