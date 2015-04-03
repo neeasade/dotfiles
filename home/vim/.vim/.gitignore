@@ -1,2 +1,3 @@
 bundle/*
 !bundle/Vundle.vim
+.netrwhist
