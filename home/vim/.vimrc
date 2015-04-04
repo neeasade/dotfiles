@@ -1,17 +1,43 @@
+
+" Vundle specific settings and plugins:
+    set nocompatible              " be iMproved, required
+    filetype off                  " required
+
+    " set the runtime path to include Vundle and initialize
+    set rtp+=~/.vim/bundle/Vundle.vim
+    call vundle#begin()
+
+    " let Vundle manage Vundle, required
+    Plugin 'gmarik/Vundle.vim'
+
+    " personal plugins:
+    Plugin 'bling/vim-airline'
+
+    " All of your Plugins must be added before the following line
+    call vundle#end()            " required
+    filetype plugin indent on    " required
+" End of vundle specific settings and plugins
+
+" set title and allow hidden buffers
 set title
 set hidden
 
-" Auto remove all whitespace on :w
+" Auto remove all whitespace on :w"
 autocmd BufWritePre * :%s/\s\+$//e
 
-" Numbers
+" Autosave files when focus is lost"
+:au FocusLost * :wa
+
+" Line Numbers"
 set number
 set numberwidth=3
 
-"exe "set path=".expand("$PATH")
+" Path will be base dir that vim is opened from"
+set path=$PWD/**
 
 syntax enable
 set nomodeline
+set noshowmode                                          " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 set backspace=indent,eol,start                          " Backspace will delete EOL chars, as well as indents
 set shortmess=atToOI                                    " To avoid the 'Hit Enter' prompts caused by the file messages
 set history=1000
@@ -55,13 +81,11 @@ colorscheme base16-default
 set t_Co=16
 set encoding=utf-8
 
-" Display extra whitespace
-set list listchars=tab:»·,trail:·
+" display tabs, not displaying trailing spaces because set to remove on write"
+set list listchars=tab:»·
 
 " General UI Options"
 set laststatus=2       " Always show the statusline
-set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
-
 set showmatch          " Shows matching brackets when text indicator is over them
 set scrolloff=5        " Show 5 lines of context around the cursor
 set sidescrolloff=20
@@ -75,7 +99,7 @@ set nostartofline      " when moving thru the lines, the cursor will try to stay
 
 " LAYOUT / TEXT FORMATTING
 " Formatting Options
-set wrap	" Soft Wrap in all files, while hard wrap can be allow by filetype
+set wrap " Soft Wrap in all files, while hard wrap can be allow by filetype
 set linebreak " It maintains the whole words when wrapping
 
 " Indentation"
@@ -87,21 +111,9 @@ set smartindent
 set shiftwidth=4
 set tabstop=4
 set expandtab
-"set smarttab
+set smarttab
 
-" Fix terminal timeout when pressing escape
-if ! has('gui_running')
-  set ttimeoutlen=10
-  augroup FastEscape
-    autocmd!
-    au InsertEnter * set timeoutlen=0
-    au InsertLeave * set timeoutlen=1000
-  augroup END
-endif
-
-
-
-" Mappings
+" Leader key Mappings
 " Clear search highlighting
 nnoremap <silent><leader>c :nohlsearch<CR>
 
@@ -112,7 +124,7 @@ nnoremap <silent> <Leader>h ml:execute 'match Search /\%'.line('.').'l/'<CR>
 set splitbelow
 set splitright
 
-" Repurpose left and right arrow keys to move between the buffers
+" Repurpose up and down arrow keys to move between the buffers
 nnoremap <silent> <Down>   :bn<CR>
 nnoremap <silent> <Up>  :bp<CR>
 
@@ -136,11 +148,6 @@ map <C-8> 8gt
 map <C-9> 9gt
 map <C-0> :tablast<CR>
 
-"prevent weird resize/move issues:
+" gvim options
 set guioptions-=L
-
-"airline enabling of powerline fonts
-let g:airline_powerline_fonts = 1
-let g:Powerline_symbols = 'fancy'
 set guioptions-=T  "remove toolbar
-
