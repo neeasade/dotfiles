@@ -81,7 +81,6 @@ super + shift + {1-9}
 	DESK_REF=$(printf "%0.si" $(seq 1 $D)); \
 	bspc window -d $CUR_MON/$DESK_REF
 
-
 ~button1
 	bspc pointer -g focus
 
@@ -102,6 +101,9 @@ super + shift + q
 
 super + semicolon
     bspc desktop -R 90
+
+super + slash
+    gapt
 #
 # wm independent hotkeys
 #
