@@ -1,8 +1,8 @@
 URxvt.saveLines:32767
 URxvt.scrollBar: false
 
-urxvt*font: xft:Dejavu Sans Mono:pixelsize=12,style=regular
-urxvt*boldFont: xft:Dejavu Sans Mono:pixelsize=12,style=regular
+urxvt*font: xft:Dejavu Sans Mono for Powerline:pixelsize=12,style=regular
+urxvt*boldFont: xft:Dejavu Sans Mono for Powerline:pixelsize=12,style=regular
 
 Xft.antialias: 1
 Xft.autohint: 0

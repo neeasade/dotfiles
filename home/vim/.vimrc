@@ -18,6 +18,9 @@
     filetype plugin indent on    " required
 " End of vundle specific settings and plugins
 
+" airline specific setting:
+let g:airline_powerline_fonts = 1
+
 " set title and allow hidden buffers
 set title
 set hidden
