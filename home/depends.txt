@@ -8,9 +8,9 @@ hsetroot
 mpc
 mpd
 ncmpcpp
+powerline-fonts-git
 rxvt-unicode
 sxhkd
 tmux
-ttf-dejavu
 vim
 xtitle-git
