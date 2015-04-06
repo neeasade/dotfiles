@@ -7,7 +7,7 @@
 export BATC=/sys/class/power_supply/BAT0/capacity
 
 clock() {
-    date '+%H:%M'
+    date '+%b%e,%l:%M'
 }
 
 battery() {
