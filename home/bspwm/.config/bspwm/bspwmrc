@@ -12,13 +12,13 @@ getXresColor() {
 }
 
 # Visual options
-BW=5        #border width
+BW=1        #border width
 WG=12       #window gap
 bspc config border_width $BW
 bspc config split_ratio              0.6
 
 #colors
-bspc config normal_border_color "$(getXresColor color10)"
+bspc config normal_border_color "$(getXresColor color0)"
 bspc config active_border_color "$(getXresColor color8)"
 bspc config focused_border_color "$(getXresColor foreground)"
 bspc config presel_border_color "$(getXresColor color8)"

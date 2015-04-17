@@ -37,8 +37,8 @@ network() {
 }
 
 # The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
-delim="${pBGS1}%{E3}   ${pFG}"
-delim2="${pBGS2}%{E3}   ${pFG}"
+delim="${pBGS1}%{E4}    ${pFG}"
+delim2="${pBGS2}%{E4}    ${pFG}"
 
 while :; do
     buf="S$delim2"

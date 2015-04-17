@@ -50,7 +50,7 @@ for i in $num_mon; do
     # The nested expr statements account for gap settings and current offset.
     # PANEL_GAP value is set in profile.
     cat "$PANEL_FIFO$i" | panel_bar |\
-        bar-aint-recursive -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_FAMILY" | sh &
+        lemonbar -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_FAMILY" | sh &
 
     # Increment the x offset for the next monitor.
     CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )
