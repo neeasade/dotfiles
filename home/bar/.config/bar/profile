@@ -9,13 +9,13 @@ getXresColor() {
 
 # Panel display settings
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=22
+PANEL_HEIGHT=14
 PANEL_FONT_FAMILY="Dejavu Sans-8"
 PANEL_GAP=8
 
 # Panel colors
-pBGS1="%{B#ff$(getXresColor color10)}"
-pBGS2="%{B#ff$(getXresColor color11)}"
+pBGS1="%{B#ff$(getXresColor color0)}"
+pBGS2="%{B#ff$(getXresColor color8)}"
 pFG="%{F#ff$(getXresColor foreground)}"
 pBG=$pBGS1
 

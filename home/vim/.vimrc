@@ -20,6 +20,7 @@
 
 " airline specific setting:
 let g:airline_powerline_fonts = 1
+let g:airline_theme = 'base16'
 
 " set title and allow hidden buffers
 set title
@@ -80,7 +81,7 @@ set foldcolumn=0
 
 " Look and Feel settings
 set background=dark
-colorscheme base16-default
+colorscheme jellybeans
 set t_Co=16
 set encoding=utf-8
 
@@ -113,7 +114,7 @@ set smartindent
 " Tab Options"
 set shiftwidth=4
 set tabstop=4
-set expandtab
+set expandtab "Inter spaces instead of tabs.
 set smarttab
 
 " Leader key Mappings
