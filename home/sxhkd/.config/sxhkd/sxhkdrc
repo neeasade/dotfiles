@@ -28,13 +28,20 @@ super + m
 
 super + shift + {h,j,k,l}
     bspc config pointer_follows_focus true; \
-    cur=$(bspc query -W -w); \
+    cur_win=$(bspc query -W -w); \
+    cur_mon=$(bspc query -M -m); \
     dir={left,down,up,right}; \
-    if ! bspc window -s $dir; then \
+    if ! bspc window -f $dir; then \
         bspc window -m $dir; \
         bspc monitor -f $dir; \
     else \
-        bspc window -f $cur; \
+        new_mon=$(bspc query -M -m); \
+        if [ $new_mon -eq $cur_mon ]; then \
+            bspc window -s $cur_win; \
+        else \
+            bspc window $cur_win -m ^$new_mon; \
+        fi; \
+        bspc window -f $cur_win; \
     fi; \
     bspc config pointer_follows_focus false
 
