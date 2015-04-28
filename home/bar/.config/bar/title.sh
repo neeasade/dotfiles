@@ -32,17 +32,17 @@ update() {
     # get tiling status of focused desktop on that monitor
     CUR_MON_TILED=$( bspc query -d $CUR_MON_DESK -T | grep "T - \*");
 
-    if [ -z "$CUR_MON_TILED" ]; then export CUR_MON_TILED=false; else export CUR_MON_TILED=true; fi;
+    if [ -z "$CUR_MON_TILED" ]; then CUR_MON_TILED=false; else CUR_MON_TILED=true; fi;
 
     # Is this the currently active monitor?
-    if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then export IS_ACT_MON=true; else export IS_ACT_MON=false; fi;
+    if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then IS_ACT_MON=true; else IS_ACT_MON=false; fi;
 
     # define an 'active' window source to use for this desktop based on weather or not it's the focused monitor.
     if [ "$IS_ACT_MON" = true ]; then
-        export WIN_SOURCE="$(bspc query -W -w focused)";
+        WIN_SOURCE="$(bspc query -W -w focused)";
     else
         # Last history object on this monitor should contain last active window.
-        export WIN_SOURCE="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 | grep -oE "[0-9]x.+" )";
+        WIN_SOURCE="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 | grep -oE "[0-9]x.+" )";
     fi
 
     if [ "$ALWAYS_TAB" = true ]; then
@@ -68,29 +68,20 @@ update() {
 # print the name of the window based on id, by using xtitle
 # will be prefixed with a 'A' or 'X' depending on if it's the 'active' window for this monitor
 winName() {
-    echo -n "$WIN_DELIM";
-
-    if [ "$1" = "$WIN_SOURCE" ]; then
-        echo -n "A";
-    else
-        echo -n "X";
-    fi;
+    [[ "$1" = "$WIN_SOURCE" ]] && echo -n "A" || echo -n "X";
 
     winName="$(xtitle -t $maxWinNameLen $1)";
 
-    echo -n "$winName";
-    echo -n "$WIN_ID_DELIM";
-    echo -n "$1";
+    echo -n "$winName$WIN_ID_DELIM$1$WIN_DELIM";
 }
 
 while :; do
     CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
-    #Update ACT_WIN
+    #Update current window
     CUR_WIN="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 )";
     if [ "$ACT_WIN" != "$CUR_WIN" ]; then
         ACT_WIN=$CUR_WIN;
-        title="T$(update)";
-        echo $title;
+        echo "T$(update)";
     fi
    sleep $WIN_REFRESH_DELAY;
 done

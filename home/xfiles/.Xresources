@@ -21,9 +21,12 @@ URxvt.url-select.underline: true
 URxvt.keysym.M-u:           perl:url-select:select_next
 URxvt.keysym.M-Escape:      perl:keyboard-select:activate
 URxvt.keysym.M-s:           perl:keyboard-select:search
-URxvt.keysym.M-c:           perl:clipboard:copy
 URxvt.urgentOnBell:         true
 URxvt.internalBorder:         3
+
+URxvt.iso14755 : false
+URxvt.keysym.C-C: perl:clipboard:copy
+URxvt.keysym.C-V: perl:clipboard:paste
 
 ! jellybeans colors
 ! 8 8 8
