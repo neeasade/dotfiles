@@ -8,11 +8,14 @@
 # output a parsable format similar to bspc control for a separate script to interprete.
 # if active window is floating or in a tiled workspace, just output title for active window.
 # if active window is in monocle mode, list all the windows in active workspace with windowIDs associated.
+# if ALWAYS_TAB is set, always list all windows in the active workspace.
 
 # The one argument will be the monitor that this is for.
 CUR_MON=$1;
 
 ###OPTIONS###
+# Always tabbed visible windows option:
+ALWAYS_TAB=true;
 # Maxium window title length
 maxWinNameLen=30;
 # The delimiter to separate window sections
@@ -42,18 +45,24 @@ update() {
         export WIN_SOURCE="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 | grep -oE "[0-9]x.+" )";
     fi
 
-    if [ "$CUR_MON_TILED" = true ]; then
-        winName $WIN_SOURCE;
-    elif [ "$CUR_MON_TILED" = false ]; then
-        FLOAT_STATUS=$(bspc query -W -w focused.floating);
-        if [ ! -z $FLOAT_STATUS ]; then
+    if [ "$ALWAYS_TAB" = true ]; then
+        for i in $(bspc query -W -d $CUR_MON_DESK); do
+           winName $i;
+        done
+    else
+        if [ "$CUR_MON_TILED" = true ]; then
             winName $WIN_SOURCE;
-        else
-            for i in $(bspc query -W -d $CUR_MON_DESK); do
-               winName $i;
-            done
+        elif [ "$CUR_MON_TILED" = false ]; then
+            FLOAT_STATUS=$(bspc query -W -w focused.floating);
+            if [ ! -z $FLOAT_STATUS ]; then
+                winName $WIN_SOURCE;
+            else
+                for i in $(bspc query -W -d $CUR_MON_DESK); do
+                   winName $i;
+                done
+            fi;
         fi;
-    fi;
+    fi
 }
 
 # print the name of the window based on id, by using xtitle

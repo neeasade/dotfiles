@@ -7,16 +7,23 @@ getXresColor() {
     echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
 }
 
+makeSpaceVar() {
+    echo "-$(printf %${PANEL_SLANT}s)-"
+}
+
 # Panel display settings
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=14
+PANEL_HEIGHT=20
 PANEL_FONT_FAMILY="Dejavu Sans-8"
 PANEL_GAP=8
+# Character width to use with slant fork. If using vanilla lemonbar set this to 0.
+pSLANT=3
 
 # Panel colors
 pBGS1="%{B#ff$(getXresColor color0)}"
 pBGS2="%{B#ff$(getXresColor color8)}"
 pFG="%{F#ff$(getXresColor foreground)}"
+pTAB="%{B#ff555555}"
 pBG=$pBGS1
 
 # Workspace colors
@@ -34,7 +41,7 @@ DM='□'              # monocle mode desktop
 # Export variables and set gap if needed
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
-export pBGS1 pBGS2 pFG pBG
+export pBGS1 pBGS2 pFG pBG pTAB pSLANT
 export pUrgent pActive pRest
 export DO DF DT DM
 
