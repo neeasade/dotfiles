@@ -30,8 +30,8 @@ while read -r line ; do
             winID="$(echo $name | grep -oE "//.*" | cut -c 3-)"
             if [ ! -z $winTitle ]; then
                 case $item in
-                    A*) title="${title}${pBGS2}%{E4}    %{F$pActive}${winTitle} %{d4}    ${pBG}%{F$pRest}";; #active window
-                    X*) title="${title}${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}";; #inactive window in monocle
+                    A*) title="${title}${pBGS2}%{F$pActive}%{E${pSLANT}}$(printf %${pSLANT}s) ${winTitle} %{d${pSLANT}}$(printf %${pSLANT}s)${pBG}";; #active window
+                    X*) title="${title}${pTAB}%{F$pRest}%{E${pSLANT}}$(printf %${pSLANT}s)${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}%{d${pSLANT}}$(printf %${pSLANT}s)${pBG}";; #inactive window in monocle
                 esac
             fi
             shift
@@ -55,7 +55,7 @@ while read -r line ; do
             esac
             shift
         done
-        wm_infos="$wm_infos%{d4}    ${pBG}"
+        wm_infos="$wm_infos%{d${pSLANT}}$(printf %${pSLANT}s)${pBG} "
     ;;
     esac
     printf "%s\n" "%{r}$sys_infos %{l}$wm_infos$title"
