@@ -1,22 +1,21 @@
 #!/bin/sh
 # info.sh
-# Output general information with formatted background colors in bar-aint-recursive format
-# TODO: If Verbose_bar has a value in bar/profile, will output more information
+# Output information with formatted background colors in lemonbar format
+# This script can take arguments for what bar information to display(meant to be the names of the functions)
 
-# default location for a battery capacity
 
 clock() {
-    date '+%b%e,%l:%M'
+    date '+%b%e,%l:%M '
 }
 
 battery() {
-    # if we reach here is assumed this computer has a battery.
     BATC=/sys/class/power_supply/BAT0/capacity
     BATS=/sys/class/power_supply/BAT0/status
     if [ -f $BATC ]; then
         test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
         sed -n p $BATC
     else
+        #no battery information found.
         echo '+100'
     fi
 }
@@ -40,6 +39,23 @@ network() {
         echo "✔" || echo "✖"
 }
 
+mpd() {
+    #TODO: Add clickable controls next to songs, trim song name.
+    cur_song=$(mpc current)
+
+    if [ -z "$cur_song" ]; then
+        echo "Stopped"
+    else
+        echo $cur_song
+    fi
+}
+
+yaourtUpdates() {
+    #TODO: make this clickable to open up terminal that prompts for updating.
+    updates=$(eval yaourt -Qu | wc --lines)
+    echo up $updates
+}
+
 # The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
 delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
 delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
@@ -48,6 +64,8 @@ delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
 while :; do
     if [ -z "$*" ];then
         buf="S"
+        buf="${buf}${delim2}$(yaourtUpdates)"
+        buf="${buf}${delim}$(mpd)"
         buf="${buf}${delim2}$(battery)"
         buf="${buf}${delim}$(network)"
         buf="${buf}${delim2}$(volume)"
