@@ -62,8 +62,8 @@ delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
 
 #determine what to display based on arguments, unless there are none, then display all.
 while :; do
+    buf="S"
     if [ -z "$*" ];then
-        buf="S"
         buf="${buf}${delim2}$(yaourtUpdates)"
         buf="${buf}${delim}$(mpd)"
         buf="${buf}${delim2}$(battery)"
@@ -72,7 +72,6 @@ while :; do
         buf="${buf}${delim}$(clock)"
     else
         cur_delim="$delim2"
-        buf="S"
         for arg in "$@"; do
             buf="${buf}${cur_delim}$($arg)"
             [ "$cur_delim" = "$delim" ] && cur_delim="$delim2" || cur_delim="$delim"
