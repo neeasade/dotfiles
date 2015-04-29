@@ -42,7 +42,7 @@ for i in $num_mon; do
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh will display a clock, sound level, and a battery/network status depending on laptop/desktop.
-    info.sh > "$PANEL_FIFO$i" &
+    info.sh clock > "$PANEL_FIFO$i" &
 
     # Grep for current monitor width (will be first number regex match from bspc query command below).
     CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
