@@ -73,13 +73,13 @@ while :; do
     else
         cur_delim="$delim2"
         buf="S"
-        for arg in "$*"; do
-            buf="${buf} $cur_delim $($arg) "
+        for arg in "$@"; do
+            buf="${buf}${cur_delim}$($arg)"
             [ "$cur_delim" = "$delim" ] && cur_delim="$delim2" || cur_delim="$delim"
         done
     fi
 
-    echo "$buf"
+    echo "$buf$pBG"
     sleep 1 # The HUD will be updated every second
 done
 
