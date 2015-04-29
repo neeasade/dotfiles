@@ -38,7 +38,7 @@ while read -r line ; do
         done
     ;;
     W*)
-        wm_infos=""
+        wm_infos="${pBGS2}"
         IFS=':'
         set -- ${line#?}
         while [ $# -gt 0 ] ; do
@@ -58,5 +58,5 @@ while read -r line ; do
         wm_infos="$wm_infos%{d${pSLANT}}$(printf %${pSLANT}s)${pBG} "
     ;;
     esac
-    printf "%s\n" "%{r}$sys_infos %{l}$wm_infos$title"
+    printf "%s\n" "%{l}$wm_infos$title %{r}$sys_infos"
 done
