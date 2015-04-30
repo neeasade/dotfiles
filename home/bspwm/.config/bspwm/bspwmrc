@@ -15,7 +15,7 @@ getXresColor() {
 }
 
 # Visual options
-BW=1        #border width
+BW=5        #border width
 WG=12       #window gap
 bspc config border_width $BW
 bspc config split_ratio              0.6
@@ -53,7 +53,7 @@ else
     bspc config window_gap         0
     bspc config top_padding        $(expr $PANEL_HEIGHT + $BW)
     bspc config borderless_monocle  true
-    bspc config gapless_monocle     true
+    bspc config gapless_monocle     false
 
     #overlapping borders
     bspc config window_gap -$BW
