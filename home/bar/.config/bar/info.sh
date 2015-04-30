@@ -6,6 +6,11 @@
 # default location for a battery capacity
 export BATC=/sys/class/power_supply/BAT0/capacity
 
+# clickable area aliases
+AC='%{A:'           # start click area
+AB=':}'             # end click area cmd
+AE='%{A}'           # end click area
+
 clock() {
     date '+%b%e,%l:%M'
 }
