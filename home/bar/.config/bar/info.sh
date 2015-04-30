@@ -8,6 +8,11 @@ AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
+# clickable area aliases
+AC='%{A:'           # start click area
+AB=':}'             # end click area cmd
+AE='%{A}'           # end click area
+
 clock() {
     date '+%b %e,%l:%M'
 }

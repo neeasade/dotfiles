@@ -3,7 +3,10 @@
 #Toggle a default gap setting if it's not already set.
 if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
 
-#Get panel height
+#Add panel scripts to path:
+export PATH=$PATH:~/.config/bar
+
+#Get panel variables
 . ~/.config/bar/profile
 
 #get the value of a color from the current xrdb load configuration
