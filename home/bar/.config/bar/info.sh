@@ -3,9 +3,13 @@
 # Output information with formatted background colors in lemonbar format
 # This script can take arguments for what bar information to display(meant to be the names of the functions)
 
+# clickable area aliases
+AC='%{A:'           # start click area
+AB=':}'             # end click area cmd
+AE='%{A}'           # end click area
 
 clock() {
-    date '+%b%e,%l:%M '
+    date '+%b %e,%l:%M'
 }
 
 battery() {
@@ -51,9 +55,9 @@ mpd() {
 }
 
 yaourtUpdates() {
-    #TODO: make this clickable to open up terminal that prompts for updating.
     updates=$(eval yaourt -Qu | wc --lines)
-    echo up $updates
+    command='urxvtc -e sh -c "yaourt -Syua"'
+    echo ${AC}$command${AB}up $updates${AE}
 }
 
 # The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
@@ -78,7 +82,7 @@ while :; do
         done
     fi
 
-    echo "$buf$pBG"
+    echo "$buf$pBG "
     sleep 1 # The HUD will be updated every second
 done
 

@@ -41,7 +41,7 @@ for i in $num_mon; do
     #xtitle -t 80 -sf 'T>>A%s//' > "$PANEL_FIFO$i" &
     title.sh $i > "$PANEL_FIFO$i" &
 
-    # info.sh will display a clock, sound level, and a battery/network status depending on laptop/desktop.
+    # info.sh outputs system information.
     info.sh > "$PANEL_FIFO$i" &
 
     # Grep for current monitor width (will be first number regex match from bspc query command below).
