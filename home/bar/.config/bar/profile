@@ -13,7 +13,7 @@ PANEL_HEIGHT=22
 PANEL_FONT_FAMILY="Dejavu Sans-8"
 PANEL_GAP=8
 # Character width to use with slant fork. If using vanilla lemonbar set this to 0.
-pSLANT=5
+pSLANT=3
 
 # Panel colors
 pBGS1="%{B#ff$(getXresColor color0)}"
