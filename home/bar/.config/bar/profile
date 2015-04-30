@@ -9,11 +9,11 @@ getXresColor() {
 
 # Panel display settings
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=20
+PANEL_HEIGHT=22
 PANEL_FONT_FAMILY="Dejavu Sans-8"
 PANEL_GAP=8
 # Character width to use with slant fork. If using vanilla lemonbar set this to 0.
-pSLANT=2
+pSLANT=5
 
 # Panel colors
 pBGS1="%{B#ff$(getXresColor color0)}"
