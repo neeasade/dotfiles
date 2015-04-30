@@ -1,10 +1,8 @@
 #!/bin/sh
 # info.sh
-# Output general information with formatted background colors in bar-aint-recursive format
-# TODO: If Verbose_bar has a value in bar/profile, will output more information
+# Output information with formatted background colors in lemonbar format
+# This script can take arguments for what bar information to display(meant to be the names of the functions)
 
-# default location for a battery capacity
-export BATC=/sys/class/power_supply/BAT0/capacity
 
 # clickable area aliases
 AC='%{A:'           # start click area
@@ -12,18 +10,23 @@ AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
 clock() {
-    date '+%b%e,%l:%M'
+    date '+%b%e,%l:%M '
 }
 
 battery() {
-    # if we reach here is assumed this computer has a battery.
+    BATC=/sys/class/power_supply/BAT0/capacity
     BATS=/sys/class/power_supply/BAT0/status
-    test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
-    sed -n p $BATC
+    if [ -f $BATC ]; then
+        test "`cat $BATS`" = "Charging" && echo -n '+' || echo -n '-'
+        sed -n p $BATC
+    else
+        #no battery information found.
+        echo '+100'
+    fi
 }
 
 volume() {
-    amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p'
+    echo "vol $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
 }
 
 network() {
@@ -36,26 +39,51 @@ network() {
         eth0=$int1
     fi
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
-
+    echo -n "⇅ "
     ping -c 1 8.8.8.8 >/dev/null 2>&1 &&
         echo "✔" || echo "✖"
 }
 
-# The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
-delim="${pBGS1}%{E4}    ${pFG}"
-delim2="${pBGS2}%{E4}    ${pFG}"
+mpd() {
+    #TODO: Add clickable controls next to songs, trim song name.
+    cur_song=$(mpc current)
 
-while :; do
-    buf="S$delim2"
-    if [ -f $BATC ]; then
-        buf="${buf} $(battery) $delim "
+    if [ -z "$cur_song" ]; then
+        echo "Stopped"
     else
-        buf="${buf} ⇅ $(network) $delim "
+        echo $cur_song
     fi
-    buf="${buf} vol $(volume) $delim2 "
-    buf="${buf} $(clock)"
+}
 
-    echo "$buf"
+yaourtUpdates() {
+    #TODO: make this clickable to open up terminal that prompts for updating.
+    updates=$(eval yaourt -Qu | wc --lines)
+    echo up $updates
+}
+
+# The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
+delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
+delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
+
+#determine what to display based on arguments, unless there are none, then display all.
+while :; do
+    buf="S"
+    if [ -z "$*" ];then
+        buf="${buf}${delim2}$(yaourtUpdates)"
+        buf="${buf}${delim}$(mpd)"
+        buf="${buf}${delim2}$(battery)"
+        buf="${buf}${delim}$(network)"
+        buf="${buf}${delim2}$(volume)"
+        buf="${buf}${delim}$(clock)"
+    else
+        cur_delim="$delim2"
+        for arg in "$@"; do
+            buf="${buf}${cur_delim}$($arg)"
+            [ "$cur_delim" = "$delim" ] && cur_delim="$delim2" || cur_delim="$delim"
+        done
+    fi
+
+    echo "$buf$pBG"
     sleep 1 # The HUD will be updated every second
 done
 

@@ -26,20 +26,31 @@ super + y
 super + m
 	bspc window -s biggest
 
-#todo: edit this to account for floating window status and switch monitors accordingly
 super + shift + {h,j,k,l}
-	bspc window -s {left,down,up,right}
+    bspc config pointer_follows_focus true; \
+    cur_win=$(bspc query -W -w); \
+    cur_mon=$(bspc query -M -m); \
+    dir={left,down,up,right}; \
+    if ! bspc window -f $dir; then \
+        bspc window -m $dir; \
+        bspc monitor -f $dir; \
+    else \
+        new_mon=$(bspc query -M -m); \
+        if [ $new_mon -eq $cur_mon ]; then \
+            bspc window -s $cur_win; \
+        else \
+            bspc window $cur_win -m ^$new_mon; \
+        fi; \
+        bspc window -f $cur_win; \
+    fi; \
+    bspc config pointer_follows_focus false
 
 super +  {h,j,k,l}
     bspc config pointer_follows_monitor true; \
     bspc config pointer_follows_focus true; \
     dir={left,down,up,right}; \
 	if ! bspc window -f $dir; then \
-        if [ $dir = "right" ]; then \
-            bspc monitor -f $dir; \
-        elif [ $dir = "left" ]; then \
-            bspc monitor -f $dir; \
-        fi; \
+        bspc monitor -f $dir; \
     fi; \
     bspc config pointer_follows_monitor false; \
     bspc config pointer_follows_focus false
