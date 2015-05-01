@@ -4,16 +4,10 @@
 # first argument: user who's home dir to target, assumes /home/$user
 # if a second argument exists, will force-resolve conflicts, storing old files in a folder
 
-if [ -z $1 ]; then
-    lUser=$USER
-else
-    lUser=$1
-fi
+[ -z $1 ] && lUser=$USER || lUser=$1
 
 #clear old conflicts file if it exists
-if [ -f conflicts.txt ]; then
-    rm conflicts.txt
-fi
+[ -f conflicts.txt ] && rm conflicts.txt
 
 for i in $(ls -d */); do
     #see if there will be any file conflicts:
@@ -21,9 +15,7 @@ for i in $(ls -d */); do
 done
 
 #remove conflicts if it is empty(file was created because we directed output to it(even if that output is empty):
-if [ ! -s conflicts.txt ]; then
-    rm conflicts.txt
-fi
+[ ! -s conflicts.txt ] && rm conflicts.txt
 
 if [ -f conflicts.txt ];then
     if [ -z "$2" ]; then

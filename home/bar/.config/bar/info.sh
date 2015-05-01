@@ -13,6 +13,11 @@ AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
+weather() {
+    weatherURL='http://www.accuweather.com/en/us/manhattan-ks/66502/weather-forecast/328848'
+    wget -q -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1
+}
+
 clock() {
     date '+%b %e,%l:%M'
 }
@@ -79,6 +84,7 @@ while :; do
         buf="${buf}${delim}$(network)"
         buf="${buf}${delim2}$(volume)"
         buf="${buf}${delim}$(clock)"
+        buf="${buf}${delim2}$(weather)"
     else
         cur_delim="$delim2"
         for arg in "$@"; do
@@ -87,7 +93,7 @@ while :; do
         done
     fi
 
-    echo "$buf$pBG "
+    echo "$buf $pBG"
     sleep 1 # The HUD will be updated every second
 done
 
