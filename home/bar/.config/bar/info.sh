@@ -54,13 +54,18 @@ network() {
 }
 
 mpd() {
-    #TODO: Add clickable controls next to songs, trim song name.
-    cur_song=$(mpc current)
+    cur_song=$(mpc current | cut -c1-30)
 
     if [ -z "$cur_song" ]; then
         echo "Stopped"
     else
-        echo $cur_song
+        echo -n $cur_song
+        paused=$(mpc | grep paused)
+        if [ -z "$paused" ]; then
+            echo "${AC}mpc pause${AB}[pause]${AE}"
+        else
+            echo "${AC}mpc play${AB}[play]${AE}"
+        fi;
     fi
 }
 
