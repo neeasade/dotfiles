@@ -31,7 +31,7 @@ while read -r line ; do
             if [ ! -z $winTitle ]; then
                 case $item in
                     A*) title="${title}${pBGS2}%{F$pActive}%{E${pSLANT}}$(printf %${pSLANT}s) ${winTitle} %{d${pSLANT}}$(printf %${pSLANT}s)${pBG}";; #active window
-                    X*) title="${title}${pTAB}%{F$pRest}%{E${pSLANT}}$(printf %${pSLANT}s)${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}%{d${pSLANT}}$(printf %${pSLANT}s)${pBG}";; #inactive window in monocle
+                    X*) title="${title}${pTAB}%{F$pRest}%{E${pSLANT}}$(printf %${pSLANT}s)${AC}${winfocus} ${winID}${AB} ${winTitle} ${AE}%{d${pSLANT}}$(printf %${pSLANT}s)${pBG}";; #inactive window
                 esac
             fi
             shift
@@ -51,7 +51,7 @@ while read -r line ; do
                 o*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive occupied desktop
                 f*) wm_infos="${wm_infos}%{F$pRest}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
                 u*) wm_infos="${wm_infos}%{F$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
-                L*) wm_infos="${wm_infos}${AC}${cycle}${AB} $([[ $name == "T" ]] && echo $DT || echo $DM) ${AE}";; # Tiling/Monocle indicator, clickable toggle.
+                L*) wm_infos="${wm_infos}%{F$pRest}${AC}${cycle}${AB} $([[ $name == "T" ]] && echo $DT || echo $DM) ${AE}";; # Tiling/Monocle indicator, clickable toggle.
             esac
             shift
         done
