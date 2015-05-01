@@ -17,7 +17,7 @@ for i in $(ls -d */); do
 done
 
 #remove conflicts if it is empty(file was created because we directed output to it(even if that output is empty):
-if [ ! -s conflicts.txt ] && rm conflicts.txt
+[ ! -s conflicts.txt ] && rm conflicts.txt
 
 if [ -f conflicts.txt ];then
     if [ -z "$1" ]; then
