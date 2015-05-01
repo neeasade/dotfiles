@@ -8,11 +8,6 @@ AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
-# clickable area aliases
-AC='%{A:'           # start click area
-AB=':}'             # end click area cmd
-AE='%{A}'           # end click area
-
 weather() {
     weatherURL='http://www.accuweather.com/en/us/manhattan-ks/66502/weather-forecast/328848'
     wget -q -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1
@@ -20,6 +15,12 @@ weather() {
 
 clock() {
     date '+%b %e,%l:%M'
+}
+
+mail() {
+    # todo: this
+    echo "✉ 0"
+    #✉
 }
 
 battery() {
@@ -35,7 +36,7 @@ battery() {
 }
 
 volume() {
-    echo "vol $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
+    echo "ᐊ) $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
 }
 
 network() {
@@ -59,12 +60,12 @@ mpd() {
     if [ -z "$cur_song" ]; then
         echo "Stopped"
     else
-        echo -n $cur_song
+        echo -n ♫
         paused=$(mpc | grep paused)
         if [ -z "$paused" ]; then
-            echo "${AC}mpc pause${AB}[pause]${AE}"
+            echo "${AC}mpc pause${AB} װ $cur_song${AE}"
         else
-            echo "${AC}mpc play${AB}[play]${AE}"
+            echo "${AC}mpc play${AB} ▷ $cur_song${AE}"
         fi;
     fi
 }
@@ -72,7 +73,7 @@ mpd() {
 yaourtUpdates() {
     updates=$(eval yaourt -Qu | wc --lines)
     command='urxvtc -e sh -c "yaourt -Syua"'
-    echo ${AC}$command${AB}up $updates${AE}
+    echo ${AC}$command${AB}↑ $updates${AE}
 }
 
 # The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
@@ -83,13 +84,14 @@ delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
 while :; do
     buf="S"
     if [ -z "$*" ];then
-        buf="${buf}${delim2}$(yaourtUpdates)"
-        buf="${buf}${delim}$(mpd)"
-        buf="${buf}${delim2}$(battery)"
-        buf="${buf}${delim}$(network)"
-        buf="${buf}${delim2}$(volume)"
-        buf="${buf}${delim}$(clock)"
+        buf="${buf}${delim2}$(mail)"
+        buf="${buf}${delim}$(yaourtUpdates)"
+        buf="${buf}${delim2}$(mpd)"
+        buf="${buf}${delim}$(battery)"
+        buf="${buf}${delim2}$(network)"
+        buf="${buf}${delim}$(volume)"
         buf="${buf}${delim2}$(weather)"
+        buf="${buf}${delim}$(clock)"
     else
         cur_delim="$delim2"
         for arg in "$@"; do
