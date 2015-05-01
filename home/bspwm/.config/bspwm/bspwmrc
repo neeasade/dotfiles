@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 #Toggle a default gap setting if it's not already set.
 if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
 
@@ -48,12 +49,10 @@ if [ "$BSPWM_GAPS" = true ]; then
     bspc config window_gap         $WG
     bspc config top_padding        $(expr $PANEL_HEIGHT + $PANEL_GAP)
     bspc config borderless_monocle false
-    bspc config gapless_monocle    false
 else
     bspc config window_gap         0
     bspc config top_padding        $(expr $PANEL_HEIGHT + $BW)
     bspc config borderless_monocle  true
-    bspc config gapless_monocle     false
 
     #overlapping borders
     bspc config window_gap -$BW
@@ -61,7 +60,6 @@ else
         bspc config ${side}_padding $BW
     done
 fi
-
 
 killall panel
 ~/.config/bar/panel &
@@ -78,9 +76,10 @@ i=1
 for monitor in $desktops; do
     if [ "$IsInitialRun" = true ]; then
         bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii}
-        ~/.config/bspwm/.autostart.sh
     else
         bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
     fi
     let i++
 done
+
+[ "$IsInitialRun" = true ] && ~/.config/bspwm/.autostart.sh
