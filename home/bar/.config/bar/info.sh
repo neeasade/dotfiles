@@ -20,7 +20,6 @@ clock() {
 mail() {
     # todo: this
     echo "✉ 0"
-    #✉
 }
 
 battery() {
@@ -36,7 +35,9 @@ battery() {
 }
 
 volume() {
-    echo "ᐊ) $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
+    display="ᐊ) $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
+    command='urxvtc -e sh -c "alsamixer"'
+    echo ${AC}$command${AB}$display${AE}
 }
 
 network() {
@@ -60,13 +61,9 @@ mpd() {
     if [ -z "$cur_song" ]; then
         echo "Stopped"
     else
-        echo -n ♫
         paused=$(mpc | grep paused)
-        if [ -z "$paused" ]; then
-            echo "${AC}mpc pause${AB} װ $cur_song${AE}"
-        else
-            echo "${AC}mpc play${AB} ▷ $cur_song${AE}"
-        fi;
+        [ -z "$paused" ] && echo  "${AC}mpc pause${AB}♫ װ $cur_song${AE}" ||
+                            echo  "${AC}mpc play${AB}♫ ▷ $cur_song${AE}"
     fi
 }
 
@@ -103,4 +100,3 @@ while :; do
     echo "$buf $pBG"
     sleep 1 # The HUD will be updated every second
 done
-
