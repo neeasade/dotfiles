@@ -21,6 +21,10 @@ CUR_X_OFFSET=0
 # Get the number of monitors we will be making bars for
 num_mon=$(bspc query -M)
 
+# Custom info options for different computers, determined by hostname. (default is all)
+# options: mail yaourtUpdates mpd battery network volume weather clock
+[ $HOSTNAME = "home27" ] && barInfo="mail yaourtUpdates mpd network volume weather clock"
+
 for i in $num_mon; do
     # remove any open panel fifo, and then create one
     [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
@@ -42,7 +46,7 @@ for i in $num_mon; do
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh outputs system information.
-    info.sh > "$PANEL_FIFO$i" &
+    info.sh $barInfo > "$PANEL_FIFO$i" &
 
     # Grep for current monitor width (will be first number regex match from bspc query command below).
     CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
