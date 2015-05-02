@@ -23,7 +23,7 @@ num_mon=$(bspc query -M)
 
 # Custom info options for different computers, determined by hostname. (default is all)
 # options: mail yaourtUpdates mpd battery network volume weather clock
-[ $HOSTNAME = "home27" ] && barInfo="mail yaourtUpdates mpd network volume weather clock"
+[ $HOSTNAME = "home27" ] && barInfo="mpd mail yaourtUpdates network volume weather clock"
 
 for i in $num_mon; do
     # remove any open panel fifo, and then create one

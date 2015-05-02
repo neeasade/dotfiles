@@ -8,7 +8,18 @@ AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
+# color settings:
+cLabel=%{F$pRest}
+cContent=%{F$pActive}
+
+# Alternating separators for display items - for a cleaner look, set these to simply spaces.
+delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
+delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
+
+
+
 weather() {
+    echo -n "w "
     weatherURL='http://www.accuweather.com/en/us/manhattan-ks/66502/weather-forecast/328848'
     wget -q -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1
 }
@@ -62,8 +73,8 @@ mpd() {
         echo "Stopped"
     else
         paused=$(mpc | grep paused)
-        [ -z "$paused" ] && echo  "${AC}mpc pause${AB}♫ װ $cur_song${AE}" ||
-                            echo  "${AC}mpc play${AB}♫ ▷ $cur_song${AE}"
+        [ -z "$paused" ] && echo "${AC}mpc pause${AB}♫ װ $cur_song${AE}" ||
+                            echo "${AC}mpc play${AB}♫ ▷ $cur_song${AE}"
     fi
 }
 
@@ -73,17 +84,13 @@ yaourtUpdates() {
     echo ${AC}$command${AB}↑ $updates${AE}
 }
 
-# The {E} bar command below provides a slant from this fork: http://github.com/neeasade/bar
-delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-
 #determine what to display based on arguments, unless there are none, then display all.
 while :; do
     buf="S"
     if [ -z "$*" ];then
-        buf="${buf}${delim2}$(mail)"
-        buf="${buf}${delim}$(yaourtUpdates)"
         buf="${buf}${delim2}$(mpd)"
+        buf="${buf}${delim}$(mail)"
+        buf="${buf}${delim2}$(yaourtUpdates)"
         buf="${buf}${delim}$(battery)"
         buf="${buf}${delim2}$(network)"
         buf="${buf}${delim}$(volume)"
