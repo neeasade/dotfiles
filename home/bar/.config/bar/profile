@@ -10,17 +10,17 @@ getXresColor() {
 # Panel display settings
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=22
-PANEL_FONT_FAMILY="Dejavu Sans-8"
+PANEL_FONT_FAMILY="Dejavu Sans-8,FontAwesome-8"
 PANEL_GAP=8
 # Character width to use with slant fork. If using vanilla lemonbar set this to 0.
 pSLANT=3
 
 # Panel colors
-pBGS1="%{B#ff$(getXresColor color0)}"
-pBGS2="%{B#ff$(getXresColor color8)}"
-pFG="%{F#ff$(getXresColor foreground)}"
-pTAB="%{B#ff303030}"
-pBG=$pBGS1
+pBGS1="%{B#ff$(getXresColor color0)}"   # Alternating bg color 1
+pBGS2="%{B#ff$(getXresColor color8)}"   # Alternating bg color 2
+pFG="%{F#ff$(getXresColor foreground)}" # Default foreground
+pTAB="%{B#ff303030}"                    # Unfocused title tab background
+pBG=$pBGS1                              # Default background
 
 # Workspace colors
 pUrgent=#ffffff00
@@ -33,6 +33,12 @@ DF='▫'              # free desktop
 DT='◫'              # tiling mode desktop
 DM='□'              # monocle mode desktop
 
+# options: mail yaourtUpdates mpd battery network volume weather clock
+# If empty, all are used.
+barInfo=""
+
+# Customize options on different computers by hostname:
+[ "$HOSTNAME" = "home27" ] && barInfo="mpd mail yaourtUpdates network volume weather clock"
 
 # Export variables and set gap if needed
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
@@ -40,5 +46,4 @@ export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
 export pBGS1 pBGS2 pFG pBG pTAB pSLANT
 export pUrgent pActive pRest
 export DO DF DT DM
-
-
+export barInfo

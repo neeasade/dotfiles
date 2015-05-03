@@ -3,39 +3,45 @@
 # Output information with formatted background colors in lemonbar format
 # This script can take arguments for what bar information to display(meant to be the names of the functions)
 
+# color settings:
+cIcon=%{F$pRest}
+cContent=%{F$pActive}
+
+# Alternating separators for display items
+delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
+delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
+
+
 # clickable area aliases
 AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
-# color settings:
-cLabel=%{F$pRest}
-cContent=%{F$pActive}
-
-# Alternating separators for display items - for a cleaner look, set these to simply spaces.
-delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-
-
+icon() {
+    echo -e "${cIcon}\u$1 ${cContent}"
+}
 
 weather() {
-    echo -n "w "
+    echo -n "$(icon f0c2)"
     weatherURL='http://www.accuweather.com/en/us/manhattan-ks/66502/weather-forecast/328848'
     wget -q -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1
 }
 
 clock() {
-    date '+%b %e,%l:%M'
+    echo -n "$(icon f073)"
+    date '+%b%e,%l:%M'
 }
 
 mail() {
     # todo: this
-    echo "✉ 0"
+    echo -n "$(icon f0e0)"
+    echo '0'
 }
 
 battery() {
     BATC=/sys/class/power_supply/BAT0/capacity
     BATS=/sys/class/power_supply/BAT0/status
+    echo -n "$(icon f0e7)"
     if [ -f $BATC ]; then
         [ "`cat $BATS`" = "Charging" ] && echo -n '+' || echo -n '-'
         cat $BATC
@@ -46,7 +52,7 @@ battery() {
 }
 
 volume() {
-    display="ᐊ) $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
+    display="$(icon f028) $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
     command='urxvtc -e sh -c "alsamixer"'
     echo ${AC}$command${AB}$display${AE}
 }
@@ -61,27 +67,28 @@ network() {
         eth0=$int1
     fi
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
-    echo -n "⇅ "
+    echo -n "$(icon f0ac)"
     ping -c 1 8.8.8.8 >/dev/null 2>&1 &&
-        echo "✔" || echo "✖"
+        echo -e '\uf00c' || echo -e '\uf00d'
 }
 
 mpd() {
     cur_song=$(mpc current | cut -c1-30)
 
+    echo -n "$(icon f025)"
     if [ -z "$cur_song" ]; then
         echo "Stopped"
     else
         paused=$(mpc | grep paused)
-        [ -z "$paused" ] && echo "${AC}mpc pause${AB}♫ װ $cur_song${AE}" ||
-                            echo "${AC}mpc play${AB}♫ ▷ $cur_song${AE}"
+        [ -z "$paused" ] && echo "${AC}mpc pause${AB} $cur_song${AE}" ||
+                            echo "${AC}mpc play${AB} $cur_song${AE}"
     fi
 }
 
 yaourtUpdates() {
     updates=$(eval yaourt -Qu | wc --lines)
     command='urxvtc -e sh -c "yaourt -Syua"'
-    echo ${AC}$command${AB}↑ $updates${AE}
+    echo ${AC}$command${AB}$(icon f062)$updates${AE}
 }
 
 #determine what to display based on arguments, unless there are none, then display all.
