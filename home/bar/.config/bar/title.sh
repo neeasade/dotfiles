@@ -70,7 +70,7 @@ update() {
 winName() {
     [[ "$1" = "$WIN_SOURCE" ]] && echo -n "A" || echo -n "X";
 
-    winName="$(xtitle -t $maxWinNameLen $1)";
+    winName="$(xtitle -t $maxWinNameLen "$1")";
 
     echo -n "$winName$WIN_ID_DELIM$1$WIN_DELIM";
 }
