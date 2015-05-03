@@ -18,30 +18,30 @@ AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
 icon() {
-    echo -e "${cIcon}\u$1 ${cContent}"
+    echo -n -e "${cIcon}\u$1 ${cContent}"
 }
 
 weather() {
-    echo -n "$(icon f0c2)"
+    icon f0c2
     weatherURL='http://www.accuweather.com/en/us/manhattan-ks/66502/weather-forecast/328848'
     wget -q -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1
 }
 
 clock() {
-    echo -n "$(icon f073)"
+    icon f073
     date '+%b%e,%l:%M'
 }
 
 mail() {
     # todo: this
-    echo -n "$(icon f0e0)"
+    icon f0e0
     echo '0'
 }
 
 battery() {
     BATC=/sys/class/power_supply/BAT0/capacity
     BATS=/sys/class/power_supply/BAT0/status
-    echo -n "$(icon f0e7)"
+    icon f0e7
     if [ -f $BATC ]; then
         [ "`cat $BATS`" = "Charging" ] && echo -n '+' || echo -n '-'
         cat $BATC
@@ -67,15 +67,15 @@ network() {
         eth0=$int1
     fi
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
-    echo -n "$(icon f0ac)"
-    ping -c 1 8.8.8.8 >/dev/null 2>&1 &&
+    icon f0ac
+    ping -W 1 -c 1 8.8.8.8 >/dev/null 2>&1 &&
         echo -e '\uf00c' || echo -e '\uf00d'
 }
 
 mpd() {
     cur_song=$(mpc current | cut -c1-30)
 
-    echo -n "$(icon f025)"
+    icon f025
     if [ -z "$cur_song" ]; then
         echo "Stopped"
     else
