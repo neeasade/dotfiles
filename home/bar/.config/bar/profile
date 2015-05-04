@@ -28,17 +28,26 @@ pActive=#ff$(getXresColor color15)
 pRest=#ff$(getXresColor color6)
 
 # Workspace variables
-DO='▪'              # occupied desktop
-DF='▫'              # free desktop
-DT='◫'              # tiling mode desktop
-DM='□'              # monocle mode desktop
+DO=$(echo -e '\uf135')  # occupied desktop
+DF=$(echo -e '\uf005')  # free desktop
+DT=$(echo -e '\uf009')  # tiling mode
+DM=$(echo -e '\uf0c9')  # monocle mode
 
 # options: mail yaourtUpdates mpd battery network volume weather clock
 # If empty, all are used.
+# it is possible to specify different information per monitor with barInfo<mon #>="options"
 barInfo=""
 
 # Customize options on different computers by hostname:
-[ "$HOSTNAME" = "home27" ] && barInfo="mpd mail yaourtUpdates network volume weather clock"
+if [ "$HOSTNAME" = "home27" ]; then
+    barInfo1="mpd "
+    barInfo2="volume weather mail yaourtUpdates"
+    barInfo3="clock"
+fi
+
+if [ "$HOSTNAME" = "home2" ]; then
+    barInfo="battery network volume clock"
+fi
 
 # Export variables and set gap if needed
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
