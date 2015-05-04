@@ -42,7 +42,12 @@ for i in $num_mon; do
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh outputs system information.
-    info.sh $barInfo > "$PANEL_FIFO$i" &
+    if [ -z "$(eval echo \$'barInfo'$i)" ]; then
+        info.sh $barInfo > "$PANEL_FIFO$i" &
+    else
+        #Custom bar options per monitor. (defined barInfo$i var for this monitor)
+        info.sh $(eval echo \$'barInfo'$i) > "$PANEL_FIFO$i" &
+    fi
 
     # Grep for current monitor width (will be first number regex match from bspc query command below).
     CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)

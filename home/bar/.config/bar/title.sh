@@ -37,7 +37,7 @@ update() {
     # Is this the currently active monitor?
     if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then IS_ACT_MON=true; else IS_ACT_MON=false; fi;
 
-    # define an 'active' window source to use for this desktop based on weather or not it's the focused monitor.
+    # define an 'active' window source to use for this desktop based on whether or not it's the focused monitor.
     if [ "$IS_ACT_MON" = true ]; then
         WIN_SOURCE="$(bspc query -W -w focused)";
     else
