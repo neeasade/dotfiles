@@ -7,9 +7,7 @@ Neeasade's dotfiles
 *   term emulator - urxvt
 *   font - Dejavu Sans Mono
 
-[imgur album](http://imgur.com/a/SkD5f)
-[Multihead use](http://a.pomf.se/poderp.png)
-[Webm](http://a.pomf.se/tzjbxu.webm)
+[Imgur album](http://imgur.com/a/SkD5f) - [Multihead picture](http://a.pomf.se/poderp.png) - [Webm](http://a.pomf.se/tzjbxu.webm)
 ![Screenshot](http://i.imgur.com/8tTVtjx.png)
 
 ##TODO(ricing roadmap)
