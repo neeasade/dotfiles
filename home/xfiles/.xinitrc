@@ -4,11 +4,11 @@
 #pcmanfm daemon - useful for automatic mounting of drives
 pcmanfm -d &
 
-#Set wallpaper
-hsetroot -tile ~/.background.png &
-
-#Refresh Xresources
+#load Xresources
 xrdb -load  /home/$USER/.Xresources &
+
+#Set background to same color as Xresources background
+hsetroot -solid "$(xrdb -query | grep  "background" | grep -oE "#[a-zA-Z0-9]{6}")"
 
 #urxvt daemon
 urxvtd &
