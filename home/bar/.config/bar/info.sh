@@ -3,14 +3,10 @@
 # Output information with formatted background colors in lemonbar format
 # This script can take arguments for what bar information to display(meant to be the names of the functions)
 
-# color settings:
-cIcon=%{F$pRest}
-cContent="%{F#ffbbbbbb}"
 
 # Alternating separators for display items
 delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
 delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-
 
 # clickable area aliases
 AC='%{A:'           # start click area
@@ -94,7 +90,7 @@ yaourtUpdates() {
 #determine what to display based on arguments, unless there are none, then display all.
 while :; do
     buf="S"
-    if [ -z "$@" ];then
+    if [ -z "$*" ];then
         buf="${buf}${delim2}$(mpd)"
         buf="${buf}${delim}$(mail)"
         buf="${buf}${delim2}$(yaourtUpdates)"
