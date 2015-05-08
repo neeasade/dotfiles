@@ -6,6 +6,7 @@
 [[ $- != *i* ]] && return
 
 alias ls='ls --color=auto'
+alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 
 PATH=$PATH:~/bin:~/.config/bar
 
@@ -15,16 +16,70 @@ PATH=$PATH:/home/$USER/.gem/ruby/2.2.0/bin
 #auto-complete for pacman when using sudo:
 complete -cf sudo
 
-#export PS1="┌─[\u][\w]\n└─╼"
+function swap() {
+    # Swap 2 filenames around, if they exist (from Uzi's bashrc).
+    local TMPFILE=tmp.$$
+
+    [ $# -ne 2 ] && echo "swap: 2 arguments needed" && return 1
+    [ ! -e $1 ] && echo "swap: $1 does not exist" && return 1
+    [ ! -e $2 ] && echo "swap: $2 does not exist" && return 1
+
+    mv "$1" $TMPFILE
+    mv "$2" "$1"
+    mv $TMPFILE "$2"
+}
+
+function extract()      # Handy Extract Program
+{
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xvjf $1     ;;
+            *.tar.gz)    tar xvzf $1     ;;
+            *.bz2)       bunzip2 $1      ;;
+            *.rar)       unrar x $1      ;;
+            *.gz)        gunzip $1       ;;
+            *.tar)       tar xvf $1      ;;
+            *.tbz2)      tar xvjf $1     ;;
+            *.tgz)       tar xvzf $1     ;;
+            *.zip)       unzip $1        ;;
+            *.Z)         uncompress $1   ;;
+            *.7z)        7z x $1         ;;
+            *)           echo "'$1' cannot be extracted via >extract<" ;;
+        esac
+    else
+        echo "'$1' is not a valid file!"
+    fi
+}
+
+function dfbar()        # Pretty-print of 'df' output.
+{                       # Inspired by 'dfc' utility.
+    for fs ; do
+
+        if [ ! -d $fs ]
+        then
+          echo -e $fs" :No such file or directory" ; continue
+        fi
+
+        local info=( $(command df -P $fs | awk 'END{ print $2,$3,$5 }') )
+        local free=( $(command df -Pkh $fs | awk 'END{ print $4 }') )
+        local nbstars=$(( 20 * ${info[1]} / ${info[0]} ))
+        local out="["
+        for ((j=0;j<20;j++)); do
+            [ ${j} -lt ${nbstars} ] && out=$out"*" || out=$out"-"
+        done
+        out=${info[2]}" "$out"] ("$free" free on "$fs")"
+        echo -e $out
+    done
+}
 
 prompt () {
-	_ERR=$?
-	_UID=$(id -u)
-	_JOB=$(jobs | wc -l)
+    _ERR=$?
+    _UID=$(id -u)
+    _JOB=$(jobs | wc -l)
 
-	[ $_UID -eq 0 ] && echo -n '━' || echo -n -e '─'
-	[ $_JOB -ne 0 ] && echo -n '!' || echo -n -e '─'
-	[ $_ERR -ne 0 ] && echo -n '!' || echo -n -e '─'
+    [ $_UID -eq 0 ] && echo -n '━' || echo -n -e '─'
+    [ $_JOB -ne 0 ] && echo -n '!' || echo -n -e '─'
+    [ $_ERR -ne 0 ] && echo -n '!' || echo -n -e '─'
 }
 
 PS1='$(prompt) '
