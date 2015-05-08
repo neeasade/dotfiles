@@ -3,10 +3,13 @@ Neeasade's dotfiles
 
 ##Information
 *   WM - bspwm
-*   Panel - [lemonbar fork](http://github.com/neeasade/bar) with slants and xft support
+*   Panel - lemonbar branch with xft support, from the lemonbar-xft-git aur package
 *   term emulator - urxvt
 *   font - Dejavu Sans Mono
+
 [imgur album](http://imgur.com/a/SkD5f)
+[Multihead use](http://a.pomf.se/poderp.png)
+[Webm](http://a.pomf.se/tzjbxu.webm)
 ![Screenshot](http://i.imgur.com/8tTVtjx.png)
 
 ##TODO(ricing roadmap)
@@ -14,9 +17,7 @@ Neeasade's dotfiles
 *   nvim
 *   gtk themes (with matching colors)
 *   more bspwm features and keybinds(cut and paste a desktop)
-*   fancier bar scripts(clickable applets for various things, addition of font awesome icons)
 *   clean tmux.conf, sync keybinds for copy/paste/other with urxvt (passthrough to term)
-*   into either bashrc or switch to zsh and into zshrc.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ##Multihead
@@ -30,7 +31,7 @@ The programs used here are located in the depends.txt file. You could install th
 ```
 for i in $(cat depends.txt); do <your package manager install command here> $i; done
 ```
-this is independent per target directory. This list has only been tested with Arch Linux and there are a number of packages that live in the Aur. Also, there are configuration files for programs that are not in te depends.txt with the idea that you only need to install what's used(this primarily affects WM choice, bspwm is installed but i3 and openbox are not in that list, even though there are configuration files for them.)
+this is independent per target directory. This list has only been tested with Arch Linux and there are a number of packages that live in the AUR. I have tried to include only packages that make up most of the WM experience(for example ranger and qutebrowser are not in the depends.txt)
 There is a script at the top level named setup.sh - this will populate any git submodules(eg for vim/tmux/other package managers) and also install everything in the depends.txt files.
 
 ##Management
