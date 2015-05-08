@@ -17,7 +17,7 @@ getXresColor() {
 
 # Visual options
 BW=5        #border width
-WG=12       #window gap
+WG=8       #window gap
 bspc config border_width $BW
 bspc config split_ratio              0.6
 
