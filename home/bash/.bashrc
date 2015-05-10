@@ -5,15 +5,13 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-alias ls='ls --color=auto'
-alias paste="curl -F 'sprunge=<-' http://sprunge.us"
-
+# Panel scripts.
 PATH=$PATH:~/bin:~/.config/bar
 
-#add the dir for gem execs to path:
+# add the dir for gem execs to path:
 PATH=$PATH:/home/$USER/.gem/ruby/2.2.0/bin
 
-#auto-complete for pacman when using sudo:
+# auto-complete for pacman when using sudo:
 complete -cf sudo
 
 function swap() {
@@ -83,5 +81,13 @@ prompt () {
 }
 
 PS1='$(prompt) '
+
+# aliases
+alias ls='ls --color=auto'
+alias paste="curl -F 'sprunge=<-' http://sprunge.us"
+alias grep="grep --color=auto"
+alias pacman="pacman --color=always"
+alias make="clear && make"
+alias shot="scrot ~/Screenshots/`date +%y-%m-%d-%H:%M:%S`.png"
 
 

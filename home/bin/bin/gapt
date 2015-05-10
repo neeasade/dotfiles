@@ -1,9 +1,6 @@
 #toggle gaps on and off
 
-if [[ $(bspc config window_gap) -le 0 ]]; then
-    export BSPWM_GAPS=true
-else
-    export BSPWM_GAPS=false
-fi
+[[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=true \
+                                      || export BSPWM_GAPS=false
 
 ~/.config/bspwm/bspwmrc

@@ -19,7 +19,7 @@ ALWAYS_TAB=true;
 # Maxium window title length
 maxWinNameLen=30;
 # The delimiter to separate window sections
-WIN_DELIM=">>";
+WIN_DELIM="\\";
 # The delimiter to separate the window name from the window in a window section.
 WIN_ID_DELIM="//";
 # The interval, in seconds, to check if an update is needed and then call update()

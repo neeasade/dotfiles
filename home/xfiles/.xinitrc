@@ -5,10 +5,10 @@
 pcmanfm -d &
 
 #load Xresources
-xrdb -load  /home/$USER/.Xresources &
+xrdb -load  /home/$USER/.Xresources
 
 #Set background to same color as Xresources background
-hsetroot -solid "$(xrdb -query | grep  "background" | grep -oE "#[a-zA-Z0-9]{6}")"
+hsetroot -solid "$(xrdb -query | grep  "background" | grep -oE "#[a-zA-Z0-9]{6}")" &
 
 #urxvt daemon
 urxvtd &
