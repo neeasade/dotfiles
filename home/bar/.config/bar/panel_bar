@@ -19,7 +19,7 @@ while read -r line ; do
     ;;
     T*)
         title="%{F$pRest}"
-        IFS='>>'
+        IFS='\'
         set -- ${line#?}
         while [ $# -gt 0 ] ; do
             item=$1
