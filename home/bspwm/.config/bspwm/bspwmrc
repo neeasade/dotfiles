@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 #Toggle a default gap setting if it's not already set.
 if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
 
@@ -17,7 +16,7 @@ getXresColor() {
 
 # Visual options
 BW=5        #border width
-WG=8       #window gap
+WG=20       #window gap
 bspc config border_width $BW
 bspc config split_ratio              0.6
 
@@ -43,6 +42,10 @@ bspc config auto_cancel true
 bspc rule -a mplayer2 floating=on
 bspc rule -a gimp floating=on
 bspc rule -a Screenkey manage=off
+
+bspc config left_padding 0
+bspc config right_padding 0
+bspc config bottom_padding 0
 
 # set window spacing according to gap settings:
 if [ "$BSPWM_GAPS" = true ]; then
@@ -74,11 +77,9 @@ if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
 i=1
 
 for monitor in $desktops; do
-    if [ "$IsInitialRun" = true ]; then
-        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii}
-    else
+    [ "$IsInitialRun" = true ] && \
+        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii} || \
         bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
-    fi
     let i++
 done
 

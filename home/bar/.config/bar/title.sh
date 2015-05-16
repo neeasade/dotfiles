@@ -29,14 +29,6 @@ update() {
     # Current monitor's shown desktop
     CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
 
-    # get tiling status of focused desktop on that monitor
-    CUR_MON_TILED=$( bspc query -d $CUR_MON_DESK -T | grep "T - \*");
-
-    if [ -z "$CUR_MON_TILED" ]; then CUR_MON_TILED=false; else CUR_MON_TILED=true; fi;
-
-    # Is this the currently active monitor?
-    if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then IS_ACT_MON=true; else IS_ACT_MON=false; fi;
-
     # define an 'active' window source to use for this desktop based on whether or not it's the focused monitor.
     if [ "$IS_ACT_MON" = true ]; then
         WIN_SOURCE="$(bspc query -W -w focused)";
@@ -50,6 +42,13 @@ update() {
            winName $i;
         done
     else
+        # get tiling status of focused desktop on that monitor
+        CUR_MON_TILED=$( bspc query -d $CUR_MON_DESK -T | grep "T - \*");
+
+        if [ -z "$CUR_MON_TILED" ]; then CUR_MON_TILED=false; else CUR_MON_TILED=true; fi;
+
+        # Is this the currently active monitor?
+        if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then IS_ACT_MON=true; else IS_ACT_MON=false; fi;
         if [ "$CUR_MON_TILED" = true ]; then
             winName $WIN_SOURCE;
         elif [ "$CUR_MON_TILED" = false ]; then

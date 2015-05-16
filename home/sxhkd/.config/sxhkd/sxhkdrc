@@ -116,8 +116,8 @@ super + shift + q
 super + {_,shift} + semicolon
     bspc desktop -R {90,270}
 
-super + slash
-    gapt
+super + {_,shift} + slash
+    ~/bin/{gapt,panelt}
 #
 # wm independent hotkeys
 #
