@@ -1,6 +1,10 @@
 #!/bin/sh
 # panel
 # Start a panel on every monitor
+# This script makes some assumptions if using multihead setup:
+# All monitors line up across vertically - if not, lemonbars -g flag can do some funky things.
+# Monitors names are arranged left to right, named in increasing int value(1 2 3..)
+# TODO: make this more flexible?
 
 # Read the panel profile for display settings
 . profile

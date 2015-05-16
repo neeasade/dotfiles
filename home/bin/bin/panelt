@@ -1,0 +1,20 @@
+#!/bin/sh
+# Toggle the panel on/off, and adjust top_padding dependent on if currently gapped.
+# Accounts for both normal and overlapped window borders in bspwm
+
+winGap=$(bspc config window_gap)                            # Current window gap value
+padValue=$winGap                                            # Amount to pad from top
+[ $winGap -ge 1 ] && padValue=0                             # gaps
+[[ $padValue -le -1 ]] && padValue=$(expr -1 \* $padValue)  # no gaps
+
+if [[ $(pgrep -cx panel) -eq 0 ]]; then
+    # There's no panel, enabling
+    [[ $winGap -le 0 ]] && export BSPWM_GAPS=false
+    . ~/.config/bar/profile
+    bspc config top_padding $(expr $PANEL_HEIGHT + $PANEL_GAP + $padValue)
+    ~/.config/bar/panel &
+else
+    # kill the bar and change top padding.
+    killall panel
+    bspc config top_padding $padValue
+fi
