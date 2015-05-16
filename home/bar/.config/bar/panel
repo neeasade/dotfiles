@@ -2,7 +2,7 @@
 # panel
 # Start a panel on every monitor
 # This script makes some assumptions if using multihead setup:
-# All monitors line up across vertically - if not, lemonbars -g flag can do some funky things.
+# The leftmost monitor is the tallest(reaches the highest in xroot window) - lemonbars -g flag acts differently if this is not the case
 # Monitors names are arranged left to right, named in increasing int value(1 2 3..)
 # TODO: make this more flexible?
 
@@ -42,7 +42,7 @@ for i in $num_mon; do
     # in a more natural manner, but can be a little more processor intensive.
     # Substitute the xtitle command here if you just want the current active window
     # name to be displayed.
-    #xtitle -t 80 -sf 'T>>A%s//' > "$PANEL_FIFO$i" &
+    #xtitle -t 80 -sf 'T\\A%s//' > "$PANEL_FIFO$i" &
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh outputs system information.
