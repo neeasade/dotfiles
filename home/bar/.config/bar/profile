@@ -9,7 +9,7 @@ getXresColor() {
 
 # Panel display settings
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=22
+PANEL_HEIGHT=30
 PANEL_FONT_FAMILY="Dejavu Sans-8,FontAwesome-8"
 PANEL_GAP=6
 # Spacing used to separate information on the bar. Can serve as slant angle if using bar slant fork(github.com/neeasade/bar)
