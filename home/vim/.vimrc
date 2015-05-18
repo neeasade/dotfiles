@@ -81,7 +81,7 @@ set foldcolumn=0
 
 " Look and Feel settings
 set background=dark
-colorscheme jellybeans
+colorscheme base16-ashes
 set t_Co=16
 set encoding=utf-8
 
