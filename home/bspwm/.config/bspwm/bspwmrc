@@ -3,30 +3,18 @@
 #Toggle a default gap setting if it's not already set.
 if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
 
-#Add panel scripts to path:
-export PATH=$PATH:~/.config/bar
+#Get settings
+. ~/.bspwm_theme
 
-#Get panel variables
-. ~/.config/bar/profile
+bspc config border_width $b_border_width
+bspc config split_ratio  $b_split_ratio
 
-#get the value of a color from the current xrdb load configuration
-getXresColor() {
-    echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-zA-Z0-9]{6}" )";
-}
-
-# Visual options
-BW=8        #border width
-WG=20       #window gap
-bspc config border_width $BW
-bspc config split_ratio              0.6
-
-#colors
-bspc config normal_border_color "$(getXresColor color0)"
-bspc config active_border_color "$(getXresColor color8)"
-bspc config focused_border_color "$(getXresColor foreground)"
-bspc config presel_border_color "$(getXresColor color8)"
-bspc config urgent_border_color "#FFFF00"
-bspc config focused_locked_border_color "#FFFFFF"
+bspc config normal_border_color "$b_normal_border_color"
+bspc config active_border_color "$b_active_border_color"
+bspc config focused_border_color "$b_focused_border_color"
+bspc config presel_border_color "$b_presel_border_color"
+bspc config urgent_border_color "$b_urgent_border_color"
+bspc config focused_locked_border_color "$b_focused_locked_border_color"
 
 #focus options:
 bspc config focus_follows_pointer true
@@ -49,23 +37,23 @@ bspc config bottom_padding 0
 
 # set window spacing according to gap settings:
 if [ "$BSPWM_GAPS" = true ]; then
-    bspc config window_gap         $WG
+    bspc config window_gap         $b_window_gap
     bspc config top_padding        $(expr $PANEL_HEIGHT + $PANEL_GAP)
     bspc config borderless_monocle false
 else
     bspc config window_gap         0
-    bspc config top_padding        $(expr $PANEL_HEIGHT + $BW)
+    bspc config top_padding        $(expr $PANEL_HEIGHT + $b_border_width)
     bspc config borderless_monocle  true
 
     #overlapping borders
-    bspc config window_gap -$BW
+    bspc config window_gap -$b_border_width
     for side in right bottom left ; do
-        bspc config ${side}_padding $BW
+        bspc config ${side}_padding $b_border_width
     done
 fi
 
 killall panel
-~/.config/bar/panel &
+~/.config/bspwm/panel/panel &
 
 desktops=$(bspc query -M)
 
@@ -83,4 +71,4 @@ for monitor in $desktops; do
     let i++
 done
 
-[ "$IsInitialRun" = true ] && ~/.config/bspwm/.autostart.sh
+[ "$IsInitialRun" = true ] && ~/.config/bspwm/autostart.sh

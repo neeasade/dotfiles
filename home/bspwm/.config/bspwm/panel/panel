@@ -6,8 +6,11 @@
 # Monitors names are arranged left to right, named in increasing int value(1 2 3..)
 # TODO: make this more flexible?
 
-# Read the panel profile for display settings
-. profile
+# Read the theme for display settings
+. ~/.bspwm_theme
+
+# Add panel scripts to path
+export PATH=$PATH:~/.config/bspwm/panel
 
 # Kill the panel if it is currently running
 if [ $(pgrep -cx panel) -gt 1 ] ; then
