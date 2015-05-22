@@ -10,9 +10,9 @@ padValue=$winGap                                            # Amount to pad from
 if [[ $(pgrep -cx panel) -eq 0 ]]; then
     # There's no panel, enabling
     [[ $winGap -le 0 ]] && export BSPWM_GAPS=false
-    . ~/.config/bar/profile
+    . ~/.bspwm_theme
     bspc config top_padding $(expr $PANEL_HEIGHT + $PANEL_GAP + $padValue)
-    ~/.config/bar/panel &
+    ~/.config/bspwm/panel/panel &
 else
     # kill the bar and change top padding.
     killall panel
