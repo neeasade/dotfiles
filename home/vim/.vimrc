@@ -20,7 +20,7 @@
 
 " airline specific setting:
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'base16'
+let g:airline_theme = 'simple'
 
 " set title and allow hidden buffers
 set title
@@ -81,8 +81,8 @@ set foldcolumn=0
 
 " Look and Feel settings
 set background=dark
-colorscheme base16-ashes
-set t_Co=16
+colorscheme mustang
+set t_Co=256
 set encoding=utf-8
 
 " display tabs, not displaying trailing spaces because set to remove on write"
