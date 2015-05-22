@@ -15,5 +15,5 @@ sxhkd
 tmux
 ttf-dejavu-sans-mono-powerline-git
 ttf-font-awesome
-vim
+neovim-git
 xtitle-git
