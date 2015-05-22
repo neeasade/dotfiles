@@ -1,22 +1,8 @@
 
-" Vundle specific settings and plugins:
-    set nocompatible              " be iMproved, required
-    filetype off                  " required
-
-    " set the runtime path to include Vundle and initialize
-    set rtp+=~/.vim/bundle/Vundle.vim
-    call vundle#begin()
-
-    " let Vundle manage Vundle, required
-    Plugin 'gmarik/Vundle.vim'
-
-    " personal plugins:
-    Plugin 'bling/vim-airline'
-
-    " All of your Plugins must be added before the following line
-    call vundle#end()            " required
-    filetype plugin indent on    " required
-" End of vundle specific settings and plugins
+" Plugins
+call plug#begin('~/.vim/plugged')
+    Plug 'bling/vim-airline'      " Status line
+call plug#end()
 
 " airline specific setting:
 let g:airline_powerline_fonts = 1
