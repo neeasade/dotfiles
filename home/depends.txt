@@ -3,6 +3,7 @@ bash
 bspwm
 compton
 dmenu2
+gtk-theme-flatstudio
 hsetroot
 i3lock
 imagemagick
@@ -10,10 +11,12 @@ lemonbar-xft-git
 mpc
 mpd
 ncmpcpp
+neovim-git
+numix-icon-theme-git
 rxvt-unicode
 sxhkd
 tmux
+ttf-dejavu
 ttf-dejavu-sans-mono-powerline-git
 ttf-font-awesome
-neovim-git
 xtitle-git

@@ -92,6 +92,7 @@ prompt () {
 PS1='$(prompt) '
 
 # aliases
+alias vim='nvim'
 alias ls='ls --color=auto'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 alias grep="grep --color=auto"

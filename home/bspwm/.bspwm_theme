@@ -31,8 +31,8 @@ PANEL_GAP=6
 pSLANT=3
 
 # Panel colors
-pBGS1="%{B#ff$(getXresColor color0)}"   # Alternating bg color 1
-pBGS2="%{B#ff$(getXresColor color0)}"   # Alternating bg color 2
+pBGS1="%{B#ff$(getXresColor background)}"   # Alternating bg color 1
+pBGS2="%{B#ff$(getXresColor background)}"   # Alternating bg color 2
 pFG="%{F#ff$(getXresColor foreground)}" # Default foreground
 pBG=$pBGS1                              # Default background
 pTAB=$pBG                               # Unfocused title tab background
@@ -45,8 +45,8 @@ pActive=#ff$(getXresColor color15)
 pRest=#ff$(getXresColor color6)
 
 # Workspace variables
-DO=$(echo -e '\uf135')  # occupied desktop
-DF=$(echo -e '\uf005')  # free desktop
+DO=$(echo -e '\uf111')  # occupied desktop
+DF=$(echo -e '\uf10c')  # free desktop
 DT=$(echo -e '\uf009')  # tiling mode
 DM=$(echo -e '\uf0c9')  # monocle mode
 
