@@ -1,12 +1,24 @@
 
 " Plugins
 call plug#begin('~/.vim/plugged')
-    Plug 'bling/vim-airline'      " Status line
+    Plug 'bling/vim-airline'                    " Status line
+    Plug 'Valloric/YouCompleteMe'               " Autocomplete
+    Plug 'jeffkreeftmeijer/vim-numbertoggle'    " Auto relative number toggling
+    Plug 'airblade/vim-gitgutter'               " Live git changes
+    Plug 'tpope/vim-fugitive'                   " Complement git in vim
+    Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
 call plug#end()
 
 " airline specific setting:
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'simple'
+let g:airline#extensions#tabline#enabled = 1
+
+" Tab Options"
+set shiftwidth=4
+set tabstop=4
+set expandtab "Inter spaces instead of tabs.
+set smarttab
 
 " set title and allow hidden buffers
 set title
@@ -96,12 +108,6 @@ set linebreak " It maintains the whole words when wrapping
 set autoindent
 set cindent
 set smartindent
-
-" Tab Options"
-set shiftwidth=4
-set tabstop=4
-set expandtab "Inter spaces instead of tabs.
-set smarttab
 
 " Leader key Mappings
 " Clear search highlighting
