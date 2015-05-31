@@ -3,11 +3,9 @@
 #
 
 # define a standard background and foreground variable.
-if [ ! -z $DISPLAY ]; then
-    export defaultBG="$( xrdb -query | grep background | grep -oE "#[a-zA-Z0-9]{6}")";
-    export defaultFG="$( xrdb -query | grep foreground | grep -oE "#[a-zA-Z0-9]{6}")";
-    export activeFG="$( xrdb -query | grep color15 | grep -oE "#[a-zA-Z0-9]{6}")";
-fi
+export defaultBG="$( cat ~/.Xresources | grep background | grep -oE "#[a-zA-Z0-9]{6}")";
+export defaultFG="$( cat ~/.Xresources | grep foreground | grep -oE "#[a-zA-Z0-9]{6}")";
+export activeFG="$( cat ~/.Xresources | grep color15 | grep -oE "#[a-zA-Z0-9]{6}")";
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
