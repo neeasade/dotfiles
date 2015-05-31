@@ -33,11 +33,11 @@ pSLANT=3
 # Panel colors
 pBGS1="%{B#ff$(getXresColor background)}"   # Alternating bg color 1
 pBGS2="%{B#ff$(getXresColor background)}"   # Alternating bg color 2
-pFG="%{F#ff$(getXresColor foreground)}" # Default foreground
-pBG=$pBGS1                              # Default background
-pTAB=$pBG                               # Unfocused title tab background
-cIcon="%{F$pRest}"                      # Color of icons next to system information
-cContent="%{F#ffbbbbbb}"                # Color of content next to information icons
+pFG="%{F#ff$(getXresColor foreground)}"     # Default foreground
+pBG=$pBGS1                                  # Default background
+pTAB=$pBG                                   # Unfocused title tab background
+cIcon="%{F$pRest}"                          # Color of icons next to system information
+cContent="%{F#ffbbbbbb}"                    # Color of content next to information icons
 
 # Workspace colors
 pUrgent=#ffffff00
