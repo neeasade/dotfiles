@@ -25,6 +25,14 @@ rm /tmp/$(ls /tmp | grep bspwm)
 #make the default x cursor not an x :)
 xsetroot -cursor_name left_ptr &
 
+# dunst
+. ~/.bspwm_theme
+dunst -geometry 200x200-10-10 \
+    -fn "$DUNST_FONT" \
+    -lb "$defaultBG" -lf "$defaultFG" \
+    -nb "$defaultBG" -nf "$defaultFG" \
+    -cb "$defaultBG" -cf "#ffff00" &
+
 #set shell that sxhkd uses to execute commands:
 export SXHKD_SHELL=sh
 

@@ -2,7 +2,6 @@
 " Plugins
 call plug#begin('~/.vim/plugged')
     Plug 'bling/vim-airline'                    " Status line
-    Plug 'Valloric/YouCompleteMe'               " Autocomplete
     Plug 'jeffkreeftmeijer/vim-numbertoggle'    " Auto relative number toggling
     Plug 'airblade/vim-gitgutter'               " Live git changes
     Plug 'tpope/vim-fugitive'                   " Complement git in vim

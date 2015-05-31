@@ -71,3 +71,6 @@ export pBGS1 pBGS2 pFG pBG pTAB pSLANT cIcon cContent
 export pUrgent pActive pRest
 export DO DF DT DM
 export barInfo
+
+# dunst variables
+export DUNST_FONT="Dejavu Sans Mono 10"
