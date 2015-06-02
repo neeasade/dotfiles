@@ -4,7 +4,6 @@ bspwm
 compton
 dmenu2
 gtk-theme-flatstudio
-hsetroot
 i3lock
 imagemagick
 lemonbar-xft-git
@@ -13,8 +12,8 @@ mpd
 ncmpcpp
 neovim-git
 numix-icon-theme-git
-rxvt-unicode
 sxhkd
+termite
 tmux
 ttf-dejavu
 ttf-dejavu-sans-mono-powerline-git
