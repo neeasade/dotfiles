@@ -12,9 +12,8 @@ Neeasade's dotfiles
 
 ##TODO(ricing roadmap)
 *   add more root dotfiles
-*   gtk themes (with matching colors)
 *   more bspwm features and keybinds(cut and paste a desktop)
-*   clean tmux.conf, sync keybinds for copy/paste/other with urxvt (passthrough to term)
+*   structure things to better support multiple themes, and then add a toggle for them on the panel.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ##Multihead

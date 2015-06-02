@@ -1,9 +1,9 @@
 #!/bin/bash
 # visual options for bspwm and lemonbar scripts to reference
 
-# get the value of a color from the current xrdb load configuration
-getXresColor() {
-    echo -n "$( xrdb -query | grep  "\*.$1:" | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
+# get the value of a color from the current terminal color configuration
+getTermColor() {
+    echo -n "$( cat ~/.config/termite/config | grep  "$1" | grep -oE "#[a-zA-Z0-9]{6}" | head -n 1 | cut -c 2- )";
 }
 
 # BSPWM variables
@@ -12,10 +12,10 @@ getXresColor() {
 b_border_width=8
 b_window_gap=20
 b_split_ratio=0.6
-b_normal_border_color="#$(getXresColor color0)"
-b_active_border_color="#$(getXresColor color8)"
-b_focused_border_color="#$(getXresColor foreground)"
-b_presel_border_color="#$(getXresColor color8)"
+b_normal_border_color="#$(getTermColor color0)"
+b_active_border_color="#$(getTermColor color8)"
+b_focused_border_color="#$(getTermColor foreground)"
+b_presel_border_color="#$(getTermColor color8)"
 b_urgent_border_color="#FFFF00"
 b_focused_locked_border_color="#FFFFFF"
 
@@ -31,9 +31,9 @@ PANEL_GAP=6
 pSLANT=3
 
 # Panel colors
-pBGS1="%{B#ff$(getXresColor background)}"   # Alternating bg color 1
-pBGS2="%{B#ff$(getXresColor background)}"   # Alternating bg color 2
-pFG="%{F#ff$(getXresColor foreground)}"     # Default foreground
+pBGS1="%{B#ff$(getTermColor background)}"   # Alternating bg color 1
+pBGS2="%{B#ff$(getTermColor background)}"   # Alternating bg color 2
+pFG="%{F#ff$(getTermColor foreground)}"     # Default foreground
 pBG=$pBGS1                                  # Default background
 pTAB=$pBG                                   # Unfocused title tab background
 cIcon="%{F$pRest}"                          # Color of icons next to system information
@@ -41,8 +41,8 @@ cContent="%{F#ffbbbbbb}"                    # Color of content next to informati
 
 # Workspace colors
 pUrgent=#ffffff00
-pActive=#ff$(getXresColor color15)
-pRest=#ff$(getXresColor color6)
+pActive=#ff$(getTermColor color15)
+pRest=#ff$(getTermColor color6)
 
 # Workspace variables
 DO=$(echo -e '\uf111')  # occupied desktop

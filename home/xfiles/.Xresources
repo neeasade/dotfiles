@@ -1,9 +1,3 @@
-URxvt.saveLines:32767
-URxvt.scrollBar: false
-
-urxvt*font: xft:Dejavu Sans Mono for Powerline:pixelsize=12,style=regular
-urxvt*boldFont: xft:Dejavu Sans Mono for Powerline:pixelsize=12,style=regular
-
 Xft.antialias: 1
 Xft.autohint: 0
 Xft.dpi: 96
@@ -11,47 +5,3 @@ Xft.hinting: 1
 Xft.hintstyle: hintfull
 Xft.lcdfilter: lcddefault
 Xft.rgba: rgb
-
-! uncomment the below to fix really wide spacing with truetype fonts
-URxvt.letterSpace: -1
-
-URxvt.perl-ext-common:      default,clipboard,url-select,keyboard-select
-URxvt.url-select.launcher:  chromium
-URxvt.url-select.underline: true
-URxvt.keysym.M-u:           perl:url-select:select_next
-URxvt.keysym.M-Escape:      perl:keyboard-select:activate
-URxvt.keysym.M-s:           perl:keyboard-select:search
-URxvt.urgentOnBell:         true
-URxvt.internalBorder:         20
-
-URxvt.iso14755 : false
-URxvt.keysym.C-C: perl:clipboard:copy
-URxvt.keysym.C-V: perl:clipboard:paste
-
-!black
-*.color0: #222222
-*.color8: #666666
-!red
-*.color1: #E84F4F
-*.color9: #D23D3D
-!green
-*.color2: #B7CE42
-*.color10: #BDE077
-!yellow
-*.color3: #FEA63C
-*.color11: #FFE863
-!blue
-*.color4: #66AABB
-*.color12: #AACCBB
-!magenta
-*.color5: #B7416E
-*.color13: #E16A98
-!cyan
-*.color6: #6D878D
-*.color14: #42717B
-!white
-*.color7: #DDDDDD
-*.color15: #CCCCCC
-*.background: #111111
-*.foreground: #FFFFFF
-
