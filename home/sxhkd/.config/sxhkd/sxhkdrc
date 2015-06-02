@@ -131,7 +131,7 @@ super + e
     pcmanfm
 
 super + Return
-    urxvtc
+    termite
 
 super + space
     ~/bin/dmenu_run
