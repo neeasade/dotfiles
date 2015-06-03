@@ -78,7 +78,10 @@ set foldcolumn=0
 
 " Look and Feel settings
 set background=dark
-colorscheme mustang
+let base16colorspace=256
+let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
+execute 'colorscheme ' vim_colors
+
 set t_Co=256
 set encoding=utf-8
 
