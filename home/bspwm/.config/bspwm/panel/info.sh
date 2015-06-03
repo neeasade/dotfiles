@@ -3,11 +3,6 @@
 # Output information with formatted background colors in lemonbar format
 # This script can take arguments for what bar information to display(meant to be the names of the functions)
 
-
-# Alternating separators for display items
-delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-
 # clickable area aliases
 AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
