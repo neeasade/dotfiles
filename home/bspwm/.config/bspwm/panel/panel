@@ -13,11 +13,11 @@
 export PATH=$PATH:~/.config/bspwm/panel
 
 # Kill the panel if it is currently running
-if [ $(pgrep -cx panel) -gt 1 ] ; then
+if [ $(pgrep -cx lemonbar) -gt 1 ] ; then
 	printf "%s\n" "The panel is already running."
-    while [[ $(pgrep -c "panel") != 0 ]]
+    while [[ $(pgrep -c "lemonbar") != 0 ]]
     do
-        pkill -n -9 "panel"
+        pkill -n -9 "lemonbar"
     done
 fi
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
@@ -69,4 +69,3 @@ for i in $num_mon; do
 done
 
 wait
-

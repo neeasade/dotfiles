@@ -6,6 +6,8 @@ getTermColor() {
     echo -n "$( cat ~/.config/termite/themes/${TERMITE_CONFIG}.config | grep  "$1" | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
 }
 
+THEME_NAME=jellybean
+
 # vim theme name
 export VIM_COLORS=jellybean
 
