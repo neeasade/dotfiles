@@ -15,13 +15,13 @@ export BG_COMMAND='feh --bg-fill /home/neeasade/images/dunes.jpg'
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
 # bspwm
-b_border_width=8
+b_border_width=3
 b_window_gap=20
 b_split_ratio=0.6
 
 # panel
 PANEL_FONT_MAIN="Dejavu Sans Mono for Powerline-8"
-PANEL_HEIGHT=14
+PANEL_HEIGHT=16
 PANEL_GAP=6
 cContent="%{F#ffbbbbbb}"                    # Color of content next to information icons
 
@@ -44,3 +44,6 @@ export delim2=" ${pFGS2}${pBGS2} ${pFG} "
 # Workspace variables
 DO=$(echo -e '\uf111')  # occupied desktop
 DF=$(echo -e '\uf10c')  # free desktop
+
+# right side of workspace indicators
+export pWSRight="${pBG}${pFGS2}"
