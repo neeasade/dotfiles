@@ -2,8 +2,6 @@
 # pyonium theme
 # named so for the redditor who I got the term colors used here from.
 
-# get the value of a color from the current terminal color configuration
-
 THEME_NAME=pyonium
 
 # vim theme name
