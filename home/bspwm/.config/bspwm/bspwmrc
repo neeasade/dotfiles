@@ -45,7 +45,7 @@ else
     bspc config top_padding        $(expr $PANEL_HEIGHT + $b_border_width)
     bspc config borderless_monocle  true
 
-    #overlapping borders
+    # overlapping borders
     bspc config window_gap -$b_border_width
     for side in right bottom left ; do
         bspc config ${side}_padding $b_border_width
@@ -57,18 +57,24 @@ killall panel
 
 desktops=$(bspc query -M)
 
-#determine if this is initial run by seeing if monitors have been renamed to numbers yet
+# determine if this is initial run by seeing if monitors have been renamed to numbers yet
 echo "$desktops" | grep -q "[a-zA-Z]"
 if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
 
-#rename all the monitors to numbers and create 5 workspaces on each
+# rename all the monitors to numbers and create 5 workspaces on each
 i=1
 
+# create desktops or reset desktop configuration if it already exists.
 for monitor in $desktops; do
     [ "$IsInitialRun" = true ] && \
         bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii} || \
         bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
     let i++
+done
+
+# set all windows to the new border width:
+for window in $(bspc query -W); do
+    bspc config -w $window border_width $b_border_width
 done
 
 [ "$IsInitialRun" = true ] && ~/.config/bspwm/autostart.sh

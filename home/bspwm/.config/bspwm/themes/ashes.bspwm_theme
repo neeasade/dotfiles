@@ -1,5 +1,5 @@
 #!/bin/bash
-# visual options for bspwm and lemonbar scripts to reference
+# ashed theme(from base16)
 
 # get the value of a color from the current terminal color configuration
 getTermColor() {
@@ -7,15 +7,18 @@ getTermColor() {
 }
 
 # vim theme name
-export VIM_COLORS=mustang
+export VIM_COLORS=base16-ashes
 
 # termite theme name
-export TERMITE_CONFIG=atelierseadark
+export TERMITE_CONFIG=ashes
+
+# Background command
+export BG_COMMAND='feh --bg-fill /home/neeasade/images/forest.jpg'
 
 # BSPWM variables
 # naming convention is b_<config_option>
-b_border_width=8
-b_window_gap=20
+b_border_width=3
+b_window_gap=10
 b_split_ratio=0.6
 b_normal_border_color="#$(getTermColor color0)"
 b_active_border_color="#$(getTermColor color8)"
@@ -25,12 +28,11 @@ b_urgent_border_color="#FFFF00"
 b_focused_locked_border_color="#FFFFFF"
 
 
-
 # Panel variables
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=30
 PANEL_FONT_FAMILY="Dejavu Sans-8,FontAwesome-8"
-PANEL_GAP=6
+PANEL_GAP=4
 
 # Spacing used to separate information on the bar. Can serve as slant angle if using bar slant fork(github.com/neeasade/bar)
 pSLANT=3
@@ -50,8 +52,8 @@ pActive=#ff$(getTermColor color15)
 pRest=#ff$(getTermColor color6)
 
 # Workspace variables
-DO=$(echo -e '\uf111')  # occupied desktop
-DF=$(echo -e '\uf10c')  # free desktop
+DO=$(echo -e '\uf0c8')  # occupied desktop
+DF=$(echo -e '\uf096')  # free desktop
 DT=$(echo -e '\uf009')  # tiling mode
 DM=$(echo -e '\uf0c9')  # monocle mode
 
@@ -63,13 +65,11 @@ barInfo=""
 # Customize options on different computers by hostname:
 if [ "$HOSTNAME" = "home27" ]; then
     barInfo1="mpd "
-    barInfo2="volume weather mail yaourtUpdates"
-    barInfo3="network clock"
 fi
 
 [ "$HOSTNAME" = "home2" ] && barInfo="battery network volume clock"
 
-# Export variables and set gap if needed
+# Export panel variables and set gap if needed
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
 export pBGS1 pBGS2 pFG pBG pTAB pSLANT cIcon cContent
