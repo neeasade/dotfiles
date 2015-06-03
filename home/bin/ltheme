@@ -1,0 +1,31 @@
+#!/bin/sh
+# Load a bspwm theme based on argument
+rm ~/.bspwm_theme
+ln -s ~/.config/bspwm/themes/${1}.bspwm_theme ~/.bspwm_theme
+
+. ~/.bspwm_theme
+
+rm ~/.config/termite/config
+ln -s ~/.config/termite/themes/${TERMITE_CONFIG}.config ~/.config/termite/config
+
+# tell all termites to reload their theme:
+killall -s USR1 termite &
+
+# set the background
+feh --bg-fill ~/.config/bspwm/themes/${1}.png &
+
+# Keep the current gap setting and reload bspwm
+
+
+# Kill dunst and restart with the right colors.
+killall dunst
+
+# reset $defaultBG and FG for dunst relaunch:
+defaultBG="$( cat ~/.config/termite/config | grep background | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}")";
+defaultFG="$( cat ~/.config/termite/config | grep foreground | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}")";
+
+dunst -geometry 200x200-10-10 \
+    -fn "$DUNST_FONT" \
+    -lb "$defaultBG" -lf "$defaultFG" \
+    -nb "$defaultBG" -nf "$defaultFG" \
+    -cb "$defaultBG" -cf "#ffff00" &
