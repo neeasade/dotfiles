@@ -2,13 +2,17 @@
 # ~/.bashrc
 #
 
-# define a standard background and foreground variable.
-export defaultBG="$( cat ~/.Xresources | grep background | grep -oE "#[a-zA-Z0-9]{6}")";
-export defaultFG="$( cat ~/.Xresources | grep foreground | grep -oE "#[a-zA-Z0-9]{6}")";
-export activeFG="$( cat ~/.Xresources | grep color15 | grep -oE "#[a-zA-Z0-9]{6}")";
-
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
+# define a standard background and foreground variable.
+getTermColor() {
+    echo -n "#$( cat ~/.config/termite/config | grep  "$1" | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
+}
+
+export defaultBG="#$(getTermColor background)"
+export defaultFG="#$(getTermColor foreground)"
+export activeFG="#$(getTermColor color15)"
 
 # Panel scripts.
 PATH=$PATH:~/bin:~/.config/bar
@@ -56,27 +60,6 @@ function extract()      # Handy Extract Program
     fi
 }
 
-function dfbar()        # Pretty-print of 'df' output.
-{                       # Inspired by 'dfc' utility.
-    for fs ; do
-
-        if [ ! -d $fs ]
-        then
-          echo -e $fs" :No such file or directory" ; continue
-        fi
-
-        local info=( $(command df -P $fs | awk 'END{ print $2,$3,$5 }') )
-        local free=( $(command df -Pkh $fs | awk 'END{ print $4 }') )
-        local nbstars=$(( 20 * ${info[1]} / ${info[0]} ))
-        local out="["
-        for ((j=0;j<20;j++)); do
-            [ ${j} -lt ${nbstars} ] && out=$out"*" || out=$out"-"
-        done
-        out=${info[2]}" "$out"] ("$free" free on "$fs")"
-        echo -e $out
-    done
-}
-
 prompt () {
     _ERR=$?
     _UID=$(id -u)
@@ -105,4 +88,4 @@ export EDITOR=VIM
 export BROWSER=chromium
 
 # autostartx if running on the first tty:
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
+if [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]]; then exec startx; fi

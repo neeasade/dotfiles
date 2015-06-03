@@ -13,7 +13,6 @@ Neeasade's dotfiles
 ##TODO(ricing roadmap)
 *   add more root dotfiles
 *   more bspwm features and keybinds(cut and paste a desktop)
-*   structure things to better support multiple themes, and then add a toggle for them on the panel.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ##Multihead
