@@ -14,6 +14,7 @@ export defaultBG="#$(getTermColor background)"
 export defaultFG="#$(getTermColor foreground)"
 export activeFG="#$(getTermColor color15)"
 
+
 # Panel scripts.
 PATH=$PATH:~/bin:~/.config/bar
 
