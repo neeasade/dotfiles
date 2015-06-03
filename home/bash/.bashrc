@@ -84,7 +84,7 @@ alias make="clear && make"
 alias shot="scrot ~/Screenshots/`date +%y-%m-%d-%H:%M:%S`.png"
 
 # programs
-export EDITOR=VIM
+export EDITOR=vim
 export BROWSER=chromium
 
 # autostartx if running on the first tty:
