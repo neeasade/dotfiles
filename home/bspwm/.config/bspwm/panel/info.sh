@@ -87,10 +87,24 @@ yaourtUpdates() {
     echo ${AC}$command${AB}$(icon f062)$updates${AE}
 }
 
+themeSwitch() {
+    # ghetto
+    cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
+    case $cur_theme in
+        ashes) next_theme=pyonium ;;
+        pyonium) next_theme=jellybean ;;
+        jellybean) next_theme=ashes ;;
+    esac
+    command="ltheme $next_theme"
+    icon f01e
+    echo ${AC}$command${AB}$cur_theme${AE}
+}
+
 #determine what to display based on arguments, unless there are none, then display all.
 while :; do
     buf="S"
     if [ -z "$*" ];then
+        buf="${buf}${delim}$(themeSwitch)"
         buf="${buf}${delim2}$(mpd)"
         buf="${buf}${delim}$(mail)"
         buf="${buf}${delim2}$(yaourtUpdates)"
