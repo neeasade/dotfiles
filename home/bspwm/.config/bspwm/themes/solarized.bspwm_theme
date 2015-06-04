@@ -1,0 +1,29 @@
+#!/bin/bash
+# solarized theme
+
+THEME_NAME=solarized
+
+# vim theme name
+VIM_COLORS=solarized
+
+# termite theme name
+TERMITE_CONFIG=solarized
+
+# Background command
+export BG_COMMAND='feh --bg-fill /home/neeasade/images/dunes.jpg'
+
+. ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
+
+# bspwm
+b_border_width=5
+b_window_gap=12
+b_split_ratio=0.6
+
+# panel
+PANEL_HEIGHT=30
+PANEL_GAP=6
+cContent="%{F#ffbbbbbb}"                    # Color of content next to information icons
+
+# Workspace variables
+DO=$(echo -e '\uf111')  # occupied desktop
+DF=$(echo -e '\uf10c')  # free desktop

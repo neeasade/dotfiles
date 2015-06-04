@@ -62,14 +62,16 @@ DM=$(echo -e '\uf0c9')  # monocle mode
 export delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
 export delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
 
-# options: mail yaourtUpdates mpd battery network volume weather clock
+# options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
 # it is possible to specify different information per monitor with barInfo<mon #>="options"
 barInfo=""
 
 # Customize options on different computers by hostname:
 if [ "$HOSTNAME" = "home27" ]; then
-    barInfo1="mpd "
+    barInfo1="yaourtUpdates weather"
+    barInfo2="themeSwitch network volume"
+    barInfo3="mpd clock"
 fi
 
 [ "$HOSTNAME" = "home2" ] && barInfo="battery network volume clock"
