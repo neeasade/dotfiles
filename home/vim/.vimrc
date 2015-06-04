@@ -10,7 +10,6 @@ call plug#end()
 
 " airline specific setting:
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'simple'
 let g:airline#extensions#tabline#enabled = 1
 
 " Tab Options"
@@ -78,7 +77,7 @@ set foldcolumn=0
 
 " Look and Feel settings
 set background=dark
-let base16colorspace=256
+let g:solarized_termcolors=16
 let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
 execute 'colorscheme ' vim_colors
 
