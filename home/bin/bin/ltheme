@@ -11,14 +11,20 @@ ln -s ~/.config/termite/themes/${TERMITE_CONFIG}.config ~/.config/termite/config
 # tell all termites to reload their theme:
 killall -s USR1 termite &
 
+# tell tmux to reload it's theme
+tmux source-file ~/.tmux.conf
+
 # set the background
-feh --bg-fill ~/.config/bspwm/themes/${1}.png &
+$BG_COMMAND
 
 # Keep the current gap setting and reload bspwm
+[[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
+                                      || export BSPWM_GAPS=true
 
+~/.config/bspwm/bspwmrc &
 
 # Kill dunst and restart with the right colors.
-killall dunst
+kill $(pgrep dunst)
 
 # reset $defaultBG and FG for dunst relaunch:
 defaultBG="$( cat ~/.config/termite/config | grep background | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}")";
@@ -29,3 +35,7 @@ dunst -geometry 200x200-10-10 \
     -lb "$defaultBG" -lf "$defaultFG" \
     -nb "$defaultBG" -nf "$defaultFG" \
     -cb "$defaultBG" -cf "#ffff00" &
+
+sleep 0.5
+
+notify-send "Theme $1 loaded."
