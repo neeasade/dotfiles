@@ -88,6 +88,7 @@ set encoding=utf-8
 set list listchars=tab:»·
 
 " General UI Options"
+set mouse=a
 set laststatus=2       " Always show the statusline
 set showmatch          " Shows matching brackets when text indicator is over them
 set scrolloff=5        " Show 5 lines of context around the cursor
