@@ -307,7 +307,8 @@ set background=dark
 if !exists("g:jellybeans_use_lowcolor_black") || g:jellybeans_use_lowcolor_black
     let s:termBlack = "Black"
 else
-    let s:termBlack = "Grey"
+    let s:termBlack = "Black"
+   "  let s:termBlack = "Grey"
 endif
 
 if version >= 700

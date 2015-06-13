@@ -52,7 +52,7 @@ else
     done
 fi
 
-killall lemonbar
+killall panel
 ~/.config/bspwm/panel/panel &
 
 desktops=$(bspc query -M)

@@ -10,9 +10,9 @@ getTermColor() {
     echo -n "#$( cat ~/.config/termite/config | grep  "$1" | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
 }
 
-export defaultBG="#$(getTermColor background)"
-export defaultFG="#$(getTermColor foreground)"
-export activeFG="#$(getTermColor color15)"
+export defaultBG="$(getTermColor background)"
+export defaultFG="$(getTermColor foreground)"
+export activeFG="$(getTermColor color15)"
 
 
 # Panel scripts.
@@ -74,6 +74,8 @@ prompt () {
 PS1='$(prompt) '
 
 # aliases
+alias tmux='tmux -2' #Make tmux assume 256 colors.
+alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
 alias info='info --vi-keys'
 alias vim='nvim'
 alias sysinfo='archey3 && dfc -p /dev && colors'
@@ -83,6 +85,7 @@ alias grep="grep --color=auto"
 alias pacman="pacman --color=always"
 alias make="clear && make"
 alias shot="scrot ~/Screenshots/`date +%y-%m-%d-%H:%M:%S`.png"
+alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
 
 # programs
 export EDITOR=vim

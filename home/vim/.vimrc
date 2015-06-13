@@ -146,6 +146,9 @@ map <C-8> 8gt
 map <C-9> 9gt
 map <C-0> :tablast<CR>
 
+"copy visual
+map <C-c> "+y<CR>
+
 " gvim options
 set guioptions-=L
 set guioptions-=T  "remove toolbar
