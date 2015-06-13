@@ -44,7 +44,7 @@ battery() {
 
 volume() {
     display="$(icon f028) $(amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p')"
-    command='urxvtc -e sh -c "alsamixer"'
+    command='termite -e "alsamixer"'
     echo ${AC}$command${AB}$display${AE}
 }
 
@@ -78,7 +78,7 @@ mpd() {
 
 yaourtUpdates() {
     updates=$(eval yaourt -Qu | wc --lines)
-    command='urxvtc -e sh -c "yaourt -Syua"'
+    command='termite -e "yaourt -Syua"'
     echo ${AC}$command${AB}$(icon f062)$updates${AE}
 }
 
