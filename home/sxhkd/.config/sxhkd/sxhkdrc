@@ -15,7 +15,7 @@ super + w
     bspc window -c
 
 super + t
-    bspc desktop -l next
+    bspc desktop -l next && bspc window -f next
 
 super + b
     bspc desktop -B

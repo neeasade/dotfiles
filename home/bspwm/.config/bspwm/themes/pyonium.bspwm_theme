@@ -24,7 +24,8 @@ b_split_ratio=0.6
 PANEL_HEIGHT=30
 PANEL_GAP=6
 cContent="%{F#ffbbbbbb}"                    # Color of content next to information icons
+pBGInactiveTab="#ff444444"
 
 # Workspace variables
-DO=$(echo -e '\uf111')  # occupied desktop
-DF=$(echo -e '\uf10c')  # free desktop
+DO=' '
+DF=' '

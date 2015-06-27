@@ -17,13 +17,13 @@ CUR_MON=$1;
 # Always tabbed visible windows option:
 ALWAYS_TAB=false;
 # Maxium window title length
-maxWinNameLen=30;
+maxWinNameLen=20;
 # The delimiter to separate window sections
 WIN_DELIM="\\";
 # The delimiter to separate the window name from the window in a window section.
 WIN_ID_DELIM="//";
 # The interval, in seconds, to check if an update is needed and then call update()
-WIN_REFRESH_DELAY=0.6;
+WIN_REFRESH_DELAY=0.1;
 
 update() {
     # Current monitor's shown desktop
@@ -50,14 +50,15 @@ update() {
         # Is this the currently active monitor?
         if [ "$(bspc query -m focused -M)" -eq "$CUR_MON" ]; then IS_ACT_MON=true; else IS_ACT_MON=false; fi;
         if [ "$CUR_MON_TILED" = true ]; then
-            winName $WIN_SOURCE;
+            winName $WIN_SOURCE X;
         elif [ "$CUR_MON_TILED" = false ]; then
             FLOAT_STATUS=$(bspc query -W -w focused.floating);
             if [ ! -z $FLOAT_STATUS ]; then
-                winName $WIN_SOURCE;
+                winName $WIN_SOURCE A;
             else
                 for i in $(bspc query -W -d $CUR_MON_DESK); do
-                   winName $i;
+                   [[ "$i" = "$WIN_SOURCE" ]] && status="A" || status="X";
+                   winName $i $status;
                 done
             fi;
         fi;
@@ -67,9 +68,8 @@ update() {
 # print the name of the window based on id, by using xtitle
 # will be prefixed with a 'A' or 'X' depending on if it's the 'active' window for this monitor
 winName() {
-    [[ "$1" = "$WIN_SOURCE" ]] && echo -n "A" || echo -n "X";
-
-    winName="$(xtitle -t $maxWinNameLen "$1")";
+#    [[ "$1" = "$WIN_SOURCE" ]] && echo -n "A" || echo -n "X";
+    winName="$2$(xtitle -t $maxWinNameLen "$1")";
 
     echo -n "$winName$WIN_ID_DELIM$1$WIN_DELIM";
 }
