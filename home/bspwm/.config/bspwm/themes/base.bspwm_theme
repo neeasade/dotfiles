@@ -27,30 +27,28 @@ b_presel_border_color="#$(getTermColor color8)"
 b_urgent_border_color="#FFFF00"
 b_focused_locked_border_color="#FFFFFF"
 
-
 # Panel variables
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=16
 PANEL_FONT_MAIN="Dejavu Sans-8"
 PANEL_FONT_ICON="FontAwesome-8"
 PANEL_GAP=4
+PANEL_UNDERLINE=4  #this value is used for both underline and overline
 
-# Spacing used to separate information on the bar. Can serve as slant angle if using bar slant fork(github.com/neeasade/bar)
-pSLANT=3
-
-# Panel colors
-pBGS1="%{B#ff$(getTermColor background)}"   # Alternating bg color 1
-pBGS2="%{B#ff$(getTermColor background)}"   # Alternating bg color 2
-pFG="%{F#ff$(getTermColor foreground)}"     # Default foreground
-pBG=$pBGS1                                  # Default background
-pTAB=$pBG                                   # Unfocused title tab background
-cIcon="%{F$pRest}"                          # Color of icons next to system information
-cContent="%{F#ffbbbbbb}"                    # Color of content next to information icons
+# padding for output from info.sh script, and title bar/tabs
+export pPadding=3
 
 # Workspace colors
-pUrgent=#ffffff00
-pActive=#ff$(getTermColor color15)
-pRest=#ff$(getTermColor color6)
+export pUrgent="#ffffff00"
+export pActive="#ff$(getTermColor color15)"
+export pRest="#ff$(getTermColor color6)"
+
+# Panel colors
+export pBG="#ff$(getTermColor background)"    # Default foreground
+export pFG="#ff$(getTermColor foreground)"    # Default foreground
+export pBGActiveTab="$pActive"                # Active title tab
+export pBGInactiveTab="$pRest"                # Inactive title tab - also used to info.sh ouput background.
+export pIcon="#ffaaaaaa"                      # color of icons from info.sh
 
 # Workspace variables
 DO=$(echo -e '\uf0c8')  # occupied desktop
@@ -58,9 +56,9 @@ DF=$(echo -e '\uf096')  # free desktop
 DT=$(echo -e '\uf009')  # tiling mode
 DM=$(echo -e '\uf0c9')  # monocle mode
 
-# Alternating separators for display items for info.sh
-export delim=" ${pBGS1}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
-export delim2=" ${pBGS2}%{E${pSLANT}}$(printf %${pSLANT}s)${pFG} "
+# Separator for display items for info.sh
+# form of the info.sh output is <pPadding><icon><content><pPadding><delim>
+export delim="%{B$pBG} "
 
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
@@ -78,11 +76,6 @@ fi
 
 # Export panel variables
 [ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
-export PANEL_FIFO PANEL_HEIGHT PANEL_FONT_FAMILY PANEL_GAP
-export pBGS1 pBGS2 pFG pBG pTAB pSLANT cIcon cContent
-export pUrgent pActive pRest
-export DO DF DT DM
-export barInfo
 
 # dunst variables
 export DUNST_FONT="Dejavu Sans Mono 10"

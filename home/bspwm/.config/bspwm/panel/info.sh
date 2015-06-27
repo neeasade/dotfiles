@@ -9,7 +9,7 @@ AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
 icon() {
-    echo -n -e "${cIcon}\u$1 ${cContent}"
+    echo -n -e "%{F$pIcon}\u$1 %{F$pFG}"
 }
 
 weather() {
@@ -89,7 +89,6 @@ themeSwitch() {
     case $cur_theme in
         pyonium) next_theme=pyonium_powerline ;;
         pyonium_powerline) next_theme=jellybean ;;
-        jellybean) next_theme=solarized ;;
         solarized) next_theme=pyonium ;;
     esac
     command="ltheme $next_theme"
@@ -99,25 +98,15 @@ themeSwitch() {
 
 #determine what to display based on arguments, unless there are none, then display all.
 while :; do
-    buf="S"
-    if [ -z "$*" ];then
-        buf="${buf}${delim}$(themeSwitch)"
-        buf="${buf}${delim2}$(mpd)"
-        buf="${buf}${delim}$(mail)"
-        buf="${buf}${delim2}$(yaourtUpdates)"
-        buf="${buf}${delim}$(battery)"
-        buf="${buf}${delim2}$(network)"
-        buf="${buf}${delim}$(volume)"
-        buf="${buf}${delim2}$(weather)"
-        buf="${buf}${delim}$(clock)"
-    else
-        cur_delim="$delim2"
-        for arg in "$@"; do
-            buf="${buf}${cur_delim}$($arg)"
-            [ "$cur_delim" = "$delim" ] && cur_delim="$delim2" || cur_delim="$delim"
-        done
-    fi
+    buf="S%{F$pFG}"
 
-    echo "$buf $pBG"
+    [ -z "$*" ] && items="mail yaourtUpdates mpd battery network volume weather clock themeSwitch" \
+                || items="$@"
+
+    for item in $items; do
+        buf="${buf}%{B$pBGInactiveTab}$(printf %${pPadding}s)$($item)$(printf %${pPadding}s)${delim}";
+    done
+
+    echo "$buf %{B$pBG}"
     sleep 1 # The HUD will be updated every second
 done
