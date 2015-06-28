@@ -87,9 +87,8 @@ themeSwitch() {
     # todo: replace with dmenu or dzen dropdown to click themes from dir.
     cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
     case $cur_theme in
-        pyonium) next_theme=pyonium_powerline ;;
-        pyonium_powerline) next_theme=jellybean ;;
-        solarized) next_theme=pyonium ;;
+        pyonium) next_theme=jellybean;;
+        jellybean) next_theme=pyonium;;
     esac
     command="ltheme $next_theme"
     icon f01e
