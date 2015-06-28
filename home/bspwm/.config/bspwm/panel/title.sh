@@ -39,7 +39,8 @@ update() {
 
     if [ "$ALWAYS_TAB" = true ]; then
         for i in $(bspc query -W -d $CUR_MON_DESK); do
-           winName $i;
+            [[ "$i" = "$WIN_SOURCE" ]] && status="A" || status="X";
+            winName $i $status;
         done
     else
         # get tiling status of focused desktop on that monitor
