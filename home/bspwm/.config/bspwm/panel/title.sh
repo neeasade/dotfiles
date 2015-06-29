@@ -23,7 +23,7 @@ WIN_DELIM="\\";
 # The delimiter to separate the window name from the window in a window section.
 WIN_ID_DELIM="//";
 # The interval, in seconds, to check if an update is needed and then call update()
-WIN_REFRESH_DELAY=0.1;
+WIN_REFRESH_DELAY=0.4;
 
 update() {
     # Current monitor's shown desktop

@@ -110,6 +110,6 @@ while :; do
         buf="${buf}%{B$pBGInactiveTab}$(printf %${pPadding}s)$($item)$(printf %${pPadding}s)${delim}";
     done
 
-    echo "$buf %{B$pBG}"
+    echo "$buf%{B$pBG}"
     sleep 1 # The HUD will be updated every second
 done

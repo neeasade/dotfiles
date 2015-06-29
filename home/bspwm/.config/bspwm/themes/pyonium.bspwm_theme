@@ -28,5 +28,5 @@ PANEL_GAP=6
 pBGInactiveTab="#ff444444"
 
 # Workspace variables
-DO=' '
-DF=' '
+export DO=' '
+export DF=' '

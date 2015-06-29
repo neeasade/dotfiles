@@ -32,8 +32,8 @@ PANEL_FONT_ICON="FontAwesome-8"
 PANEL_GAP=4
 
 # Workspace variables
-DO=''
-DF=''
+export DO=''
+export DF=''
 
 # dunst variables
 export DUNST_FONT="Terminus 8"
