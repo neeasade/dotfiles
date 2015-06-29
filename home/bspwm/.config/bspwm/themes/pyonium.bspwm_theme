@@ -4,6 +4,8 @@
 
 THEME_NAME=pyonium
 
+GTK_THEME=pyonium
+
 # vim theme name
 VIM_COLORS=mustang
 

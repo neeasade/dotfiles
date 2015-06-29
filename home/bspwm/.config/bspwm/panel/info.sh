@@ -71,8 +71,11 @@ mpd() {
         echo "Stopped"
     else
         paused=$(mpc | grep paused)
-        [ -z "$paused" ] && echo "${AC}mpc pause${AB} $cur_song${AE}" ||
-                            echo "${AC}mpc play${AB} $cur_song${AE}"
+        [ -z "$paused" ] && toggle="${AC}mpc pause${AB}$(icon f04c)${AE}" ||
+            toggle="${AC}mpc play${AB}$(icon f04b)${AE}"
+        prev="${AC}mpc prev${AB}$(icon f049)${AE}"
+        next="${AC}mpc next${AB}$(icon f050)${AE}"
+        echo "$cur_song $prev$toggle$next"
     fi
 }
 
@@ -87,7 +90,8 @@ themeSwitch() {
     # todo: replace with dmenu or dzen dropdown to click themes from dir.
     cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
     case $cur_theme in
-        pyonium) next_theme=jellybean;;
+        pyonium) next_theme=zenburn;;
+        zenburn) next_theme=jellybean;;
         jellybean) next_theme=pyonium;;
     esac
     command="ltheme $next_theme"
