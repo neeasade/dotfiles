@@ -1,32 +1,30 @@
 #!/bin/bash
 # jellybean theme
 
-THEME_NAME=jellybean
+THEME_NAME=zenburn
 
-GTK_THEME=jellybean
+GTK_THEME=zenburn
 
 # vim theme name
-VIM_COLORS=jellybean
+VIM_COLORS=zenburn
 
 # termite theme name
-TERMITE_CONFIG=jellybean
+TERMITE_CONFIG=zenburn
 
 # Background command
-export BG_COMMAND='feh --bg-tile /home/neeasade/images/crossed_stripes.png'
+export BG_COMMAND='feh --bg-fill /home/neeasade/images/leaves.jpg'
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
 # BSPWM variables
 # naming convention is b_<config_option>
-b_border_width=1
-b_window_gap=8
+b_border_width=3
+b_window_gap=12
 b_split_ratio=0.6
-pBGInactiveTab="$pBG"
-pFG="#ffdddddd"
 export pPadding=1
 
 # Panel variables
-PANEL_HEIGHT=20
+PANEL_HEIGHT=28
 PANEL_FONT_MAIN="Terminus-8"
 PANEL_FONT_ICON="FontAwesome-8"
 PANEL_GAP=4

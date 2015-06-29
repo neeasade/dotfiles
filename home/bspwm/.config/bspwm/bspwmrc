@@ -52,7 +52,8 @@ else
     done
 fi
 
-killall panel
+# TODO - fix the bug here if lemonbar is set to panel - button on panel kills itself, but as is can lead to lag over time.
+killall lemonbar
 ~/.config/bspwm/panel/panel &
 
 desktops=$(bspc query -M)
@@ -64,12 +65,23 @@ if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
 # rename all the monitors to numbers and create 5 workspaces on each
 i=1
 
+# get a list of desktops in monocle mode:
+#MonocleDesktops=''
+for desktop in $(bspc query -D); do
+    [ ! -z "$( bspc query -d $desktop -T | grep "M - \*")" ] && MonocleDesktops="$MonocleDesktops $desktop"
+done
+
 # create desktops or reset desktop configuration if it already exists.
 for monitor in $desktops; do
     [ "$IsInitialRun" = true ] && \
         bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii} || \
         bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
     let i++
+done
+
+# Set any Monocle desktops back to tiling mode
+for desktop in $MonocleDesktops; do
+    bspc desktop $desktop -l monocle
 done
 
 # set all windows to the new border width:

@@ -1,8 +1,8 @@
 #!/bin/sh
 # Load a bspwm theme based on argument
+
 rm ~/.bspwm_theme
 ln -s ~/.config/bspwm/themes/${1}.bspwm_theme ~/.bspwm_theme
-
 . ~/.bspwm_theme
 
 rm ~/.config/termite/config
@@ -12,10 +12,10 @@ ln -s ~/.config/termite/themes/${TERMITE_CONFIG}.config ~/.config/termite/config
 killall -s USR1 termite &
 
 # tell tmux to reload it's theme
-tmux source-file ~/.tmux.conf
+tmux source-file ~/.tmux.conf &
 
 # set the background
-$BG_COMMAND
+$BG_COMMAND &
 
 # Keep the current gap setting and reload bspwm
 [[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
@@ -23,8 +23,13 @@ $BG_COMMAND
 
 ~/.config/bspwm/bspwmrc &
 
+# reload gtk theme
+rm ~/.gtkrc-2.0
+ln -s ~/.config/gtk-settings/$GTK_THEME ~/.gtkrc-2.0
+gtkrc-reload &
+
 # Kill dunst and restart with the right colors.
-kill $(pgrep dunst)
+killall dunst
 
 # reset $defaultBG and FG for dunst relaunch:
 defaultBG="$( cat ~/.config/termite/config | grep background | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}")";
