@@ -3,7 +3,6 @@ bash
 bspwm
 compton
 dmenu2
-gtk-theme-flatstudio
 i3lock
 imagemagick
 lemonbar-xft-git
