@@ -66,7 +66,7 @@ export delim="%{B$pBG} "
 barInfo=""
 
 # Customize options on different computers by hostname:
-if [ "$HOSTNAME" = "home27" ]; then
+if [ "$HOSTNAME" = "littleapple" ]; then
     barInfo1="yaourtUpdates weather"
     barInfo2="themeSwitch network volume"
     barInfo3="mpd clock"

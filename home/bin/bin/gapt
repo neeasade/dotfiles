@@ -1,5 +1,7 @@
 #toggle gaps on and off
 
+killall panel
+
 [[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=true \
                                       || export BSPWM_GAPS=false
 

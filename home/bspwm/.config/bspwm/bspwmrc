@@ -66,7 +66,7 @@ if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
 i=1
 
 # get a list of desktops in monocle mode:
-#MonocleDesktops=''
+MonocleDesktops=''
 for desktop in $(bspc query -D); do
     [ ! -z "$( bspc query -d $desktop -T | grep "M - \*")" ] && MonocleDesktops="$MonocleDesktops $desktop"
 done
