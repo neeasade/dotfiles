@@ -111,7 +111,7 @@ super + d
     bspc control --toggle-visibility
 
 super + shift + q
-    bspc quit
+    killall panel && bspc quit
 
 super + {_,shift} + semicolon
     bspc desktop -R {90,270}

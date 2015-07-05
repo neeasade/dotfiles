@@ -1,6 +1,5 @@
 base-devel
 bash
-bspwm
 compton
 dmenu2
 i3lock
