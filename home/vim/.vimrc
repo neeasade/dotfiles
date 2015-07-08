@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'airblade/vim-gitgutter'               " Live git changes
     Plug 'tpope/vim-fugitive'                   " Complement git in vim
     Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
+    Plug 'kien/ctrlp.vim'                       " fuzzy file, buffer, tag finder
 call plug#end()
 
 " airline specific setting:
@@ -77,7 +78,6 @@ set foldcolumn=0
 
 " Look and Feel settings
 set background=dark
-let g:solarized_termcolors=16
 let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
 execute 'colorscheme ' vim_colors
 
@@ -146,6 +146,8 @@ map <C-8> 8gt
 map <C-9> 9gt
 map <C-0> :tablast<CR>
 
+" sync yanking and pasting with clipboard
+set clipboard=unnamedplus
 "copy visual
 map <C-c> "+y<CR>
 
