@@ -31,7 +31,7 @@ b_focused_locked_border_color="#FFFFFF"
 PANEL_FIFO=/tmp/panel-fifo
 PANEL_HEIGHT=16
 PANEL_FONT_MAIN="Dejavu Sans-8"
-PANEL_FONT_ICON="FontAwesome-8"
+PANEL_FONT_ICON="FontAwesome-10"
 PANEL_GAP=4
 PANEL_UNDERLINE=4  #this value is used for both underline and overline
 

@@ -59,6 +59,7 @@ network() {
     fi
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
     icon f0ac
+    echo $int
     ping -W 1 -c 1 8.8.8.8 >/dev/null 2>&1 &&
         echo -e '\uf00c' || echo -e '\uf00d'
 }
@@ -75,7 +76,7 @@ mpd() {
             toggle="${AC}mpc play${AB}$(icon f04b)${AE}"
         prev="${AC}mpc prev${AB}$(icon f049)${AE}"
         next="${AC}mpc next${AB}$(icon f050)${AE}"
-        echo "$cur_song $prev$toggle$next"
+        echo "$cur_song  $prev $toggle $next"
     fi
 }
 
