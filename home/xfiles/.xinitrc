@@ -13,8 +13,9 @@ xrdb -load  /home/$USER/.Xresources &
 #compositing
 compton &
 
-#mpd
+#mpd and mpdcron(for notifications and lastfm scrobbling)
 mpd ~/.config/mpd/mpd.conf &
+[[ -z $(pgrep -xU $UID mpdcron) ]] && mpdcron &
 
 #make the default x cursor not an x :)
 xsetroot -cursor_name left_ptr &
