@@ -4,3 +4,4 @@
 .config/mpd/state
 .config/mpd/sticker.sql
 .config/mpd/database
+.config/mpd/mpdcron.pid
