@@ -27,7 +27,7 @@ PANEL_GAP=6
 pBGInactiveTab="#ff323537"
 pBGActiveTab="#ff828587"
 pIcon="#ff787878"
-export pRest="#ff626567"
+export pRest="$pBG"
 export pActive="$pBGActiveTab"
 b_normal_border_color="#2e2e2e"
 
