@@ -2,14 +2,15 @@
 # bspwm hotkeys
 #
 
+# note a desktop
 super + c
     echo "$(bspc query -D -d)" > /tmp/bspwmdtop_swap
 
-#Not done yet.
+# move the windows of the noted desktop to the current desktop
 super + v
-    bspc desktop $(bspwc query -D -d) -n tmp; \
-    bspc desktop -s ^$(cat /tmp/bspwmdtop_swap)
-
+    for win in $(bspc query -W -d $(cat /tmp/bspwmdtop_swap)); do \
+        bspc window $win -d $(bspc query -D -d); \
+    done
 
 super + w
     bspc window -c
