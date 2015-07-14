@@ -31,9 +31,14 @@ PANEL_FONT_MAIN="Terminus-8"
 PANEL_FONT_ICON="FontAwesome-8"
 PANEL_GAP=4
 
+export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
+export showFreeDesktops=true # option to show nothing for free desktops
+export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
+export NoModeToggle=1 # if defined, no monocle/tiling toggle.
+
 # Workspace variables
-export DO=''
-export DF=''
+export DO='+'
+export DF='-'
 
 # dunst variables
 export DUNST_FONT="Terminus 8"
