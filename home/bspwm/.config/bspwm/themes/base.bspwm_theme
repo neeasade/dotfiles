@@ -5,7 +5,6 @@
 # Things a theme is expected to define at a minimum:
 # THEME_NAME
 # TERMITE_CONFIG
-# BG_COMMAND
 # VIM_COLORS
 
 # get the value of a color from the current terminal color configuration
@@ -78,7 +77,7 @@ fi
 
 [ "$HOSTNAME" = "home2" ] && barInfo="battery network volume clock"
 
-# Export panel variables
+# Export panel variables - note - this doesn't work with dmenu_run, maybe because it's sourced a second layer down?
 [ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
 
 # dunst variables

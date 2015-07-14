@@ -39,3 +39,6 @@ export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variab
 export showFreeDesktops=false # option to show nothing for free desktops
 export desktopDisplayType=separate # [together| separate] - show desktops in separate blocks or together in one block
 export NoModeToggle=1 # if defined, no monocle/tiling toggle.
+
+# This is needed for spacing on the dmenu_run script.
+[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0

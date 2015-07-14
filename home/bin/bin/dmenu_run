@@ -14,5 +14,4 @@ PANEL_WIDTH=$(bspc query -T -m $(bspc query -M -m) | grep -oE "[0-9]{2,6}" | hea
 PANEL_WIDTH=$( expr $PANEL_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))
 PANEL_BG=$(cat ~/.config/termite/config | grep background | head -n 1 | grep -oE "#[a-fA-F0-9]{6}" )
 
-#dmenu_run -y $PANEL_GAP -x $PANEL_GAP -h $PANEL_HEIGHT -w $PANEL_WIDTH -i -q -p "───" -nb "$PANEL_BG" -sb "$PANEL_BG" -fn "$PANEL_FONT_MAIN"
 dmenu_run -y $PANEL_GAP -x $PANEL_GAP -h $PANEL_HEIGHT -w $PANEL_WIDTH -i -q -p "$" -nb "$PANEL_BG" -sb "$PANEL_BG" -fn "$PANEL_FONT_MAIN"
