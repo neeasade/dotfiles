@@ -34,11 +34,15 @@ PANEL_FONT_MAIN="Dejavu Sans-8"
 PANEL_FONT_ICON="FontAwesome-10"
 PANEL_GAP=4
 PANEL_UNDERLINE=4  #this value is used for both underline and overline
+export pPadding=3  # number of spaces to pad panel informaiton with
 
-# padding for output from info.sh script, and title bar/tabs
-export pPadding=3
+# variables for desktop area
+export desktopDisplay=icon     # [icon|name] - display desktop names or DO/DF variables.
+export showFreeDesktops=true   # option to show nothing for free desktops
+export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
+# NoModeToggle=1 # if defined, no monocle/tiling toggle.
 
-# Workspace colors
+# desktop colors
 export pUrgent="#ffffff00"
 export pActive="#ff$(getTermColor color15)"
 export pRest="#ff$(getTermColor color6)"

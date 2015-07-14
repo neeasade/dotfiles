@@ -38,17 +38,6 @@ while read -r line ; do
         done
     ;;
     W*)
-        # 2 types - display desktop names or free and occupied characters
-        # if displaying desktop names, want option for i3-like (only show desktops that are occupied
-        # $showFreeDesktops=[true|false], $desktopDisplay=[name|icon]
-        # desktop name type is assumed to be #/<name>, wher e# is the monitor number
-        desktopDisplay=icon;
-        showFreeDesktops=true;
-
-        # furthermore, desktop information should be configurable to one or separate 'blocks'
-        desktopDisplayType=together # [together| separate]
-#        NoModeToggle=1 # if defined, no monocle/tiling toggle.
-
         # setting the underline for everything with wm_info
         wm_infos="%{U$pBG+o}%{U$pBG+u}"
         IFS=':'
@@ -81,7 +70,7 @@ while read -r line ; do
                 if [ "$showFreeDesktops" = true ] || [[ ! $item == f* ]]; then
                     if [ "$desktopDisplayType" = separate ]; then
                         blockContent="${AC}${command} ${name}${AB}$(printf %${pPadding}s)${dDisplay}$(printf %${pPadding}s)${AE}"
-                        NoPadding=1
+                        NoPadding=0
                         wm_infos="$wm_infos$(block "$blockContent")"
                         NoPadding=""
                     else
@@ -93,11 +82,13 @@ while read -r line ; do
             shift
         done
         # WHY DOES THIS LINE AFFECT THE SPACING ON THE LEFT WHEN SEPARATED
-        if [ $desktopDisplayType=="together" ]; then
+        if [ "$desktopDisplayType" == "together" ]; then
+            NoPadding=$(expr $pPadding - 1)
             wm_infos="$(block "$wm_infos")"
+            NoPadding=""
         fi
 
-        wm_infos="$wm_infos%{B$pBG}";;
+        wm_infos=" $wm_infos%{B$pBG}";;
     esac
     printf "%s\n" "%{l}$wm_infos %{c}$title %{r}$sys_infos"
 done

@@ -27,7 +27,7 @@ WIN_REFRESH_DELAY=0.4;
 
 update() {
     # Current monitor's shown desktop
-    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
+    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/[^ ]+" );
 
     # define an 'active' window source to use for this desktop based on whether or not it's the focused monitor.
     if [ "$IS_ACT_MON" = true ]; then
@@ -76,7 +76,7 @@ winName() {
 }
 
 while :; do
-    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/i+" );
+    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/[^ ]+" );
     #Update current window
     CUR_WIN="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 )";
     if [ "$ACT_WIN" != "$CUR_WIN" ]; then
