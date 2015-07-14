@@ -74,8 +74,8 @@ done
 # create desktops or reset desktop configuration if it already exists.
 for monitor in $desktops; do
     [ "$IsInitialRun" = true ] && \
-        bspc monitor "$monitor" -n $i -d $i/{i,ii,iii,iiii,iiiii} || \
-        bspc monitor "$monitor" -d $i/{i,ii,iii,iiii,iiiii}
+        bspc monitor "$monitor" -n $i -d $i/{00,01,10,11} || \
+        bspc monitor "$monitor" -d $i/{00,01,10,11}
     let i++
 done
 

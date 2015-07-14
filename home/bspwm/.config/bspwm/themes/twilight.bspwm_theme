@@ -35,8 +35,7 @@ b_normal_border_color="#2e2e2e"
 PANEL_FONT_MAIN="Droid Sans-9:style=Bold"
 PANEL_FONT_ICON="FontAwesome-10"
 
-# Workspace variables
-export DO='@'
-export DF='#'
-export DT='T'
-export DM='M'
+export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
+export showFreeDesktops=false # option to show nothing for free desktops
+export desktopDisplayType=separate # [together| separate] - show desktops in separate blocks or together in one block
+export NoModeToggle=1 # if defined, no monocle/tiling toggle.

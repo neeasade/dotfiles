@@ -82,18 +82,14 @@ super + alt + shift + {h,j,k,l}
 super + ctrl + {1-9}
     bspc window -r 0.{1-9}
 
-# These two keybinds assume monitor/desktop naming scheme of 1/i, 1/ii, 2/i, etc..
+# These two keybinds determine index by list order of desktops from current monitor
 super + {1-9}
     D={1-9}; \
-    CUR_MON=$(bspc query -M -m); \
-    DESK_REF=$(printf "%0.si" $(seq 1 $D)); \
-    bspc desktop -f $CUR_MON/$DESK_REF
+    bspc desktop -f "$(bspc query -D -m | sed -n "$D p")"
 
 super + shift + {1-9}
     D={1-9}; \
-    CUR_MON=$(bspc query -M -m); \
-    DESK_REF=$(printf "%0.si" $(seq 1 $D)); \
-    bspc window -d $CUR_MON/$DESK_REF
+    bspc window -d "$(bspc query -D -m | sed -n "$D p")"
 
 ~button1
     bspc pointer -g focus

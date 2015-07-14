@@ -34,7 +34,7 @@ num_mon=$(bspc query -M)
 
 # display function used by both info.sh and panel_bar scripts:
 function block() {
-    [ ! -z $NoPadding ] && pPadding=0
+    [ ! -z $NoPadding ] && pPadding=$NoPadding
     if [ "$blockActive" = true ] ; then
         echo -n "%{B$pBGActiveTab}%{F$pBG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
     else

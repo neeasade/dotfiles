@@ -19,8 +19,9 @@ weather() {
 }
 
 clock() {
-    icon f073
-    date '+%b%e,%l:%M'
+    icon f017
+    date '+%l:%M %p'
+    # todo: gcal popup here
 }
 
 mail() {
