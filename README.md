@@ -11,8 +11,8 @@ Neeasade's dotfiles
 ![Screenshot](http://a.pomf.se/dvdaho.png)
 
 ##TODO(ricing roadmap)
-*   add more root dotfiles
-*   more bspwm features and keybinds(cut and paste a desktop)
+*   better irc experience
+*   restructure to remove root files and put home files at top level - possibly add a 'root' folder there.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ##Multihead
@@ -29,8 +29,7 @@ The programs used here are located in the depends.txt file. You could install th
 ```
 for i in $(cat depends.txt); do <your package manager install command here> $i; done
 ```
-this is independent per target directory. This list has only been tested with Arch Linux and there are a number of packages that live in the AUR. I have tried to include only packages that make up most of the WM experience(for example ranger and qutebrowser are not in the depends.txt)
-There is a script at the top level named setup.sh - this will populate any git submodules(eg for vim/tmux/other package managers) and also install everything in the depends.txt files.
+this is independent per target directory. This list has only been tested with Arch Linux and there are a number of packages that live in the AUR. There is a script at the top level named setup.sh - this will populate any git submodules(eg for vim/tmux/other package managers) and also install everything in the depends.txt files(assumes yaourt).
 
 ##Management
 These files are managed with GNU [stow](http://www.gnu.org/software/stow/manual/stow.html), which should be available via your package manager of choice. Stow is a symlink-farm management program. It allows for mass symlinking out of a 'master' directory(Here you can see I use the users home directory and the root('/') directory. The deploy scripts in these directories run stow with a target parent directory indicated by name. if you are reading this you are probably interested in only the dotfiles for your home directory. The deploy scripts handle file conflict, stopping if there is an existing file in a place where a symlink would go. If the force flag is set with a deploy script and it finds conflicts, it will store the original files in a directory here should you still need them.
@@ -39,4 +38,3 @@ These files are managed with GNU [stow](http://www.gnu.org/software/stow/manual/
 *   The philosophy for the prompt was taken from [dcat](http://dcat.iotek.org/prompt/)
 *   Initial information(and still some) displayed in the bar is from [z3bra's](http://z3bra.org) example
 *   the compton setting is modified from [dkeg's](https://bitbucket.org/dkeg/current/src/) config
-

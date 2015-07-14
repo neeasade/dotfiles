@@ -15,8 +15,8 @@ export defaultFG="$(getTermColor foreground)"
 export activeFG="$(getTermColor color15)"
 
 
-# Panel scripts.
-PATH=$PATH:~/bin:~/.config/bar
+# Add bin to path
+PATH=$PATH:~/bin
 
 # add the dir for gem execs to path:
 PATH=$PATH:/home/$USER/.gem/ruby/2.2.0/bin
@@ -25,7 +25,6 @@ PATH=$PATH:/home/$USER/.gem/ruby/2.2.0/bin
 complete -cf sudo
 
 # functions
-
 function swap() {
     # Swap 2 filenames around, if they exist (from Uzi's bashrc).
     local TMPFILE=tmp.$$
