@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # panel_bar
 # a script to interpret panel fifo information(workspace/window titles/system info)
 
@@ -11,7 +11,6 @@ AE='%{A}'           # end click area
 goto='bspc desktop -f'       # go to this desktop
 cycle='bspc desktop -l next' # cycle tiled/monocle
 winfocus='bspc window -f '   # focus on a window
-
 while read -r line ; do
     case $line in
     S*)
@@ -30,36 +29,75 @@ while read -r line ; do
             winID="$(echo $name | grep -oE "//.*" | cut -c 3-)"
             if [ ! -z $winTitle ]; then
                 case $item in
-                    A*) title="${title}%{B$pBGActiveTab}%{F$pBG}$(printf %${pPadding}s)${winTitle}$(printf %${pPadding}s)";; #active window
-                    X*) title="${title}%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)${AC}${winfocus} ${winID}${AB}${winTitle}${AE}$(printf %${pPadding}s)";; #inactive window
+                    A*) blockActive=true && title="${title}$(block $winTitle)";; #active window
+                    X*) blockActive=false && title="${title}$(block ${AC}${winfocus} ${winID}${AB}${winTitle}${AE})";; #inactive window
                 esac
             fi
-            title="$title%{B$pBG} "
+            title="$title%{B$pBG}"
             shift
         done
     ;;
     W*)
-        #setting the underline for everything with wm_info
+        # 2 types - display desktop names or free and occupied characters
+        # if displaying desktop names, want option for i3-like (only show desktops that are occupied
+        # $showFreeDesktops=[true|false], $desktopDisplay=[name|icon]
+        # desktop name type is assumed to be #/<name>, wher e# is the monitor number
+        desktopDisplay=icon;
+        showFreeDesktops=true;
+
+        # furthermore, desktop information should be configurable to one or separate 'blocks'
+        desktopDisplayType=together # [together| separate]
+#        NoModeToggle=1 # if defined, no monocle/tiling toggle.
+
+        # setting the underline for everything with wm_info
         wm_infos="%{U$pBG+o}%{U$pBG+u}"
         IFS=':'
         set -- ${line#?}
         while [ $# -gt 0 ] ; do
-            space=' '
             item=$1
             name=${item#?}
+            desktopName=$(echo "$name" | cut -c3-)
+            curFree=false
+            command=$goto
+            blockActive=false
             case $item in
-                O* | F* ) wm_infos="${wm_infos}%{B$pActive}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active occupied/free desktop
-                U*) wm_infos="${wm_infos}%{B$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # active urgent desktop
-                o*) wm_infos="${wm_infos}%{B$pRest}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive occupied desktop
-                f*) space='' ;;# wm_infos="${wm_infos}%{B$pBG}${AC}${goto} ${name}${AB} ${DF} ${AE}";; # inactive free desktop
-                u*) wm_infos="${wm_infos}%{B$pUrgent}${AC}${goto} ${name}${AB} ${DO} ${AE}";; # inactive urgent desktop
-                L*) space='' ;;#wm_infos="${wm_infos}%{F$pRest}${AC}${cycle}${AB} $([[ $name == "T" ]] && echo $DT || echo $DM) ${AE}";; # Tiling/Monocle indicator, clickable toggle.
+                O*) dColor="$pActive" && dDisplay="$DO" && blockActive=true;; #active occupied desktop
+                F*) dColor="$pActive" && dDisplay="$DF" && blockActive=true;; #active free desktop
+                U*) dColor="$pUrgent" && dDisplay="$DO";; #active urgent desktop
+                o*) dColor="$pRest" && dDisplay="$DO";; #inactive occupied desktop
+                f*) dColor="$pRest" && dDisplay="$DF";; #inactive free desktop
+                u*) dColor="$pUrgent" && dDisplay="$DO";; #inactive urgent desktop
+                L*) if [ ! -z "$NoModeToggle" ]; then
+                        dDisplay=""
+                    else
+                        dColor="$pRest" && command="$cycle" && name=""
+                        dDisplay="$([[ $item == LT ]] && echo $DT || echo $DM)"
+                    fi;; # mode toggle
+                *) dDisplay="";; # Monitor
             esac
-            wm_infos="$wm_infos%{B$pBG}$space"
+
+            if [ ! -z "$dDisplay" ]; then
+                [ "$desktopDisplay" = name ] && [[ ! $item == L* ]] && dDisplay="$desktopName"
+                if [ "$showFreeDesktops" = true ] || [[ ! $item == f* ]]; then
+                    if [ "$desktopDisplayType" = separate ]; then
+                        blockContent="${AC}${command} ${name}${AB}$(printf %${pPadding}s)${dDisplay}$(printf %${pPadding}s)${AE}"
+                        NoPadding=1
+                        wm_infos="$wm_infos$(block "$blockContent")"
+                        NoPadding=""
+                    else
+                        wm_infos="$wm_infos%{F$dColor}${AC}${command} ${name}${AB} ${dDisplay} ${AE}"
+                    fi
+                fi
+            fi
+
             shift
         done
-        wm_infos="$wm_infos%{B$pBG}"
-    ;;
+        # WHY DOES THIS LINE AFFECT THE SPACING ON THE LEFT WHEN SEPARATED
+        if [ $desktopDisplayType=="together" ]; then
+            wm_infos="$(block "$wm_infos")"
+        fi
+
+        wm_infos="$wm_infos%{B$pBG}";;
     esac
     printf "%s\n" "%{l}$wm_infos %{c}$title %{r}$sys_infos"
 done

@@ -15,7 +15,7 @@ icon() {
 weather() {
     icon f0c2
     weatherURL='http://www.accuweather.com/en/us/manhattan-ks/66502/weather-forecast/328848'
-    wget -q -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1
+    wget -q -T 1 -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1
 }
 
 clock() {
@@ -101,16 +101,17 @@ themeSwitch() {
 }
 
 #determine what to display based on arguments, unless there are none, then display all.
+blockActive=false;
 while :; do
-    buf="S%{F$pFG}"
+    buf="S"
 
     [ -z "$*" ] && items="mail yaourtUpdates mpd battery network volume weather clock themeSwitch" \
                 || items="$@"
 
     for item in $items; do
-        buf="${buf}%{B$pBGInactiveTab}$(printf %${pPadding}s)$($item)$(printf %${pPadding}s)${delim}";
+        buf="${buf}$(block $($item))";
     done
 
-    echo "$buf%{B$pBG}"
+    echo "$buf"
     sleep 1 # The HUD will be updated every second
 done
