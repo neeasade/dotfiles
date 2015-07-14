@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # panel
 # Start a panel on every monitor
 # This script makes some assumptions if using multihead setup:
@@ -32,6 +32,17 @@ num_mon=$(bspc query -M)
 # panel_gap to 0 if no gaps.
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 
+# display function used by both info.sh and panel_bar scripts:
+function block() {
+    [ ! -z $NoPadding ] && pPadding=0
+    if [ "$blockActive" = true ] ; then
+        echo -n "%{B$pBGActiveTab}%{F$pBG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
+    else
+        echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
+    fi
+}
+export -f block
+
 for i in $num_mon; do
     # remove any open panel fifo, and then create one
     [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
@@ -49,7 +60,7 @@ for i in $num_mon; do
     # in a more natural manner, but can be a little more processor intensive.
     # Substitute the xtitle command here if you just want the current active window
     # name to be displayed.
-    #xtitle -t 80 -sf 'T\\A%s//' > "$PANEL_FIFO$i" &
+    #xtitle -t 80 -sf 'T\\X%s//' > "$PANEL_FIFO$i" &
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh outputs system information.
