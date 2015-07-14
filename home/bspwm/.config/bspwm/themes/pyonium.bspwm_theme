@@ -35,3 +35,6 @@ export NoModeToggle="" # if defined, no monocle/tiling toggle.
 # Workspace variables
 export DO=$(echo -e "\uf111")
 export DF=$(echo -e "\uf10c")
+
+# This is needed for spacing on the dmenu_run script.
+[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
