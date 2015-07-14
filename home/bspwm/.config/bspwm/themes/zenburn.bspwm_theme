@@ -12,7 +12,7 @@ VIM_COLORS=zenburn
 TERMITE_CONFIG=zenburn
 
 # Background command
-export BG_COMMAND='feh --bg-fill /home/neeasade/images/leaves.jpg'
+export BG_COMMAND='feh --bg-fill /home/neeasade/images/walls/fill/tree.jpg'
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
@@ -35,7 +35,7 @@ export pRest="$pBG"
 export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=true # option to show nothing for free desktops
 export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
-#export NoModeToggle=1 # if defined, no monocle/tiling toggle.
+export NoModeToggle="" # if defined, no monocle/tiling toggle.
 
 # Workspace variables
 export DO='+'

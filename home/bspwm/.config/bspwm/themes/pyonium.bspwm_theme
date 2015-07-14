@@ -13,13 +13,13 @@ VIM_COLORS=mustang
 TERMITE_CONFIG=pyonium
 
 # Background command
-export BG_COMMAND='feh --bg-fill /home/neeasade/images/leaves.jpg'
+export BG_COMMAND='feh --bg-fill /home/neeasade/images/walls/fill/forest.jpg'
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
 # bspwm
-b_border_width=3
-b_window_gap=16
+b_border_width=5
+b_window_gap=22
 b_split_ratio=0.6
 
 # panel
@@ -30,6 +30,7 @@ pBGInactiveTab="#ff444444"
 export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=true # option to show nothing for free desktops
 export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
+export NoModeToggle="" # if defined, no monocle/tiling toggle.
 
 # Workspace variables
 export DO=$(echo -e "\uf111")
