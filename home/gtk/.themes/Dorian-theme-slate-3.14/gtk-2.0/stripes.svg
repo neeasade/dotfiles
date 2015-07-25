@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="500"
+   height="36"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="stripes.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient3815">
+      <stop
+         style="stop-color:#363636;stop-opacity:1;"
+         offset="0"
+         id="stop3817" />
+      <stop
+         id="stop3762"
+         offset="0.13"
+         style="stop-color:#262626;stop-opacity:1;" />
+      <stop
+         style="stop-color:#232323;stop-opacity:1;"
+         offset="0.85108107"
+         id="stop3820" />
+      <stop
+         style="stop-color:#111111;stop-opacity:1;"
+         offset="1"
+         id="stop3819" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3755">
+      <stop
+         style="stop-color:#0b4b70;stop-opacity:1;"
+         offset="0"
+         id="stop3757" />
+      <stop
+         id="stop3763"
+         offset="0.08"
+         style="stop-color:#123245;stop-opacity:1;" />
+      <stop
+         style="stop-color:#161616;stop-opacity:1;"
+         offset="0.09"
+         id="stop3765" />
+      <stop
+         id="stop3758"
+         offset="0.41999999"
+         style="stop-color:#1b1b1b;stop-opacity:1;" />
+      <stop
+         style="stop-color:#181818;stop-opacity:1;"
+         offset="1"
+         id="stop3759" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.96"
+     inkscape:cx="205.61473"
+     inkscape:cy="-11.728059"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1307"
+     inkscape:window-height="744"
+     inkscape:window-x="59"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1016.3622)">
+    <image
+       y="1023.3622"
+       x="8"
+       id="image3056"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAAkCAYAAACnk2wbAAAABHNCSVQICAgIfAhkiAAAAV1JREFU
+eJzt3LGRhDAQAMEX+ZB/IAR07wIHzlpTdY0nqaUaD2/X3+3b9/1z3zuOY933eJ7n+d/2l4NaHM/z
+PN/167yoxfE8z/Ndv8pxPM/zfNevchzP8zzf9Vs5jud5nu/6yw+kFsfzPM93/XZe1OJ4nuf5rt/K
+cTzP83zXv14sxPE8z/Ndn47jeZ7nu/7xgUocz/M83/Vfm6U4nud5vusvB7U4nud5vuvXeVGL43me
+57t+leN4nuf5rjcLi+d5nh95s7B4nuf5kTcLi+d5nh95s7B4nuf5kTcLi+d5nh/514uFOJ7neb7r
+03E8z/N81z8+UInjeZ7nu/5rsxTH8zzPd/3loBbH8zzPd/06L2pxPM/zfNevchzP8zzf9WZh8TzP
+8yNvFhbP8zw/8mZh8TzP8yNvFhbP8zw/8mZh8TzP8yP/erEQx/M8z3d9Oo7neZ7v+scHKnE8z/N8
+1/8Drku50XMLgYAAAAAASUVORK5CYII=
+"
+       height="22"
+       width="244.26942"
+       style="opacity:0.12" />
+    <image
+       y="1023.3622"
+       x="249.73058"
+       id="image3056-1"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAZAAAAAkCAYAAACnk2wbAAAABHNCSVQICAgIfAhkiAAAAV1JREFU eJzt3LGRhDAQAMEX+ZB/IAR07wIHzlpTdY0nqaUaD2/X3+3b9/1z3zuOY933eJ7n+d/2l4NaHM/z PN/167yoxfE8z/Ndv8pxPM/zfNevchzP8zzf9Vs5jud5nu/6yw+kFsfzPM93/XZe1OJ4nuf5rt/K cTzP83zXv14sxPE8z/Ndn47jeZ7nu/7xgUocz/M83/Vfm6U4nud5vusvB7U4nud5vuvXeVGL43me 57t+leN4nuf5rjcLi+d5nh95s7B4nuf5kTcLi+d5nh95s7B4nuf5kTcLi+d5nh/514uFOJ7neb7r 03E8z/N81z8+UInjeZ7nu/5rsxTH8zzPd/3loBbH8zzPd/06L2pxPM/zfNevchzP8zzf9WZh8TzP 8yNvFhbP8zw/8mZh8TzP8yNvFhbP8zw/8mZh8TzP8yP/erEQx/M8z3d9Oo7neZ7v+scHKnE8z/N8 1/8Drku50XMLgYAAAAAASUVORK5CYII= "
+       height="22"
+       width="244.26942"
+       style="opacity:0.12" />
+  </g>
+</svg>

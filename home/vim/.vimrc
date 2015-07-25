@@ -7,6 +7,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-fugitive'                   " Complement git in vim
     Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
     Plug 'kien/ctrlp.vim'                       " fuzzy file, buffer, tag finder
+    Plug 'Valloric/YouCompleteMe'
 call plug#end()
 
 " airline specific setting:
