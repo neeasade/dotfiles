@@ -4,7 +4,7 @@
 include "/home/neeasade/.gtkrc-2.0.mine"
 gtk-theme-name="FlatStudioDark-Twilight"
 gtk-icon-theme-name="Numix"
-gtk-font-name="DejaVu Sans Mono 11"
+gtk-font-name="Droid Sans 10"
 gtk-cursor-theme-name="Adwaita"
 gtk-cursor-theme-size=0
 gtk-toolbar-style=GTK_TOOLBAR_ICONS

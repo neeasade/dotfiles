@@ -17,7 +17,7 @@ export BG_COMMAND="feh --bg-fill /home/neeasade/images/walls/fill/lake.jpg"
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
 # bspwm
-b_border_width=3
+b_border_width=5
 b_window_gap=16
 b_split_ratio=0.6
 
@@ -26,7 +26,8 @@ PANEL_HEIGHT=32
 PANEL_GAP=6
 pBGInactiveTab="#ff323537"
 pBGActiveTab="#ff828587"
-pIcon="#ff787878"
+
+pIcon="#bba2a2a2"
 export pRest="$pBG"
 export pActive="$pBGActiveTab"
 b_normal_border_color="#2e2e2e"
@@ -34,6 +35,7 @@ b_normal_border_color="#2e2e2e"
 
 PANEL_FONT_MAIN="Droid Sans-9:style=Bold"
 PANEL_FONT_ICON="FontAwesome-10"
+DUNST_FONT="Droid Sans 10"
 
 export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=false # option to show nothing for free desktops

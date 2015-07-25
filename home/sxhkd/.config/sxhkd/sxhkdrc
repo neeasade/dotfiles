@@ -122,7 +122,7 @@ super + p
     i3blur.sh
 
 super + o
-    firefox
+    chromium
 
 super + e
     pcmanfm
@@ -132,6 +132,9 @@ super + Return
 
 super + space
     ~/bin/dmenu_run
+
+XF86Audio{Prev,Next}
+     mpc -q {prev,next}
 
 # make sxhkd reload its configuration files:
 super + Escape

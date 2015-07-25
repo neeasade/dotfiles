@@ -1,0 +1,39 @@
+#!/bin/bash
+# base16 twilight theme
+
+THEME_NAME=material
+
+GTK_THEME=material
+
+# vim theme name
+VIM_COLORS=material
+
+# termite theme name
+TERMITE_CONFIG=material
+
+# Background command
+export BG_COMMAND="feh --bg-fill /home/neeasade/images/walls/fill/hexagon.png"
+
+. ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
+
+# bspwm
+b_border_width=5
+b_window_gap=16
+b_split_ratio=0.6
+
+# panel
+PANEL_HEIGHT=32
+PANEL_GAP=6
+pBGInactiveTab="#ff37474f"
+
+PANEL_FONT_MAIN="Droid Sans-9:style=Bold"
+PANEL_FONT_ICON="FontAwesome-10"
+DUNST_FONT="Droid Sans 10"
+
+export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
+export showFreeDesktops=false # option to show nothing for free desktops
+export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
+export NoModeToggle="" # if defined, no monocle/tiling toggle.
+
+# This is needed for spacing on the dmenu_run script.
+[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0

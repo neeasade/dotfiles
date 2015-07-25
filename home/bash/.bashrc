@@ -76,7 +76,7 @@ PS1='$(prompt) '
 alias tmux='tmux -2' #Make tmux assume 256 colors.
 alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 10'
 alias info='info --vi-keys'
-alias vim='nvim'
+alias vim='NVIM_TUI_ENABLE_TRUE_COLOR=1 nvim'
 alias sysinfo='archey3 && dfc -p /dev && colors'
 alias ls='ls --color=auto'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"

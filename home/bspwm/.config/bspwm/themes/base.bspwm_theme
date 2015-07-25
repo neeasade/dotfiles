@@ -70,8 +70,8 @@ barInfo=""
 
 # Customize options on different computers by hostname:
 if [ "$HOSTNAME" = "littleapple" ]; then
-    barInfo1="yaourtUpdates weather"
-    barInfo2="themeSwitch network volume"
+    barInfo1="yaourtUpdates"
+    barInfo2="themeSwitch volume"
     barInfo3="mpd clock"
 fi
 
@@ -81,7 +81,7 @@ fi
 [ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
 
 # dunst variables
-export DUNST_FONT="Dejavu Sans Mono 10"
+DUNST_FONT="Dejavu Sans Mono 10"
 
 # if this is called, override the defaultBG/FG variables.
 export defaultBG="#$(getTermColor background)"
