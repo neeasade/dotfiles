@@ -43,7 +43,7 @@ export DT='[-]'
 export DM='[]'
 
 # dunst variables
-export DUNST_FONT="Terminus 8"
+DUNST_FONT="Terminus 8"
 
 # This is needed for spacing on the dmenu_run script.
 [ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
