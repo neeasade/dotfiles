@@ -4,11 +4,13 @@ Neeasade's dotfiles
 ##Information
 *   WM - bspwm
 *   Panel - lemonbar with xft support, from the lemonbar-xft-git aur package
-*   term emulator - termite
-*   GTK theme - FlatStudioDark, with some changed colors to match.
-*   font - Dejavu Sans Mono
+*   term emulator - termite, for it's live reload of configuration feature.
+*   Multiple themes are used here(see below)
+*   GTK theme - FlatStudioDark/Dorian-Slate/zenburn
+*   font - Dejavu Sans Mono/Droid Sans/Terminus
 
-![Screenshot](http://a.pomf.se/dvdaho.png)
+[Workflow webm](https://sr.ht/61e69.webm)
+![Screenshot](https://sr.ht/c2ac.png)
 
 ##TODO(ricing roadmap)
 *   better irc experience
@@ -22,7 +24,7 @@ Neeasade's dotfiles
 One feature of this setup is a 'tabbed' display in bar when a desktop is in monocle mode. The active window title is highlighted and the other window titles are clickable on the bar to focus them, though you may also cycle through them with the appropriate key combination. This idea came after a user complained about no i3-like tab mode in bspwm in a thread discussing bspwm's flexibility. Optionally, desktops may always be 'tabbed', resulting lemonbar will show titles of all programs in a desktop view. This is only toggled by watching bspwm's window history, so title mode will only change on a change of window focus, sadly.
 
 ##Themes
-This setup bases most all it's settings on a theme file, ~/.bspwm_theme. It is set up to allow multiple themes with different files that get symlinked to that location. I user termite to transition through configs on the fly. For a nice demo of this, see here: https://u.teknik.io/uJYtdP.webm
+This setup bases most all it's settings on a theme file, ~/.bspwm_theme. It is set up to allow multiple themes with different files that get symlinked to that location. I use termite to transition through configs on the fly, as seen in the workflow webm.
 
 ##Dependencies
 The programs used here are located in the depends.txt file. You could install them all at once with something like:
