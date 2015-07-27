@@ -14,7 +14,8 @@ Neeasade's dotfiles
 
 ##TODO(ricing roadmap)
 *   better irc experience
-*   restructure to remove root files and put home files at top level - possibly add a 'root' folder there.
+*   more BSPWM window manuevers
+*   dzen2 applets/panel things as I think of them
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ##Multihead
@@ -27,14 +28,22 @@ One feature of this setup is a 'tabbed' display in bar when a desktop is in mono
 This setup bases most all it's settings on a theme file, ~/.bspwm_theme. It is set up to allow multiple themes with different files that get symlinked to that location. I use termite to transition through configs on the fly, as seen in the workflow webm.
 
 ##Dependencies
-The programs used here are located in the depends.txt file. You could install them all at once with something like:
+Most programs used here are located in the depends.txt file. You could install them all at once with something like:
 ```
 for i in $(cat depends.txt); do <your package manager install command here> $i; done
 ```
-this is independent per target directory. This list has only been tested with Arch Linux and there are a number of packages that live in the AUR. There is a script at the top level named setup.sh - this will populate any git submodules(eg for vim/tmux/other package managers) and also install everything in the depends.txt files(assumes yaourt).
+This list has only been tested with Arch Linux and there are a number of packages that live in the AUR. There is a script at the top level named setup.sh - this will populate any git submodules(eg for vim/tmux/other package managers) and also install everything in the depends.txt files(assumes yaourt).
 
 ##Management
-These files are managed with GNU [stow](http://www.gnu.org/software/stow/manual/stow.html), which should be available via your package manager of choice. Stow is a symlink-farm management program. It allows for mass symlinking out of a 'master' directory(Here you can see I use the users home directory and the root('/') directory. The deploy scripts in these directories run stow with a target parent directory indicated by name. if you are reading this you are probably interested in only the dotfiles for your home directory. The deploy scripts handle file conflict, stopping if there is an existing file in a place where a symlink would go. If the force flag is set with a deploy script and it finds conflicts, it will store the original files in a directory here should you still need them.
+Excluding the root folder, all of these files are meant to be symlinked to a users home folder, most likely stored in something like ~/.dotfiles. I deploy these with GNU [stow](http://www.gnu.org/software/stow/manual/stow.html):
+```
+stow $(ls */ -d | grep -v root)
+```
+If there are any conflicts, files will not be symlinked and you will be told about conflicts. The following shows conflicts parsed out of stows output:
+```
+stow -n $(ls */ -d | grep -v root) 2>&1 | grep -oE ":.+" | cut -c3-
+```
+
 
 ##Misc:
 *   The philosophy for the prompt was taken from [dcat](http://dcat.iotek.org/prompt/)
