@@ -131,7 +131,10 @@ super + Return
     termite
 
 super + space
-    ~/bin/dmenu_run
+    eval dmenu_run $(dmenu_options)
+
+super + shift + space
+    eval passmenu $(dmenu_options)
 
 XF86Audio{Prev,Next}
      mpc -q {prev,next}
