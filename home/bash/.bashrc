@@ -76,7 +76,7 @@ PS1='$(prompt) '
 alias tmux='tmux -2' #Make tmux assume 256 colors.
 alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 10'
 alias info='info --vi-keys'
-alias vim='NVIM_TUI_ENABLE_TRUE_COLOR=1 nvim'
+alias vim='nvim'
 alias sysinfo='archey3 && dfc -p /dev && colors'
 alias ls='ls --color=auto'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
@@ -87,8 +87,21 @@ alias shot="scrot ~/Screenshots/`date +%y-%m-%d-%H:%M:%S`.png"
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
 
 # programs
-export EDITOR=vim
+export EDITOR='nvim'
 export BROWSER=chromium
+
+export HISTFILESIZE=10000
+. /etc/profile.d/fzf.bash
+
+# fe [FUZZY PATTERN] - Open the selected file with the default editor
+#   - Bypass fuzzy finder if there's only one match (--select-1)
+#   - Exit if there's no match (--exit-0)
+fe() {
+  local file
+  file=$(fzf --query="$1" --select-1 --exit-0)
+  [ -n "$file" ] && ${EDITOR} "$file"
+}
+export FZF_CTRL_T_COMMAND=fe
 
 # autostartx if running on the first tty:
 if [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]]; then exec startx; fi

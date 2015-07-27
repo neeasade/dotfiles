@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # info.sh
 # Output information with formatted background colors in lemonbar format
 # This script can take arguments for what bar information to display(meant to be the names of the functions)
@@ -66,7 +66,7 @@ network() {
 }
 
 mpd() {
-    cur_song=$(mpc current | cut -c1-30)
+    cur_song=$(basename "$(mpc current)" | sed "s/^\(.*\)\..*$/\1/" | cut -c1-30 )
 
     icon f025
     if [ -z "$cur_song" ]; then

@@ -81,8 +81,11 @@ set foldcolumn=0
 set background=dark
 let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
 execute 'colorscheme ' vim_colors
-
 set t_Co=256
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1 " neovim true colors.
+" neovim remap esc for term mode.
+tnoremap <Esc> <C-\><C-n>
+
 set encoding=utf-8
 
 " display tabs, not displaying trailing spaces because set to remove on write"
