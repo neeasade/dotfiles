@@ -13,14 +13,14 @@ password_files=( "$prefix"/**/*.gpg )
 password_files=( "${password_files[@]#"$prefix"/}" )
 password_files=( "${password_files[@]%.gpg}" )
 
-password=$(printf '%s\n' "${password_files[@]}" | dmenu "$@")
+pass=$(printf '%s\n' "${password_files[@]}" | dmenu "$@")
 
-[[ -n $password ]] || exit
+[[ -n $pass ]] || exit
 
 if [[ $typeit -eq 0 ]]; then
-    pass show -c "$password" 2>/dev/null
+    pass show -c "$pass" 2>/dev/null
 else
-    pass show "$password" |
+    pass show "$pass" |
         awk 'BEGIN{ORS=""} {print; exit}' |
         xdotool type --clearmodifiers --file -
 fi
