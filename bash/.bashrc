@@ -74,7 +74,7 @@ PS1='$(prompt) '
 
 # aliases
 alias tmux='tmux -2' #Make tmux assume 256 colors.
-alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 10'
+alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
 alias info='info --vi-keys'
 alias vim='nvim'
 alias sysinfo='archey3 && dfc -p /dev && colors'
