@@ -139,6 +139,16 @@ super + shift + space
 XF86Audio{Prev,Next}
      mpc -q {prev,next}
 
+
+XF86AudioPlay
+     mpc -q toggle
+
+XF86Audio{LowerVolume,RaiseVolume}
+    amixer -q sset Master 3%{-,+}
+
+XF86AudioMute
+    amixer -q set Master toggle
+
 # make sxhkd reload its configuration files:
 super + Escape
     pkill -USR1 -x sxhkd

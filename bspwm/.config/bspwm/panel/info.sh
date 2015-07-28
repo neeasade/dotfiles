@@ -97,7 +97,7 @@ themeSwitch() {
         zenburn) next_theme=jellybean;;
         jellybean) next_theme=pyonium;;
     esac
-    command="ltheme $next_theme"
+    command="nohup ltheme $next_theme &"
     icon f01e
     echo ${AC}$command${AB}$cur_theme${AE}
 }
