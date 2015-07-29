@@ -54,10 +54,10 @@ export pBGInactiveTab="$pRest"                # Inactive title tab - also used t
 export pIcon="#ffaaaaaa"                      # color of icons from info.sh
 
 # Workspace variables
-DO=$(echo -e '\uf0c8')  # occupied desktop
-DF=$(echo -e '\uf096')  # free desktop
-DT=$(echo -e '\uf009')  # tiling mode
-DM=$(echo -e '\uf0c9')  # monocle mode
+export DO=$(echo -e '\uf0c8')  # occupied desktop
+export DF=$(echo -e '\uf096')  # free desktop
+export DT=$(echo -e '\uf009')  # tiling mode
+export DM=$(echo -e '\uf0c9')  # monocle mode
 
 # Separator for display items for info.sh
 # form of the info.sh output is <pPadding><icon><content><pPadding><delim>
