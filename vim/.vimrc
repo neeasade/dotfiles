@@ -78,7 +78,6 @@ set foldlevel=0
 set foldcolumn=0
 
 " Look and Feel settings
-" set background=dark
 let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
 execute 'colorscheme ' vim_colors
 set t_Co=256

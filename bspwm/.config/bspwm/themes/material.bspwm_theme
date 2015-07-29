@@ -33,7 +33,7 @@ DUNST_FONT="Droid Sans 10"
 export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=false # option to show nothing for free desktops
 export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
-export NoModeToggle="" # if defined, no monocle/tiling toggle.
+export NoModeToggle="1" # if defined, no monocle/tiling toggle.
 
 # This is needed for spacing on the dmenu_run script.
 [ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
