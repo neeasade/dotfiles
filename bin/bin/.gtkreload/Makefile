@@ -8,7 +8,7 @@ CFLAGS=`pkg-config --cflags --libs gdk-2.0`
 all: $(BIN)
 
 $(BIN):
-	@$(CC) $(BIN).c $(CFLAGS) -o $(BIN)
+	@$(CC) $(BIN).c $(CFLAGS) -o ../$(BIN)
 
 install:
 	mkdir -p $(DESTDIR)$(BINDIR)
