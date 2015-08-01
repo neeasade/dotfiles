@@ -117,5 +117,5 @@ while :; do
     done
 
     echo "$buf"
-    sleep 1 # The HUD will be updated every second
+    sleep 2 # The HUD will be updated every second
 done

@@ -13,7 +13,6 @@ Neeasade's dotfiles
 ![Screenshot](https://sr.ht/c2ac.png)
 
 ##TODO(ricing roadmap)
-*   better irc experience
 *   more BSPWM window manuevers
 *   dzen2 applets/panel things as I think of them
 *   better document and 'clean' things within the dotfiles themselves(never ends)
@@ -44,6 +43,12 @@ If there are any conflicts, files will not be symlinked and you will be told abo
 stow -n $(ls */ -d | grep -v root) 2>&1 | grep -oE ":.+" | cut -c3-
 ```
 
+##I want this on my computer and I run Arch Linux.
+Cool, assuming you have git and yaourt, run the following.
+```
+git clone http://github.com/neeasade/dotfiles ~/.dotfiles_neeasade && ~/.dotfiles_neeasade/deploy.sh
+```
+I take no responsibility for what happens when you do this. Any conflicting files will be moved to ~/dotfile_conflicts
 
 ##Misc:
 *   The philosophy for the prompt was taken from [dcat](http://dcat.iotek.org/prompt/)
