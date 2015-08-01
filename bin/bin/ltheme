@@ -32,14 +32,11 @@ gtkrc-reload &
 killall dunst
 
 # reset $defaultBG and FG for dunst relaunch:
-defaultBG="$( cat ~/.config/termite/config | grep background | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}")";
-defaultFG="$( cat ~/.config/termite/config | grep foreground | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}")";
-
 dunst -geometry 200x200-10-10 \
     -fn "$DUNST_FONT" \
-    -lb "$defaultBG" -lf "$defaultFG" \
-    -nb "$defaultBG" -nf "$defaultFG" \
-    -cb "$defaultBG" -cf "#ffff00" &
+    -lb "$pBG" -lf "$pFG" \
+    -nb "$pBG" -nf "$pFG" \
+    -cb "$pFG" -cf "$pBG" &
 
 sleep 0.5
 
