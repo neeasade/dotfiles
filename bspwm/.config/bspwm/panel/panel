@@ -33,7 +33,9 @@ num_mon=$(bspc query -M)
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 
 # display function used by both info.sh and panel_bar scripts:
-if [ -z block ]; then
+declare -f block
+if [ $? = "1" ]; then
+notify-send "asdf defining block: $(block asdf)"
     function block() {
         [ ! -z $NoPadding ] && pPadding=$NoPadding
         if [ "$blockActive" = true ] ; then
