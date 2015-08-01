@@ -17,7 +17,7 @@ numix-icon-theme-git
 sxhkd
 terminus-font
 termite
-tmux
+tmux-true_colors
 ttf-dejavu
 ttf-dejavu-sans-mono-powerline-git
 ttf-droid
