@@ -23,7 +23,7 @@ b_split_ratio=0.6
 
 # panel
 PANEL_HEIGHT=32
-PANEL_GAP=6
+PANEL_GAP=0
 pBGInactiveTab="#ff323537"
 pBGActiveTab="#ff828587"
 
@@ -36,6 +36,17 @@ b_normal_border_color="#2e2e2e"
 PANEL_FONT_MAIN="Droid Sans-9:style=Bold"
 PANEL_FONT_ICON="FontAwesome-10"
 DUNST_FONT="Droid Sans 10"
+
+#underline style
+function block() {
+    [ ! -z $NoPadding ] && pPadding=$NoPadding
+    if [ "$blockActive" = true ] ; then
+        echo -n "%{B#ff$(colort 2 $(echo $pBG | cut -c4-))}%{-o}%{U$pBGActiveTab+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
+    else
+        echo -n "%{-o}%{U#ff$(colort -3 $(echo $pBGActiveTab | cut -c4-))+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
+    fi
+}
+export -f block
 
 export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=false # option to show nothing for free desktops
