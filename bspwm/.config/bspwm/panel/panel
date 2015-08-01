@@ -33,26 +33,17 @@ num_mon=$(bspc query -M)
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 
 # display function used by both info.sh and panel_bar scripts:
-function block() {
-    [ ! -z $NoPadding ] && pPadding=$NoPadding
-    if [ "$blockActive" = true ] ; then
-        echo -n "%{B$pBGActiveTab}%{F$pBG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
-    else
-        echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
-    fi
-}
-
-# Optional Underline style.
-function Underlineblock() {
-    [ ! -z $NoPadding ] && pPadding=$NoPadding
-    if [ "$blockActive" = true ] ; then
-        echo -n "%{B#ff$(colort 2 $(echo $pBG | cut -c4-))}%{-o}%{U$pBGActiveTab+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
-    else
-        echo -n "%{-o}%{U#ff$(colort -3 $(echo $pBGActiveTab | cut -c4-))+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
-    fi
-}
-
-export -f block
+if [ -z block ]; then
+    function block() {
+        [ ! -z $NoPadding ] && pPadding=$NoPadding
+        if [ "$blockActive" = true ] ; then
+            echo -n "%{B$pBGActiveTab}%{F$pBG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
+        else
+            echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
+        fi
+    }
+    export -f block
+fi
 
 for i in $num_mon; do
     # remove any open panel fifo, and then create one
