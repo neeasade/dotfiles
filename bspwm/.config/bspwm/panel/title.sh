@@ -22,23 +22,18 @@ maxWinNameLen=20;
 WIN_DELIM="\\";
 # The delimiter to separate the window name from the window in a window section.
 WIN_ID_DELIM="//";
-# The interval, in seconds, to check if an update is needed and then call update()
-WIN_REFRESH_DELAY=0.4;
 
 update() {
     # Current monitor's shown desktop
     CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/[^ ]+" );
 
-    # define an 'active' window source to use for this desktop based on whether or not it's the focused monitor.
-    if [ "$IS_ACT_MON" = true ]; then
-        WIN_SOURCE="$(bspc query -W -w focused)";
-    else
-        # Last history object on this monitor should contain last active window.
-        WIN_SOURCE="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 | grep -oE "[0-9]x.+" )";
+    # If current window is not in this desktop, no need to update.
+    if [ -z "$(bspc query -W -d "$CUR_MON_DESK" | grep "$WIN_SOURCE" )" ]; then
+        return;
     fi
 
     if [ "$ALWAYS_TAB" = true ]; then
-        for i in $(bspc query -W -d $CUR_MON_DESK); do
+        for i in $(bspc query -W -d "$CUR_MON_DESK"); do
             [[ "$i" = "$WIN_SOURCE" ]] && status="A" || status="X";
             winName $i $status;
         done
@@ -75,13 +70,11 @@ winName() {
     echo -n "$winName$WIN_ID_DELIM$1$WIN_DELIM";
 }
 
-while :; do
-    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/[^ ]+" );
-    #Update current window
-    CUR_WIN="$( bspc query -H -d $CUR_MON_DESK | tail -n 1 )";
-    if [ "$ACT_WIN" != "$CUR_WIN" ]; then
-        ACT_WIN=$CUR_WIN;
-        echo "T$(update)";
-    fi
-   sleep $WIN_REFRESH_DELAY;
+WIN_SOURCE="$(bspc query -H -m "$CUR_MON" | tail -n 1 | grep -oE "[0-9]x.+")"
+echo "T$(update)"
+
+bspc control --subscribe window | while read line; do
+   WIN_SOURCE="$(echo $line | grep -oE "[0-9]x.+")"
+   WINDOWS="T$(update)"
+   [ ! "$WINDOWS" = "T" ] && echo "$WINDOWS"
 done
