@@ -82,8 +82,3 @@ fi
 
 # dunst variables
 DUNST_FONT="Dejavu Sans Mono 10"
-
-# if this is called, override the defaultBG/FG variables.
-export defaultBG="#$(getTermColor background)"
-export defaultFG="#$(getTermColor foreground)"
-export defaultFG="#$(getTermColor color15)"

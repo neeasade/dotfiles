@@ -2,10 +2,9 @@
 # Deploy these dotfiles to your setup.
 
 cd $(dirname $0)
-pwd
 
 # only need to run setup.sh once.
-if [ -z ./bin/bin/colort ]; then
+if [ ! -e ./bin/bin/colort ]; then
     ./setup.sh
 fi
 
