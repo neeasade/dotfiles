@@ -20,13 +20,8 @@ weather() {
 
 clock() {
     icon f017
-<<<<<<< HEAD
-    # i want to see the day, month
-    date '+%a, %b,%e %l:%M %p'
-    # todo: gcal popup here
-=======
+    # I'd like to see the day, month
     echo ${AC}dzen_cal${AB}$(date '+%l:%M %p')${AE}
->>>>>>> 3c4b918195352564c636ed26644af9ab70755280
 }
 
 mail() {
@@ -93,22 +88,9 @@ yaourtUpdates() {
 }
 
 themeSwitch() {
-<<<<<<< HEAD
     # ghetto
     # todo: replace with dzen dropdown to click themes from dir.
     cur_theme=$(grep "THEME_NAME" ~/.bspwm_theme | cut -c12-)
-    case $cur_theme in
-        pyonium) next_theme=twilight;;
-        twilight) next_theme=zenburn;;
-        zenburn) next_theme=jellybean;;
-        jellybean) next_theme=chalk;;
-        chalk) next_theme=material;;
-        material) next_theme=pyonium;;
-    esac
-    command="nohup ltheme $next_theme &"
-=======
-    cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
->>>>>>> 3c4b918195352564c636ed26644af9ab70755280
     icon f01e
     echo ${AC}'dzen_theme'${AB}$cur_theme${AE}
 }
