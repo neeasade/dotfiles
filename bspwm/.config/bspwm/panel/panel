@@ -1,10 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # panel
 # Start a panel on every monitor
-# This script makes some assumptions if using multihead setup:
-# The leftmost monitor is the tallest(reaches the highest in xroot window) - lemonbars -g flag acts differently if this is not the case
-# Monitors names are arranged left to right, named in increasing int value(1 2 3..)
-# TODO: make this more flexible?
+# This script makes the assumption that monitors names are arranged left to right, named in increasing int value(1 2 3..)
+# if this is not the case, you can override this with the num_mon variable below.
 
 # Read the theme for display settings
 . ~/.bspwm_theme

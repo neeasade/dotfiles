@@ -20,7 +20,7 @@ weather() {
 
 clock() {
     icon f017
-    echo ${AC}dzen_cal${AB}$(date '+%l:%M %p')${AE}
+    echo ${AC}'dzen_cal &'${AB}$(date '+%l:%M %p')${AE}
 }
 
 mail() {
@@ -76,6 +76,7 @@ mpd() {
             toggle="${AC}mpc play${AB}$(icon f04b)${AE}"
         prev="${AC}mpc prev${AB}$(icon f049)${AE}"
         next="${AC}mpc next${AB}$(icon f050)${AE}"
+        cur_song="${AC}'dzen_mpd'${AB}$cur_song${AE}"
         echo "$cur_song  $prev $toggle $next"
     fi
 }
@@ -89,7 +90,7 @@ yaourtUpdates() {
 themeSwitch() {
     cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
     icon f01e
-    echo ${AC}'dzen_theme'${AB}$cur_theme${AE}
+    echo ${AC}'dzen_theme &'${AB}$cur_theme${AE}
 }
 
 #determine what to display based on arguments, unless there are none, then display all.

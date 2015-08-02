@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Toggle the panel on/off, and adjust top_padding dependent on if currently gapped.
 # Accounts for both normal and overlapped window borders in bspwm
 

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+. ~/.bspwm_theme
+
+eval $(xdotool getmouselocation --shell)
+pBG="$(cut -c4- <<< $pBG)"
+pFG="$(cut -c4- <<< $pFG)"
+pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+
+X=`expr $X - 150`
+
+WIDTH=300
+# x root window height above current monitor:
+xextra=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '4 p'`
+Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
+
+# xoffset for multihead.
+xedge=`bspc query -T -d | head -n 1 | grep -oE "[^x ]+" | sed -n '2 p'`
+xoffset=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '3 p'`
+if [ `expr $xoffset + $xedge - $X` -lt $WIDTH ];then
+    X=`expr $xoffset + $xedge - $WIDTH - $PANEL_GAP`
+fi
+
+
+
+playlist=$(mpc playlist | grep -5 "`mpc current`")
+LENGTH=10
+
+printf "Playlist:\n$playlist" | dzen2 -l $LENGTH -fg "#$pFG" -bg "#$pBG" -fn "$PANEL_FONT_MAIN" -x "$X" -y "$Y" -w "$WIDTH" -p 5 -e 'onstart=uncollapse;button1=menuprint;button3=exit;button4=scrollup;button5=scrolldown' -sa l -m
+
+[[ ! -z $THEME ]] && ltheme $THEME

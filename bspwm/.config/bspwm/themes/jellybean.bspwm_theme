@@ -30,7 +30,7 @@ PANEL_HEIGHT=20
 PANEL_FONT_MAIN="Terminus-8"
 PANEL_FONT_ICON="FontAwesome-8"
 PANEL_GAP=4
-PANEL_UNDERLINE=2
+PANEL_UNDERLINE=0
 
 export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=true # option to show nothing for free desktops
