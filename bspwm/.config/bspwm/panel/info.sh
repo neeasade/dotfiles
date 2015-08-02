@@ -20,8 +20,7 @@ weather() {
 
 clock() {
     icon f017
-    date '+%l:%M %p'
-    # todo: gcal popup here
+    echo ${AC}dzen_cal${AB}$(date '+%l:%M %p')${AE}
 }
 
 mail() {
@@ -88,20 +87,9 @@ yaourtUpdates() {
 }
 
 themeSwitch() {
-    # ghetto
-    # todo: replace with dzen dropdown to click themes from dir.
     cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
-    case $cur_theme in
-        pyonium) next_theme=twilight;;
-        twilight) next_theme=zenburn;;
-        zenburn) next_theme=jellybean;;
-        jellybean) next_theme=chalk;;
-        chalk) next_theme=material;;
-        material) next_theme=pyonium;;
-    esac
-    command="nohup ltheme $next_theme &"
     icon f01e
-    echo ${AC}$command${AB}$cur_theme${AE}
+    echo ${AC}'dzen_theme'${AB}$cur_theme${AE}
 }
 
 #determine what to display based on arguments, unless there are none, then display all.
@@ -117,5 +105,5 @@ while :; do
     done
 
     echo "$buf"
-    sleep 2 # The HUD will be updated every second
+    sleep 2 # update interval
 done
