@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #Toggle a default gap setting if it's not already set.
-if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
+if [[ -z "$bspwm_gaps" ]]; then export bspwm_gaps=true; fi
 
 #Get settings
 . ~/.bspwm_theme
@@ -36,13 +36,13 @@ bspc config right_padding 0
 bspc config bottom_padding 0
 
 # set window spacing according to gap settings:
-if [ "$BSPWM_GAPS" = true ]; then
+if [[ "$bspwm_gaps" = true ]]; then
     bspc config window_gap         $b_window_gap
-    bspc config top_padding        $(expr $PANEL_HEIGHT + $PANEL_GAP)
+    bspc config top_padding        $(expr $panel_height + $panel_gap)
     bspc config borderless_monocle false
 else
     bspc config window_gap         0
-    bspc config top_padding        $(expr $PANEL_HEIGHT + $b_border_width)
+    bspc config top_padding        $(expr $panel_height + $b_border_width)
     bspc config borderless_monocle  true
 
     # overlapping borders
@@ -59,8 +59,8 @@ killall lemonbar
 desktops=$(bspc query -M)
 
 # determine if this is initial run by seeing if monitors have been renamed to numbers yet
-echo "$desktops" | grep -q "[a-zA-Z]"
-if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
+grep -q "[a-zA-Z]" $( echo $desktops )
+if [[ $? -eq 0 ]]; then IsInitialRun=true; else IsInitialRun=false; fi
 
 # rename all the monitors to numbers and create 5 workspaces on each
 i=1
@@ -68,12 +68,12 @@ i=1
 # get a list of desktops in monocle mode:
 MonocleDesktops=''
 for desktop in $(bspc query -D); do
-    [ ! -z "$( bspc query -d $desktop -T | grep "M - \*")" ] && MonocleDesktops="$MonocleDesktops $desktop"
+    [[ ! -z "grep "M - \*" $( bspc query -d $desktop -T )" ]] && MonocleDesktops="$MonocleDesktops $desktop"
 done
 
 # create desktops or reset desktop configuration if it already exists.
 for monitor in $desktops; do
-    [ "$IsInitialRun" = true ] && \
+    [[ "$IsInitialRun" = true ]] && \
         bspc monitor "$monitor" -n $i -d $i/{00,01,10,11} || \
         bspc monitor "$monitor" -d $i/{00,01,10,11}
     let i++
@@ -89,4 +89,4 @@ for window in $(bspc query -W); do
     bspc config -w $window border_width $b_border_width
 done
 
-[ "$IsInitialRun" = true ] && ~/.config/bspwm/autostart.sh
+[[ "$IsInitialRun" = true ]] && ~/.config/bspwm/autostart.sh

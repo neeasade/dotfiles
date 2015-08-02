@@ -28,10 +28,10 @@ b_focused_locked_border_color="#FFFFFF"
 
 # Panel variables
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=16
+panel_height=16
 PANEL_FONT_MAIN="Dejavu Sans-8"
 PANEL_FONT_ICON="FontAwesome-10"
-PANEL_GAP=4
+panel_gap=4
 PANEL_UNDERLINE=4  #this value is used for both underline and overline
 export pPadding=3  # number of spaces to pad panel informaiton with
 
@@ -78,7 +78,7 @@ fi
 [ "$HOSTNAME" = "home2" ] && barInfo="battery network volume clock"
 
 # Export panel variables - note - this doesn't work with dmenu_run, maybe because it's sourced a second layer down?
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+[ "$bspwm_gaps" = false ] && export panel_gap=0
 
 # dunst variables
 DUNST_FONT="Dejavu Sans Mono 10"

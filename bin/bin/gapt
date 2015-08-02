@@ -2,7 +2,7 @@
 
 killall panel
 
-[[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=true \
-                                      || export BSPWM_GAPS=false
+[[ $(bspc config window_gap) -le 0 ]] && export bspwm_gaps=true \
+                                      || export bspwm_gaps=false
 
 ~/.config/bspwm/bspwmrc

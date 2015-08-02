@@ -18,8 +18,8 @@ tmux source-file ~/.tmux.conf &
 $BG_COMMAND &
 
 # Keep the current gap setting and reload bspwm
-[[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
-                                      || export BSPWM_GAPS=true
+[[ $(bspc config window_gap) -le 0 ]] && export bspwm_gaps=false \
+                                      || export bspwm_gaps=true
 
 ~/.config/bspwm/bspwmrc &
 
