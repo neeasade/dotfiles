@@ -23,4 +23,6 @@ ttf-dejavu
 ttf-dejavu-sans-mono-powerline-git
 ttf-droid
 ttf-font-awesome
+txtw
+xdotool
 xtitle-git
