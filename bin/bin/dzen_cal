@@ -1,0 +1,49 @@
+#!/bin/bash
+# dzen2 calendar with dynamic width that matches panel colors and font
+# depends: txtw, xdotool
+# works on multihead, accounts for virtual window mismatches using bspc information
+# todo: clean this.
+
+. ~/.bspwm_theme
+
+eval $(xdotool getmouselocation --shell)
+pBG="$(cut -c4- <<< $pBG)"
+pFG="$(cut -c4- <<< $pFG)"
+pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+
+# handle the fonts I use - Monospace is better here.
+PANEL_FONT_MAIN=`sed 's/Droid Sans/Droid Sans Mono/; s/:style=Bold//; s/Dejavu Sans/Dejavu Sans Mono/' <<< "$PANEL_FONT_MAIN"`
+
+# dynamic width using txtw
+font_size="${PANEL_FONT_MAIN#*-}"
+font_name="${PANEL_FONT_MAIN%-*}"
+
+# txtw seems to be off by one..
+font_size=`expr $font_size + 1`
+
+WIDTH=$(txtw -f "xft:$font_name:style=Regular" -s $font_size "$(cal | sed -n "4 p" | sed "s/ /a/g")" )
+
+
+# handle edge cases against edges of x -root window.
+
+# x root window height above current monitor:
+xextra=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '4 p'`
+Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
+
+# xoffset for multihead.
+xedge=`bspc query -T -d | head -n 1 | grep -oE "[^x ]+" | sed -n '2 p'`
+xoffset=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '3 p'`
+if [ `expr $xoffset + $xedge - $X` -lt $WIDTH ];then
+    X=`expr $xoffset + $xedge - $WIDTH - $PANEL_GAP`
+fi
+
+TODAY=$(expr `date +'%d'` + 0)
+MONTH=`date +'%m'`
+YEAR=`date +'%Y'`
+
+# highlight current date
+(
+cal | sed -re "s/^(.*[A-Za-z][A-Za-z]*.*)$/^fg(#$pFG)^bg(#$pBG)\1/;
+s/(^|[ ])($TODAY)($|[ ])/\1^bg(#$pBGActiveTab)^fg(#$pBG)\2^fg(#$pFG)^bg(#$pBG)\3/"
+) | dzen2 -fg "#$pFG" -bg "#$pBG" -fn "$PANEL_FONT_MAIN" -x "$X" -y \
+"$Y" -w "$WIDTH"  -l 7 -e 'onstart=uncollapse;button1=exit;button3=exit' -p 5
