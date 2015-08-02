@@ -22,8 +22,8 @@ b_window_gap=16
 b_split_ratio=0.6
 
 # panel
-PANEL_HEIGHT=32
-PANEL_GAP=6
+panel_height=32
+panel_gap=6
 pBGInactiveTab="#ff37474f"
 
 PANEL_FONT_MAIN="Droid Sans-9:style=Bold"
@@ -36,4 +36,4 @@ export desktopDisplayType=together # [together| separate] - show desktops in sep
 export NoModeToggle="1" # if defined, no monocle/tiling toggle.
 
 # This is needed for spacing on the dmenu_run script.
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+[ "$bspwm_gaps" = false ] && export panel_gap=0

@@ -30,7 +30,7 @@ num_mon=$(bspc query -M)
 [ "$HOSTNAME" = "littleapple" ] && num_mon="1 2 3"
 
 # panel_gap to 0 if no gaps.
-[ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
+[ "$bspwm_gaps" = false ] && panel_gap=0
 
 # display function used by both info.sh and panel_bar scripts:
 declare -f block
@@ -79,9 +79,9 @@ for i in $num_mon; do
     CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
 
     # The nested expr statements account for gap settings and current offset.
-    # PANEL_GAP value is set in profile.
+    # panel_gap value is set in profile.
     cat "$PANEL_FIFO$i" | panel_bar |\
-        lemonbar -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_MAIN" -f "$PANEL_FONT_ICON" -u $PANEL_UNDERLINE | sh &
+        lemonbar -g $(expr $CUR_MON_WIDTH - $(expr $panel_gap + $PANEL_GAP))x$panel_height+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_MAIN" -f "$PANEL_FONT_ICON" -u $PANEL_UNDERLINE | sh &
 
     # Increment the x offset for the next monitor.
     CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )

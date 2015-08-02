@@ -26,10 +26,10 @@ pFG="#ffdddddd"
 export pPadding=1
 
 # Panel variables
-PANEL_HEIGHT=20
+panel_height=20
 PANEL_FONT_MAIN="Terminus-8"
 PANEL_FONT_ICON="FontAwesome-8"
-PANEL_GAP=4
+panel_gap=4
 PANEL_UNDERLINE=2
 
 export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
@@ -45,4 +45,4 @@ export DF='-'
 export DUNST_FONT="Terminus 8"
 
 # This is needed for spacing on the dmenu_run script.
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+[ "$bspwm_gaps" = false ] && export panel_gap=0

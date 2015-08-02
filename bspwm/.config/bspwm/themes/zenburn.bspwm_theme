@@ -24,10 +24,10 @@ b_split_ratio=0.6
 export pPadding=1
 
 # Panel variables
-PANEL_HEIGHT=28
+panel_height=28
 PANEL_FONT_MAIN="Terminus-8"
 PANEL_FONT_ICON="FontAwesome-8"
-PANEL_GAP=4
+panel_gap=4
 PANEL_UNDERLINE=5
 
 export pRest="$pIcon"
@@ -46,4 +46,4 @@ export DM='[]'
 DUNST_FONT="Terminus 8"
 
 # This is needed for spacing on the dmenu_run script.
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+[ "$bspwm_gaps" = false ] && export panel_gap=0
