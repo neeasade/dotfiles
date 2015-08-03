@@ -4,6 +4,7 @@ bspwm-git
 chromium
 compton
 dmenu2
+dunst
 dzen2
 feh
 i3lock
@@ -11,6 +12,7 @@ imagemagick
 lemonbar-xft-git
 mpc
 mpd
+mpdcron
 ncmpcpp
 neovim-git
 numix-icon-theme-git
