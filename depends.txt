@@ -16,6 +16,7 @@ mpdcron
 ncmpcpp
 neovim-git
 numix-icon-theme-git
+python2-notify2
 stow
 sxhkd
 terminus-font
