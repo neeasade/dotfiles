@@ -12,7 +12,7 @@ imagemagick
 lemonbar-xft-git
 mpc
 mpd
-mpdcron
+mpdcron-git
 ncmpcpp
 neovim-git
 numix-icon-theme-git
