@@ -4,7 +4,7 @@
 cd $(dirname $0)
 
 # only need to run setup.sh once.
-if [ ! -e ./bin/bin/colort ]; then
+if [ -z "$@" ]; then
     ./setup.sh
 fi
 

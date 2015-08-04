@@ -1,3 +1,4 @@
+alsa-utils
 base-devel
 bash
 bspwm-git
@@ -7,6 +8,7 @@ dmenu2
 dunst
 dzen2
 feh
+fzf
 i3lock
 imagemagick
 lemonbar-xft-git
@@ -16,6 +18,7 @@ mpdcron-git
 ncmpcpp
 neovim-git
 numix-icon-theme-git
+pcmanfm
 python2-notify2
 stow
 sxhkd
