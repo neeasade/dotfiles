@@ -1,3 +1,7 @@
+" Tab Options
+set shiftwidth=4
+set tabstop=4
+" set expandtab "Enter spaces instead of tabs.
 
 " Plugins
 call plug#begin('~/.vim/plugged')
@@ -7,18 +11,14 @@ call plug#begin('~/.vim/plugged')
     Plug 'airblade/vim-gitgutter'               " Live git changes
     Plug 'tpope/vim-fugitive'                   " Complement git in vim
     Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
-    Plug 'kien/ctrlp.vim'                       " fuzzy file, buffer, tag finder
     Plug 'davidhalter/jedi-vim',                {'for': 'python'} " python autocomplete
+    Plug 'junegunn/fzf',                        {'dir': '~/fzf', 'do': 'yes\| ./install'}
 call plug#end()
 
 " airline specific setting:
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 
-" Tab Options
-" set shiftwidth=4
-" set tabstop=4
-" set expandtab "Inter spaces instead of tabs.
 " todo: shift-tab
 
 " set title and allow hidden buffers
@@ -53,9 +53,7 @@ let g:mapleader = ' '
 
 " Wild menu (Autocompletion)"
 set wildignore=.svn,CVS,.git,*.o,*.a,*.class,*.mo,*.la,*.so,*.obj,*.swp,*.jpg,*.jpeg,*.png,*.xpm,*.gif
-
-" todo: understand this:
-set wildmode=full
+set wildmode=list:longest,full
 
 " Backup and Swap
 set nobackup
@@ -74,10 +72,14 @@ set foldmethod=marker
 set foldlevel=0
 set foldcolumn=0
 
-" Colors - todo - default if file not found.
-let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
-execute 'colorscheme ' vim_colors
+" Colors
 set t_Co=256
+if empty(glob('~/.bspwm_theme'))
+    colorscheme zenburn
+else
+    let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
+    execute 'colorscheme ' vim_colors
+endif
 
 set encoding=utf-8
 
@@ -95,8 +97,6 @@ set nostartofline      " when moving thru the lines, the cursor will try to stay
 " Formatting Options
 set wrap " Soft Wrap in all files, while hard wrap can be allow by filetype
 set linebreak " It maintains the whole words when wrapping
-
-" todo : see if needed.
 set smartindent
 
 " Open new split panes to right and bottom, which feels more natural
@@ -116,10 +116,6 @@ vmap = =gv
 "key shortcuts for tabs like in Chrome with selecing some specifically.
 map <C-S-]> gt
 map <C-S-[> gT
-
-" sync yanking and pasting with clipboard
-" todo: revisit this setting.
-set clipboard=unnamedplus
 
 "copy visual
 map <C-c> "+y<CR>
