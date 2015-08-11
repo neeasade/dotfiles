@@ -11,12 +11,12 @@ call plug#begin('~/.vim/plugged')
     Plug 'airblade/vim-gitgutter'               " Live git changes
     Plug 'tpope/vim-fugitive'                   " Complement git in vim - todo: learn this.
     Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
-    Plug 'terryma/vim-multiple-cursors'         " Muliple cursors - todo: keybinds/practice this.
-    Plug 'Shougo/neocomplete.vim'               " Easily customized cached completion.
+    Plug 'terryma/vim-multiple-cursors'         " Muliple cursors, akin to sublime text
     Plug 'jiangmiao/auto-pairs'                 " auto-pairs(brackets/quotes)
-    Plug 'scrooloose/nerdtree',                 {'on': 'NERDTreeToggle'} " Side panel file browser. todo: keybinds
+    Plug 'scrooloose/nerdtree',                 {'on': ['NERDTreeToggle','NERDTreeFind']} " Side panel file browser.
 
-    Plug 'davidhalter/jedi-vim',                {'for': 'python'} " python autocomplete - todo: keybinds for doc lookup/autopop revision.
+    Plug 'Valloric/YouCompleteMe',              { 'do': './install.sh --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'cs', 'python']}
+    Plug 'rdnetto/YCM-Generator', 'stable'      " Generate ycm files - :YcmGenerateConfig
 
     Plug 'mattn/emmet-vim',                     {'for': ['html', 'xml', 'xsl', 'xslt', 'xsd', 'css', 'sass', 'scss', 'less', 'mustache', 'php']}
     Plug 'Valloric/MatchTagAlways',             {'for': ['html', 'xhtml', 'xml', 'jinja']}
@@ -26,44 +26,47 @@ call plug#begin('~/.vim/plugged')
 call plug#end()
 " }}}
 
-" {{{ Autocompletion
-let g:acp_enableAtStartup = 0
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#enable_smart_case = 1
-let g:neocomplete#sources#syntax#min_keyword_length = 3
-let g:neocomplete#lock_buffer_name_pattern = '\*ku\*' " todo: look into this/that function w/ multiple cursors in daniels.
-let g:neocomplete#sources#dictionary#dictionaries =  { 'default' : '' }
-inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
-function! s:my_cr_function()
-  return pumvisible() ? neocomplete#close_popup() : "\<CR>"
-endfunction
-" <TAB>: completion.
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-inoremap <expr><C-y>  neocomplete#close_popup()
-inoremap <expr><C-e>  neocomplete#cancel_popup()
-
-" for jedi-vim + neocomplete(python):
-autocmd FileType python setlocal omnifunc=jedi#completions
-let g:jedi#completions_enabled = 0
-let g:jedi#auto_vim_configuration = 0
-if !exists('g:neocomplete#force_omni_input_patterns')
-    let g:neocomplete#force_omni_input_patterns = {}
-    let g:neocomplete#force_omni_input_patterns.python='\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-endif
-" }}}
-
-" airline specific setting:
+" {{{ Plugin settings
+" youcompleteme
+let g:ycm_autoclose_preview_window_after_completion = 1
+" airline
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
+" NerdTree
+" let NERDTreeShowHidden = 1
+" vim-multiple-cursors
+let g:multi_cursor_exit_from_visual_mode = 0
+let g:multi_cursor_exit_from_insert_mode = 0
+" }}}
 
-" todo: tab / shift-tab in highlight.
+" {{{ keybinds
+" Define ' ' as map leader
+let mapleader = ' '
+let g:mapleader = ' '
+" indenting keybinds
+nnoremap <Tab> >>_
+nnoremap <S-Tab> <<_
+inoremap <S-Tab> <C-D>
+vnoremap <Tab> >gv
+vnoremap <S-Tab> <gv
+" Repurpose up and down arrow keys to move between the buffers
+nnoremap <silent> <Down>   :bn<CR>
+nnoremap <silent> <Up>  :bp<CR>
+" copy visual
+map <C-c> "+y<CR>
+" toggle paste mode
+set pastetoggle=<F2>
+" NerdTree
+" silent! nmap <C-p> :NERDTreeToggle<CR>
+silent! map <F3> :NERDTreeFind<CR>
+let g:NERDTreeMapActivateNode="<F3>"
+let g:NERDTreeMapPreview="<F4>"
+" }}}
 
 " set title and allow hidden buffers
 set title
 set hidden
+set list
 
 " Auto remove all trailing whitespace on :w
 autocmd BufWritePre * :%s/\s\+$//e
@@ -83,11 +86,6 @@ set noshowmode                                          " Hide the default mode 
 set shortmess=atToOI                                    " To avoid the 'Hit Enter' prompts caused by the file messages
 set undolevels=1000
 set updatetime=1500
-
-" Define ' ' as map leader
-let mapleader = ' '
-let g:mapleader = ' '
-
 " Disable all bells
 " set noerrorbells visualbell t_vb=
 
@@ -142,24 +140,6 @@ set smartindent
 " Open new split panes to right and bottom, which feels more natural
 set splitbelow
 set splitright
-
-" Repurpose up and down arrow keys to move between the buffers
-nnoremap <silent> <Down>   :bn<CR>
-nnoremap <silent> <Up>  :bp<CR>
-
-" Indent visual selected code without unselecting
-" As seen in vimcasts.org
-" todo - revaluate this when tab/shift-tab
-vmap > >gv
-vmap < <gv
-vmap = =gv
-
-"key shortcuts for tabs like in Chrome with selecing some specifically.
-map <C-S-]> gt
-map <C-S-[> gT
-
-"copy visual
-map <C-c> "+y<CR>
 
 " gvim options - remove the toolbar.
 set guioptions-=L
