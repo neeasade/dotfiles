@@ -90,5 +90,5 @@ while read -r line ; do
 
         wm_infos=" $wm_infos%{B$pBG}";;
     esac
-    printf "%s\n" "%{l}$wm_infos %{c}$title %{r}$sys_infos"
+    printf "%s\n" "%{l}$wm_infos %{r}$sys_infos %{c}$title"
 done
