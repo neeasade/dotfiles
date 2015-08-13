@@ -25,7 +25,7 @@ CUR_X_OFFSET=0
 
 # Get the number of monitors we will be making bars for
 num_mon=$(bspc query -M)
-[ "$HOSTNAME" = "littleapple" ] && num_mon="1 2 3"
+[ "$HOSTNAME" = "littleapple" ] && num_mon="2 1 3"
 
 # panel_gap to 0 if no gaps.
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
