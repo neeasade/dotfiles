@@ -91,7 +91,6 @@ export EDITOR='nvim'
 export BROWSER=chromium
 
 export HISTFILESIZE=10000
-. /etc/profile.d/fzf.bash
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
@@ -105,3 +104,5 @@ export FZF_CTRL_T_COMMAND=fe
 
 # autostartx if running on the first tty:
 if [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]]; then exec startx; fi
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
