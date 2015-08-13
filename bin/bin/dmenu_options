@@ -14,5 +14,5 @@ PANEL_BG="#$(echo $pBG | cut -c4-)"
 pFG="#$(echo $pFG | cut -c4-)"
 pBGActiveTab="#$(echo $pBGActiveTab | cut -c4-)"
 
-dmenu_options="-y $PANEL_GAP -x $PANEL_GAP -h $PANEL_HEIGHT -w $PANEL_WIDTH -i -q -p \"\$\" -sf \"$pFG\" -nf \"$(colort -5 "$pFG")\" -nb \"$PANEL_BG\" -sb \"$PANEL_BG\" -fn \"$PANEL_FONT_MAIN\""
+dmenu_options="-y $PANEL_GAP -x $PANEL_GAP -h $PANEL_HEIGHT -w $PANEL_WIDTH -i -q -p \"\$\" -sf \"$pFG\" -nf \"$(colort -4 "$pFG")\" -nb \"$PANEL_BG\" -sb \"$PANEL_BG\" -fn \"$PANEL_FONT_MAIN\""
 echo $dmenu_options
