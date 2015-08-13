@@ -21,11 +21,16 @@ if [ `expr $xoffset + $xedge - $X` -lt $WIDTH ];then
     X=`expr $xoffset + $xedge - $WIDTH - $PANEL_GAP`
 fi
 
-
-
-playlist=$(mpc playlist | grep -5 "`mpc current`")
 LENGTH=10
 
-printf "Playlist:\n$playlist" | dzen2 -l $LENGTH -fg "#$pFG" -bg "#$pBG" -fn "$PANEL_FONT_MAIN" -x "$X" -y "$Y" -w "$WIDTH" -p 5 -e 'onstart=uncollapse;button1=menuprint;button3=exit;button4=scrollup;button5=scrolldown' -sa l -m
+lines=5
+format="%position% [[%artist% - ]%title%]|[%file%]"
+format="%position% %title%"
+(
+echo "Playlist"
+mpc playlist -f "$format" | grep -$lines "$(mpc current -f %position%)" | while read -r position song; do
+echo " ^ca(1, mpc play $position) $song ^ca() "
+done
+) | dzen2 -l $LENGTH -fg "#$pFG" -bg "#$pBG" -fn "$PANEL_FONT_MAIN" -x "$X" -y "$Y" -w "$WIDTH" -p 5 -e 'onstart=uncollapse;button1=menuprint;button3=exit;button4=scrollup;button5=scrolldown' -sa l -m
 
 [[ ! -z $THEME ]] && ltheme $THEME
