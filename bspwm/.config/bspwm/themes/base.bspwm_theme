@@ -70,8 +70,8 @@ barInfo=""
 
 # Customize options on different computers by hostname:
 if [ "$HOSTNAME" = "littleapple" ]; then
-    barInfo1="yaourtUpdates"
-    barInfo2="themeSwitch volume clock"
+    barInfo2="yaourtUpdates"
+    barInfo1="themeSwitch volume clock"
     barInfo3="mpd clock"
 fi
 

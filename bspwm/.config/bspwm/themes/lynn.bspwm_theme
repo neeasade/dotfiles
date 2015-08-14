@@ -1,0 +1,48 @@
+#!/bin/bash
+# named for the ricer in #rice.
+
+THEME_NAME=lynn
+
+GTK_THEME=lynn
+
+# vim theme name
+VIM_COLORS=autumn
+
+# termite theme name
+TERMITE_CONFIG=lynn
+
+# Background command
+export BG_COMMAND="feh  --bg-fill /home/neeasade/images/walls/fill/bamboo.jpg"
+
+. ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
+
+# bspwm
+b_border_width=5
+b_window_gap=16
+b_split_ratio=0.6
+export pPadding=6
+
+# panel
+PANEL_HEIGHT=32
+PANEL_GAP=4
+pBGInactiveTab="#ff392925"
+
+pIcon="#bbe4dc8c"
+export pRest="$pBG"
+export pActive="$pBGActiveTab"
+#b_normal_border_color="#2e2e2e"
+
+export DO=`echo -e '\uf18c'`
+export DF=`echo -e '\uf068'`
+
+PANEL_FONT_MAIN="Droid Sans-9:style=bold"
+PANEL_FONT_ICON="FontAwesome-10"
+DUNST_FONT="Droid Sans 10"
+
+export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
+export showFreeDesktops=true # option to show nothing for free desktops
+export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
+export NoModeToggle=1 # if defined, no monocle/tiling toggle.
+
+# This is needed for spacing on the dmenu_run script.
+[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
