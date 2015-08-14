@@ -9,6 +9,8 @@
 
 set background=dark
 
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1 " neovim true colors.
+
 hi clear
 
 if exists("syntax-on")
@@ -32,7 +34,7 @@ let colors_name = "materialtheme"
 "green  300 81c784
 "blue   300 64b5f6
 
-hi Normal guibg=#263238 guifg=#eeeeec 
+hi Normal guibg=#263238 guifg=#eeeeec
 hi VertSplit guibg=#263238 guifg=#263238
 hi SignColumn guibg=#263238
 hi LineNr guibg=#263238 guifg=#37474f
@@ -48,8 +50,8 @@ hi PMenu guifg=#80cbc4 guibg=#37474f
 hi PMenuSel guibg=#546e7a guifg=#80cbc4
 hi SpellBad gui=undercurl guisp=#e57373 guifg=#e57373
 
-hi Folded guibg=#37474f guifg=#80cbc4 
-" No fold column support yet 
+hi Folded guibg=#37474f guifg=#80cbc4
+" No fold column support yet
 " hi FoldColumn guifg=Orange guibg=DarkBlue
 " =============================================================================
 " Syntax highlighting
@@ -67,7 +69,7 @@ hi Function gui=bold guifg=#9BCF8D
 "hi Statement guifg=#729FCF
 hi Statement guifg=#ff8a65
 hi Identifier guifg=#AD7FA8
-hi PreProc guifg=#e9ba6e 
+hi PreProc guifg=#e9ba6e
 hi Special term=underline guifg=#64b5f6
 hi Number guifg=#ffd54f gui=bold
 
