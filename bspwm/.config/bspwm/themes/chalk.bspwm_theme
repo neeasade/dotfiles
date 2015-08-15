@@ -1,5 +1,5 @@
 #!/bin/bash
-# base16 material theme
+# base16 chalk theme
 
 THEME_NAME=chalk
 
@@ -12,7 +12,7 @@ VIM_COLORS=Tomorrow
 TERMITE_CONFIG=chalk
 
 # Background command
-export BG_COMMAND="feh --bg-fill /home/$USER/images/walls/fill/evian.jpg"
+export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/evian.jpg"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
