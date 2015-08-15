@@ -12,7 +12,7 @@ VIM_COLORS=base16-twilight
 TERMITE_CONFIG=twilight
 
 # Background command
-export BG_COMMAND="feh --bg-fill /home/neeasade/images/walls/fill/lake.jpg"
+export BG_COMMAND="feh --bg-fill /home/$USER/images/walls/fill/lake.jpg"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
