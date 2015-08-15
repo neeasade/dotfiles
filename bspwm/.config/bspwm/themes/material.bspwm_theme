@@ -12,7 +12,7 @@ VIM_COLORS=material
 TERMITE_CONFIG=material
 
 # Background command
-export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/hexagon.png"
+export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/worlds.jpg"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
