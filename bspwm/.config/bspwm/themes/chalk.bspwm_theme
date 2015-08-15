@@ -12,7 +12,7 @@ VIM_COLORS=base16-chalk
 TERMITE_CONFIG=chalk
 
 # Background command
-export BG_COMMAND="feh --bg-tile /home/neeasade/images/walls/tiled/triangular.png"
+export BG_COMMAND="feh --bg-tile /home/$USER/images/walls/tiled/triangular.png"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 

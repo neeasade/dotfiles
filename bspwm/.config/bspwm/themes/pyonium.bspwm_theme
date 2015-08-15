@@ -13,7 +13,7 @@ VIM_COLORS=mustang
 TERMITE_CONFIG=pyonium
 
 # Background command
-export BG_COMMAND='feh --bg-fill /home/neeasade/images/walls/fill/forest.jpg'
+export BG_COMMAND="feh --bg-fill /home/$USER/images/walls/fill/forest.jpg"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 

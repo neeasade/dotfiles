@@ -12,7 +12,7 @@ VIM_COLORS=autumn
 TERMITE_CONFIG=lynn
 
 # Background command
-export BG_COMMAND="feh  --bg-fill /home/neeasade/images/walls/fill/bamboo.jpg"
+export BG_COMMAND="feh  --bg-fill /home/$USER/images/walls/fill/bamboo.jpg"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
@@ -20,7 +20,7 @@ export BG_COMMAND="feh  --bg-fill /home/neeasade/images/walls/fill/bamboo.jpg"
 b_border_width=5
 b_window_gap=16
 b_split_ratio=0.6
-export pPadding=6
+export pPadding=10
 
 # panel
 PANEL_HEIGHT=32
