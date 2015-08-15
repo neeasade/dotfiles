@@ -12,7 +12,7 @@ VIM_COLORS=jellybean
 TERMITE_CONFIG=jellybean
 
 # Background command
-export BG_COMMAND="feh --bg-tile /home/$USER/images/walls/tiled/random_grey_variations.png"
+export BG_COMMAND="feh --bg-tile $HOME/images/walls/tiled/random_grey_variations.png"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
