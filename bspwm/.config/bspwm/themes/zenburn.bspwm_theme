@@ -12,7 +12,7 @@ VIM_COLORS=zenburn
 TERMITE_CONFIG=zenburn
 
 # Background command
-export BG_COMMAND="feh --bg-fill /home/$USER/images/walls/fill/tree.jpg"
+export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/tree.jpg"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
 
