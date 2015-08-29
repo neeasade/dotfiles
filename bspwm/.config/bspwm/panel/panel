@@ -20,6 +20,9 @@ if [ $(pgrep -cx lemonbar) -gt 1 ] ; then
 fi
 trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
 
+# Store pid to kill this process later(toggle gaps/panel)
+echo $$ > /tmp/panel-pid
+
 # Track the current offset for making a bar per monitor, so we can make bars with specific geometries.
 CUR_X_OFFSET=0
 
@@ -79,7 +82,7 @@ for i in $num_mon; do
     # The nested expr statements account for gap settings and current offset.
     # PANEL_GAP value is set in profile.
     cat "$PANEL_FIFO$i" | panel_bar |\
-        lemonbar -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_MAIN" -f "$PANEL_FONT_ICON" -u $PANEL_UNDERLINE | sh &
+        lemonbar -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_MAIN" -f "$PANEL_FONT_ICON" -f "font\-linux-10" -u $PANEL_UNDERLINE | sh &
 
     # Increment the x offset for the next monitor.
     CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )
