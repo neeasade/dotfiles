@@ -1,0 +1,44 @@
+#!/bin/bash
+
+. ~/.bspwm_theme
+
+eval $(xdotool getmouselocation --shell)
+pBG="$(cut -c4- <<< $pBG)"
+pFG="$(cut -c4- <<< $pFG)"
+pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+
+width=200
+# x root window height above current monitor:
+xextra=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '4 p'`
+Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
+
+# xoffset for multihead.
+xedge=`bspc query -T -d | head -n 1 | grep -oE "[^x ]+" | sed -n '2 p'`
+xoffset=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '3 p'`
+X=`expr $xoffset + $PANEL_GAP`
+
+length=14
+
+# stupid dzen workaround.
+sdw="& pkill dzen"
+(
+echo "+"
+
+echo "Common folders"
+echo " ^ca(1, pcmanfm "$HOME/Downloads" $sdw) Downloads ^ca()"
+echo " ^ca(1, pcmanfm "$HOME/Documents" $sdw) Documents ^ca()"
+echo " ^ca(1, pcmanfm "$HOME/images" $sdw) Images ^ca()"
+
+echo "Recently edited "
+# Get recent files from .viminfo by vim marks.
+for file in $(cat .viminfo | grep -A 10 "File marks" | grep -oE "~.+" | uniq | head -n 5); do
+    fullfile="$(echo $file | sed "s/~/\/home\/$USER/" )"
+    echo " ^ca(1, termite -e 'vim $fullfile' $sdw) $file ^ca()"
+done
+
+echo "Actions"
+echo " ^ca(1, i3blur.sh $sdw) ^fn($PANEL_FONT_ICON) $(echo -n -e "\uf023") ^fn() Lock ^ca()"
+echo " ^ca(1, bspc quit) ^fn($PANEL_FONT_ICON) $(echo -n -e "\uf08b") ^fn() Logoff ^ca()"
+echo " ^ca(1, shutdown $sdw) ^fn($PANEL_FONT_ICON) $(echo -n -e "\uf011") ^fn() Shutdown ^ca()"
+) | dzen2 -l $length -fg "#$pFG" -bg "#$pBG" -fn "$PANEL_FONT_MAIN" -x "$X" -y "$Y" -w "$width" -p 5 -e 'onstart=uncollapse;button1=exit;button3=exit;button4=scrollup;button5=scrolldown' -sa l -m
+
