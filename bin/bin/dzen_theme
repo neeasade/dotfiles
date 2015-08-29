@@ -3,25 +3,10 @@
 
 . ~/.bspwm_theme
 
-eval $(xdotool getmouselocation --shell)
-pBG="$(cut -c4- <<< $pBG)"
-pFG="$(cut -c4- <<< $pFG)"
-pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+width=100
+length=`ls ~/.config/bspwm/themes | wc -l`
+length=`expr $length - 2`
 
-X=`expr $X - 50`
-
-#handle offsets
-xextra=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '4 p'`
-Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
-xedge=`bspc query -T -d | head -n 1 | grep -oE "[^x ]+" | sed -n '2 p'`
-xoffset=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '3 p'`
-if [ `expr $xoffset + $xedge - $X` -lt $WIDTH ];then
-    X=`expr $xoffset + $xedge - $WIDTH - $PANEL_GAP`
-fi
-
-WIDTH=100
-LENGTH=`ls ~/.config/bspwm/themes | wc -l`
-LENGTH=`expr $LENGTH - 2`
-THEME=`ls ~/.config/bspwm/themes | grep -v base | sed s/.bspwm_theme// | dzen2 -l $LENGTH -fg "#$pFG" -bg "#$pBG" -fn "$PANEL_FONT_MAIN" -x "$X" -y "$Y" -w "$WIDTH" -p 5 -e 'onstart=uncollapse;button1=menuprint,exit;button3=exit;' -title-name 'Themes' -sa c -m`
+THEME=`ls ~/.config/bspwm/themes | grep -v base | sed s/.bspwm_theme// | eval dzen2 $(dzen_options)`
 
 [[ ! -z $THEME ]] && ltheme $THEME

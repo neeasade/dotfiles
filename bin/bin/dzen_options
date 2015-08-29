@@ -1,0 +1,20 @@
+#!/bin/bash
+
+pBG="$(cut -c4- <<< $pBG)"
+pFG="$(cut -c4- <<< $pFG)"
+pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+
+eval $(xdotool getmouselocation --shell)
+
+X=$(expr $X - $(expr $width / 2))
+
+#handle offsets
+xextra=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '4 p'`
+Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
+xedge=`bspc query -T -d | head -n 1 | grep -oE "[^x ]+" | sed -n '2 p'`
+xoffset=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '3 p'`
+if [[ `expr $xoffset + $xedge - $X` -lt $width ]];then
+    X=`expr $xoffset + $xedge - $width - $PANEL_GAP`
+fi
+
+echo -l $length -fg \"#$pFG\" -bg \"#$pBG\" -fn \"$PANEL_FONT_MAIN\" -x \"$X\" -y \"$Y\" -w \"$width\" -p 5 -sa c -e \'onstart=uncollapse\;button1=menuprint\;button3=exit\;button4=scrollup\;button5=scrolldown\' -m v
