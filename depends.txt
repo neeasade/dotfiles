@@ -8,6 +8,7 @@ dmenu2
 dunst
 dzen2
 feh
+ttf-font-linux
 fzf
 i3lock
 imagemagick
