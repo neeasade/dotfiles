@@ -38,8 +38,8 @@ export desktopDisplayType=together # [together| separate] - show desktops in sep
 export NoModeToggle=1 # if defined, no monocle/tiling toggle.
 
 # Workspace variables
-export DO='+'
-export DF='-'
+export DO='[-]'
+export DF='[ ]'
 
 # dunst variables
 export DUNST_FONT="Terminus 8"

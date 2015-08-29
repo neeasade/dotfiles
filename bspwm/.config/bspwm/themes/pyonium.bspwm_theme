@@ -26,6 +26,7 @@ b_split_ratio=0.6
 PANEL_HEIGHT=32
 PANEL_GAP=6
 pBGInactiveTab="#ff444444"
+pPadding=1
 
 export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=true # option to show nothing for free desktops
@@ -33,8 +34,8 @@ export desktopDisplayType=together # [together| separate] - show desktops in sep
 export NoModeToggle="" # if defined, no monocle/tiling toggle.
 
 # Workspace variables
-export DO=$(echo -e "\uf111")
-export DF=$(echo -e "\uf10c")
+export DO=$(echo -e "\uf085")
+export DF=$(echo -e "\uf013")
 
 # This is needed for spacing on the dmenu_run script.
 [ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
