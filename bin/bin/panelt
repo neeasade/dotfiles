@@ -7,14 +7,15 @@ padValue=$winGap                                            # Amount to pad from
 [ $winGap -ge 1 ] && padValue=0                             # gaps
 [[ $padValue -le -1 ]] && padValue=$(expr -1 \* $padValue)  # no gaps
 
-if [[ $(pgrep -cx panel) -eq 0 ]]; then
+# returns success if pid is running
+if $(kill -s 0 $(cat /tmp/panel-pid)) ; then
+    # kill the bar and change top padding.
+    kill $(cat /tmp/panel-pid)
+    bspc config top_padding $padValue
+else
     # There's no panel, enabling
     [[ $winGap -le 0 ]] && export BSPWM_GAPS=false
     . ~/.bspwm_theme
     bspc config top_padding $(expr $PANEL_HEIGHT + $PANEL_GAP + $padValue)
     ~/.config/bspwm/panel/panel &
-else
-    # kill the bar and change top padding.
-    killall panel
-    bspc config top_padding $padValue
 fi

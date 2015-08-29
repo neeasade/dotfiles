@@ -1,6 +1,6 @@
 #toggle gaps on and off
 
-killall panel
+kill $(cat /tmp/panel-pid)
 
 [[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=true \
                                       || export BSPWM_GAPS=false
