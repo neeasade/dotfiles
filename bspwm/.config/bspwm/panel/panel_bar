@@ -15,7 +15,7 @@ winfocus='bspc window -f '   # focus on a window
 # define clickable menu thing:
 dropdown="%{T3}`echo -n -e "\uf100"`%{T-}"
 dropdown="$(pPadding=1 && block "$dropdown")"
-dropdown="${AC}dzen_menu${AB}$dropdown${AE}"
+dropdown="${AC}dzen_menu & ${AB}$dropdown${AE}"
 
 while read -r line ; do
     case $line in
