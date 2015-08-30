@@ -16,5 +16,11 @@ xoffset=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '3 p'`
 if [[ `expr $xoffset + $xedge - $X` -lt $width ]];then
     X=`expr $xoffset + $xedge - $width - $PANEL_GAP`
 fi
+if [[ `expr $xoffset + $PANEL_GAP` -gt $X ]];then
+    X=`expr $xoffset + $PANEL_GAP`
+fi
 
-echo -l $length -fg \"#$pFG\" -bg \"#$pBG\" -fn \"$PANEL_FONT_MAIN\" -x \"$X\" -y \"$Y\" -w \"$width\" -p 5 -sa c -e \'onstart=uncollapse\;button1=menuprint\;button3=exit\;button4=scrollup\;button5=scrolldown\' -m v
+# set the alignment(default to center)
+[[ -z $align ]] && align=c
+
+echo -l $length -fg \"#$pFG\" -bg \"#$pBG\" -fn \"$PANEL_FONT_MAIN\" -x \"$X\" -y \"$Y\" -w \"$width\" -p 5 -sa $align -e \'onstart=uncollapse\;button1=menuprint,exit\;button3=exit\;button4=scrollup\;button5=scrolldown\' -m v

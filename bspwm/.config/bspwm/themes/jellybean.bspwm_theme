@@ -26,10 +26,10 @@ pFG="#ffdddddd"
 export pPadding=1
 
 # Panel variables
-PANEL_HEIGHT=20
-PANEL_FONT_MAIN="Terminus-8"
-PANEL_FONT_ICON="FontAwesome-8"
-PANEL_GAP=4
+export PANEL_HEIGHT=20
+export PANEL_FONT_MAIN="Terminus-8"
+export PANEL_FONT_ICON="FontAwesome-8"
+export PANEL_GAP=4
 PANEL_UNDERLINE=0
 
 export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.

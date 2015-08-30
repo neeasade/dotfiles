@@ -28,10 +28,10 @@ b_focused_locked_border_color="#FFFFFF"
 
 # Panel variables
 PANEL_FIFO=/tmp/panel-fifo
-PANEL_HEIGHT=16
-PANEL_FONT_MAIN="Dejavu Sans-8"
-PANEL_FONT_ICON="FontAwesome-10"
-PANEL_GAP=4
+export PANEL_HEIGHT=16
+export PANEL_FONT_MAIN="Dejavu Sans-8"
+export PANEL_FONT_ICON="FontAwesome-10"
+export PANEL_GAP=4
 PANEL_UNDERLINE=4  #this value is used for both underline and overline
 export pPadding=3  # number of spaces to pad panel informaiton with
 

@@ -3,9 +3,9 @@
 
 . ~/.bspwm_theme
 
-width=100
+export width=100
 length=`ls ~/.config/bspwm/themes | wc -l`
-length=`expr $length - 2`
+export length=`expr $length - 2`
 
 THEME=`ls ~/.config/bspwm/themes | grep -v base | sed s/.bspwm_theme// | eval dzen2 $(dzen_options)`
 

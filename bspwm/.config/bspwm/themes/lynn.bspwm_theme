@@ -23,8 +23,8 @@ b_split_ratio=0.6
 export pPadding=10
 
 # panel
-PANEL_HEIGHT=32
-PANEL_GAP=4
+export PANEL_HEIGHT=32
+export PANEL_GAP=4
 pBGInactiveTab="#ff392925"
 
 pIcon="#bbe4dc8c"
@@ -35,7 +35,7 @@ export pActive="$pBGActiveTab"
 export DO=`echo -e '\uf18c'`
 export DF=`echo -e '\uf068'`
 
-PANEL_FONT_MAIN="Droid Sans-9:style=bold"
+export PANEL_FONT_MAIN="Droid Sans-9:style=bold"
 PANEL_FONT_ICON="FontAwesome-10"
 DUNST_FONT="Droid Sans 10"
 
