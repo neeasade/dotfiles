@@ -23,8 +23,8 @@ b_window_gap=22
 b_split_ratio=0.6
 
 # panel
-PANEL_HEIGHT=32
-PANEL_GAP=6
+export PANEL_HEIGHT=32
+export PANEL_GAP=6
 pBGInactiveTab="#ff444444"
 pPadding=1
 

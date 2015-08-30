@@ -16,7 +16,8 @@ font_name="${PANEL_FONT_MAIN%-*}"
 # txtw seems to be off by one..
 font_size=`expr $font_size + 1`
 
-width=$(txtw -f "xft:$font_name:style=Regular" -s $font_size "$(cal | sed -n "4 p" | sed "s/ /a/g")" )
+export width=$(txtw -f "xft:$font_name:style=Regular" -s $font_size "$(cal | sed -n "4 p" | sed "s/ /a/g")" )
+export length=7
 
 TODAY=$(expr `date +'%d'` + 0)
 MONTH=`date +'%m'`

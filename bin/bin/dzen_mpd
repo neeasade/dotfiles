@@ -2,8 +2,8 @@
 
 . ~/.bspwm_theme
 
-width=300
-length=10
+export width=300
+export length=10
 
 lines=5
 format="%position% [[%artist% - ]%title%]|[%file%]"
