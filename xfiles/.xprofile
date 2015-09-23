@@ -1,4 +1,5 @@
 #!/bin/bash
+# This file is used by display managers, although they don't need the 'exec wm' command.
 
-#grep out exec line that launches bspwm
+# grep out exec line that launches bspwm
 eval "$(cat .xinitrc | grep -v "exec")"
