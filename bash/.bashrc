@@ -14,13 +14,6 @@ export defaultBG="$(getTermColor background)"
 export defaultFG="$(getTermColor foreground)"
 export activeFG="$(getTermColor color15)"
 
-
-# Add bin to path
-PATH=$PATH:~/bin
-
-# add the dir for gem execs to path:
-PATH=$PATH:/home/$USER/.gem/ruby/2.2.0/bin
-
 # auto-complete for pacman when using sudo:
 complete -cf sudo
 
@@ -85,12 +78,6 @@ alias pacman="pacman --color=always"
 alias make="clear && make"
 alias shot="scrot ~/Screenshots/`date +%y-%m-%d-%H:%M:%S`.png"
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
-
-# programs
-export EDITOR='nvim'
-export BROWSER=chromium
-
-export HISTFILESIZE=10000
 
 # fe [FUZZY PATTERN] - Open the selected file with the default editor
 #   - Bypass fuzzy finder if there's only one match (--select-1)
