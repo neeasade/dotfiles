@@ -1,4 +1,4 @@
-#Xrandr script:
+#xrandr script:
 ~/.screenlayout/display.sh
 
 #pcmanfm daemon - useful for automatic mounting of drives
@@ -8,7 +8,8 @@ pcmanfm -d &
 xrdb -load  /home/$USER/.Xresources &
 
 #background
-~/.fehbg &
+. ~/.bspwm_theme
+$BG_COMMAND &
 
 #compositing
 compton &
@@ -21,12 +22,11 @@ mpd ~/.config/mpd/mpd.conf &
 xsetroot -cursor_name left_ptr &
 
 #dunst
-. ~/.bspwm_theme
 dunst -geometry 200x200-10-10 \
     -fn "$DUNST_FONT" \
-    -lb "$defaultBG" -lf "$defaultFG" \
-    -nb "$defaultBG" -nf "$defaultFG" \
-    -cb "$defaultBG" -cf "#ffff00" &
+    -lb "$pBG" -lf "$pFG" \
+    -nb "$pBG" -nf "$pFG" \
+    -cb "$pFG" -cf "$pBG" &
 
 #check if existing socket exists and killl for bspwm(doesn't play nice with logging out and in)
 rm /tmp/$(ls /tmp | grep bspwm)
