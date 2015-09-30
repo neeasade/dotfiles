@@ -5,14 +5,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-# define a standard background and foreground variable.
-getTermColor() {
-    echo -n "#$( cat ~/.config/termite/config | grep  "$1" | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
-}
-
-export defaultBG="$(getTermColor background)"
-export defaultFG="$(getTermColor foreground)"
-export activeFG="$(getTermColor color15)"
+# Make sure profile gets sourced.
+. $HOME/.profile
 
 # auto-complete for pacman when using sudo:
 complete -cf sudo
