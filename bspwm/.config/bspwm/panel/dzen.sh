@@ -54,26 +54,32 @@ dzen_menu()
     width=200
     length=14
     align=l
+    icon() {
+        echo -n "^fn($PANEL_FONT_ICON)"
+        echo -n -e "\u$1"
+        echo -n "^fn()"
+    }
 
     # stupid dzen workaround.
     sdw="& pkill dzen"
     content+=("+")
+
     content+=(" Common folders")
-    content+=("   ^ca(1, pcmanfm "$HOME/Downloads" ) Downloads ^ca()")
-    content+=("   ^ca(1, pcmanfm "$HOME/Documents" $sdw) Documents ^ca()")
-    content+=("   ^ca(1, pcmanfm "$HOME/images" $sdw) Images ^ca()")
+    for folder in Downloads Documents Images; do
+        content+=("   ^ca(1, pcmanfm "$HOME/$folder" $sdw) `icon f07b` $folder ^ca()")
+    done
 
     content+=(" Recently edited ")
     # Get recent files from .nviminfo by vim marks.
     for file in $(cat ~/.nviminfo | grep -A 10 "File marks" | grep -oE "~.+" | uniq | head -n 5); do
         fullfile="$(echo $file | sed "s/~/\/home\/$USER/" )"
-        content+=("   ^ca(1, termite -e 'vim $fullfile' $sdw) $file ^ca()")
+        content+=("   ^ca(1, termite -e 'vim $fullfile' $sdw) `icon f15c` $file ^ca()")
     done
 
     content+=(" Actions")
-    content+=("   ^ca(1, i3blur.sh $sdw) ^fn($PANEL_FONT_ICON) $(echo -n -e "\uf023") ^fn() Lock ^ca()")
-    content+=("   ^ca(1, bspc quit) ^fn($PANEL_FONT_ICON) $(echo -n -e "\uf08b") ^fn() Logoff ^ca()")
-    content+=("   ^ca(1, shutdown $sdw) ^fn($PANEL_FONT_ICON) $(echo -n -e "\uf011") ^fn() Shutdown ^ca()")
+    content+=("   ^ca(1, i3blur.sh $sdw) `icon f023` Lock ^ca()")
+    content+=("   ^ca(1, bspc quit) `icon f08b` Logoff ^ca()")
+    content+=("   ^ca(1, shutdown $sdw) `icon f011` Shutdown ^ca()")
 }
 
 # Calendar from cal with current date highlighted
