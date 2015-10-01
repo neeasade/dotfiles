@@ -1,5 +1,5 @@
 #!/bin/bash
-# print dmenu2 options matching current panel.
+# print dmenu2 options matching current panel, to be used with any dmenu script.
 
 [[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
                                       || export BSPWM_GAPS=true
