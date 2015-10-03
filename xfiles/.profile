@@ -6,5 +6,14 @@ export BROWSER=chromium
 
 export TODO="$HOME/.todo.txt"
 
-export HISTFILESIZE=10000
-export HISTFILE=".history"
+# Avoid duplicates
+export HISTCONTROL=ignoredups:erasedups
+
+# When the shell exits, append to the history file instead of overwriting it
+shopt -s histappend
+
+# Yes.
+export HISTFILESIZE=6000
+export HISTSIZE=6000
+
+export HISTFILE="$HOME/.history"
