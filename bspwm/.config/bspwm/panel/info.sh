@@ -58,7 +58,7 @@ network() {
         eth0=$int1
     fi
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
-    icon f0ac
+    echo "${AC}termite -e 'nmtui'${AB}$(icon f0ac)${AE}"
     echo $int
     ping -W 1 -c 1 8.8.8.8 >/dev/null 2>&1 &&
         echo -e '\uf00c' || echo -e '\uf00d'
