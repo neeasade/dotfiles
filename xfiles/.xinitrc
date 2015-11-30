@@ -28,6 +28,9 @@ dunst -geometry 200x200-10-10 \
     -nb "$pBG" -nf "$pFG" \
     -cb "$pFG" -cf "$pBG" &
 
+# unset block function.
+unset -f block
+
 # check if existing socket exists and killl for bspwm(doesn't play nice with logging out and in)
 rm /tmp/$(ls /tmp | grep bspwm)
 
@@ -36,4 +39,4 @@ export SXHKD_SHELL=sh
 
 # start bspwm and sxhkd
 sxhkd -f 100 -c /home/$USER/.config/sxhkd/sxhkdrc &
-exec bspwm -c /home/$USER/.config/bspwm/bspwmrc > .xinit.log
+exec bspwm -c /home/$USER/.config/bspwm/bspwmrc 2>&1 > .xinit.log

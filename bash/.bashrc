@@ -51,10 +51,13 @@ prompt () {
     _ERR=$?
     _UID=$(id -u)
     _JOB=$(jobs | wc -l)
+    _prompt='$'
 
-    [ $_UID -eq 0 ] && echo -n '━' || echo -n -e '─'
-    [ $_JOB -ne 0 ] && echo -n '!' || echo -n -e '─'
-    [ $_ERR -ne 0 ] && echo -n '!' || echo -n -e '─'
+    [ $_UID -eq 0 ] && _prompt='#'
+    [ $_ERR -ne 0 ] && echo -e -n '\e[7m' # invert
+    [ $_JOB -ne 0 ] && echo -n "$_prompt"
+    echo -n "$_prompt"
+    echo -e -n '\e[0m' # reset
 }
 
 PS1='$(prompt) '
@@ -62,8 +65,6 @@ PS1='$(prompt) '
 # aliases
 alias tmux='tmux -2' #Make tmux assume 256 colors.
 alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
-alias info='info --vi-keys'
-alias vim='nvim'
 alias sysinfo='archey3 && dfc -p /dev && colors'
 alias ls='ls --color=auto'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"

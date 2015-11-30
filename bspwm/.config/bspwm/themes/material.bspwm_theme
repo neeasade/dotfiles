@@ -26,7 +26,7 @@ export PANEL_HEIGHT=32
 export PANEL_GAP=6
 pBGInactiveTab="#ff37474f"
 
-export PANEL_FONT_MAIN="Droid Sans-9:style=Bold"
+export PANEL_FONT_MAIN="Droid Sans-10"
 export PANEL_FONT_ICON="FontAwesome-10"
 DUNST_FONT="Droid Sans 10"
 

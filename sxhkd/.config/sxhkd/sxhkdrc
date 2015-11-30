@@ -21,8 +21,14 @@ super + t
 super + b
     bspc desktop -B
 
-super + {s,f}
-    bspc window -t {floating,fullscreen}
+super + s
+    bspc query -W -w focused.tiled && state=floating || state=tiled; \
+    bspc window -t $state
+
+super + f
+    state=fullscreen; \
+    bspc query -W -w "focused.$state" && state=$(bspc query -T -w | jshon -e client -e lastState -u); \
+    bspc window -t "$state"
 
 super + {_,shift} + Tab
     bspc desktop -f {next,prev}

@@ -13,8 +13,10 @@ Neeasade's dotfiles
 ![Screenshot](https://sr.ht/c2ac.png)
 
 ##TODO(ricing roadmap)
+*   rewrite panel in python. current panel is broken, due to the scripts relying on hacky greps, and now bspwm uses json.
+*   learn emacs
+*   turn this repo into a template to be used transparently with something like http://github.com/neeasade/autotheme.sh
 *   more BSPWM window manuevers
-*   dzen2 applets/panel things as I think of them
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ##Multihead

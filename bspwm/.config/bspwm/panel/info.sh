@@ -90,7 +90,7 @@ yaourtUpdates() {
 themeSwitch() {
     cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
     icon f01e
-    echo ${AC}dzen.sh theme${AB}$cur_theme${AE}
+    echo ${AC}nohup dzen.sh theme${AB}$cur_theme${AE}
 }
 
 #determine what to display based on arguments, unless there are none, then display all.

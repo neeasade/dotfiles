@@ -12,7 +12,7 @@ ln -s ~/.config/termite/themes/${TERMITE_CONFIG}.config ~/.config/termite/config
 killall -s USR1 termite &
 
 # tell tmux to reload it's theme
-tmux source-file ~/.tmux.conf &
+tmux source-file ~/.tmux.conf > /dev/null &
 
 # set the background
 $BG_COMMAND &
