@@ -64,11 +64,13 @@ win_source="$(bspc query -H -m "$CUR_MON" | tail -n 1 | grep -oE "[0-9]x.+")"
 echo "T$(update)"
 
 bspc control --subscribe window | while read line; do
-   if grep unmanage <<< "$line"; then
-      echo "T "
-   else
-      win_source="$(echo $line | grep -oE "[0-9]x.+")"
-      WINDOWS="T$(update)"
-      [ ! "$WINDOWS" = "T" ] && echo "$WINDOWS"
+   if grep $(bspc query -T -m ^"$CUR_MON" | jshon -e focusedDesktopName -u) <<< "$line"; then
+      if grep unmanage <<< "$line"; then
+         echo "T "
+      else
+         win_source="$(echo $line | grep -oE "[0-9]x.+")"
+         WINDOWS="T$(update)"
+         [ ! "$WINDOWS" = "T" ] && echo "$WINDOWS"
+      fi
    fi
 done
