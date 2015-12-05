@@ -25,7 +25,7 @@ win_id_delim="//";
 
 update() {
     # Current monitor's shown desktop
-    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | grep " - \*" | grep -oE "[0-9]/[^ ]+" );
+    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | jshon -e focusedDesktopName -u);
 
     # If current window is not in this desktop, no need to update.
     [[ -z "$(bspc query -W -d "$CUR_MON_DESK" | grep "$win_source" )" ]] && return
@@ -36,7 +36,7 @@ update() {
             winName $i $status;
         done
     else
-        if [[ ! -z `bspc query -d $CUR_MON_DESK -T | grep "T - \*"` ]]; then
+        if [[ `bspc query -d $CUR_MON_DESK -T | jshon -e layout -u` = tiled ]]; then
             winName $win_source X;
         else
             FLOAT_STATUS=$(bspc query -W -w focused.floating);
