@@ -8,7 +8,7 @@
 . ~/.bspwm_theme
 
 #first line is current monitor width, then subtract panel gap x2 in second line.
-PANEL_WIDTH=$(bspc query -T -m $(bspc query -M -m) | grep -oE "[0-9]{2,6}" | head -n 1)
+PANEL_WIDTH=$(bspc query -T -m 1 | jshon -e rectangle -e width -u)
 PANEL_WIDTH=$( expr $PANEL_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))
 PANEL_BG="#$(echo $pBG | cut -c4-)"
 pFG="#$(echo $pFG | cut -c4-)"

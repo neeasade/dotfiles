@@ -9,14 +9,15 @@ Neeasade's dotfiles
 *   GTK theme - FlatStudioDark/Dorian-Slate/zenburn
 *   font - Dejavu Sans Mono/Droid Sans/Terminus
 
-[Workflow webm](https://sr.ht/61e69.webm)
-![Screenshot](https://sr.ht/c2ac.png)
+[Workflow webm](https://u.teknik.io/wk6knx.webm)
+![Screenshot](https://u.teknik.io/si6yKy.png)
 
 ##TODO(ricing roadmap)
-*   rewrite panel in python. current panel is broken, due to the scripts relying on hacky greps, and now bspwm uses json.
+*   rewrite panel in python
 *   learn emacs
 *   turn this repo into a template to be used transparently with something like http://github.com/neeasade/autotheme.sh
-*   more BSPWM window manuevers
+	* Write a apckage build for urnn and improve the dataset for this.
+*   more BSPWM window manuevers - json possiblities?
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ##Multihead
