@@ -16,7 +16,7 @@ Neeasade's dotfiles
 *   rewrite panel in python
 *   learn emacs
 *   turn this repo into a template to be used transparently with something like http://github.com/neeasade/autotheme.sh
-	* Write a apckage build for urnn and improve the dataset for this.
+	* Write a package build for urnn and improve the dataset for this.
 *   more BSPWM window manuevers - json possiblities?
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 

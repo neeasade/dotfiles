@@ -76,7 +76,7 @@ for i in $num_mon; do
 
 
     # Grep for current monitor width (will be first number regex match from bspc query command below).
-    CUR_MON_WIDTH=$(bspc query -T -m $i | grep -oE "[0-9]{2,6}" | head -n 1)
+    CUR_MON_WIDTH=$(bspc query -T -m $i | jshon -e rectangle -e width -u)
 
     # The nested expr statements account for gap settings and current offset.
     # PANEL_GAP value is set in profile.
