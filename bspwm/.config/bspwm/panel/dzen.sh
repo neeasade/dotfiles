@@ -14,10 +14,10 @@ dzen_options()
     X=$(expr $X - $(expr $width / 2))
 
     #handle offsets
-    xextra=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '4 p'`
+    xextra=$(bspc query -T -m $i | jshon -e rectangle -e y -u)
     Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
-    xedge=`bspc query -T -d | head -n 1 | grep -oE "[^x ]+" | sed -n '2 p'`
-    xoffset=`bspc query -T -d | head -n 1 | grep -oE "[^+ ]+" | sed -n '3 p'`
+    xedge=$(bspc query -T -m $i | jshon -e rectangle -e width -u)
+    xoffset=$(bspc query -T -m $i | jshon -e rectangle -e x -u)
     if [[ `expr $xoffset + $xedge - $X` -lt $width ]];then
         X=`expr $xoffset + $xedge - $width - $PANEL_GAP`
     fi
