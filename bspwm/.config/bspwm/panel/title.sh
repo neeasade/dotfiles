@@ -25,7 +25,7 @@ win_id_delim="//";
 
 update() {
     # Current monitor's shown desktop
-    CUR_MON_DESK=$( bspc query --monitor ^$CUR_MON -T | jshon -e focusedDesktopName -u);
+    CUR_MON_DESK=$(bspc query -D --desktop "$CUR_MON:focused");
 
     # If current window is not in this desktop, no need to update.
     [[ -z "$(bspc query -W -d "$CUR_MON_DESK" | grep "$win_source" )" ]] && return
@@ -64,7 +64,7 @@ win_source="$(bspc query -H -m "$CUR_MON" | tail -n 1 | grep -oE "[0-9]x.+")"
 echo "T$(update)"
 
 bspc control --subscribe window | while read line; do
-   if grep $(bspc query -T -m ^"$CUR_MON" | jshon -e focusedDesktopName -u) <<< "$line"; then
+   if grep $(bspc query -D --desktop "$CUR_MON:focused") <<< "$line"; then
       if grep unmanage <<< "$line"; then
          echo "T "
       else

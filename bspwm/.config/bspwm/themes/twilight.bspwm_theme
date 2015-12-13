@@ -3,7 +3,7 @@
 
 THEME_NAME=twilight
 
-GTK_THEME=twilight
+GTK_THEME=oomox-twilight
 
 # vim theme name
 VIM_COLORS=base16-twilight
@@ -24,31 +24,41 @@ b_split_ratio=0.6
 # panel
 
 export PANEL_HEIGHT=32
-export PANEL_GAP=0
-export PANEL_UNDERLINE=2
-pBGInactiveTab="#ff323537"
-pBGActiveTab="#ff828587"
+export PANEL_GAP=5
+export PANEL_UNDERLINE=0
+pBGInactiveTab="#ff1e1e1e"
+pBGActiveTab="#ff2d2d2d"
 
 pIcon="#bba2a2a2"
 export pRest="$pBG"
 export pActive="$pBGActiveTab"
 b_normal_border_color="#2e2e2e"
 
-
 export PANEL_FONT_MAIN="Droid Sans-10"
 export PANEL_FONT_ICON="FontAwesome-10"
 DUNST_FONT="Droid Sans 10"
 
-#underline style
 function block() {
     [ ! -z $NoPadding ] && pPadding=$NoPadding
     if [ "$blockActive" = true ] ; then
-        echo -n "%{B#ff$(colort 2 $(echo $pBG | cut -c4-))}%{-o}%{U$pBGActiveTab+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
+        echo -n "%{B$pBGActiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
     else
-        echo -n "%{-o}%{U#ff$(colort -3 $(echo $pBGActiveTab | cut -c4-))+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
+        echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
     fi
 }
 export -f block
+
+#underline style:
+
+#function block() {
+#    [ ! -z $NoPadding ] && pPadding=$NoPadding
+#    if [ "$blockActive" = true ] ; then
+#        echo -n "%{B#ff$(colort 2 $(echo $pBG | cut -c4-))}%{-o}%{U$pBGActiveTab+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
+#    else
+#        echo -n "%{-o}%{U#ff$(colort -3 $(echo $pBGActiveTab | cut -c4-))+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
+#    fi
+#}
+#export -f block
 
 export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
 export showFreeDesktops=false # option to show nothing for free desktops

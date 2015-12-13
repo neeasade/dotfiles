@@ -21,7 +21,6 @@ export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/tree.jpg"
 b_border_width=3
 b_window_gap=12
 b_split_ratio=0.6
-export pPadding=1
 
 # Panel variables
 export PANEL_HEIGHT=28
@@ -30,7 +29,7 @@ export PANEL_FONT_ICON="FontAwesome-8"
 export PANEL_GAP=4
 PANEL_UNDERLINE=5
 pBG="#003f3f3f"
-pPadding=8
+pPadding=2
 
 export pRest="$pIcon"
 export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
