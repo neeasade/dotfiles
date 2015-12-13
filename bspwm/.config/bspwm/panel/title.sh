@@ -17,7 +17,7 @@ CUR_MON=$1;
 # Always tabbed visible windows option:
 always_tab=false;
 # Maxium window title length
-maxWinNameLen=20;
+maxWinNameLen=25;
 # The delimiter to separate window sections
 win_delim="\\";
 # The delimiter to separate the window name from the window in a window section.
