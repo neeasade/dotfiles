@@ -24,8 +24,12 @@ $BG_COMMAND &
 ~/.config/bspwm/bspwmrc &
 
 # reload gtk theme
-rm ~/.gtkrc-2.0
-ln -s ~/.config/gtk-settings/$GTK_THEME ~/.gtkrc-2.0
+# .gtkrc-2.0.back
+cp ~/.gtkrc-2.0.back  ~/.gtkrc-2.0
+# todo here: change acyl colors, sed in gtk.back to set theme and font.
+# check if oomox-theme folder exists, and if not, make one.
+
+#ln -s ~/.config/gtk-settings/$GTK_THEME ~/.gtkrc-2.0
 gtkrc-reload &
 
 # Kill dunst and restart with the right colors.
