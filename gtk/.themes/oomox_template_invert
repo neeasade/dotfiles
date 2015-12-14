@@ -1,0 +1,11 @@
+NAME="auto"
+BG=bgreplace
+FG=fgreplace
+TXT_BG=$BG
+TXT_FG=$FG
+MENU_BG=$BG
+MENU_FG=$FG
+SEL_BG=$FG
+SEL_FG=$BG
+BTN_BG=$BG
+BTN_FG=$FG

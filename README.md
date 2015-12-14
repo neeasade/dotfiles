@@ -5,9 +5,9 @@ Neeasade's dotfiles
 *   WM - bspwm
 *   Panel - lemonbar with xft support, from the lemonbar-xft-git aur package
 *   term emulator - termite, for it's live reload of configuration feature.
-*   Multiple themes are used here(see below)
-*   GTK theme - FlatStudioDark/Dorian-Slate/zenburn
-*   font - Dejavu Sans Mono/Droid Sans/Terminus
+*   Multiple themes are used here using flexible tools:
+*   GTK theme - [oomox](https://github.com/actionless/oomox) with [ACYL](http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910) icons.
+*   Font - Dejavu Sans Mono/Droid Sans/Terminus
 
 [Workflow webm](https://u.teknik.io/wk6knx.webm)
 ![Screenshot](https://u.teknik.io/si6yKy.png)

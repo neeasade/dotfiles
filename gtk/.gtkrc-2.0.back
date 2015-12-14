@@ -1,10 +1,6 @@
-# DO NOT EDIT! This file will be overwritten by LXAppearance.
-# Any customization should be done in ~/.gtkrc-2.0.mine instead.
-
-include "/home/neeasade/.gtkrc-2.0.mine"
-gtk-theme-name="oomox-twilight"
+gtk-theme-name="replaceThemeName"
 gtk-icon-theme-name="acyl"
-gtk-font-name="Droid Sans 10"
+gtk-font-name="replaceFontName"
 gtk-cursor-theme-name="Adwaita"
 gtk-cursor-theme-size=0
 gtk-toolbar-style=GTK_TOOLBAR_ICONS
