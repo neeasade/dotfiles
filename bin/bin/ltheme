@@ -23,14 +23,29 @@ $BG_COMMAND &
 
 ~/.config/bspwm/bspwmrc &
 
-# reload gtk theme
-# .gtkrc-2.0.back
+# GTK
 cp ~/.gtkrc-2.0.back  ~/.gtkrc-2.0
-# todo here: change acyl colors, sed in gtk.back to set theme and font.
-# check if oomox-theme folder exists, and if not, make one.
+sed -i "s/replaceThemeName/$THEME_NAME/g;s/replaceFontName/$GTK_FONT/g;" ~/.gtkrc-2.0
 
-#ln -s ~/.config/gtk-settings/$GTK_THEME ~/.gtkrc-2.0
+# make gtk theme if it does not exist.
+if [ ! -d "$HOME/.themes/oomox-$THEME_NAME" ]; then
+    cp $HOME/.themes/oomox_template $HOME/.themes/.oomox/colors/$THEME_NAME.sh
+    $HOME/.themes/.oomox/change_color.sh "$THEME_NAME"
+fi
+
+# set icon color(ACYL)
+$HOME/.icons/acyl/scalable/scripts/icon.sh "$GTK_ICON_COLOR"
+
+# load it:
 gtkrc-reload &
+
+# cp the qutebrowser config and replace the colors with this theme's colors.
+quteconf="$HOME/.config/qutebrowser/qutebrowser.conf"
+cp "$HOME/.config/qutebrowser/qutebrowser.conf.template" "$quteconf"
+
+# match tabs to panel.
+sed -i "s/replaceQuteFG/$pFG/g;s/replaceQuteBG/$pBG/g;" $quteconf
+sed -i "s/replaceQuteActiveTabFG/$pFGActiveTab/g;s/replaceQuteActiveTabBG/$pBGActiveTab/g;" $quteconf
 
 # Kill dunst and restart with the right colors.
 killall dunst

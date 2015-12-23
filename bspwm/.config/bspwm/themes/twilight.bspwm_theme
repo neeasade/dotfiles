@@ -3,7 +3,8 @@
 
 THEME_NAME=twilight
 
-GTK_THEME=oomox-twilight
+GTK_FONT="Droid Sans 10"
+GTK_ICON_COLOR="$pFG"
 
 # vim theme name
 VIM_COLORS=base16-twilight
@@ -28,6 +29,7 @@ export PANEL_GAP=5
 export PANEL_UNDERLINE=0
 pBGInactiveTab="#ff1e1e1e"
 pBGActiveTab="#ff2d2d2d"
+pFGActiveTab="$pFG"
 
 pIcon="#bba2a2a2"
 export pRest="$pBG"

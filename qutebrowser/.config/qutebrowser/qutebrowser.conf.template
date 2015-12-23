@@ -1,5 +1,7 @@
 # vim: ft=dosini
 
+# template file by neeasade - search "replaceQute"
+
 # Configfile for qutebrowser.
 #
 # This configfile is parsed by python's configparser in extended
@@ -1228,8 +1230,10 @@ DEFAULT = https://google.com/search?q={}
 #     Background color for webpages if unset (or empty to use the
 #     theme's color)
 #     Default: white
-completion.fg = #a7a7a7
-completion.bg = #1e1e1e
+#
+completion.fg = replaceQuteFG
+completion.bg = replaceQuteBG
+
 completion.alternate-bg = ${completion.bg}
 completion.category.fg = #A68E6A
 completion.category.bg = ${completion.bg}
@@ -1269,9 +1273,10 @@ tabs.fg.odd = ${completion.fg}
 tabs.bg.odd = ${completion.bg}
 tabs.fg.even = ${completion.fg}
 tabs.bg.even = ${completion.bg}
-tabs.fg.selected.odd = ${completion.fg}
-tabs.bg.selected.odd = #2f2f2f
-#${completion.fg}
+
+tabs.fg.selected.odd = replaceQuteActiveTabFG
+tabs.bg.selected.odd = replaceQuteActiveTabBG
+
 tabs.fg.selected.even = ${tabs.fg.selected.odd}
 tabs.bg.selected.even = ${tabs.bg.selected.odd}
 tabs.bg.bar = #555555
