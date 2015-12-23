@@ -12,7 +12,8 @@
 complete -cf sudo
 
 # functions
-function swap() {
+function swap()
+{
     # Swap 2 filenames around, if they exist (from Uzi's bashrc).
     local TMPFILE=tmp.$$
 
@@ -23,6 +24,18 @@ function swap() {
     mv "$1" $TMPFILE
     mv "$2" "$1"
     mv $TMPFILE "$2"
+}
+
+function setgitremote()
+{
+    # I found myself doing this too often.
+    local remoteUrl="$(git remote -v | grep -oP "http[^ ]+" | head -1)"
+    local domain="$(echo $remoteUrl | cut -f3 -d'/')"
+    local username="$(echo $remoteUrl | cut -f4 -d'/')"
+    local reponame="$(echo $remoteUrl | cut -f5 -d'/' | cut -f1 -d'.' )"
+    local newRemote="git@$domain:$username/$reponame.git"
+    echo Setting git remote to $newRemote
+    git remote set-url origin $newRemote
 }
 
 function extract()      # Handy Extract Program
