@@ -2,3 +2,5 @@
 .weechat/logs
 .weechat/*fifo
 .weechat/weechat.log
+.weechat/script/plugins.xml.gz
+
