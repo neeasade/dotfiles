@@ -8,64 +8,64 @@ super + c
 
 # move the windows of the noted desktop to the current desktop
 super + v
-    for win in $(bspc query -W -d $(cat /tmp/bspwmdtop_swap)); do \
-        bspc window $win -d $(bspc query -D -d); \
+    for win in $(bspc query -N -d $(cat /tmp/bspwmdtop_swap)); do \
+        bspc node $win -d $(bspc query -D -d); \
     done
 
 super + w
-    bspc window -c
+    bspc node -c
 
 super + t
-    bspc desktop -l next && bspc window -f next
+    bspc desktop -l next && bspc node -f next
 
 super + b
     bspc desktop -B
 
 super + s
-    bspc query -W -w focused.tiled && state=floating || state=tiled; \
-    bspc window -t $state
+    bspc query -N -n focused.tiled && state=floating || state=tiled; \
+    bspc node -t $state
 
 super + f
     state=fullscreen; \
-    bspc query -W -w "focused.$state" && state=$(bspc query -T -w | jshon -e client -e lastState -u); \
-    bspc window -t "$state"
+    bspc query -N -n "focused.$state" && state=$(bspc query -T -n | jshon -e client -e lastState -u); \
+    bspc node -t "$state"
 
 super + {_,shift} + Tab
     bspc desktop -f {next,prev}
 
 alt + {_,shift} + Tab
-    bspc window -f {next,prev}
+    bspc node -f {next,prev}
 
 super + apostrophe
-    bspc window -s last
+    bspc node -s last
 
 super + m
-    bspc window -s biggest
+    bspc node -s biggest
 
 super + shift + {h,j,k,l}
     bspc config pointer_follows_focus true; \
-    cur_win=$(bspc query -W -w); \
+    cur_win=$(bspc query -N -n); \
     cur_mon=$(bspc query -M -m); \
-    dir={left,down,up,right}; \
-    if ! bspc window -f $dir; then \
-        bspc window -m $dir; \
+    dir={west,south,north,east}; \
+    if ! bspc node -f $dir; then \
+        bspc node -m $dir; \
         bspc monitor -f $dir; \
     else \
         new_mon=$(bspc query -M -m); \
         if [ $new_mon -eq $cur_mon ]; then \
-            bspc window -s $cur_win; \
+            bspc node -s $cur_win; \
         else \
-            bspc window $cur_win -m ^$new_mon; \
+            bspc node $cur_win -m ^$new_mon; \
         fi; \
-        bspc window -f $cur_win; \
+        bspc node -f $cur_win; \
     fi; \
     bspc config pointer_follows_focus false
 
 super +  {h,j,k,l}
     bspc config pointer_follows_monitor true; \
     bspc config pointer_follows_focus true; \
-    dir={left,down,up,right}; \
-    if ! bspc window -f $dir; then \
+    dir={west,south,north,east}; \
+    if ! bspc node -f $dir; then \
         bspc monitor -f $dir; \
     fi; \
     bspc config pointer_follows_monitor false; \
@@ -75,19 +75,20 @@ super + {comma,period}
     bspc desktop -C {backward,forward}
 
 super + ctrl + {h,j,k,l}
-    bspc window -p {left,down,up,right}
+    bspc node -p {west,south,north,east}
 
 super + ctrl + {_,shift + }space
-    bspc {window -p cancel,desktop -c}
+    bspc node @{_,/} -p cancel
 
+# resize functions - todo: have these do things to floating windows.
 super + alt + {h,j,k,l}
-    bspc window -e {left -35,down +35,up -35,right +35}
+    bspc node {@west -r -35,@south -r +35,@north -r -35,@east -r +35}
 
 super + alt + shift + {h,j,k,l}
-    bspc window -e {right -35,up +35,down -35,left +35}
+    bspc node {@east -r -35,@north -r +35,@south -r -35,@west -r +35}
 
 super + ctrl + {1-9}
-    bspc window -r 0.{1-9}
+    bspc node -r 0.{1-9}
 
 # These two keybinds determine index by list order of desktops from current monitor
 super + {1-9}
@@ -96,11 +97,12 @@ super + {1-9}
 
 super + shift + {1-9}
     D={1-9}; \
-    bspc window -d "$(bspc query -D -m | sed -n "$D p")"
+    bspc node -d "$(bspc query -D -m | sed -n "$D p")"
 
 ~button1
     bspc pointer -g focus
 
+# mouse movements
 super + button{1-3}
     bspc pointer -g {move,resize_side,resize_corner}
 
@@ -110,17 +112,20 @@ super + !button{1-3}
 super + @button{1-3}
     bspc pointer -u
 
-super + d
-    bspc control --toggle-visibility
-
+# kill panel, nicely ask all windows to close, quit.
 super + shift + q
-    killall panel && bspc quit
+    pgrep lemonbar && ~/bin/panelt; \
+    for win in $(bspc query -N); do bspc node -c $win; done; \
+    bspc quit
 
+# rotate desktops.
 super + {_,shift} + semicolon
     bspc desktop -R {90,270}
 
+# toggle panel or gaps.
 super + {_,shift} + slash
     ~/bin/{gapt,panelt}
+
 #
 # wm independent hotkeys
 #
@@ -128,7 +133,7 @@ super + p
     i3blur.sh
 
 super + o
-    chromium
+    $BROWSER
 
 super + e
     pcmanfm

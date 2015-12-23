@@ -28,10 +28,10 @@ update() {
     CUR_MON_DESK=$(bspc query -D --desktop "$CUR_MON:focused");
 
     # If current window is not in this desktop, no need to update.
-    [[ -z "$(bspc query -W -d "$CUR_MON_DESK" | grep "$win_source" )" ]] && return
+    [[ -z "$(bspc query -N -d "$CUR_MON_DESK" | grep "$win_source" )" ]] && return
 
     if [[ "$always_tab" = true ]]; then
-        for i in $(bspc query -W -d "$CUR_MON_DESK"); do
+        for i in $(bspc query -N -d "$CUR_MON_DESK"); do
             [[ "$i" = "$win_source" ]] && status="A" || status="X";
             winName $i $status;
         done
@@ -39,11 +39,11 @@ update() {
         if [[ `bspc query -d $CUR_MON_DESK -T | jshon -e layout -u` = tiled ]]; then
             winName $win_source X;
         else
-            FLOAT_STATUS=$(bspc query -W -w focused.floating);
+            FLOAT_STATUS=$(bspc query -N -n focused.floating);
             if [[ ! -z $FLOAT_STATUS ]]; then
                 winName $win_source A;
             else
-                for i in $(bspc query -W -d $CUR_MON_DESK); do
+                for i in $(bspc query -N -d $CUR_MON_DESK); do
                    [[ "$i" = "$win_source" ]] && status="A" || status="X";
                    winName $i $status;
                 done
@@ -60,11 +60,11 @@ winName() {
     echo -n "$winName$win_id_delim$1$win_delim";
 }
 
-win_source="$(bspc query -H -m "$CUR_MON" | tail -n 1 | grep -oE "[0-9]x.+")"
+win_source="$(bspc query -N -n)"
 echo "T$(update)"
 
-bspc control --subscribe window | while read line; do
-   if grep $(bspc query -D --desktop "$CUR_MON:focused") <<< "$line"; then
+bspc subscribe node | while read line; do
+   if grep $(bspc query -D -d "$CUR_MON:focused") <<< "$line"; then
       if grep unmanage <<< "$line"; then
          echo "T "
       else
