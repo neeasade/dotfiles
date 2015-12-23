@@ -113,14 +113,15 @@ super + @button{1-3}
     bspc pointer -u
 
 # kill panel, nicely ask all windows to close, quit.
+# todo: ask nicely for real.
 super + shift + q
     pgrep lemonbar && ~/bin/panelt; \
-    for win in $(bspc query -N); do bspc node -c $win; done; \
+    for win in $(bspc query -N); do bspc node $win -c ; done; \
     bspc quit
 
 # rotate desktops.
 super + {_,shift} + semicolon
-    bspc desktop -R {90,270}
+    bspc node @/ -R {90,270}
 
 # toggle panel or gaps.
 super + {_,shift} + slash
@@ -139,7 +140,7 @@ super + e
     pcmanfm
 
 super + Return
-    termite
+    $TERMINAL
 
 super + space
     eval dmenu_run $(dmenu_options)

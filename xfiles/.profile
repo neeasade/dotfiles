@@ -1,10 +1,9 @@
 PATH=$PATH:$HOME/bin
 
-export EDITOR='nvim'
-export GIT_EDITOR='/usr/bin/nvim'
-export BROWSER=chromium
-
-export TODO="$HOME/.todo.txt"
+export EDITOR='vim'
+export GIT_EDITOR='/usr/bin/vim'
+export BROWSER=qutebrowser
+export TERMINAL=termite
 
 # Avoid duplicates
 export HISTCONTROL=ignoredups:erasedups
