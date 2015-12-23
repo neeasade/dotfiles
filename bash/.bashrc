@@ -12,6 +12,28 @@
 complete -cf sudo
 
 # functions
+function todo()
+{
+    if [[ ! -f $HOME/.todo ]]; then
+        touch "$HOME/.todo"
+    fi
+
+    if ! (($#)); then
+        cat "$HOME/.todo"
+    elif [[ "$1" == "-l" ]]; then
+        nl -b a "$HOME/.todo"
+    elif [[ "$1" == "-c" ]]; then
+        > $HOME/.todo
+    elif [[ "$1" == "-r" ]]; then
+        nl -b a "$HOME/.todo"
+        eval printf %.0s- '{1..'"${COLUMNS:-$(tput cols)}"\}; echo
+        read -p "Type a number to remove: " number
+        sed -i ${number}d $HOME/.todo "$HOME/.todo"
+    else
+        printf "%s\n" "$*" >> "$HOME/.todo"
+    fi
+}
+
 function swap()
 {
     # Swap 2 filenames around, if they exist (from Uzi's bashrc).
