@@ -1,11 +1,11 @@
 NAME="replaceThemeName"
-BG=$pBG
-FG=$pFG
+BG=replacepBG
+FG=replacepFG
 TXT_BG=$BG
 TXT_FG=$FG
 MENU_BG=$BG
 MENU_FG=$FG
-SEL_BG=$pBGActiveTab
-SEL_FG=$pFGActiveTab
+SEL_BG=replacepBGActiveTab
+SEL_FG=replacepFGActiveTab
 BTN_BG=$BG
 BTN_FG=$FG

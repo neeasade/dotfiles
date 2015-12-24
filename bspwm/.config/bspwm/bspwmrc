@@ -85,8 +85,10 @@ for desktop in $MonocleDesktops; do
 done
 
 # set all windows to the new border width:
-for window in $(bspc query -W); do
-    bspc config -w $window border_width $b_border_width
+# note: crashes.
+for window in $(bspc query -N); do
+    # bspc config -n $window border_width $b_border_width
+    echo -n ""
 done
 
 [ "$IsInitialRun" = true ] && ~/.config/bspwm/autostart.sh

@@ -27,9 +27,22 @@ $BG_COMMAND &
 cp ~/.gtkrc-2.0.back  ~/.gtkrc-2.0
 sed -i "s/replaceThemeName/$THEME_NAME/g;s/replaceFontName/$GTK_FONT/g;" ~/.gtkrc-2.0
 
+# trim transparency from colors to be used in gtk and qutebrowser
+# ugh gross todo: clean
+pFG="$(echo $pFG | cut -c4-)"
+pBG="$(echo $pBG | cut -c4-)"
+pFGActiveTab="$(echo $pFGActiveTab | cut -c4-)"
+pBGActiveTab="$(echo $pBGActiveTab | cut -c4-)"
+
 # make gtk theme if it does not exist.
 if [ ! -d "$HOME/.themes/oomox-$THEME_NAME" ]; then
-    cp $HOME/.themes/oomox_template $HOME/.themes/.oomox/colors/$THEME_NAME.sh
+    target="$HOME/.themes/.oomox/colors/$THEME_NAME.sh"
+    cp $HOME/.themes/oomox_template $target
+    sed -i "s/replaceThemeName/$THEME_NAME/g;" $target
+    sed -i "s/replacepFGActiveTab/$pFGActiveTab/g;" $target
+    sed -i "s/replacepBGActiveTab/$pBGActiveTab/g;" $target
+    sed -i "s/replacepFG/$pFG/g;" $target
+    sed -i "s/replacepBG/$pBG/g;" $target
     $HOME/.themes/.oomox/change_color.sh "$THEME_NAME"
 fi
 
