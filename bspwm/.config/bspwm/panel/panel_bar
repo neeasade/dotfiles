@@ -10,7 +10,7 @@ AE='%{A}'           # end click area
 # Shell commands for clickable areas
 goto='bspc desktop -f'       # go to this desktop
 cycle='bspc desktop -l next' # cycle tiled/monocle
-winfocus='bspc window -f '   # focus on a window
+winfocus='bspc node -f '   # focus on a window
 
 # define clickable menu thing:
 dropdown="%{T3}`echo -n -e "\uf100"`%{T-}"
