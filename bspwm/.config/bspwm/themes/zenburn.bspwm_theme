@@ -3,7 +3,7 @@
 
 THEME_NAME=zenburn
 
-GTK_THEME=zenburn
+GTK_FONT="Terminus 8"
 
 # vim theme name
 VIM_COLORS=zenburn
@@ -27,9 +27,13 @@ export PANEL_HEIGHT=28
 export PANEL_FONT_MAIN="Terminus-8"
 export PANEL_FONT_ICON="FontAwesome-8"
 export PANEL_GAP=4
-PANEL_UNDERLINE=5
+# sneak an extra launch parameter onto lemonbar to show no shadows.
+PANEL_UNDERLINE="5 -n zenburn"
 pBG="#003f3f3f"
+pBGActiveTab="$pFG"
+pFGActiveTab="$pBG"
 pPadding=2
+GTK_ICON_COLOR="$(colort -1 "$pBG")"
 
 export pRest="$pIcon"
 export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
