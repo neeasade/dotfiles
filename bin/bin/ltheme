@@ -57,8 +57,8 @@ quteconf="$HOME/.config/qutebrowser/qutebrowser.conf"
 cp "$HOME/.config/qutebrowser/qutebrowser.conf.template" "$quteconf"
 
 # match tabs to panel.
-sed -i "s/replaceQuteFG/$pFG/g;s/replaceQuteBG/$pBG/g;" $quteconf
-sed -i "s/replaceQuteActiveTabFG/$pFGActiveTab/g;s/replaceQuteActiveTabBG/$pBGActiveTab/g;" $quteconf
+sed -i "s/replaceQuteFG/#$pFG/g;s/replaceQuteBG/#$pBG/g;" $quteconf
+sed -i "s/replaceQuteActiveTabFG/#$pFGActiveTab/g;s/replaceQuteActiveTabBG/#$pBGActiveTab/g;" $quteconf
 
 # Kill dunst and restart with the right colors.
 killall dunst
@@ -66,9 +66,9 @@ killall dunst
 # reset $defaultBG and FG for dunst relaunch:
 dunst -geometry 200x200-10-10 \
     -fn "$DUNST_FONT" \
-    -lb "$pBG" -lf "$pFG" \
-    -nb "$pBG" -nf "$pFG" \
-    -cb "$pFG" -cf "$pBG" &
+    -lb "#$pBG" -lf "#$pFG" \
+    -nb "#$pBG" -nf "#$pFG" \
+    -cb "#$pFG" -cf "#$pBG" &
 
 sleep 0.5
 
