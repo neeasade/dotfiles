@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# generate a github markdown table from an sxhkd table 
+# generate a github markdown table from an sxhkd conf
 
 key=
 value=
@@ -15,9 +15,11 @@ while read line; do
 			\#*) ;;
 			$'    '*)
 				if [[ -z $value ]]; then
-					value='``` sh '"$line"
+					value='` '"$line"
 				else
-					value="$value"'```<br>``` sh'"$line"
+					value="$value"' `<br>` '"$line"
+					value="$(echo "$value" | tr '\r\n' ' ')"
+					value="$(echo "$value" | sed 's/    /\t/')"
 				fi
 				;;
 			*)
@@ -27,11 +29,10 @@ while read line; do
 	else
 		if [[ ! -z $value ]]; then
 			# time to print the next row.
-			value="$value"'```<br>'
+			value="$value"' `'
 			echo "$key | $value"
 			key=
 			value=
 		fi
 	fi
-
 done<"$1"
