@@ -28,6 +28,7 @@ dunst -geometry 200x200-10-10 \
     -nb "$pBG" -nf "$pFG" \
     -cb "$pFG" -cf "$pBG" &
 
+# todo: check why I did this.
 # unset block function.
 unset -f block
 
@@ -38,5 +39,5 @@ rm /tmp/$(ls /tmp | grep bspwm)
 export SXHKD_SHELL=sh
 
 # start bspwm and sxhkd
-sxhkd -f 100 -c /home/$USER/.config/sxhkd/sxhkdrc &
-exec bspwm -c /home/$USER/.config/bspwm/bspwmrc 2>&1 > .xinit.log
+sxhkd -f 100 -c $HOME/.config/sxhkd/sxhkdrc &
+exec bspwm -c $HOME/.config/bspwm/bspwmrc 2>&1 > .xinit.log

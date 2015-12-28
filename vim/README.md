@@ -7,7 +7,6 @@ My vimrc utilizes vim folds, with the following sections:
 - Plugin settings
 - Misc
 
-
 plugin | notes
 ----|-----
 [tpope/vim-sensible](https://github.com/tpope/vim-sensible) |  sensible defaults. 
