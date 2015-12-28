@@ -8,18 +8,18 @@ call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-sensible'                   " sensible defaults.
     Plug 'bling/vim-airline'                    " Status line
     Plug 'jeffkreeftmeijer/vim-numbertoggle'    " Auto relative number toggling
-    Plug 'airblade/vim-gitgutter'               " Live git changes
+    Plug 'airblade/vim-gitgutter'               " Live git changes visible
     Plug 'tpope/vim-fugitive'                   " Complement git in vim - todo: learn this.
     Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
     Plug 'terryma/vim-multiple-cursors'         " Muliple cursors, akin to sublime text
     Plug 'jiangmiao/auto-pairs'                 " auto-pairs(brackets/quotes)
     Plug 'scrooloose/nerdtree',                 {'on': ['NERDTreeToggle','NERDTreeFind']} " Side panel file browser.
 
-    Plug 'Valloric/YouCompleteMe',              { 'do': './install.sh --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'cs', 'python']}
+    Plug 'Valloric/YouCompleteMe',              { 'do': './install.sh --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'cs', 'python']}   " Autocompletion engine.
     Plug 'rdnetto/YCM-Generator', 'stable'      " Generate ycm files - :YcmGenerateConfig
 
-    Plug 'mattn/emmet-vim',                     {'for': ['html', 'xml', 'xsl', 'xslt', 'xsd', 'css', 'sass', 'scss', 'less', 'mustache', 'php']}
-    Plug 'Valloric/MatchTagAlways',             {'for': ['html', 'xhtml', 'xml', 'jinja']}
+    Plug 'mattn/emmet-vim',                     {'for': ['html', 'xml', 'xsl', 'xslt', 'xsd', 'css', 'sass', 'scss', 'less', 'mustache', 'php']}  " A tool for generating repetitive html/css. todo: learn this.
+    Plug 'Valloric/MatchTagAlways',             {'for': ['html', 'xhtml', 'xml', 'jinja']} " Autocompletes tags.
 
     Plug 'junegunn/fzf',                        {'dir': '~/fzf', 'do': 'yes\| ./install'} " based fuzzy search.
 
@@ -65,6 +65,8 @@ silent! map <F3> :NERDTreeFind<CR>
 let g:NERDTreeMapActivateNode="<F3>"
 let g:NERDTreeMapPreview="<F4>"
 " }}}
+
+" {{{ Misc
 
 " set title and allow hidden buffers
 set title
@@ -147,3 +149,4 @@ set splitright
 " gvim options - remove the toolbar.
 set guioptions-=L
 set guioptions-=T
+" }}}
