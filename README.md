@@ -1,5 +1,5 @@
 ## Neeasade's dotfiles
-[screenshot](https://u.teknik.io/3924RI.png)
+[screenshot](https://u.teknik.io/3924RL.png)
 
  +	 | -
 ---------|---
