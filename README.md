@@ -19,7 +19,9 @@ Neeasade's dotfiles
 	* Write a package build for urnn and improve the dataset for this.
 	* Consider making oomox a dependency and having the setup script generate the gtk themes.
 *   more BSPWM window manuevers - json possiblities?
+*   get used to mutt/run in a tmux session.
 *   run BFG repo cleaner on this repo
+*   document the bspwm/gtk/bin/root/mutt directories
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 ## Multihead
