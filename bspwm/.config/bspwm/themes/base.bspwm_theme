@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/env bash
 # This script will be sourced by themes and then have options overridden
 # assumes that $1 is the termiteconfig name
 
@@ -16,7 +16,7 @@ export TERMITE_CONFIG=$1
 
 # BSPWM variables
 # naming convention is b_<config_option>
-b_border_width=3 
+b_border_width=3
 b_window_gap=10
 b_split_ratio=0.6
 b_normal_border_color="#$(getTermColor color0)"
@@ -32,7 +32,7 @@ export PANEL_HEIGHT=16 # Panel height.
 export PANEL_FONT_MAIN="Dejavu Sans-8" # Panel main font.
 export PANEL_FONT_ICON="FontAwesome-10" # Panel Icon font.
 export PANEL_GAP=4 # Gaps of panel off screen.
-export PANEL_UNDERLINE=4 # This value is used for both underline and overline 
+export PANEL_UNDERLINE=4 # This value is used for both underline and overline
 export pPadding=3 # number of spaces to pad panel informaiton with
 
 # variables for desktop area
