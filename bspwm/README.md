@@ -11,41 +11,40 @@ My WM setup is theme oriented, with the current 'theme file' being symlinked to 
 
 
 variable | default | note
-----|----|-
-`TERMITE_CONFIG` | `TERMITE_CONFIG=$1` | none
-`b_border_width` | `b_border_width=3` | none
-`b_window_gap` | `b_window_gap=10` | none
-`b_split_ratio` | `b_split_ratio=0.6` | none
-`b_normal_border_color` | `b_normal_border_color="#$(getTermColor color0)"` | none
-`b_active_border_color` | `b_active_border_color="#$(getTermColor color8)"` | none
-`b_focused_border_color` | `b_focused_border_color="#$(getTermColor foreground)"` | none
-`b_presel_feedback_color` | `b_presel_feedback_color="#$(getTermColor color8)"` | none
-`b_urgent_border_color` | `b_urgent_border_color="#FFFF00"` | none
-`b_focused_locked_border_color` | `b_focused_locked_border_color="#FFFFFF"` | none
-`PANEL_FIFO` | `PANEL_FIFO=/tmp/panel-fifo` | Location of the Panel fifo
-`PANEL_HEIGHT` | `PANEL_HEIGHT=16` | Panel height.
-`PANEL_FONT_MAIN` | `PANEL_FONT_MAIN="Dejavu Sans-8"` | Panel main font.
-`PANEL_FONT_ICON` | `PANEL_FONT_ICON="FontAwesome-10"` | Panel Icon font.
-`PANEL_GAP` | `PANEL_GAP=4` | Gaps of panel off screen.
-`PANEL_UNDERLINE` | `PANEL_UNDERLINE=4` | This value is used for both underline and overline
-`pPadding` | `pPadding=3` | number of spaces to pad panel informaiton with
-`showFreeDesktops` | `showFreeDesktops=true` | option to show nothing for free desktops
-`NoModeToggle` | `NoModeToggle=` | if defined, no monocle/tiling toggle.
-`pUrgent` | `pUrgent="#ffffff00"` | none
-`pActive` | `pActive="#ff$(getTermColor color15)"` | none
-`pRest` | `pRest="#ff$(getTermColor color6)"` | none
-`pBG` | `pBG="#ff$(getTermColor background)"   ` | Default foreground
-`pFG` | `pFG="#ff$(getTermColor foreground)"   ` | Default foreground
-`pBGActiveTab` | `pBGActiveTab="$pActive"               ` | Active title tab
-`pBGInactiveTab` | `pBGInactiveTab="$pRest"               ` | Inactive title tab - also used to info.sh ouput background.
-`pIcon` | `pIcon="#ffaaaaaa"                     ` | color of icons from info.sh
-`DO` | `DO=$(echo -e 'uf0c8') ` | occupied desktop
-`DF` | `DF=$(echo -e 'uf096') ` | free desktop
-`DT` | `DT=$(echo -e 'uf009') ` | tiling mode
-`DM` | `DM=$(echo -e 'uf0c9') ` | monocle mode
-`# it is possible to specify different information per monitor with barInfo<mon #>` | `# it is possible to specify different information per monitor with barInfo<mon` | ="options"
-`barInfo` | `barInfo=""` | Default options/items to include in info section of panel.
-`    barInfo2` | `    barInfo2="yaourtUpdates"` | none
-`    barInfo1` | `    barInfo1="themeSwitch volume clock"` | none
-`    barInfo3` | `    barInfo3="mpd clock"` | none
-`DUNST_FONT` | `DUNST_FONT="Dejavu Sans Mono 10"` | Font used by dunst on startup
+----|----|-----
+`TERMITE_CONFIG` | `$1` | none
+`b_border_width` | `3` | none
+`b_window_gap` | `10` | none
+`b_split_ratio` | `0.6` | none
+`b_normal_border_color` | `"#$(getTermColor color0)"` | none
+`b_active_border_color` | `"#$(getTermColor color8)"` | none
+`b_focused_border_color` | `"#$(getTermColor foreground)"` | none
+`b_presel_feedback_color` | `"#$(getTermColor color8)"` | none
+`b_urgent_border_color` | `"#FFFF00"` | none
+`b_focused_locked_border_color` | `"#FFFFFF"` | none
+`PANEL_FIFO` | `/tmp/panel-fifo` | Location of the Panel fifo
+`PANEL_HEIGHT` | `16` | Panel height.
+`PANEL_FONT_MAIN` | `"Dejavu Sans-8"` | Panel main font.
+`PANEL_FONT_ICON` | `"FontAwesome-10"` | Panel Icon font.
+`PANEL_GAP` | `4` | Gaps of panel off screen.
+`PANEL_UNDERLINE` | `4` | This value is used for both underline and overline
+`pPadding` | `3` | number of spaces to pad panel informaiton with
+`showFreeDesktops` | `true` | option to show nothing for free desktops
+`NoModeToggle` | `` | if defined, no monocle/tiling toggle.
+`pUrgent` | `"#ffffff00"` | none
+`pActive` | `"#ff$(getTermColor color15)"` | none
+`pRest` | `"#ff$(getTermColor color6)"` | none
+`pBG` | `"#ff$(getTermColor background)"   ` | Default foreground
+`pFG` | `"#ff$(getTermColor foreground)"   ` | Default foreground
+`pBGActiveTab` | `"$pActive"               ` | Active title tab
+`pBGInactiveTab` | `"$pRest"               ` | Inactive title tab - also used to info.sh ouput background.
+`pIcon` | `"#ffaaaaaa"                     ` | color of icons from info.sh
+`DO` | `$(echo -e 'uf0c8') ` | occupied desktop
+`DF` | `$(echo -e 'uf096') ` | free desktop
+`DT` | `$(echo -e 'uf009') ` | tiling mode
+`DM` | `$(echo -e 'uf0c9') ` | monocle mode
+`barInfo` | `""` | Default options/items to include in info section of panel.
+`    barInfo2` | `"yaourtUpdates"` | none
+`    barInfo1` | `"themeSwitch volume clock"` | none
+`    barInfo3` | `"mpd clock"` | none
+`DUNST_FONT` | `"Dejavu Sans Mono 10"` | Font used by dunst on startup
