@@ -1,7 +1,6 @@
 ## Neeasade's dotfiles
-[screenshot](https://u.teknik.io/3924RL.png)
 
- +	 | -
+[screenshot](https://u.teknik.io/3924RL.png) | [webm](https://u.teknik.io/wk6knx.webm)
 ---------|---
 WM	 | BSPWM
 Panel	 | lemonbar (xft patch)
