@@ -2,7 +2,7 @@
 
 [screenshot](https://u.teknik.io/3924RL.png) | [webm](https://u.teknik.io/wk6knx.webm)
 ---------|---
-WM	 | BSPWM
+WM		 | BSPWM
 Panel	 | lemonbar (xft patch)
 Terminal | termite, for it's live reload of configuration feature.
 GTK 	 | [oomox](https://github.com/actionless/oomox) with [ACYL](http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910) icons.
