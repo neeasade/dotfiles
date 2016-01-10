@@ -7,10 +7,11 @@ padValue=$winGap                                            # Amount to pad from
 [ $winGap -ge 1 ] && padValue=0                             # gaps
 [[ $padValue -le -1 ]] && padValue=$(expr -1 \* $padValue)  # no gaps
 
-# returns success if pid is running
-if $(kill -s 0 $(cat /tmp/panel-pid)) ; then
+# returns success if panel is running
+panelpid=$(cat /tmp/panel-pid)
+if kill -s 0 $panelpid; then
     # kill the bar and change top padding.
-    kill $(cat /tmp/panel-pid)
+    kill -s 15 $panelpid
     bspc config top_padding $padValue
 else
     # There's no panel, enabling

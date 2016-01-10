@@ -3,7 +3,8 @@
 
 THEME_NAME=chalk
 
-GTK_THEME=chalk
+GTK_FONT="Droid Sans Mono 8"
+GTK_ICON_COLOR="$pFG"
 
 # vim theme name
 VIM_COLORS=Tomorrow
@@ -24,8 +25,9 @@ b_split_ratio=0.6
 # panel
 export PANEL_HEIGHT=32
 export PANEL_GAP=6
-pBGInactiveTab="#ffc6c7c9"
-pBGActiveTab="#ff404040"
+export pBGInactiveTab="#ffc6c7c9"
+export pBGActiveTab="#ffc6c7c9"
+export pFGActiveTab="$pFG"
 pBG="#ffe7e8eb"
 pIcon="#ff606060"
 

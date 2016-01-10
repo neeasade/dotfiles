@@ -52,8 +52,7 @@ else
     done
 fi
 
-# TODO - fix the bug here if lemonbar is set to panel - button on panel kills itself, but as is can lead to lag over time.
-killall lemonbar
+kill -s 15 $(cat /tmp/panel-pid)
 ~/.config/bspwm/panel/panel &
 
 desktops=$(bspc query -M)

@@ -14,4 +14,5 @@
 *	qutebrowser font/tab padding confirm to whatever current panel is
 *	pulse.sh border correction on change window
 	* see if can use more bspc commands here?
+*	clean up the theme scripts.
 
