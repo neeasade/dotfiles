@@ -63,7 +63,7 @@ winName() {
 win_source="$(bspc query -N -n)"
 echo "T$(update)"
 
-bspc subscribe node | while read line; do
+bspc subscribe node_focus node_unmanage | while read line; do
    if grep $(bspc query -D -d "$CUR_MON:focused") <<< "$line"; then
       if grep unmanage <<< "$line"; then
          echo "T "

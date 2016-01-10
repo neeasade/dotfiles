@@ -89,4 +89,8 @@ for window in $(bspc query -N -n .leaf); do
     bspc config -n $window border_width $b_border_width
 done
 
+# relaunch pulse so colors are related to current theme
+pkill pulse.sh
+$HOME/bin/pulse.sh
+
 [ "$IsInitialRun" = true ] && ~/.config/bspwm/autostart.sh

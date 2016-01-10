@@ -18,7 +18,7 @@ export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/tree.jpg"
 
 # BSPWM variables
 # naming convention is b_<config_option>
-b_border_width=3
+b_border_width=2
 b_window_gap=12
 b_split_ratio=0.6
 

@@ -5,9 +5,11 @@
 # along with options from current theme(font)
 dzen_options()
 {
-    pBG="$(cut -c4- <<< $pBG)"
-    pFG="$(cut -c4- <<< $pFG)"
-    pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+    if [[ ! "$1" = "cal" ]]; then
+        pBG="$(cut -c4- <<< $pBG)"
+        pFG="$(cut -c4- <<< $pFG)"
+        pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+    fi
 
     eval $(xdotool getmouselocation --shell)
 
@@ -88,7 +90,7 @@ dzen_cal()
     # handle the fonts I use - monospace is better here.
     PANEL_FONT_MAIN=`sed 's/Droid Sans/Droid Sans Mono/; s/:style=Bold//; s/Dejavu Sans/Dejavu Sans Mono/' <<< "$PANEL_FONT_MAIN"`
 
-    # dynamic width using txtw
+    # dynamic width using txtw:
     font_size="${PANEL_FONT_MAIN#*-}"
     font_name="${PANEL_FONT_MAIN%-*}"
 
@@ -99,14 +101,14 @@ dzen_cal()
     length=7
 
     TODAY=$(expr `date +'%d'` + 0)
-    MONTH=`date +'%m'`
-    YEAR=`date +'%Y'`
+
+    pBG="$(cut -c4- <<< $pBG)"
+    pFG="$(cut -c4- <<< $pFG)"
+    pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
 
     # highlight current date
-    # currently broken
     content+=$(
-    cal | sed -re "s/^(.*[A-Za-z][A-Za-z]*.*)$/^fg(#$pFG)^bg(#$pBG)\1/;
-    s/(^|[ ])($TODAY)($|[ ])/\1^bg(#$pBGActiveTab)^fg(#$pBG)\2^fg(#$pFG)^bg(#$pBG)\3/"
+    cal | sed -re "s/(^|[ ])($TODAY)($|[ ])/\1^bg(#$pBGActiveTab)^fg(#$pBG)\2^fg(#$pFG)^bg(#$pBG)\3/"
     )
 }
 
@@ -139,4 +141,4 @@ length=
 dzen_$1
 
 # Print the content array to dzen_options
-printf "%s\n" "${content[@]}" | eval dzen2 `dzen_options` &
+printf "%s\n" "${content[@]}" | eval dzen2 `dzen_options $1` &
