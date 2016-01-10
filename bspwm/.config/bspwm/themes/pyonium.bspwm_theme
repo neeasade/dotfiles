@@ -4,7 +4,8 @@
 
 THEME_NAME=pyonium
 
-GTK_THEME=pyonium
+GTK_FONT="Dejavu Sans 10"
+GTK_ICON_COLOR="$(colort -3 "$pFG")"
 
 # vim theme name
 VIM_COLORS=mustang
@@ -26,6 +27,9 @@ b_split_ratio=0.6
 export PANEL_HEIGHT=32
 export PANEL_GAP=6
 pBGInactiveTab="#ff444444"
+export pBGActiveTab="$pFG"
+export pFGActiveTab="$pBG"
+
 pPadding=1
 
 export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.

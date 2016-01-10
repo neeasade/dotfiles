@@ -11,4 +11,7 @@
 	* don't forget to credit dcat for initial prompt, and earsplit/z3bra for initial panel scripts.
 *   make a new workflow webm.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
+*	qutebrowser font/tab padding confirm to whatever current panel is
+*	pulse.sh border correction on change window
+	* see if can use more bspc commands here?
 

@@ -55,9 +55,14 @@ update() {
 # print the name of the window based on id, by using xtitle
 # will be prefixed with a 'A' or 'X' depending on if it's the 'active' window for this monitor
 winName() {
-    winName="$2$(xtitle -t $maxWinNameLen "$1")";
+    winName="$(xtitle -t $maxWinNameLen "$1")";
 
-    echo -n "$winName$win_id_delim$1$win_delim";
+    # doesn't work - debugging later.
+    #remain=$(( $maxWinNameLen - ${#winName} ))
+    #[[ $(( $remain % 2  )) -ne 0  ]] && remain=$(( $remain + 1  ))
+    #padding=$(eval "printf \"%0.1s\" \" \"{0..$(( $remain / 2  ))}")
+
+    echo -n "$2$padding$winName$padding$win_id_delim$1$win_delim";
 }
 
 win_source="$(bspc query -N -n)"
