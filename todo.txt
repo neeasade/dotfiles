@@ -1,8 +1,8 @@
 *   rewrite panel in python
 *   learn emacs
-*   turn this repo into a template to be used transparently with something like http://github.com/neeasade/autotheme.sh [done]
-	* Write a package build for urnn and improve the dataset for this.
-*   more BSPWM window manuevers - json possiblities?
+*   more BSPWM window manuevers
+    * look into json opporunities for i3-like window frame movement
+    * floating keybinds(move, resize, better focus)
 *   get used to mutt/run in a tmux session.
 *   investigate more thoroughly inline reloading possibilities of urxvt or st.
 *   run BFG repo cleaner on this repo
@@ -11,7 +11,9 @@
 *   make a new workflow webm.
 *   qutebrowser font/tab padding confirm to whatever current panel is
 *   pulse.sh border correction on change window
-    * see if can use more bspc commands here?
+    * see if can use more bspc commands here
 *   clean up the theme scripts.
+*   https://gist.github.com/romainl/5cd2f4ec222805f49eca
+*   incorporate automagic stuff
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
