@@ -23,6 +23,12 @@ $BG_COMMAND &
 
 ~/.config/bspwm/bspwmrc &
 
+# vim reload
+VIMS=`vim --serverlist`
+for vim in $VIMS; do
+    vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>'
+done
+
 # GTK
 cp ~/.gtkrc-2.0.back  ~/.gtkrc-2.0
 sed -i "s/replaceThemeName/$THEME_NAME/g;s/replaceFontName/$GTK_FONT/g;" ~/.gtkrc-2.0
