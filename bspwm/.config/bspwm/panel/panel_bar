@@ -13,7 +13,12 @@ cycle='bspc desktop -l next' # cycle tiled/monocle
 winfocus='bspc node -f '   # focus on a window
 
 # define clickable menu thing:
-dropdown="%{T3}`echo -n -e "\uf100"`%{T-}"
+if grep -q "Siji" <<< "$PANEL_FONT_ICON"; then
+    dropdown="%{T2}`echo -n -e "\ue0a1"`%{T-}"
+else
+    dropdown="%{T3}`echo -n -e "\uf100"`%{T-}"
+fi
+
 dropdown="$(pPadding=1 && block "$dropdown")"
 dropdown="${AC}dzen.sh menu${AB}$dropdown${AE}"
 

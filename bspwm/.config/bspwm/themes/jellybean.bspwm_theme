@@ -32,7 +32,6 @@ export pPadding=1
 export PANEL_HEIGHT=20
 export PANEL_FONT_MAIN="Tewi-8"
 export PANEL_FONT_ICON="Siji-8"
-export PANEL_FONT_ICON="FontAwesome-8"
 export PANEL_GAP=4
 PANEL_UNDERLINE=0
 

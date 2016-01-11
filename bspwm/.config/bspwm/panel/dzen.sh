@@ -62,15 +62,15 @@ dzen_menu()
             case $code in
                 f07c) code=e1e1 ;; # folder
                 f15c) code=e1d5 ;; # file
-                f023) code=e1e1 ;; # lock
-                f08b) code=e1e1 ;; # logoff
-                f023) code=e00d ;; # shutdown
+                f023) code=e029 ;; # lock
+                f08b) code=e157 ;; # logoff
+                f011) code=e00d ;; # shutdown
                 *) ;;
             esac
         fi
 
         echo -n "^fn($PANEL_FONT_ICON)"
-        if  ! grep -q "Siji" <<< "$PANEL_FONT_ICON"; then echo -n "  "; fi
+        if  ! grep -q "Siji" <<< "$PANEL_FONT_ICON"; then echo -n "   "; fi
         echo -n -e "\u$code"
         echo -n "^fn()"
     }
