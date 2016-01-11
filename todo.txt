@@ -2,7 +2,6 @@
 *   learn emacs
 *   turn this repo into a template to be used transparently with something like http://github.com/neeasade/autotheme.sh [done]
 	* Write a package build for urnn and improve the dataset for this.
-	* Consider making oomox a dependency and having the setup script generate the gtk themes.
 *   more BSPWM window manuevers - json possiblities?
 *   get used to mutt/run in a tmux session.
 *   investigate more thoroughly inline reloading possibilities of urxvt or st.
@@ -10,9 +9,9 @@
 *   document the bspwm/gtk/bin/root/mutt directories
 	* don't forget to credit dcat for initial prompt, and earsplit/z3bra for initial panel scripts.
 *   make a new workflow webm.
+*   qutebrowser font/tab padding confirm to whatever current panel is
+*   pulse.sh border correction on change window
+    * see if can use more bspc commands here?
+*   clean up the theme scripts.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
-*	qutebrowser font/tab padding confirm to whatever current panel is
-*	pulse.sh border correction on change window
-	* see if can use more bspc commands here?
-*	clean up the theme scripts.
 

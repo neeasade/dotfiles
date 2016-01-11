@@ -26,7 +26,6 @@ icon() {
             f0e0) code=e072 ;; # mail
             f017) code=e1fe ;; # battery
             ff0a) code=e1a0 ;; # world
-            ff0a) code=e1a0 ;; # world
             *) ;;
         esac
     else
