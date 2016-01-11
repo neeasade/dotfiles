@@ -20,6 +20,7 @@ ncmpcpp
 pcmanfm
 python2-notify2
 qutebrowser-git
+siji-git
 stow
 sxhkd
 terminus-font

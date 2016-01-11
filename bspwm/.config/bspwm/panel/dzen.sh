@@ -60,8 +60,8 @@ dzen_menu()
         code="$1"
         if grep -q "Siji" <<< "$PANEL_FONT_ICON"; then
             case $code in
-                f07c) code=e1e1 ;; # folder
-                f15c) code=e1d5 ;; # file
+                f07c) code=e1d9 ;; # folder
+                f15c) code=e1ed ;; # file
                 f023) code=e029 ;; # lock
                 f08b) code=e157 ;; # logoff
                 f011) code=e00d ;; # shutdown
