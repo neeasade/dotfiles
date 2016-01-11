@@ -57,8 +57,21 @@ dzen_menu()
     length=14
     align=l
     icon() {
+        code="$1"
+        if grep -q "Siji" <<< "$PANEL_FONT_ICON"; then
+            case $code in
+                f07c) code=e1e1 ;; # folder
+                f15c) code=e1d5 ;; # file
+                f023) code=e1e1 ;; # lock
+                f08b) code=e1e1 ;; # logoff
+                f023) code=e00d ;; # shutdown
+                *) ;;
+            esac
+        fi
+
         echo -n "^fn($PANEL_FONT_ICON)"
-        echo -n -e "\u$1"
+        if  ! grep -q "Siji" <<< "$PANEL_FONT_ICON"; then echo -n "  "; fi
+        echo -n -e "\u$code"
         echo -n "^fn()"
     }
 
@@ -68,20 +81,20 @@ dzen_menu()
 
     content+=(" Common folders")
     for folder in Downloads Documents Images; do
-        content+=("   ^ca(1, pcmanfm "$HOME/$folder" $sdw) `icon f07b` $folder ^ca()")
+        content+=(" ^ca(1, pcmanfm "$HOME/$folder" $sdw) `icon f07c` $folder ^ca()")
     done
 
     content+=(" Recently edited ")
     # Get recent files from .viminfo by vim marks.
     for file in $(cat ~/.viminfo | grep -A 10 "File marks" | grep -oE "~.+" | uniq | head -n 5); do
         fullfile="$(echo $file | sed "s/~/\/home\/$USER/" )"
-        content+=("   ^ca(1, termite -e 'vim $fullfile' $sdw) `icon f15c` $file ^ca()")
+        content+=(" ^ca(1, termite -e 'vim $fullfile' $sdw) `icon f15c` $file ^ca()")
     done
 
     content+=(" Actions")
-    content+=("   ^ca(1, i3blur.sh $sdw) `icon f023` Lock ^ca()")
-    content+=("   ^ca(1, bspc quit) `icon f08b` Logoff ^ca()")
-    content+=("   ^ca(1, shutdown $sdw) `icon f011` Shutdown ^ca()")
+    content+=(" ^ca(1, i3blur.sh $sdw) `icon f023` Lock ^ca()")
+    content+=(" ^ca(1, bspc quit) `icon f08b` Logoff ^ca()")
+    content+=(" ^ca(1, shutdown $sdw) `icon f011` Shutdown ^ca()")
 }
 
 # Calendar from cal with current date highlighted

@@ -38,9 +38,9 @@ if [ $? = "1" ]; then
     function block() {
         [ ! -z $NoPadding ] && pPadding=$NoPadding
         if [ "$blockActive" = true ] ; then
-            echo -n "%{B$pBGActiveTab}%{F$pBG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
+            echo -n "%{B$pBGActiveTab}%{F$pFGActiveTab}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
         else
-            echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
+            echo -n "%{B$pBGInactiveTab}%{F$pFGInactiveTab}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
         fi
     }
     export -f block

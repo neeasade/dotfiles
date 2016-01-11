@@ -27,7 +27,7 @@ export PANEL_HEIGHT=32
 export PANEL_GAP=6
 export pBGInactiveTab="#ff37474f"
 export pFGActiveTab="$pFG"
-export pBGActiveTab="$(colort 2 "$pBG")"
+export pBGActiveTab="#$(colort 2 "$pBG" | cut -c4- )"
 
 export PANEL_FONT_MAIN="Droid Sans-10"
 export PANEL_FONT_ICON="FontAwesome-10"

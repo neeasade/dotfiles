@@ -58,9 +58,9 @@ winName() {
     winName="$(xtitle -t $maxWinNameLen "$1")";
 
     # doesn't work - debugging later.
-    #remain=$(( $maxWinNameLen - ${#winName} ))
-    #[[ $(( $remain % 2  )) -ne 0  ]] && remain=$(( $remain + 1  ))
-    #padding=$(eval "printf \"%0.1s\" \" \"{0..$(( $remain / 2  ))}")
+    remain=$(( $maxWinNameLen - ${#winName} ))
+    [[ $(( $remain % 2  )) -ne 0  ]] && remain=$(( $remain + 1  ))
+    padding=$(eval "printf \"%0.1s\" \" \"{0..$(( $remain / 2  ))}")
 
     echo -n "$2$padding$winName$padding$win_id_delim$1$win_delim";
 }
@@ -69,7 +69,7 @@ win_source="$(bspc query -N -n)"
 echo "T$(update)"
 
 bspc subscribe node_focus node_unmanage | while read line; do
-   if grep $(bspc query -D -d "$CUR_MON:focused") <<< "$line"; then
+   if grep -q "$(bspc query -D -d "$CUR_MON:focused")" <<< "$line"; then
       if grep unmanage <<< "$line"; then
          echo "T "
       else

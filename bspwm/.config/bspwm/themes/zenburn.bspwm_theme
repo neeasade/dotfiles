@@ -25,14 +25,14 @@ b_split_ratio=0.6
 # Panel variables
 export PANEL_HEIGHT=28
 export PANEL_FONT_MAIN="Terminus-8"
-export PANEL_FONT_ICON="FontAwesome-8"
+export PANEL_FONT_ICON="Siji-8"
 export PANEL_GAP=2
 # sneak an extra launch parameter onto lemonbar to show no shadows.
 PANEL_UNDERLINE="4 -n zenburn"
-pBG="#003f3f3f"
-pBGInactiveTab="#ff3f3f3f"
-pBGActiveTab="$pFG"
-pFGActiveTab="$pBG"
+export pBG="#003f3f3f"
+export pBGInactiveTab="#ff3f3f3f"
+export pBGActiveTab="$pFG"
+export pFGActiveTab="$pBG"
 pPadding=2
 GTK_ICON_COLOR="$(colort -1 "$pBG")"
 

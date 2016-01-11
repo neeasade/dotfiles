@@ -1,6 +1,7 @@
 alsa-utils
 base-devel
 bash
+bdf-tewi-git
 bspwm-git
 compton
 dmenu2

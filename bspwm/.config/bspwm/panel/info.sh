@@ -9,7 +9,33 @@ AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
 icon() {
-    echo -n -e "%{F$pIcon}\u$1 %{F$pFG}"
+    code=$1
+    # hack for 2 icon fonts. translates font awesome to siji
+    if grep -q "Siji" <<< "$PANEL_FONT_ICON"; then
+        case $code in
+            f025) code=e04d ;; # headphones
+            f04b) code=e058 ;; # play button
+            f04c) code=e09b ;; # pause button
+            f049) code=e096 ;; # prev button
+            f050) code=e09c ;; # next button
+            f017) code=e015 ;; # clock
+            f028) code=e05d ;; # sound
+            f01e) code=e1c0 ;; # sync/rotate
+            f062) code=e060 ;; # up arrow
+            f0c2) code=e22b ;; # cloud
+            f0e0) code=e072 ;; # mail
+            f017) code=e1fe ;; # battery
+            ff0a) code=e1a0 ;; # world
+            ff0a) code=e1a0 ;; # world
+            *) ;;
+        esac
+    else
+        # if we're using siji, chances are we're using monospace and it works out.
+        # other fonts/icons need an extra space to look normal spacing wise.
+        code="$code "
+    fi
+
+    echo -n -e "%{F$pIcon}\u$code%{F$pFG}"
 }
 
 weather() {
@@ -60,8 +86,8 @@ network() {
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
     echo "${AC}termite -e 'nmtui'${AB}$(icon f0ac)${AE}"
     echo $int
-    ping -W 1 -c 1 8.8.8.8 >/dev/null 2>&1 &&
-        echo -e '\uf00c' || echo -e '\uf00d'
+    ping -W 1 -c 1 8.8.8.8 > /dev/null 2>&1 &&
+        echo 'up' || echo 'down'
 }
 
 mpd() {
@@ -73,7 +99,8 @@ mpd() {
     else
         paused=$(mpc | grep paused)
         [ -z "$paused" ] && toggle="${AC}mpc pause${AB}$(icon f04c)${AE}" ||
-            toggle="${AC}mpc play${AB}$(icon f04b)${AE}"
+                            toggle="${AC}mpc play${AB}$(icon f04b)${AE}"
+
         prev="${AC}mpc prev${AB}$(icon f049)${AE}"
         next="${AC}mpc next${AB}$(icon f050)${AE}"
         cur_song="${AC}dzen.sh mpd${AB} $cur_song ${AE}"
@@ -90,7 +117,7 @@ yaourtUpdates() {
 themeSwitch() {
     cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
     icon f01e
-    echo ${AC}nohup dzen.sh theme${AB}$cur_theme${AE}
+    echo ${AC}nohup dzen.sh theme${AB} $cur_theme${AE}
 }
 
 #determine what to display based on arguments, unless there are none, then display all.

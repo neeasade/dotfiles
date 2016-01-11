@@ -4,7 +4,7 @@
 THEME_NAME=lynn
 
 GTK_FONT="Droid Sans 10"
-GTK_ICON_COLOR="$pFG"
+GTK_ICON_COLOR="$(colort -5 "$pFG")"
 
 # vim theme name
 VIM_COLORS=autumn
@@ -27,7 +27,7 @@ export pPadding=10
 export PANEL_HEIGHT=32
 export PANEL_GAP=4
 pBGInactiveTab="#ff392925"
-pFGActiveTab="$pFG"
+pFGActiveTab="$pBGInactiveTab"
 
 pIcon="#bbe4dc8c"
 export pRest="$pBG"
