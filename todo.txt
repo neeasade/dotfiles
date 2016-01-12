@@ -15,5 +15,8 @@
 *   clean up the theme scripts.
 *   https://gist.github.com/romainl/5cd2f4ec222805f49eca
 *   incorporate automagic stuff
+*   Mimic spring theme in a better way (setting DO and DF in fancy ways)
+    * This requires making the lemonbar placement string overridable
+    * Should probably let options in title.sh be optionally overridden as well.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
