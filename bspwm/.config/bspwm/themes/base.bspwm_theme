@@ -34,6 +34,7 @@ export PANEL_FONT_ICON="FontAwesome-10" # Panel Icon font.
 export PANEL_GAP=4 # Gaps of panel off screen.
 export PANEL_UNDERLINE=4 # This value is used for both underline and overline
 export pPadding=3 # number of spaces to pad panel informaiton with
+export pOutputOrder="\"%{l} \$dropdown\$wm_infos%{c}\$title%{r}\$sys_infos\""
 
 # variables for desktop area
 export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.

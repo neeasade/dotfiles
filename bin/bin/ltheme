@@ -1,5 +1,7 @@
 #!/bin/sh
 # Load a bspwm theme based on argument
+# This loads settings for: bspwm, termite, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
+
 unset block
 rm ~/.bspwm_theme
 ln -s ~/.config/bspwm/themes/${1}.bspwm_theme ~/.bspwm_theme

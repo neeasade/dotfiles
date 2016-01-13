@@ -9,7 +9,7 @@ FREQ=0.07
 COLORS="$(bspc config active_border_color | cut -c2- )"
 LAST_COLOR="$COLORS"
 
-for i in 1 1 1 1 -1 -1 -1 -1 -1 -1 -1 -1 1 1 1; do
+for i in 1 1 1 1 -1 -1 -1 -1 -1 -1 1 1 1; do
     LAST_COLOR=$(colort $i "$LAST_COLOR")
     COLORS="$COLORS $LAST_COLOR"
 done

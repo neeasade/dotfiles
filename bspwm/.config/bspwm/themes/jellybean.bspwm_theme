@@ -23,6 +23,7 @@ b_window_gap=8
 b_split_ratio=0.6
 export pBGInactiveTab="$pBG"
 pFG="#ffdddddd"
+export pFGInactiveTab="$pFG"
 export pBGActiveTab="#ff$(colort 2 "$pBG" | cut -c4-)"
 export pFGActiveTab="$pFG"
 GTK_ICON_COLOR="$pFG"

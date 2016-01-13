@@ -15,13 +15,13 @@ CUR_MON=$1;
 
 ###OPTIONS###
 # Always tabbed visible windows option:
-always_tab=false;
+[[ -z $always_tab ]] && always_tab=false;
 # Maxium window title length
-maxWinNameLen=25;
+[[ -z $maxWinNameLen  ]] && maxWinNameLen=25;
 # The delimiter to separate window sections
-win_delim="\\";
+[[ -z $win_delim  ]] && win_delim="\\";
 # The delimiter to separate the window name from the window in a window section.
-win_id_delim="//";
+[[ -z $win_id_delim ]] && win_id_delim="//";
 
 update() {
     # Current monitor's shown desktop

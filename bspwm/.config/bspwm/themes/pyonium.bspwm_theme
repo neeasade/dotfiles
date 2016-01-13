@@ -26,7 +26,8 @@ b_split_ratio=0.6
 # panel
 export PANEL_HEIGHT=32
 export PANEL_GAP=6
-pBGInactiveTab="#ff444444"
+export pBGInactiveTab="#ff444444"
+export pFGInactiveTab="$pFG"
 export pBGActiveTab="$pFG"
 export pFGActiveTab="$pBG"
 

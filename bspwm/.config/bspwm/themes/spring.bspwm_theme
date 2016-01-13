@@ -1,22 +1,22 @@
-#!/bin/bash
-# base16 twilight theme
+#!/usr/bin/env bash
+# spring theme
+# based off of my submission to the fist #rice contest 2015.
 
-THEME_NAME=twilight
+THEME_NAME=spring
 
 GTK_FONT="Droid Sans 10"
 GTK_ICON_COLOR="$pFG"
 
 # vim theme name
-VIM_COLORS=base16-twilight
+VIM_COLORS=autumn
 
 # termite theme name
-TERMITE_CONFIG=twilight
+TERMITE_CONFIG=spring
 
 # Background command
-export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/lake.jpg"
+export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/spring.jpg"
 
 . ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
-export pOutputOrder
 
 # bspwm
 b_border_width=3
@@ -24,32 +24,24 @@ b_window_gap=16
 b_split_ratio=0.6
 
 # panel
-
-export PANEL_HEIGHT=32
-export PANEL_GAP=5
-export PANEL_UNDERLINE=0
-pBGInactiveTab="#ff1e1e1e"
+export PANEL_HEIGHT=24
+export PANEL_GAP=0
+export PANEL_UNDERLINE="5 -n noshadow"
+export pBGInactiveTab="#bb`echo $pBG | cut -c4-`"
 pBGActiveTab="#ff2d2d2d"
 pFGActiveTab="$pFG"
+export DO='     '
+export DF='     '
 
 pIcon="#bba2a2a2"
 export pRest="$pBG"
 export pActive="$pBGActiveTab"
-b_normal_border_color="#2e2e2e"
+export pBG="#00000000"
 
 export PANEL_FONT_MAIN="Droid Sans-10"
 export PANEL_FONT_ICON="FontAwesome-10"
 DUNST_FONT="Droid Sans 10"
-
-function block() {
-    [ ! -z $NoPadding ] && pPadding=$NoPadding
-    if [ "$blockActive" = true ] ; then
-        echo -n "%{B$pBGActiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
-    else
-        echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
-    fi
-}
-export -f block
+export pOutputOrder="\"%{l}\$dropdown\$title%{c}\${wm_infos}%{U$pBG-o}%{U$pBG-u}%{r}\$sys_infos\""
 
 #underline style:
 
@@ -63,8 +55,8 @@ export -f block
 #}
 #export -f block
 
-export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
-export showFreeDesktops=false # option to show nothing for free desktops
+export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
+export showFreeDesktops=true # option to show nothing for free desktops
 export desktopDisplayType=separate # [together| separate] - show desktops in separate blocks or together in one block
 export NoModeToggle=1 # if defined, no monocle/tiling toggle.
 

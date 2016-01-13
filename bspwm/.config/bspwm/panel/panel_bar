@@ -101,5 +101,5 @@ while read -r line ; do
 
         wm_infos="$wm_infos%{B$pBG}";;
     esac
-    printf "%s\n" "%{l} $dropdown$wm_infos%{c}$title%{r}$sys_infos"
+    eval 'printf "%s\n"' $pOutputOrder
 done
