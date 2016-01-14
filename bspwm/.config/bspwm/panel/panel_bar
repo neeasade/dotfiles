@@ -51,6 +51,7 @@ while read -r line ; do
     W*)
         # setting the underline for everything with wm_info
         wm_infos="%{U$pBG+o}%{U$pBG+u}"
+        wm_infos=""
         IFS=':'
         set -- ${line#?}
         while [ $# -gt 0 ] ; do
@@ -85,7 +86,11 @@ while read -r line ; do
                         wm_infos="$wm_infos$(block "$blockContent")"
                         NoPadding=""
                     else
-                        wm_infos="$wm_infos%{F$dColor}${AC}${command} ${name}${AB} ${dDisplay} ${AE}"
+                        if grep -q '%{-o}' <<< "$dDisplay"; then
+                            wm_infos="$wm_infos%{U$dColor+o}${AC}${command} ${name}${AB} ${dDisplay} ${AE}"
+                        else
+                            wm_infos="$wm_infos%{F$dColor}${AC}${command} ${name}${AB} ${dDisplay} ${AE}"
+                        fi
                     fi
                 fi
             fi

@@ -63,7 +63,7 @@ export DM=$(echo -e '\uf0c9')  # monocle mode
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
 # it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"
-barInfo="" # Default options/items to include in info section of panel.
+barInfo="volume mpd themeSwitch clock" # Default options/items to include in info section of panel.
 
 # Customize options on different computers by hostname:
 if [ "$HOSTNAME" = "littleapple" ]; then

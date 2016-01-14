@@ -29,4 +29,5 @@ done
 echo "Linking dotfiles to home dir.."
 stow $(ls */ -d | grep -v root)
 
+$HOME/bin/ltheme twilight
 echo "All done."
