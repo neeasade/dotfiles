@@ -17,7 +17,7 @@
 
 SCRIPT_NAME    = "autoconnect"
 SCRIPT_AUTHOR  = "arno <arno@renevier.net>"
-SCRIPT_VERSION = "0.2.3"
+SCRIPT_VERSION = "0.3.0"
 SCRIPT_LICENSE = "GPL3"
 SCRIPT_DESC    = "reopens servers and channels opened last time weechat closed"
 SCRIPT_COMMAND = "autoconnect"
@@ -32,57 +32,64 @@ except:
 
 weechat.register(SCRIPT_NAME, SCRIPT_AUTHOR, SCRIPT_VERSION, SCRIPT_LICENSE, SCRIPT_DESC, "", "")
 
-def join_cb(data, signal, signal_data):
+quitting = False
+
+
+def get_autojoin_channels(server):
+    channels = weechat.config_string(weechat.config_get("irc.server.%s.autojoin" % (server,)))
+    return set(channels.split(',')) if channels else set()
+
+
+def update_autojoin_channels(server, channels):
+    channels = ','.join(channels) if channels else "null"
+    weechat.command("", "/mute /set irc.server.%s.autojoin %s" % (server, channels))
+
+
+def joinpart_cb(data, signal, signal_data):
     server = signal.split(',')[0]
     if weechat.info_get("irc_nick_from_host", signal_data) != weechat.info_get("irc_nick", server):
         # nick which has joined is not our current nick
         return weechat.WEECHAT_RC_OK
-    weechat.command("", "/mute /set irc.server.%s.autoconnect on" % (server,))
 
+    autojoin_channels = get_autojoin_channels(server)
 
-    channel = signal_data.split()[-1][1:]
-    # Fix up prefixless channels, : prefixed channels
-    channel = channel if channel[0] != ':' else channel[1:]
-    channel = '#' + channel if channel[0] != '#' else channel
-    autojoin = weechat.config_string(weechat.config_get("irc.server.%s.autojoin" % (server,)))
-    if autojoin:
-        autojoin = ','.join(['#' + w if w[0] != '#' else w for w in autojoin.split(',')])
-        if not channel in autojoin.split(','):
-            weechat.command("", "/mute /set irc.server.%s.autojoin %s,%s" % (server, autojoin, channel))
-        else:
-            weechat.command("", "/mute /set irc.server.%s.autojoin %s" % (server, autojoin))
-    else:
-        weechat.command("", "/mute /set irc.server.%s.autojoin %s" % (server, channel))
+    if signal.endswith("irc_in2_JOIN"):
+        weechat.command("", "/mute /set irc.server.%s.autoconnect on" % (server,))
 
+        channel = signal_data.split()[-1][1:]
+        # Fix up prefixless channels, : prefixed channels
+        channel = channel if channel[0] != ':' else channel[1:]
+        channel = '#' + channel if channel[0] != '#' else channel
+        autojoin_channels.add(channel)
+
+    elif signal.endswith("irc_in2_PART"):
+        channel = signal_data.split(' PART ')[1].split()[0]
+        autojoin_channels.discard(channel)
+
+    update_autojoin_channels(server, autojoin_channels)
     weechat.command("", "/save irc")
     return weechat.WEECHAT_RC_OK
 
-def part_cb(data, signal, signal_data):
-    server = signal.split(',')[0]
-    if weechat.info_get("irc_nick_from_host", signal_data) != weechat.info_get("irc_nick", server):
-        # nick which has parted is not our current nick
-        return weechat.WEECHAT_RC_OK
-    channel = signal_data.split(' PART ')[1].split()[0]
-    autojoin = weechat.config_string(weechat.config_get("irc.server.%s.autojoin" % (server,)))
-
-    if autojoin:
-        autojoin = autojoin.split(',')
-        if channel in autojoin:
-            autojoin.remove(channel)
-            weechat.command("", "/mute /set irc.server.%s.autojoin %s" % (server, ','.join(autojoin)))
-
-    weechat.command("", "/save irc")
-    return weechat.WEECHAT_RC_OK
 
 def disconnect_cb(data, signal, signal_data):
-    server = signal_data.split(',')[0]
+    global quitting
+    if not quitting:
+        server = signal_data.split(',')[0]
 
-    weechat.command("", "/mute /set irc.server.%s.autoconnect null" % (server,))
-    weechat.command("", "/mute /set irc.server.%s.autojoin null" % (server,))
+        weechat.command("", "/mute /set irc.server.%s.autoconnect null" % (server,))
+        weechat.command("", "/mute /set irc.server.%s.autojoin null" % (server,))
 
-    weechat.command("", "/save irc")
+        weechat.command("", "/mute /save irc")
     return weechat.WEECHAT_RC_OK
 
-weechat.hook_signal("*,irc_in2_join", "join_cb", "")
-weechat.hook_signal("*,irc_in2_part", "part_cb", "")
+
+def quit_cb(data, signal, signal_data):
+    global quitting
+    quitting = True
+    return weechat.WEECHAT_RC_OK
+
+
+weechat.hook_signal("quit", "quit_cb", "")
+weechat.hook_signal("*,irc_in2_join", "joinpart_cb", "")
+weechat.hook_signal("*,irc_in2_part", "joinpart_cb", "")
 weechat.hook_signal("irc_server_disconnected", "disconnect_cb", "")
