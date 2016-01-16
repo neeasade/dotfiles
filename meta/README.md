@@ -1,3 +1,5 @@
+### Todo
+
 *   rewrite panel in python
 *   learn emacs
 *   more BSPWM window manuevers
@@ -15,4 +17,5 @@
 *   clean up the theme scripts.
 *   https://gist.github.com/romainl/5cd2f4ec222805f49eca
 *   incorporate automagic stuff
+*   use mustache templates in this fashion - https://github.com/rcrowley/mustache.sh
 *   better document and 'clean' things within the dotfiles themselves(never ends)
