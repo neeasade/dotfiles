@@ -18,4 +18,4 @@ The `meta` folder contains:
 - scripts for docs
 - todo list
 
-I use GNU stow to manage my dotfiles, To see existing file conflicts if you were to link these files: `stow -t "$HOME" -n 2>&1 | grep -oE ":.+" | cut -c3-`
+I use GNU stow to manage my dotfiles, To see existing file conflicts if you were to link these files: `stow  */ -t "$HOME" -n 2>&1 | grep -oE ":.+" | cut -c3-`
