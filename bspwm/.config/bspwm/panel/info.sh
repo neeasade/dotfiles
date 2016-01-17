@@ -114,7 +114,7 @@ yaourtUpdates() {
 }
 
 themeSwitch() {
-    cur_theme=$(cat ~/.bspwm_theme | grep THEME_NAME | cut -c12-)
+    cur_theme=$(cut -c12- <<< $(grep -m 1 "THEME_NAME" ~/.bspwm_theme))
     icon f01e
     echo ${AC}nohup dzen.sh theme${AB} $cur_theme${AE}
 }

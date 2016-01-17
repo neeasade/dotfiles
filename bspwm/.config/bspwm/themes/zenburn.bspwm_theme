@@ -1,55 +1,38 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # zenburn theme
 
+set -a
+
+# theme
 THEME_NAME=zenburn
-
-GTK_FONT="Terminus 8"
-
-# vim theme name
 VIM_COLORS=zenburn
-
-# termite theme name
-TERMITE_CONFIG=zenburn
-
-# Background command
 export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/desert.png"
+. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
 
-. ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
-
-# BSPWM variables
-# naming convention is b_<config_option>
+# bspwm
 b_border_width=2
 b_window_gap=12
-b_split_ratio=0.6
 
-# Panel variables
-export PANEL_HEIGHT=28
-export PANEL_FONT_MAIN="Terminus-8"
-export PANEL_FONT_ICON="Siji-8"
-export PANEL_GAP=2
+# panel
+PANEL_HEIGHT=28
+PANEL_FONT_MAIN="Terminus-8"
+PANEL_FONT_ICON="Siji-8"
+PANEL_GAP=2
+desktopDisplay=name
+NoModeToggle=
 # sneak an extra launch parameter onto lemonbar to show no shadows.
 PANEL_UNDERLINE="4 -n noshadow"
-export pBG="#003f3f3f"
-export pBGInactiveTab="#ff3f3f3f"
-export pBGActiveTab="$pFG"
-export pFGActiveTab="$pBG"
-pPadding=2
-GTK_ICON_COLOR="$(colort -1 "$pBG")"
 
-export pRest="$pIcon"
-export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
-export showFreeDesktops=true # option to show nothing for free desktops
-export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
-export NoModeToggle="" # if defined, no monocle/tiling toggle.
+# colors
+pBG="#003f3f3f"
+pBGInactiveTab="#ff3f3f3f"
+pPadding=2
+GTK_ICON_COLOR="$(colort +4 "$pBG")"
 
 # Workspace variables
-export DO='+'
-export DF='-'
-export DT='[-]'
-export DM='[]'
+DT='[-]'
+DM='[]'
 
-# dunst variables
+# other
 DUNST_FONT="Terminus 8"
-
-# This is needed for spacing on the dmenu_run script.
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+GTK_FONT="Terminus 8"

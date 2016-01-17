@@ -1,42 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # base16 material theme
 
+set -a
+
+# theme
 THEME_NAME=material
-
-GTK_FONT="Droid Sans 10"
-GTK_ICON_COLOR="$pFG"
-
-# vim theme name
 VIM_COLORS=material
-
-# termite theme name
-TERMITE_CONFIG=material
-
-# Background command
-export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/worlds.jpg"
-
-. ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
+BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/worlds.jpg"
+. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=5
 b_window_gap=16
-b_split_ratio=0.6
 
 # panel
-export PANEL_HEIGHT=32
-export PANEL_GAP=6
-export pBGInactiveTab="#ff37474f"
-export pFGActiveTab="$pFG"
-export pBGActiveTab="#$(colort 2 "$pBG" | cut -c4- )"
-
-export PANEL_FONT_MAIN="Droid Sans-10"
-export PANEL_FONT_ICON="FontAwesome-10"
+PANEL_HEIGHT=32
+PANEL_GAP=6
+PANEL_FONT_MAIN="Droid Sans-10"
 DUNST_FONT="Droid Sans 10"
+desktopDisplay=name
+showFreeDesktops=false
 
-export desktopDisplay=name # [icon|name] - display desktop names or DO/DF variables.
-export showFreeDesktops=false # option to show nothing for free desktops
-export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
-export NoModeToggle="1" # if defined, no monocle/tiling toggle.
+# colors
+pBGInactiveTab="#ff37474f"
+pFGActiveTab="$pFG"
+pBGActiveTab="#$(colort 3 "$pBG" | cut -c4- )"
 
-# This is needed for spacing on the dmenu_run script.
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+# other
+GTK_FONT="Droid Sans 10"
+GTK_ICON_COLOR="$pFG"

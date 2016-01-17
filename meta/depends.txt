@@ -25,7 +25,6 @@ stow
 sxhkd
 terminus-font
 termite
-ttf-dejavu
 ttf-droid
 ttf-font-awesome
 ttf-font-linux

@@ -2,69 +2,55 @@
 # spring theme
 # based off of my submission to the fist #rice contest 2015.
 
+set -a
+
+# theme
 THEME_NAME=spring
-
-GTK_FONT="Droid Sans 10"
-GTK_ICON_COLOR="$pFG"
-
-# vim theme name
 VIM_COLORS=autumn
-
-# termite theme name
-TERMITE_CONFIG=spring
-
-# Background command
 export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/spring.jpg"
-
-. ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
+. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=3
 b_window_gap=16
-b_split_ratio=0.6
 
 # panel
-export PANEL_HEIGHT=24
-export PANEL_GAP=0
-export PANEL_UNDERLINE="5 -n noshadow"
-export pBGInactiveTab="#bb`echo $pBG | cut -c4-`"
-export pBGActiveTab="$pBG"
-export pBGActiveTab="$pFG"
-export pBGActiveTab="$pFG"
-export pFGActiveTab="$pBG"
-export pPadding=2
-pIcon="#bba2a2a2"
+PANEL_HEIGHT=24
+PANEL_GAP=0
+PANEL_UNDERLINE="5 -n noshadow"
+PANEL_FONT_MAIN="Droid Sans-10:style=Bold"
+DUNST_FONT="Droid Sans 10"
+pPadding=2
 
-export pRest="$pBG"
-export pActive="$pBGActiveTab"
-export pBG="#00000000"
+# colors
+pBGInactiveTab="#bb`cut -c4- <<< $pBG`"
+pBG="#00000000"
 
+
+# These get grepped later to determine if overline.
 # I'm literally hitler
-export DO="%{B$pBG}           %{-o}"
-export DF="%{B$pBG}           %{-o}"
+DO="        %{-o}"
+DF="        %{-o}"
 
+# other
+GTK_FONT="Droid Sans 10"
+GTK_ICON_COLOR="$pFG"
+
+
+# Create custom block function to print right thing when overline encountered.
 function block() {
     [[ ! -z $NoPadding ]] && pPadding=$NoPadding
     if [[ "$blockActive" = true ]] ; then
         echo -n "%{B$pBGActiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
     else
-		if grep -q '%{U#' <<< "$@"; then
-			echo -n "%{B$pBG}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
-		else
-			echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
-		fi
+        if grep -q '%{U#' <<< "$@"; then
+            echo -n "%{B$pBG}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
+        else
+            echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
+        fi
     fi
 }
 export -f block
 
-export PANEL_FONT_MAIN="Droid Sans-10:style=Bold"
-export PANEL_FONT_ICON="FontAwesome-10"
-DUNST_FONT="Droid Sans 10"
-export pOutputOrder="\"%{l}\$dropdown\$title%{c}\${wm_infos}%{r}\$sys_infos\""
-export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
-export showFreeDesktops=true # option to show nothing for free desktops
-export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
-export NoModeToggle=1 # if defined, no monocle/tiling toggle.
-
-# This is needed for spacing on the dmenu_run script.
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+# Make the workspaces be in the middle.
+pOutputOrder='"%{l}$dropdown$title%{c}${wm_infos}%{r}$sys_infos"'

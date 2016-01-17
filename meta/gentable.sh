@@ -67,7 +67,7 @@ gen_sxhkd()
 gen_vim()
 {
     echo "plugin | notes"
-    echo "----|-----"
+    echo "-------|-------"
 
     IFS=$'\r\n'
     while read line; do

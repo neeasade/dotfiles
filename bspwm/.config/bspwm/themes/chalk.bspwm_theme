@@ -1,47 +1,33 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # base16 chalk theme
 
+set -a
+
+# theme
 THEME_NAME=chalk
-
-GTK_FONT="Droid Sans Mono 8"
-GTK_ICON_COLOR="$pFG"
-
-# vim theme name
 VIM_COLORS=Tomorrow
-
-# termite theme name
-TERMITE_CONFIG=chalk
-
-# Background command
-export BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/evian.jpg"
-
-. ~/.config/bspwm/themes/base.bspwm_theme $TERMITE_CONFIG
+BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/evian.jpg"
+. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=2
 b_window_gap=16
-b_split_ratio=0.6
 
 # panel
-export PANEL_HEIGHT=32
-export PANEL_GAP=6
-export pBGInactiveTab="#ffc6c7c9"
-export pBGActiveTab="#ffc6c7c9"
-export pFGActiveTab="$pFG"
+PANEL_HEIGHT=32
+PANEL_FONT_MAIN="Droid Sans Mono-8"
+PANEL_GAP=6
+DO=+
+DF=-
+pPadding=2
+desktopDisplayType=separate
+
+# colors
+pBGInactiveTab="#ffc6c7c9"
+pBGActiveTab="#ffc6c7c9"
+pFGActiveTab="$pFG"
 pBG="#ffe7e8eb"
 pIcon="#ff606060"
 
-export PANEL_FONT_MAIN="Droid Sans Mono-8"
-export PANEL_FONT_ICON="FontAwesome-10"
-DUNST_FONT="Droid Sans 10"
-export DO=+
-export DF=-
-pPadding=2
-
-export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
-export showFreeDesktops=true # option to show nothing for free desktops
-export desktopDisplayType=separate # [together| separate] - show desktops in separate blocks or together in one block
-export NoModeToggle="1" # if defined, no monocle/tiling toggle.
-
-# This is needed for spacing on the dmenu_run script.
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
+# other
+DUNST_FONT="Droid Sans Mono 8" # Font used by dunst on startup

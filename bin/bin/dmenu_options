@@ -1,11 +1,11 @@
 #!/bin/bash
 # print dmenu2 options matching current panel, to be used with any dmenu script.
 
-[[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
-                                      || export BSPWM_GAPS=true
 
 # get gap values
 . ~/.bspwm_theme
+
+[[ $(bspc config window_gap) -le 0 ]] && PANEL_GAP=0
 
 #first line is current monitor width, then subtract panel gap x2 in second line.
 PANEL_WIDTH=$(bspc query -T -m | jshon -e rectangle -e width -u)

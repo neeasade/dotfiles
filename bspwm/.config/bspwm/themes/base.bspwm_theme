@@ -1,10 +1,9 @@
 #!/bin/env bash
 # This script will be sourced by themes and then have options overridden
-# assumes that $1 is the termiteconfig name
+# assumes that $1 is the termite config name
 
 # Things a theme is expected to define at a minimum:
 # THEME_NAME
-# TERMITE_CONFIG
 # VIM_COLORS
 
 # get the value of a color from the current terminal color configuration
@@ -12,11 +11,9 @@ getTermColor() {
     echo -n "$( cat ~/.config/termite/themes/${TERMITE_CONFIG}.config | grep  "$1" | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
 }
 
-export TERMITE_CONFIG=$1
+TERMITE_CONFIG=$1
 
-# BSPWM variables
-# naming convention is b_<config_option>
-b_border_width=3
+b_border_width=3 # bspwm settings. Naming convention is b_<config_option>
 b_window_gap=10
 b_split_ratio=0.6
 b_normal_border_color="#$(getTermColor color0)"
@@ -27,45 +24,54 @@ b_urgent_border_color="#FFFF00"
 b_focused_locked_border_color="#FFFFFF"
 
 # Panel variables
-export PANEL_FIFO=/tmp/panel-fifo # Location of the Panel fifo
-export PANEL_HEIGHT=16 # Panel height.
-export PANEL_FONT_MAIN="Dejavu Sans-8" # Panel main font.
-export PANEL_FONT_ICON="FontAwesome-10" # Panel Icon font.
-export PANEL_GAP=4 # Gaps of panel off screen.
-export PANEL_UNDERLINE=4 # This value is used for both underline and overline
-export pPadding=3 # number of spaces to pad panel informaiton with
-export pOutputOrder="\"%{l} \$dropdown\$wm_infos%{c}\$title%{r}\$sys_infos\""
+PANEL_FIFO=/tmp/panel-fifo       # Location of the Panel fifo
+PANEL_HEIGHT=16                  # Panel height.
+PANEL_FONT_MAIN="Droid Sans-8"   # Panel main font.
+PANEL_FONT_ICON="FontAwesome-10" # Panel Icon font.
+PANEL_GAP=4                      # Gaps of panel off screen.
+PANEL_UNDERLINE=4                # This value is used for both underline and overline
+pPadding=3                       # number of spaces to pad panel information (sections/blocks) with
+pOutputOrder='"%{l} $dropdown$wm_infos%{c}$title%{r}$sys_infos"' # placement of sections in panel
 
 # variables for desktop area
-export desktopDisplay=icon # [icon|name] - display desktop names or DO/DF variables.
-export showFreeDesktops=true # option to show nothing for free desktops
-export desktopDisplayType=together # [together| separate] - show desktops in separate blocks or together in one block
-export NoModeToggle= # if defined, no monocle/tiling toggle.
+desktopDisplay=icon         # [icon|name] - display desktop names or DO/DF variables.
+showFreeDesktops=true       # option to show nothing for free desktops
+desktopDisplayType=together # [together|separate] - show desktops in separate blocks or together in one block
+NoModeToggle=1              # if defined, no monocle/tiling toggle.
 
 # desktop colors
-export pUrgent="#ffffff00"
-export pActive="#ff$(getTermColor color15)"
-export pRest="#ff$(getTermColor color6)"
+pUrgent="#ffffff00"                  # urgent desktop color
+pActive="#ff$(getTermColor color15)" # active desktop color
+pRest="#ff$(getTermColor color6)"    # resting desktop color
 
 # Panel colors
-export pBG="#ff$(getTermColor background)"    # Default foreground
-export pFG="#ff$(getTermColor foreground)"    # Default foreground
-export pBGActiveTab="$pActive"                # Active title tab
-export pBGInactiveTab="$pRest"                # Inactive title tab - also used to info.sh ouput background.
-export pIcon="#ffaaaaaa"                      # color of icons from info.sh
+pBG="#ff$(getTermColor background)"          # Default foreground
+pFG="#ff$(getTermColor foreground)"          # Default foreground
+pBGActiveTab="$pFG"                          # Active title tab - also used as gtk select color value.
+pFGActiveTab="$pBG"                          # Active title tab - also used as gtk select color value.
+pBGInactiveTab="$pBG"                        # Inactive title tab - also used to info.sh ouput background.
+pFGInactiveTab="$pFG"                        # Inactive title tab - also used to info.sh ouput background.
+pIcon="#ff$(colort -2 $(cut -c4- <<< $pFG))" # color of icons from info.sh
 
 # Workspace variables
-export DO=$(echo -e '\uf0c8')  # occupied desktop
-export DF=$(echo -e '\uf096')  # free desktop
-export DT=$(echo -e '\uf009')  # tiling mode
-export DM=$(echo -e '\uf0c9')  # monocle mode
+DO='[-]' # occupied desktop
+DF='[ ]' # free desktop
+DT='T'   # tiling mode
+DM='M'   # monocle mode
+
+# GTK options
+GTK_FONT="Droid Sans 10"             # GTK font to be used.
+GTK_ICON_COLOR="$(colort -2 "$pFG")" # Icon color to be applied to ACYL icons.
+
+DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
 
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
 # it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"
 barInfo="volume mpd themeSwitch clock" # Default options/items to include in info section of panel.
 
-# Customize options on different computers by hostname:
+# Customize options on different computers by hostname.
+# for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.
 if [ "$HOSTNAME" = "littleapple" ]; then
     barInfo2="yaourtUpdates"
     barInfo1="themeSwitch volume clock"
@@ -74,7 +80,3 @@ fi
 
 [ "$HOSTNAME" = "home2" ] && barInfo="battery network volume clock"
 
-# Export panel variables - note - this doesn't work with dmenu_run, maybe because it's sourced a second layer down?
-[ "$BSPWM_GAPS" = false ] && export PANEL_GAP=0
-
-DUNST_FONT="Dejavu Sans Mono 10" # Font used by dunst on startup
