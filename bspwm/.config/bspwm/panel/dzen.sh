@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env mksh
 # dzen dropdown functions
 
 # This function echos dzen dimensions at the panel centered to click

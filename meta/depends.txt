@@ -13,6 +13,7 @@ i3lock
 imagemagick
 jshon
 lemonbar-xft-git
+mksh
 mpc
 mpd
 mpdcron-git

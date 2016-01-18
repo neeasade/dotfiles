@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env mksh
 # panel
 # Start a panel on every monitor
 # This script makes the assumption that monitors names are arranged left to right, named in increasing int value(1 2 3..)
@@ -33,17 +33,14 @@ num_mon=$(bspc query -M)
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 
 # display function used by both info.sh and panel_bar scripts:
-declare -f block
+typeset -f block
 if [ $? = "1" ]; then
-    function block() {
-        [ ! -z $NoPadding ] && pPadding=$NoPadding
-        if [ "$blockActive" = true ] ; then
-            echo -n "%{B$pBGActiveTab}%{F$pFGActiveTab}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
-        else
-            echo -n "%{B$pBGInactiveTab}%{F$pFGInactiveTab}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG} "
-        fi
-    }
-    export -f block
+    block='[[ ! -z $NoPadding ]] && pPadding=$NoPadding; \
+        if [ "$blockActive" = true ] ; then \
+            echo -n "%{B$pBGActiveTab}%{F$pFGActiveTab}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG} "; \
+        else  \
+            echo -n "%{B$pBGInactiveTab}%{F$pFGInactiveTab}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG} "; \
+        fi '
 fi
 
 for i in $num_mon; do

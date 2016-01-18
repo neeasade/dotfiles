@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env mksh
 # A script to determine title form for different window modes in bspwm
 # dependencies: xtitle
 # Neeasade
@@ -60,7 +60,10 @@ winName() {
     # doesn't work - debugging later.
     remain=$(( $maxWinNameLen - ${#winName} ))
     [[ $(( $remain % 2  )) -ne 0  ]] && remain=$(( $remain + 1  ))
-    padding=$(eval "printf \"%0.1s\" \" \"{0..$(( $remain / 2  ))}")
+    padding=
+    for i in {0..$(( $remain / 2 ))}; do
+       padding="$padding "
+    done
 
     echo -n "$2$padding$winName$padding$win_id_delim$1$win_delim";
 }

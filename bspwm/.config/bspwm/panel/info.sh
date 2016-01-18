@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env mksh
 # info.sh
 # Output information with formatted background colors in lemonbar format
 # This script can take arguments for what bar information to display(meant to be the names of the functions)
@@ -128,7 +128,8 @@ while :; do
                 || items="$@"
 
     for item in $items; do
-        buf="${buf}$(block $($item))";
+        blockContent="$($item)"
+        buf="${buf}$(eval "$block")";
     done
 
     echo "$buf"
