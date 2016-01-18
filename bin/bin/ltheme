@@ -66,8 +66,11 @@ cp "$HOME/.config/qutebrowser/qutebrowser.conf.template" "$quteconf"
 
 # match tabs to panel.
 sed -i "s/replaceQuteFG/#$pFG/g;s/replaceQuteBG/#$pBG/g;" $quteconf
-splitPadding="$(bc <<< "($PANEL_HEIGHT - 10)/2")"
-sed -i "s/replaceQuteHeight/$(expr $PANEL_HEIGHT - 10)/g" $quteconf
+splitPadding="$(bc <<< "($PANEL_HEIGHT - 12)/2")"
+quteFont="$(sed 's/-.*//' <<< $PANEL_FONT_MAIN)"
+# todo: handle bold.
+sed -i "s/replaceQuteHeight/$(echo "($PANEL_HEIGHT - 10) / 2" | bc)/g" $quteconf
+sed -i "s/replaceQuteFont/$quteFont/g" $quteconf
 sed -i "s/replaceQuteActiveTabFG/#$pFGActiveTab/g;s/replaceQuteActiveTabBG/#$pBGActiveTab/g;" $quteconf
 
 # Kill dunst and restart with the right colors.

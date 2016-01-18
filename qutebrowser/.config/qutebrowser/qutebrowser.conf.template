@@ -642,7 +642,7 @@ tabs-are-windows = false
 title-format = {title}
 title-alignment = center
 mousewheel-tab-switching = true
-padding = 10,10,10,10
+padding = replaceQuteHeight,replaceQuteHeight,8,8
 indicator-padding = 0,0,0,0
 
 [storage]
@@ -1374,11 +1374,11 @@ webpage.bg = ${completion.bg}
 # web-size-default-fixed (Int):
 #     The default font size for fixed-pitch text.
 #     Default:
-_monospace = "Droid Sans Mono", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Liberation Mono", "Courier New", Courier, monospace, Fixed, Consolas, Terminal
-completion = 8pt ${_monospace}
-tabbar = "10pt Droid Sans"
-statusbar = 8pt ${_monospace}
-downloads = 8pt ${_monospace}
+_monospace = "replaceQuteFont", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Liberation Mono", "Courier New", Courier, monospace, Fixed, Consolas, Terminal
+completion = 9pt ${_monospace}
+tabbar = 10pt ${_monospace}
+statusbar = 9pt ${_monospace}
+downloads = 9pt ${_monospace}
 hints = bold 13px Monospace
 debug-console = 8pt ${_monospace}
 web-family-standard =
