@@ -30,3 +30,4 @@ pActive="$pBGActiveTab"
 # other
 DUNST_FONT="Droid Sans 10"
 GTK_FONT="Droid Sans 10"
+GTK_ICON_COLOR="#413925"

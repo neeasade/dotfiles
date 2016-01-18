@@ -11,7 +11,7 @@
 export PATH=$PATH:~/.config/bspwm/panel
 
 # Kill the panel if it is currently running
-if [ $(pgrep -cx lemonbar) -gt 1 ] ; then
+if [[ $(pgrep -cx lemonbar) -gt 1 ]]; then
 	printf "%s\n" "The panel is already running."
     while [[ $(pgrep -c "lemonbar") != 0 ]]
     do
@@ -27,14 +27,13 @@ echo $$ > /tmp/panel-pid
 CUR_X_OFFSET=0
 
 # Get the number of monitors we will be making bars for
-num_mon=$(bspc query -M)
+num_mon="$(bspc query -M)"
 
 # panel_gap to 0 if no gaps.
-[ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
+[[ "$BSPWM_GAPS" = false ]] && PANEL_GAP=0
 
 # display function used by both info.sh and panel_bar scripts:
-typeset -f block
-if [ $? = "1" ]; then
+if [[ -z $block ]]; then
     block='[[ ! -z $NoPadding ]] && pPadding=$NoPadding; \
         if [ "$blockActive" = true ] ; then \
             echo -n "%{B$pBGActiveTab}%{F$pFGActiveTab}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG} "; \
@@ -45,7 +44,7 @@ fi
 
 for i in $num_mon; do
     # remove any open panel fifo, and then create one
-    [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
+    [[ -e "$PANEL_FIFO$i" ]] && rm "$PANEL_FIFO$i"
     mkfifo "$PANEL_FIFO$i"
 
     # This greps out the bspc control section of the current monitor we are on.
@@ -64,7 +63,7 @@ for i in $num_mon; do
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh outputs system information.
-    if [ -z "$(eval echo \$'barInfo'$i)" ]; then
+    if [[ -z "$(eval echo \$'barInfo'$i)" ]]; then
         info.sh $barInfo > "$PANEL_FIFO$i" &
     else
         #Custom bar options per monitor. (defined barInfo$i var for this monitor)

@@ -36,21 +36,20 @@ DF="        %{-o}"
 GTK_FONT="Droid Sans 10"
 GTK_ICON_COLOR="$pFG"
 
-
 # Create custom block function to print right thing when overline encountered.
-function block() {
-    [[ ! -z $NoPadding ]] && pPadding=$NoPadding
+block="$(cat <<\EOF
+    [[ ! -z $NoPadding ]] && pPadding=$NoPadding;
     if [[ "$blockActive" = true ]] ; then
-        echo -n "%{B$pBGActiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
+        echo -n "%{B$pBGActiveTab}%{F$pFG}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG}";
     else
-        if grep -q '%{U#' <<< "$@"; then
-            echo -n "%{B$pBG}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
+        if grep -q '%{U#' <<< "$blockContent"; then
+            echo -n "%{B$pBG}%{F$pFG}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG}";
         else
-            echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}"
-        fi
+            echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG}";
+        fi;
     fi
-}
-export -f block
+EOF
+)"
 
 # Make the workspaces be in the middle.
 pOutputOrder='"%{l}$dropdown$title%{c}${wm_infos}%{r}$sys_infos"'
