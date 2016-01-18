@@ -16,6 +16,7 @@ compton &
 
 # mpd and mpdcron(for notifications and lastfm scrobbling)
 mpd ~/.config/mpd/mpd.conf &
+MPDCRON_DIR="$HOME/.config/mpd"
 [[ -z $(pgrep -xU $UID mpdcron) ]] && mpdcron &
 
 # make the default x cursor not an x :)
