@@ -1,19 +1,19 @@
-#!/usr/bin/env mksh
+#!/usr/bin/env dash
 # panel
 # Start a panel on every monitor
 # This script makes the assumption that monitors names are arranged left to right, named in increasing int value(1 2 3..)
 # if this is not the case, you can override this with the num_mon variable below.
 
 # Read the theme for display settings
-. ~/.bspwm_theme
+. $HOME/.bspwm_theme
 
 # Add panel scripts to path
-export PATH=$PATH:~/.wm/panel
+export PATH=$PATH:$HOME/.wm/panel
 
 # Kill the panel if it is currently running
-if [[ $(pgrep -cx lemonbar) -gt 1 ]]; then
+if [ $(pgrep -cx lemonbar) -gt 1 ]; then
 	printf "%s\n" "The panel is already running."
-    while [[ $(pgrep -c "lemonbar") != 0 ]]
+    while [ $(pgrep -c "lemonbar") != 0 ]
     do
         pkill -n -9 "lemonbar"
     done
@@ -30,11 +30,11 @@ CUR_X_OFFSET=0
 num_mon="$(bspc query -M)"
 
 # panel_gap to 0 if no gaps.
-[[ "$BSPWM_GAPS" = false ]] && PANEL_GAP=0
+[ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 
 # display function used by both info.sh and panel_bar scripts:
-if [[ -z $block ]]; then
-    block='[[ ! -z $NoPadding ]] && pPadding=$NoPadding
+if [ -z $block ]; then
+    block='[ ! -z $NoPadding ] && pPadding=$NoPadding
 
         padding=""
         for i in $(seq $pPadding); do
@@ -50,7 +50,7 @@ fi
 
 for i in $num_mon; do
     # remove any open panel fifo, and then create one
-    [[ -e "$PANEL_FIFO$i" ]] && rm "$PANEL_FIFO$i"
+    [ -e "$PANEL_FIFO$i" ] && rm "$PANEL_FIFO$i"
     mkfifo "$PANEL_FIFO$i"
 
     # This greps out the bspc control section of the current monitor we are on.
@@ -69,7 +69,7 @@ for i in $num_mon; do
     title.sh $i > "$PANEL_FIFO$i" &
 
     # info.sh outputs system information.
-    if [[ -z "$(eval echo \$'barInfo'$i)" ]]; then
+    if [ -z "$(eval echo \$'barInfo'$i)" ]; then
         info.sh $barInfo > "$PANEL_FIFO$i" &
     else
         #Custom bar options per monitor. (defined barInfo$i var for this monitor)
@@ -80,13 +80,12 @@ for i in $num_mon; do
     # Grep for current monitor width (will be first number regex match from bspc query command below).
     CUR_MON_WIDTH=$(bspc query -T -m $i | jshon -e rectangle -e width -u)
 
-    # The nested expr statements account for gap settings and current offset.
     # PANEL_GAP value is set in profile.
     cat "$PANEL_FIFO$i" | panel_bar |\
-        lemonbar -g $(expr $CUR_MON_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))x$PANEL_HEIGHT+$(expr $CUR_X_OFFSET + $PANEL_GAP)+$PANEL_GAP -f "$PANEL_FONT_MAIN" -f "$PANEL_FONT_ICON" -f "font\-linux-10" -u $PANEL_UNDERLINE -a 20 | sh &
+        lemonbar -g $(( CUR_MON_WIDTH - (PANEL_GAP * 2 ) ))x$PANEL_HEIGHT+$(( CUR_X_OFFSET + PANEL_GAP ))+$PANEL_GAP -f "$PANEL_FONT_MAIN" -f "$PANEL_FONT_ICON" -f "font\-linux-10" -u $PANEL_UNDERLINE -a 20 | sh &
 
     # Increment the x offset for the next monitor.
-    CUR_X_OFFSET=$(expr $CUR_X_OFFSET + $CUR_MON_WIDTH )
+    CUR_X_OFFSET=$(( CUR_X_OFFSET + CUR_MON_WIDTH ))
 done
 
 wait

@@ -9,7 +9,7 @@
 . $HOME/.profile
 
 # auto-complete for pacman when using sudo:
-complete -cf sudo
+# complete -cf sudo
 
 # functions
 function todo()
@@ -119,5 +119,3 @@ export FZF_CTRL_T_COMMAND=fe
 
 # autostartx if running on the first tty:
 if [[ -z $DISPLAY && $XDG_VTNR -eq 1 && -z $TMUX ]]; then exec startx; fi
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash

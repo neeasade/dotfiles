@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env dash
 # This script will be sourced by themes and then have options overridden
 # assumes that $1 is the termite config name
 
@@ -6,12 +6,13 @@
 # THEME_NAME
 # VIM_COLORS
 
+TERMITE_CONFIG=$THEME_NAME
+
 # get the value of a color from the current terminal color configuration
 getTermColor() {
-    echo -n "$( cat ~/.config/termite/themes/${TERMITE_CONFIG}.config | grep  "$1" | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
+    echo -n "$(cat "$HOME/.config/termite/themes/${TERMITE_CONFIG}.config" | grep  "$1" | head -n 1 | grep -oE "#[a-zA-Z0-9]{6}" | cut -c 2- )";
 }
 
-TERMITE_CONFIG=$1
 
 b_border_width=3 # bspwm settings. Naming convention is b_<config_option>
 b_window_gap=10
@@ -51,7 +52,7 @@ pBGActiveTab="$pFG"                          # Active title tab - also used as g
 pFGActiveTab="$pBG"                          # Active title tab - also used as gtk select color value.
 pBGInactiveTab="$pBG"                        # Inactive title tab - also used to info.sh ouput background.
 pFGInactiveTab="$pFG"                        # Inactive title tab - also used to info.sh ouput background.
-pIcon="#ff$(colort -2 $(cut -c4- <<< $pFG))" # color of icons from info.sh
+pIcon="#ff$(colort -2 $(echo $pFG | cut -c4-))" # color of icons from info.sh
 
 # Workspace variables
 DO='[-]' # occupied desktop
@@ -72,6 +73,7 @@ barInfo="volume mpd themeSwitch clock" # Default options/items to include in inf
 
 # Customize options on different computers by hostname.
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.
+HOSTNAME=`cat /etc/hostname`
 if [ "$HOSTNAME" = "littleapple" ]; then
     barInfo2="yaourtUpdates"
     barInfo1="themeSwitch volume clock"
@@ -79,4 +81,3 @@ if [ "$HOSTNAME" = "littleapple" ]; then
 fi
 
 [ "$HOSTNAME" = "home2" ] && barInfo="battery network volume clock"
-

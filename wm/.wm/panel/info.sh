@@ -1,4 +1,4 @@
-#!/usr/bin/env mksh
+#!/usr/bin/env dash
 # info.sh
 # Output information with formatted background colors in lemonbar format
 # This script can take arguments for what bar information to display(meant to be the names of the functions)
@@ -8,10 +8,13 @@ AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
 
+siji=false
+echo "$PANEL_FONT_ICON" | grep -q "Siji" && siji=true
+
 icon() {
     code=$1
     # hack for 2 icon fonts. translates font awesome to siji
-    if grep -q "Siji" <<< "$PANEL_FONT_ICON"; then
+    if $siji; then
         case $code in
             f025) code=e04d ;; # headphones
             f04b) code=e058 ;; # play button
@@ -34,7 +37,9 @@ icon() {
         code="$code "
     fi
 
-    echo -n -e "%{F$pIcon}\u$code%{F$pFG}"
+    echo -n "%{F$pIcon}"
+    env printf "\u$code"
+    echo -n "%{F$pFG}"
 }
 
 weather() {
@@ -74,7 +79,7 @@ volume() {
 }
 
 network() {
-    read lo int1 int2 <<< `ip link | sed -n 's/^[0-9]: \(.*\):.*$/\1/p'`
+    `ip link | sed -n 's/^[0-9]: \(.*\):.*$/\1/p'` | read lo int1 int2
     if iwconfig $int1 >/dev/null 2>&1; then
         wifi=$int1
         eth0=$int2
@@ -83,10 +88,10 @@ network() {
         eth0=$int1
     fi
     ip link show $eth0 | grep 'state UP' >/dev/null && int=$eth0 ||int=$wifi
-    echo "${AC}termite -e 'nmtui'${AB}$(icon f0ac)${AE}"
-    echo $int
+    echo -n "${AC}termite -e 'nmtui'${AB}$(icon f0ac)${AE}"
+    echo -n $int
     ping -W 1 -c 1 8.8.8.8 > /dev/null 2>&1 &&
-        echo 'up' || echo 'down'
+        echo -n 'up' || echo -n 'down'
 }
 
 mpd() {
@@ -114,18 +119,18 @@ yaourtUpdates() {
 }
 
 themeSwitch() {
-    cur_theme=$(cut -c12- <<< $(grep -m 1 "THEME_NAME" ~/.bspwm_theme))
+    cur_theme=$(grep -m 1 "THEME_NAME" ~/.bspwm_theme | cut -c12-)
     icon f01e
     echo ${AC}nohup dzen.sh theme${AB} $cur_theme${AE}
 }
 
-#determine what to display based on arguments, unless there are none, then display all.
+# determine what to display based on arguments, unless there are none, then display all.
 blockActive=false;
 while :; do
     buf="S"
 
     [ -z "$*" ] && items="mail yaourtUpdates mpd battery network volume weather clock themeSwitch" \
-                || items="$@"
+                || items="$*"
 
     for item in $items; do
         blockContent="$($item)"

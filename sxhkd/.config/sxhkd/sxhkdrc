@@ -131,7 +131,7 @@ super + {_,shift} + slash
 # wm independent hotkeys
 #
 super + p
-    i3blur.sh
+    ~/.wm/scripts/i3blur.sh
 
 super + o
     $BROWSER

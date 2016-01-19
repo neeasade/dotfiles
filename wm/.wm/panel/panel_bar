@@ -1,4 +1,4 @@
-#!/usr/bin/env mksh
+#!/usr/bin/env dash
 # panel_bar
 # a script to interpret panel fifo information(workspace/window titles/system info)
 
@@ -13,19 +13,19 @@ cycle='bspc desktop -l next' # cycle tiled/monocle
 winfocus='bspc node -f '   # focus on a window
 
 # define clickable menu thing:
-if grep -q "Siji" <<< "$PANEL_FONT_ICON"; then
-    dropdown="%{T2}`echo -n -e "\ue0a1"`%{T-}"
+if echo $PANEL_FONT_ICON | grep -q "Siji"; then
+    dropdown="%{T2}`env printf "\ue0a1"`%{T-}"
 else
-    dropdown="%{T3}`echo -n -e "\uf100"`%{T-}"
+    dropdown="%{T3}`env printf "\uf100"`%{T-}"
 fi
 
 blockContent="$dropdown"
 dropdown="$(pPadding=1 && eval "$block")"
 dropdown="${AC}dzen.sh menu${AB}$dropdown${AE}"
 
-grep -q '%{-o}' <<< "$DO" && overline=true || overline=false
+echo "$DO" | grep -q '%{-o}' && overline=true || overline=false
 
-while read -r line ; do
+while read -r line; do
     case $line in
     S*)
         sys_infos="${line#?}"
@@ -41,7 +41,7 @@ while read -r line ; do
             # split and use for clickable focus areas
             winTitle="$(echo "$name" | grep -oE ".*//" | rev | cut -c 3- | rev)"
             winID="$(echo $name | grep -oE "//.*" | cut -c 3-)"
-            if [ ! -z "${winTitle// }" ]; then
+            if [ ! -z `echo $winTitle | tr -d ' '` ]; then
                 case "$item" in
                     A*) blockContent="$winTitle"; blockActive=true; title="${title}$(eval "$block")";; #active window
                     X*) blockContent="${AC}${winfocus} ${winID}${AB}${winTitle}${AE}"; blockActive=false; title="${title}$(eval "$block")";; #inactive window
@@ -53,7 +53,7 @@ while read -r line ; do
     ;;
     W*)
         # setting the underline for everything with wm_info
-        $overline &&  wm_infos="" \
+        $overline &&  wm_infos= \
                   ||  wm_infos="%{U$pBG+o}%{U$pBG+u}"
         IFS=':'
         set -- ${line#?}
@@ -72,22 +72,22 @@ while read -r line ; do
                 f*) dColor="$pRest" && dDisplay="$DF";; #inactive free desktop
                 u*) dColor="$pUrgent" && dDisplay="$DO";; #inactive urgent desktop
                 L*) if [ ! -z "$NoModeToggle" ]; then
-                        dDisplay=""
+                        dDisplay=
                     else
-                        dColor="$pRest" && command="$cycle" && name=""
-                        dDisplay="$([[ $item == LT ]] && echo $DT || echo $DM)"
+                        dColor="$pRest" && command="$cycle" && name=
+                        dDisplay="$([ $item == LT ] && echo $DT || echo $DM)"
                     fi;; # mode toggle
-                *) dDisplay="";; # Monitor
+                *) dDisplay= ;; # Monitor
             esac
 
-            if [[ ! -z "$dDisplay" ]]; then
-                [[ "$desktopDisplay" = name ]] && [[ ! $item == L* ]] && dDisplay="$desktopName"
-                if [[ "$showFreeDesktops" = true ]] || [[ ! $item == f* ]]; then
-                    if [[ "$desktopDisplayType" = separate ]]; then
-                        blockContent="${AC}${command} ${name}${AB}$(printf %${pPadding}s)${dDisplay}$(printf %${pPadding}s)${AE}"
+            if [ ! -z "$dDisplay" ]; then
+                [ "$desktopDisplay" = name ] && [ ! echo $item | grep -q "^L" ] && dDisplay="$desktopName"
+                if [ "$showFreeDesktops" = true ] || [ echo $item | grep -q "^f" ]; then
+                    if [ "$desktopDisplayType" = separate ]; then
+                        blockContent="${AC}${command} ${name}${AB}${dDisplay}${AE}"
                         NoPadding=0
                         wm_infos="$wm_infos$(eval "$block" )"
-                        NoPadding=""
+                        NoPadding=
                     else
                         $overline && wm_infos="$wm_infos%{U$dColor+o}${AC}${command} ${name}${AB} ${dDisplay} ${AE}" \
                                   || wm_infos="$wm_infos%{F$dColor}${AC}${command} ${name}${AB} ${dDisplay} ${AE}"
@@ -98,11 +98,11 @@ while read -r line ; do
             shift
         done
         # WHY DOES THIS LINE AFFECT THE SPACING ON THE LEFT WHEN SEPARATED
-        if [[ "$desktopDisplayType" == "together" ]]; then
-            NoPadding=$(expr $pPadding - 1)
+        if [ "$desktopDisplayType" = "together" ]; then
+            NoPadding=$((pPadding - 1))
             blockContent="$wm_infos"
             wm_infos="$(eval "$block")"
-            NoPadding=""
+            NoPadding=
         fi
 
         wm_infos="$wm_infos%{B$pBG}";;

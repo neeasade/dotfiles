@@ -4,6 +4,7 @@ bash
 bdf-tewi-git
 bspwm-git
 compton
+dash
 dmenu2
 dunst
 dzen2
