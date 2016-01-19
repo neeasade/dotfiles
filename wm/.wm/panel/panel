@@ -4,6 +4,8 @@
 # This script makes the assumption that monitors names are arranged left to right, named in increasing int value(1 2 3..)
 # if this is not the case, you can override this with the num_mon variable below.
 
+set -a
+
 # Read the theme for display settings
 . $HOME/.bspwm_theme
 

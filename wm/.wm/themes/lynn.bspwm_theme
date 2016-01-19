@@ -18,8 +18,8 @@ pPadding=10
 PANEL_HEIGHT=32
 PANEL_GAP=4
 PANEL_FONT_MAIN="Droid Sans-8:style=bold"
-DO=`echo -e '\uf18c'`
-DF=`echo -e '\uf068'`
+DO=`env printf '\uf18c'`
+DF=`env printf '\uf068'`
 
 # colors
 pBGInactiveTab="#ff392925"

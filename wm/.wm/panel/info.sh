@@ -39,7 +39,7 @@ icon() {
 
     echo -n "%{F$pIcon}"
     env printf "\u$code"
-    echo -n "%{F$pFG}"
+    echo -n "%{F${pFG}}"
 }
 
 weather() {

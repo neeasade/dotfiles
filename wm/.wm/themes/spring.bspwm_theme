@@ -23,7 +23,7 @@ DUNST_FONT="Droid Sans 10"
 pPadding=2
 
 # colors
-pBGInactiveTab="#bb`cut -c4- <<< $pBG`"
+pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"
 pBG="#00000000"
 
 
@@ -42,7 +42,7 @@ block="$(cat <<\EOF
     if [[ "$blockActive" = true ]] ; then
         echo -n "%{B$pBGActiveTab}%{F$pFG}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG}";
     else
-        if grep -q '%{U#' <<< "$blockContent"; then
+        if echo "$blockContent" | grep -q '%{U#' ; then
             echo -n "%{B$pBG}%{F$pFG}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG}";
         else
             echo -n "%{B$pBGInactiveTab}%{F$pFG}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG}";

@@ -61,7 +61,7 @@ winName() {
     remain=$(( $maxWinNameLen - ${#winName} ))
     [ $(( $remain % 2  )) -ne 0  ] && remain=$(( $remain + 1  ))
     padding=
-    for i in {0..$(seq $remain)}; do
+    for i in $(seq $remain); do
        padding="$padding "
     done
 
