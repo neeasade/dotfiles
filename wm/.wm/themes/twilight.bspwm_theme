@@ -6,8 +6,8 @@ set -a
 # theme
 THEME_NAME=twilight
 VIM_COLORS=base16-twilight
-BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/lake.jpg"
-. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/lake.jpg"
+. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=3

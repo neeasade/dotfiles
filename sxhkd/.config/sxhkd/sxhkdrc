@@ -115,7 +115,7 @@ super + @button{1-3}
 # kill panel, nicely ask all windows to close, quit.
 # todo: ask nicely for real.
 super + shift + q
-    pgrep lemonbar && ~/bin/panelt; \
+    pgrep lemonbar && ~/.wm/scripts/panelt; \
     for win in $(bspc query -N); do bspc node $win -c ; done; \
     bspc quit
 
@@ -125,7 +125,7 @@ super + {_,shift} + semicolon
 
 # toggle panel or gaps.
 super + {_,shift} + slash
-    ~/bin/{gapt,panelt}
+    ~/.wm/scripts/{gapt,panelt}
 
 #
 # wm independent hotkeys

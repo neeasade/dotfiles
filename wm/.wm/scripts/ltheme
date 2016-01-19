@@ -4,7 +4,7 @@
 
 unset block
 rm ~/.bspwm_theme
-ln -s ~/.config/bspwm/themes/${1}.bspwm_theme ~/.bspwm_theme
+ln -s ~/.wm/themes/${1}.bspwm_theme ~/.bspwm_theme
 . ~/.bspwm_theme
 
 rm ~/.config/termite/config

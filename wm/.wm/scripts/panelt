@@ -19,5 +19,5 @@ else
     . ~/.bspwm_theme
 	[[ $(bspc config window_gap) -le 0  ]] && PANEL_GAP=0
     bspc config top_padding $(expr $PANEL_HEIGHT + $PANEL_GAP + $padValue)
-    ~/.config/bspwm/panel/panel &
+    ~/.wm/panel/panel &
 fi

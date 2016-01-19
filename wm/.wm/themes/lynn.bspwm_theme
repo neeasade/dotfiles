@@ -6,8 +6,8 @@ set -a
 # theme
 THEME_NAME=lynn
 VIM_COLORS=autumn
-BG_COMMAND="feh  --bg-fill $HOME/images/walls/fill/bamboo.jpg"
-. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
+BG_COMMAND="feh  --bg-fill $HOME/.wm/walls/fill/bamboo.jpg"
+. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=4

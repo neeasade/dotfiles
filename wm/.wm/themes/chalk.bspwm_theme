@@ -6,8 +6,8 @@ set -a
 # theme
 THEME_NAME=chalk
 VIM_COLORS=Tomorrow
-BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/evian.jpg"
-. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/evian.jpg"
+. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=2

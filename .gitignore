@@ -1,7 +1,7 @@
 nohup.out
 
-bin/bin/colort
-bin/bin/gtkrc-reload
+wm/.wm/scripts/colort
+wm/.wm/scripts/gtkrc-reload
 
 gtk/.config/gtk-3.0/bookmarks
 gtk/.config/gtk-3.0/settings.ini
@@ -14,7 +14,7 @@ mpd/.config/mpd/sticker.sql
 mpd/.config/mpd/database
 mpd/.config/mpd/mpdcron.pid
 
-ncmpcpp/.ncmpcpp/error.log
+ncmpcpp/.config/ncmpcpp/error.log
 
 vim/.vim/.netrwhist
 vim/.vim/plugged

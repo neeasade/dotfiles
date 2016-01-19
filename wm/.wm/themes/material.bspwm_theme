@@ -6,8 +6,8 @@ set -a
 # theme
 THEME_NAME=material
 VIM_COLORS=material
-BG_COMMAND="feh --bg-fill $HOME/images/walls/fill/worlds.jpg"
-. ~/.config/bspwm/themes/base.bspwm_theme $THEME_NAME
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/worlds.jpg"
+. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=5

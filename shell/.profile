@@ -1,4 +1,5 @@
 PATH=$PATH:$HOME/bin
+PATH=$PATH:$HOME/.wm/scripts
 
 export EDITOR='vim'
 export GIT_EDITOR='/usr/bin/vim'

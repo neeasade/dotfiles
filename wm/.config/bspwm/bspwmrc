@@ -53,7 +53,7 @@ else
 fi
 
 kill -s 15 $(cat /tmp/panel-pid)
-~/.config/bspwm/panel/panel &
+~/.wm/panel/panel &
 
 desktops=$(bspc query -M)
 
@@ -90,6 +90,6 @@ done
 
 # relaunch pulse so colors are related to current theme
 pkill pulse.sh
-$HOME/bin/pulse.sh
+pulse.sh
 
 [ "$IsInitialRun" = true ] && ~/.config/bspwm/autostart.sh

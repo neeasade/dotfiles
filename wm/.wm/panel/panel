@@ -8,7 +8,7 @@
 . ~/.bspwm_theme
 
 # Add panel scripts to path
-export PATH=$PATH:~/.config/bspwm/panel
+export PATH=$PATH:~/.wm/panel
 
 # Kill the panel if it is currently running
 if [[ $(pgrep -cx lemonbar) -gt 1 ]]; then
@@ -34,11 +34,17 @@ num_mon="$(bspc query -M)"
 
 # display function used by both info.sh and panel_bar scripts:
 if [[ -z $block ]]; then
-    block='[[ ! -z $NoPadding ]] && pPadding=$NoPadding; \
-        if [ "$blockActive" = true ] ; then \
-            echo -n "%{B$pBGActiveTab}%{F$pFGActiveTab}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG} "; \
-        else  \
-            echo -n "%{B$pBGInactiveTab}%{F$pFGInactiveTab}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG} "; \
+    block='[[ ! -z $NoPadding ]] && pPadding=$NoPadding
+
+        padding=""
+        for i in $(seq $pPadding); do
+            padding="$padding "
+        done
+
+        if [ "$blockActive" = true ] ; then
+            echo -n "%{B$pBGActiveTab}%{F$pFGActiveTab}${padding}$blockContent${padding}%{B$pBG} ";
+        else
+            echo -n "%{B$pBGInactiveTab}%{F$pFGInactiveTab}${padding}$blockContent${padding}%{B$pBG} ";
         fi '
 fi
 

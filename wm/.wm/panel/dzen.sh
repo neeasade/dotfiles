@@ -129,11 +129,11 @@ dzen_cal()
 dzen_theme()
 {
     width=100
-    length=`ls ~/.config/bspwm/themes | wc -l`
+    length=`ls ~/.wm/themes | wc -l`
     (( length -= 1 ))
 
     content+=("+")
-    for theme in `ls ~/.config/bspwm/themes | grep -v base | sed s/.bspwm_theme// `; do
+    for theme in `ls ~/.wm/themes | grep -v base | sed s/.bspwm_theme// `; do
         content+=("^ca(1, nohup ltheme $theme & pkill dzen) $theme ^ca()")
     done
 }
