@@ -41,4 +41,4 @@ export SXHKD_SHELL=sh
 
 # start bspwm and sxhkd
 sxhkd -f 100 -c $HOME/.config/sxhkd/sxhkdrc &
-exec bspwm -c $HOME/.config/bspwm/bspwmrc > .xinit.log 2>&1
+exec bspwm -c $HOME/.wm/bspwmrc > .xinit.log 2>&1
