@@ -23,7 +23,7 @@ $BG_COMMAND &
 [[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
                                       || export BSPWM_GAPS=true
 
-~/.config/bspwm/bspwmrc &
+~/.wm/bspwmrc &
 
 # vim reload
 VIMS=`vim --serverlist`
