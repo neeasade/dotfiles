@@ -1,5 +1,4 @@
-#!/bin/bash
-# This file is used by display managers, although they don't need the 'exec wm' command.
+#!/usr/bin/env sh
+# This file is used by display managers, I only want to manage one file.
 
-# grep out exec line that launches bspwm
-eval "$(cat .xinitrc | grep -v "exec")"
+eval "$(cat .xinitrc)"
