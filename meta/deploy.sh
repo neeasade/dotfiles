@@ -11,7 +11,7 @@ if [ -z "$@" ]; then
     make
     cd ../.gtkreload
     make
-    cd ../../..
+    cd ../../../..
 
     for package in $(cat meta/depends.txt); do
         yaourt -S $package --needed --noconfirm
