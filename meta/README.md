@@ -11,8 +11,6 @@
 *   document the bspwm/gtk/bin/root/mutt directories
     * don't forget to credit dcat for initial prompt, and earsplit/z3bra for initial panel scripts.
 *   make a new workflow webm.
-*   pulse.sh border correction on change window
-    * see if can use more bspc commands here
 *   https://gist.github.com/romainl/5cd2f4ec222805f49eca
 *   incorporate automagic stuff
 *   use mustache templates in this fashion - https://github.com/rcrowley/mustache.sh
