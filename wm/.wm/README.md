@@ -1,14 +1,22 @@
 ## bspwm
 
+My bspwmrc file references many variables set by the bspwm theme files for options.
+
 ### Multihead
 5 desktops are made per monitor, and super + # will focuse on that desktop for the current monitor. A panel is created per desktop, with workspace status for that monitor. Additionally, the title on a monitor is for the last active window on a desktop, as determined by a change in bspc window focus history. This behavior can be changed in the title.sh script. Windows can be moved across monitors and workspaces in an i3-like fashion, see [this post](http://blog.neeasade.net/2015/04/28/BSPWM-Multihead.html) for more details.
 
-### Tabbing
+### scripts
+the scripts folder has various scripts for toggling the panel, gaps, pulsing window borders, and so on.
+
+
+### Panel
+My panel is a mesh of shell scripts that have evolved over time to accomedate flexible features/options as I thought of them/saw fit. The only attractive thing about it is it runs posix shell and has flexible (to me) options. The main panel is lemonbar with dzen2 dropdowns, colors for which are all derived from the currently loaded bspwm theme file. The initial scripts used for info.sh came from z3bra's blog post about bar scripts.
+
+#### Tabbing
 One feature of this setup is a 'tabbed' display in bar when a desktop is in monocle mode. The active window title is highlighted and the other window titles are clickable on the bar to focus them, though you may also cycle through them with the appropriate key combination. This idea came after a user complained about no i3-like tab mode in bspwm in a thread discussing bspwm's flexibility. Optionally, desktops may always be 'tabbed', resulting lemonbar will show titles of all programs in a desktop view. This is only toggled by watching bspwm's window history, so title mode will only change on a change of window focus, sadly.
 
 ### Themes
-My WM setup is theme oriented, with the current 'theme file' being symlinked to ~/.bspwm_theme. These are located here in the ~/.config/bspwm/themes folder. All that these theme files do is set environment variables that are used by my bspwmrc, panel scripts, and the ltheme script. Many of the colors are pulled from the current loaded termite config colors. 
-
+My WM setup is theme oriented, with the current 'theme file' being symlinked to ~/.bspwm_theme. These are located here in the ~/.config/bspwm/themes folder. All that these theme files do is set environment variables that are used by my bspwmrc, panel scripts, and the ltheme script. Many of the colors are pulled from the current loaded termite config colors.
 
 variable | default | note
 ----|----|-----

@@ -8,8 +8,6 @@
 *   get used to mutt/run in a tmux session.
 *   investigate more thoroughly inline reloading possibilities of urxvt or st.
 *   run BFG repo cleaner on this repo
-*   document the bspwm/gtk/bin/root/mutt directories
-    * don't forget to credit dcat for initial prompt, and earsplit/z3bra for initial panel scripts.
 *   make a new workflow webm.
 *   https://gist.github.com/romainl/5cd2f4ec222805f49eca
 *   incorporate automagic stuff
