@@ -15,7 +15,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'jiangmiao/auto-pairs'                 " auto-pairs(brackets/quotes)
     Plug 'scrooloose/nerdtree',                 {'on': ['NERDTreeToggle','NERDTreeFind']} " Side panel file browser.
 
-    Plug 'Valloric/YouCompleteMe',              { 'do': './install.sh --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'cs', 'python']}   " Autocompletion engine.
+    Plug 'Valloric/YouCompleteMe',              { 'do': './install.sh --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'java', 'cs', 'python']}   " Autocompletion engine.
     Plug 'rdnetto/YCM-Generator', 'stable'      " Generate ycm files - :YcmGenerateConfig
 
     Plug 'mattn/emmet-vim',                     {'for': ['html', 'xml', 'xsl', 'xslt', 'xsd', 'css', 'sass', 'scss', 'less', 'mustache', 'php']}  " A tool for generating repetitive html/css. todo: learn this.

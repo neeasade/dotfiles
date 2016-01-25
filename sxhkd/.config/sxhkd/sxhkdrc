@@ -52,11 +52,9 @@ super + shift + {h,j,k,l}
         bspc monitor -f $dir; \
     else \
         new_mon=$(bspc query -M -m); \
-        if [ $new_mon -eq $cur_mon ]; then \
-            bspc node -s $cur_win; \
-        else \
+        $new_mon -eq $cur_mon && \
+            bspc node -s $cur_win || \
             bspc node $cur_win -m ^$new_mon; \
-        fi; \
         bspc node -f $cur_win; \
     fi; \
     bspc config pointer_follows_focus false
@@ -65,9 +63,7 @@ super +  {h,j,k,l}
     bspc config pointer_follows_monitor true; \
     bspc config pointer_follows_focus true; \
     dir={west,south,north,east}; \
-    if ! bspc node -f $dir; then \
-        bspc monitor -f $dir; \
-    fi; \
+    bspc node -f $dir || bspc monitor -f $dir; \
     bspc config pointer_follows_monitor false; \
     bspc config pointer_follows_focus false
 

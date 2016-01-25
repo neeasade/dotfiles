@@ -3,15 +3,9 @@
 
 cd $(dirname $0)/..
 
-# if run with no arguments, setup packages/submodules/scripts.
+# if run with no arguments, setup packages/submodules.
 if [ -z "$@" ]; then
     git submodule init
-
-    cd wm/.wm/scripts/.colort
-    make
-    cd ../.gtkreload
-    make
-    cd ../../../..
 
     for package in $(cat meta/depends.txt); do
         yaourt -S $package --needed --noconfirm

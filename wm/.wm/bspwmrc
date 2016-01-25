@@ -21,6 +21,7 @@ bspc config focus_follows_pointer true
 bspc config pointer_follows_monitor false
 bspc config pointer_follows_focus false
 bspc config focus_by_distance true
+bspc config history_aware_focus false
 
 #behavior settings
 bspc config auto_alternate true
@@ -38,11 +39,11 @@ bspc config bottom_padding 0
 # set window spacing according to gap settings:
 if [ "$BSPWM_GAPS" = true ]; then
     bspc config window_gap         $b_window_gap
-    bspc config top_padding        $(expr $PANEL_HEIGHT + $PANEL_GAP)
+    bspc config top_padding        $((PANEL_HEIGHT + PANEL_GAP))
     bspc config borderless_monocle false
 else
     bspc config window_gap         0
-    bspc config top_padding        $(expr $PANEL_HEIGHT + $b_border_width)
+    bspc config top_padding        $((PANEL_HEIGHT + b_border_width))
     bspc config borderless_monocle  true
 
     # overlapping borders

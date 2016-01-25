@@ -1,8 +1,5 @@
 nohup.out
 
-wm/.wm/scripts/colort
-wm/.wm/scripts/gtkrc-reload
-
 gtk/.config/gtk-3.0/bookmarks
 gtk/.config/gtk-3.0/settings.ini
 gtk/.themes/oomox-*

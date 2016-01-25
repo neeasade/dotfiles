@@ -17,7 +17,7 @@ else
     # There's no panel, enabling
     [[ $winGap -le 0 ]] && export BSPWM_GAPS=false
     . ~/.bspwm_theme
-	[[ $(bspc config window_gap) -le 0  ]] && PANEL_GAP=0
+    [[ $(bspc config window_gap) -le 0  ]] && PANEL_GAP=0
     bspc config top_padding $(expr $PANEL_HEIGHT + $PANEL_GAP + $padValue)
     ~/.wm/panel/panel &
 fi

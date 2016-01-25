@@ -1296,8 +1296,7 @@ downloads.fg.system = rgb
 downloads.bg.system = rgb
 downloads.fg.error = white
 downloads.bg.error = red
-webpage.bg = ${completion.bg}
-#webpage.fg = ${completion.fg}
+webpage.bg = white
 
 [fonts]
 # Fonts used for the UI, with optional style/weight/size.

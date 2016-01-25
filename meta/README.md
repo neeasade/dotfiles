@@ -16,10 +16,7 @@
 *   https://gist.github.com/romainl/5cd2f4ec222805f49eca
 *   incorporate automagic stuff
 *   use mustache templates in this fashion - https://github.com/rcrowley/mustache.sh
-*   retest deploy script with restructure.
 *   better document and 'clean' things within the dotfiles themselves(never ends)
-
-
 
 
 use this again somewhere(underline style block):
