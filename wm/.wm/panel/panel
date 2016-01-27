@@ -14,7 +14,7 @@ export PATH=$PATH:$HOME/.wm/panel
 
 # Kill the panel if it is currently running
 if [ $(pgrep -cx lemonbar) -gt 1 ]; then
-	printf "%s\n" "The panel is already running."
+    printf "%s\n" "The panel is already running."
     while [ $(pgrep -c "lemonbar") != 0 ]
     do
         pkill -n -9 "lemonbar"
@@ -35,7 +35,7 @@ num_mon="$(bspc query -M)"
 [ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 
 # display function used by both info.sh and panel_bar scripts:
-if [ -z $block ]; then
+if [ -z "$block" ]; then
     block='[ ! -z $NoPadding ] && pPadding=$NoPadding
 
         padding=""

@@ -24,7 +24,7 @@ pPadding=2
 
 # colors
 pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"
-pBG="#00000000"
+pBG="#00`echo "$pBG" | cut -c4-`"
 
 
 # These get grepped later to determine if overline.
@@ -34,12 +34,11 @@ DF="        %{-o}"
 
 # other
 GTK_FONT="Droid Sans 10"
-GTK_ICON_COLOR="$pFG"
 
 # Create custom block function to print right thing when overline encountered.
 block="$(cat <<\EOF
-    [[ ! -z $NoPadding ]] && pPadding=$NoPadding;
-    if [[ "$blockActive" = true ]] ; then
+    [ ! -z $NoPadding ] && pPadding=$NoPadding;
+    if [ "$blockActive" = true ] ; then
         echo -n "%{B$pBGActiveTab}%{F$pFG}$(printf %${pPadding}s)$blockContent$(printf %${pPadding}s)%{B$pBG}";
     else
         if echo "$blockContent" | grep -q '%{U#' ; then

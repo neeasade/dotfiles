@@ -52,7 +52,7 @@ pBGActiveTab="$pFG"                          # Active title tab - also used as g
 pFGActiveTab="$pBG"                          # Active title tab - also used as gtk select color value.
 pBGInactiveTab="$pBG"                        # Inactive title tab - also used to info.sh ouput background.
 pFGInactiveTab="$pFG"                        # Inactive title tab - also used to info.sh ouput background.
-pIcon="#ff$(colort -2 "$(echo "$pFG" | cut -c4-)")" # color of icons from info.sh
+pIcon="#ff$(colort -l -2 "$(echo "$pFG" | cut -c4-)")" # color of icons from info.sh
 
 # Workspace variables
 DO='[-]' # occupied desktop
@@ -62,7 +62,7 @@ DM='M'   # monocle mode
 
 # GTK options
 GTK_FONT="Droid Sans 10"             # GTK font to be used.
-GTK_ICON_COLOR="$(colort -2 "$pFG")" # Icon color to be applied to ACYL icons.
+GTK_ICON_COLOR="$(colort -l -3 "$pFG")" # Icon color to be applied to ACYL icons.
 
 DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
 
