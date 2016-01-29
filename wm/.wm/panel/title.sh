@@ -58,10 +58,11 @@ winName() {
     winName="$(xtitle -t $maxWinNameLen "$1")";
 
     # doesn't work - debugging later.
-    remain=$(( $maxWinNameLen - ${#winName} ))
+    count=$(echo $winName | wc -c)
+    remain=$(( $maxWinNameLen - $count ))
     [ $(( $remain % 2  )) -ne 0  ] && remain=$(( $remain + 1  ))
     padding=
-    for i in $(seq $remain); do
+    for i in $(seq $(( $remain / 2))); do
        padding="$padding "
     done
 
