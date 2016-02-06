@@ -52,7 +52,7 @@ super + shift + {h,j,k,l}
         bspc monitor -f $dir; \
     else \
         new_mon=$(bspc query -M -m); \
-        $new_mon -eq $cur_mon && \
+        [ $new_mon -eq $cur_mon ] && \
             bspc node -s $cur_win || \
             bspc node $cur_win -m ^$new_mon; \
         bspc node -f $cur_win; \

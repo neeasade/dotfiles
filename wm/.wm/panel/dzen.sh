@@ -121,7 +121,7 @@ dzen_cal()
 
     # highlight current date
     content+=$(
-    cal | sed -re "s/(^|[ ])($TODAY)($|[ ])/\1^bg(#$pBGActiveTab)^fg(#$pBG)\2^fg(#$pFG)^bg(#$pBG)\3/"
+    cal | sed -re "s/(^|[ ])( $TODAY )($|[ ])/\1^bg(#$pBGActiveTab)^fg(#$p)\2^fg(#$pFG)^bg(#$pBG)\3/"
     )
 }
 

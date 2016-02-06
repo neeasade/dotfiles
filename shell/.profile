@@ -1,5 +1,6 @@
 PATH=$PATH:$HOME/bin
 PATH=$PATH:$HOME/.wm/scripts
+PATH=$PATH:$HOME/.gem/ruby/2.3.0/bin
 
 export EDITOR='vim'
 export GIT_EDITOR='/usr/bin/vim'

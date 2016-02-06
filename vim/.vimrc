@@ -6,22 +6,24 @@ set tabstop=4
 " {{{ Plugins
 call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-sensible'                   " sensible defaults.
-    Plug 'bling/vim-airline'                    " Status line
-    Plug 'jeffkreeftmeijer/vim-numbertoggle'    " Auto relative number toggling
-    Plug 'airblade/vim-gitgutter'               " Live git changes visible
     Plug 'tpope/vim-fugitive'                   " Complement git in vim - todo: learn this.
     Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
+
+    Plug 'vim-airline/vim-airline'              " Status line
+    Plug 'jeffkreeftmeijer/vim-numbertoggle'    " Auto relative number toggling
+    Plug 'airblade/vim-gitgutter'               " Live git changes visible
     Plug 'terryma/vim-multiple-cursors'         " Muliple cursors, akin to sublime text
     Plug 'jiangmiao/auto-pairs'                 " auto-pairs(brackets/quotes)
-    Plug 'scrooloose/nerdtree',                 {'on': ['NERDTreeToggle','NERDTreeFind']} " Side panel file browser.
 
-    Plug 'Valloric/YouCompleteMe',              { 'do': './install.sh --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'java', 'cs', 'python']}   " Autocompletion engine.
+    Plug 'Valloric/YouCompleteMe',              { 'do': './install.py --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'java', 'cs', 'python']}   " Autocompletion engine.
     Plug 'rdnetto/YCM-Generator', 'stable'      " Generate ycm files - :YcmGenerateConfig
 
     Plug 'mattn/emmet-vim',                     {'for': ['html', 'xml', 'xsl', 'xslt', 'xsd', 'css', 'sass', 'scss', 'less', 'mustache', 'php']}  " A tool for generating repetitive html/css. todo: learn this.
     Plug 'Valloric/MatchTagAlways',             {'for': ['html', 'xhtml', 'xml', 'jinja']} " Autocompletes tags.
 
     Plug 'junegunn/fzf',                        {'dir': '~/fzf', 'do': 'yes\| ./install'} " based fuzzy search.
+    Plug 'junegunn/goyo.vim'                    " Distraction-free writing in vim.
+    Plug 'junegunn/limelight.vim'               " A nice focus color plugin. using with goyo.
 
 call plug#end()
 " }}}
@@ -35,8 +37,7 @@ let g:airline_section=''
 let g:airline_left_sep = ''
 let g:airline_right_sep = ''
 let g:airline#extensions#tabline#left_alt_sep = '│'
-" NerdTree
-" let NERDTreeShowHidden = 1
+
 " vim-multiple-cursors
 let g:multi_cursor_exit_from_visual_mode = 0
 let g:multi_cursor_exit_from_insert_mode = 0
@@ -118,7 +119,7 @@ set foldcolumn=0
 " Colors
 set t_Co=256
 if empty(glob('~/.bspwm_theme'))
-    colorscheme base16-twilight
+    colorscheme default
 else
     let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
     execute 'colorscheme ' vim_colors
