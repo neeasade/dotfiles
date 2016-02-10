@@ -21,3 +21,8 @@ weechat/.weechat/logs
 weechat/.weechat/*fifo
 weechat/.weechat/weechat.log
 weechat/.weechat/script/plugins.xml.gz
+
+qutebrowser/.config/qutebrowser/bookmarks
+qutebrowser/.config/qutebrowser/keys.conf
+qutebrowser/.config/qutebrowser/quickmarks
+qutebrowser/.config/qutebrowser/qutebrowser.conf

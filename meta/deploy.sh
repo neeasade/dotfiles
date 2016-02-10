@@ -6,6 +6,7 @@ cd $(dirname $0)/..
 # if run with no arguments, setup packages/submodules.
 if [ -z "$@" ]; then
     git submodule init
+    git submodule update
 
     for package in $(cat meta/depends.txt); do
         yaourt -S $package --needed --noconfirm
