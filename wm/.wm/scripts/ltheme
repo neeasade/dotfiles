@@ -55,7 +55,7 @@ if [ ! -d "$HOME/.themes/oomox-$THEME_NAME" ]; then
 fi
 
 # set icon color(ACYL)
-$HOME/.icons/acyl/scalable/scripts/icon.sh "$GTK_ICON_COLOR"
+$HOME/.icons/acyl/icon.sh "$GTK_ICON_COLOR"
 
 # load it:
 gtkrc-reload &
