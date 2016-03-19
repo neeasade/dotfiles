@@ -52,9 +52,9 @@ super + shift + {h,j,k,l}
         bspc monitor -f $dir; \
     else \
         new_mon=$(bspc query -M -m); \
-        [ $new_mon -eq $cur_mon ] && \
+        [ "$new_mon" = "$cur_mon" ] && \
             bspc node -s $cur_win || \
-            bspc node $cur_win -m ^$new_mon; \
+            bspc node $cur_win -m $new_mon; \
         bspc node -f $cur_win; \
     fi; \
     bspc config pointer_follows_focus false
@@ -101,9 +101,6 @@ super + shift + {1-9}
 # mouse movements
 super + button{1-3}
     bspc pointer -g {move,resize_side,resize_corner}
-
-super + !button{1-3}
-    bspc pointer -t %i %i
 
 super + @button{1-3}
     bspc pointer -u
