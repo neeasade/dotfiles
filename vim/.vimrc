@@ -4,6 +4,18 @@ set tabstop=4
 " set expandtab "Enter spaces instead of tabs.
 
 " {{{ Plugins
+let s:configdir = '.vim'
+if has('nvim')
+  let s:configdir = '.config/nvim'
+endif
+
+if empty(glob('~/' . s:configdir . '/autoload/plug.vim'))
+  silent call system('mkdir -p ~/' . s:configdir . '/{autoload,bundle,cache,undo,backups,swaps}')
+  silent call system('curl -fLo ~/' . s:configdir . '/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim')
+  execute 'source  ~/' . s:configdir . '/autoload/plug.vim'
+  autocmd VimEnter * PlugInstall
+endif
+
 call plug#begin('~/.vim/plugged')
     Plug 'tpope/vim-sensible'                   " sensible defaults.
     Plug 'tpope/vim-fugitive'                   " Complement git in vim - todo: learn this.

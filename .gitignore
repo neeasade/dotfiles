@@ -13,8 +13,8 @@ mpd/.config/mpd/mpdcron.pid
 
 ncmpcpp/.config/ncmpcpp/error.log
 
-vim/.vim/.netrwhist
-vim/.vim/plugged
+vim/.vim/*
+!vim/.vim/colors
 
 weechat/.weechat/irc.conf
 weechat/.weechat/logs
