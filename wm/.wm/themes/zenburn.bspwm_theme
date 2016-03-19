@@ -27,7 +27,7 @@ PANEL_UNDERLINE="4 -n noshadow"
 pBG="#003f3f3f"
 pBGInactiveTab="#ff3f3f3f"
 pPadding=2
-GTK_ICON_COLOR="$(colort +4 "$pBG")"
+GTK_ICON_COLOR="$(colort 40 "$pBG")"
 
 # Workspace variables
 DT='[-]'

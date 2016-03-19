@@ -52,7 +52,7 @@ pBGActiveTab="$pFG"                          # Active title tab - also used as g
 pFGActiveTab="$pBG"                          # Active title tab - also used as gtk select color value.
 pBGInactiveTab="$pBG"                        # Inactive title tab - also used to info.sh ouput background.
 pFGInactiveTab="$pFG"                        # Inactive title tab - also used to info.sh ouput background.
-pIcon="#ff$(colort -l -2 "$(echo "$pFG" | cut -c4-)")" # color of icons from info.sh
+pIcon="$(colort -l -30 "$pFG")"
 
 # Workspace variables
 DO='[-]' # occupied desktop
