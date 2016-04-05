@@ -1,4 +1,7 @@
 nohup.out
+.xinit.log
+
+wm/.wm/timestamp
 
 gtk/.config/gtk-3.0/bookmarks
 gtk/.config/gtk-3.0/settings.ini

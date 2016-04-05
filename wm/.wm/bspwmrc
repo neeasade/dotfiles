@@ -1,9 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env dash
 
-#Toggle a default gap setting if it's not already set.
-if [ -z "$BSPWM_GAPS" ]; then export BSPWM_GAPS=true; fi
+set -a
 
-#Get settings
+# Toggle a default gap setting if it's not already set.
+[ -z "$BSPWM_GAPS" ] && BSPWM_GAPS=true
+
+# get settings
 . ~/.bspwm_theme
 
 bspc config border_width $b_border_width
@@ -13,84 +15,43 @@ bspc config normal_border_color "$b_normal_border_color"
 bspc config active_border_color "$b_active_border_color"
 bspc config focused_border_color "$b_focused_border_color"
 bspc config presel_feedback_color "$b_presel_feedback_color"
-bspc config urgent_border_color "$b_urgent_border_color"
-bspc config focused_locked_border_color "$b_focused_locked_border_color"
 
-#focus options:
+# focus options:
 bspc config focus_follows_pointer true
 bspc config pointer_follows_monitor false
 bspc config pointer_follows_focus false
 bspc config focus_by_distance true
 bspc config history_aware_focus false
 
-#behavior settings
-bspc config auto_alternate true
-bspc config auto_cancel true
-
-#rules
-bspc rule -a mplayer2 floating=on
+# rules
 bspc rule -a gimp floating=on
-bspc rule -a Screenkey manage=off
 
-bspc config left_padding 0
-bspc config right_padding 0
-bspc config bottom_padding 0
+# set window spacing according to gap settings - if no gaps, overlap window borders.
+$BSPWM_GAPS || b_window_gap=-$b_border_width
+bspc config window_gap $b_window_gap
+bspc config top_padding $((PANEL_HEIGHT + b_border_width `$BSPWM_GAPS && echo + PANEL_GAP`))
+for side in right bottom left; do
+    bspc config ${side}_padding $((0 `$BSPWM_GAPS || echo + $b_border_width`))
+done
+bspc config borderless_monocle `$BSPWM_GAPS && echo false || echo true`
 
-# set window spacing according to gap settings:
-if [ "$BSPWM_GAPS" = true ]; then
-    bspc config window_gap         $b_window_gap
-    bspc config top_padding        $((PANEL_HEIGHT + PANEL_GAP))
-    bspc config borderless_monocle false
-else
-    bspc config window_gap         0
-    bspc config top_padding        $((PANEL_HEIGHT + b_border_width))
-    bspc config borderless_monocle  true
-
-    # overlapping borders
-    bspc config window_gap -$b_border_width
-    for side in right bottom left ; do
-        bspc config ${side}_padding $b_border_width
-    done
-fi
-
-kill -s 15 $(cat /tmp/panel-pid)
+# relaunch panel
+[ -f /tmp/panel-pid ] && kill -s 15 $(cat /tmp/panel-pid)
 ~/.wm/panel/panel &
 
-desktops=$(bspc query -M)
-
-# determine if this is initial run by seeing if monitors have been renamed to numbers yet
-echo "$desktops" | grep -q "[a-zA-Z]"
-if [ $? -eq 0 ]; then IsInitialRun=true; else IsInitialRun=false; fi
-
-# rename all the monitors to numbers and create 5 workspaces on each
-i=1
-
-# get a list of desktops in monocle mode:
-MonocleDesktops=''
-for desktop in $(bspc query -D); do
-    [ ! -z "$( bspc query -d $desktop -T | grep "M - \*")" ] && MonocleDesktops="$MonocleDesktops $desktop"
-done
-
-# create desktops or reset desktop configuration if it already exists.
-for monitor in $desktops; do
-    [ "$IsInitialRun" = true ] && \
-        bspc monitor "$monitor" -n $i -d $i/{00,01,10,11} || \
-        bspc monitor "$monitor" -d $i/{00,01,10,11}
-    let i++
-done
-
-# Set any Monocle desktops back to tiling mode
-for desktop in $MonocleDesktops; do
-    bspc desktop $desktop -l monocle
-done
-
-# set all windows to the new border width:
-for window in $(bspc query -N -n .leaf); do
-    bspc config -n $window border_width $b_border_width
+# declare desktops per monitor
+for monitor in $(bspc query -M); do
+    bspc monitor $monitor -d 00 01 10 11
 done
 
 # relaunch pulse so colors are related to current theme
 pkill pulse.sh
 pulse.sh
 
-[ "$IsInitialRun" = true ] && ~/.config/bspwm/autostart.sh
+# Use a reference file to determine if this is initial run (by checking if the file is older than last boot)
+# and if so, run a startup file.
+timestamp="$HOME/.wm/timestamp"
+uptimeInSeconds=$((`sed 's/.* //;s/\..*//' < /proc/uptime` / 60))
+timestampInSeconds=$((`date +%s` - `date -r "$timestamp" +%s`))
+[ ! -f "$timestamp" ] || [ $((uptimeInSeconds - timestampInSeconds)) -lt 0 ] && "$HOME/.wm/startup.sh"
+touch "$timestamp"

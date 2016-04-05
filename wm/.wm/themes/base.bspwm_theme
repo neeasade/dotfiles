@@ -21,8 +21,6 @@ b_normal_border_color="#$(getTermColor color0)"
 b_active_border_color="#$(getTermColor color8)"
 b_focused_border_color="#$(getTermColor foreground)"
 b_presel_feedback_color="#$(getTermColor color8)"
-b_urgent_border_color="#FFFF00"
-b_focused_locked_border_color="#FFFFFF"
 
 # Panel variables
 PANEL_FIFO=/tmp/panel-fifo       # Location of the Panel fifo
