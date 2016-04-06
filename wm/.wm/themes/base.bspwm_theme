@@ -6,6 +6,8 @@
 # THEME_NAME
 # VIM_COLORS
 
+[ -z "$BSPWM_GAPS"  ] && BSPWM_GAPS=true
+
 TERMITE_CONFIG=$THEME_NAME
 
 # get the value of a color from the current terminal color configuration

@@ -77,7 +77,7 @@ bspc subscribe node_focus node_unmanage | while read line; do
       if echo "$line" | grep -q unmanage; then
          echo "T "
       else
-         win_source="$(echo $line | grep -oE "[0-9]x.+")"
+         win_source="$(echo $line | grep -oE "[0-9]x[0-9]+" | head -n 1)"
          WINDOWS="T$(update)"
          [ ! "$WINDOWS" = "T" ] && echo "$WINDOWS"
       fi

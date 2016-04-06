@@ -1,8 +1,6 @@
+#!/usr/bin/env dash
 #toggle gaps on and off
 
-kill $(cat /tmp/panel-pid)
-
-[[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=true \
-                                      || export BSPWM_GAPS=false
-
+unset BSPWM_GAPS
+[ $(bspc config window_gap) -le 0 ] || export BSPWM_GAPS=false
 ~/.wm/bspwmrc

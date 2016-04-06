@@ -11,7 +11,11 @@ NORMAL_COLOR="$(bspc config normal_border_color | cut -c2- )"
 COLORS="$(bspc config active_border_color | cut -c2- )"
 LAST_COLOR="$COLORS"
 
-for i in 1 1 1 1 -1 -1 -1 -1 -1 -1 1 1 1; do
+colort -c "$LAST_COLOR" && set="20 20 20 20 20 20 -20 -20 -20 -20 -20 -20" || \
+                           set="-20 -20 -20 -20 -20 -20 20 20 20 20 20 20"
+
+for i in $set; do
+    NEW_COLOR="$LAST_COLOR"
     LAST_COLOR=$(colort -l $i "$LAST_COLOR")
     COLORS="$COLORS $LAST_COLOR"
 done

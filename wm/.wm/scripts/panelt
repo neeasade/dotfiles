@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env dash
 # Toggle the panel on/off, and adjust top_padding dependent on if currently gapped.
 # Accounts for both normal and overlapped window borders in bspwm
 
-winGap=$(bspc config window_gap)                            # Current window gap value
-padValue=$winGap                                            # Amount to pad from top
-[ $winGap -ge 1 ] && padValue=0                             # gaps
-[[ $padValue -le -1 ]] && padValue=$(expr -1 \* $padValue)  # no gaps
+winGap=$(bspc config window_gap)                     # Current window gap value
+padValue=$winGap                                     # Amount to pad from top
+[ $winGap -ge 1 ] && padValue=0                      # gaps
+[ $padValue -le -1 ] && padValue=$((-1 * $padValue)) # no gaps
 
 # returns success if panel is running
 panelpid=$(cat /tmp/panel-pid)
@@ -15,9 +15,9 @@ if kill -s 0 $panelpid; then
     bspc config top_padding $padValue
 else
     # There's no panel, enabling
-    [[ $winGap -le 0 ]] && export BSPWM_GAPS=false
+    [ $winGap -le 0 ] && export BSPWM_GAPS=false
     . ~/.bspwm_theme
-    [[ $(bspc config window_gap) -le 0  ]] && PANEL_GAP=0
+    [ $(bspc config window_gap) -le 0 ] && PANEL_GAP=0
     bspc config top_padding $(expr $PANEL_HEIGHT + $PANEL_GAP + $padValue)
     ~/.wm/panel/panel &
 fi
