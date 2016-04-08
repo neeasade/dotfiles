@@ -1,0 +1,21 @@
+font="Droid Sans Mono-8:pixelsize=11:antialias=true:autohint=true;"
+borderpx=10
+
+background=1e1e1e
+foreground=a7a7a7
+color0=1e1e1e
+color10=8f9d6a
+color11=f9ee98
+color12=7587a6
+color13=9b859d
+color14=afc4db
+color15=ffffff
+color1=cf6a4c
+color2=8f9d6a
+color3=f9ee98
+color4=7587a6
+color5=9b859d
+color6=afc4db
+color7=a7a7a7
+color8=5f5a60
+color9=cf6a4c

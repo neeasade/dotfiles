@@ -5,7 +5,7 @@ PATH=$PATH:$HOME/.gem/ruby/2.3.0/bin
 export EDITOR='vim'
 export GIT_EDITOR='/usr/bin/vim'
 export BROWSER=qutebrowser
-export TERMINAL=termite
+export TERMINAL=st
 
 # Avoid duplicates
 export HISTCONTROL=ignoredups:erasedups

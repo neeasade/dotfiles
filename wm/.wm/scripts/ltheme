@@ -1,23 +1,24 @@
 #!/bin/sh
 # Load a bspwm theme based on argument
-# This loads settings for: bspwm, termite, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
+# This loads settings for: bspwm, shit, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
 
 unset block
 rm ~/.bspwm_theme
 ln -s ~/.wm/themes/${1}.bspwm_theme ~/.bspwm_theme
 . ~/.bspwm_theme
 
-rm ~/.config/termite/config
-ln -s ~/.config/termite/themes/${TERMITE_CONFIG}.config ~/.config/termite/config
+. ~/.wm/templates/mustache.sh
+mustache < ~/.wm/templates/Xresources > ~/.Xresources
+xrdb ~/.Xresources
 
-# tell all termites to reload their theme:
-killall -s USR1 termite &
+# tell all shits to reload their theme:
+killall -s USR1 st &
 
 # tell tmux to reload it's theme
 tmux source-file ~/.tmux.conf > /dev/null &
 
 # set the background
-$BG_COMMAND &
+`$BG_COMMAND &`
 
 # Keep the current gap setting and reload bspwm
 [[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
@@ -77,11 +78,9 @@ sed -i "s/replaceQuteActiveTabFG/#$pFGActiveTab/g;s/replaceQuteActiveTabBG/#$pBG
 killall dunst
 
 # reset $defaultBG and FG for dunst relaunch:
-dunst -geometry 200x200-10-10 \
-    -fn "$DUNST_FONT" \
-    -lb "#$pBG" -lf "#$pFG" \
-    -nb "#$pBG" -nf "#$pFG" \
-    -cb "#$pFG" -cf "#$pBG" &
+. ~/.wm/templates/mustash.sh
+mustache < ~/.wm/templates/dunstrc > ~/.config/dunst/dunstrc
+dunst
 
 sleep 0.5
 

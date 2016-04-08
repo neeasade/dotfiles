@@ -6,12 +6,10 @@
     * look into json opporunities for i3-like window frame movement
     * floating keybinds(move, resize, better focus)
 *   get used to mutt/run in a tmux session.
-*   investigate more thoroughly inline reloading possibilities of urxvt or st.
 *   run BFG repo cleaner on this repo
 *   make a new workflow webm.
 *   https://gist.github.com/romainl/5cd2f4ec222805f49eca
 *   incorporate automagic stuff
-*   use mustache templates in this fashion - https://github.com/rcrowley/mustache.sh
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 

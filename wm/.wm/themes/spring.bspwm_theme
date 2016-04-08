@@ -26,7 +26,6 @@ pPadding=2
 pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"
 pBG="#00`echo "$pBG" | cut -c4-`"
 
-
 # These get grepped later to determine if overline.
 # I'm literally hitler
 DO="        %{-o}"

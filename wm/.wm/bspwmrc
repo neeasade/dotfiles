@@ -38,7 +38,7 @@ done
 
 # relaunch pulse so colors are redetermined with current theme
 pgrep -f pulse.sh >/dev/null 2>&1 && pkill -f pulse.sh >/dev/null
-pulse.sh
+pulse.sh &
 
 # use a reference file to determine if this is initial run (by checking if the file is older than last boot)
 # and if so, run a startup file.

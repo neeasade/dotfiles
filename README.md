@@ -5,7 +5,7 @@
 OS		 | Arch Linux
 WM		 | BSPWM
 Panel	 | lemonbar (xft patch)
-Terminal | termite, for it's live reload of configuration feature.
+Terminal | [shit](https://github.com/neeasade/shit)
 GTK 	 | [oomox](https://github.com/actionless/oomox) with [ACYL](http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910) icons.
 Font 	 | Droid Sans Mono/Tewi
 

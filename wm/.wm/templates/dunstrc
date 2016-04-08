@@ -1,5 +1,5 @@
 [global]
-    font = Terminus 8
+    font = {{DUNST_FONT}}
     allow_markup = yes
     format = "<b>%s</b>\n%b"
     sort = yes
@@ -25,14 +25,13 @@
     separator_color = auto
     startup_notification = false
     dmenu = /usr/bin/dmenu -p dunst:
-    browser = /usr/bin/qutebrowser
+    browser = /usr/bin/{{BROWSER}}
     icon_position = off
     icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
 
 [frame]
     width = 3
-    color = "#3f3f3f
-"
+    color = "{{`echo -n `bspc config normal_border_color``}}"
 
 [shortcuts]
     close = ctrl+space
@@ -41,18 +40,18 @@
     context = ctrl+shift+period
 
 [urgency_low]
-    background = "#003f3f3f"
-    foreground = "#ffdcdccc"
+    background = "{{pBG}}"
+    foreground = "{{pFG}}"
     timeout = 10
 
 [urgency_normal]
-    background = "#003f3f3f"
-    foreground = ""
+    background = "{{pBG}}"
+    foreground = "{{pFB}}"
     timeout = 10
 
 [urgency_critical]
-    background = "#ffdcdccc"
-    foreground = "#003f3f3f"
+    background = "{{pFG}}"
+    foreground = "{{pBG}}"
     timeout = 0
 
 # Every section that isn't one of the above is interpreted as a rules to
