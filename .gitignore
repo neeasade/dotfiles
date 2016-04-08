@@ -3,8 +3,6 @@ nohup.out
 
 wm/.wm/timestamp
 
-gtk/.config/gtk-3.0/bookmarks
-gtk/.config/gtk-3.0/settings.ini
 gtk/.themes/oomox-*
 
 mpd/.config/mpd/pid
