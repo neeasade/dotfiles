@@ -10,6 +10,7 @@
 *   make a new workflow webm.
 *   https://gist.github.com/romainl/5cd2f4ec222805f49eca
 *   incorporate automagic stuff
+*   better handle GTK_THEME var (not in profile/maybe look into hooking up with dmenu_run only)
 *   better document and 'clean' things within the dotfiles themselves(never ends)
 
 

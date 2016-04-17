@@ -5,7 +5,7 @@ set -a
 
 # theme
 THEME_NAME=chalk
-VIM_COLORS=Tomorrow
+VIM_COLORS=base16-default
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/evian.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 

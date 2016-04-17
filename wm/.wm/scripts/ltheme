@@ -1,87 +1,76 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # Load a bspwm theme based on argument
 # This loads settings for: bspwm, shit, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
+# This makes heavy use of a posix implementation of mustache templates.
+
+set -a
+
+# mustache args
+margs()
+{
+    echo -n "< \"$HOME/.wm/templates/$1\" > \"$HOME/$2\""
+}
 
 unset block
-rm ~/.bspwm_theme
-ln -s ~/.wm/themes/${1}.bspwm_theme ~/.bspwm_theme
-. ~/.bspwm_theme
+rm $HOME/.bspwm_theme
+ln -s $HOME/.wm/themes/${1}.bspwm_theme $HOME/.bspwm_theme
+. $HOME/.bspwm_theme
+. $HOME/.wm/templates/mustache.sh
 
-. ~/.wm/templates/mustache.sh
-mustache < ~/.wm/templates/Xresources > ~/.Xresources
-xrdb ~/.Xresources
+eval mustache `margs Xresources .Xresources`
+xrdb $HOME/.Xresources
 
 # tell all shits to reload their theme:
 killall -s USR1 st &
 
 # tell tmux to reload it's theme
-tmux source-file ~/.tmux.conf > /dev/null &
+tmux source-file $HOME/.tmux.conf > /dev/null &
 
-# set the background
-`$BG_COMMAND &`
+# set the background (in the background, heh)
+IFS=" "
+($BG_COMMAND &)
 
 # Keep the current gap setting and reload bspwm
-[[ $(bspc config window_gap) -le 0 ]] && export BSPWM_GAPS=false \
-                                      || export BSPWM_GAPS=true
-
-~/.wm/bspwmrc &
+[ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false
+$HOME/.wm/bspwmrc &
 
 # vim reload
 VIMS=`vim --serverlist`
 for vim in $VIMS; do
-    vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>'
+    vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
 done
 
-# GTK
-cp ~/.gtkrc-2.0.back  ~/.gtkrc-2.0
-sed -i "s/replaceThemeName/$THEME_NAME/g;s/replaceFontName/$GTK_FONT/g;" ~/.gtkrc-2.0
+# trim alpha from colors to be used in gtk and qutebrowser
+pFG=$(colort -t 0 "$pFG")
+pBG=$(colort -t 0 "$pBG")
+pFGActiveTab=$(colort -t 0 "$pFGActiveTab")
+pBGActiveTab=$(colort -t 0 "$pBGActiveTab")
 
-# trim transparency from colors to be used in gtk and qutebrowser
-# ugh gross todo: clean
-pFG="$(echo $pFG | cut -c4-)"
-pBG="$(echo $pBG | cut -c4-)"
-pFGActiveTab="$(echo $pFGActiveTab | cut -c4-)"
-pBGActiveTab="$(echo $pBGActiveTab | cut -c4-)"
+# GTK (make theme if it does not exist, then reload)
+eval mustache `margs gtkrc .gtkrc-2.0`
 
-# make gtk theme if it does not exist.
-if [ ! -d "$HOME/.themes/oomox-$THEME_NAME" ]; then
-    target="$HOME/.themes/.oomox/colors/$THEME_NAME.sh"
-    cp $HOME/.themes/oomox_template $target
-    sed -i "s/replaceThemeName/$THEME_NAME/g;" $target
-    sed -i "s/replacepFGActiveTab/$pFGActiveTab/g;" $target
-    sed -i "s/replacepBGActiveTab/$pBGActiveTab/g;" $target
-    sed -i "s/replacepFG/$pFG/g;" $target
-    sed -i "s/replacepBG/$pBG/g;" $target
-    $HOME/.themes/.oomox/change_color.sh "$THEME_NAME"
+if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
+    target="$(mktemp)"
+    mustache < $HOME/.wm/templates/oomox > $target
+    oomox-cli "$target" "$THEME_NAME"
 fi
 
-# set icon color(ACYL)
+# icon color(ACYL)
 $HOME/.icons/acyl/icon.sh "$GTK_ICON_COLOR"
 
-# load it:
+# reload
 gtkrc-reload &
 
-# cp the qutebrowser config and replace the colors with this theme's colors.
-quteconf="$HOME/.config/qutebrowser/qutebrowser.conf"
-cp "$HOME/.config/qutebrowser/qutebrowser.conf.template" "$quteconf"
+# set a place to reference active theme for newly launched GTK3 programs.
+echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME &
 
-# match tabs to panel.
-sed -i "s/replaceQuteFG/#$pFG/g;s/replaceQuteBG/#$pBG/g;" $quteconf
-splitPadding="$(bc <<< "($PANEL_HEIGHT - 12)/2")"
-quteFont="$(sed 's/-.*//' <<< $PANEL_FONT_MAIN)"
-# todo: handle bold.
-sed -i "s/replaceQuteHeight/$(echo "($PANEL_HEIGHT - 10) / 2" | bc)/g" $quteconf
-sed -i "s/replaceQuteFont/$quteFont/g" $quteconf
-sed -i "s/replaceQuteActiveTabFG/#$pFGActiveTab/g;s/replaceQuteActiveTabBG/#$pBGActiveTab/g;" $quteconf
+# qutebrowser
+echo $PANEL_FONT_MAIN | grep -q Bold && PANEL_FONT_MAIN="Bold $PANEL_FONT_MAIN"
+PANEL_FONT_MAIN="$(echo $PANEL_FONT_MAIN | sed 's/-.*//')"
+PANEL_HEIGHT="$(( (PANEL_HEIGHT-10) / 2 ))"
+eval mustache `margs qutebrowser .config/qutebrowser/qutebrowser.conf`
 
-# Kill dunst and restart with the right colors.
+# dunst
 killall dunst
-
-# reset $defaultBG and FG for dunst relaunch:
-. ~/.wm/templates/mustash.sh
-mustache < ~/.wm/templates/dunstrc > ~/.config/dunst/dunstrc
-dunst
-
-sleep 0.5
-
-notify-send "Theme $1 loaded."
+eval mustache `margs dunstrc .config/dunst/dunstrc`
+dunst &

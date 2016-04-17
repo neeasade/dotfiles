@@ -31,7 +31,7 @@
 
 [frame]
     width = 3
-    color = "{{`echo -n `bspc config normal_border_color``}}"
+    color = "{{`bspc config normal_border_color`}}"
 
 [shortcuts]
     close = ctrl+space

@@ -15,7 +15,8 @@ mpd/.config/mpd/mpdcron.pid
 ncmpcpp/.config/ncmpcpp/error.log
 
 vim/.vim/*
-!vim/.vim/colors
+vim/.config/nvim/*
+!vim/.config/nvim/init.vim
 
 weechat/.weechat/irc.conf
 weechat/.weechat/logs

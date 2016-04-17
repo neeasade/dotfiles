@@ -16,7 +16,7 @@ if empty(glob('~/' . s:configdir . '/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall
 endif
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/' . s:configdir . '/Plug')
     Plug 'tpope/vim-sensible'                   " sensible defaults.
     Plug 'tpope/vim-fugitive'                   " Complement git in vim - todo: learn this.
     Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
@@ -36,6 +36,13 @@ call plug#begin('~/.vim/plugged')
     Plug 'junegunn/fzf',                        {'dir': '~/fzf', 'do': 'yes\| ./install'} " based fuzzy search.
     Plug 'junegunn/goyo.vim'                    " Distraction-free writing in vim.
     Plug 'junegunn/limelight.vim'               " A nice focus color plugin. using with goyo.
+
+    " colors n shit
+    Plug 'chriskempson/base16-vim'
+    Plug 'jnurmine/zenburn'
+    Plug 'nanotech/jellybeans.vim'
+    Plug 'jdkanani/vim-material-theme'
+    Plug 'lucy/term.vim'
 
 call plug#end()
 " }}}
@@ -130,6 +137,9 @@ set foldcolumn=0
 
 " Colors
 set t_Co=256
+let base16colorspace=256
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+
 if empty(glob('~/.bspwm_theme'))
     colorscheme default
 else

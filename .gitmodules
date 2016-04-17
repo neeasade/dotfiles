@@ -1,6 +1,3 @@
-[submodule "oomox"]
-	path = gtk/.themes/.oomox
-	url = https://github.com/actionless/oomox
 [submodule "acyl"]
 	path = gtk/.icons/acyl
 	url = https://github.com/neeasade/acyl

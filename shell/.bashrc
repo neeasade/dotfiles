@@ -82,7 +82,8 @@ function extract()      # Handy Extract Program
     fi
 }
 
-prompt () {
+prompt ()
+{
     _ERR=$?
     _JOB=$(jobs | wc -l)
 
@@ -99,7 +100,8 @@ alias tmux='tmux -2' #Make tmux assume 256 colors.
 alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
 alias sysinfo='archey3 && dfc -p /dev && colors'
 alias ls='ls --color=auto'
-alias vim='vim --servername `date +%s`'
+# alias vim='vim --servername `date +%s`'
+alias vim='nvim'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 alias grep="grep --color=auto"
 alias pacman="pacman --color=always"

@@ -5,7 +5,7 @@ set -a
 
 # theme
 THEME_NAME=material
-VIM_COLORS=material
+VIM_COLORS=material-theme
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/worlds.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
