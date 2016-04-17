@@ -7,7 +7,7 @@ set -a
 # theme
 THEME_NAME=spring
 VIM_COLORS=term
-BG_COMMAND="--bg-fill $HOME/.wm/walls/fill/spring.jpg"
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/spring.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm

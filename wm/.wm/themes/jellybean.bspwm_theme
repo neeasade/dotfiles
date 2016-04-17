@@ -5,8 +5,8 @@ set -a
 
 # theme
 THEME_NAME=jellybean
-VIM_COLORS=jellybean
-BG_COMMAND="/usr/bin/feh --bg-tile $HOME/.wm/walls/tiled/random_grey_variations.png"
+VIM_COLORS=jellybeans
+BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/random_grey_variations.png"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
@@ -25,6 +25,7 @@ pPadding=1
 # colors
 pFG="#ffcccccc"
 pBGActiveTab="$(colort 30 "$pBG")"
+pFGActiveTab="$pFG"
 pFGInactiveTab="$pFG"
 GTK_ICON_COLOR="$pFG"
 
