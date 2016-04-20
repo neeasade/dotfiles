@@ -31,7 +31,7 @@
 
 [frame]
     width = 3
-    color = "{{`bspc config normal_border_color`}}"
+    color = "{{DUNST_BORDER}}"
 
 [shortcuts]
     close = ctrl+space
@@ -46,7 +46,7 @@
 
 [urgency_normal]
     background = "{{pBG}}"
-    foreground = "{{pFB}}"
+    foreground = "{{pFG}}"
     timeout = 10
 
 [urgency_critical]

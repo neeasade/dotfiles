@@ -60,6 +60,7 @@ GTK_FONT="Droid Sans 10"             # GTK font to be used.
 GTK_ICON_COLOR="$(colort -l -3 "$pFG")" # Icon color to be applied to ACYL icons.
 
 DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
+DUNST_BORDER="`bspc config normal_border_color`" # Font used by dunst on startup
 
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
