@@ -97,7 +97,7 @@ super + shift + {1-9}
     D={1-9}; \
     bspc node -d "$(bspc query -D -m | sed -n "$D p")"
 
-# insert receptical, or clear recepticals on current desktop
+# insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
     insert={true,false}; \
     $insert && bspc node -i || \
