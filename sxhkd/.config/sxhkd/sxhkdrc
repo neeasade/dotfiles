@@ -12,8 +12,8 @@ super + v
         bspc node $win -d $(bspc query -D -d); \
     done
 
-super + w
-    bspc node -c
+super + {_,shift + }w
+	bspc node -{c,k}
 
 super + t
     bspc desktop -l next && bspc node -f next
@@ -67,9 +67,6 @@ super +  {h,j,k,l}
     bspc config pointer_follows_monitor false; \
     bspc config pointer_follows_focus false
 
-super + {comma,period}
-    bspc desktop -C {backward,forward}
-
 super + ctrl + {h,j,k,l}
     bspc node -p {west,south,north,east}
 
@@ -86,14 +83,29 @@ super + alt + shift + {h,j,k,l}
 super + ctrl + {1-9}
     bspc node -r 0.{1-9}
 
-# These two keybinds determine index by list order of desktops from current monitor
+# Change all monitors to desktop index
 super + {1-9}
     D={1-9}; \
-    bspc desktop -f "$(bspc query -D -m | sed -n "$D p")"
+    cur=`bspc query -M -m`; \
+    for mon in `bspc query -M`; do \
+        bspc desktop -f "$(bspc query -D -m $mon | sed -n "$D p")"; \
+    done; \
+    bspc monitor -f $cur
 
+# Send node to desktop on current monitor index
 super + shift + {1-9}
     D={1-9}; \
     bspc node -d "$(bspc query -D -m | sed -n "$D p")"
+
+# insert receptical, or clear recepticals on current desktop
+super + {_,shift} + r
+    insert={true,false}; \
+    $insert && bspc node -i || \
+    for win in `bspc query -N -n .leaf.!window`; do bspc node $win -k ; done;
+
+# focus the node for the given path jump
+super + {p,b,comma,period}
+    bspc node -f @{parent,brother,first,second}
 
 ~button1
     bspc pointer -g focus
@@ -123,8 +135,8 @@ super + {_,shift} + slash
 #
 # wm independent hotkeys
 #
-super + p
-    ~/.wm/scripts/i3blur.sh
+#super + p
+#    ~/.wm/scripts/i3blur.sh
 
 super + o
     $BROWSER
@@ -135,15 +147,17 @@ super + e
 super + Return
     $TERMINAL
 
+# launch a program, with a var set for GTK3 programs to launch with the right theme.
 super + space
+    export GTK_THEME="`cat $HOME/.themes/ACTIVE_THEME 2>/dev/null`"; \
     eval dmenu_run $(dmenu_options)
 
+# A nice wrapper script for password store.
 super + shift + space
     eval passmenu $(dmenu_options)
 
 XF86Audio{Prev,Next}
      mpc -q {prev,next}
-
 
 XF86AudioPlay
      mpc -q toggle
@@ -154,6 +168,6 @@ XF86Audio{LowerVolume,RaiseVolume}
 XF86AudioMute
     amixer -q set Master toggle
 
-# make sxhkd reload its configuration files:
+# make sxhkd reload its configuration files
 super + Escape
     pkill -USR1 -x sxhkd
