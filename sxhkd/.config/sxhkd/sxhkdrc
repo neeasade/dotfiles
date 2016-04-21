@@ -16,7 +16,7 @@ super + {_,shift + }w
 	bspc node -{c,k}
 
 super + t
-    bspc desktop -l next && bspc node -f next
+    bspc desktop -l next
 
 super + b
     bspc desktop -B
@@ -101,7 +101,7 @@ super + shift + {1-9}
 super + {_,shift} + r
     insert={true,false}; \
     $insert && bspc node -i || \
-    for win in `bspc query -N -n .leaf.!window`; do bspc node $win -k ; done;
+    for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k ; done;
 
 # focus the node for the given path jump
 super + {p,b,comma,period}
