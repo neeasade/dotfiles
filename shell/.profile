@@ -81,5 +81,8 @@ export HISTCONTROL=ignoredups:erasedups
 # Yes.
 export HISTFILESIZE=6000
 export HISTSIZE=6000
-export HISTFILE="$HOME/.$0_history"
+export HISTFILE="$HOME/.history"
 # }}}
+
+# autostartx if running on the first tty:
+if [[ -z $DISPLAY && $XDG_VTNR -eq 1 && -z $TMUX ]]; then exec startx; fi
