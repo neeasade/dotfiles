@@ -2,6 +2,14 @@ st.shell:       /bin/zsh
 st.font:        {{font}}
 st.borderpx:    {{borderpx}}
 
+! TODO:
+dmenu.font:
+dmenu.foreground:
+dmenu.background:
+dmenu.selforeground:
+dmenu.selbackground:
+dmenu.undercolor:
+
 *.background:   #{{background}}
 *.foreground:   #{{foreground}}
 *.color0:       #{{color0}}

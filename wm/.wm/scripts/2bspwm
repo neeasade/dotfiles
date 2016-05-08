@@ -1,0 +1,59 @@
+#!/usr/bin/env dash
+# depends on: colort, wmutils opt/chwb2
+
+borderWidth=`bspc config border_width`
+inWidth=$(( $borderWidth/2 ))
+outWidth=$(( ($borderWidth/2) + ($borderWidth%2) ))
+
+# _chwb2 [Focused|Normal] [nodeId]
+_chwb2()
+{
+    colorType=$1
+    shift
+    eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@
+}
+
+# dec to hex
+d2h(){
+  echo "obase=16; $@"|bc
+}
+
+# define border colors based on bspwm border settings
+outerFocused=`bspc config focused_border_color | tr -d \#`
+colort -c "$outerFocused" || sign=-
+innerFocused=`colort -l ${sign}70 "$outerFocused"`
+
+outerNormal=`bspc config normal_border_color | tr -d \#`
+unset sign
+colort -c "$outerNormal" || sign=-
+innerNormal=`colort -l ${sign}20 "$outerNormal"`
+
+# apply normal to all nodes, active to focused node.
+for win in `bspc query -N -n .window.\!focused`; do
+    _chwb2 Normal $win
+done
+_chwb2 Focused `bspc query -N -n`
+
+# react to resizes and focus changes
+bspc subscribe node_geometry node_focus | while read msg; do
+    nodeAction=`echo $msg | cut -d " " -f 1`
+    nodeId=`echo $msg | cut -d " " -f 4`
+
+    case $nodeAction in
+        node_focus)
+            # handle across monitors
+            _chwb2 Normal `bspc query -N -n last.\!focused` \
+                          `bspc query -N -n last.local.\!focused`
+
+            # double border any windows under focused node path
+            for winId in `bspc query -T -n | jq '.. | .?, .root?, .firstChild?, .secondChild? | select (.client != null) | .id'`; do
+                # converting from dex to hex because that's what wmutils tools expect.
+                _chwb2 Focused `d2h $winId`
+            done
+            ;;
+        node_geometry)
+            [ "$nodeId" = "`bspc query -N -n`" ] &&
+                _chwb2 Focused $nodeId ||
+                _chwb2 Normal  $nodeId ;;
+    esac
+done

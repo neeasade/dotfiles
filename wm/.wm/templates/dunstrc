@@ -30,7 +30,7 @@
     icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
 
 [frame]
-    width = 3
+    width = {{b_border_width}}
     color = "{{DUNST_BORDER}}"
 
 [shortcuts]
@@ -40,18 +40,18 @@
     context = ctrl+shift+period
 
 [urgency_low]
-    background = "{{pBG}}"
-    foreground = "{{pFG}}"
+    background = "#{{pBG}}"
+    foreground = "#{{pFG}}"
     timeout = 10
 
 [urgency_normal]
-    background = "{{pBG}}"
-    foreground = "{{pFG}}"
+    background = "#{{pBG}}"
+    foreground = "#{{pFG}}"
     timeout = 10
 
 [urgency_critical]
-    background = "{{pFG}}"
-    foreground = "{{pBG}}"
+    background = "#{{pFG}}"
+    foreground = "#{{pBG}}"
     timeout = 0
 
 # Every section that isn't one of the above is interpreted as a rules to

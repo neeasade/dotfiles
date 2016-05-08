@@ -6,14 +6,13 @@
 # THEME_NAME
 # VIM_COLORS
 
-
 . "$HOME/.wm/themes/colors/$THEME_NAME"
 
 [ -z "$BSPWM_GAPS"  ] && BSPWM_GAPS=true
 
 b_border_width=3 # bspwm settings. Naming convention is b_<config_option>
 b_window_gap=10
-b_split_ratio=0.6
+b_split_ratio=0.52
 b_normal_border_color="#$color0"
 b_active_border_color="#$color8"
 b_focused_border_color="#$foreground"
@@ -31,8 +30,8 @@ pOutputOrder='"%{l} $dropdown$wm_infos%{c}$title%{r}$sys_infos"' # placement of 
 
 # variables for desktop area
 desktopDisplay=icon         # [icon|name] - display desktop names or DO/DF variables.
-showFreeDesktops=true       # option to show nothing for free desktops
-desktopDisplayType=together # [together|separate] - show desktops in separate blocks or together in one block
+showFreeDesktops=true       # option to show nothing for free desktops.
+desktopDisplayType=together # [together|separate] - show desktops in separate blocks or together in one block.
 NoModeToggle=1              # if defined, no monocle/tiling toggle.
 
 # desktop colors
@@ -41,13 +40,13 @@ pActive="#ff$color15" # active desktop color
 pRest="#ff$color6"    # resting desktop color
 
 # Panel colors
-pBG="#ff$background"          # Default foreground
-pFG="#ff$foreground"          # Default foreground
-pBGActiveTab="$pFG"                          # Active title tab - also used as gtk select color value.
-pFGActiveTab="$pBG"                          # Active title tab - also used as gtk select color value.
-pBGInactiveTab="$pBG"                        # Inactive title tab - also used to info.sh ouput background.
-pFGInactiveTab="$pFG"                        # Inactive title tab - also used to info.sh ouput background.
-pIcon="$(colort -l -30 "$pFG")"
+pBG="#ff$background"            # Default foreground
+pFG="#ff$foreground"            # Default foreground
+pBGActiveTab="$pFG"             # Active title tab - also used as gtk select color value.
+pFGActiveTab="$pBG"             # Active title tab - also used as gtk select color value.
+pBGInactiveTab="$pBG"           # Inactive title tab - also used to info.sh ouput background.
+pFGInactiveTab="$pFG"           # Inactive title tab - also used to info.sh ouput background.
+pIcon="$(colort -l -30 "$pFG")" # panel icon colors - also used to color acyl icons.
 
 # Workspace variables
 DO='[-]' # occupied desktop
@@ -56,8 +55,7 @@ DT='T'   # tiling mode
 DM='M'   # monocle mode
 
 # GTK options
-GTK_FONT="Droid Sans 10"             # GTK font to be used.
-GTK_ICON_COLOR="$(colort -l -3 "$pFG")" # Icon color to be applied to ACYL icons.
+GTK_FONT="Droid Sans 10"                # GTK font to be used.
 
 DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
 DUNST_BORDER="`bspc config normal_border_color`" # Font used by dunst on startup

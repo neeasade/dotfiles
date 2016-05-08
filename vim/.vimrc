@@ -1,8 +1,8 @@
 " Tab Options
 set shiftwidth=4
 set tabstop=4
-" set expandtab "Enter spaces instead of tabs.
 
+" set expandtab "Enter spaces instead of tabs.
 " {{{ Plugins
 let s:configdir = '.vim'
 if has('nvim')
@@ -43,7 +43,7 @@ call plug#begin('~/' . s:configdir . '/Plug')
     Plug 'nanotech/jellybeans.vim'
     Plug 'jdkanani/vim-material-theme'
     Plug 'lucy/term.vim'
-
+    Plug 'laserswald/chameleon.vim'
 call plug#end()
 " }}}
 
@@ -136,12 +136,10 @@ set foldlevel=0
 set foldcolumn=0
 
 " Colors
-set t_Co=256
-let base16colorspace=256
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set background=dark
 
 if empty(glob('~/.bspwm_theme'))
-    colorscheme default
+    colorscheme chameleon
 else
     let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
     execute 'colorscheme ' vim_colors

@@ -55,7 +55,7 @@ if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
 fi
 
 # icon color(ACYL)
-$HOME/.icons/acyl/icon.sh "$GTK_ICON_COLOR"
+$HOME/.icons/acyl/icon.sh "$pIcon"
 
 # reload
 gtkrc-reload &

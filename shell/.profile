@@ -73,8 +73,6 @@ prompt ()
 # }}}
 
 # {{{ shell
-[ -f ~/.fzf.$0 ] && source ~/.fzf.$0
-
 # Avoid duplicates
 export HISTCONTROL=ignoredups:erasedups
 

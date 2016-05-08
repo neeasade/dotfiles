@@ -10,7 +10,7 @@ BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/lake.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
-b_border_width=3
+b_border_width=6
 b_window_gap=16
 b_normal_border_color="#2e2e2e"
 

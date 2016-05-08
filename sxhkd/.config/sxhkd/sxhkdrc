@@ -13,7 +13,7 @@ super + v
     done
 
 super + {_,shift + }w
-	bspc node -{c,k}
+    bspc node -{c,k}
 
 super + t
     bspc desktop -l next
@@ -47,7 +47,7 @@ super + shift + {h,j,k,l}
     cur_win=$(bspc query -N -n); \
     cur_mon=$(bspc query -M -m); \
     dir={west,south,north,east}; \
-    if ! bspc node -f $dir; then \
+    if ! bspc node -f $dir.local; then \
         bspc node -m $dir; \
         bspc monitor -f $dir; \
     else \
@@ -59,13 +59,16 @@ super + shift + {h,j,k,l}
     fi; \
     bspc config pointer_follows_focus false
 
-super +  {h,j,k,l}
+# todo: we only care about focus_follows_pointer if switching monitors.
+super + {h,j,k,l}
     bspc config pointer_follows_monitor true; \
     bspc config pointer_follows_focus true; \
+    bspc config focus_follows_pointer false; \
     dir={west,south,north,east}; \
-    bspc node -f $dir || bspc monitor -f $dir; \
+    bspc node -f $dir.local || bspc monitor -f $dir; \
     bspc config pointer_follows_monitor false; \
-    bspc config pointer_follows_focus false
+    bspc config pointer_follows_focus false; \
+    bspc config focus_follows_pointer true;
 
 super + ctrl + {h,j,k,l}
     bspc node -p {west,south,north,east}
@@ -73,12 +76,9 @@ super + ctrl + {h,j,k,l}
 super + ctrl + {_,shift + }space
     bspc node @{_,/} -p cancel
 
-# resize functions - todo: have these do things to floating windows.
+# resize functions
 super + alt + {h,j,k,l}
-    bspc node {@west -r -35,@south -r +35,@north -r -35,@east -r +35}
-
-super + alt + shift + {h,j,k,l}
-    bspc node {@east -r -35,@north -r +35,@south -r -35,@west -r +35}
+    resize.sh {left,bottom,top,right};
 
 super + ctrl + {1-9}
     bspc node -r 0.{1-9}
@@ -86,11 +86,7 @@ super + ctrl + {1-9}
 # Change all monitors to desktop index
 super + {1-9}
     D={1-9}; \
-    cur=`bspc query -M -m`; \
-    for mon in `bspc query -M`; do \
-        bspc desktop -f "$(bspc query -D -m $mon | sed -n "$D p")"; \
-    done; \
-    bspc monitor -f $cur
+    bspc desktop -f "$(bspc query -D -m | sed -n "$D p")";
 
 # Send node to desktop on current monitor index
 super + shift + {1-9}
@@ -111,9 +107,6 @@ super + {p,b,comma,period}
     bspc pointer -g focus
 
 # mouse movements
-super + button{1-3}
-    bspc pointer -g {move,resize_side,resize_corner}
-
 super + @button{1-3}
     bspc pointer -u
 
