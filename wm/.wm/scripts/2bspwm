@@ -10,12 +10,12 @@ _chwb2()
 {
     colorType=$1
     shift
-    eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@
+    eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null
 }
 
 # dec to hex
-d2h(){
-  echo "obase=16; $@"|bc
+d2h() {
+    printf '0x%x\n' "$1"
 }
 
 # define border colors based on bspwm border settings
@@ -41,14 +41,13 @@ bspc subscribe node_geometry node_focus | while read msg; do
 
     case $nodeAction in
         node_focus)
-            # handle across monitors
-            _chwb2 Normal `bspc query -N -n last.\!focused` \
-                          `bspc query -N -n last.local.\!focused`
+            # color everything not focused
+            _chwb2 Normal `bspc query -N -n .\!focused`
 
             # double border any windows under focused node path
             for winId in `bspc query -T -n | jq '.. | .?, .root?, .firstChild?, .secondChild? | select (.client != null) | .id'`; do
                 # converting from dex to hex because that's what wmutils tools expect.
-                _chwb2 Focused `d2h $winId`
+                _chwb2 Focused `d2h $winId` &
             done
             ;;
         node_geometry)
