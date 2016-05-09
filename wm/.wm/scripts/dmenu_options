@@ -8,7 +8,7 @@
 [[ $(bspc config window_gap) -le 0 ]] && PANEL_GAP=0
 
 #first line is current monitor width, then subtract panel gap x2 in second line.
-PANEL_WIDTH=$(bspc query -T -m | jshon -e rectangle -e width -u)
+PANEL_WIDTH=$(bspc query -T -m | jq -r '.rectangle.width')
 PANEL_WIDTH=$( expr $PANEL_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))
 PANEL_BG="#$(echo $pBG | cut -c4-)"
 pFG="#$(echo $pFG | cut -c4-)"

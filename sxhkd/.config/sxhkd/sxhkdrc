@@ -15,29 +15,17 @@ super + v
 super + {_,shift + }w
     bspc node -{c,k}
 
-super + t
-    bspc desktop -l next
-
-super + b
-    bspc desktop -B
-
 super + s
     bspc query -N -n focused.tiled && state=floating || state=tiled; \
     bspc node -t $state
 
 super + f
     state=fullscreen; \
-    bspc query -N -n "focused.$state" && state=$(bspc query -T -n | jshon -e client -e lastState -u); \
+    bspc query -N -n "focused.$state" && state=$(bspc query -T -n | jq -r '.client.lastState'); \
     bspc node -t "$state"
-
-super + {_,shift} + Tab
-    bspc desktop -f {next,prev}
 
 alt + {_,shift} + Tab
     bspc node -f {next,prev}
-
-super + apostrophe
-    bspc node -s last
 
 super + m
     bspc node -s biggest
@@ -85,7 +73,7 @@ super + alt + {h,j,k,l}
 super + ctrl + {1-9}
     bspc node -r 0.{1-9}
 
-# Change all monitors to desktop index
+# desktop by index on this monitor
 super + {1-9}
     D={1-9}; \
     bspc desktop -f "$(bspc query -D -m | sed -n "$D p")";
@@ -100,6 +88,12 @@ super + {_,shift} + r
     insert={true,false}; \
     $insert && bspc node -i || \
     for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k ; done;
+
+# balance, retrigger focus even after.
+super + equal
+    bspc query -N -n focused.window && target=@/; \
+    bspc node $target -B; \
+    bspc node -f
 
 # focus the node for the given path jump
 super + {p,b,comma,period}
@@ -118,9 +112,8 @@ super + shift + q
 
 # rotate desktops, or groups of nodes, retrigger focus event after.
 super + {_,shift} + semicolon
-    bspc query -N -n focused.window && \
-    bspc node @/ -R {90,270} || \
-    bspc node -R {90,270}; \
+    bspc query -N -n focused.window && target=@/; \
+    bspc node $target -R {90,270}; \
     bspc node -f
 
 # toggle panel or gaps.

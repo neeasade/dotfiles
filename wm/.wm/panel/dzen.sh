@@ -16,10 +16,10 @@ dzen_options()
     X=$(expr $X - $(expr $width / 2))
 
     #handle offsets
-    xextra=$(bspc query -T -m $i | jshon -e rectangle -e y -u)
+    xextra=$(bspc query -T -m $i | jq -r '.rectangle.y')
     Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
-    xedge=$(bspc query -T -m $i | jshon -e rectangle -e width -u)
-    xoffset=$(bspc query -T -m $i | jshon -e rectangle -e x -u)
+    xedge=$(bspc query -T -m $i | jq -r '.rectangle.width')
+    xoffset=$(bspc query -T -m $i | jq -r '.rectangle.x')
     if [[ `expr $xoffset + $xedge - $X` -lt $width ]];then
         X=`expr $xoffset + $xedge - $width - $PANEL_GAP`
     fi

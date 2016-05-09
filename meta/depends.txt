@@ -1,6 +1,5 @@
 alsa-utils
 base-devel
-bash
 bdf-tewi-git
 bspwm-git
 colort-git
@@ -14,9 +13,8 @@ fzf
 gtkrc-reload
 i3lock
 imagemagick
-jshon
+jq
 lemonbar-xft-git
-mksh
 mpc
 mpd
 mpdcron-git
@@ -25,7 +23,7 @@ pcmanfm
 python2-notify2
 qutebrowser-git
 siji-git
-shit-git
+xst-git
 stow
 sxhkd
 terminus-font
@@ -35,3 +33,4 @@ ttf-font-linux
 txtw-git
 xdotool
 xtitle-git
+zsh

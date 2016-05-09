@@ -5,7 +5,7 @@
 OS		 | Arch Linux
 WM		 | BSPWM
 Panel	 | lemonbar (xft patch)
-Terminal | [shit](https://github.com/neeasade/shit)
+Terminal | [xst](https://github.com/neeasade/xst)
 GTK 	 | [oomox](https://github.com/actionless/oomox) with [ACYL](http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910) icons.
 Font 	 | Droid Sans Mono/Tewi
 
