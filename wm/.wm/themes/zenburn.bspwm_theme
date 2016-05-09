@@ -10,7 +10,7 @@ export BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/desert.png"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
-b_border_width=2
+b_border_width=4
 b_window_gap=12
 
 # panel

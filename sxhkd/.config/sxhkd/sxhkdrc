@@ -51,12 +51,14 @@ super + shift + {h,j,k,l}
         bspc node -m $dir; \
         bspc monitor -f $dir; \
     else \
+        bspc config focus_follows_pointer false; \
         new_mon=$(bspc query -M -m); \
         [ "$new_mon" = "$cur_mon" ] && \
             bspc node -s $cur_win || \
             bspc node $cur_win -m $new_mon; \
         bspc node -f $cur_win; \
     fi; \
+    bspc config focus_follows_pointer true; \
     bspc config pointer_follows_focus false
 
 # todo: we only care about focus_follows_pointer if switching monitors.
@@ -103,12 +105,9 @@ super + {_,shift} + r
 super + {p,b,comma,period}
     bspc node -f @{parent,brother,first,second}
 
-~button1
-    bspc pointer -g focus
-
-# mouse movements
-super + @button{1-3}
-    bspc pointer -u
+# path jumps by DIR (unsure/need better binding)
+super + ctrl + alt + {h,j,k,l}
+    bspc node -f @{west,south,north,east}
 
 # kill panel, nicely ask all windows to close, quit.
 # todo: ask nicely for real.
@@ -117,9 +116,12 @@ super + shift + q
     for win in $(bspc query -N); do bspc node $win -c ; done; \
     bspc quit
 
-# rotate desktops.
+# rotate desktops, or groups of nodes, retrigger focus event after.
 super + {_,shift} + semicolon
-    bspc node @/ -R {90,270}
+    bspc query -N -n focused.window && \
+    bspc node @/ -R {90,270} || \
+    bspc node -R {90,270}; \
+    bspc node -f
 
 # toggle panel or gaps.
 super + {_,shift} + slash
@@ -128,6 +130,7 @@ super + {_,shift} + slash
 #
 # wm independent hotkeys
 #
+
 #super + p
 #    ~/.wm/scripts/i3blur.sh
 
@@ -135,7 +138,7 @@ super + o
     $BROWSER
 
 super + e
-    pcmanfm
+    $FILEBROWSER
 
 super + Return
     $TERMINAL

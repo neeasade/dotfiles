@@ -7,6 +7,7 @@ export EDITOR='vim'
 export GIT_EDITOR='/usr/bin/vim'
 export BROWSER=qutebrowser
 export TERMINAL=st
+export FILEBROWSER=pcmanfm
 # }}}
 
 # {{{ alias

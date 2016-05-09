@@ -136,7 +136,7 @@ set foldlevel=0
 set foldcolumn=0
 
 " Colors
-set background=dark
+" set background=dark
 
 if empty(glob('~/.bspwm_theme'))
     colorscheme chameleon

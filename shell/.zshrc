@@ -1,5 +1,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+. $HOME/.profile
 
 # get the thing
 [ ! -d ~/.zplug ] && curl --create-dirs -o ~/.zplug/zplug https://raw.githubusercontent.com/b4b4r07/zplug/master/zplug
@@ -16,7 +17,6 @@ zplug "djui/alias-tips", nice: 11                                    # alias rem
 ! zplug check && zplug install
 zplug load
 
-. $HOME/.profile
 PROMPT='$(prompt) '
 
 [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh || true
