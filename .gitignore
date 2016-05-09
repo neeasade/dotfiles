@@ -3,8 +3,6 @@ nohup.out
 
 wm/.wm/timestamp
 
-gtk/.themes/oomox-*
-
 mpd/.config/mpd/pid
 mpd/.config/mpd/log
 mpd/.config/mpd/state
@@ -23,6 +21,8 @@ weechat/.weechat/logs
 weechat/.weechat/*fifo
 weechat/.weechat/weechat.log
 weechat/.weechat/script/plugins.xml.gz
+weechat/.weechat/perl
+weechat/.weechat/python
 
 qutebrowser/.config/qutebrowser/bookmarks
 qutebrowser/.config/qutebrowser/keys.conf

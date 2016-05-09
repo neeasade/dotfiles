@@ -10,3 +10,5 @@ highmon.pl 	| Creates a buffer that contains messages containing your nick. can 
 autosort.py	| Sort your buffers by server in the buffer list.
 notify.py 	| Trigger an INotify message whenever your nick is mentioned (Which is then caught by dunst/whatever)
 
+
+to install,  `/script install autoconnect.py buffers.pl highmon.pl autosort.py notify.py`

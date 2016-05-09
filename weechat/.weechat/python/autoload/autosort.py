@@ -1,1 +1,0 @@
-../autosort.py
