@@ -25,10 +25,10 @@ done
 
 while :; do
     for c in $COLORS; do
-        CUR=$(bspc query -N -n)
-        LAST=$CUR
-        [ ! "$CUR" = "$LAST" ] && chwb -c "$NORMAL_COLOR" $LAST
-        chwb -c "$c" $CUR
+        CUR="$(bspc query -N -n .descendant_of.window | tr '\n' ' ')"
+        LAST="$CUR"
+        [ "$CUR" = "$LAST" ] || chwb -c "$NORMAL_COLOR" $LAST
+        chwb -c "$c" $(bspc query -N -n .descendant_of.window | tr '\n' ' ')
         sleep $FREQ
     done
 done
