@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 # neeasade
-# depends on: jq, colort, wmutils opt/chwb2
+# depends on: colort, wmutils opt/chwb2
 # makes dual borders based on your bspwm colors
 
 focusedTint=70
@@ -12,18 +12,10 @@ inWidth=$(( $borderWidth/2 ))
 outWidth=$(( ($borderWidth/2) + ($borderWidth%2) ))
 
 # _chwb2 [Focused|Normal] [nodeId]
-_chwb2()
-{
+_chwb2() {
     colorType=$1
     shift
     eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null
-}
-
-# dec to hex
-d2h() {
-    while read in; do
-        printf '0x%x\n' "$in"
-    done
 }
 
 # define border colors based on bspwm border settings
@@ -35,15 +27,12 @@ outerNormal=`bspc config normal_border_color | tr -d \#`
 colort -c "$outerNormal" && sign=+ || sign=-
 innerNormal=`colort -l $sign$normalTint "$outerNormal"`
 
-# apply normal to all nodes, active to focused node.
-_chwb2 Normal `bspc query -N -n .\!focused`
-_chwb2 Focused `bspc query -N -n`
+# initial draw
+_chwb2 Normal  `bspc query -N -n .!descendant_of.window`
+_chwb2 Focused `bspc query -N -n .descendant_of.window`
 
-# react to resizes and focus changes
+# reactive draw
 bspc subscribe node_geometry node_focus | while read msg; do
-    # everything not focused
-    _chwb2 Normal `bspc query -N -n .\!focused`
-
-    # any windows under focused node path
-    _chwb2 Focused `bspc query -T -n | jq '.. | .?, .root?, .firstChild?, .secondChild? | select (.client != null) | .id' | d2h`
+    _chwb2 Normal  `bspc query -N -n .!descendant_of.window`
+    _chwb2 Focused `bspc query -N -n .descendant_of.window`
 done

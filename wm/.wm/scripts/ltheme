@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 # Load a bspwm theme based on argument
-# This loads settings for: bspwm, shit, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
+# This loads settings for: bspwm, xst, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
 # This makes heavy use of a posix implementation of mustache templates.
 
 set -a
@@ -20,7 +20,7 @@ ln -s $HOME/.wm/themes/${1}.bspwm_theme $HOME/.bspwm_theme
 eval mustache `margs Xresources .Xresources`
 xrdb $HOME/.Xresources
 
-# tell all shits to reload their theme:
+# tell all xsts to reload their theme:
 killall -s USR1 st &
 
 # tell tmux to reload it's theme
