@@ -11,7 +11,7 @@ horiPref=east
 vertPref=south
 # if dimensions are within this percent, will split $horiPref,
 # else direction is determined by width or height being greater.
-percent=.20
+percent=.33
 
 # get any presels on the current desktop, select one if so.
 presel="$(bspc query -N -d -n .\!automatic | head -n 1)"

@@ -51,7 +51,7 @@ eval mustache `margs gtkrc .gtkrc-2.0`
 if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
     target="$(mktemp)"
     mustache < $HOME/.wm/templates/oomox > $target
-    oomox-cli "$target" "$THEME_NAME"
+    # oomox-cli "$target" "$THEME_NAME"
 fi
 
 # icon color(ACYL)
@@ -66,10 +66,12 @@ echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME &
 # qutebrowser
 echo $PANEL_FONT_MAIN | grep -q Bold && PANEL_FONT_MAIN_BOLD="bold"
 PANEL_FONT_MAIN="$(echo $PANEL_FONT_MAIN | sed 's/-.*//')"
-PANEL_HEIGHT="$(( (PANEL_HEIGHT-10) / 2 ))"
+PANEL_FONT_MAIN_SIZE="$(echo $PANEL_FONT_MAIN | sed 's/.*-//')"
+PANEL_HEIGHT="$(( ($PANEL_HEIGHT-10) / 2 ))"
 eval mustache `margs qutebrowser .config/qutebrowser/qutebrowser.conf`
 
 # dunst
+[ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
 killall dunst
 eval mustache `margs dunstrc .config/dunst/dunstrc`
 dunst &

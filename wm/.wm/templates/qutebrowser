@@ -221,7 +221,7 @@ webpage.bg = white
 [fonts]
 _monospace = "{{PANEL_FONT_MAIN}}", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Liberation Mono", "Courier New", Courier, monospace, Fixed, Consolas, Terminal
 completion = 9pt ${_monospace}
-tabbar = {{PANEL_FONT_MAIN_BOLD}} 10pt ${_monospace}
+tabbar = {{PANEL_FONT_MAIN_BOLD}} {{PANEL_FONT_MAIN_SIZE}}pt ${_monospace}
 statusbar = 9pt ${_monospace}
 downloads = 9pt ${_monospace}
 hints = bold 13px Monospace

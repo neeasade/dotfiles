@@ -15,7 +15,7 @@ outWidth=$(( ($borderWidth/2) + ($borderWidth%2) ))
 _chwb2() {
     colorType=$1
     shift
-    eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null
+    eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null &
 }
 
 # define border colors based on bspwm border settings
