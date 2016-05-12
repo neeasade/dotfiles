@@ -80,7 +80,7 @@ rocker-gestures = false
 mouse-zoom-divider = 512
 
 [tabs]
-background-tabs = false
+background-tabs = true
 select-on-remove = right
 new-tab-position = right
 new-tab-position-explicit = last
