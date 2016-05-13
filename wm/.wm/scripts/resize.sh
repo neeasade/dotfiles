@@ -3,6 +3,9 @@
 # (percent of current monitor resolution to move)
 percent=3
 
+# if we're focused on a group of nodes, select a window within.
+bspc query -N -n focused.window || bspc node -f biggest.descendant_of.window
+
 # get rectangle property of current floating or tiling node (x,y,width,height)
 dim()
 {

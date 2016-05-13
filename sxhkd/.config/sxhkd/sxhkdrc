@@ -10,19 +10,21 @@ super + f
     bspc query -N -n "focused.fullscreen" && target=\~; \
     bspc node -t $\{target\}fullscreen
 
+# if the current node is automatic, send it to the last manual, otherwise pull the last leaf
+super + y
+    bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local
 
 super + t
     bspc desktop -l next
 
-super + m
-    bspc node -s biggest
-
+# move current node
 super + shift + {h,j,k,l}
     bspc config pointer_follows_focus true; \
-    cur_win=$(bspc query -N -n); \
-    cur_mon=$(bspc query -M -m); \
+    node=$(bspc query -N -n); \
+    mon=$(bspc query -M -m); \
     dir={west,south,north,east}; \
     if ! bspc node -f $dir.local; then \
         bspc node -m $dir; \
@@ -30,14 +32,15 @@ super + shift + {h,j,k,l}
     else \
         bspc config focus_follows_pointer false; \
         new_mon=$(bspc query -M -m); \
-        [ "$new_mon" = "$cur_mon" ] && \
-            bspc node -s $cur_win   || \
-            bspc node $cur_win -m $new_mon; \
-        bspc node -f $cur_win; \
+        [ "$new_mon" = "$mon" ] && \
+            bspc node -s $node   || \
+            bspc node $node -m $new_mon; \
     fi; \
+    bspc node -f $node; \
     bspc config focus_follows_pointer true; \
     bspc config pointer_follows_focus false
 
+# focus handling
 super + {h,j,k,l}
     bspc config pointer_follows_monitor true; \
     bspc config pointer_follows_focus true; \
@@ -50,33 +53,27 @@ super + {h,j,k,l}
     bspc config pointer_follows_monitor false; \
     bspc config pointer_follows_focus false
 
+# resize functions
+super + alt + {h,j,k,l}
+    resize.sh {left,bottom,top,right};
+
 super + ctrl + {h,j,k,l}
     bspc node -p {west,south,north,east}
 
 super + ctrl + {_,shift + }space
     bspc node @{_,/} -p cancel
 
-# resize functions
-super + alt + {h,j,k,l}
-    resize.sh {left,bottom,top,right};
-
-super + ctrl + {1-9}
-    bspc node -r 0.{1-9}
-
 # desktop by index on this monitor
 super + {1-9}
-    D={1-9}; \
-    bspc desktop -f "$(bspc query -D -m | sed -n "$D p")";
+    bspc desktop -f "$(bspc query -D -m | sed -n '{1-9} p')";
 
-# Send node to desktop on current monitor index
+# send node to desktop on current monitor index
 super + shift + {1-9}
-    D={1-9}; \
-    bspc node -d "$(bspc query -D -m | sed -n "$D p")"
+    bspc node -d "$(bspc query -D -m | sed -n '{1-9} p')"
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
-    insert={true,false}; \
-    $insert && bspc node -i || \
+    {true, false} && bspc node -i || \
     for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k ; done;
 
 # balance, retrigger focus even after.
@@ -84,6 +81,10 @@ super + equal
     bspc query -N -n focused.window && target=@/; \
     bspc node $target -B; \
     bspc node -f
+
+# hide current node, or restore a queried hidden node
+super + {_,shift} + minus
+    bspc node { ,$(bspc query -N -d -n .hidden | head -n 1)} -g hidden
 
 # focus the node for the given path jump
 super + {p,b,comma,period}

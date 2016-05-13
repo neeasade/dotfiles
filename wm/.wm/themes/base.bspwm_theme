@@ -12,7 +12,7 @@
 
 b_border_width=3 # bspwm settings. Naming convention is b_<config_option>
 b_window_gap=10
-b_split_ratio=0.52
+b_split_ratio=0.5
 b_normal_border_color="#$color0"
 b_active_border_color="#$color8"
 b_focused_border_color="#$foreground"
