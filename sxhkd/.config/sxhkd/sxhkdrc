@@ -20,40 +20,12 @@ alt + {_,shift} + Tab
 super + t
     bspc desktop -l next
 
-# move current node
 super + shift + {h,j,k,l}
-    bspc config pointer_follows_focus true; \
-    node=$(bspc query -N -n); \
-    mon=$(bspc query -M -m); \
-    dir={west,south,north,east}; \
-    if ! bspc node -f $dir.local; then \
-        bspc node -m $dir; \
-        bspc monitor -f $dir; \
-    else \
-        bspc config focus_follows_pointer false; \
-        new_mon=$(bspc query -M -m); \
-        [ "$new_mon" = "$mon" ] && \
-            bspc node -s $node   || \
-            bspc node $node -m $new_mon; \
-    fi; \
-    bspc node -f $node; \
-    bspc config focus_follows_pointer true; \
-    bspc config pointer_follows_focus false
+    move.sh {west,south,north,east}
 
-# focus handling
 super + {h,j,k,l}
-    bspc config pointer_follows_monitor true; \
-    bspc config pointer_follows_focus true; \
-    dir={west,south,north,east}; \
-    if ! bspc node -f $dir.local; then \
-        bspc config focus_follows_pointer false; \
-        bspc monitor -f $dir; \
-        bspc config focus_follows_pointer true; \
-    fi; \
-    bspc config pointer_follows_monitor false; \
-    bspc config pointer_follows_focus false
+    focus.sh {west,south,north,east}
 
-# resize functions
 super + alt + {h,j,k,l}
     resize.sh {left,bottom,top,right};
 
@@ -73,7 +45,7 @@ super + shift + {1-9}
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
-    {true, false} && bspc node -i || \
+    {true,false} && bspc node -i || \
     for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k ; done;
 
 # balance, retrigger focus even after.
