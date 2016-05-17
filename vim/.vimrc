@@ -37,6 +37,8 @@ call plug#begin('~/' . s:configdir . '/Plug')
     Plug 'junegunn/goyo.vim'                    " Distraction-free writing in vim.
     Plug 'junegunn/limelight.vim'               " A nice focus color plugin. using with goyo.
 
+    Plug 'christoomey/vim-tmux-navigator'       " Sync tmux and vim keybinds.
+
     " colors n shit
     Plug 'chriskempson/base16-vim'
     Plug 'jnurmine/zenburn'
