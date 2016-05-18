@@ -38,5 +38,5 @@ export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswi
 export SXHKD_SHELL=dash
 
 # start bspwm and sxhkd
-sxhkd -f 100 -c $HOME/.config/sxhkd/sxhkdrc &
+sxhkd -c $HOME/.config/sxhkd/sxhkdrc &
 exec bspwm -c $HOME/.wm/bspwmrc > .xinit.log 2>&1

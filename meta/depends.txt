@@ -25,7 +25,7 @@ qutebrowser-git
 siji-git
 xst-git
 stow
-sxhkd
+sxhkd-git
 terminus-font
 ttf-droid
 ttf-font-awesome
