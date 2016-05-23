@@ -7,7 +7,7 @@ mon=$(bspc query -M -m)
 
 # are we floating? move a percentage of the monitor resolution.
 if bspc query -N -n $node.floating; then
-    percent=5
+    percent=8
     case $dir in
         west)  targetProp=width; sign=-;;
         east)  targetProp=width;;

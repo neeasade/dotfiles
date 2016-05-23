@@ -2,7 +2,7 @@
 # depends on: jq, bc, bspc
 # resize windows or groups of windows in bspwm.
 # (percent of current monitor resolution to resize)
-percent=3
+percent=7
 
 # get rectangle property of origin node, floating or tiling (x,y,width,height)
 originalNode=$(bspc query -N -n)
@@ -20,7 +20,7 @@ case $1 in
 esac
 
 # if we're focused on a group of nodes, select a window within, leaning towards our desired direction.
-bspc query -N -n focused.\!window && targetNode=$(bspc query -T -n | jq "[recurse(.[]?) | objects | select(has(\"id\") and .client!=null)] | ${op}_by(.rectangle.$queryDir) | .id")
+bspc query -N -n focused.\!window && targetNode=$(bspc query -T -n | jq "[recurse(.[]?) | objects | select(has(\"id\") and .client!=null)] | ${op}_by(.rectangle.$queryDir).id")
 targetNode=${targetNode:-focused}
 
 # set move args

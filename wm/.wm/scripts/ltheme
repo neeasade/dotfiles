@@ -6,8 +6,7 @@
 set -a
 
 # mustache args
-margs()
-{
+margs() {
     echo -n "< \"$HOME/.wm/templates/$1\" > \"$HOME/$2\""
 }
 

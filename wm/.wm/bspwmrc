@@ -22,7 +22,7 @@ bspc config presel_feedback_color "$b_presel_feedback_color" &
 bspc config focus_follows_pointer true &
 
 # external rules
-bspc config external_rules_command `which external_rules.sh`
+bspc config external_rules_command `which external_rules.sh` &
 
 # to gap or not to gap
 bspc config window_gap $b_window_gap &
