@@ -32,6 +32,7 @@ ttf-droid
 ttf-font-awesome
 ttf-font-linux
 txtw-git
+wmutils-git
 xdotool
 xtitle-git
 xorg-xsetroot
