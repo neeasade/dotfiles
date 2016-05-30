@@ -19,6 +19,7 @@ mpc
 mpd
 mpdcron-git
 ncmpcpp
+oomox-git
 pcmanfm
 python2-notify2
 qutebrowser-git
@@ -33,4 +34,5 @@ ttf-font-linux
 txtw-git
 xdotool
 xtitle-git
+xorg-xsetroot
 zsh

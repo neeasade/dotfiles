@@ -7,8 +7,7 @@ super + s
     bspc node -t $state
 
 super + f
-    bspc query -N -n "focused.fullscreen" && target=\~; \
-    bspc node -t $\{target\}fullscreen
+    bspc node -t ~fullscreen
 
 # if the current node is automatic, send it to the last manual, otherwise pull the last leaf
 super + y
@@ -37,22 +36,20 @@ super + ctrl + {_,shift + }space
 
 # desktop by index on this monitor
 super + {1-9}
-    bspc desktop -f "$(bspc query -D -m | sed -n '{1-9} p')";
+    bspc desktop -f focused:^{1-9}
 
 # send node to desktop on current monitor index
 super + shift + {1-9}
-    bspc node -d "$(bspc query -D -m | sed -n '{1-9} p')"
+    bspc node -d focused:^{1-9}
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
     {true,false} && bspc node -i || \
-    for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k ; done;
+    for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k ; done
 
-# balance, retrigger focus even after.
+# balance
 super + equal
-    bspc query -N -n focused.window && target=@/; \
-    bspc node $target -B; \
-    bspc node -f
+    bspc node $(bspc query -N -n -n .!leaf || echo @/) -B
 
 # hide current node, or restore a queried hidden node
 super + {_,shift} + minus
@@ -73,11 +70,9 @@ super + shift + q
     for win in $(bspc query -N); do bspc node $win -c ; done; \
     bspc quit
 
-# rotate desktops, or groups of nodes, retrigger focus event after.
+# rotate
 super + {_,shift} + semicolon
-    bspc query -N -n focused.window && target=@/; \
-    bspc node $target -R {90,270}; \
-    bspc node -f
+    bspc node $(bspc query -N -n -n .!leaf || echo @/) -R {90,270}
 
 # toggle panel or gaps.
 super + {_,shift} + slash
@@ -90,14 +85,8 @@ super + {_,shift} + slash
 #super + p
 #    ~/.wm/scripts/i3blur.sh
 
-super + o
-    $BROWSER
-
-super + e
-    $FILEBROWSER
-
-super + Return
-    $TERMINAL
+super + {o,e,Return}
+    ${BROWSER,FILEBROWSER,TERMINAL}
 
 # launch a program, with a var set for GTK3 programs to launch with the right theme.
 super + space
