@@ -3,8 +3,7 @@ super + {_,shift} + w
     bspc node -{c,k}
 
 super + s
-    bspc query -N -n focused.tiled && state=floating || state=tiled; \
-    bspc node -t $state
+    bspc node -t $(bspc query -N -n -n .tiled >/dev/null && echo floating || echo tiled)
 
 super + f
     bspc node -t ~fullscreen
@@ -44,8 +43,7 @@ super + shift + {1-9}
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
-    {true,false} && bspc node -i || \
-    for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k ; done
+    {bspc node -i,for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k; done}
 
 # balance
 super + equal
@@ -53,7 +51,7 @@ super + equal
 
 # hide current node, or restore a queried hidden node
 super + {_,shift} + minus
-    bspc node { ,$(bspc query -N -d -n .hidden | head -n 1)} -g hidden
+    bspc node {,$(bspc query -N -d -n .hidden | head -n 1)} -g hidden
 
 # focus the node for the given path jump
 super + {p,b,comma,period}
