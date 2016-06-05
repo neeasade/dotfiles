@@ -86,9 +86,12 @@ super + {_,shift} + slash
 super + {o,e,Return}
     ${BROWSER,FILEBROWSER,TERMINAL}
 
-# launch a program, with a var set for GTK3 programs to launch with the right theme.
+# launch a program, ensure GTK3 theme, ensure current desktop spawn
+# todo: evaluate better handling of split_dir here
 super + space
     export GTK_THEME="`cat $HOME/.themes/ACTIVE_THEME 2>/dev/null`"; \
+    bspc rule -a \* -o node=@`bspc query -D -d`:.focused split_dir=south follow=off; \
+    bspc rule -l > /tmp/bspcrules; \
     eval dmenu_run $(dmenu_options)
 
 # A nice wrapper script for password store.

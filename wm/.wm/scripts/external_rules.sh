@@ -6,6 +6,14 @@
 # if there are any presel's on current desktop, spawn there.
 # else, spawn a prefered split in current node based on node size.
 
+# if any one shot rule exists, defer to potentially that.
+# have to check a file/set outside of this script because bspc calls here make external rule take priority
+if cat /tmp/bspcrules | grep -q ' ->'; then
+    # todo: check class.
+    rm -rf /tmp/bspcrules
+    exit 0
+fi
+
 # preferred split directions:
 horiPref=east
 vertPref=south
