@@ -7,7 +7,7 @@ set -a
 
 # get settings
 . ~/.bspwm_theme
-kill -s 15 $(cat /tmp/panel-pid) 2>/dev/null || LAUNCH_PANEL=false
+kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null || LAUNCH_PANEL=false
 $BSPWM_GAPS || b_window_gap=-$b_border_width
 
 bspc config border_width $b_border_width &
@@ -33,7 +33,7 @@ for side in right bottom left; do
 done
 bspc config borderless_monocle `$BSPWM_GAPS && echo false || echo true` &
 
-$LAUNCH_PANEL && ~/.wm/panel/panel &
+$LAUNCH_PANEL && ~/.wm/panel/lemonade &
 
 # declare desktops per monitor
 for monitor in $(bspc query -M); do

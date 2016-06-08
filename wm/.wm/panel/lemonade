@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # a wrapper to launch lemonade on every monitor, as determined by bspwm
 
 set -a
@@ -27,6 +27,9 @@ for mon in $(bspc query -M); do
 	tools/lemonade "$conf" "$geom" &
 done
 
-trap "bspc config top_padding 0; trap - TERM; kill 0" INT ERR TERM QUIT
+trap "bspc config top_padding 0; trap - TERM; kill -s TERM 0;" INT ERR TERM QUIT
+
+# where are we?
+echo $$ > /tmp/panel-pid
 
 wait

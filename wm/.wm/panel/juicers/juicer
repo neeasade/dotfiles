@@ -1,7 +1,7 @@
 [bar]
 background = "#FFFFFFFF"
 foreground = "#FF000000"
-format = "desktop|title|clock"
+format = "desktop|title|mail clock"
 fonts = "Droid Sans Mono-8"
         "FontAwesome-10"
 
@@ -10,6 +10,10 @@ offset = 0
 
 [desktop]
 reload = "bspc subscribe"
+
+[mail]
+reload = 4
+mouse-left = "xdg-open 'https://gmail.com/'"
 
 [title]
 reload = "xtitle -s"
