@@ -1,0 +1,11 @@
+#!/usr/bin/env dash
+
+icon $iconfont sound
+
+# todo: make this one value
+amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p'
+
+# todo: click command will be pavu control
+# echo ${AC}$command${AB}$display${AE}
+
+

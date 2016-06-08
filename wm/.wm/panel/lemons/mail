@@ -1,0 +1,6 @@
+#!/usr/bin/env dash
+
+icon $iconfont mail
+
+# todo
+echo 0

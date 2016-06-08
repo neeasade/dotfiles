@@ -1,0 +1,90 @@
+#!/usr/bin/env dash
+
+desktop=$(bspc query -T -m $mon | jq -r .name)
+. $HOME/.bspwm_theme
+
+AC='%{A:'           # start click area
+AB=':}'             # end click area cmd
+AE='%{A}'           # end click area
+
+
+# Shell commands for clickable areas
+goto='bspc desktop -f'       # go to this desktop
+cycle='bspc desktop -l next' # cycle tiled/monocle
+winfocus='bspc node -f '   # focus on a window
+
+# define clickable menu thing:
+if echo $PANEL_FONT_ICON | grep -q "Siji"; then
+    dropdown="%{T2}`env printf "\ue0a1"`%{T-}"
+else
+    dropdown="%{T3}`env printf "\uf100"`%{T-}"
+fi
+
+# padding gross loop.
+padding=
+for i in $(seq $pPadding); do
+   padding="$padding "
+done
+
+
+
+blockContent="$dropdown"
+dropdown="$(pPadding=1 && eval "$block")"
+dropdown="${AC}dzen.sh menu${AB}$dropdown${AE}"
+
+echo "$DO" | grep -q '%{-o}' && overline=true || overline=false
+
+while read line; do
+	line=$(echo $line | grep -Eo "[Mm]$desktop[^mM]*")
+
+	IFS=':'
+	set -- ${line#?}
+	while [ $# -gt 0 ] ; do
+		item=$1
+		name=${item#?}
+		curFree=false
+		command=$goto
+		blockActive=false
+		case $item in
+			O*) dColor="$pActive" && dDisplay="$DO" && blockActive=true;; #active occupied desktop
+			F*) dColor="$pActive" && dDisplay="$DF" && blockActive=true;; #active free desktop
+			U*) dColor="$pUrgent" && dDisplay="$DO";; #active urgent desktop
+			o*) dColor="$pRest" && dDisplay="$DO";; #inactive occupied desktop
+			f*) dColor="$pRest" && dDisplay="$DF";; #inactive free desktop
+			u*) dColor="$pUrgent" && dDisplay="$DO";; #inactive urgent desktop
+			L*) if [ ! -z "$NoModeToggle" ]; then
+					dDisplay=
+				else
+					dColor="$pRest" && command="$cycle" && name=
+					dDisplay="$( [ "$item" = "LT" ] && echo $DT || echo $DM)"
+				fi;; # mode toggle
+			*) dDisplay= ;; # Monitor
+		esac
+
+		if [ ! -z "$dDisplay" ]; then
+			[ "$desktopDisplay" = name ] && ! echo "$item" | grep -q "^L" && dDisplay="$desktop"
+			if $showFreeDesktops || ! echo "$item" | grep -q "^f"; then
+				if [ "$desktopDisplayType" = separate ]; then
+					blockContent="${AC}${command} ${name}${AB}$padding${dDisplay}$padding${AE}"
+					NoPadding=0
+					wm_infos="$wm_infos$(eval "$block" )"
+					NoPadding=
+				else
+				   wm_infos="$wm_infos%{F$dColor}${AC}${command} ${name}${AB} ${dDisplay} ${AE}"
+				fi
+			fi
+		fi
+
+		shift
+	done
+
+	# WHY DOES THIS LINE AFFECT THE SPACING ON THE LEFT WHEN SEPARATED
+	if [ "$desktopDisplayType" = "together" ]; then
+		NoPadding=$((pPadding - 1))
+		blockContent="$wm_infos"
+		wm_infos="$(eval "$block")"
+		NoPadding=
+	fi
+
+	echo "$wm_infos"
+done

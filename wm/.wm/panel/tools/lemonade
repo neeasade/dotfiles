@@ -1,0 +1,276 @@
+#!/usr/bin/env bash
+#  Author: Mirko van der Waal, Nathan Isom
+#  Mail: <mvdw at airmail dot cc>
+#  Mail: <nathanisom27 at gmail.com dot cc>
+#  Distributed under terms of the MIT license.
+#
+#  The MIT License (MIT)
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in all
+#  copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
+
+# notes on differences with captain
+# takes 2 args, $conf and $geom
+
+geometry=$2
+
+# Obviously we set -e to quit at any error.
+set -e
+
+# auto-export variables
+set -a
+
+# Change the current directory to the lemonade directory always.
+cd $(dirname $0)
+
+lemonadedir=$HOME/.wm/panel
+ident=$1$RANDOM
+
+mkdir -p $lemonadedir $lemonadedir/logs $lemonadedir/lemons
+exec 3<> $lemonadedir/logs/$ident.log
+
+# Create the scripts directory.
+treasure=$lemonadedir/lemons
+manuscript=$lemonadedir/juicers/$1
+
+# The only bit of python in the code, we parse .dosini file with it.
+source <(python3 -c "
+import sys, re
+from configparser import ConfigParser
+
+def variable(*fmt):
+    return '{}_{}={}'.format(*fmt)
+
+def array(*fmt):
+    return '{}_{}=({})'.format(*fmt)
+
+parser = ConfigParser()
+parser.read(sys.argv[1])
+
+for section in parser:
+    for key in parser[section]:
+        # Split on spaces and newlines to determine when to create arrays.
+        current = re.sub('[\n ]', '$', parser[section][key]).split('$')
+        # Replace dashes with underscores for a better user experience.
+        key = key.replace('-', '_')
+        if len(current) == 1:
+            print(variable(section, key, current[0]))
+        else:
+            print(array(section, key, ' '.join(current)))
+" $manuscript 2>&3) 2>&3
+
+# "It is easier to port a shell than a shell script."
+#   -- Larry Wall
+
+process=/tmp/lemonade-process-$ident
+unique=/tmp/lemonade-stack-$ident
+
+# Always clean up when you are done.
+trap "rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
+
+# Retrieve a value from the stack, the stack is a collection of all scripts with
+# unique sets of characters that are used for event handles.
+stack() {
+    {
+    IFS=":" read -a char < <(grep -e "$1" < <(cat $unique))
+    sed -i "/$1:/d" $unique
+    echo "${char[0]}:${char[1]:1:$((${#char[1]} + 1))}" >> $unique
+    echo ${char[1]:0:1}
+    } 2>&3
+}
+
+# Catch the strings send to stdout and execute the matching command.
+handle() {
+    {
+    while read -r line; do
+        local cmd=${handle[$line]}
+        if [[ ! -z $cmd ]]; then
+            echo "$cmd &"
+        fi
+    done
+    } 2>&3
+}
+
+# Dynamically format all the available options and display them accordingly.
+format() {
+    {
+    position=$(sed 's/://g;s/|/%{c}/;s/|/%{r}/' <<< $bar_format)
+    for script in $treasure/*; do
+        position=$(sed "s/$(basename $script)/\$__$(basename $script)/g" <<< $position)
+        switch="$switch $(basename $script)) __$(basename $script)=\${line#*@} ;;"
+    done
+    while read -r line; do
+        eval "case ${line%%@*} in
+            $switch
+        esac"
+        eval "echo \"$position\""
+    done
+    } 2>&3
+}
+
+# The defaults for the [bar] section. Most of the values are simplified and
+# require some extra attention to be formatted correctly.
+{
+    declare -A bar=(
+        [foreground]="#FFFFFFFF"
+        [background]="#FF000000"
+        [format]="||"
+        [offset]=0
+        [fonts]="monospace-9"
+        [force]=true
+        [dock]="top")
+    for section in "${!bar[@]}"; do
+        if [[ $(eval "echo \${#bar_${section}}") -eq 0 ]]; then
+            echo "No value for 'bar-$section' -> using ${bar[${section}]}"
+            eval "bar_${section}=${bar[${section}]}"
+        fi
+    done
+    for section in $treasure/*; do
+        printf "%s" "$(basename $section):" {A..E} $'\n' >> $unique
+    done
+} 2>&3
+
+# Whenever a value is not defined, set the default value for it.
+{
+    declare -A choices=(
+        [foreground]="${bar_foreground}"
+        [background]="${bar_background}"
+        [overline]=false
+        [reload]=5)
+    for file in $treasure/*; do
+        name=$(basename $file)
+        for section in "${!choices[@]}"; do
+            if [[ $(eval "echo \${#${name}_${section}}") -eq 0 ]]; then
+                echo "No value for '${name}-$section' -> using ${choices[${section}]}"
+                eval "${name}_${section}=${choices[${section}]}"
+            fi
+        done
+    done
+} 2>&3
+
+# Define what lines to draw (under & over), and what color they should be..
+{
+    declare -A line
+    for file in $treasure/*; do
+        name=$(basename $file)
+        if [[ $(eval "echo \${#${name}_line}") -eq 0 ]]; then
+            echo "No value for '${name}-line' -> using ${choices[foreground]}"
+            eval "${name}_line=${choices[foreground]}"
+        fi
+        line["${name}"]="%{"
+        for section in underline overline; do
+            if [[ $(eval "echo \${${name}_${section}}") = true ]]; then
+                line["${name}"]+="+${section:0:1}"
+            else
+                echo "No value for '${name}-${section}' -> using false"
+            fi
+        done
+        line["${name}"]+="U$(eval "echo \${${name}_line}")}"
+    done
+} 2>&2
+
+# Create event handles and add them in the area.
+{
+    declare -A area handle events=(
+        [mouse_middle]=2
+        [scroll_down]=5
+        [mouse_right]=3
+        [mouse_left]=1
+        [scroll_up]=4)
+    for file in $treasure/*; do
+        name=$(basename $file)
+        for event in ${!events[@]}; do
+            if [[ ! -z $(eval "echo \${${name}_${event}}") ]]; then
+                uid="$(stack ${name})${name}"
+                handle["${uid}"]="$(eval "echo \${${name}_${event}}")"
+                area["${name}_p"]+="%{A${events[$event]}:${uid}:}"
+                area["${name}_s"]+="%{A}"
+            else
+                echo "No events specified for '${name}-${event/_/-}' -> using none."
+            fi
+        done
+    done
+} 2>&3
+
+# Parse our previously collected elements to a full string.
+{
+    if [[ -e $process ]]; then
+        rm $process
+    fi && mkfifo "$process"
+    for file in $treasure/*; do
+        name=$(basename $file)
+        if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
+            if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
+                # note: was $output line below:
+                # "$(tr '\n' ' ' < <(eval "$file \"$output\""))" \
+                 while read -r output; do
+                    printf "%s" \
+                        "${name}@" \
+                        "$(eval "echo \${area[${name}_p]"})" \
+                        "$(eval "echo \${line[${name}]"})" \
+                        "%{F$(eval "echo \${${name}_foreground}")}" \
+                        "%{B$(eval "echo \${${name}_background"})}" \
+                        "$(tr -d '\n' < <(echo "$output" | $file))" \
+                        "%{F-}%{B-}" \
+                        "$(eval "echo \${area[${name}_s]"})" \
+                        "%{-o}%{-uU-}" \
+                        $'\n' > "$process" &
+                done < <($(eval "echo \${${name}_reload"})) &
+            else
+                while :; do
+                    printf "%s" \
+                        "${name}@" \
+                        "$(eval "echo \${area[${name}_p]"})" \
+                        "$(eval "echo \${line[${name}]"})" \
+                        "%{F$(eval "echo \${${name}_foreground}")}" \
+                        "%{B$(eval "echo \${${name}_background"})}" \
+                        "$(tr -d '\n' < <(eval "$file"))" \
+                        "%{F-}%{B-}" \
+                        "$(eval "echo \${area[${name}_s]"})" \
+                        "%{-o}%{-uU-}" \
+                        $'\n'
+                    sleep $(eval "echo \${${name}_reload"})
+                done > "$process" &
+            fi
+        fi
+    done
+} 2>&3
+
+# Information block.
+echo "
+==== ==== ==== ==== ====`echo -e -n '\033[1;33m'`
+ ,.        ,.        ,.
+(:;)      (:;)      (:;)
+ \`'        \`'        \`'`echo -e -n '\e[0m'`
+$(date) - $(echo $USER)
+
+We found $(wc -l < <(ls $treasure)) lemons, we juiced roughly $(
+wc -w < <(uniq < <(sed 's/[|:]/\n/g' <<< $bar_format))) of them.
+
+You can limit the output visible by filtering it with 'grep'.
+If you want the corrections to be saved, pipe them to the log.
+==== ==== ==== ==== ===="
+
+# Start lemonade
+cat "$process" | format | lemonbar \
+    $(echo "-o $bar_offset") \
+    $(printf " -f %s" "${bar_fonts[@]}") \
+    $(echo "-${bar_dock//[^b]/}") \
+    $([[ $bar_force = true ]] && echo "-d") \
+    -g $geometry -F "$bar_foreground" -B "$bar_background" | handle | sh
+wait

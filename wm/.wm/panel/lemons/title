@@ -10,8 +10,8 @@
 # if active window is in monocle mode, list all the windows in active workspace with windowIDs associated.
 # if always_tab is set, always list all windows in the active workspace.
 
-# The one argument will be the monitor that this is for.
-CUR_MON=$1;
+# The one argument will be the monitor index that this is for.
+CUR_MON=$mon
 
 ###OPTIONS###
 # Always tabbed visible windows option:
@@ -19,7 +19,7 @@ CUR_MON=$1;
 # Maxium window title length
 [ -z $maxWinNameLen  ] && maxWinNameLen=25;
 # The delimiter to separate window sections
-[ -z $win_delim  ] && win_delim="\\";
+[ -z $win_delim  ] && win_delim="|";
 # The delimiter to separate the window name from the window in a window section.
 [ -z $win_id_delim ] && win_id_delim="//";
 
@@ -72,7 +72,8 @@ winName() {
 win_source="$(bspc query -N -n)"
 echo "T$(update)"
 
-bspc subscribe node_focus node_unmanage | while read line; do
+# todo: take input from: sed -n '{1-9} p'
+while read line; do
    if echo "$line" | grep -q "$(bspc query -D -d "$CUR_MON:focused")"; then
       if echo "$line" | grep -q unmanage; then
          echo "T "

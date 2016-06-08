@@ -1,0 +1,23 @@
+[bar]
+background = "#FFFFFFFF"
+foreground = "#FF000000"
+format = "desktop|title|clock"
+fonts = "Droid Sans Mono-8"
+        "FontAwesome-10"
+
+force = true
+offset = 0
+
+[desktop]
+reload = "bspc subscribe"
+
+[title]
+reload = "xtitle -s"
+
+[clock]
+background = "#FF000000"
+foreground = "#FFFFFFFF"
+overline = true
+reload = 5
+
+# vim:syntax=dosini
