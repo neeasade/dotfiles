@@ -25,7 +25,6 @@ for mon in $(bspc query -M); do
 	conf=`ls juicers | sed -n "$i p"`
 	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
 	geom="$(( $(dim $mon width)-(PANEL_GAP*2) ))x$PANEL_HEIGHT+$(( $(dim $mon x)+PANEL_GAP ))+$PANEL_GAP"
-	export mon
 	tools/lemonade "$conf" "$geom" &
 done
 

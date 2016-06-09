@@ -1,12 +1,10 @@
 #!/usr/bin/env dash
 
-desktop=$(bspc query -T -m $mon | jq -r .name)
-. $HOME/.bspwm_theme
+focusMonitor=$(bspc query -T -m $mon | jq -r .name)
 
 AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
 AE='%{A}'           # end click area
-
 
 # Shell commands for clickable areas
 goto='bspc desktop -f'       # go to this desktop
@@ -20,12 +18,26 @@ else
     dropdown="%{T3}`env printf "\uf100"`%{T-}"
 fi
 
+dropdown="Arch"
+
 # padding gross loop.
 padding=
 for i in $(seq $pPadding); do
    padding="$padding "
 done
 
+block='[ ! -z $NoPadding ] && pPadding=$NoPadding
+
+        padding=""
+        for i in $(seq $pPadding); do
+            padding="$padding "
+        done
+
+        if [ "$blockActive" = true ] ; then
+            echo -n "%{B$pBGActiveTab}%{F$pFGActiveTab}${padding}$blockContent${padding}%{B$pBG} ";
+        else
+            echo -n "%{B$pBGInactiveTab}%{F$pFGInactiveTab}${padding}$blockContent${padding}%{B$pBG} ";
+        fi '
 
 
 blockContent="$dropdown"
@@ -35,14 +47,13 @@ dropdown="${AC}dzen.sh menu${AB}$dropdown${AE}"
 echo "$DO" | grep -q '%{-o}' && overline=true || overline=false
 
 while read line; do
-	line=$(echo $line | grep -Eo "[Mm]$desktop[^mM]*")
+	line=$(echo $line | grep -Eo "[Mm]${focusMonitor}[^mM]*")
 
 	IFS=':'
 	set -- ${line#?}
 	while [ $# -gt 0 ] ; do
 		item=$1
 		name=${item#?}
-		curFree=false
 		command=$goto
 		blockActive=false
 		case $item in
@@ -53,16 +64,16 @@ while read line; do
 			f*) dColor="$pRest" && dDisplay="$DF";; #inactive free desktop
 			u*) dColor="$pUrgent" && dDisplay="$DO";; #inactive urgent desktop
 			L*) if [ ! -z "$NoModeToggle" ]; then
-					dDisplay=
-				else
-					dColor="$pRest" && command="$cycle" && name=
-					dDisplay="$( [ "$item" = "LT" ] && echo $DT || echo $DM)"
-				fi;; # mode toggle
-			*) dDisplay= ;; # Monitor
+			   dDisplay=
+			else
+			   dColor="$pRest" && command="$cycle" && name=
+			   dDisplay="$( [ "$item" = "LT" ] && echo $DT || echo $DM)"
+			fi;; # mode toggle
+			*) dDisplay= ;; # Monitor<Paste>
 		esac
 
 		if [ ! -z "$dDisplay" ]; then
-			[ "$desktopDisplay" = name ] && ! echo "$item" | grep -q "^L" && dDisplay="$desktop"
+			[ "$desktopDisplay" = name ] && ! echo "$item" | grep -q "^L" && dDisplay="$name"
 			if $showFreeDesktops || ! echo "$item" | grep -q "^f"; then
 				if [ "$desktopDisplayType" = separate ]; then
 					blockContent="${AC}${command} ${name}${AB}$padding${dDisplay}$padding${AE}"
