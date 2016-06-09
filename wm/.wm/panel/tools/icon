@@ -28,12 +28,15 @@ case $1 in
        exit 1;;
 esac
 
-iconfont=${iconfont:-$2}
+# ick
+# todo: handle/define this at a theme level somehow.
+[ ! -z "$2" ] && iconfont="$2" || iconfont="$(echo $PANEL_FONT_ICON | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic')"
+
 case $iconfont in
     awesome) index=1;;
     siji)    index=2;;
     ionic)   echo "not implemented.";;
-    *) echo "icon font not found."
+    *) echo "icon font not found: $iconfont"
        exit 1;;
 esac
 

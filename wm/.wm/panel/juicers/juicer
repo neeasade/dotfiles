@@ -12,7 +12,7 @@ offset = 0
 reload = "bspc subscribe"
 
 [mail]
-reload = 4
+reload = 10
 mouse-left = "xdg-open 'https://gmail.com/'"
 
 [title]

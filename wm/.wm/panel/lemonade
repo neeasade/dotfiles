@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # a wrapper to launch lemonade on every monitor, as determined by bspwm
+# note: this has to be bash or it won't die correctly..
+# todo: understand ^
 
 set -a
-height=30
-gap=10
-iconfont=awesome
+
+. $HOME/.bspwm_theme
+[ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
 
 # relevance
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
@@ -15,14 +17,14 @@ dim() {
 	bspc query -T -m $1 | jq .rectangle.$2
 }
 
-bspc config top_padding $(( height+gap ))
+bspc config top_padding $(( PANEL_HEIGHT+PANEL_GAP ))
 
 i=0
 for mon in $(bspc query -M); do
 	i=$(($i+1))
 	conf=`ls juicers | sed -n "$i p"`
 	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
-	geom="$(( $(dim $mon width)-(gap*2) ))x$height+$(( $(dim $mon x)+gap ))+$gap"
+	geom="$(( $(dim $mon width)-(PANEL_GAP*2) ))x$PANEL_HEIGHT+$(( $(dim $mon x)+PANEL_GAP ))+$PANEL_GAP"
 	export mon
 	tools/lemonade "$conf" "$geom" &
 done
