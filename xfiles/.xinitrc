@@ -37,6 +37,9 @@ export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswi
 # set shell that sxhkd uses to execute commands:
 export SXHKD_SHELL=dash
 
+# note a start time to use for initial launch trigger.
+export xstart=`date +%s`
+
 # start bspwm and sxhkd
 sxhkd -c $HOME/.config/sxhkd/sxhkdrc &
 exec bspwm -c $HOME/.wm/bspwmrc > .xinit.log 2>&1

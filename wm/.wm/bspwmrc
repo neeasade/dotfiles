@@ -45,10 +45,8 @@ pgrep -f 2bspwm >/dev/null 2>&1 && pkill -f 2bspwm
 # If our border width is not at least 5px 2 borders looks eh. If not doing that, let's pulse.
 [ $b_border_width -gt 4 ] && (2bspwm &) || (pulse.sh &) &
 
-# use a reference file to determine if this is initial run (by checking if the file is older than last boot)
-# and if so, run a startup file.
-timestamp="$HOME/.wm/timestamp"
-uptimeInSeconds=$((`sed 's/.* //;s/\..*//' < /proc/uptime` / 60))
-timestampInSeconds=$((`date +%s` - `date -r "$timestamp" +%s 2>/dev/null || echo 0`))
-[ ! -f "$timestamp" ] || [ $((uptimeInSeconds - timestampInSeconds)) -lt 0 ] && "$HOME/.wm/startup.sh" &
-touch "$timestamp"
+# check if just starting
+if [ $(( `date +%s` - xstart )) -lt 2 ]; then
+    $HOME/.wm/startup.sh &
+    $HOME/.wm/panel/lemonade &
+fi
