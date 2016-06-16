@@ -1,0 +1,22 @@
+[bar]
+background = "#{{`colort -t 0 "$pBG"`}}"
+foreground = "#{{`colort -t 0 "$pFG"`}}"
+format = "{{barInfo}}"
+fonts = "{{PANEL_FONT_MAIN}}"
+        "{{PANEL_FONT_ICON}}"
+        "font-linux-10"
+
+force = true
+
+[desktop]
+reload = "bspc subscribe"
+
+[mail]
+reload = 30
+mouse-left = "xdg-open 'https://gmail.com/'"
+
+[title]
+reload = "xtitle -s"
+
+[clock]
+reload = 5

@@ -63,7 +63,7 @@ DUNST_BORDER="`bspc config normal_border_color`" # Font used by dunst on startup
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
 # it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"
-barInfo="volume mpd themeSwitch clock" # Default options/items to include in info section of panel.
+barInfo="desktop|title|clock" # Default options/items to include in info section of panel.
 
 # Customize options on different computers by hostname.
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.

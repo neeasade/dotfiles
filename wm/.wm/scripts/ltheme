@@ -29,6 +29,8 @@ tmux source-file $HOME/.tmux.conf > /dev/null &
 eval $BG_COMMAND &
 
 # Keep the current gap setting and reload bspwm
+[ ! -d $HOME/.wm/panel/juicers ] && mkdir $HOME/.wm/panel/juicers
+eval mustache `margs juicer .wm/panel/juicers/juicer`
 [ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false
 $HOME/.wm/bspwmrc &
 

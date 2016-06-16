@@ -43,7 +43,7 @@ done
 pgrep -f pulse.sh >/dev/null 2>&1 && pkill -f pulse.sh
 pgrep -f 2bspwm >/dev/null 2>&1 && pkill -f 2bspwm
 # If our border width is not at least 5px 2 borders looks eh. If not doing that, let's pulse.
-[ $b_border_width -gt 4 ] && (2bspwm &) || (pulse.sh &) &
+[ $b_border_width -gt 4 ] && (nohup 2bspwm &) || (nohup pulse.sh &) &
 
 # check if just starting
 if [ $(( `date +%s` - xstart )) -lt 2 ]; then

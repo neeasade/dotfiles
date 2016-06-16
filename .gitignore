@@ -1,7 +1,7 @@
 nohup.out
 .xinit.log
 
-wm/.wm/timestamp
+wm/.wm/panel/juicers/
 
 mpd/.config/mpd/pid
 mpd/.config/mpd/log

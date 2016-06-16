@@ -6,7 +6,7 @@
 set -a
 
 . $HOME/.bspwm_theme
-[ "$BSPWM_GAPS" = false ] && PANEL_GAP=0
+"$BSPWM_GAPS" || PANEL_GAP=0
 
 # relevance
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
