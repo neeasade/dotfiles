@@ -69,10 +69,9 @@ winName() {
     echo -n "$2$padding$winName$padding$win_id_delim$1$win_delim";
 }
 
-win_source="$(bspc query -N -n)"
+win_source="$(bspc query -N -m $CUR_MON -n .focused)"
 echo "T$(update)"
 
-# todo: take input from: sed -n '{1-9} p'
 while read line; do
    if echo "$line" | grep -q "$(bspc query -D -d "$CUR_MON:focused")"; then
       if echo "$line" | grep -q unmanage; then

@@ -1,6 +1,6 @@
 [bar]
-background = "#{{`colort -t 0 "$pBG"`}}"
-foreground = "#{{`colort -t 0 "$pFG"`}}"
+background = "{{`colort 0 "$pBG"`}}"
+foreground = "{{`colort 0 "$pFG"`}}"
 format = "{{barInfo}}"
 fonts = "{{PANEL_FONT_MAIN}}"
         "{{PANEL_FONT_ICON}}"
@@ -19,4 +19,5 @@ mouse-left = "xdg-open 'https://gmail.com/'"
 reload = "xtitle -s"
 
 [clock]
+mouse-left = "dzen.sh cal"
 reload = 5

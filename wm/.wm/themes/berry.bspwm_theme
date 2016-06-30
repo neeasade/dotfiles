@@ -1,0 +1,29 @@
+#!/usr/bin/env dash
+# berry theme
+
+set -a
+
+# theme
+THEME_NAME=pretty
+VIM_COLORS=chameleon
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/berry.jpg"
+. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
+
+# bspwm
+b_border_width=4
+b_window_gap=16
+
+# panel
+PANEL_HEIGHT=24
+PANEL_GAP=0
+PANEL_UNDERLINE="5 -n noshadow"
+PANEL_FONT_MAIN="Droid Sans-10:style=Bold"
+DUNST_FONT="Droid Sans 10"
+pPadding=2
+
+# colors
+pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"
+pBG="#00`echo "$pBG" | cut -c4-`"
+
+# other
+GTK_FONT="Droid Sans 10"

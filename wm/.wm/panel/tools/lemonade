@@ -45,7 +45,7 @@ mkdir -p $lemonadedir $lemonadedir/logs $lemonadedir/lemons
 exec 3<> $lemonadedir/logs/$ident.log
 
 # Create the scripts directory.
-treasure=$lemonadedir/lemons
+lemons=$lemonadedir/lemons
 manuscript=$lemonadedir/juicers/$1
 
 # The only bit of python in the code, we parse .dosini file with it.
@@ -83,6 +83,12 @@ unique=/tmp/lemonade-stack-$ident
 # Always clean up when you are done.
 trap "rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
 
+# note enabled lemons.
+juicedLemons=""
+for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
+    juicedLemons="$juicedLemons $lemon"
+done
+
 # Retrieve a value from the stack, the stack is a collection of all scripts with
 # unique sets of characters that are used for event handles.
 stack() {
@@ -110,7 +116,7 @@ handle() {
 format() {
     {
     position=$(sed 's/://g;s/|/%{c}/;s/|/%{r}/' <<< $bar_format)
-    for script in $treasure/*; do
+    for script in $juicedLemons; do
         position=$(sed "s/$(basename $script)/\$__$(basename $script)/g" <<< $position)
         switch="$switch $(basename $script)) __$(basename $script)=\${line#*@} ;;"
     done
@@ -140,7 +146,7 @@ format() {
             eval "bar_${section}=${bar[${section}]}"
         fi
     done
-    for section in $treasure/*; do
+    for section in $juicedLemons; do
         printf "%s" "$(basename $section):" {A..E} $'\n' >> $unique
     done
 } 2>&3
@@ -152,7 +158,7 @@ format() {
         [background]="${bar_background}"
         [overline]=false
         [reload]=5)
-    for file in $treasure/*; do
+    for file in $juicedLemons; do
         name=$(basename $file)
         for section in "${!choices[@]}"; do
             if [[ $(eval "echo \${#${name}_${section}}") -eq 0 ]]; then
@@ -166,7 +172,7 @@ format() {
 # Define what lines to draw (under & over), and what color they should be..
 {
     declare -A line
-    for file in $treasure/*; do
+    for file in $juicedLemons; do
         name=$(basename $file)
         if [[ $(eval "echo \${#${name}_line}") -eq 0 ]]; then
             echo "No value for '${name}-line' -> using ${choices[foreground]}"
@@ -192,7 +198,7 @@ format() {
         [mouse_right]=3
         [mouse_left]=1
         [scroll_up]=4)
-    for file in $treasure/*; do
+    for file in $juicedLemons; do
         name=$(basename $file)
         for event in ${!events[@]}; do
             if [[ ! -z $(eval "echo \${${name}_${event}}") ]]; then
@@ -212,7 +218,7 @@ format() {
     if [[ -e $process ]]; then
         rm $process
     fi && mkfifo "$process"
-    for file in $treasure/*; do
+    for file in $juicedLemons; do
         name=$(basename $file)
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
@@ -225,7 +231,7 @@ format() {
                         "$(eval "echo \${line[${name}]"})" \
                         "%{F$(eval "echo \${${name}_foreground}")}" \
                         "%{B$(eval "echo \${${name}_background"})}" \
-                        "$(tr -d '\n' < <(echo "$output" | $file))" \
+                        "$(tr -d '\n' < <(echo "$output" | $lemons/$file))" \
                         "%{F-}%{B-}" \
                         "$(eval "echo \${area[${name}_s]"})" \
                         "%{-o}%{-uU-}" \
@@ -239,7 +245,7 @@ format() {
                         "$(eval "echo \${line[${name}]"})" \
                         "%{F$(eval "echo \${${name}_foreground}")}" \
                         "%{B$(eval "echo \${${name}_background"})}" \
-                        "$(tr -d '\n' < <(eval "$file"))" \
+                        "$(tr -d '\n' < <(eval "$lemons/$file"))" \
                         "%{F-}%{B-}" \
                         "$(eval "echo \${area[${name}_s]"})" \
                         "%{-o}%{-uU-}" \
@@ -257,13 +263,6 @@ echo "
  ,.        ,.        ,.
 (:;)      (:;)      (:;)
  \`'        \`'        \`'`echo -e -n '\e[0m'`
-$(date) - $(echo $USER)
-
-We found $(wc -l < <(ls $treasure)) lemons, we juiced roughly $(
-wc -w < <(uniq < <(sed 's/[|:]/\n/g' <<< $bar_format))) of them.
-
-You can limit the output visible by filtering it with 'grep'.
-If you want the corrections to be saved, pipe them to the log.
 ==== ==== ==== ==== ===="
 
 # Start lemonade

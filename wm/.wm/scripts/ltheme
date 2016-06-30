@@ -52,7 +52,7 @@ eval mustache `margs gtkrc .gtkrc-2.0`
 if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
     target="$(mktemp)"
     mustache < $HOME/.wm/templates/oomox > $target
-    # oomox-cli "$target" "$THEME_NAME"
+    oomox-cli -o "$THEME_NAME" "$target"
 fi
 
 # icon color(ACYL)
