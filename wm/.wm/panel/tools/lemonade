@@ -111,10 +111,7 @@ stack() {
 handle() {
     {
     while read -r line; do
-        local cmd=${handle[$line]}
-        if [[ ! -z $cmd ]]; then
-            echo "$cmd &"
-        fi
+        echo "${handle[$line]} &" &
     done
     } 2>&3
 }
@@ -149,7 +146,7 @@ format() {
         fi
     done
     for section in $juicedLemons; do
-        printf "%s" "$(basename $section):" {A..E} $'\n' >> $unique
+        printf "%s" "${section}:" {A..E} $'\n' >> $unique
     done
 } 2>&3
 
@@ -160,8 +157,7 @@ format() {
         [background]="${bar_background}"
         [overline]=false
         [reload]=5)
-    for file in $juicedLemons; do
-        name=$(basename $file)
+    for name in $juicedLemons; do
         for section in "${!choices[@]}"; do
             if [[ $(eval "echo \${#${name}_${section}}") -eq 0 ]]; then
                 echo "No value for '${name}-$section' -> using ${choices[${section}]}"
@@ -174,8 +170,7 @@ format() {
 # Define what lines to draw (under & over), and what color they should be..
 {
     declare -A line
-    for file in $juicedLemons; do
-        name=$(basename $file)
+    for name in $juicedLemons; do
         if [[ $(eval "echo \${#${name}_line}") -eq 0 ]]; then
             echo "No value for '${name}-line' -> using ${choices[foreground]}"
             eval "${name}_line=${choices[foreground]}"
@@ -200,8 +195,7 @@ format() {
         [mouse_right]=3
         [mouse_left]=1
         [scroll_up]=4)
-    for file in $juicedLemons; do
-        name=$(basename $file)
+    for name in $juicedLemons; do
         for event in ${!events[@]}; do
             if [[ ! -z $(eval "echo \${${name}_${event}}") ]]; then
                 uid="$(stack ${name})${name}"
@@ -220,8 +214,7 @@ format() {
     if [[ -e $process ]]; then
         rm $process
     fi && mkfifo "$process"
-    for file in $juicedLemons; do
-        name=$(basename $file)
+    for name in $juicedLemons; do
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
                 # note: was $output line below:
