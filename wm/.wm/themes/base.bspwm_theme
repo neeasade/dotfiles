@@ -69,9 +69,9 @@ barInfo="desktop|title|clock" # Default options/items to include in info section
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.
 HOSTNAME=`cat /etc/hostname`
 if [ "$HOSTNAME" = "littleapple" ]; then
-    barInfo2="yaourtUpdates"
-    barInfo1="themeSwitch volume clock"
-    barInfo3="mpd clock"
+    barInfo1="desktop|title|yaourtUpdates"
+    barInfo2="desktop|title|themeSwitch:volume:clock"
+    barInfo3="desktop|title|mpd:clock"
 fi
 
-[ "$HOSTNAME" = "home2" ] && barInfo="battery network volume clock"
+[ "$HOSTNAME" = "home2" ] && barInfo="desktop:title||battery:network:volume:clock"
