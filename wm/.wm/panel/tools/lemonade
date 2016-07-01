@@ -89,6 +89,13 @@ for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
     juicedLemons="$juicedLemons $lemon"
 done
 
+# build the panel switch
+position=$(sed 's/://g;s/|/%{c}/;s/|/%{r}/' <<< $bar_format)
+for script in $juicedLemons; do
+    position=$(sed "s/${script}/\$__${script}/g" <<< $position)
+    switch="$switch ${script}) __${script}=\${line#*@} ;;"
+done
+
 # Retrieve a value from the stack, the stack is a collection of all scripts with
 # unique sets of characters that are used for event handles.
 stack() {
@@ -115,16 +122,11 @@ handle() {
 # Dynamically format all the available options and display them accordingly.
 format() {
     {
-    position=$(sed 's/://g;s/|/%{c}/;s/|/%{r}/' <<< $bar_format)
-    for script in $juicedLemons; do
-        position=$(sed "s/$(basename $script)/\$__$(basename $script)/g" <<< $position)
-        switch="$switch $(basename $script)) __$(basename $script)=\${line#*@} ;;"
-    done
     while read -r line; do
         eval "case ${line%%@*} in
             $switch
-        esac"
-        eval "echo \"$position\""
+        esac ; echo \"$position\""
+        # todo: test forking this eval^
     done
     } 2>&3
 }
