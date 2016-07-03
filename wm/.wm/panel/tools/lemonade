@@ -84,13 +84,13 @@ unique=/tmp/lemonade-stack-$ident
 trap "rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
 
 # note enabled lemons.
-juicedLemons=""
 for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
     juicedLemons="$juicedLemons $lemon"
 done
 
 # build the panel switch
 position=$(sed 's/://g;s/|/%{c}/;s/|/%{r}/' <<< $bar_format)
+switch=""
 for script in $juicedLemons; do
     position=$(sed "s/${script}/\$__${script}/g" <<< $position)
     switch="$switch ${script}) __${script}=\${line#*@} ;;"
@@ -226,7 +226,7 @@ format() {
                         "$(eval "echo \${line[${name}]"})" \
                         "%{F$(eval "echo \${${name}_foreground}")}" \
                         "%{B$(eval "echo \${${name}_background"})}" \
-                        "$(tr -d '\n' < <(echo "$output" | $lemons/$file))" \
+                        "$(tr -d '\n' < <(echo "$output" | $lemons/$name))" \
                         "%{F-}%{B-}" \
                         "$(eval "echo \${area[${name}_s]"})" \
                         "%{-o}%{-uU-}" \
@@ -240,7 +240,7 @@ format() {
                         "$(eval "echo \${line[${name}]"})" \
                         "%{F$(eval "echo \${${name}_foreground}")}" \
                         "%{B$(eval "echo \${${name}_background"})}" \
-                        "$(tr -d '\n' < <(eval "$lemons/$file"))" \
+                        "$(tr -d '\n' < <(eval "$lemons/$name"))" \
                         "%{F-}%{B-}" \
                         "$(eval "echo \${area[${name}_s]"})" \
                         "%{-o}%{-uU-}" \
