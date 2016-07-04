@@ -88,9 +88,18 @@ for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
     juicedLemons="$juicedLemons $lemon"
 done
 
+# transform format with delimiters and alignment
+i=0
+for section in $(echo $bar_format | tr '|' '\n'); do
+	case $i in
+		0) position="$(echo "$section" | sed "s/:/${bar_left_delimiter}/g")${bar_left_append}" ;;
+		1) position="${position}%{c}${bar_center_append_left}$(echo "$section" | sed "s/:/${bar_center_delimiter}/g")${bar_center_append_right}" ;;
+		2) position="${position}%{r}${bar_right_append}$(echo "$section" | sed "s/:/${bar_right_delimiter}/g")" ;;
+	esac
+	i=$((i+1))
+done
+
 # build the panel switch
-# todo here: integrate delimiter and append vars.
-position=$(sed 's/://g;s/|/%{c}/;s/|/%{r}/' <<< $bar_format)
 switch=""
 for script in $juicedLemons; do
     position=$(sed "s/${script}/\$__${script}/g" <<< $position)
@@ -124,7 +133,6 @@ format() {
         eval "case ${line%%@*} in
             $switch
         esac ; echo \"$position\""
-        # todo: test forking this eval^
     done
     } 2>&3
 }
@@ -265,6 +273,7 @@ echo "
 cat "$process" | format | lemonbar \
     $(echo "-o $bar_offset") \
     $(printf " -f %s" "${bar_fonts[@]}") \
+	-a 40 \
     $(echo "-${bar_dock//[^b]/}") \
     $([[ $bar_force = true ]] && echo "-d") \
     -g $geometry -F "$bar_foreground" -B "$bar_background" | handle | sh

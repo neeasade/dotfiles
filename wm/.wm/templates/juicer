@@ -8,14 +8,14 @@ fonts = "{{PANEL_FONT_MAIN}}"
 
 force = true
 
-left-delimiter=>
-right-delimiter=<
-center-delimiter=|
+left-delimiter=">"
+right-delimiter="<"
+center-delimiter="|"
 
-left-append=\
-right-append=/
-center-append-left=<
-center-append-right=>
+left-append="\\"
+right-append="/"
+center-append-left="<"
+center-append-right=">"
 
 [desktop]
 reload = "bspc subscribe"
