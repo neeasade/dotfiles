@@ -2,7 +2,7 @@
 [[ $- != *i* ]] && return
 
 . $HOME/.profile
-PS1='$(prompt) '
+PS1='$(prompt)'
 
 
 [ -f ~/.fzf.bash ] && . ~/.fzf.bash || true

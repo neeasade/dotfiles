@@ -16,7 +16,7 @@ alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
 alias sysinfo='archey3 && dfc -p /dev && colors'
 alias ls='ls --color=auto'
 # alias vim='vim --servername `date +%s`'
-alias vim='nvim'
+alias vim='emacs'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 alias grep="grep --color=auto"
 alias pacman="pacman --color=always"
@@ -64,12 +64,10 @@ function extract()      # Handy Extract Program
 prompt ()
 {
     _ERR=$?
-    _JOB=$(jobs | wc -l)
-
-    [ $_ERR -ne 0 ] && echo -e -n '\e[7m' # invert
-    [ $_JOB -ne 0 ] && echo -n "$"
-    echo -n "$"
-    echo -e -n '\e[0m' # reset
+    _prompt=">"
+    [ $(jobs | wc -l) -ne 0 ] && _prompt="$_promp$_prompt"
+    [ $_ERR -ne 0 ] && _prompt="\e[7m$_prompt\e[0m" # invert
+    echo -e -n "$_prompt "
 }
 # }}}
 

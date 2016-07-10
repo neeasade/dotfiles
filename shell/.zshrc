@@ -19,6 +19,6 @@ zplug "djui/alias-tips"                                              # alias rem
 zplug load
 
 setopt PROMPT_SUBST
-PS1='$(prompt) '
+PS1='$(prompt)'
 
 [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh || true
