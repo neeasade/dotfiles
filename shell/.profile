@@ -16,7 +16,7 @@ alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
 alias sysinfo='archey3 && dfc -p /dev && colors'
 alias ls='ls --color=auto'
 # alias vim='vim --servername `date +%s`'
-alias vim='emacs'
+alias vim='emacs -nw'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 alias grep="grep --color=auto"
 alias pacman="pacman --color=always"
