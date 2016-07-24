@@ -29,7 +29,7 @@ dunst &
 
 # java fixes:
 wmname LG3D &
-export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'  export _JAVA_AWT_WM_NONREPARENTING=1
+alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'  export _JAVA_AWT_WM_NONREPARENTING=1
 
 # check if existing socket exists and killl for bspwm(doesn't play nice with logging out and in)
 # rm /tmp/$(ls /tmp | grep bspwm)

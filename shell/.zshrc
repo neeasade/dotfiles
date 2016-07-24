@@ -4,7 +4,7 @@
 . $HOME/.profile
 
 # get the thing
-[ ! -d ~/.zplug ] && curl -sL get.zplug.sh | zsh
+[ ! -d ~/.zplug ] && curl -sL zplug.sh/installer | zsh
 . ~/.zplug/init.zsh
 
 # config the thing
@@ -20,5 +20,8 @@ zplug load
 
 setopt PROMPT_SUBST
 PS1='$(prompt)'
+
+# allow emacs like bindings to work
+bindkey -e
 
 [ -f ~/.fzf.zsh ] && . ~/.fzf.zsh || true

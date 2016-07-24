@@ -78,7 +78,7 @@ export HISTCONTROL=ignoredups:erasedups
 # Yes.
 export HISTFILESIZE=6000
 export HISTSIZE=6000
-export HISTFILE="$HOME/.history"
+export HISTFILE="$HOME/.$(basename $SHELL)_history"
 # }}}
 
 # autostartx if running on the first tty:
