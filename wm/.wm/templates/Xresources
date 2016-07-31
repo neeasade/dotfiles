@@ -2,13 +2,12 @@ st.shell:       /bin/zsh
 st.font:        {{font}}
 st.borderpx:    {{borderpx}}
 
-! TODO:
-dmenu.font:
-dmenu.foreground:
-dmenu.background:
-dmenu.selforeground:
-dmenu.selbackground:
-dmenu.undercolor:
+! dmenu2 can read from Xresources.
+dmenu.font: #{{`colort -t 0 $PANEL_FONT_MAIN`}}
+dmenu.foreground: #{{`colort -t 0 $pFG`}}
+dmenu.background: #{{`colort -t 0 $pBG`}}
+dmenu.selforeground: #{{`colort -t 0 $pFGActiveTab`}}
+dmenu.selbackground: #{{`colort -t 0 $pBGActiveTab`}}
 
 *.background:   #{{background}}
 *.foreground:   #{{foreground}}

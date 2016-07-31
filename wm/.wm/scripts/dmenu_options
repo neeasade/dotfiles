@@ -1,18 +1,13 @@
-#!/bin/bash
-# print dmenu2 options matching current panel, to be used with any dmenu script.
-
+#!/usr/bin/env dash
+# print dmenu dimentions for current monitor, and set prompt.
+# colors are set by Xresources.
 
 # get gap values
 . ~/.bspwm_theme
 
-[[ $(bspc config window_gap) -le 0 ]] && PANEL_GAP=0
+[ $(bspc config window_gap) -le 0 ] && PANEL_GAP=0
 
-#first line is current monitor width, then subtract panel gap x2 in second line.
 PANEL_WIDTH=$(bspc query -T -m | jq -r '.rectangle.width')
-PANEL_WIDTH=$( expr $PANEL_WIDTH - $(expr $PANEL_GAP + $PANEL_GAP))
-PANEL_BG="#$(echo $pBG | cut -c4-)"
-pFG="#$(echo $pFG | cut -c4-)"
-pBGActiveTab="#$(echo $pBGActiveTab | cut -c4-)"
+PANEL_WIDTH=$(( PANEL_WIDTH - (PANEL_GAP + PANEL_GAP) ))
 
-dmenu_options="-y $PANEL_GAP -x $PANEL_GAP -h $PANEL_HEIGHT -w $PANEL_WIDTH -i -q -p \"\$\" -sf \"$pFG\" -nf \"$(colort -4 "$pFG")\" -nb \"$PANEL_BG\" -sb \"$PANEL_BG\" -fn \"$PANEL_FONT_MAIN\""
-echo $dmenu_options
+echo "-y $PANEL_GAP -x $PANEL_GAP -h $PANEL_HEIGHT -w $PANEL_WIDTH -i -q -p \"${PROMPT_CHAR}\""

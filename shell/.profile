@@ -26,8 +26,7 @@ alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e
 # }}}
 
 # {{{ func
-function setgitremote()
-{
+setgitremote() {
     # I found myself doing this too often.
     # todo: this better
     local remoteUrl="$(git remote -v | grep -oP "http[^ ]+" | head -1)"
@@ -39,8 +38,7 @@ function setgitremote()
     git remote set-url origin $newRemote
 }
 
-function extract()      # Handy Extract Program
-{
+extract() {      # Handy Extract Program
     if [ -f $1 ] ; then
         case $1 in
             *.tar.bz2)   tar xvjf $1     ;;
@@ -72,14 +70,22 @@ prompt ()
 # }}}
 
 # {{{ shell
-# Avoid duplicates
-export HISTCONTROL=ignoredups:erasedups
+cur_shell=$(ps | grep $$ |  sed 's/^.* //')
+historyLength=6000
 
-# Yes.
-export HISTFILESIZE=6000
-export HISTSIZE=6000
-export HISTFILE="$HOME/.$(basename $SHELL)_history"
+HISTFILE="$HOME/.${cur_shell}_history"
+case $cur_shell in
+    bash)
+        HISTSIZE=200
+        HISTFILESIZE=$historyLength
+        HISTCONTROL=ignoredups:erasedups
+        ;;
+    zsh)
+        setopt hist_ignore_dups
+        SAVEHIST=$historyLength
+        ;;
+esac
 # }}}
 
 # autostartx if running on the first tty:
-if [[ -z $DISPLAY && $XDG_VTNR -eq 1 && -z $TMUX ]]; then exec startx; fi
+[[ -z $DISPLAY && $XDG_VTNR -eq 1 && -z $TMUX ]] && exec startx

@@ -93,10 +93,6 @@
 
 (global-whitespace-cleanup-mode)
 
-;; hide tool bar.
-(with-eval-after-load 'tool-bar
-  (tool-bar-mode -1))
-
 ;; always visible cursor:
 (when (fboundp #'blink-cursor-mode)
   (blink-cursor-mode -1))

@@ -10,7 +10,8 @@
 
 [ -z "$BSPWM_GAPS"  ] && BSPWM_GAPS=true
 
-b_border_width=3 # bspwm settings. Naming convention is b_<config_option>
+# bspwm settings. Naming convention is b_<config_option>
+b_border_width=3
 b_window_gap=10
 b_split_ratio=0.5
 b_normal_border_color="#$color0"
@@ -54,11 +55,13 @@ DF='[ ]' # free desktop
 DT='T'   # tiling mode
 DM='M'   # monocle mode
 
-# GTK options
 GTK_FONT="Droid Sans 10"                # GTK font to be used.
 
 DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
 DUNST_BORDER="`bspc config normal_border_color`" # Font used by dunst on startup
+
+# promptchar to be set for st and dmenu
+PROMPT_CHAR='>'
 
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
