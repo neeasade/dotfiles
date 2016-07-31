@@ -32,3 +32,5 @@ GTK_ICON_COLOR="$pFG"
 # other
 DUNST_FONT="Terminus 8"
 GTK_FONT="tewi 8"
+st_font="Tewi-8:pixelsize=12:antialias=true:autohint=true;"
+st_borderpx=4

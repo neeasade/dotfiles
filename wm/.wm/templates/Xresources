@@ -1,6 +1,7 @@
-st.shell:       /bin/zsh
-st.font:        {{font}}
-st.borderpx:    {{borderpx}}
+st.font: {{st_font}}
+st.borderpx: {{st_borderpx}}
+st.cursorshape: {{st_cursorshape}}
+st.cursorthickness: {{st_cursorthickness}}
 
 ! dmenu2 can read from Xresources.
 dmenu.font: #{{`colort -t 0 $PANEL_FONT_MAIN`}}
@@ -9,27 +10,6 @@ dmenu.background: #{{`colort -t 0 $pBG`}}
 dmenu.selforeground: #{{`colort -t 0 $pFGActiveTab`}}
 dmenu.selbackground: #{{`colort -t 0 $pBGActiveTab`}}
 
-*.background:   #{{background}}
-*.foreground:   #{{foreground}}
-*.color0:       #{{color0}}
-*.color1:       #{{color1}}
-*.color2:       #{{color2}}
-*.color3:       #{{color3}}
-*.color4:       #{{color4}}
-*.color5:       #{{color5}}
-*.color6:       #{{color6}}
-*.color7:       #{{color7}}
-*.color8:       #{{color8}}
-*.color9:       #{{color9}}
-*.color10:      #{{color10}}
-*.color11:      #{{color11}}
-*.color12:      #{{color12}}
-*.color13:      #{{color13}}
-*.color14:      #{{color14}}
-*.color15:      #{{color15}}
-*.color16:      #{{color16}}
-*.color17:      #{{color17}}
-*.color18:      #{{color18}}
-*.color19:      #{{color19}}
-*.color20:      #{{color20}}
-*.color21:      #{{color21}}
+! colors (appended in ltheme script)
+*.background: #{{background}}
+*.foreground: #{{foreground}}

@@ -2,7 +2,8 @@
 
 # `mustache.sh`, Mustache in POSIX shell.
 
-set -e
+# commenting to use the `[ condition ] && action` style in scripts that source this.
+# set -e
 
 # File descriptor 3 is commandeered for debug output, which may end up being
 # forwarded to standard error.

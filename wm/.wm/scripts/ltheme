@@ -5,74 +5,100 @@
 
 set -a
 
-# mustache args
-margs() {
-    echo -n "< \"$HOME/.wm/templates/$1\" > \"$HOME/$2\""
-}
-
 unset block
 rm $HOME/.bspwm_theme
 ln -s $HOME/.wm/themes/${1}.bspwm_theme $HOME/.bspwm_theme
+
 . $HOME/.bspwm_theme
 . $HOME/.wm/templates/mustache.sh
 
-eval mustache `margs Xresources .Xresources`
-xrdb $HOME/.Xresources
+# mustache args
+margs() {
+    mustache < "$HOME/.wm/templates/$1" > "$HOME/$2"
+}
 
-# tell all xsts to reload their theme:
-killall -s USR1 st &
+load_xresources() {
+    margs Xresources .Xresources
 
-# tell tmux to reload it's theme
-tmux source-file $HOME/.tmux.conf > /dev/null &
+    # handle any color definitions through 255
+    for i in `seq 0 255`; do
+        eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources || true"
+    done
 
-# set the background (in the background, heh)
-eval $BG_COMMAND &
+    xrdb $HOME/.Xresources
+
+    # tell all xsts to reload their theme:
+    killall -s USR1 st
+}
 
 # Keep the current gap setting and reload bspwm
-[ ! -d $HOME/.wm/panel/juicers ] && mkdir $HOME/.wm/panel/juicers
-eval mustache `margs juicer .wm/panel/juicers/juicer`
-[ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false
-$HOME/.wm/bspwmrc &
+load_bspwm() {
+    [ ! -d $HOME/.wm/panel/juicers ] && mkdir $HOME/.wm/panel/juicers
+    margs juicer .wm/panel/juicers/juicer
+    [ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false
+    $HOME/.wm/bspwmrc
+}
 
 # vim reload
-VIMS=`vim --serverlist`
-for vim in $VIMS; do
-    vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
-done
+load_vim() {
+    VIMS=`vim --serverlist`
+    for vim in $VIMS; do
+        vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
+    done
+}
 
-# trim alpha from colors to be used in gtk and qutebrowser
+# GTK (make theme if it does not exist, then reload)
+load_gtk() {
+    margs gtkrc .gtkrc-2.0
+
+    if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
+        target="$(mktemp)"
+        mustache < $HOME/.wm/templates/oomox > $target
+        oomox-cli -o "$THEME_NAME" "$target"
+    fi
+
+    # icon color(ACYL)
+    $HOME/.icons/acyl/icon.sh "$pIcon"
+
+    # reload
+    gtkrc-reload &
+
+    # set a place to reference active theme for newly launched GTK3 programs.
+    echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME &
+}
+
+# qutebrowser
+load_qutebrowser() {
+    echo $PANEL_FONT_MAIN | grep -q Bold && PANEL_FONT_MAIN_BOLD="bold"
+    PANEL_FONT_MAIN="$(echo $PANEL_FONT_MAIN | sed 's/-.*//')"
+    PANEL_FONT_MAIN_SIZE="$(echo $PANEL_FONT_MAIN | sed 's/.*-//')"
+    PANEL_HEIGHT="$(( ($PANEL_HEIGHT-10) / 2 ))"
+    margs qutebrowser .config/qutebrowser/qutebrowser.conf
+}
+
+# dunst
+load_dunst() {
+    [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
+    killall dunst
+    margs dunstrc .config/dunst/dunstrc
+    dunst &
+}
+
+# do the thing
+load_xresources &
+load_bspwm &
+load_vim &
+
+# tmux
+tmux source-file $HOME/.tmux.conf > /dev/null 2>&1 &
+eval $BG_COMMAND &
+
+# trim alpha from colors
 pFG=$(colort -t 0 "$pFG")
 pBG=$(colort -t 0 "$pBG")
 pFGActiveTab=$(colort -t 0 "$pFGActiveTab")
 pBGActiveTab=$(colort -t 0 "$pBGActiveTab")
 
-# GTK (make theme if it does not exist, then reload)
-eval mustache `margs gtkrc .gtkrc-2.0`
-
-if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
-    target="$(mktemp)"
-    mustache < $HOME/.wm/templates/oomox > $target
-    oomox-cli -o "$THEME_NAME" "$target"
-fi
-
-# icon color(ACYL)
-$HOME/.icons/acyl/icon.sh "$pIcon"
-
-# reload
-gtkrc-reload &
-
-# set a place to reference active theme for newly launched GTK3 programs.
-echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME &
-
-# qutebrowser
-echo $PANEL_FONT_MAIN | grep -q Bold && PANEL_FONT_MAIN_BOLD="bold"
-PANEL_FONT_MAIN="$(echo $PANEL_FONT_MAIN | sed 's/-.*//')"
-PANEL_FONT_MAIN_SIZE="$(echo $PANEL_FONT_MAIN | sed 's/.*-//')"
-PANEL_HEIGHT="$(( ($PANEL_HEIGHT-10) / 2 ))"
-eval mustache `margs qutebrowser .config/qutebrowser/qutebrowser.conf`
-
-# dunst
-[ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
-killall dunst
-eval mustache `margs dunstrc .config/dunst/dunstrc`
-dunst &
+load_gtk &
+load_qutebrowser &
+load_dunst &

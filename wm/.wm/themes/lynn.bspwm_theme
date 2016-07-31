@@ -31,3 +31,4 @@ pActive="$pBGActiveTab"
 DUNST_FONT="Droid Sans 10"
 GTK_FONT="Droid Sans 10"
 GTK_ICON_COLOR="#413925"
+st_borderpx=20

@@ -55,6 +55,12 @@ DF='[ ]' # free desktop
 DT='T'   # tiling mode
 DM='M'   # monocle mode
 
+# xst
+st_font="Droid Sans Mono-8:pixelsize=11:antialias=true:autohint=true;"
+st_borderpx=10
+st_cursorshape=2
+st_cursorthickness=2
+
 GTK_FONT="Droid Sans 10"                # GTK font to be used.
 
 DUNST_FONT="Droid Sans 10" # Font used by dunst on startup

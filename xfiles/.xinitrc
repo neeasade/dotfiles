@@ -9,9 +9,11 @@ pcmanfm -d &
 # Xresources
 xrdb -load $HOME/.Xresources &
 
-# background
-. ~/.bspwm_theme
-$BG_COMMAND &
+# background (subshell so x session doesn't get initial theme values.)
+(
+	. ~/.bspwm_theme
+	$BG_COMMAND &
+)
 
 # compositing
 compton &
