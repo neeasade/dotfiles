@@ -2,9 +2,10 @@ st.font: {{st_font}}
 st.borderpx: {{st_borderpx}}
 st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
+st.prompt_char: {{PROMPT_CHAR}}
 
 ! dmenu2 can read from Xresources.
-dmenu.font: #{{`colort -t $PANEL_FONT_MAIN`}}
+dmenu.font: {{PANEL_FONT_MAIN}}
 dmenu.foreground: #{{`colort -t $pFG`}}
 dmenu.background: #{{`colort -t $pBG`}}
 dmenu.selforeground: #{{`colort -t $pFGActiveTab`}}

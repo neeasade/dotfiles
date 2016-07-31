@@ -67,7 +67,7 @@ DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
 DUNST_BORDER="`bspc config normal_border_color`" # Font used by dunst on startup
 
 # promptchar to be set for st and dmenu
-PROMPT_CHAR='>'
+PROMPT_CHAR='$'
 
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
