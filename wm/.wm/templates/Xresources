@@ -4,11 +4,11 @@ st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
 
 ! dmenu2 can read from Xresources.
-dmenu.font: #{{`colort -t 0 $PANEL_FONT_MAIN`}}
-dmenu.foreground: #{{`colort -t 0 $pFG`}}
-dmenu.background: #{{`colort -t 0 $pBG`}}
-dmenu.selforeground: #{{`colort -t 0 $pFGActiveTab`}}
-dmenu.selbackground: #{{`colort -t 0 $pBGActiveTab`}}
+dmenu.font: #{{`colort -t $PANEL_FONT_MAIN`}}
+dmenu.foreground: #{{`colort -t $pFG`}}
+dmenu.background: #{{`colort -t $pBG`}}
+dmenu.selforeground: #{{`colort -t $pFGActiveTab`}}
+dmenu.selbackground: #{{`colort -t $pBGActiveTab`}}
 
 ! colors (appended in ltheme script)
 *.background: #{{background}}

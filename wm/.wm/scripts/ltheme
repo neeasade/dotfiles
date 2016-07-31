@@ -94,10 +94,10 @@ tmux source-file $HOME/.tmux.conf > /dev/null 2>&1 &
 eval $BG_COMMAND &
 
 # trim alpha from colors
-pFG=$(colort -t 0 "$pFG")
-pBG=$(colort -t 0 "$pBG")
-pFGActiveTab=$(colort -t 0 "$pFGActiveTab")
-pBGActiveTab=$(colort -t 0 "$pBGActiveTab")
+pFG=$(colort -t "$pFG")
+pBG=$(colort -t "$pBG")
+pFGActiveTab=$(colort -t "$pFGActiveTab")
+pBGActiveTab=$(colort -t "$pBGActiveTab")
 
 load_gtk &
 load_qutebrowser &
