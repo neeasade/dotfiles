@@ -18,36 +18,23 @@ alt + {_,shift} + Tab
 super + t
     bspc desktop -l next
 
-super + shift + {h,j,k,l}
-    move.sh {west,south,north,east}
+super + {_,shift,alt,ctrl} + {h,j,k,l}
+    {focus,move,resize,presel}.sh {west,south,north,east}
 
-super + {h,j,k,l}
-    focus.sh {west,south,north,east}
-
-super + alt + {h,j,k,l}
-    resize.sh {left,bottom,top,right};
-
-super + ctrl + {h,j,k,l}
-    bspc node -p {west,south,north,east}
-
-super + ctrl + {_,shift + }space
-    bspc node @{_,/} -p cancel
-
-# desktop by index on this monitor
-super + {1-9}
-    bspc desktop -f focused:^{1-9}
+super + ctrl + space
+    bspc node -p cancel
 
 # send node to desktop on current monitor index
-super + shift + {1-9}
-    bspc node -d focused:^{1-9}
+super + {_,shift} + {1-9}
+    bspc {desktop -f,node -d} focused:^{1-9}
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
     {bspc node -i,for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k; done}
 
-# balance
-super + equal
-    bspc node $(bspc query -N -n -n .!leaf || echo @/) -B
+# rotate, balance
+super + {_,shift} + semicolon
+    bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
 
 # hide current node, or restore a queried hidden node
 super + {_,shift} + minus
@@ -57,10 +44,6 @@ super + {_,shift} + minus
 super + {p,b,comma,period}
     bspc node -f @{parent,brother,first,second}
 
-# path jumps by DIR (unsure/need better binding)
-super + ctrl + alt + {h,j,k,l}
-    bspc node -f @{west,south,north,east}
-
 # kill panel, nicely ask all windows to close, quit.
 # todo: ask nicely for real.
 super + shift + q
@@ -68,13 +51,9 @@ super + shift + q
     for win in $(bspc query -N); do bspc node $win -c ; done; \
     bspc quit
 
-# rotate
-super + {_,shift} + semicolon
-    bspc node $(bspc query -N -n -n .!leaf || echo @/) -R {90,270}
-
 # toggle panel or gaps.
 super + {_,shift} + slash
-    ~/.wm/scripts/{gapt,panelt}
+    ~/.wm/scripts/{gap,panel}t
 
 # }}}
 
@@ -86,12 +65,9 @@ super + {_,shift} + slash
 super + {o,e,Return}
     ${BROWSER,FILEBROWSER,TERMINAL}
 
-# launch a program, ensure GTK3 theme, ensure current desktop spawn
-# todo: evaluate better handling of split_dir here
+# launch a program, ensure GTK3 theme.
 super + space
     export GTK_THEME="`cat $HOME/.themes/ACTIVE_THEME 2>/dev/null`"; \
-    bspc rule -a \* -o node=@`bspc query -D -d`:.focused split_dir=south follow=off; \
-    bspc rule -l > /tmp/bspcrules; \
     eval dmenu_run $(dmenu_options)
 
 # A nice wrapper script for password store.
@@ -105,7 +81,7 @@ XF86AudioPlay
      mpc -q toggle
 
 XF86Audio{LowerVolume,RaiseVolume}
-    amixer -q sset Master 3%{-,+}
+    amixer -q set Master 3%{-,+}
 
 XF86AudioMute
     amixer -q set Master toggle
