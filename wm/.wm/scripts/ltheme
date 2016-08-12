@@ -3,14 +3,17 @@
 # This loads settings for: bspwm, xst, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
 # This makes heavy use of a posix implementation of mustache templates.
 
+targetTheme="$HOME/.wm/themes/${1}.bspwm_theme"
+[ -f "$targetTheme" ] || exit 1
+
 set -a
 
 unset block
 rm $HOME/.bspwm_theme
-ln -s $HOME/.wm/themes/${1}.bspwm_theme $HOME/.bspwm_theme
+ln -s "$targetTheme" "$HOME/.bspwm_theme"
 
-. $HOME/.bspwm_theme
-. $HOME/.wm/templates/mustache.sh
+. "$HOME/.bspwm_theme"
+. "$HOME/.wm/templates/mustache.sh"
 
 # mustache args
 margs() {
@@ -33,10 +36,10 @@ load_xresources() {
 
 # Keep the current gap setting and reload bspwm
 load_bspwm() {
-    [ ! -d $HOME/.wm/panel/juicers ] && mkdir $HOME/.wm/panel/juicers
+    [ ! -d "$HOME/.wm/panel/juicers" ] && mkdir $HOME/.wm/panel/juicers
     margs juicer .wm/panel/juicers/juicer
     [ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false
-    $HOME/.wm/bspwmrc
+    "$HOME/.wm/bspwmrc"
 }
 
 # vim reload
@@ -70,8 +73,8 @@ load_gtk() {
 # qutebrowser
 load_qutebrowser() {
     echo $PANEL_FONT_MAIN | grep -q Bold && PANEL_FONT_MAIN_BOLD="bold"
+    PANEL_FONT_MAIN_SIZE="$(echo $PANEL_FONT_MAIN | grep -Eo '[0-9]+')"
     PANEL_FONT_MAIN="$(echo $PANEL_FONT_MAIN | sed 's/-.*//')"
-    PANEL_FONT_MAIN_SIZE="$(echo $PANEL_FONT_MAIN | sed 's/.*-//')"
     PANEL_HEIGHT="$(( ($PANEL_HEIGHT-10) / 2 ))"
     margs qutebrowser .config/qutebrowser/qutebrowser.conf
 }

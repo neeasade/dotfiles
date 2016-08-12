@@ -63,7 +63,9 @@ extract() {      # Handy Extract Program
 # dirty, but AFAIK there is no way to detect if esc code yields nothing visible from
 # the shell (as it will see the escape code only either way).
 case $TERM in
-    st*)  _prompt=$'\033[z' ;;
+    st*)
+        [ -z "$TMUX" ] && _prompt=$'\e[z'
+        ;;
 esac
 
 prompt ()
@@ -72,7 +74,7 @@ prompt ()
     _prompt="${_prompt:->}"
     [ $(jobs | wc -l) -ne 0 ] && _prompt="$_prompt$_prompt"
     [ $_ERR -ne 0 ] && _prompt="\e[7m$_prompt\e[0m" # invert
-    echo -e -n "$_prompt "
+    echo -n -e "$_prompt "
 }
 # }}}
 

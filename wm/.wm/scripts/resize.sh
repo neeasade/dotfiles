@@ -2,7 +2,7 @@
 # depends on: jq, bc, bspc
 # resize windows or groups of windows in bspwm.
 # (percent of current monitor resolution to resize)
-percent=8
+percent=5
 dir=$1
 
 # get rectangle property of origin node, floating or tiling (x,y,width,height)
