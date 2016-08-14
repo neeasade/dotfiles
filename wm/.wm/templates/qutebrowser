@@ -26,7 +26,7 @@ url-incdec-segments = path,query
 [ui]
 zoom-levels = 25%,33%,50%,67%,75%,90%,100%,110%,125%,150%,175%,200%,250%,300%,400%,500%
 default-zoom = 100%
-downloads-position = top
+downloads-position = bottom
 message-timeout = 2000
 message-unfocused = false
 confirm-quit = never
@@ -36,7 +36,7 @@ frame-flattening = false
 user-stylesheet = ::-webkit-scrollbar { width: 0px; height: 0px; }
 css-media-type =
 smooth-scrolling = false
-remove-finished-downloads = -1
+remove-finished-downloads = 20000
 hide-statusbar = false
 statusbar-padding = 0,0,0,0
 window-title-format = {perc}{title}{title_sep}qutebrowser
@@ -102,8 +102,8 @@ padding = {{PANEL_HEIGHT}},{{PANEL_HEIGHT}},8,8
 indicator-padding = 0,0,0,0
 
 [storage]
-download-directory =
-prompt-download-directory = true
+download-directory = {{`echo $HOME/Downloads`}}
+prompt-download-directory = false
 remember-download-directory = true
 maximum-pages-in-cache =
 object-cache-capacities =
@@ -138,12 +138,12 @@ host-blocking-whitelist = piwik.org
 enable-pdfjs = true
 
 [hints]
-border = 1px solid #E3BE23
+border = 1px solid #{{pFG}}
 opacity = 0.7
 mode = letter
 chars = asdfghjkl
 min-chars = 1
-scatter = true
+scatter = false
 uppercase = false
 auto-follow = true
 next-regexes = \bnext\b,\bmore\b,\bnewer\b,\b[>→≫]\b,\b(>>|»)\b,\bcontinue\b
@@ -158,25 +158,30 @@ DEFAULT = https://google.com/search?q={}
 completion.fg = #{{pFG}}
 completion.bg = #{{pBG}}
 completion.alternate-bg = ${completion.bg}
-completion.category.fg = #A68E6A
-completion.category.bg = ${completion.bg}
+
+completion.category.fg = #{{pFGInactiveTab}}
+completion.category.bg = #{{pBGInactiveTab}}
 completion.category.border.top = ${completion.fg}
 completion.category.border.bottom = ${completion.category.border.top}
-completion.item.selected.fg = ${completion.bg}
-completion.item.selected.bg = ${completion.fg}
-completion.item.selected.border.top = ${completion.fg}
-completion.item.selected.border.bottom = ${completion.item.selected.border.top}
-completion.match.fg = ${completion.category.fg}
+
+completion.item.selected.fg = #{{pFGActiveTab}}
+completion.item.selected.bg = #{{pBGActiveTab}}
+completion.item.selected.border.top = #{{pBGActiveTab}}
+completion.item.selected.border.bottom = #{{pBGActiveTab}}
+
+completion.match.fg = #{{MatchFG}}
+
 completion.scrollbar.fg = ${completion.fg}
 completion.scrollbar.bg = ${completion.bg}
+
 statusbar.fg = ${completion.fg}
 statusbar.bg = ${completion.bg}
 statusbar.fg.error = ${statusbar.fg}
 statusbar.bg.error = red
 statusbar.fg.warning = ${statusbar.fg}
 statusbar.bg.warning = darkorange
-statusbar.fg.prompt = ${statusbar.fg}
-statusbar.bg.prompt = darkblue
+statusbar.fg.prompt = #{{pFGActiveTab}}
+statusbar.bg.prompt = #{{pBGActiveTab}}
 statusbar.fg.insert = ${completion.bg}
 statusbar.bg.insert = ${completion.fg}
 statusbar.fg.command = ${statusbar.fg}
@@ -186,12 +191,14 @@ statusbar.bg.caret = purple
 statusbar.fg.caret-selection = ${statusbar.fg}
 statusbar.bg.caret-selection = #a12dff
 statusbar.progress.bg = ${completion.category.fg}
-statusbar.url.fg = ${statusbar.fg}
+
+statusbar.url.fg = ${completion.category.fg}
 statusbar.url.fg.success = ${completion.category.fg}
 statusbar.url.fg.success.https = ${completion.category.fg}
 statusbar.url.fg.error = orange
 statusbar.url.fg.warn = yellow
 statusbar.url.fg.hover = aqua
+
 tabs.fg.odd = ${completion.fg}
 tabs.bg.odd = ${completion.bg}
 tabs.fg.even = ${completion.fg}
@@ -205,18 +212,21 @@ tabs.indicator.start = #0000aa
 tabs.indicator.stop = #00aa00
 tabs.indicator.error = #ff0000
 tabs.indicator.system = rgb
+
 hints.fg = ${completion.fg}
 hints.bg = ${completion.bg}
-hints.fg.match = green
-downloads.bg.bar = black
-downloads.fg.start = white
-downloads.bg.start = #0000aa
-downloads.fg.stop = ${downloads.fg.start}
-downloads.bg.stop = #00aa00
-downloads.fg.system = rgb
-downloads.bg.system = rgb
+hints.fg.match = ${completion.match.fg}
+
+downloads.bg.bar = ${completion.bg}
+downloads.fg.start = #{{pFGInactiveTab}}
+downloads.bg.start = #{{pBGInactiveTab}}
+downloads.fg.stop = #{{pFGActiveTab}}
+downloads.bg.stop = #{{pBGActiveTab}}
+downloads.fg.system = none
+downloads.bg.system = none
 downloads.fg.error = white
 downloads.bg.error = red
+
 webpage.bg = white
 
 [fonts]

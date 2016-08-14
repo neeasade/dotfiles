@@ -101,6 +101,18 @@ pFG=$(colort -t "$pFG")
 pBG=$(colort -t "$pBG")
 pFGActiveTab=$(colort -t "$pFGActiveTab")
 pBGActiveTab=$(colort -t "$pBGActiveTab")
+pFGInactiveTab=$(colort -t "$pFGInactiveTab")
+pBGInactiveTab=$(colort -t "$pBGInactiveTab")
+
+# some magic for match color (has to work in both schemes, invert and highlight)
+if colort -c "$pBGActiveTab"; then
+    MatchFG=$(colort -c "$pFGInactiveTab" && colort -l -40 "$pFGInactiveTab" || colort -l 40 "$pFGInactiveTab")
+    [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort 50 "$pFGInactiveTab" || colort -50 "$pFGInactiveTab")
+else
+    # light, assume invert
+    MatchFG=$(colort -c "$pFGInactiveTab" && colort -l 60 "$pFGInactiveTab" || colort -l -60 "$pFGInactiveTab")
+    [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort -60 "$pFGInactiveTab" || colort 60 "$pFGInactiveTab")
+fi
 
 load_gtk &
 load_qutebrowser &
