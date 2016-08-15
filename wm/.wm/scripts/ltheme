@@ -20,12 +20,32 @@ margs() {
     mustache < "$HOME/.wm/templates/$1" > "$HOME/$2"
 }
 
+trimAlphas() {
+    pFG=$(colort -t "$pFG")
+    pBG=$(colort -t "$pBG")
+    pFGActiveTab=$(colort -t "$pFGActiveTab")
+    pBGActiveTab=$(colort -t "$pBGActiveTab")
+    pFGInactiveTab=$(colort -t "$pFGInactiveTab")
+    pBGInactiveTab=$(colort -t "$pBGInactiveTab")
+    pIcon=$(colort -t "$pIcon")
+}
+
+# tmux
+load_tmux() {
+    tmux source-file $HOME/.tmux.conf > /dev/null 2>&1
+}
+
+load_bg() {
+    eval $BG_COMMAND
+}
+
+# also loads term.
 load_xresources() {
     margs Xresources .Xresources
 
     # handle any color definitions through 255
     for i in `seq 0 255`; do
-        eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources || true"
+        eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources"
     done
 
     xrdb $HOME/.Xresources
@@ -52,6 +72,7 @@ load_vim() {
 
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
+    trimAlphas
     margs gtkrc .gtkrc-2.0
 
     if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
@@ -61,59 +82,38 @@ load_gtk() {
     fi
 
     # icon color(ACYL)
-    $HOME/.icons/acyl/icon.sh "$pIcon"
+    $HOME/.icons/acyl/icon.sh "#$pIcon"
 
     # reload
     gtkrc-reload &
 
     # set a place to reference active theme for newly launched GTK3 programs.
-    echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME &
+    echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME
 }
 
 # qutebrowser
 load_qutebrowser() {
+    trimAlphas
+
     echo $PANEL_FONT_MAIN | grep -q Bold && PANEL_FONT_MAIN_BOLD="bold"
     PANEL_FONT_MAIN_SIZE="$(echo $PANEL_FONT_MAIN | grep -Eo '[0-9]+')"
     PANEL_FONT_MAIN="$(echo $PANEL_FONT_MAIN | sed 's/-.*//')"
     PANEL_HEIGHT="$(( ($PANEL_HEIGHT-10) / 2 ))"
+
     margs qutebrowser .config/qutebrowser/qutebrowser.conf
 }
 
 # dunst
 load_dunst() {
+    trimAlphas
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
     killall dunst
+
     margs dunstrc .config/dunst/dunstrc
     dunst &
 }
 
 # do the thing
-load_xresources &
-load_bspwm &
-load_vim &
-
-# tmux
-tmux source-file $HOME/.tmux.conf > /dev/null 2>&1 &
-eval $BG_COMMAND &
-
-# trim alpha from colors
-pFG=$(colort -t "$pFG")
-pBG=$(colort -t "$pBG")
-pFGActiveTab=$(colort -t "$pFGActiveTab")
-pBGActiveTab=$(colort -t "$pBGActiveTab")
-pFGInactiveTab=$(colort -t "$pFGInactiveTab")
-pBGInactiveTab=$(colort -t "$pBGInactiveTab")
-
-# some magic for match color (has to work in both schemes, invert and highlight)
-if colort -c "$pBGActiveTab"; then
-    MatchFG=$(colort -c "$pFGInactiveTab" && colort -l -40 "$pFGInactiveTab" || colort -l 40 "$pFGInactiveTab")
-    [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort 50 "$pFGInactiveTab" || colort -50 "$pFGInactiveTab")
-else
-    # light, assume invert
-    MatchFG=$(colort -c "$pFGInactiveTab" && colort -l 60 "$pFGInactiveTab" || colort -l -60 "$pFGInactiveTab")
-    [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort -60 "$pFGInactiveTab" || colort 60 "$pFGInactiveTab")
-fi
-
-load_gtk &
-load_qutebrowser &
-load_dunst &
+for conf in xresources bspwm bg vim gtk dunst qutebrowser; do
+    load_$conf &
+done

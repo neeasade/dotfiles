@@ -47,7 +47,17 @@ pBGActiveTab="$pFG"             # Active title tab - also used as gtk select col
 pFGActiveTab="$pBG"             # Active title tab - also used as gtk select color value.
 pBGInactiveTab="$pBG"           # Inactive title tab - also used to info.sh ouput background.
 pFGInactiveTab="$pFG"           # Inactive title tab - also used to info.sh ouput background.
-pIcon="$(colort -l -30 "$pFG")" # panel icon colors - also used to color acyl icons.
+
+# panel icon colors - also used to color acyl icons, and qutebrowser match color.
+if colort -c "$pBGActiveTab"; then
+    pIcon=$(colort -c "$pFGInactiveTab" && colort -l -40 "$pFGInactiveTab" || colort -l 40 "$pFGInactiveTab")
+    [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort 50 "$pFGInactiveTab" || colort -50 "$pFGInactiveTab")
+else
+    # light, assume invert
+    pIcon=$(colort -c "$pFGInactiveTab" && colort -l 60 "$pFGInactiveTab" || colort -l -60 "$pFGInactiveTab")
+    [ $? -ne 0 ] && pIcon=$(colort -c "$pFGInactiveTab" && colort -60 "$pFGInactiveTab" || colort 60 "$pFGInactiveTab")
+fi
+pIcon="#ff$pIcon"
 
 # Workspace variables
 DO='[-]' # occupied desktop

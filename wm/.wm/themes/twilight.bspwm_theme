@@ -27,7 +27,4 @@ desktopDisplayType=separate
 pBGInactiveTab="#ff1e1e1e"
 pBGActiveTab="#ff2d2d2d"
 pFGActiveTab="$pFG"
-pIcon="#bba2a2a2"
-
-# other
-GTK_ICON_COLOR="$pFG"
+pIcon="#bb$(colort -t $pIcon)"

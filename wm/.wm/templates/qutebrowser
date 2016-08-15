@@ -72,7 +72,7 @@ timeout = 500
 partial-timeout = 1000
 insert-mode-on-plugins = false
 auto-leave-insert-mode = true
-auto-insert-mode = false
+auto-insert-mode = true
 forward-unbound-keys = auto
 spatial-navigation = false
 links-included-in-focus-chain = true
@@ -161,7 +161,6 @@ completion.alternate-bg = ${completion.bg}
 
 completion.category.fg = #{{pFGInactiveTab}}
 completion.category.bg = #{{pBGInactiveTab}}
-completion.category.border.top = ${completion.fg}
 completion.category.border.bottom = ${completion.category.border.top}
 
 completion.item.selected.fg = #{{pFGActiveTab}}
@@ -169,7 +168,7 @@ completion.item.selected.bg = #{{pBGActiveTab}}
 completion.item.selected.border.top = #{{pBGActiveTab}}
 completion.item.selected.border.bottom = #{{pBGActiveTab}}
 
-completion.match.fg = #{{MatchFG}}
+completion.match.fg = #{{pIcon}}
 
 completion.scrollbar.fg = ${completion.fg}
 completion.scrollbar.bg = ${completion.bg}
