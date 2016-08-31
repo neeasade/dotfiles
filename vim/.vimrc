@@ -40,6 +40,7 @@ call plug#begin('~/' . s:configdir . '/Plug')
     Plug 'christoomey/vim-tmux-navigator'       " Sync tmux and vim keybinds.
 
     " colors n shit
+    Plug 'NLKNguyen/papercolor-theme'
     Plug 'chriskempson/base16-vim'
     Plug 'jnurmine/zenburn'
     Plug 'nanotech/jellybeans.vim'

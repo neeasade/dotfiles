@@ -15,6 +15,18 @@ ln -s "$targetTheme" "$HOME/.bspwm_theme"
 . "$HOME/.bspwm_theme"
 . "$HOME/.wm/templates/mustache.sh"
 
+# adjust pIcon to theme (rel for panel, acyl, qutebrowser.)
+if [ "$pIcon" = "unset" ]; then
+    if colort -c "$pBGActiveTab"; then
+        pIcon=$(colort -c "$pFGInactiveTab" && colort -l -40 "$pFGInactiveTab" || colort -l 40 "$pFGInactiveTab")
+        [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort 50 "$pFGInactiveTab" || colort -50 "$pFGInactiveTab")
+    else
+        # light, assume invert
+        pIcon=$(colort -c "$pFGInactiveTab" && colort -l 60 "$pFGInactiveTab" || colort -l -60 "$pFGInactiveTab")
+        [ $? -ne 0 ] && pIcon=$(colort -c "$pFGInactiveTab" && colort -60 "$pFGInactiveTab" || colort 60 "$pFGInactiveTab")
+    fi
+fi
+
 # mustache args
 margs() {
     mustache < "$HOME/.wm/templates/$1" > "$HOME/$2"
@@ -114,6 +126,6 @@ load_dunst() {
 }
 
 # do the thing
-for conf in xresources bspwm bg vim gtk dunst qutebrowser; do
+for conf in tmux xresources bspwm bg vim gtk dunst qutebrowser; do
     load_$conf &
 done

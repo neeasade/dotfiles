@@ -27,7 +27,7 @@ PANEL_FONT_ICON="FontAwesome-10" # Panel Icon font.
 PANEL_GAP=4                      # Gaps of panel off screen.
 PANEL_UNDERLINE=4                # This value is used for both underline and overline
 pPadding=3                       # number of spaces to pad panel information (sections/blocks) with
-pOutputOrder='"%{l} $dropdown$wm_infos%{c}$title%{r}$sys_infos"' # placement of sections in panel
+pIcon=unset
 
 # variables for desktop area
 desktopDisplay=icon         # [icon|name] - display desktop names or DO/DF variables.
@@ -36,7 +36,7 @@ desktopDisplayType=together # [together|separate] - show desktops in separate bl
 NoModeToggle=1              # if defined, no monocle/tiling toggle.
 
 # desktop colors
-pUrgent="#ffffff00"                  # urgent desktop color
+pUrgent="#ffffff00"   # urgent desktop color
 pActive="#ff$color15" # active desktop color
 pRest="#ff$color6"    # resting desktop color
 
@@ -49,16 +49,6 @@ pBGInactiveTab="$pBG"           # Inactive title tab - also used to info.sh oupu
 pFGInactiveTab="$pFG"           # Inactive title tab - also used to info.sh ouput background.
 
 # panel icon colors - also used to color acyl icons, and qutebrowser match color.
-if colort -c "$pBGActiveTab"; then
-    pIcon=$(colort -c "$pFGInactiveTab" && colort -l -40 "$pFGInactiveTab" || colort -l 40 "$pFGInactiveTab")
-    [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort 50 "$pFGInactiveTab" || colort -50 "$pFGInactiveTab")
-else
-    # light, assume invert
-    pIcon=$(colort -c "$pFGInactiveTab" && colort -l 60 "$pFGInactiveTab" || colort -l -60 "$pFGInactiveTab")
-    [ $? -ne 0 ] && pIcon=$(colort -c "$pFGInactiveTab" && colort -60 "$pFGInactiveTab" || colort 60 "$pFGInactiveTab")
-fi
-pIcon="#ff$pIcon"
-
 # Workspace variables
 DO='[-]' # occupied desktop
 DF='[ ]' # free desktop
@@ -71,7 +61,7 @@ st_borderpx=10
 st_cursorshape=2
 st_cursorthickness=2
 
-GTK_FONT="Droid Sans 10"                # GTK font to be used.
+GTK_FONT="Droid Sans 10" # GTK font to be used.
 
 DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
 DUNST_BORDER="`bspc config normal_border_color`" # Font used by dunst on startup

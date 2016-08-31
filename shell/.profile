@@ -11,6 +11,9 @@ export FILEBROWSER=pcmanfm
 # }}}
 
 # {{{ alias
+steam() {
+    LD_PRELOAD='/usr/$LIB/libstdc++.so.6 /usr/$LIB/libgcc_s.so.1 /usr/$LIB/libxcb.so.1 /usr/$LIB/libgpg-error.so' /usr/bin/steam
+}
 alias tmux='tmux -2' #Make tmux assume 256 colors.
 alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
 alias sysinfo='archey3 && dfc -p /dev && colors'
