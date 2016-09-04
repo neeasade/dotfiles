@@ -1,4 +1,6 @@
 [bar]
+# todo: consider calculating this at runtime?
+clickables = 40
 background = "{{`colort 0 "$pBG"`}}"
 foreground = "{{`colort 0 "$pFG"`}}"
 format = "{{barInfo}}"
@@ -6,16 +8,16 @@ fonts = "{{PANEL_FONT_MAIN}}"
         "{{PANEL_FONT_ICON}}"
         "font-linux-10"
 
-force = true
+class = "{{pWindowClass}}"
 
-left-delimiter=">"
-right-delimiter="<"
-center-delimiter="|"
+left-delimiter = "{{pLeftDelimiter}}"
+right-delimiter = "{{pRightDelimiter}}"
+center-delimiter = "{{pCenterDelimiter}}"
 
-left-append="\\"
-right-append="/"
-center-append-left="<"
-center-append-right=">"
+left-append = "{{pLeftAppend}}"
+right-append = "{{pRightAppend}}"
+center-append-left = "{{pCenterAppendLeft}}"
+center-append-right = "{{pCenterAppendRight}}"
 
 [desktop]
 reload = "bspc subscribe"

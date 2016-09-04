@@ -91,12 +91,12 @@ done
 # transform format with delimiters and alignment
 i=0
 for section in $(echo $bar_format | tr '|' '\n'); do
-	case $i in
-		0) position="$(echo "$section" | sed "s/:/${bar_left_delimiter}/g")${bar_left_append}" ;;
-		1) position="${position}%{c}${bar_center_append_left}$(echo "$section" | sed "s/:/${bar_center_delimiter}/g")${bar_center_append_right}" ;;
-		2) position="${position}%{r}${bar_right_append}$(echo "$section" | sed "s/:/${bar_right_delimiter}/g")" ;;
-	esac
-	i=$((i+1))
+    case $i in
+        0) position="$(echo "$section" | sed "s/:/${bar_left_delimiter}/g")${bar_left_append}" ;;
+        1) position="${position}%{c}${bar_center_append_left}$(echo "$section" | sed "s/:/${bar_center_delimiter}/g")${bar_center_append_right}" ;;
+        2) position="${position}%{r}${bar_right_append}$(echo "$section" | sed "s/:/${bar_right_delimiter}/g")" ;;
+    esac
+    i=$((i+1))
 done
 
 # build the panel switch
@@ -147,6 +147,8 @@ format() {
         [offset]=0
         [fonts]="monospace-9"
         [force]=true
+        [class]="lemonbar"
+        [clickables]=10
         [dock]="top")
     for section in "${!bar[@]}"; do
         if [[ $(eval "echo \${#bar_${section}}") -eq 0 ]]; then
@@ -262,19 +264,21 @@ format() {
 } 2>&3
 
 # Information block.
-echo "
-==== ==== ==== ==== ====`echo -e -n '\033[1;33m'`
+echo -e -n "
+==== ==== ==== ==== ==== \033[1;33m
  ,.        ,.        ,.
 (:;)      (:;)      (:;)
- \`'        \`'        \`'`echo -e -n '\e[0m'`
+ \`'        \`'        \` \e[0m
 ==== ==== ==== ==== ===="
 
 # Start lemonade
 cat "$process" | format | lemonbar \
     $(echo "-o $bar_offset") \
     $(printf " -f %s" "${bar_fonts[@]}") \
-	-a 40 \
     $(echo "-${bar_dock//[^b]/}") \
     $([[ $bar_force = true ]] && echo "-d") \
+    -a $bar_clickables \
+    -n "$bar_class" \
     -g $geometry -F "$bar_foreground" -B "$bar_background" | handle | sh
+
 wait

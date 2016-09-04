@@ -16,10 +16,11 @@ b_window_gap=16
 # panel
 PANEL_HEIGHT=24
 PANEL_GAP=0
-PANEL_UNDERLINE="5 -n noshadow"
+PANEL_UNDERLINE="5"
 PANEL_FONT_MAIN="Droid Sans-10:style=Bold"
 DUNST_FONT="Droid Sans 10"
 pPadding=2
+pWindowClass="noshadow"
 
 # colors
 pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"

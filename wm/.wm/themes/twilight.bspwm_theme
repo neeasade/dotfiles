@@ -27,5 +27,3 @@ desktopDisplayType=separate
 pBGInactiveTab="#ff1e1e1e"
 pBGActiveTab="#ff2d2d2d"
 pFGActiveTab="$pFG"
-
-pIcon="#bb$(colort -t $pIcon)"
