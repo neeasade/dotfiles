@@ -32,3 +32,4 @@ reload = "xtitle -s"
 [clock]
 mouse-left = "dzen.sh cal"
 reload = 5
+

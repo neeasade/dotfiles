@@ -28,6 +28,7 @@ PANEL_GAP=4                      # Gaps of panel off screen.
 PANEL_UNDERLINE=0                # This value is used for both underline and overline
 pPadding=3                       # number of spaces to pad panel information (sections/blocks) with
 pIcon=unset
+pWindowClass="lemonbar"
 
 pLeftDelimiter=""
 pRightDelimiter=""

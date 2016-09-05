@@ -222,27 +222,25 @@ format() {
 
 # Parse our previously collected elements to a full string.
 {
-    if [[ -e $process ]]; then
-        rm $process
-    fi && mkfifo "$process"
+    [[ -e "$process" ]] && rm "$process"
+    mkfifo "$process"
+
     for name in $juicedLemons; do
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
-                # note: was $output line below:
-                # "$(tr '\n' ' ' < <(eval "$file \"$output\""))" \
-                 while read -r output; do
+                while read -r output; do
                     printf "%s" \
                         "${name}@" \
                         "$(eval "echo \${area[${name}_p]"})" \
                         "$(eval "echo \${line[${name}]"})" \
                         "%{F$(eval "echo \${${name}_foreground}")}" \
                         "%{B$(eval "echo \${${name}_background"})}" \
-                        "$(tr -d '\n' < <(echo "$output" | $lemons/$name))" \
+                        "$output" \
                         "%{F-}%{B-}" \
                         "$(eval "echo \${area[${name}_s]"})" \
                         "%{-o}%{-uU-}" \
                         $'\n' > "$process" &
-                done < <($(eval "echo \${${name}_reload"})) &
+                done < <($(eval "echo \${${name}_reload"}) | $lemons/$name) &
             else
                 while :; do
                     printf "%s" \
