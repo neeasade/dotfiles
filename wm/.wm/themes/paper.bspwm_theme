@@ -8,6 +8,7 @@ THEME_NAME=paper
 VIM_COLORS=PaperColor
 BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
+st_font="Roboto Mono-10:pixelsize=11:antialias=true:autohint=true;"
 
 # bspwm
 b_border_width=6
@@ -19,8 +20,8 @@ b_normal_border_color=\#edeeef
 PANEL_HEIGHT=24
 PANEL_GAP=0
 PANEL_UNDERLINE="5 -n noshadow"
-PANEL_FONT_MAIN="Droid Sans-10:style=Bold"
-DUNST_FONT="Droid Sans 10"
+PANEL_FONT_MAIN="Roboto Mono-10:style=Bold"
+DUNST_FONT="Roboto Mono 10"
 
 # colors
 #pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"
@@ -29,4 +30,4 @@ pIcon=5f819d
 pBGActiveTab=005f87
 
 # other
-GTK_FONT="Droid Sans 10"
+GTK_FONT="Roboto Mono 10"

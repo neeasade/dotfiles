@@ -29,6 +29,8 @@ stow
 sxhkd-git
 terminus-font
 ttf-droid
+ttf-roboto
+ttf-roboto-mono
 ttf-font-awesome
 ttf-font-linux
 txtw-git

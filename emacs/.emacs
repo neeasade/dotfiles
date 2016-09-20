@@ -1,9 +1,10 @@
 ;; todo: look unto use-package
-;;       tab/shift tab bindings for indent
 ;;       look at https://github.com/noctuid/dotfiles/blob/master/emacs/.emacs.d/init.el
 ;;       hydra + helm post.
-;;       colorschemes?
 ;;       consolidate or get rid of swap files
+;;       reorg this.
+;;       review links/literate emacs configs.
+;;       package install
 
 ;; # PACKAGES
 (require 'package)
@@ -36,6 +37,8 @@
 (ensure-package-installed 'magit
 			  'projectile
 			  'evil
+			  'git-gutter
+			  'spaceline
 			  'popup-complete
 			  'better-defaults
 			  'whitespace-cleanup-mode
@@ -43,17 +46,14 @@
 
 ;; # KEYBINDS
 
-;; C-; makes a good alternative toggle to shift-; I think.
-(global-set-key (kbd "C-;") 'helm-M-x)
-
 ;; indenting, ref: http://stackoverflow.com/questions/2249955/emacs-shift-tab-to-left-shift-the-block
 (defun indent-region(numSpaces)
   (progn
-                                        ; default to start and end of current line
+    ; default to start and end of current line
     (setq regionStart (line-beginning-position))
     (setq regionEnd (line-end-position))
 
-                                        ; if there's a selection, use that instead of the current line
+    ; if there's a selection, use that instead of the current line
     (when (use-region-p)
       (setq regionStart (region-beginning))
       (setq regionEnd (region-end))
@@ -80,14 +80,18 @@
   (interactive "p")
   (if (use-region-p)
       (indent-region 4) ; region was selected, call indent-region
-    (insert "    ") ; else insert four spaces as expected
+    (indent-line-to (+ (current-indentation) 4)) ; else indent line by 4
     )
   )
 
-(global-set-key (kbd "<backtab>") 'untab-region)
+(defun tab-region-inplace (N)
+  (interactive "p")
+  (if (use-region-p)
+      (indent-region 4) ; region was selected, call indent-region
+    (insert "    ") ; insert 4 spaces
+    )
+  )
 
-;; TODO: this is set by evil somewhere, set here.
-(global-set-key (kbd "<tab>") 'tab-region)
 
 ;; # MISC
 
@@ -111,14 +115,38 @@
 (require 'evil)
 (evil-mode t)
 
+(global-set-key (kbd "<backtab>") 'untab-region)
+
+(with-eval-after-load 'evil-maps
+    (define-key evil-motion-state-map (kbd "TAB") 'tab-region)
+    (define-key evil-visual-state-map (kbd "TAB") 'tab-region)
+    (define-key evil-insert-state-map (kbd "TAB") 'tab-region-inplace))
+
 (require 'helm-config)
 
 ;; offsets
 (setq c-basic-offset 4)
 
 ;; no tabs (reference)
-;; (setq-default indent-tabs-mode nil)
+; (setq-default indent-tabs-mode nil)
+
+;; global company mode
+;; TODO: look into options, popups are slow it feels.
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;; auto accept changes made to file if not changed in current buffer.
 (global-auto-revert-mode t)
 
+;; steal spacemacs mode line 
+(require 'spaceline-config)
+(spaceline-spacemacs-theme)
+
+;; auto follow symbolic links
+(setq vc-follow-symlinks t)
+
+;; git gutter
+(global-git-gutter-mode +1)
+
+;; note: depends on emacs 24.4
+;; auto save on unfocus
+(add-hook 'focus-out-hook 'save-buffer)

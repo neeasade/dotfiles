@@ -20,16 +20,20 @@ center-append-left = "{{pCenterAppendLeft}}"
 center-append-right = "{{pCenterAppendRight}}"
 
 [desktop]
+background = "{{`colort 0 "$pBGInactiveTab"`}}"
 reload = "bspc subscribe"
 
 [mail]
+background = "{{`colort 0 "$pBGInactiveTab"`}}"
 reload = 30
 mouse-left = "xdg-open 'https://gmail.com/'"
 
 [title]
+background = "{{`colort 0 "$pBGInactiveTab"`}}"
 reload = "xtitle -s"
 
 [clock]
+background = "{{`colort 0 "$pBGInactiveTab"`}}"
 mouse-left = "dzen.sh cal"
 reload = 5
 
