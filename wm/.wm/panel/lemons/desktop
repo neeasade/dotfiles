@@ -1,6 +1,7 @@
 #!/usr/bin/env dash
 
 focusMonitor=$(bspc query -T -m $mon | jq -r .name)
+pPadding=3
 
 AC='%{A:'           # start click area
 AB=':}'             # end click area cmd
@@ -47,7 +48,7 @@ dropdown="${AC}dzen.sh menu${AB}$dropdown${AE}"
 echo "$DO" | grep -q '%{-o}' && overline=true || overline=false
 
 while read line; do
-	line=$(echo $line | grep -Eo "[Mm]${focusMonitor}[^mM]*")
+        line="$(echo $line | grep -Eo "[Mm]${focusMonitor}[^mM]*")"
 
 	IFS=':'
 	set -- ${line#?}

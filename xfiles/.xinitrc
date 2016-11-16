@@ -12,8 +12,8 @@ xrdb -load $HOME/.Xresources &
 # background (subshell so x session doesn't get initial theme values.)
 (
 	. ~/.bspwm_theme
-	$BG_COMMAND &
-)
+	$BG_COMMAND
+) &
 
 # compositing
 compton &

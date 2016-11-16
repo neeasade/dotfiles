@@ -39,7 +39,8 @@
 			  'evil
 			  'git-gutter
 			  'spaceline
-			  'popup-complete
+			  'eclim
+			  'company
 			  'better-defaults
 			  'whitespace-cleanup-mode
 			  'helm)
@@ -92,6 +93,11 @@
     )
   )
 
+(defun tab-or-complete (N)
+  (interactive)
+    (if (looking-at "\\_>")
+        (company-complete-common)
+      'tab-region-inplace))
 
 ;; # MISC
 
@@ -120,7 +126,7 @@
 (with-eval-after-load 'evil-maps
     (define-key evil-motion-state-map (kbd "TAB") 'tab-region)
     (define-key evil-visual-state-map (kbd "TAB") 'tab-region)
-    (define-key evil-insert-state-map (kbd "TAB") 'tab-region-inplace))
+    (define-key evil-insert-state-map (kbd "TAB") 'tab-or-complete))
 
 (require 'helm-config)
 
@@ -133,6 +139,9 @@
 ;; global company mode
 ;; TODO: look into options, popups are slow it feels.
 (add-hook 'after-init-hook 'global-company-mode)
+
+;; no delay
+(setq company-idle-delay 0)
 
 ;; auto accept changes made to file if not changed in current buffer.
 (global-auto-revert-mode t)

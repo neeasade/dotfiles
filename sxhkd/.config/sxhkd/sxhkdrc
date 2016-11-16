@@ -48,8 +48,7 @@ super + {p,b,comma,period}
 # todo: ask nicely for real.
 super + shift + q
     pgrep lemonbar && ~/.wm/scripts/panelt; \
-    for win in $(bspc query -N); do bspc node $win -c ; done; \
-    bspc quit
+    zenity --question "Quit wm?" && bspc quit
 
 # toggle panel or gaps.
 super + {_,shift} + slash
@@ -66,27 +65,20 @@ super + {o,e,Return}
     ${BROWSER,FILEBROWSER,TERMINAL}
 
 # launch a program, ensure GTK3 theme.
-super + space
+super + {_,alt} + space
     export GTK_THEME="`cat $HOME/.themes/ACTIVE_THEME 2>/dev/null`"; \
-    eval dmenu_run $(dmenu_options)
+    eval dmenu_{run,slop} $(dmenu_options)
 
 # A nice wrapper script for password store.
 super + shift + space
     eval passmenu $(dmenu_options)
 
-XF86Audio{Prev,Next}
-     mpc -q {prev,next}
+XF86Audio{Prev,Next,Play}
+     mpc -q {prev,next,toggle}
 
-XF86AudioPlay
-     mpc -q toggle
+XF86Audio{LowerVolume,RaiseVolume,Mute}
+    amixer -q set Master {3%-,3%+,toggle}
 
-XF86Audio{LowerVolume,RaiseVolume}
-    amixer -q set Master 3%{-,+}
-
-XF86AudioMute
-    amixer -q set Master toggle
-
-# make sxhkd reload its configuration files
 super + Escape
     pkill -USR1 -x sxhkd
 

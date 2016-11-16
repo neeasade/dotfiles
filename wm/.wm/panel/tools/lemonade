@@ -89,6 +89,7 @@ for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
 done
 
 # transform format with delimiters and alignment
+# todo: account for these as the bar is being made, not here..
 i=0
 for section in $(echo $bar_format | tr '|' '\n'); do
     case $i in
@@ -167,6 +168,10 @@ format() {
         [foreground]="${bar_foreground}"
         [background]="${bar_background}"
         [overline]=false
+        # note: added underline, TODO check if relevant
+        #[underline]=false
+        # enable lemons to have multiple blocks
+        [lines]=1
         [reload]=5)
     for name in $juicedLemons; do
         for section in "${!choices[@]}"; do
@@ -228,19 +233,35 @@ format() {
     for name in $juicedLemons; do
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
+                bar_message="${name}@"
+                lines="$(eval "echo \${${name}_lines"})"
+
+                $(eval "echo \${${name}_reload"}) | $lemons/$name | \
                 while read -r output; do
-                    printf "%s" \
-                        "${name}@" \
-                        "$(eval "echo \${area[${name}_p]"})" \
-                        "$(eval "echo \${line[${name}]"})" \
-                        "%{F$(eval "echo \${${name}_foreground}")}" \
-                        "%{B$(eval "echo \${${name}_background"})}" \
-                        "$output" \
-                        "%{F-}%{B-}" \
-                        "$(eval "echo \${area[${name}_s]"})" \
-                        "%{-o}%{-uU-}" \
-                        $'\n' > "$process" &
-                done < <($(eval "echo \${${name}_reload"}) | $lemons/$name) &
+                    # asdf: within this, set multiline to number of newlines to expect before actually doing things.
+                    if [ "$lines" -gt 0 ]; then
+                        bar_message="${bar_message}$(printf "%s" \
+                            "$(eval "echo \${area[${name}_p]"})" \
+                            "$(eval "echo \${line[${name}]"})" \
+                            "%{F$(eval "echo \${${name}_foreground}")}" \
+                            "%{B$(eval "echo \${${name}_background"})}" \
+                            "$output" \
+                            "%{F-}%{B-}" \
+                            "$(eval "echo \${area[${name}_s]"})" \
+                            "%{-o}%{-uU-}")"
+
+                        lines=$((lines - 1))
+                    fi
+
+                    if [ "$lines" -eq 0 ]; then
+                        printf "%s" \
+                            "${bar_message}" \
+                            $'\n' > "$process" &
+
+                        lines="$(eval "echo \${${name}_lines"})"
+                        bar_message="${name}@"
+                    fi
+                done &
             else
                 while :; do
                     printf "%s" \

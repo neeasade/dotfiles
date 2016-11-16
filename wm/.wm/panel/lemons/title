@@ -44,7 +44,7 @@ while read -r line; do
    result=
    for window in $windows; do
       if [ "$window" = "$active" ]; then
-         result="$result>>$(setLength "$(xtitle $window)")<<"
+         result="$result$(setLength "$(xtitle $window)")"
       else
          result="$result$(setLength "$(xtitle $window)")"
       fi
