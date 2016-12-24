@@ -1,6 +1,6 @@
 ## Neeasade's dotfiles
 
-[screenshot](https://u.teknik.io/3924RL.png) | [webm](https://u.teknik.io/wk6knx.webm)
+[screenshot](https://u.teknik.io/3924Rl.png) | [webm](https://u.teknik.io/wk6knx.webm)
 ---------|------
 OS		 | Arch Linux
 WM		 | BSPWM
