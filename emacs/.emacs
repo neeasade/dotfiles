@@ -1,7 +1,10 @@
+;;; init.el --- dotmacs
+;;; Commentary: none.
+;;; Code:
 
-
-;; # PACKAGES
 ;; referenced: https://github.com/aaronbieber/dotfiles/blob/master/configs/emacs.d/init.el
+
+;; bootstrap use-package.
 (package-initialize)
 
 ;; activate installed packages
@@ -21,6 +24,9 @@
 
 (eval-when-compile
   (require 'use-package))
+
+(add-to-list 'default-frame-alist
+             '(font . "Fira Code-9"))
 
 ;; Don't litter my init file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -46,7 +52,11 @@
 (setq split-width-threshold nil)
 (setq custom-safe-themes t)
 (put 'narrow-to-region 'disabled nil)
-
+; improves cursor performance on windows as far as I can tell
+; ref: http://emacs.stackexchange.com/questions/28736/emacs-pointcursor-movement-lag
+(setq auto-window-vscroll nil)
+; auto complete parens
+(electric-pair-mode 1)
 
 (defun my-minibuffer-setup-hook ()
   "Increase GC cons threshold."
@@ -70,9 +80,12 @@
   :init
   (global-company-mode)
   :config
-  ;(setq company-tooltip-common-selection ((t (:inherit company-tooltip-selection :background "yellow2" :foreground "#c82829"))))
-  ;(setq company-tooltip-selection ((t (:background "yellow2"))))
-  (setq company-idle-delay 0.1)
+  (use-package company-flx
+    :ensure t
+    :config
+    (company-flx-mode +1))
+
+  (setq company-idle-delay 0.5)
   (setq company-selection-wrap-around t)
   ;; aligns annotation to the right hand side
   (setq company-tooltip-align-annotations t)
@@ -80,6 +93,14 @@
   ;; todo: consider these keybindings/investigate tab handling like VS
   (define-key company-active-map (kbd "C-n") 'company-select-next)
   (define-key company-active-map (kbd "C-p") 'company-select-previous))
+
+(use-package company-quickhelp
+  :ensure t
+  :init
+  (company-quickhelp-mode 1))
+
+(use-package base16-theme
+  :ensure t)
 
 (defun air--config-evil-leader ()
   ; todo: consider adding this/refine.
@@ -255,6 +276,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   (use-package evil-indent-textobject
     :ensure t))
 
+(use-package nlinum
+  :ensure t
+  :config
+  (use-package nlinum-relative
+      :ensure t
+      :config
+      ;; something else you want
+      (eval-after-load "evil" '(nlinum-relative-setup-evil))
+      (add-hook 'prog-mode-hook 'nlinum-relative-mode)
+      (setq nlinum-relative-redisplay-delay 0)      ;; delay
+      (setq nlinum-relative-current-symbol "")      ;; or "" for display current line number
+      (global-nlinum-relative-mode)
+      ))
 
 (use-package web-mode
   :ensure t
@@ -295,6 +329,10 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
                 (evil-define-key 'normal flycheck-mode-map (kbd "]e") 'flycheck-next-error)
                 (evil-define-key 'normal flycheck-mode-map (kbd "[e") 'flycheck-previous-error))))
 
+;; package to beautify web junk
+(use-package web-beautify
+  :ensure t)
+
 ;; typescript integration
 (use-package tide
   :ensure t
@@ -307,7 +345,8 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
     (tide-hl-identifier-mode +1)
     (setq tide-completion-ignore-case t)
     (setq typescript-indent-level 2)
-    (company-mode +1))
+    (global-set-key (kbd "<f12>") 'tide-jump-to-definition)
+      (company-mode +1))
     (setq tide-format-options
           '(:insertSpaceAfterFunctionKeywordForAnonymousFunctions t
             :placeOpenBraceOnNewLineForFunctions nil))
@@ -321,15 +360,29 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 (use-package ivy
   :ensure t
   :config
+
+  ;; ref: http://oremacs.com/2016/01/06/ivy-flx/
+  (use-package flx
+    :ensure t)
+  (setq ivy-re-builders-alist
+    '((ivy-switch-buffer . ivy--regex-plus)
+      (t . ivy--regex-fuzzy)))
+  (setq ivy-initial-inputs-alist nil)
+
   (global-set-key (kbd "C-s") 'swiper)
   (global-set-key (kbd "M-x") 'counsel-M-x)
   (global-set-key (kbd "C-x C-f") 'counsel-find-file)
+  ;; todo: evaluate these.
   (global-set-key (kbd "<f1> f") 'counsel-describe-function)
   (global-set-key (kbd "<f1> v") 'counsel-describe-variable)
   (global-set-key (kbd "<f1> l") 'counsel-load-library)
   (global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
   (global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+
   (ivy-mode 1))
+
+;; ref: https://www.reddit.com/r/emacs/comments/3xzas3/help_with_ivycounsel_fuzzy_matching_and_sorting/
+
 
 ;; # KEYBINDS
 
@@ -348,3 +401,6 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
 ;; auto accept changes made to file if not changed in current buffer.
 (global-auto-revert-mode t)
+
+(provide '.emacs )
+;;; .emacs ends here
