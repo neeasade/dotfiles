@@ -9,8 +9,6 @@ Terminal | [xst](https://github.com/neeasade/xst)
 GTK 	 | [oomox](https://github.com/actionless/oomox) with [ACYL](http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910) icons.
 Font 	 | Droid Sans Mono/Tewi
 
-Further details can be found within the folders here themselves, at a top level. The README's assume you are familiar with the tool/program you are reading about, and describe how I use them in my setup.
-
 The `meta` folder contains:
 - dependencies
 - deploy script

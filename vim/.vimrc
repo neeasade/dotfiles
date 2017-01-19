@@ -2,7 +2,7 @@
 set shiftwidth=4
 set tabstop=4
 
-" set expandtab "Enter spaces instead of tabs.
+" set expandtab Enter spaces instead of tabs.
 " {{{ Plugins
 let s:configdir = '.vim'
 if has('nvim')
@@ -17,42 +17,55 @@ if empty(glob('~/' . s:configdir . '/autoload/plug.vim'))
 endif
 
 call plug#begin('~/' . s:configdir . '/Plug')
-    Plug 'tpope/vim-sensible'                   " sensible defaults.
-    Plug 'tpope/vim-fugitive'                   " Complement git in vim - todo: learn this.
-    Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
+  Plug 'tpope/vim-sensible'                   " sensible defaults.
+  Plug 'tpope/vim-fugitive'                   " Complement git in vim - todo: learn this.
+  Plug 'tpope/vim-sleuth'                     " Auto spacing/indenting conformity to files
 
-    Plug 'vim-airline/vim-airline'              " Status line
-    Plug 'jeffkreeftmeijer/vim-numbertoggle'    " Auto relative number toggling
-    Plug 'airblade/vim-gitgutter'               " Live git changes visible
-    Plug 'terryma/vim-multiple-cursors'         " Muliple cursors, akin to sublime text
-    Plug 'jiangmiao/auto-pairs'                 " auto-pairs(brackets/quotes)
+  Plug 'vim-airline/vim-airline'              " Status line
+  Plug 'jeffkreeftmeijer/vim-numbertoggle'    " Auto relative number toggling
+  Plug 'airblade/vim-gitgutter'               " Live git changes visible
+  Plug 'terryma/vim-multiple-cursors'         " Muliple cursors, akin to sublime text
+  Plug 'jiangmiao/auto-pairs'                 " auto-pairs(brackets/quotes)
 
-    Plug 'Valloric/YouCompleteMe',              { 'do': './install.py --clang-completer --system-libclang --omnisharp-completer', 'for': ['cpp', 'c', 'java', 'cs', 'python']}   " Autocompletion engine.
-    Plug 'rdnetto/YCM-Generator', 'stable'      " Generate ycm files - :YcmGenerateConfig
+  Plug 'Valloric/MatchTagAlways',             {'for': ['html', 'xhtml', 'xml', 'jinja']} " Autocompletes tags.
 
-    Plug 'mattn/emmet-vim',                     {'for': ['html', 'xml', 'xsl', 'xslt', 'xsd', 'css', 'sass', 'scss', 'less', 'mustache', 'php']}  " A tool for generating repetitive html/css. todo: learn this.
-    Plug 'Valloric/MatchTagAlways',             {'for': ['html', 'xhtml', 'xml', 'jinja']} " Autocompletes tags.
+  Plug 'junegunn/fzf',                        {'dir': '~/fzf', 'do': 'yes\| ./install'} " based fuzzy search.
+  Plug 'junegunn/goyo.vim'                    " Distraction-free writing in vim.
+  Plug 'junegunn/limelight.vim'               " A nice focus color plugin. using with goyo.
 
-    Plug 'junegunn/fzf',                        {'dir': '~/fzf', 'do': 'yes\| ./install'} " based fuzzy search.
-    Plug 'junegunn/goyo.vim'                    " Distraction-free writing in vim.
-    Plug 'junegunn/limelight.vim'               " A nice focus color plugin. using with goyo.
+  Plug 'christoomey/vim-tmux-navigator'       " Sync tmux and vim keybinds.
 
-    Plug 'christoomey/vim-tmux-navigator'       " Sync tmux and vim keybinds.
+  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+  Plug 'Shougo/neco-vim'
+  Plug 'mhartington/deoplete-typescript'
 
-    " colors n shit
-    Plug 'NLKNguyen/papercolor-theme'
-    Plug 'chriskempson/base16-vim'
-    Plug 'jnurmine/zenburn'
-    Plug 'nanotech/jellybeans.vim'
-    Plug 'jdkanani/vim-material-theme'
-    Plug 'lucy/term.vim'
-    Plug 'laserswald/chameleon.vim'
+  Plug 'w0rp/ale'
+
+  " colors n shit
+  Plug 'NLKNguyen/papercolor-theme'
+  Plug 'chriskempson/base16-vim'
+  Plug 'jnurmine/zenburn'
+  Plug 'nanotech/jellybeans.vim'
+  Plug 'jdkanani/vim-material-theme'
+  Plug 'lucy/term.vim'
+  Plug 'laserswald/chameleon.vim'
 call plug#end()
 " }}}
 
 " {{{ Plugin settings
-" youcompleteme
-let g:ycm_autoclose_preview_window_after_completion = 1
+" Use deoplete.
+let g:deoplete#enable_at_startup = 1
+
+" deoplete tab-complete
+inoremap <expr><tab> pumvisible() ? "\<c-n>" : "\<tab>"
+
+let g:deoplete#enable_ignore_case = 1
+let g:deoplete#auto_complete_start_length = 0
+let g:auto_complete_start_length = 0
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#enable_debug = 1
+let g:deoplete#enable_profile = 1
+
 " airline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline_section=''
@@ -142,10 +155,11 @@ set foldcolumn=0
 " set background=dark
 
 if empty(glob('~/.bspwm_theme'))
-    colorscheme chameleon
+    colorscheme zenburn
 else
     let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
-    execute 'colorscheme ' vim_colors
+    "execute 'colorscheme ' zenburn
+    colorscheme zenburn
 endif
 
 set encoding=utf-8
