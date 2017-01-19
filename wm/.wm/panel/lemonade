@@ -20,6 +20,7 @@ dim() {
 bspc config top_padding $(( PANEL_HEIGHT+PANEL_GAP ))
 
 i=0
+# note: mon will be available to all lemons as reference.
 for mon in $(bspc query -M); do
 	i=$(($i+1))
 	conf=`ls juicers | sed -n "$i p"`

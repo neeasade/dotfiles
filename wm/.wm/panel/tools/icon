@@ -6,24 +6,24 @@
 
 case $1 in
     # awesome, siji, ionic.
-    battery)  icon='f017 e1fe';;
-    clock)    icon='f017 e015';;
-    cloud)    icon='f0c2 e22b';;
-    file)     icon='f15c e1ed';;
-    folder)   icon='f07c e1d9';;
-    lock)     icon='f023 e029';;
-    logoff)   icon='f08b e157';;
-    mail)     icon='f0e0 e072';;
-    music)    icon='f025 e04d';;
-    next)     icon='f050 e09c';;
-    pause)    icon='f04c e09b';;
-    play)     icon='f04b e058';;
-    prev)     icon='f049 e096';;
-    rotate)   icon='f01e e1c0';;
-    shutdown) icon='f011 e00d';;
-    sound)    icon='f028 e05d';;
-    up)       icon='f062 e060';;
-    world)    icon='ff0a e1a0';;
+    battery)  icon='f017 e1fe f113';;
+    clock)    icon='f017 e015 f26e';;
+    cloud)    icon='f0c2 e22b f12b';;
+    file)     icon='f15c e1ed f12e';;
+    folder)   icon='f07c e1d9 f139';;
+    lock)     icon='f023 e029 f458';;
+    logoff)   icon='f08b e157 f29f';;
+    mail)     icon='f0e0 e072 f132';;
+    music)    icon='f025 e04d f192';;
+    next)     icon='f050 e09c f223';;
+    pause)    icon='f04c e09b f478';;
+    play)     icon='f04b e058 f488';;
+    prev)     icon='f049 e096 f222';;
+    rotate)   icon='f01e e1c0 f201';;
+    shutdown) icon='f011 e00d f2a9';;
+    sound)    icon='f028 e05d f259';;
+    up)       icon='f062 e060 f10c';;
+    world)    icon='ff0a e1a0 f4d3';;
     *) echo "icon type not found."
        exit 1;;
 esac
@@ -35,7 +35,7 @@ esac
 case $iconfont in
     awesome) index=1;;
     siji)    index=2;;
-    ionic)   echo "not implemented.";;
+    ionic)   index=3;;
     *) echo "icon font not found: $iconfont"
        exit 1;;
 esac

@@ -20,6 +20,7 @@ PANEL_HEIGHT=32
 PANEL_GAP=5
 PANEL_UNDERLINE=0
 PANEL_FONT_MAIN="Droid Sans-10"
+PANEL_FONT_ICON="Ionicons-10"
 desktopDisplay=name
 showFreeDesktops=false
 desktopDisplayType=separate

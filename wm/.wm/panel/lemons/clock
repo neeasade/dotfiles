@@ -1,5 +1,4 @@
 #!/usr/bin/env dash
 
 icon clock
-# todo: call dzen.sh cal on click (in conf)
 date '+%l:%M %p'

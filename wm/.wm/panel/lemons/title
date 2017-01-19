@@ -5,6 +5,10 @@
 # investigate handling that at lemonade level/define delimiter.
 # Neeasade
 
+if [[ "$mon" -ne "$(bspc query -M -m)" ]]; then
+   exit
+fi
+
 ### OPTIONS ###
 # Always tabbed visible windows option:
 onlyShowActive=${always_tab:-false}
@@ -30,24 +34,17 @@ setLength() {
     echo -n "$padding$content$padding";
 }
 
-while read -r line; do
-   windows="$(bspc query -N -d $mon:focused -n .window)"
-   active=$(bspc query -N -n)
+while read -r window; do
+   active=$(bspc query -N -m $mon -n .focused.active)
 
-   # single
-   if $onlyShowActive || [ "$windows" = "$active" ]; then
-      echo $(setLength "$line")
-      continue
+   if [ "$window" = "$active" ]; then
+      # todo: make activeBG not lower in tools/lemonade
+      echo meta title_background="${title_activebg}"
+      echo meta title_foreground="${title_activefg}"
+      echo "$(setLength "$(xtitle $window)")"
+      echo meta title_background="${title_background}"
+      echo meta title_foreground="${title_foreground}"
+   else
+      echo "$(setLength "$(xtitle $window)")"
    fi
-
-   # multiple
-   result=
-   for window in $windows; do
-      if [ "$window" = "$active" ]; then
-         result="$result$(setLength "$(xtitle $window)")"
-      else
-         result="$result$(setLength "$(xtitle $window)")"
-      fi
-   done
-   echo "$result"
 done

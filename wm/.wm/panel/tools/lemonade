@@ -46,7 +46,7 @@ exec 3<> $lemonadedir/logs/$ident.log
 
 # Create the scripts directory.
 lemons=$lemonadedir/lemons
-manuscript=$lemonadedir/juicers/$1
+juicer=$lemonadedir/juicers/$1
 
 # The only bit of python in the code, we parse .dosini file with it.
 source <(python3 -c "
@@ -65,14 +65,15 @@ parser.read(sys.argv[1])
 for section in parser:
     for key in parser[section]:
         # Split on spaces and newlines to determine when to create arrays.
-        current = re.sub('[\n ]', '$', parser[section][key]).split('$')
+        # note: this means '^' can't be used in conf file.
+        current = re.sub('[\n ]', '^', parser[section][key]).split('^')
         # Replace dashes with underscores for a better user experience.
         key = key.replace('-', '_')
         if len(current) == 1:
             print(variable(section, key, current[0]))
         else:
             print(array(section, key, ' '.join(current)))
-" $manuscript 2>&3) 2>&3
+" $juicer 2>&3) 2>&3
 
 # "It is easier to port a shell than a shell script."
 #   -- Larry Wall
@@ -171,7 +172,6 @@ format() {
         # note: added underline, TODO check if relevant
         #[underline]=false
         # enable lemons to have multiple blocks
-        [lines]=1
         [reload]=5)
     for name in $juicedLemons; do
         for section in "${!choices[@]}"; do
@@ -233,54 +233,71 @@ format() {
     for name in $juicedLemons; do
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
-                bar_message="${name}@"
-                lines="$(eval "echo \${${name}_lines"})"
+                $(eval "echo \${${name}_reload"}) | \
+                    while IFS='' read -r output; do
 
-                $(eval "echo \${${name}_reload"}) | $lemons/$name | \
-                while read -r output; do
-                    # asdf: within this, set multiline to number of newlines to expect before actually doing things.
-                    if [ "$lines" -gt 0 ]; then
-                        bar_message="${bar_message}$(printf "%s" \
-                            "$(eval "echo \${area[${name}_p]"})" \
-                            "$(eval "echo \${line[${name}]"})" \
-                            "%{F$(eval "echo \${${name}_foreground}")}" \
-                            "%{B$(eval "echo \${${name}_background"})}" \
-                            "$output" \
-                            "%{F-}%{B-}" \
-                            "$(eval "echo \${area[${name}_s]"})" \
-                            "%{-o}%{-uU-}")"
+                        bar_message="${name}@"
+                        if [[ -z $(eval "echo \${${name}_inputs"}) ]]; then
+                            input="$output"
+                        else
+                            input="$(eval "\${${name}_inputs"})"
+                        fi
 
-                        lines=$((lines - 1))
-                    fi
+                        unset IFS
+                        while IFS='' read -r output2; do
+                            unset IFS
 
-                    if [ "$lines" -eq 0 ]; then
+                            if [[ "${output2:0:4}" == "meta" ]]; then
+                                eval "${output2:4}"
+                                continue
+                            fi
+
+                            bar_message="${bar_message}$(printf "%s" \
+                                "$(eval "echo \${area[${name}_p]"})" \
+                                "$(eval "echo \${line[${name}]"})" \
+                                "%{F$(eval "echo \${${name}_foreground}")}" \
+                                "%{B$(eval "echo \${${name}_background"})}" \
+                                "$output2" \
+                                "%{F-}%{B-}" \
+                                "$(eval "echo \${area[${name}_s]"})" \
+                                "%{-o}%{-uU-}")"
+
+                        done < <($lemons/$name <<< "$input")
+
+
+                        #if [[ "${bar_message}" -ne "${name}@" ]]; then
+                            printf "%s" \
+                                "${bar_message}" \
+                                $'\n' > "$process" &
+                        #fi
+                    done &
+                else
+                    while :; do
+                        bar_message="${name}@"
+
+                        while read -r output; do
+                            bar_message="${bar_message}$(printf "%s" \
+                                "$(eval "echo \${area[${name}_p]"})" \
+                                "$(eval "echo \${line[${name}]"})" \
+                                "%{F$(eval "echo \${${name}_foreground}")}" \
+                                "%{B$(eval "echo \${${name}_background"})}" \
+                                "$output" \
+                                "%{F-}%{B-}" \
+                                "$(eval "echo \${area[${name}_s]"})" \
+                                "%{-o}%{-uU-}")"
+
+                        done < <(eval "$lemons/$name")
+
                         printf "%s" \
                             "${bar_message}" \
                             $'\n' > "$process" &
 
-                        lines="$(eval "echo \${${name}_lines"})"
-                        bar_message="${name}@"
-                    fi
-                done &
-            else
-                while :; do
-                    printf "%s" \
-                        "${name}@" \
-                        "$(eval "echo \${area[${name}_p]"})" \
-                        "$(eval "echo \${line[${name}]"})" \
-                        "%{F$(eval "echo \${${name}_foreground}")}" \
-                        "%{B$(eval "echo \${${name}_background"})}" \
-                        "$(tr -d '\n' < <(eval "$lemons/$name"))" \
-                        "%{F-}%{B-}" \
-                        "$(eval "echo \${area[${name}_s]"})" \
-                        "%{-o}%{-uU-}" \
-                        $'\n'
-                    sleep $(eval "echo \${${name}_reload"})
-                done > "$process" &
+                        sleep $(eval "echo \${${name}_reload"})
+                    done > "$process" &
+                fi
             fi
-        fi
-    done
-} 2>&3
+        done
+    } 2>&3
 
 # Information block.
 echo -e -n "

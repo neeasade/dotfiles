@@ -1,0 +1,5 @@
+#!/usr/bin/env dash
+# dropdown menu.
+
+# only needs to display click, click action handled at juicer level.
+echo Arch

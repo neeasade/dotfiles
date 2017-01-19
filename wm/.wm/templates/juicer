@@ -1,5 +1,5 @@
 [bar]
-# todo: consider calculating this at runtime?
+; todo: consider calculating this at runtime?
 clickables = 40
 background = "{{`colort 0 "$pBG"`}}"
 foreground = "{{`colort 0 "$pFG"`}}"
@@ -23,14 +23,23 @@ center-append-right = "{{pCenterAppendRight}}"
 background = "{{`colort 0 "$pBGInactiveTab"`}}"
 reload = "bspc subscribe"
 
+[dropdown]
+reload = "echo oneshot"
+mouse-left="dropdown.sh menu"
+
 [mail]
 background = "{{`colort 0 "$pBGInactiveTab"`}}"
 reload = 30
 mouse-left = "xdg-open 'https://gmail.com/'"
 
 [title]
+activeFG = "{{`colort 0 "$pFGActiveTab"`}}"
+activeBG = "{{`colort 0 "$pBGActiveTab"`}}"
 background = "{{`colort 0 "$pBGInactiveTab"`}}"
+foreground = "{{`colort 0 "$pFGInactiveTab"`}}"
+
 reload = "xtitle -s"
+inputs="bspc query -N -d $mon:focused -n .window"
 
 [clock]
 background = "{{`colort 0 "$pBGInactiveTab"`}}"
