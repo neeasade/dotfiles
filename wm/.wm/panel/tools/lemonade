@@ -147,6 +147,8 @@ format() {
         [background]="#FF000000"
         [format]="||"
         [offset]=0
+        # padding inside sections
+        [padding]=0
         [fonts]="monospace-9"
         [force]=true
         [class]="lemonbar"
@@ -230,6 +232,12 @@ format() {
     [[ -e "$process" ]] && rm "$process"
     mkfifo "$process"
 
+    padding=
+    for i in $(seq $bar_padding); do
+        padding="$padding "
+    done
+
+
     for name in $juicedLemons; do
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
@@ -240,7 +248,13 @@ format() {
                         if [[ -z $(eval "echo \${${name}_inputs"}) ]]; then
                             input="$output"
                         else
-                            input="$(eval "\${${name}_inputs"})"
+                            input="$(eval "\${${name}_inputs"} || true)"
+                            if [[ -z "$input" ]]; then
+                                printf "%s" \
+                                    "${bar_message}" \
+                                    $'\n' > "$process" &
+                                continue
+                            fi
                         fi
 
                         unset IFS
@@ -257,19 +271,23 @@ format() {
                                 "$(eval "echo \${line[${name}]"})" \
                                 "%{F$(eval "echo \${${name}_foreground}")}" \
                                 "%{B$(eval "echo \${${name}_background"})}" \
+                                "$padding" \
                                 "$output2" \
+                                "$padding" \
                                 "%{F-}%{B-}" \
                                 "$(eval "echo \${area[${name}_s]"})" \
-                                "%{-o}%{-uU-}")"
+                                "%{-o}%{-uU-}" \
+                                "$bar_center_delimiter")"
+                            # todo: make this dynamic, not center delim.
 
                         done < <($lemons/$name <<< "$input")
 
 
-                        #if [[ "${bar_message}" -ne "${name}@" ]]; then
+                        if [[ ! "${bar_message}" == "${name}@" ]]; then
                             printf "%s" \
                                 "${bar_message}" \
                                 $'\n' > "$process" &
-                        #fi
+                        fi
                     done &
                 else
                     while :; do
@@ -281,7 +299,9 @@ format() {
                                 "$(eval "echo \${line[${name}]"})" \
                                 "%{F$(eval "echo \${${name}_foreground}")}" \
                                 "%{B$(eval "echo \${${name}_background"})}" \
+                                "$padding" \
                                 "$output" \
+                                "$padding" \
                                 "%{F-}%{B-}" \
                                 "$(eval "echo \${area[${name}_s]"})" \
                                 "%{-o}%{-uU-}")"
@@ -299,22 +319,22 @@ format() {
         done
     } 2>&3
 
-# Information block.
-echo -e -n "
-==== ==== ==== ==== ==== \033[1;33m
- ,.        ,.        ,.
-(:;)      (:;)      (:;)
- \`'        \`'        \` \e[0m
-==== ==== ==== ==== ===="
-
-# Start lemonade
-cat "$process" | format | lemonbar \
-    $(echo "-o $bar_offset") \
+echo lemonbar \
     $(printf " -f %s" "${bar_fonts[@]}") \
-    $(echo "-${bar_dock//[^b]/}") \
     $([[ $bar_force = true ]] && echo "-d") \
     -a $bar_clickables \
     -n "$bar_class" \
-    -g $geometry -F "$bar_foreground" -B "$bar_background" | handle | sh
+    -g $geometry -F "$bar_foreground" -B "$bar_background"
+
+# Start lemonade
+    #$(echo "-${bar_dock//[^b]/}") \
+
+cat "$process" | format | eval lemonbar \
+    $(printf " -f \"%s\"" "${bar_fonts[@]}") \
+    $([[ $bar_force = true ]] && echo "-d") \
+    -a $bar_clickables \
+    -o $bar_offset \
+    -n "$bar_class" \
+    -g $geometry -F "\\$bar_foreground" -B "\\$bar_background" | handle | sh
 
 wait

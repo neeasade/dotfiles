@@ -1,14 +1,15 @@
 [bar]
-; todo: consider calculating this at runtime?
-clickables = 40
+padding={{pPadding}}
 background = "{{`colort 0 "$pBG"`}}"
 foreground = "{{`colort 0 "$pFG"`}}"
 format = "{{barInfo}}"
 fonts = "{{PANEL_FONT_MAIN}}"
         "{{PANEL_FONT_ICON}}"
         "font-linux-10"
-
 class = "{{pWindowClass}}"
+
+; todo: consider calculating this at runtime?
+clickables = 40
 
 left-delimiter = "{{pLeftDelimiter}}"
 right-delimiter = "{{pRightDelimiter}}"

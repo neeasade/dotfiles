@@ -15,12 +15,13 @@ b_window_gap=8
 
 # panel
 PANEL_HEIGHT=20
-PANEL_FONT_MAIN="Tewi-8"
-PANEL_FONT_ICON="Siji-8"
+PANEL_FONT_MAIN="lucy tewi-8"
+PANEL_FONT_ICON="Wuncon Siji-8"
 PANEL_GAP=4
 PANEL_UNDERLINE=0
 NoModeToggle=1
 pPadding=1
+pWindowClass=noshadow
 
 # colors
 pFG="#ffcccccc"
@@ -30,9 +31,9 @@ pFGInactiveTab="$pFG"
 GTK_ICON_COLOR="$pFG"
 
 # other
-DUNST_FONT="Terminus 8"
-GTK_FONT="tewi 8"
-st_font="Tewi-8:pixelsize=12:antialias=true:autohint=true;"
+DUNST_FONT="xos4 Terminus 8"
+GTK_FONT="lucy tewi 8"
+st_font="lucy tewi-8:pixelsize=12:antialias=true:autohint=true;"
 st_borderpx=4
 st_cursorshape=3
 st_cursorthickness=1

@@ -3,6 +3,13 @@
 # note: this has to be bash or it won't die correctly..
 # todo: understand ^
 
+echo -e -n "
+==== ==== ==== ==== ==== \033[1;33m
+ ,.        ,.        ,.
+(:;)      (:;)      (:;)
+ \`'        \`'        \` \e[0m
+==== ==== ==== ==== ===="
+
 set -a
 
 . $HOME/.bspwm_theme

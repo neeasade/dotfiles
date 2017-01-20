@@ -5,7 +5,7 @@
 # investigate handling that at lemonade level/define delimiter.
 # Neeasade
 
-if [[ "$mon" -ne "$(bspc query -M -m)" ]]; then
+if [ ! "$mon" = "$(bspc query -M -m)" ]; then
    exit
 fi
 

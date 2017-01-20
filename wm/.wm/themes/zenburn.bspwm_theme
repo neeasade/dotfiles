@@ -34,7 +34,7 @@ DT='[-]'
 DM='[]'
 
 # other
-DUNST_FONT="Terminus 8"
-GTK_FONT="Terminus 8"
-st_font="Terminus-8:pixelsize=12:antialias=true:autohint=true;"
+DUNST_FONT="xos4 Terminus 8"
+GTK_FONT="xos4 Terminus 8"
+st_font="xos4 Terminus-8:pixelsize=12:antialias=true:autohint=true;"
 st_borderpx=2
