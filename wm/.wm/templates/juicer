@@ -26,7 +26,7 @@ reload = "bspc subscribe"
 
 [dropdown]
 reload = "echo oneshot"
-mouse-left="dropdown.sh menu"
+mouse-left="dzen.sh menu"
 
 [mail]
 background = "{{`colort 0 "$pBGInactiveTab"`}}"
