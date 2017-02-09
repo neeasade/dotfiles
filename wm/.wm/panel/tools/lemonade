@@ -237,58 +237,57 @@ format() {
         padding="$padding "
     done
 
-
     for name in $juicedLemons; do
+        export juicedLemon="$name";
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
-                $(eval "echo \${${name}_reload"}) | \
-                    while IFS='' read -r output; do
+                hold=false;
+                bar_message="${name}@"
 
-                        bar_message="${name}@"
-                        if [[ -z $(eval "echo \${${name}_inputs"}) ]]; then
-                            input="$output"
+                    while IFS=$'\n' read -r output; do
+                        #[ -z "$output" ] && continue
+
+                        if [[ "${output:0:4}" == "meta" ]]; then
+                            input="${output:4}"
+                            echo meta: $input
+
+                            if [ "$input" = "start" ]; then
+                                hold=true
+                            elif [ "$input" = "end" ]; then
+                                hold=false
+                            else
+                                eval "$input"
+                                continue
+                            fi
                         else
-                            input="$(eval "\${${name}_inputs"} || true)"
-                            if [[ -z "$input" ]]; then
-                                printf "%s" \
-                                    "${bar_message}" \
-                                    $'\n' > "$process" &
-                                continue
-                            fi
-                        fi
-
-                        unset IFS
-                        while IFS='' read -r output2; do
-                            unset IFS
-
-                            if [[ "${output2:0:4}" == "meta" ]]; then
-                                eval "${output2:4}"
-                                continue
-                            fi
-
+                            if [[ ! -z "$output" ]]; then
                             bar_message="${bar_message}$(printf "%s" \
                                 "$(eval "echo \${area[${name}_p]"})" \
                                 "$(eval "echo \${line[${name}]"})" \
                                 "%{F$(eval "echo \${${name}_foreground}")}" \
                                 "%{B$(eval "echo \${${name}_background"})}" \
                                 "$padding" \
-                                "$output2" \
+                                "$output" \
                                 "$padding" \
                                 "%{F-}%{B-}" \
                                 "$(eval "echo \${area[${name}_s]"})" \
                                 "%{-o}%{-uU-}" \
                                 "$bar_center_delimiter")"
-                            # todo: make this dynamic, not center delim.
-
-                        done < <($lemons/$name <<< "$input")
-
-
-                        if [[ ! "${bar_message}" == "${name}@" ]]; then
-                            printf "%s" \
-                                "${bar_message}" \
-                                $'\n' > "$process" &
+                            fi
+                                # todo: make this dynamic, not center delim.
                         fi
-                    done &
+
+
+                        #if [[ ! "${bar_message}" == "${name}@" ]]; then
+                            if ! $hold; then
+                              printf "%s" \
+                                  "${bar_message}" \
+                                  $'\n' > "$process" &
+  
+                              bar_message="${name}@"
+                            fi
+                        #fi
+                    done < <(eval "\${${name}_reload"} | "$lemons/$name") &
                 else
                     while :; do
                         bar_message="${name}@"
@@ -327,7 +326,6 @@ echo lemonbar \
     -g $geometry -F "$bar_foreground" -B "$bar_background"
 
 # Start lemonade
-    #$(echo "-${bar_dock//[^b]/}") \
 
 cat "$process" | format | eval lemonbar \
     $(printf " -f \"%s\"" "${bar_fonts[@]}") \

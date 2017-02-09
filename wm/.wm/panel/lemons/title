@@ -1,13 +1,10 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # takes input from `xtitle -s`, makes titles.
 # determines monitor from $mon variable (set outside this script)
 # todo: handle multiple title block separation better,
 # investigate handling that at lemonade level/define delimiter.
 # Neeasade
 
-if [ ! "$mon" = "$(bspc query -M -m)" ]; then
-   exit
-fi
 
 ### OPTIONS ###
 # Always tabbed visible windows option:
@@ -34,17 +31,34 @@ setLength() {
     echo -n "$padding$content$padding";
 }
 
-while read -r window; do
-   active=$(bspc query -N -m $mon -n .focused.active)
+declare -A titleMap
 
-   if [ "$window" = "$active" ]; then
-      # todo: make activeBG not lower in tools/lemonade
-      echo meta title_background="${title_activebg}"
-      echo meta title_foreground="${title_activefg}"
-      echo "$(setLength "$(xtitle $window)")"
-      echo meta title_background="${title_background}"
-      echo meta title_foreground="${title_foreground}"
-   else
-      echo "$(setLength "$(xtitle $window)")"
-   fi
+while read -r trigger; do
+    if [[ ! "$mon" = "$(bspc query -M -m)" ]]; then
+       continue
+    fi
+
+    meta start
+    active="$(bspc query -N -m $mon -n .focused.active || echo '')" 
+
+    input="$(bspc query -N -d $mon:focused -n .window || echo '')"
+    while read -r wid; do
+        [[ -z "$wid" ]] && continue
+
+        # fill in if empty
+        [[ -z "${titleMap[$wid]}" ]] && titleMap[$wid]="$(setLength "$(xtitle $wid)")"
+
+        # force refresh on active
+        [[ "$wid" = "$active" ]] && titleMap[$wid]="$(setLength "$(xtitle $wid)")"
+
+        # print
+        [[ "$wid" = "$active" ]] && meta active
+        echo "${titleMap[$wid]}"
+        [[ "$wid" = "$active" ]] && meta reset
+
+    done < <(echo "$input")
+
+    # empty desktop case.
+    [[ -z "$input" ]] && echo ""
+    meta end
 done

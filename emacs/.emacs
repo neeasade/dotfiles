@@ -26,7 +26,7 @@
   (require 'use-package))
 
 (add-to-list 'default-frame-alist
-             '(font . "Fira Code-9"))
+             '(font . "Droid Sans Mono-9"))
 
 ;; Don't litter my init file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -364,6 +364,7 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
   ;; ref: http://oremacs.com/2016/01/06/ivy-flx/
   (use-package flx
     :ensure t)
+  ;; ref: https://www.reddit.com/r/emacs/comments/3xzas3/help_with_ivycounsel_fuzzy_matching_and_sorting/
   (setq ivy-re-builders-alist
     '((ivy-switch-buffer . ivy--regex-plus)
       (t . ivy--regex-fuzzy)))
@@ -381,8 +382,19 @@ then it takes a second \\[keyboard-quit] to abort the minibuffer."
 
   (ivy-mode 1))
 
-;; ref: https://www.reddit.com/r/emacs/comments/3xzas3/help_with_ivycounsel_fuzzy_matching_and_sorting/
-
+;; auto set #! files to be executable.
+(add-hook 'after-save-hook
+        #'(lambda ()
+        (and (save-excursion
+               (save-restriction
+                 (widen)
+                 (goto-char (point-min))
+                 (save-match-data
+                   (looking-at "^#!"))))
+             (not (file-executable-p buffer-file-name))
+             (shell-command (concat "chmod u+x " buffer-file-name))
+             (message
+              (concat "Saved as script: " buffer-file-name)))))
 
 ;; # KEYBINDS
 

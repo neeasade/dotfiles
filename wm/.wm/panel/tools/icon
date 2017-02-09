@@ -40,4 +40,4 @@ case $iconfont in
        exit 1;;
 esac
 
-env printf "\u$(echo $icon | cut -d ' ' -f$index)"
+env printf "\u$(echo $icon | cut -d ' ' -f$index) "

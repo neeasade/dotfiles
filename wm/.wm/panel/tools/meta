@@ -1,0 +1,25 @@
+#!/usr/bin/env dash
+# eval things, handle special cases.
+
+# the prefix used to signal upper panel:
+prefix=meta
+
+case "$*" in
+  active)
+    eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_activebg"
+    eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_activefg"
+    ;;
+  reset)
+    eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_background"
+    eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_foreground"
+    ;;
+  start)
+    echo ${prefix}start
+    ;;
+  end)
+    echo ${prefix}end
+    ;;
+  *)
+    echo ${prefix}$*
+    ;;
+esac

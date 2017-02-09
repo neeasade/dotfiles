@@ -1,0 +1,21 @@
+#!/usr/bin/env dash
+# neeasade
+# depends on: colort, wmutils opt/chwb2
+# makes dual borders based on your bspwm colors
+
+# set border widths, if odd outer is 1px larger
+# borderWidth=`bspc config border_width`
+#inWidth=$(( $borderWidth/2 ))
+#outWidth=$(( ($borderWidth/2) + ($borderWidth%2) ))
+focused=`bspc config focused_border_color | tr -d \#`
+normal=`bspc config normal_border_color | tr -d \#`
+
+# initial draw
+chwb2 -c $normal `bspc query -N -n .!descendant_of.window`
+chwb2 -c $focused `bspc query -N -n .descendant_of.window`
+
+# reactive draw
+bspc subscribe node_geometry node_focus | while read msg; do
+    chwbb -c $normal `bspc query -N -n .!descendant_of.window`
+    chwbb -c $focused `bspc query -N -n .descendant_of.window`
+done

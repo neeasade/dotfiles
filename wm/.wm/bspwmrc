@@ -7,7 +7,10 @@ set -a
 
 # get settings
 . ~/.bspwm_theme
+
+LAUNCH_PANEL=true
 kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null || LAUNCH_PANEL=false
+
 $BSPWM_GAPS || b_window_gap=-$b_border_width
 
 bspc config border_width $b_border_width &
@@ -28,7 +31,7 @@ bspc config external_rules_command `which external_rules.sh` &
 
 # to gap or not to gap
 bspc config window_gap $b_window_gap &
-bspc config top_padding $((0 `$BSPWM_GAPS || echo + b_border_width` `$LAUNCH_PANEL && echo + PANEL_HEIGHT + PANEL_GAP`)) &
+bspc config top_padding $((0 `$BSPWM_GAPS || echo + b_border_width ` `$LAUNCH_PANEL && echo + PANEL_HEIGHT + PANEL_GAP`)) &
 
 for side in right bottom left; do
     bspc config ${side}_padding $((0 `$BSPWM_GAPS || echo + $b_border_width`)) &

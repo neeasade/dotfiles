@@ -12,6 +12,7 @@ echo -e -n "
 
 set -a
 
+[ $(bspc config window_gap) -le 0 ] && export BSPWM_GAPS=false
 . $HOME/.bspwm_theme
 "$BSPWM_GAPS" || PANEL_GAP=0
 
@@ -24,7 +25,11 @@ dim() {
 	bspc query -T -m $1 | jq .rectangle.$2
 }
 
-bspc config top_padding $(( PANEL_HEIGHT+PANEL_GAP ))
+if $BSPWM_GAPS; then
+	bspc config top_padding $(( PANEL_HEIGHT+PANEL_GAP))
+else
+	bspc config top_padding $(( PANEL_HEIGHT+PANEL_GAP+b_border_width))
+fi
 
 i=0
 # note: mon will be available to all lemons as reference.
@@ -36,7 +41,11 @@ for mon in $(bspc query -M); do
 	tools/lemonade "$conf" "$geom" &
 done
 
-trap "bspc config top_padding 0; trap - TERM; kill 0;" INT ERR TERM QUIT
+if $BSPWM_GAPS; then
+	trap "bspc config top_padding 0; trap - TERM; kill 0;" INT ERR TERM QUIT
+else
+	trap "bspc config top_padding $b_border_width; trap - TERM; kill 0;" INT ERR TERM QUIT
+fi
 
 # where are we?
 echo $$ > /tmp/panel-pid
