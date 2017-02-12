@@ -5,6 +5,10 @@
 prefix=meta
 
 case "$*" in
+  invert)
+    eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_foreground"
+    eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_background"
+    ;;
   active)
     eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_activebg"
     eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_activefg"
@@ -19,7 +23,11 @@ case "$*" in
   end)
     echo ${prefix}end
     ;;
-  *)
-    echo ${prefix}$*
+  set*)
+    # assume "set <content>", eg "set foreground=#ffffff"
+    shift
+    echo "${prefix}${juicedLemon}_$*"
     ;;
+  *)
+    echo "${prefix}$*" ;;
 esac

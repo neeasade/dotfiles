@@ -33,11 +33,7 @@ setLength() {
 
 declare -A titleMap
 
-while read -r trigger; do
-    if [[ ! "$mon" = "$(bspc query -M -m)" ]]; then
-       continue
-    fi
-
+doTheThing() {
     meta start
     active="$(bspc query -N -m $mon -n .focused.active || echo '')" 
 
@@ -48,17 +44,27 @@ while read -r trigger; do
         # fill in if empty
         [[ -z "${titleMap[$wid]}" ]] && titleMap[$wid]="$(setLength "$(xtitle $wid)")"
 
-        # force refresh on active
-        [[ "$wid" = "$active" ]] && titleMap[$wid]="$(setLength "$(xtitle $wid)")"
+        # force refresh on active, set colors
+        if [[ "$wid" = "$active" ]]; then
+            titleMap[$wid]="$(setLength "$(xtitle $wid)")"
+            meta active
+        fi
 
         # print
-        [[ "$wid" = "$active" ]] && meta active
         echo "${titleMap[$wid]}"
         [[ "$wid" = "$active" ]] && meta reset
 
-    done < <(echo "$input")
+      done < <(echo "$input")
 
     # empty desktop case.
     [[ -z "$input" ]] && echo ""
     meta end
+}
+
+# initial fireoff:
+doTheThing
+
+while read -r trigger; do
+    [[ ! "$mon" = "$(bspc query -M -m)" ]] && continue
+    doTheThing
 done

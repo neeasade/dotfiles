@@ -19,9 +19,10 @@ PANEL_FONT_MAIN="Terminus-8"
 PANEL_FONT_ICON="Siji-8"
 PANEL_GAP=2
 desktopDisplay=name
-NoModeToggle=
+NoModeToggle=true
 # sneak an extra launch parameter onto lemonbar to show no shadows.
-PANEL_UNDERLINE="4 -n noshadow"
+PANEL_UNDERLINE="4"
+pWindowClass="noshadow"
 
 # colors
 pBG="#003f3f3f"

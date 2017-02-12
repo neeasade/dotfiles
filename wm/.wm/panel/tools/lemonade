@@ -171,6 +171,9 @@ format() {
         [foreground]="${bar_foreground}"
         [background]="${bar_background}"
         [overline]=false
+        [underline]=false
+        [activeoverline]=false
+        [activeunderline]=false
         # note: added underline, TODO check if relevant
         #[underline]=false
         # enable lemons to have multiple blocks
@@ -245,11 +248,8 @@ format() {
                 bar_message="${name}@"
 
                     while IFS=$'\n' read -r output; do
-                        #[ -z "$output" ] && continue
-
                         if [[ "${output:0:4}" == "meta" ]]; then
                             input="${output:4}"
-                            echo meta: $input
 
                             if [ "$input" = "start" ]; then
                                 hold=true
@@ -261,32 +261,29 @@ format() {
                             fi
                         else
                             if [[ ! -z "$output" ]]; then
-                            bar_message="${bar_message}$(printf "%s" \
-                                "$(eval "echo \${area[${name}_p]"})" \
-                                "$(eval "echo \${line[${name}]"})" \
-                                "%{F$(eval "echo \${${name}_foreground}")}" \
-                                "%{B$(eval "echo \${${name}_background"})}" \
-                                "$padding" \
-                                "$output" \
-                                "$padding" \
-                                "%{F-}%{B-}" \
-                                "$(eval "echo \${area[${name}_s]"})" \
-                                "%{-o}%{-uU-}" \
-                                "$bar_center_delimiter")"
+                              bar_message="${bar_message}$(printf "%s" \
+                                  "$(eval "echo \${area[${name}_p]"})" \
+                                  "$(eval "echo \${line[${name}]"})" \
+                                  "%{F$(eval "echo \${${name}_foreground}")}" \
+                                  "%{B$(eval "echo \${${name}_background"})}" \
+                                  "$padding" \
+                                  "$output" \
+                                  "$padding" \
+                                  "%{F-}%{B-}" \
+                                  "$(eval "echo \${area[${name}_s]"})" \
+                                  "%{-o}%{-uU-}" \
+                                  "$bar_center_delimiter")"
+                                  # todo: make this dynamic, not center delim.
                             fi
-                                # todo: make this dynamic, not center delim.
                         fi
 
+                        if ! $hold; then
+                          printf "%s" \
+                              "${bar_message}" \
+                              $'\n' > "$process" &
 
-                        #if [[ ! "${bar_message}" == "${name}@" ]]; then
-                            if ! $hold; then
-                              printf "%s" \
-                                  "${bar_message}" \
-                                  $'\n' > "$process" &
-  
-                              bar_message="${name}@"
-                            fi
-                        #fi
+                          bar_message="${name}@"
+                        fi
                     done < <(eval "\${${name}_reload"} | "$lemons/$name") &
                 else
                     while :; do

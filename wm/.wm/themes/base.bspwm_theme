@@ -43,7 +43,7 @@ pCenterAppendRight=""
 desktopDisplay=icon         # [icon|name] - display desktop names or DO/DF variables.
 showFreeDesktops=true       # option to show nothing for free desktops.
 desktopDisplayType=together # [together|separate] - show desktops in separate blocks or together in one block.
-NoModeToggle=1              # if defined, no monocle/tiling toggle.
+NoModeToggle=true             # if defined, no monocle/tiling toggle.
 
 # desktop colors
 pUrgent="#ffffff00"   # urgent desktop color
