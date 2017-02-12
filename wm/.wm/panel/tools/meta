@@ -12,10 +12,33 @@ case "$*" in
   active)
     eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_activebg"
     eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_activefg"
+
+    result="%{"
+    for section in activeunderline activeoverline; do
+        if [ $(eval "echo \${${juicedLemon}_${section}}") = true ]; then
+            [ "$section" = "activeunderline" ] && postfix="u" || postfix="o"
+            result="${result}+${postfix}"
+        fi
+    done
+    result="${result}U$(eval "echo \${${juicedLemon}_activeline}")}"
+    echo "${prefix}line[\"${juicedLemon}\"]=\"$result\""
+
+    #if $(eval echo ${prefix}${juicedLemon}_underline) || $(eval echo ${prefix}${juicedLemon}_overline) 
+    #eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_activefg"
     ;;
   reset)
     eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_background"
     eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_foreground"
+
+    result="%{"
+    for section in underline overline; do
+        if [ $(eval "echo \${${juicedLemon}_${section}}") = true ]; then
+            result="${result}+$(echo $section | cut -c1)"
+        fi
+    done
+    result="${result}U$(eval "echo \${${juicedLemon}_line}")}"
+    echo "${prefix}line[\"${juicedLemon}\"]=\"$result\""
+
     ;;
   start)
     echo ${prefix}start

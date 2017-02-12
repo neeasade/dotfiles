@@ -147,6 +147,7 @@ format() {
         [background]="#FF000000"
         [format]="||"
         [offset]=0
+        [line]=2
         # padding inside sections
         [padding]=0
         [fonts]="monospace-9"
@@ -174,9 +175,9 @@ format() {
         [underline]=false
         [activeoverline]=false
         [activeunderline]=false
-        # note: added underline, TODO check if relevant
-        #[underline]=false
-        # enable lemons to have multiple blocks
+        [line]=\#ff999999
+        # todo: consider not having default 'active' things in this script.
+        [activeline]=\#ffffffff
         [reload]=5)
     for name in $juicedLemons; do
         for section in "${!choices[@]}"; do
@@ -205,6 +206,7 @@ format() {
             fi
         done
         line["${name}"]+="U$(eval "echo \${${name}_line}")}"
+        notify-send ${line["${name}"]}
     done
 } 2>&2
 
@@ -327,6 +329,7 @@ echo lemonbar \
 cat "$process" | format | eval lemonbar \
     $(printf " -f \"%s\"" "${bar_fonts[@]}") \
     $([[ $bar_force = true ]] && echo "-d") \
+    -u $bar_line \
     -a $bar_clickables \
     -o $bar_offset \
     -n "$bar_class" \
