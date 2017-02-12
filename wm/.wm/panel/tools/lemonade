@@ -59,7 +59,8 @@ def variable(*fmt):
 def array(*fmt):
     return '{}_{}=({})'.format(*fmt)
 
-parser = ConfigParser()
+# strict to false means you can have duplicate keys that override previous values.
+parser = ConfigParser(strict=False)
 parser.read(sys.argv[1])
 
 for section in parser:
@@ -91,6 +92,7 @@ done
 
 # transform format with delimiters and alignment
 # todo: account for these as the bar is being made, not here..
+# do so in an array mapped to name
 i=0
 for section in $(echo $bar_format | tr '|' '\n'); do
     case $i in
@@ -150,6 +152,7 @@ format() {
         [line]=2
         # padding inside sections
         [padding]=0
+
         [fonts]="monospace-9"
         [force]=true
         [class]="lemonbar"
@@ -206,7 +209,6 @@ format() {
             fi
         done
         line["${name}"]+="U$(eval "echo \${${name}_line}")}"
-        notify-send ${line["${name}"]}
     done
 } 2>&2
 

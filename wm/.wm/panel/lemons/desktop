@@ -6,7 +6,7 @@ focusMonitor=$(bspc query -M -m $mon --names)
 
 # options/variables to account for:
 #desktopDisplay=icon         # [icon|name] - display desktop names or DO/DF variables.
-#showFreeDesktops=true       # option to show nothing for free desktops (but still show the focused desktop, think i3)
+#showFreeDesktops=true       # option to show nothing for free desktops (but still show the focused desktop)
 #NoModeToggle=true           # true or false
 
 while read -r line; do

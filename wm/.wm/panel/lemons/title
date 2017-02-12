@@ -7,14 +7,22 @@
 
 
 ### OPTIONS ###
-# Always tabbed visible windows option:
-onlyShowActive=${always_tab:-false}
+
+# only show the active window title at any time.
+onlyShowActive=${onlyShowActive:-false}
 # Maxium window title length
 maxWinNameLen=${maxWinNameLen:-25}
 # The delimiter to separate window sections
 win_delim=${win_delim:-\|}
 # The delimiter to separate the window name from the window in a window section.
 win_id_delim=${win_id_delim:-//}
+
+
+# not setting any settings if $onlyShowActive.
+_meta="$(which meta)"
+meta() {
+    ! $onlyShowActive && eval $_meta "$*"
+}
 
 # set $1 length to $maxWinNameLen chars (trim or pad)
 setLength() {
@@ -37,7 +45,12 @@ doTheThing() {
     meta start
     active="$(bspc query -N -m $mon -n .focused.active || echo '')" 
 
-    input="$(bspc query -N -d $mon:focused -n .window || echo '')"
+    if $onlyShowActive; then
+      input="$(bspc query -N -n || echo '')"
+    else
+      input="$(bspc query -N -d $mon:focused -n .window || echo '')"
+    fi
+
     while read -r wid; do
         [[ -z "$wid" ]] && continue
 
