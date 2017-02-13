@@ -59,4 +59,4 @@ reload = 5
 [mpd]
 background = "{{pBGInactiveTab}}"
 foreground = "{{pFGInactiveTab}}"
-mouse-left = "player.sh"
+mouse-left = "player.sh toggle"

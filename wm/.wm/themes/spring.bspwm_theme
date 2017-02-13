@@ -40,7 +40,7 @@ DF="        "
 GTK_FONT="Droid Sans 10"
 
 # Make the workspaces be in the middle.
-barInfo="dropdown:title|desktop|clock"
+barInfo="dropdown:title|desktop|mpd:clock"
 
 desktop_theme=$(cat<<EOF
 background="#00000000"
