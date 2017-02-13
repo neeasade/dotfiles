@@ -25,6 +25,7 @@ showFreeDesktops=false
 pBGInactiveTab="#ff37474f"
 pFGActiveTab="$pFG"
 pBGActiveTab="$(colort 45 "$pBG")"
+barInfo="dropdown:desktop|title|mail:volume:updates:weather:clock" # Default options/items to include in info section of panel.
 
 # other
 GTK_FONT="Droid Sans 10"

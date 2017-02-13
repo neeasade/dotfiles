@@ -1,5 +1,6 @@
 #!/usr/bin/env dash
 # eval things, handle special cases.
+# todo: consider handling padding case
 
 # the prefix used to signal upper panel:
 prefix=meta
