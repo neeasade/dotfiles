@@ -2,7 +2,16 @@
 # mpd
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
 
-mpvc >/dev/null && target='mpvc' || target='mpc'
+# target is picked based on which might be playing.
+mpc | grep -q playing && mpcplaying=true || mpcplaying=false
+mpvc | grep -q playing && mpvcplaying=true || mpvcplaying=false
+
+if ! $mpvcplaying && ! $mpcplaying; then
+  mpvc >/dev/null && target='mpvc' || target='mpc'
+else
+  $mpvcplaying && target='mpvc'
+  $mpcplaying && target='mpc'
+fi
 
 $target | grep -q playing && playing=true || playing=false
 $target | grep -q paused && paused=true || paused=false
