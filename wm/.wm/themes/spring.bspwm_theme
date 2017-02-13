@@ -24,7 +24,10 @@ pPadding=2
 pWindowClass="noshadow"
 onlyShowActive=true
 pCenterDelimiter="   "
+pLeftDelimiter="   "
+pRightDelimiter="   "
 pLine=5
+maxWinNameLen=50
 
 # colors
 pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"

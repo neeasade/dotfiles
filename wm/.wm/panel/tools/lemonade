@@ -176,11 +176,7 @@ format() {
         [background]="${bar_background}"
         [overline]=false
         [underline]=false
-        [activeoverline]=false
-        [activeunderline]=false
         [line]=\#ff999999
-        # todo: consider not having default 'active' things in this script.
-        [activeline]=\#ffffffff
         [reload]=5)
     for name in $juicedLemons; do
         for section in "${!choices[@]}"; do

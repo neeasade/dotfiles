@@ -2,20 +2,24 @@
 # mpd
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
 
-icon $iconfont music
+mpvc >/dev/null && target='mpvc' || target='mpc'
 
-cur_song="$(basename "$(mpc current -f "%artist% - %title%")" | cut -c1-30 )"
-if [ -z "$cur_song" ]; then
-	echo "Stopped"
+$target | grep -q playing && playing=true || playing=false
+$target | grep -q paused && paused=true || paused=false
+
+if $playing || $paused; then
+  title="$($target -f "%title%" | head -n 1)"
 else
-	paused=$(mpc | grep paused)
+  title="Stopped"
+fi
 
-	[ -z "$paused" ] && toggle="${AC}mpc pause${AB}$(icon $iconfont pause)${AE}" ||
-						toggle="${AC}mpc play${AB}$(icon $iconfont play)${AE}"
-
-	# TODO: define AC,B,E for these to work inline.
-	prev="${AC}mpc prev${AB}$(icon $iconfont prev)${AE}"
-	next="${AC}mpc next${AB}$(icon $iconfont next)${AE}"
-	cur_song="${AC}dzen.sh mpd${AB} $cur_song ${AE}"
-	echo "$cur_song $prev $toggle $next"
+if [  "$title" = "Stopped" ]; then
+    icon music
+    echo Stopped
+else
+    icon music
+    printf "%s" " "
+    $playing && icon pause
+    $paused && icon play
+    printf "%s\n" "$title"
 fi

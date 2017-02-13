@@ -26,7 +26,6 @@ activeFG = "{{pFGActiveTab}}"
 activeBG = "{{pBGActiveTab}}"
 background = "{{pBGInactiveTab}}"
 reload = "bspc subscribe"
-
 {{desktop_theme}}
 
 [dropdown]
@@ -34,14 +33,12 @@ background = "{{pBGInactiveTab}}"
 foreground = "{{pFGInactiveTab}}"
 reload = "echo oneshot"
 mouse-left="dzen.sh menu"
-
 {{dropdown_theme}}
 
 [mail]
 background = "{{pBGInactiveTab}}"
 reload = 30
 mouse-left = "xdg-open 'https://gmail.com/'"
-
 {{mail_theme}}
 
 [title]
@@ -50,13 +47,16 @@ activeBG = "{{pBGActiveTab}}"
 background = "{{pBGInactiveTab}}"
 foreground = "{{pFGInactiveTab}}"
 reload = "xtitle -s"
-
 {{title_theme}}
 
 [clock]
 background = "{{pBGInactiveTab}}"
+foreground = "{{pFGInactiveTab}}"
 mouse-left = "dzen.sh cal"
 reload = 5
-
 {{clock_theme}}
 
+[mpd]
+background = "{{pBGInactiveTab}}"
+foreground = "{{pFGInactiveTab}}"
+mouse-left = "player.sh"

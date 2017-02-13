@@ -22,13 +22,11 @@ case "$*" in
     done
     result="${result}U$(eval "echo \${${juicedLemon}_activeline}")}"
     echo "${prefix}line[\"${juicedLemon}\"]=\"$result\""
-
-    #if $(eval echo ${prefix}${juicedLemon}_underline) || $(eval echo ${prefix}${juicedLemon}_overline) 
-    #eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_activefg"
     ;;
   reset)
     eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_background"
     eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_foreground"
+    eval echo "${prefix}padding=\"$padding\""
 
     result="%{"
     for section in underline overline; do

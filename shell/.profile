@@ -27,6 +27,7 @@ alias pacman="pacman --color=always"
 alias make="clear && make"
 alias shot="scrot ~/Screenshots/`date +%y-%m-%d-%H:%M:%S`.png"
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
+alias mpv='~/.wm/scripts/mpv'
 # }}}
 
 # {{{ func

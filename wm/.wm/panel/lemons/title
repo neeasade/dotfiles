@@ -36,7 +36,11 @@ setLength() {
         padding="$padding "
     done
 
-    echo -n "$padding$content$padding";
+    if $onlyShowActive; then
+      echo -n "$content";
+    else
+      echo -n "$padding$content$padding";
+    fi
 }
 
 declare -A titleMap
