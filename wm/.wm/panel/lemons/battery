@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 
-icon $iconfont battery
+icon battery
 
 BATC=/sys/class/power_supply/BAT0/capacity
 BATS=/sys/class/power_supply/BAT0/status

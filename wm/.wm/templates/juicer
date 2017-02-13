@@ -60,3 +60,24 @@ reload = 5
 background = "{{pBGInactiveTab}}"
 foreground = "{{pFGInactiveTab}}"
 mouse-left = "player.sh toggle"
+
+[battery]
+background = "{{pBGInactiveTab}}"
+foreground = "{{pFGInactiveTab}}"
+
+[themeSwitch]
+background = "{{pBGInactiveTab}}"
+foreground = "{{pFGInactiveTab}}"
+mouse-left = "dzen.sh theme"
+
+[updates]
+background = "{{pBGInactiveTab}}"
+foreground = "{{pFGInactiveTab}}"
+
+[weather]
+background = "{{pBGInactiveTab}}"
+foreground = "{{pFGInactiveTab}}"
+
+[volume]
+background = "{{pBGInactiveTab}}"
+foreground = "{{pFGInactiveTab}}"

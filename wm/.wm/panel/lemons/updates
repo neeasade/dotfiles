@@ -1,4 +1,5 @@
 #!/usr/bin/env dash
 # updates available on arch system.
 
+icon up
 echo $((`checkupdates | wc -l` + `pacaur -Qu | wc -l`))

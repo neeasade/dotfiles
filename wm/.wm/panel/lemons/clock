@@ -1,4 +1,4 @@
 #!/usr/bin/env dash
 
 icon clock
-date '+%l:%M %p'
+date '+%I:%M %p'

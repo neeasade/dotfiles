@@ -177,6 +177,7 @@ format() {
         [overline]=false
         [underline]=false
         [line]=\#ff999999
+        [activeline]=\#ffffffff
         [reload]=5)
     for name in $juicedLemons; do
         for section in "${!choices[@]}"; do

@@ -26,7 +26,6 @@ case "$*" in
   reset)
     eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_background"
     eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_foreground"
-    eval echo "${prefix}padding=\"$padding\""
 
     result="%{"
     for section in underline overline; do
