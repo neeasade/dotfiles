@@ -8,6 +8,7 @@ export GIT_EDITOR='/usr/bin/vim'
 export BROWSER=qutebrowser
 export TERMINAL=st
 export FILEBROWSER=pcmanfm
+export NODE_PATH=/usr/lib/node_modules
 # }}}
 
 # {{{ alias
@@ -41,6 +42,10 @@ setgitremote() {
     local newRemote="git@$domain:$username/$reponame.git"
     echo Setting git remote to $newRemote
     git remote set-url origin $newRemote
+}
+
+dec2hex() {
+    printf "%X" $1
 }
 
 extract() {      # Handy Extract Program

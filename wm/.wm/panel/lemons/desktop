@@ -10,6 +10,12 @@ focusMonitor=$(bspc query -M -m $mon --names)
 #NoModeToggle=true           # true or false
 
 while read -r line; do
+    if $onlyShowActiveDesktop; then
+        icon desktop
+        bspc query -D -m $mon -d focused --names
+        continue
+    fi
+
     input="$(echo $line | grep -Eo "[Mm]${focusMonitor}[^mM]*")"
     meta start
 

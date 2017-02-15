@@ -6,6 +6,7 @@
 
 case $1 in
     # awesome, siji, ionic.
+    desktop)  icon='f108 e1d7 f37e';;
     battery)  icon='f240 e1fe f113';;
     clock)    icon='f017 e015 f26e';;
     cloud)    icon='f0c2 e22b f12b';;

@@ -1,32 +1,69 @@
-#!/bin/bash
-# do things with lemon colors
-
-# dropdown:desktop|title|clock
-# it's late.
-i=0
-left=
-center=
-right=
-for section in $(echo $barInfo | tr '|' '\n'); do
-    total=$(echo $section | tr ':' '\n' | wc -l)
-    [[ "$i" = "0" ]] && j=$total || j=0
-    for lemon in $(echo $section | tr ':' '\n'); do
-        # reverse count on left
-        eval $lemon=$j
-        [[ "$i" = "0" ]] && j=$((j-1)) || j=$((j+1))
-    done
-    i=$((i+1))
-done
-
-#example call: colorchange.sh "#ffcccccc" volume fg
-# $volume would expect section and index, eg 'right,2'
-color="$1"
-step="$(eval "echo \${${2}"})"
-ground="$3"
+#!/usr/bin/env dash
+# do meta things with lemon colors
 
 # bland/vanilla::
 #echo -n "$1"
 #exit
+
+# barInfo example:
+# dropdown:desktop|title|clock
+
+# step will be per section, total will be largest section.
+separateStep() {
+  IFS=\|
+  total=0
+  for section in $barInfo; do
+      temptotal=$(echo $barInfo | tr -d -C ':' | wc -c)
+      [ $temptotal -gt $total ] && total=$temptotal
+  done
+
+  IFS=\|
+  i=0
+  for section in $barInfo; do
+      # total=$(echo $barInfo | tr -d -C ':' | wc -c)
+      # reverse count on left
+
+      [ "$i" = "0" ] && j=$((total-1)) || j=0
+      #[ "$i" = "0" ] && j=0 || j=$((total-1))
+      IFS=':'
+      for lemon in $section; do
+          eval $lemon=$j
+          [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
+          #[ "$i" = "0" ] && j=$((j+1)) || j=$((j-1))
+      done
+      i=$((i+1))
+  done
+  IFS=
+}
+
+# step will be across all sections, total will be number of lemons
+togetherStep() {
+    total=$(echo $barInfo | tr ':|' ' '| wc -w)
+
+    IFS=\|:
+    j=0
+    for lemon in $barInfo; do
+        eval $lemon=$j
+        j=$((j+1))
+    done
+    IFS=
+}
+
+# get gradient by step, use total as step.
+gradientGet() {
+    # 1-indexed, skip the first gradient step as it's the color itself.
+    step=$((step+2))
+    echo -n "$(gradient $color0 $color7 $total | sed -n ${step}p)"
+}
+
+
+#separateStep
+togetherStep
+
+color="$1"
+step="$(eval "echo \${${2}"})"
+ground="$3"
+
 if [ -z "$step" ]; then
     echo -n "$1"
     exit
@@ -37,4 +74,4 @@ if [ "$ground" = "fg" ]; then
     exit
 fi
 
-colort $(( step * 10 )) "$color"
+gradientGet 
