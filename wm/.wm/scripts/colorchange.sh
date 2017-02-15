@@ -13,16 +13,15 @@ separateStep() {
   IFS=\|
   total=0
   for section in $barInfo; do
-    temptotal=$(echo $barInfo | tr -d ':' | wc -w)
+    temptotal=$(echo $section | tr ':' ' '| wc -w)
     [ $temptotal -gt $total ] && total=$temptotal
   done
 
   IFS=\|
   i=0
   for section in $barInfo; do
-    # total=$(echo $barInfo | tr -d -C ':' | wc -c)
-    # reverse count on left
 
+    # reverse count on left, direction depends arg.
     if [ "$1" = "desc" ]; then
       [ "$i" = "0" ] && j=$((total-1)) || j=0
     else
@@ -64,7 +63,7 @@ gradientGet() {
 }
 
 
-separateStep 
+separateStep desc
 #togetherStep
 
 color="$1"
