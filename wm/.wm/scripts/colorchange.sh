@@ -13,25 +13,32 @@ separateStep() {
   IFS=\|
   total=0
   for section in $barInfo; do
-      temptotal=$(echo $barInfo | tr -d -C ':' | wc -c)
-      [ $temptotal -gt $total ] && total=$temptotal
+    temptotal=$(echo $barInfo | tr -d ':' | wc -w)
+    [ $temptotal -gt $total ] && total=$temptotal
   done
 
   IFS=\|
   i=0
   for section in $barInfo; do
-      # total=$(echo $barInfo | tr -d -C ':' | wc -c)
-      # reverse count on left
+    # total=$(echo $barInfo | tr -d -C ':' | wc -c)
+    # reverse count on left
 
+    if [ "$1" = "desc" ]; then
       [ "$i" = "0" ] && j=$((total-1)) || j=0
-      #[ "$i" = "0" ] && j=0 || j=$((total-1))
-      IFS=':'
-      for lemon in $section; do
-          eval $lemon=$j
-          [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
-          #[ "$i" = "0" ] && j=$((j+1)) || j=$((j-1))
-      done
-      i=$((i+1))
+    else
+      [ "$i" = "0" ] && j=0 || j=$((total-1))
+    fi
+
+    IFS=':'
+    for lemon in $section; do
+      eval $lemon=$j
+      if [ "$1" = "desc" ]; then
+        [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
+      else
+        [ "$i" = "0" ] && j=$((j+1)) || j=$((j-1))
+      fi
+    done
+    i=$((i+1))
   done
   IFS=
 }
@@ -57,8 +64,8 @@ gradientGet() {
 }
 
 
-#separateStep
-togetherStep
+separateStep 
+#togetherStep
 
 color="$1"
 step="$(eval "echo \${${2}"})"
