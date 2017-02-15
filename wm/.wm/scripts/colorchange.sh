@@ -20,22 +20,13 @@ separateStep() {
   IFS=\|
   i=0
   for section in $barInfo; do
-
-    # reverse count on left, direction depends arg.
-    if [ "$1" = "desc" ]; then
-      [ "$i" = "0" ] && j=$((total-1)) || j=0
-    else
-      [ "$i" = "0" ] && j=0 || j=$((total-1))
-    fi
+    # reverse count on left
+    [ "$i" = "0" ] && j=$((total-1)) || j=0
 
     IFS=':'
     for lemon in $section; do
       eval $lemon=$j
-      if [ "$1" = "desc" ]; then
-        [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
-      else
-        [ "$i" = "0" ] && j=$((j+1)) || j=$((j-1))
-      fi
+      [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
     done
     i=$((i+1))
   done
@@ -44,40 +35,57 @@ separateStep() {
 
 # step will be across all sections, total will be number of lemons
 togetherStep() {
-    total=$(echo $barInfo | tr ':|' ' '| wc -w)
+  total=$(echo $barInfo | tr ':|' ' '| wc -w)
 
-    IFS=\|:
-    j=0
-    for lemon in $barInfo; do
-        eval $lemon=$j
-        j=$((j+1))
-    done
-    IFS=
+  IFS=\|:
+  j=0
+  for lemon in $barInfo; do
+      eval $lemon=$j
+      j=$((j+1))
+  done
+  IFS=
+}
+
+# reverse the steps by total
+reverseSteps() {
+  # by lemon
+  lemons=$(echo $barInfo | tr '|:' ' ')
+  IFS=' '
+  for lemon in $lemons; do
+    temp=$(eval "echo \${$lemon}")
+    eval $lemon=$((total-temp))
+  done
+  IFS=
 }
 
 # get gradient by step, use total as step.
 gradientGet() {
-    # 1-indexed, skip the first gradient step as it's the color itself.
-    step=$((step+2))
-    echo -n "$(gradient $color0 $color7 $total | sed -n ${step}p)"
+  # 1-indexed, skip the first gradient step as it's the color itself.
+  step=$((step+2))
+  echo -n "$(gradient $color0 $color7 $total | sed -n ${step}p)"
 }
 
 
-separateStep desc
+# options
+separateStep 
 #togetherStep
+reverseSteps
 
 color="$1"
 step="$(eval "echo \${${2}"})"
 ground="$3"
 
+# handle lemon not in barInfo case
 if [ -z "$step" ]; then
     echo -n "$1"
     exit
 fi
 
+# TODO
 if [ "$ground" = "fg" ]; then
     echo -n "$1"
     exit
 fi
 
+# do what you want with the steps here..
 gradientGet 
