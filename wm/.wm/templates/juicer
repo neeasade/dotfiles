@@ -8,6 +8,7 @@ fonts = "{{PANEL_FONT_MAIN}}"
         "{{PANEL_FONT_ICON}}"
         "font-linux-10"
 class = "{{pWindowClass}}"
+offset = {{pOffset}}
 
 ; todo: consider calculating this at runtime?
 clickables = 40
@@ -22,60 +23,65 @@ center-append-left = "{{pCenterAppendLeft}}"
 center-append-right = "{{pCenterAppendRight}}"
 
 [desktop]
-activeFG = "{{pFGActiveTab}}"
-activeBG = "{{pBGActiveTab}}"
-background = "{{`colorchange.sh "$pBGInactiveTab" desktop bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" desktop fg`}}"
+activeFG = "{{`colorchange.sh desktop activefg`}}"
+activeBG = "{{`colorchange.sh desktop activebg`}}"
+
+background = "{{`colorchange.sh desktop bg`}}"
+foreground = "{{`colorchange.sh desktop fg`}}"
 reload = "bspc subscribe"
 {{desktop_theme}}
 
 [dropdown]
-background = "{{`colorchange.sh "$pBGInactiveTab" dropdown bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" dropdown fg`}}"
+background = "{{`colorchange.sh dropdown bg`}}"
+foreground = "{{`colorchange.sh dropdown fg`}}"
 reload = "echo oneshot"
 mouse-left="dzen.sh menu"
 
 [mail]
-background = "{{`colorchange.sh "$pBGInactiveTab" mail bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" mail fg`}}"
+background = "{{`colorchange.sh mail bg`}}"
+foreground = "{{`colorchange.sh mail fg`}}"
 reload = 30
 mouse-left = "xdg-open 'https://gmail.com/'"
 
 [title]
-activeFG = "{{pFGActiveTab}}"
-activeBG = "{{pBGActiveTab}}"
-background = "{{`colorchange.sh "$pBGInactiveTab" title bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" title fg`}}"
+activeFG = "{{`colorchange.sh title activefg`}}"
+activeBG = "{{`colorchange.sh title activebg`}}"
+background = "{{`colorchange.sh title bg`}}"
+foreground = "{{`colorchange.sh title fg`}}"
 reload = "xtitle -s"
 
 [clock]
-background = "{{`colorchange.sh "$pBGInactiveTab" clock bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" clock fg`}}"
+background = "{{`colorchange.sh clock bg`}}"
+foreground = "{{`colorchange.sh clock fg`}}"
 mouse-left = "dzen.sh cal"
 reload = 5
 
 [mpd]
-background = "{{`colorchange.sh "$pBGInactiveTab" mpd bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" mpd fg`}}"
+background = "{{`colorchange.sh mpd bg`}}"
+foreground = "{{`colorchange.sh mpd fg`}}"
 mouse-left = "player.sh toggle"
 
 [battery]
-background = "{{`colorchange.sh "$pBGInactiveTab" battery bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" battery fg`}}"
+background = "{{`colorchange.sh battery bg`}}"
+foreground = "{{`colorchange.sh battery fg`}}"
 
 [themeSwitch]
-background = "{{`colorchange.sh "$pBGInactiveTab" themeSwitch bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" themeSwitch fg`}}"
+# never
+reload="echo oneshot"
+background = "{{`colorchange.sh themeSwitch bg`}}"
+foreground = "{{`colorchange.sh themeSwitch fg`}}"
 mouse-left = "dzen.sh theme"
 
 [updates]
-background = "{{`colorchange.sh "$pBGInactiveTab" updates bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" updates fg`}}"
+reload=600
+background = "{{`colorchange.sh updates bg`}}"
+foreground = "{{`colorchange.sh updates fg`}}"
 
 [weather]
-background = "{{`colorchange.sh "$pBGInactiveTab" weather bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" weather fg`}}"
+reload=600
+background = "{{`colorchange.sh weather bg`}}"
+foreground = "{{`colorchange.sh weather fg`}}"
 
 [volume]
-background = "{{`colorchange.sh "$pBGInactiveTab" volume bg`}}"
-foreground = "{{`colorchange.sh "$pFGInactiveTab" volume fg`}}"
+background = "{{`colorchange.sh volume bg`}}"
+foreground = "{{`colorchange.sh volume fg`}}"

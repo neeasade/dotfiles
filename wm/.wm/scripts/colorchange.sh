@@ -1,12 +1,33 @@
 #!/usr/bin/env dash
-# do meta things with lemon colors
+# override theme intentions in a generative fashion.
+# takes 2 arguments, the lemon and the target.
+# target may be one of: bg, fg, activefg, activebg
+# theme variables are exposed here to use and reference.
 
-# bland/vanilla::
-#echo -n "$1"
-#exit
+lemon="$1"
+target="$2"
 
 # barInfo example:
 # dropdown:desktop|title|clock
+
+# vanilla/theme intention:
+vanilla() {
+  case $target in
+    fg) echo -n "$pFGInactiveTab" ;;
+    bg) echo -n "$pBGInactiveTab" ;;
+    activefg) echo -n "$pFGActiveTab" ;;
+    activebg) echo -n "$pBGActiveTab" ;;
+  esac
+}
+
+#vanilla
+#exit
+
+# ignore lemons not included.
+if ! echo $barInfo | grep -q $lemon; then
+  vanilla
+  exit
+fi
 
 # step will be per section, total will be largest section.
 separateStep() {
@@ -67,25 +88,40 @@ gradientGet() {
 
 
 # options
-separateStep 
+separateStep
 #togetherStep
 reverseSteps
 
-color="$1"
-step="$(eval "echo \${${2}"})"
-ground="$3"
+step="$(eval "echo \${${1}"})"
 
-# handle lemon not in barInfo case
-if [ -z "$step" ]; then
-    echo -n "$1"
-    exit
-fi
+# use lemon step and target to make decisions here:
+# still playing around..
+bg() {
+  # select a color in the scheme
+  step=$((step+1))
+  step=$((step*2))
+  eval "echo -n \#\${color${step}}"
+  #gradientGet
+}
 
-# TODO
-if [ "$ground" = "fg" ]; then
-    echo -n "$1"
-    exit
-fi
+activebg() {
+  base=$(bg)
+  colort 30 "$base"
+}
 
-# do what you want with the steps here..
-gradientGet 
+fg() {
+  bg=$(bg)
+  colort -c $pBG && contrast=true || contrast=false
+
+  if colort -c $bg && $contrast; then
+    echo -n $pFG
+  else
+    echo -n $pBG
+  fi
+}
+
+activefg() {
+  fg
+}
+
+eval $target
