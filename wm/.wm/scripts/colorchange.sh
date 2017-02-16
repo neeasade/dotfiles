@@ -106,7 +106,8 @@ bg() {
 
 activebg() {
   base=$(bg)
-  colort 30 "$base"
+  # allow either direction for light and dark themes.
+  colort -l 30 "$base" || colort -30 "$base"
 }
 
 fg() {
