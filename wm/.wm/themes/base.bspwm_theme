@@ -30,6 +30,7 @@ pPadding=3                       # number of spaces to pad panel information (se
 pLine=2 # width of the over/underlines
 pIcon=unset
 pWindowClass="lemonbar"
+pOffset=0
 
 pLeftDelimiter=""
 pRightDelimiter=""
@@ -45,11 +46,7 @@ desktopDisplay=icon         # [icon|name] - display desktop names or DO/DF varia
 showFreeDesktops=true       # option to show nothing for free desktops.
 desktopDisplayType=together # [together|separate] - show desktops in separate blocks or together in one block.
 NoModeToggle=true             # if defined, no monocle/tiling toggle.
-
-# desktop colors
-pUrgent="#ffffff00"   # urgent desktop color
-pActive="#ff$color15" # active desktop color
-pRest="#ff$color6"    # resting desktop color
+onlyShowActiveDesktop=false
 
 # Panel colors
 pBG="#ff$background"            # Default foreground
@@ -84,6 +81,8 @@ PROMPT_CHAR='$'
 # If empty, all are used.
 # it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"
 barInfo="dropdown:desktop|title|clock" # Default options/items to include in info section of panel.
+
+barInfo="dropdown:desktop|title|mpd:volume:updates:weather:clock" # Default options/items to include in info section of panel.
 
 # Customize options on different computers by hostname.
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.

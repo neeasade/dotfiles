@@ -42,3 +42,8 @@ case $iconfont in
 esac
 
 env printf "\u$(echo $icon | cut -d ' ' -f$index) "
+
+# separate icon option:
+#meta active
+#env printf "\u$(echo $icon | cut -d ' ' -f$index)\n"
+#meta reset

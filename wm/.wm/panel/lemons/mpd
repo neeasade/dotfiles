@@ -26,7 +26,7 @@ if [  "$title" = "Stopped" ]; then
     icon music
     echo Stopped
 else
-    icon music
+    #icon music
     printf "%s" " "
     $playing && icon pause
     $paused && icon play

@@ -1,5 +1,6 @@
 #!/usr/bin/env dash
 
 icon cloud
+
 weatherURL='http://www.accuweather.com/en/us/manhattan-ks/66502/weather-forecast/328848'
 wget -q -T 1 -O- "$weatherURL" | awk -F\' '/acm_RecentLocationsCarousel\.push/{print $12"°F" }'| head -1

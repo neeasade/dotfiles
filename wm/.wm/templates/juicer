@@ -23,65 +23,115 @@ center-append-left = "{{pCenterAppendLeft}}"
 center-append-right = "{{pCenterAppendRight}}"
 
 [desktop]
+reload = "bspc subscribe"
+
 activeFG = "{{`colorchange.sh desktop activefg`}}"
 activeBG = "{{`colorchange.sh desktop activebg`}}"
-
+activeline = "{{`colorchange.sh desktop activeline`}}"
 background = "{{`colorchange.sh desktop bg`}}"
 foreground = "{{`colorchange.sh desktop fg`}}"
-reload = "bspc subscribe"
+line = "{{`colorchange.sh desktop line`}}"
+activeline = "{{`colorchange.sh desktop activeline`}}"
+
+; theme extras here:
 {{desktop_theme}}
 
 [dropdown]
-background = "{{`colorchange.sh dropdown bg`}}"
-foreground = "{{`colorchange.sh dropdown fg`}}"
 reload = "echo oneshot"
 mouse-left="dzen.sh menu"
 
+activeFG = "{{`colorchange.sh dropdown activefg`}}"
+activeBG = "{{`colorchange.sh dropdown activebg`}}"
+background = "{{`colorchange.sh dropdown bg`}}"
+foreground = "{{`colorchange.sh dropdown fg`}}"
+line = "{{`colorchange.sh dropdown line`}}"
+activeline = "{{`colorchange.sh dropdown activeline`}}"
+
 [mail]
-background = "{{`colorchange.sh mail bg`}}"
-foreground = "{{`colorchange.sh mail fg`}}"
 reload = 30
 mouse-left = "xdg-open 'https://gmail.com/'"
 
+activeFG = "{{`colorchange.sh mail activefg`}}"
+activeBG = "{{`colorchange.sh mail activebg`}}"
+background = "{{`colorchange.sh mail bg`}}"
+foreground = "{{`colorchange.sh mail fg`}}"
+line = "{{`colorchange.sh mail line`}}"
+activeline = "{{`colorchange.sh mail activeline`}}"
+
 [title]
-activeFG = "{{`colorchange.sh title activefg`}}"
-activeBG = "{{`colorchange.sh title activebg`}}"
-background = "{{`colorchange.sh title bg`}}"
-foreground = "{{`colorchange.sh title fg`}}"
 reload = "xtitle -s"
 
+activeFG = "{{`colorchange.sh title activefg`}}"
+activeBG = "{{`colorchange.sh title activebg`}}"
+activeline = "{{`colorchange.sh title activeline`}}"
+background = "{{`colorchange.sh title bg`}}"
+foreground = "{{`colorchange.sh title fg`}}"
+line = "{{`colorchange.sh title line`}}"
+
 [clock]
-background = "{{`colorchange.sh clock bg`}}"
-foreground = "{{`colorchange.sh clock fg`}}"
 mouse-left = "dzen.sh cal"
 reload = 5
 
+activeFG = "{{`colorchange.sh clock activefg`}}"
+activeBG = "{{`colorchange.sh clock activebg`}}"
+background = "{{`colorchange.sh clock bg`}}"
+foreground = "{{`colorchange.sh clock fg`}}"
+line = "{{`colorchange.sh clock line`}}"
+activeline = "{{`colorchange.sh clock activeline`}}"
+
 [mpd]
-background = "{{`colorchange.sh mpd bg`}}"
-foreground = "{{`colorchange.sh mpd fg`}}"
 mouse-left = "player.sh toggle"
 
+activeFG = "{{`colorchange.sh mpd activefg`}}"
+activeBG = "{{`colorchange.sh mpd activebg`}}"
+background = "{{`colorchange.sh mpd bg`}}"
+foreground = "{{`colorchange.sh mpd fg`}}"
+line = "{{`colorchange.sh mpd line`}}"
+activeline = "{{`colorchange.sh mpd activeline`}}"
+
 [battery]
+activeFG = "{{`colorchange.sh battery activefg`}}"
+activeBG = "{{`colorchange.sh battery activebg`}}"
 background = "{{`colorchange.sh battery bg`}}"
 foreground = "{{`colorchange.sh battery fg`}}"
+line = "{{`colorchange.sh battery line`}}"
+activeline = "{{`colorchange.sh battery activeline`}}"
 
 [themeSwitch]
-# never
 reload="echo oneshot"
+mouse-left = "dzen.sh theme"
+
+activeFG = "{{`colorchange.sh themeSwitch activefg`}}"
+activeBG = "{{`colorchange.sh themeSwitch activebg`}}"
 background = "{{`colorchange.sh themeSwitch bg`}}"
 foreground = "{{`colorchange.sh themeSwitch fg`}}"
-mouse-left = "dzen.sh theme"
+line = "{{`colorchange.sh themeSwitch line`}}"
+activeline = "{{`colorchange.sh themeSwitch activeline`}}"
 
 [updates]
 reload=600
+
+activeFG = "{{`colorchange.sh updates activefg`}}"
+activeBG = "{{`colorchange.sh updates activebg`}}"
 background = "{{`colorchange.sh updates bg`}}"
 foreground = "{{`colorchange.sh updates fg`}}"
+line = "{{`colorchange.sh updates line`}}"
+activeline = "{{`colorchange.sh updates activeline`}}"
 
 [weather]
 reload=600
+
+activeFG = "{{`colorchange.sh desktop activefg`}}"
+activeBG = "{{`colorchange.sh desktop activebg`}}"
 background = "{{`colorchange.sh weather bg`}}"
 foreground = "{{`colorchange.sh weather fg`}}"
+line = "{{`colorchange.sh weather line`}}"
+activeline = "{{`colorchange.sh weather activeline`}}"
 
 [volume]
+activeFG = "{{`colorchange.sh volume activefg`}}"
+activeBG = "{{`colorchange.sh volume activebg`}}"
 background = "{{`colorchange.sh volume bg`}}"
 foreground = "{{`colorchange.sh volume fg`}}"
+line = "{{`colorchange.sh volume line`}}"
+activeline = "{{`colorchange.sh volume activeline`}}"

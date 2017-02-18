@@ -1,7 +1,7 @@
 #!/usr/bin/env dash
 # override theme intentions in a generative fashion.
 # takes 2 arguments, the lemon and the target.
-# target may be one of: bg, fg, activefg, activebg
+# target may be one of: bg, fg, activefg, activebg, line, activeline
 # theme variables are exposed here to use and reference.
 
 lemon="$1"
@@ -10,18 +10,19 @@ target="$2"
 # barInfo example:
 # dropdown:desktop|title|clock
 
-# vanilla/theme intention:
+# vanilla/theme intention for all targets:
+
 vanilla() {
+  [ ! -z "$1" ] && target="$1"
   case $target in
     fg) echo -n "$pFGInactiveTab" ;;
     bg) echo -n "$pBGInactiveTab" ;;
     activefg) echo -n "$pFGActiveTab" ;;
     activebg) echo -n "$pBGActiveTab" ;;
+    line) echo -n "$pBGInactiveTab" ;;
+    activeline) echo -n "$pBGActiveTab" ;;
   esac
 }
-
-#vanilla
-#exit
 
 # ignore lemons not included.
 if ! echo $barInfo | grep -q $lemon; then
@@ -88,9 +89,9 @@ gradientGet() {
 
 
 # options
-separateStep
-#togetherStep
-reverseSteps
+#separateStep
+togetherStep
+#reverseSteps
 
 step="$(eval "echo \${${1}"})"
 
@@ -98,23 +99,26 @@ step="$(eval "echo \${${1}"})"
 # still playing around..
 bg() {
   # select a color in the scheme
-  step=$((step+1))
-  step=$((step*2))
-  eval "echo -n \#\${color${step}}"
+  vanilla bg
+  #step=$((step+1))
+  #step=$((step*2))
+  #eval "echo -n \#\${color${step}}"
   #gradientGet
 }
 
 activebg() {
   base=$(bg)
+
+  #step=$((step+1))
+  #eval "echo -n \#\${color${step}}"
+  gradientGet
+
   # allow either direction for light and dark themes.
-  colort -l 30 "$base" || colort -30 "$base"
+  #colort -l 30 "$base" || colort -30 "$base"
 }
 
 fg() {
-  bg=$(bg)
-  colort -c $pBG && contrast=true || contrast=false
-
-  if colort -c $bg && $contrast; then
+  if colort -c "$(bg)" && colort -c "$pBG"; then
     echo -n $pFG
   else
     echo -n $pBG
@@ -122,7 +126,20 @@ fg() {
 }
 
 activefg() {
-  fg
+  if colort -c "$(activebg)" && colort -c "$pBGActiveTab"; then
+    echo -n $pFG
+  else
+    echo -n $pBG
+  fi
+}
+
+line() {
+  step=$((step+1))
+  eval "echo -n \#\${color${step}}"
+}
+
+activeline() {
+    vanilla activeline
 }
 
 eval $target

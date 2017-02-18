@@ -291,17 +291,23 @@ format() {
                         bar_message="${name}@"
 
                         while read -r output; do
-                            bar_message="${bar_message}$(printf "%s" \
-                                "$(eval "echo \${area[${name}_p]"})" \
-                                "$(eval "echo \${line[${name}]"})" \
-                                "%{F$(eval "echo \${${name}_foreground}")}" \
-                                "%{B$(eval "echo \${${name}_background"})}" \
-                                "$padding" \
-                                "$output" \
-                                "$padding" \
-                                "%{F-}%{B-}" \
-                                "$(eval "echo \${area[${name}_s]"})" \
-                                "%{-o}%{-uU-}")"
+                            if [[ "${output:0:4}" == "meta" ]]; then
+                                input="${output:4}"
+                                eval "$input"
+                                continue
+                            else
+                                bar_message="${bar_message}$(printf "%s" \
+                                    "$(eval "echo \${area[${name}_p]"})" \
+                                    "$(eval "echo \${line[${name}]"})" \
+                                    "%{F$(eval "echo \${${name}_foreground}")}" \
+                                    "%{B$(eval "echo \${${name}_background"})}" \
+                                    "$padding" \
+                                    "$output" \
+                                    "$padding" \
+                                    "%{F-}%{B-}" \
+                                    "$(eval "echo \${area[${name}_s]"})" \
+                                    "%{-o}%{-uU-}")"
+                            fi
 
                         done < <(eval "$lemons/$name")
 
