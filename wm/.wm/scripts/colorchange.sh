@@ -1,31 +1,33 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # override theme intentions in a generative fashion.
 # takes 2 arguments, the lemon and the target.
 # target may be one of: bg, fg, activefg, activebg, line, activeline
 # theme variables are exposed here to use and reference.
 
-lemon="$1"
-target="$2"
+lemon_target="$1"
+lemon_reload="$2"
 
 # barInfo example:
 # dropdown:desktop|title|clock
+barInfo="$p_format"
 
 # vanilla/theme intention for all targets:
 
 vanilla() {
-  [ ! -z "$1" ] && target="$1"
-  case $target in
-    fg) echo -n "$pFGInactiveTab" ;;
-    bg) echo -n "$pBGInactiveTab" ;;
-    activefg) echo -n "$pFGActiveTab" ;;
-    activebg) echo -n "$pBGActiveTab" ;;
-    line) echo -n "$pBGInactiveTab" ;;
-    activeline) echo -n "$pBGActiveTab" ;;
+  case $1 in
+    fg) echo  "$p_fg_inactive" ;;
+    bg) echo  "$p_bg_inactive" ;;
+    activefg) echo  "$p_fg_active" ;;
+    activebg) echo  "$p_bg_active" ;;
+    line) echo  "$p_bg_inactive" ;;
+    activeline) echo  "$p_bg_active" ;;
+    prefix) echo  "";;
+    suffix) echo  "";;
   esac
 }
 
 # ignore lemons not included.
-if ! echo $barInfo | grep -q $lemon; then
+if ! echo $barInfo | grep -q $lemon_target; then
   vanilla
   exit
 fi
@@ -84,62 +86,78 @@ reverseSteps() {
 gradientGet() {
   # 1-indexed, skip the first gradient step as it's the color itself.
   step=$((step+2))
-  echo -n "$(gradient $color0 $color7 $total | sed -n ${step}p)"
+  echo "$(gradient $color0 $color7 $total | sed -n ${step}p)"
 }
 
 
-# options
-#separateStep
-togetherStep
-#reverseSteps
+# keep these dynamic unless otherwise,
+# because the fg color peek is neat and saves time.
+# means we need default bg activebg as well...
+if [ ! "$(type -t fg)" = "function" ]; then
+  fg() {
+    colort -c "$(bg)" && check="$p_bg_normal" || check="$p_fg_normal"
+    colort -c "$check" && echo $p_fg_normal || echo $p_bg_normal
+  }
+fi
 
+if [ ! "$(type -t activefg)" = "function" ]; then
+  activefg() {
+    colort -c "$(activebg)" && check="$p_bg_active" || check="$p_fg_active"
+    colort -c "$check" && echo $p_fg_active || echo $p_bg_active
+  }
+fi
+
+if [ ! "$(type -t bg)" = "function" ]; then
+    bg() {
+        vanilla bg
+    }
+fi
+
+if [ ! "$(type -t activebg)" = "function" ]; then
+    activebg() {
+        vanilla bg
+    }
+fi
+
+# Where the magic happens:
+
+if [ ! "$(type -t stepSetup)" = "function" ]; then
+    stepSetup() {
+        separateStep
+        reverseSteps
+    }
+fi
+
+stepSetup
 step="$(eval "echo \${${1}"})"
 
-# use lemon step and target to make decisions here:
-# still playing around..
-bg() {
-  # select a color in the scheme
-  vanilla bg
-  #step=$((step+1))
-  #step=$((step*2))
-  #eval "echo -n \#\${color${step}}"
-  #gradientGet
-}
+# declare, reload.
+echo "[$lemon_target]"
+if [ ! -z "$lemon_reload" ]; then
+    echo "reload = \"$lemon_reload\""
+fi
 
-activebg() {
-  base=$(bg)
+# todo: account for mouse generative things here...
 
-  #step=$((step+1))
-  #eval "echo -n \#\${color${step}}"
-  gradientGet
+# targets may be exported functions by themes in bash.
+# resources include: gradientStep, step reference, theme variables.
+targets="bg fg line activebg activefg activeline prefix suffix"
+IFS=" "
+for target in $targets; do
+    if type -t $target > /dev/null; then
+      #echo "$target = $(eval $target)"
+      input="$(eval $target)"
+    else
+      #echo "$target = \"$(vanilla $target)\""
+      input="$(vanilla $target)"
+    fi
 
-  # allow either direction for light and dark themes.
-  #colort -l 30 "$base" || colort -30 "$base"
-}
+    if [ ! -z "$input" ]; then
+      echo "$target = \"${input}\""
+    fi
+done
 
-fg() {
-  if colort -c "$(bg)" && colort -c "$pBG"; then
-    echo -n $pFG
-  else
-    echo -n $pBG
-  fi
-}
-
-activefg() {
-  if colort -c "$(activebg)" && colort -c "$pBGActiveTab"; then
-    echo -n $pFG
-  else
-    echo -n $pBG
-  fi
-}
-
-line() {
-  step=$((step+1))
-  eval "echo -n \#\${color${step}}"
-}
-
-activeline() {
-    vanilla activeline
-}
-
-eval $target
+# after that, add any overrides from theme.
+if [ ! -z "$(eval echo \$p_${lemon_target}_theme)" ]; then
+  eval echo "\$p_${lemon_target}_theme"
+fi

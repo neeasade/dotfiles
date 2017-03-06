@@ -1,5 +1,5 @@
 [global]
-    font = {{DUNST_FONT}}
+    font = {{d_font}}
     allow_markup = yes
     format = "<b>%s</b>\n%b"
     sort = yes
@@ -31,7 +31,7 @@
 
 [frame]
     width = {{b_border_width}}
-    color = "{{DUNST_BORDER}}"
+    color = "{{d_border_color}}"
 
 [shortcuts]
     close = ctrl+space
@@ -40,16 +40,16 @@
     context = ctrl+shift+period
 
 [urgency_low]
-    background = "#{{pBG}}"
-    foreground = "#{{pFG}}"
+    background = "#{{p_bg_normal}}"
+    foreground = "#{{p_fg_normal}}"
     timeout = 10
 
 [urgency_normal]
-    background = "#{{pBG}}"
-    foreground = "#{{pFG}}"
+    background = "#{{p_bg_normal}}"
+    foreground = "#{{p_fg_normal}}"
     timeout = 10
 
 [urgency_critical]
-    background = "#{{pFG}}"
-    foreground = "#{{pBG}}"
+    background = "#{{p_bg_active}}"
+    foreground = "#{{p_fg_active}}"
     timeout = 0

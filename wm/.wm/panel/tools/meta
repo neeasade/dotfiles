@@ -7,16 +7,16 @@ prefix=meta
 
 case "$*" in
   invert)
-    eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_foreground"
-    eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_background"
+    eval echo ${prefix}${juicedLemon}_bg="\$${juicedLemon}_fg"
+    eval echo ${prefix}${juicedLemon}_fg="\$${juicedLemon}_bg"
     ;;
   active)
-    eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_activebg"
-    eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_activefg"
+    eval echo ${prefix}${juicedLemon}_bg="\$${juicedLemon}_activebg"
+    eval echo ${prefix}${juicedLemon}_fg="\$${juicedLemon}_activefg"
 
     result="%{"
     for section in activeunderline activeoverline; do
-        if [ $(eval "echo \${${juicedLemon}_${section}}") = true ]; then
+        if [ "$(eval "echo \${${juicedLemon}_${section}}")" = "true" ]; then
             [ "$section" = "activeunderline" ] && postfix="u" || postfix="o"
             result="${result}+${postfix}"
         fi
@@ -25,12 +25,12 @@ case "$*" in
     echo "${prefix}line[\"${juicedLemon}\"]=\"$result\""
     ;;
   reset)
-    eval echo ${prefix}${juicedLemon}_background="\$${juicedLemon}_background"
-    eval echo ${prefix}${juicedLemon}_foreground="\$${juicedLemon}_foreground"
+    eval echo ${prefix}${juicedLemon}_bg="\$${juicedLemon}_bg"
+    eval echo ${prefix}${juicedLemon}_fg="\$${juicedLemon}_fg"
 
     result="%{"
     for section in underline overline; do
-        if [ $(eval "echo \${${juicedLemon}_${section}}") = true ]; then
+        if [ "$(eval "echo \${${juicedLemon}_${section}}")" = "true" ]; then
             result="${result}+$(echo $section | cut -c1)"
         fi
     done
@@ -39,16 +39,17 @@ case "$*" in
 
     ;;
   start)
-    echo ${prefix}start
+    echo ${prefix}hold=true
     ;;
   end)
-    echo ${prefix}end
+    echo ${prefix}hold=false
     ;;
   set*)
-    # assume "set <content>", eg "set foreground=#ffffff"
+    # assume "set <content>", eg "set fg=#ffffff"
     shift
     echo "${prefix}${juicedLemon}_$*"
     ;;
   *)
-    echo "${prefix}$*" ;;
+    echo "${prefix}$*"
+    ;;
 esac

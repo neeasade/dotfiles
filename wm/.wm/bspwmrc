@@ -1,7 +1,6 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # neeasade's bspwmrc
 # heavily tied to my theme-based setup.
-# todo: revisit toggling gaps think we're off by a bit on top padding.
 
 set -a
 
@@ -39,12 +38,12 @@ done
 
 bspc config borderless_monocle `$BSPWM_GAPS && echo false || echo true` &
 
-$LAUNCH_PANEL && ~/.wm/panel/lemonade &
-
 # declare desktops per monitor
 for monitor in $(bspc query -M); do
     bspc monitor $monitor -d 00 01 10 11 &
 done
+
+$LAUNCH_PANEL && ~/.wm/panel/lemonade &
 
 pgrep -f pulse.sh >/dev/null 2>&1 && pkill -f pulse.sh
 pgrep -f 2bspwm >/dev/null 2>&1 && pkill -f 2bspwm

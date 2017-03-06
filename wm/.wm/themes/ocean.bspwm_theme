@@ -1,0 +1,34 @@
+#!/usr/bin/env dash
+# base16 twilight theme
+
+set -a
+
+# theme
+THEME_NAME=ocean
+VIM_COLORS=chameleon
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/ocean.jpg"
+. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
+
+
+# bspwm
+b_border_width=6
+b_window_gap=16
+
+# panel
+p_height=32
+p_gap=0
+p_underline=0
+p_font_main="Droid Sans-10"
+p_font_icon="FontAwesome-10"
+p_desktop_display_name=name
+p_desktop_show_free=false
+p_desktop_only_active=true
+p_title_only_show_active=false 
+p_bg_inactive=$(colort 20 $p_bg_normal)
+
+barInfo="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock" # Default options/items to include in info section of panel.
+
+# colors
+#pBGInactiveTab="#ff1e1e1e"
+#pBGActiveTab="#ff2d2d2d"
+#pFGActiveTab="$pFG"

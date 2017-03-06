@@ -8,7 +8,7 @@
 
 . "$HOME/.wm/themes/colors/$THEME_NAME"
 
-[ -z "$BSPWM_GAPS"  ] && BSPWM_GAPS=true
+[ -z "$BSPWM_GAPS"  ] && BSPWM_GAPS=true || BSPWM_GAPS=false
 
 # bspwm settings. Naming convention is b_<config_option>
 b_border_width=3
@@ -20,48 +20,41 @@ b_focused_border_color="#$foreground"
 b_presel_feedback_color="#$color8"
 
 # Panel variables
-PANEL_FIFO=/tmp/panel-fifo       # Location of the Panel fifo
-PANEL_HEIGHT=16                  # Panel height.
-PANEL_FONT_MAIN="Droid Sans-8"   # Panel main font.
-PANEL_FONT_ICON="FontAwesome-10" # Panel Icon font.
-PANEL_GAP=4                      # Gaps of panel off screen.
-PANEL_UNDERLINE=0                # This value is used for both underline and overline
-pPadding=3                       # number of spaces to pad panel information (sections/blocks) with
-pLine=2 # width of the over/underlines
-pIcon=unset
-pWindowClass="lemonbar"
-pOffset=0
+p_height=16                  # Panel height.
+p_font_main="Droid Sans-8"   # Panel main font.
+p_font_icon="FontAwesome-10" # Panel Icon font.
+p_gap=4                      # Gaps of panel off screen.
+p_underline=0                # This value is used for both underline and overline
+p_padding=3                       # number of spaces to pad panel information (sections/blocks) with
+p_line=2 # width of the over/underlines
 
-pLeftDelimiter=""
-pRightDelimiter=""
-pCenterDelimiter=""
-
-pLeftAppend=""
-pRightAppend=""
-pCenterAppendLeft=""
-pCenterAppendRight=""
+# note: this name should maybe indicate a color more.
+p_icon=unset
+p_window_class="lemonbar"
 
 # variables for desktop area
-desktopDisplay=icon         # [icon|name] - display desktop names or DO/DF variables.
-showFreeDesktops=true       # option to show nothing for free desktops.
-desktopDisplayType=together # [together|separate] - show desktops in separate blocks or together in one block.
-NoModeToggle=true             # if defined, no monocle/tiling toggle.
-onlyShowActiveDesktop=false
+p_desktop_display_name=icon # [icon|name] - display desktop names or DO/DF variables.
+p_desktop_display_format=together  # [together|separate] - show desktops in separate blocks or together in one block.
+p_desktop_show_free=true # option to show nothing for free desktops.
+p_desktop_mode_toggle=true # monocle/tiling toggle.
+p_desktop_only_active=false # only show the active desktop name
+
+p_title_only_show_active=false # used by title.
 
 # Panel colors
-pBG="#ff$background"            # Default foreground
-pFG="#ff$foreground"            # Default foreground
-pBGActiveTab="$pFG"             # Active title tab - also used as gtk select color value.
-pFGActiveTab="$pBG"             # Active title tab - also used as gtk select color value.
-pBGInactiveTab="$pBG"           # Inactive title tab - also used to info.sh ouput background.
-pFGInactiveTab="$pFG"           # Inactive title tab - also used to info.sh ouput background.
+p_bg_normal="#ff$background"            # Default foreground
+p_fg_normal="#ff$foreground"            # Default foreground
+p_bg_active="$p_fg_normal"              # Active title tab - also used as gtk select color value.
+p_fg_active="$p_bg_normal"              # Active title tab - also used as gtk select color value.
+p_bg_inactive="$p_bg_normal"              # Active title tab - also used as gtk select color value.
+p_fg_inactive="$p_fg_normal"              # Active title tab - also used as gtk select color value.
 
 # panel icon colors - also used to color acyl icons, and qutebrowser match color.
 # Workspace variables
-DO='[-]' # occupied desktop
-DF='[ ]' # free desktop
-DT='T'   # tiling mode
-DM='M'   # monocle mode
+p_desktop_occupied_label='[-]'
+p_desktop_empty_label='[ ]'
+p_desktop_tiling_label='T'
+p_desktop_monocle_label='M'
 
 # xst
 st_font="Droid Sans Mono-8:pixelsize=11:antialias=true:autohint=true;"
@@ -71,8 +64,8 @@ st_cursorthickness=2
 
 GTK_FONT="Droid Sans 10" # GTK font to be used.
 
-DUNST_FONT="Droid Sans 10" # Font used by dunst on startup
-DUNST_BORDER="`bspc config normal_border_color`" # Font used by dunst on startup
+d_font="Droid Sans 10" # Font used by dunst on startup
+d_border_color="$b_normal_border_color" # Font used by dunst on startup
 
 # promptchar to be set for st and dmenu
 PROMPT_CHAR='$'
@@ -80,17 +73,18 @@ PROMPT_CHAR='$'
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
 # it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"
-barInfo="dropdown:desktop|title|clock" # Default options/items to include in info section of panel.
-
-barInfo="dropdown:desktop|title|mpd:volume:updates:weather:clock" # Default options/items to include in info section of panel.
+p_format="dropdown:desktop|title|mpd:volume:updates:weather:clock" # Default options/items to include in info section of panel.
 
 # Customize options on different computers by hostname.
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.
 HOSTNAME=`cat /etc/hostname`
+
 if [ "$HOSTNAME" = "littleapple" ]; then
-    barInfo1="desktop|title|yaourtUpdates"
-    barInfo2="desktop|title|themeSwitch:volume:clock"
-    barInfo3="desktop|title|mpd:clock"
+  barInfo1="desktop|title|yaourtUpdates"
+  barInfo2="desktop|title|themeSwitch:volume:clock"
+  barInfo3="desktop|title|mpd:clock"
 fi
 
-[ "$HOSTNAME" = "home2" ] && barInfo="desktop:title||battery:network:volume:clock"
+if [ "$HOSTNAME" = "home2" ]; then
+  barInfo="desktop:title||battery:network:volume:clock" 
+fi

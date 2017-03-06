@@ -17,17 +17,21 @@ b_focused_border_color=\#005f87
 b_normal_border_color=\#edeeef
 
 # panel
-PANEL_HEIGHT=24
+PANEL_HEIGHT=34
 PANEL_GAP=0
 PANEL_UNDERLINE="5 -n noshadow"
 PANEL_FONT_MAIN="Roboto Mono-10:style=Bold"
 DUNST_FONT="Roboto Mono 10"
+onlyShowActiveDesktop=true
+pPadding=1
+pLine=3
+maxWinNameLen=16
 
 # colors
 #pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"
 #pBG="#00`echo "$pBG" | cut -c4-`"
-pIcon=5f819d
-pBGActiveTab=005f87
+pIcon=\#5f819d
+pBGActiveTab=\#005f87
 
 # other
 GTK_FONT="Roboto Mono 10"

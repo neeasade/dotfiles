@@ -1,4 +1,4 @@
 #!/usr/bin/env dash
 
 icon rotate
-grep -m 1 "THEME_NAME" ~/.bspwm_theme | sed s'/.*=//'
+echo $THEME_NAME

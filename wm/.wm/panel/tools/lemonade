@@ -36,13 +36,14 @@ set -e
 set -a
 
 # Change the current directory to the lemonade directory always.
-cd $(dirname $0)
+cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 
 lemonadedir=$HOME/.wm/panel
-ident=$1$RANDOM
+ident="$(bspc query -M -m "$mon" --names)"
 
 mkdir -p $lemonadedir $lemonadedir/logs $lemonadedir/lemons
-exec 3<> $lemonadedir/logs/$ident.log
+[ -f "$lemonadedir/logs/$ident.log" ] && rm "$lemonadedir/logs/$ident.log"
+exec 3<> "$lemonadedir/logs/$ident.log"
 
 # Create the scripts directory.
 lemons=$lemonadedir/lemons
@@ -79,6 +80,7 @@ for section in parser:
 # "It is easier to port a shell than a shell script."
 #   -- Larry Wall
 
+echo asdf
 process=/tmp/lemonade-process-$ident
 unique=/tmp/lemonade-stack-$ident
 
@@ -91,17 +93,10 @@ for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
 done
 
 # transform format with delimiters and alignment
-# todo: account for these as the bar is being made, not here..
 # do so in an array mapped to name
-i=0
-for section in $(echo $bar_format | tr '|' '\n'); do
-    case $i in
-        0) position="$(echo "$section" | sed "s/:/${bar_left_delimiter}/g")${bar_left_append}" ;;
-        1) position="${position}%{c}${bar_center_append_left}$(echo "$section" | sed "s/:/${bar_center_delimiter}/g")${bar_center_append_right}" ;;
-        2) position="${position}%{r}${bar_right_append}$(echo "$section" | sed "s/:/${bar_right_delimiter}/g")" ;;
-    esac
-    i=$((i+1))
-done
+
+#position="%{l}$(echo $bar_format | tr ':' ' ')"
+position="%{l}$(echo $bar_format | sed "s/|/%{c}/;s/|/%{r}/;s/:/$bar_delimiter/g;")"
 
 # build the panel switch
 switch=""
@@ -109,6 +104,7 @@ for script in $juicedLemons; do
     position=$(sed "s/${script}/\$__${script}/g" <<< $position)
     switch="$switch ${script}) __${script}=\${line#*@} ;;"
 done
+
 
 # Retrieve a value from the stack, the stack is a collection of all scripts with
 # unique sets of characters that are used for event handles.
@@ -145,8 +141,8 @@ format() {
 # require some extra attention to be formatted correctly.
 {
     declare -A bar=(
-        [foreground]="#FFFFFFFF"
-        [background]="#FF000000"
+        [fg]="#FFFFFFFF"
+        [bg]="#FF000000"
         [format]="||"
         [offset]=0
         [line]=2
@@ -172,8 +168,8 @@ format() {
 # Whenever a value is not defined, set the default value for it.
 {
     declare -A choices=(
-        [foreground]="${bar_foreground}"
-        [background]="${bar_background}"
+        [fg]="${bar_fg}"
+        [bg]="${bar_bg}"
         [overline]=false
         [underline]=false
         [line]=\#ff999999
@@ -194,8 +190,8 @@ format() {
     declare -A line
     for name in $juicedLemons; do
         if [[ $(eval "echo \${#${name}_line}") -eq 0 ]]; then
-            echo "No value for '${name}-line' -> using ${choices[foreground]}"
-            eval "${name}_line=${choices[foreground]}"
+            echo "No value for '${name}-line' -> using ${choices[fg]}"
+            eval "${name}_line=${choices[fg]}"
         fi
         line["${name}"]="%{"
         for section in underline overline; do
@@ -246,49 +242,45 @@ format() {
         if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
             if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
                 hold=false;
-                bar_message="${name}@"
+                bar_message=
 
                     while IFS=$'\n' read -r output; do
                         if [[ "${output:0:4}" == "meta" ]]; then
-                            input="${output:4}"
-
-                            if [ "$input" = "start" ]; then
-                                hold=true
-                            elif [ "$input" = "end" ]; then
-                                hold=false
-                            else
-                                eval "$input"
-                                continue
-                            fi
+                            eval "${output:4}"
                         else
                             if [[ ! -z "$output" ]]; then
                               bar_message="${bar_message}$(printf "%s" \
                                   "$(eval "echo \${area[${name}_p]"})" \
                                   "$(eval "echo \${line[${name}]"})" \
-                                  "%{F$(eval "echo \${${name}_foreground}")}" \
-                                  "%{B$(eval "echo \${${name}_background"})}" \
+                                  "%{F$(eval "echo \${${name}_fg}")}" \
+                                  "%{B$(eval "echo \${${name}_bg"})}" \
                                   "$padding" \
                                   "$output" \
                                   "$padding" \
                                   "%{F-}%{B-}" \
-                                  "$(eval "echo \${area[${name}_s]"})" \
-                                  "%{-o}%{-uU-}" \
-                                  "$bar_center_delimiter")"
-                                  # todo: make this dynamic, not center delim.
+                                  "%{-o}%{-uU-}")"
+
+                              if $hold; then
+                                  bar_message="${bar_message}${bar_delimiter}"
+                              fi
                             fi
                         fi
 
                         if ! $hold; then
+
+                          #bar_message="${name}@$(eval "echo \${${name}_prefix"})${bar_message}$(eval "echo \${${name}_suffix"})"
+                          bar_message="${name}@${bar_message}"
+
                           printf "%s" \
                               "${bar_message}" \
                               $'\n' > "$process" &
 
-                          bar_message="${name}@"
+                          bar_message=
                         fi
                     done < <(eval "\${${name}_reload"} | "$lemons/$name") &
                 else
                     while :; do
-                        bar_message="${name}@"
+                        bar_message=""
 
                         while read -r output; do
                             if [[ "${output:0:4}" == "meta" ]]; then
@@ -299,8 +291,8 @@ format() {
                                 bar_message="${bar_message}$(printf "%s" \
                                     "$(eval "echo \${area[${name}_p]"})" \
                                     "$(eval "echo \${line[${name}]"})" \
-                                    "%{F$(eval "echo \${${name}_foreground}")}" \
-                                    "%{B$(eval "echo \${${name}_background"})}" \
+                                    "%{F$(eval "echo \${${name}_fg}")}" \
+                                    "%{B$(eval "echo \${${name}_bg"})}" \
                                     "$padding" \
                                     "$output" \
                                     "$padding" \
@@ -310,6 +302,11 @@ format() {
                             fi
 
                         done < <(eval "$lemons/$name")
+
+
+                        #bar_message="${name}@$(eval "echo \${${name}_prefix"})${bar_message}$(eval "echo \${${name}_suffix"})"
+                        # note: bar delimeter is handled in $position sed setup.
+                          bar_message="${name}@${bar_message}"
 
                         printf "%s" \
                             "${bar_message}" \
@@ -322,13 +319,6 @@ format() {
         done
     } 2>&3
 
-echo lemonbar \
-    $(printf " -f %s" "${bar_fonts[@]}") \
-    $([[ $bar_force = true ]] && echo "-d") \
-    -a $bar_clickables \
-    -n "$bar_class" \
-    -g $geometry -F "$bar_foreground" -B "$bar_background"
-
 # Start lemonade
 
 cat "$process" | format | eval lemonbar \
@@ -338,6 +328,6 @@ cat "$process" | format | eval lemonbar \
     -a $bar_clickables \
     -o $bar_offset \
     -n "$bar_class" \
-    -g $geometry -F "\\$bar_foreground" -B "\\$bar_background" | handle | sh
+    -g $geometry -F "\\$bar_fg" -B "\\$bar_bg" | handle | sh
 
 wait

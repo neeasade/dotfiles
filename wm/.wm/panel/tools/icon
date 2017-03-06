@@ -6,7 +6,7 @@
 
 case $1 in
     # awesome, siji, ionic.
-    desktop)  icon='f108 e1d7 f37e';;
+    desktop)  icon='f108 e1d7 f380';;
     battery)  icon='f240 e1fe f113';;
     clock)    icon='f017 e015 f26e';;
     cloud)    icon='f0c2 e22b f12b';;
@@ -25,13 +25,15 @@ case $1 in
     sound)    icon='f028 e05d f259';;
     up)       icon='f062 e060 f10c';;
     world)    icon='ff0a e1a0 f4d3';;
+    window)   icon='f2d0';;
+    linux)    icon='f17c';;
     *) echo "icon type not found."
        exit 1;;
 esac
 
 # ick
 # todo: handle/define this at a theme level somehow.
-[ ! -z "$2" ] && iconfont="$2" || iconfont="$(echo $PANEL_FONT_ICON | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic')"
+[ ! -z "$2" ] && iconfont="$2" || iconfont="$(echo $p_font_icon | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic')"
 
 case $iconfont in
     awesome) index=1;;
@@ -44,6 +46,3 @@ esac
 env printf "\u$(echo $icon | cut -d ' ' -f$index) "
 
 # separate icon option:
-#meta active
-#env printf "\u$(echo $icon | cut -d ' ' -f$index)\n"
-#meta reset

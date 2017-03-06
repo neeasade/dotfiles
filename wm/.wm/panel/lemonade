@@ -10,11 +10,26 @@ echo -e -n "
  \`'        \`'        \` \e[0m
 ==== ==== ==== ==== ===="
 
+
+error() {
+   local sourcefile=$1
+   local lineno=$2
+   # ...logic for reporting an error at line $lineno
+   #    of file $sourcefile goes here...
+   echo err: $sourcefile $lineno
+}
+trap 'error "${BASH_SOURCE}" "${LINENO}"' ERR
+
+# todo: reconsider this, is the different between juicer
+# being main config point and themes passing into lemons..
 set -a
 
-[ $(bspc config window_gap) -le 0 ] && export BSPWM_GAPS=false
+[ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false || BSPWM_GAPS=true
+
+# only need this for p_gap and b_border_width values.
 . $HOME/.bspwm_theme
-"$BSPWM_GAPS" || PANEL_GAP=0
+
+"$BSPWM_GAPS" || p_gap=0
 
 # relevance
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
@@ -26,9 +41,9 @@ dim() {
 }
 
 if $BSPWM_GAPS; then
-	bspc config top_padding $(( PANEL_HEIGHT+PANEL_GAP))
+	bspc config top_padding $(( p_height+p_gap ))
 else
-	bspc config top_padding $(( PANEL_HEIGHT+PANEL_GAP+b_border_width))
+	bspc config top_padding $(( p_height+p_gap+b_border_width ))
 fi
 
 i=0
@@ -37,14 +52,14 @@ for mon in $(bspc query -M); do
 	i=$(($i+1))
 	conf=`ls juicers | sed -n "$i p"`
 	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
-	geom="$(( $(dim $mon width)-(PANEL_GAP*2) ))x$PANEL_HEIGHT+$(( $(dim $mon x)+PANEL_GAP ))+$PANEL_GAP"
+	geom="$(( $(dim $mon width)-(p_gap*2) ))x$p_height+$(( $(dim $mon x)+p_gap ))+$p_gap"
 	tools/lemonade "$conf" "$geom" &
 done
 
 if $BSPWM_GAPS; then
-	trap "bspc config top_padding 0; trap - TERM; kill 0;" INT ERR TERM QUIT
+	trap "bspc config top_padding 0; trap - TERM; kill 0;" INT TERM QUIT
 else
-	trap "bspc config top_padding $b_border_width; trap - TERM; kill 0;" INT ERR TERM QUIT
+	trap "bspc config top_padding $b_border_width; trap - TERM; kill 0;" INT TERM QUIT
 fi
 
 # where are we?

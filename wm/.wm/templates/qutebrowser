@@ -98,7 +98,7 @@ tabs-are-windows = false
 title-format = {title}
 title-alignment = center
 mousewheel-tab-switching = true
-padding = {{PANEL_HEIGHT}},{{PANEL_HEIGHT}},8,8
+padding = {{p_height}},{{p_height}},8,8
 indicator-padding = 0,0,0,0
 
 [storage]
@@ -138,7 +138,7 @@ host-blocking-whitelist = piwik.org
 enable-pdfjs = true
 
 [hints]
-border = 1px solid #{{pFG}}
+border = 1px solid #{{p_fg_normal}}
 opacity = 0.7
 mode = letter
 chars = asdfghjkl
@@ -155,20 +155,20 @@ DEFAULT = https://google.com/search?q={}
 [aliases]
 
 [colors]
-completion.fg = #{{pFG}}
-completion.bg = #{{pBG}}
+completion.fg = #{{p_fg_normal}}
+completion.bg = #{{p_bg_normal}}
 completion.alternate-bg = ${completion.bg}
 
-completion.category.fg = #{{pFGInactiveTab}}
-completion.category.bg = #{{pBGInactiveTab}}
+completion.category.fg = #{{p_fg_inactive}}
+completion.category.bg = #{{p_bg_inactive}}
 completion.category.border.bottom = ${completion.category.border.top}
 
-completion.item.selected.fg = #{{pFGActiveTab}}
-completion.item.selected.bg = #{{pBGActiveTab}}
-completion.item.selected.border.top = #{{pBGActiveTab}}
-completion.item.selected.border.bottom = #{{pBGActiveTab}}
+completion.item.selected.fg = #{{p_fg_active}}
+completion.item.selected.bg = #{{p_bg_active}}
+completion.item.selected.border.top = #{{p_bg_active}}
+completion.item.selected.border.bottom = #{{p_bg_active}}
 
-completion.match.fg = #{{pIcon}}
+completion.match.fg = #{{p_icon}}
 
 completion.scrollbar.fg = ${completion.fg}
 completion.scrollbar.bg = ${completion.bg}
@@ -179,10 +179,13 @@ statusbar.fg.error = ${statusbar.fg}
 statusbar.bg.error = red
 statusbar.fg.warning = ${statusbar.fg}
 statusbar.bg.warning = darkorange
-statusbar.fg.prompt = #{{pFGActiveTab}}
-statusbar.bg.prompt = #{{pBGActiveTab}}
-statusbar.fg.insert = ${completion.bg}
-statusbar.bg.insert = ${completion.fg}
+
+statusbar.fg.prompt = #{{p_fg_active}}
+statusbar.bg.prompt = #{{p_bg_active}}
+
+statusbar.fg.insert = #{{p_fg_active}}
+statusbar.bg.insert = #{{p_bg_active}}
+
 statusbar.fg.command = ${statusbar.fg}
 statusbar.bg.command = ${statusbar.bg}
 statusbar.fg.caret = ${statusbar.fg}
@@ -202,10 +205,12 @@ tabs.fg.odd = ${completion.fg}
 tabs.bg.odd = ${completion.bg}
 tabs.fg.even = ${completion.fg}
 tabs.bg.even = ${completion.bg}
-tabs.fg.selected.odd = #{{pFGActiveTab}}
-tabs.bg.selected.odd = #{{pBGActiveTab}}
+
+tabs.fg.selected.odd = #{{p_fg_active}}
+tabs.bg.selected.odd = #{{p_bg_active}}
 tabs.fg.selected.even = ${tabs.fg.selected.odd}
 tabs.bg.selected.even = ${tabs.bg.selected.odd}
+
 tabs.bg.bar = #555555
 tabs.indicator.start = #0000aa
 tabs.indicator.stop = #00aa00
@@ -217,10 +222,10 @@ hints.bg = ${completion.bg}
 hints.fg.match = ${completion.match.fg}
 
 downloads.bg.bar = ${completion.bg}
-downloads.fg.start = #{{pFGInactiveTab}}
-downloads.bg.start = #{{pBGInactiveTab}}
-downloads.fg.stop = #{{pFGActiveTab}}
-downloads.bg.stop = #{{pBGActiveTab}}
+downloads.fg.start = #{{p_fg_inactive}}
+downloads.bg.start = #{{p_bg_inactive}}
+downloads.fg.stop = #{{p_fg_active}}
+downloads.bg.stop = #{{p_bg_active}}
 downloads.fg.system = none
 downloads.bg.system = none
 downloads.fg.error = white
@@ -229,9 +234,9 @@ downloads.bg.error = red
 webpage.bg = white
 
 [fonts]
-_monospace = "{{PANEL_FONT_MAIN}}", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Liberation Mono", "Courier New", Courier, monospace, Fixed, Consolas, Terminal
+_monospace = "{{p_font_main}}", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Liberation Mono", "Courier New", Courier, monospace, Fixed, Consolas, Terminal
 completion = 9pt ${_monospace}
-tabbar = {{PANEL_FONT_MAIN_BOLD}} {{PANEL_FONT_MAIN_SIZE}}pt ${_monospace}
+tabbar = {{p_font_main_bold}} {{p_font_main_size}}pt ${_monospace}
 statusbar = 9pt ${_monospace}
 downloads = 9pt ${_monospace}
 hints = bold 13px Monospace

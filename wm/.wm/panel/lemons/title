@@ -37,6 +37,9 @@ setLength() {
     done
 
     if $onlyShowActive; then
+      meta bar_center_delimiter=""
+      icon window
+      meta bar_center_delimiter="$bar_center_delimiter"
       echo -n "$content";
     else
       echo -n "$padding$content$padding";
@@ -47,7 +50,7 @@ declare -A titleMap
 
 doTheThing() {
     meta start
-    active="$(bspc query -N -m $mon -n .focused.active || echo '')" 
+    active="$(bspc query -N -m $mon -n .focused.active || echo '')"
 
     if $onlyShowActive; then
       input="$(bspc query -N -n || echo '')"
@@ -68,7 +71,7 @@ doTheThing() {
         fi
 
         # print
-        echo "${titleMap[$wid]}"
+        [ ! -z "${titleMap[$wid]}" ] && echo "${titleMap[$wid]}"
         [[ "$wid" = "$active" ]] && meta reset
 
       done < <(echo "$input")

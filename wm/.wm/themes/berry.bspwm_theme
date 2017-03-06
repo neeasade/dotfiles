@@ -4,7 +4,7 @@
 set -a
 
 # theme
-THEME_NAME=pretty
+THEME_NAME=berry
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/berry.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
@@ -14,16 +14,31 @@ b_border_width=4
 b_window_gap=16
 
 # panel
-PANEL_GAP=0
+PANEL_GAP=7
 PANEL_HEIGHT=22
 PANEL_UNDERLINE="5"
 PANEL_FONT_MAIN="Droid Sans-10:style=Bold"
 DUNST_FONT="Droid Sans 10"
 pPadding=2
 pWindowClass="noshadow"
+pOffset=-1
+onlyShowActive=true
+
+DO="$(echo -n -e '\uf004')"
+DF="$(echo -n -e '\uf08a')"
+
+pLeftDelimiter="   "
+pRightDelimiter="   "
+pCenterDelimiter="   "
+pLeftAppend="   "
+pRightAppend="   "
+pCenterAppendLeft="   "
+pCenterAppendRight="   "
+
+barInfo="dropdown:mpd:title|desktop|themeSwitch:volume:updates:weather:clock" # Default options/items to include in info section of panel.
 
 # colors
-pBGInactiveTab="#99`echo "$pBG" | cut -c4-`"
+#pBGInactiveTab="#99`echo "$pBG" | cut -c4-`"
 pBG="#00`echo "$pBG" | cut -c4-`"
 
 # other

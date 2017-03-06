@@ -16,7 +16,7 @@ b_window_gap=12
 # panel
 PANEL_HEIGHT=28
 PANEL_FONT_MAIN="Terminus-8"
-PANEL_FONT_ICON="Siji-8"
+PANEL_FONT_ICON="Wuncon Siji-8"
 PANEL_GAP=2
 desktopDisplay=name
 NoModeToggle=true

@@ -9,8 +9,18 @@ focusMonitor=$(bspc query -M -m $mon --names)
 #showFreeDesktops=true       # option to show nothing for free desktops (but still show the focused desktop)
 #NoModeToggle=true           # true or false
 
+# temp/compat
+DO="$p_desktop_occupied_label"
+DF="$p_desktop_empty_label"
+NoModeToggle="$p_desktop_mode_toggle"
+showFreeDesktops="$p_desktop_show_free"
+desktopDisplay="$p_desktop_display_name"
+
 while read -r line; do
-    if $onlyShowActiveDesktop; then
+    [ "$cache" = "$line" ] && continue
+    cache="$line"
+
+    if $p_desktop_only_active; then
         icon desktop
         bspc query -D -m $mon -d focused --names
         continue

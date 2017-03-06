@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # Load a bspwm theme based on argument
 # This loads settings for: bspwm, xst, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
 # This makes heavy use of a posix implementation of mustache templates.
@@ -16,14 +16,14 @@ ln -s "$targetTheme" "$HOME/.bspwm_theme"
 . "$HOME/.wm/templates/mustache.sh"
 
 # adjust pIcon to theme (rel for panel, acyl, qutebrowser.)
-if [ "$pIcon" = "unset" ]; then
-    if colort -c "$pBGActiveTab"; then
-        pIcon=$(colort -c "$pFGInactiveTab" && colort -l -40 "$pFGInactiveTab" || colort -l 40 "$pFGInactiveTab")
-        [ $? -ne 0 ] && MatchFG=$(colort -c "$pFGInactiveTab" && colort 50 "$pFGInactiveTab" || colort -50 "$pFGInactiveTab")
+if [ "$p_icon" = "unset" ]; then
+    if colort -c "$p_bg_active"; then
+        p_icon=$(colort -c "$p_fg_inactive" && colort -l -40 "$p_fg_inactive" || colort -l 40 "$p_fg_inactive")
+        [ $? -ne 0 ] && p_icon=$(colort -c "$p_fg_inactive" && colort 50 "$p_fg_inactive" || colort -50 "$p_fg_inactive")
     else
         # light, assume invert
-        pIcon=$(colort -c "$pFGInactiveTab" && colort -l 60 "$pFGInactiveTab" || colort -l -60 "$pFGInactiveTab")
-        [ $? -ne 0 ] && pIcon=$(colort -c "$pFGInactiveTab" && colort -60 "$pFGInactiveTab" || colort 60 "$pFGInactiveTab")
+        p_icon=$(colort -c "$p_fg_inactive" && colort -l 60 "$p_fg_inactive" || colort -l -60 "$p_fg_inactive")
+        [ $? -ne 0 ] && p_icon=$(colort -c "$p_fg_inactive" && colort -60 "$p_fg_inactive" || colort 60 "$p_fg_inactive")
     fi
 fi
 
@@ -33,13 +33,12 @@ margs() {
 }
 
 trimAlphas() {
-    pFG=$(colort -t "$pFG")
-    pBG=$(colort -t "$pBG")
-    pFGActiveTab=$(colort -t "$pFGActiveTab")
-    pBGActiveTab=$(colort -t "$pBGActiveTab")
-    pFGInactiveTab=$(colort -t "$pFGInactiveTab")
-    pBGInactiveTab=$(colort -t "$pBGInactiveTab")
-    pIcon=$(colort -t "$pIcon")
+    for target in active inactive normal; do
+        eval p_fg_$target=$(eval colort -t "\$p_fg_$target")
+        eval p_bg_$target=$(eval colort -t "\$p_bg_$target")
+    done
+
+    p_icon=$(colort -t "$p_icon")
 }
 
 # tmux
@@ -69,8 +68,28 @@ load_xresources() {
 # Keep the current gap setting and reload bspwm
 load_bspwm() {
     [ ! -d "$HOME/.wm/panel/juicers" ] && mkdir $HOME/.wm/panel/juicers
+
     margs juicer .wm/panel/juicers/juicer
-    [ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false
+
+    # custom reload values:
+    p_mail_reload=30
+    p_desktop_reload="bspc subscribe"
+    p_title_reload="xtitle -s"
+    p_weather_reload=600
+    p_updates_reload=600
+    p_dropdown_reload="echo oneshot"
+    p_themeSwitch_reload="echo oneshot"
+
+    # note all lemons, generate them.
+    lemons=$(echo $p_format | tr ':|' ' ');
+    IFS=' '
+    for lemon in $lemons; do
+        colorchange.sh "$lemon" "$(eval "echo \${p_${lemon}_reload}")" >> ~/.wm/panel/juicers/juicer
+        echo "" >> ~/.wm/panel/juicers/juicer
+    done
+    IFS=
+
+    [ $(bspc config window_gap) -le 0 ] && export BSPWM_GAPS=false
     "$HOME/.wm/bspwmrc"
 }
 
@@ -94,7 +113,7 @@ load_gtk() {
     fi
 
     # icon color(ACYL)
-    $HOME/.icons/acyl/icon.sh "#$pIcon"
+    $HOME/.icons/acyl/icon.sh "#$p_icon"
 
     # reload
     gtkrc-reload &
@@ -107,10 +126,10 @@ load_gtk() {
 load_qutebrowser() {
     trimAlphas
 
-    echo $PANEL_FONT_MAIN | grep -q Bold && PANEL_FONT_MAIN_BOLD="bold"
-    PANEL_FONT_MAIN_SIZE="$(echo $PANEL_FONT_MAIN | grep -Eo '[0-9]+')"
-    PANEL_FONT_MAIN="$(echo $PANEL_FONT_MAIN | sed 's/-.*//')"
-    PANEL_HEIGHT="$(( ($PANEL_HEIGHT-10) / 2 ))"
+    echo $p_font_main | grep -q Bold && p_font_main_bold="bold"
+    p_font_main_size="$(echo $p_font_main | grep -Eo '[0-9]+')"
+    p_font_main="$(echo $p_font_main | sed 's/-.*//')"
+    p_height="$(( ($p_height-10) / 2 ))"
 
     margs qutebrowser .config/qutebrowser/qutebrowser.conf
 }

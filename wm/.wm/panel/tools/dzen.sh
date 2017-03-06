@@ -3,47 +3,37 @@
 
 # This function echos dzen dimensions at the panel centered to click
 # along with options from current theme(font)
-dzen_options()
-{
-    if [[ ! "$1" = "cal" ]]; then
-        pBG="$(cut -c4- <<< $pBG)"
-        pFG="$(cut -c4- <<< $pFG)"
-        pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
-    fi
+dzen_options() {
+    #if [[ ! "$1" = "cal" ]]; then
+        p_bg_normal="$(colort -t $p_bg_normal)"
+        p_fg_normal="$(colort -t $p_fg_normal)"
+        p_bg_active="$(colort -t $p_bg_active)"
+    #fi
 
     eval $(xdotool getmouselocation --shell)
 
-    X=$(expr $X - $(expr $width / 2))
+    #X=$((X+$(bspc query -T -m $mon | jq .rectangle.x)))
 
-    #handle offsets
-    xextra=$(bspc query -T -m $i | jq -r '.rectangle.y')
-    Y=`expr $PANEL_HEIGHT + $PANEL_GAP + $xextra`
-    xedge=$(bspc query -T -m $i | jq -r '.rectangle.width')
-    xoffset=$(bspc query -T -m $i | jq -r '.rectangle.x')
-    if [[ `expr $xoffset + $xedge - $X` -lt $width ]];then
-        X=`expr $xoffset + $xedge - $width - $PANEL_GAP`
-    fi
-    if [[ `expr $xoffset + $PANEL_GAP` -gt $X ]];then
-        X=`expr $xoffset + $PANEL_GAP`
-    fi
+    miny=$(bspc query -T -m | jq .rectangle.y)
+    miny=$((miny+p_height+p_gap))
+    Y=$miny
+
+    length="${#content[@]}"
+    width=200
 
     # set the alignment(default to center)
     [[ -z $align ]] && align=c
+    echo -l $((${#content[@]}-1)) -fg \"#$p_fg_normal\" -bg \"#$p_bg_normal\" -fn \"$p_font_main\" -x \"$X\" -y \"$Y\" -w \"$width\" -p 5 -sa $align -e \'onstart=uncollapse\;button1=menuprint,exit\;button3=exit\;button4=scrollup\;button5=scrolldown\' -m v
 
-    echo -l $length -fg \"#$pFG\" -bg \"#$pBG\" -fn \"$PANEL_FONT_MAIN\" -x \"$X\" -y \"$Y\" -w \"$width\" -p 5 -sa $align -e \'onstart=uncollapse\;button1=menuprint,exit\;button3=exit\;button4=scrollup\;button5=scrolldown\' -m v
 }
 
 # Songs next to current song in playlist(click to play them)
-dzen_mpd()
-{
-    width=300
-    length=10
-
+dzen_mpd() {
     lines=5
     format="%position%;%title%"
     content+=("Playlist")
     IFS=$'\n'
-    for song in `mpc playlist -f "$format" | grep -$lines "$(mpc current -f %position%)" | head -n $length` ; do
+    for song in `mpc playlist -f "$format" | grep -$lines "$(mpc current -f %position%)" | head -n 10` ; do
         position=${song%%";"*}
         songname=${song#*";"}
         content+=(" ^ca(1, mpc play $position ) ${songname} ^ca() ")
@@ -51,14 +41,14 @@ dzen_mpd()
 }
 
 # Common folders and recent files, as well as some actions.
-dzen_menu()
-{
-    width=200
-    length=14
+dzen_menu() {
+    set +e
+    notify-send asdf
+
     align=l
     icon_dzen() {
-        if  ! grep -q "Siji" <<< "$PANEL_FONT_ICON"; then echo -n "   "; fi
-        echo -n "^fn($PANEL_FONT_ICON)$(icon $1)^fn()"
+        if  ! grep -q "Siji" <<< "$p_font_icon"; then echo -n "   "; fi
+        echo -n "^fn($p_font_icon)$(icon $1)^fn()"
     }
 
     # stupid dzen workaround.
@@ -84,37 +74,39 @@ dzen_menu()
 }
 
 # Calendar from cal with current date highlighted
-dzen_cal()
-{
+dzen_cal() {
     # handle the fonts I use - monospace is better here.
-    PANEL_FONT_MAIN=`sed 's/Droid Sans/Droid Sans Mono/; s/:style=Bold//; s/Dejavu Sans/Dejavu Sans Mono/' <<< "$PANEL_FONT_MAIN"`
+    p_font_main=`sed 's/Droid Sans/Droid Sans Mono/; s/:style=Bold//; s/Dejavu Sans/Dejavu Sans Mono/' <<< "$p_font_main"`
 
     # dynamic width using txtw:
-    font_size="${PANEL_FONT_MAIN#*-}"
-    font_name="${PANEL_FONT_MAIN%-*}"
+    font_size="${p_font_main#*-}"
+    font_name="${p_font_main%-*}"
 
     # txtw seems to be off by one..
     font_size=`expr $font_size + 1`
 
     width=$(txtw -f "xft:$font_name:style=Regular" -s $font_size "$(cal | sed -n "4 p" | sed "s/ /a/g")" )
-    length=7
 
     TODAY=$(expr `date +'%d'` + 0)
 
-    pBG="$(cut -c4- <<< $pBG)"
-    pFG="$(cut -c4- <<< $pFG)"
-    pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
+    #$p_bg_normal="$(colort )"
+    #pFG="$(cut -c4- <<< $pFG)"
+    #pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
 
     # highlight current date
-    content+=$(
-    cal | sed -re "s/(^|[ ])( $TODAY )($|[ ])/\1^bg(#$pBGActiveTab)^fg(#$p)\2^fg(#$pFG)^bg(#$pBG)\3/"
-    )
+    #for input in "$(cal | sed -re "s/(^|[ ])( $TODAY )($|[ ])/\1^bg(#$pBGActiveTab)^fg(#$p)\2^fg(#$pFG)^bg(#$pBG)\3/")";do
+        #content+=("$input")
+    #done
+    IFS=$'\n'
+    for i in $(cal); do
+        content+=("$i")
+    done
+    IFS=
+
 }
 
 # Theme switcher
-dzen_theme()
-{
-    width=100
+dzen_theme() {
     length=`ls ~/.wm/themes | wc -l`
     (( length -= 1 ))
 

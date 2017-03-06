@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # spring theme
 # based off of my submission to the fist #rice contest 2015.
 
@@ -15,41 +15,40 @@ b_border_width=7
 b_window_gap=16
 
 # panel
-PANEL_HEIGHT=24
-PANEL_GAP=0
-PANEL_UNDERLINE="5"
-PANEL_FONT_MAIN="Droid Sans-10:style=Bold"
-DUNST_FONT="Droid Sans 10"
-pPadding=2
-pWindowClass="noshadow"
-onlyShowActive=true
-pCenterDelimiter="   "
-pLeftDelimiter="   "
-pRightDelimiter="   "
-pLine=5
+p_height=24
+p_gap=0
+p_line="5"
+
+p_font_main="Droid Sans-10:style=Bold"
+d_font="Droid Sans 10"
+
+p_padding=2
+p_window_class="noshadow"
+
+p_delimiter="   "
+p_line=5
+
 maxWinNameLen=50
 
 # colors
-pBGInactiveTab="#bb`echo "$pBG" | cut -c4-`"
-pBG="#00`echo "$pBG" | cut -c4-`"
+p_bg_inactive="#bb$(colort -t $p_bg_normal)"
+p_bg_normal="#00$(colort -t $p_bg_normal)"
 
-DO="        "
-DF="        "
+p_desktop_occupied_label="        "
+p_desktop_empty_label="        "
 
 # other
 GTK_FONT="Droid Sans 10"
 
 # Make the workspaces be in the middle.
-barInfo="dropdown:title|desktop|mpd:clock"
+p_format="dropdown:title|desktop|mpd:clock"
 
-desktop_theme=$(cat<<EOF
-background="#00000000"
+p_desktop_theme=$(cat<<EOF
+bg="#00000000"
 activeBG="#00000000"
-
 overline=true
 activeoverline=true
-line=$pBGInactiveTab
-activeline=$pBGActiveTab
+line=$p_bg_inactive
+activeline=$p_bg_active
 EOF
 )
-
