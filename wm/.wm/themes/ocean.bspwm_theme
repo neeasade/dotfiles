@@ -1,5 +1,5 @@
-#!/usr/bin/env dash
-# base16 twilight theme
+#!/usr/bin/env bash
+# base16 ocean theme
 
 set -a
 
@@ -26,9 +26,19 @@ p_desktop_only_active=true
 p_title_only_show_active=false 
 p_bg_inactive=$(colort 20 $p_bg_normal)
 
-barInfo="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock" # Default options/items to include in info section of panel.
+p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock" 
 
-# colors
-#pBGInactiveTab="#ff1e1e1e"
-#pBGActiveTab="#ff2d2d2d"
-#pFGActiveTab="$pFG"
+#stepSetup() {}
+
+bg() {
+    #gradientGet
+    step=$((step+3))
+    eval "echo \#\${color$step}"
+}
+
+activebg() {
+    colort 20 "$(bg)"
+}
+
+export -f bg
+export -f activebg

@@ -141,14 +141,19 @@ fi
 
 # targets may be exported functions by themes in bash.
 # resources include: gradientStep, step reference, theme variables.
-targets="bg fg line activebg activefg activeline prefix suffix"
+targets="bg fg line"
+
+if grep -q "meta active" < "$HOME/.wm/panel/lemons/$lemon_target"; then
+    targets="$targets activebg activefg activeline"
+fi
+
+targets="$targets prefix suffix"
+
 IFS=" "
 for target in $targets; do
     if type -t $target > /dev/null; then
-      #echo "$target = $(eval $target)"
       input="$(eval $target)"
     else
-      #echo "$target = \"$(vanilla $target)\""
       input="$(vanilla $target)"
     fi
 

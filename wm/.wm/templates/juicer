@@ -8,7 +8,7 @@ fonts = "{{p_font_main}}"
         "{{p_font_icon}}"
         "font-linux-10"
 class = "{{p_window_class}}"
-offset = {{p_gap}}
+offset = {{p_offset}}
 delimiter= "{{p_delimiter}}"
 
 ; todo: consider calculating this at runtime?

@@ -180,9 +180,6 @@ statusbar.bg.error = red
 statusbar.fg.warning = ${statusbar.fg}
 statusbar.bg.warning = darkorange
 
-statusbar.fg.prompt = #{{p_fg_active}}
-statusbar.bg.prompt = #{{p_bg_active}}
-
 statusbar.fg.insert = #{{p_fg_active}}
 statusbar.bg.insert = #{{p_bg_active}}
 

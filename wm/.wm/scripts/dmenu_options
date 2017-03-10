@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # print dmenu dimentions for current monitor, and set prompt.
 # colors are set by Xresources.
 

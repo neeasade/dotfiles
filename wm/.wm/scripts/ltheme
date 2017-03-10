@@ -52,6 +52,14 @@ load_bg() {
 
 # also loads term.
 load_xresources() {
+    trimAlphas
+
+    # qutebrowser related:
+    echo $p_font_main | grep -q Bold && p_font_main_bold="bold"
+    p_font_main_size="$(echo $p_font_main | grep -Eo '[0-9]+')"
+    p_font_main="$(echo $p_font_main | sed 's/-.*//')"
+    p_height="$(( ($p_height-10) / 2 ))"
+
     margs Xresources .Xresources
 
     # handle any color definitions through 255
@@ -63,6 +71,16 @@ load_xresources() {
 
     # tell all xsts to reload their theme:
     killall -s USR1 st
+
+    # locate a qutebrowser window and send bind to update from Xresources
+    if pgrep qutebrowser >/dev/null; then
+      wid=$(xdotool search --any --pid "$(pgrep qutebrowser)")
+      # only send to one
+      wid=$(echo $wid | cut -d ' ' -f 1)
+      # pending https://github.com/qutebrowser/qutebrowser/issues/1741
+      xdotool windowactivate $wid
+      xdotool key --window $wid  "shift+i"
+    fi
 }
 
 # Keep the current gap setting and reload bspwm
@@ -79,6 +97,7 @@ load_bspwm() {
     p_updates_reload=600
     p_dropdown_reload="echo oneshot"
     p_themeSwitch_reload="echo oneshot"
+    p_dynamicmpd_reload=0
 
     # note all lemons, generate them.
     lemons=$(echo $p_format | tr ':|' ' ');

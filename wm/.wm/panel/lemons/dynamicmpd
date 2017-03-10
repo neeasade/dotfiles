@@ -23,24 +23,50 @@ if $playing || $paused; then
     # if title is empty, try file and trim from last / if exists.
     if [ -z "$title" ]; then
         if [ "$target" = "mpvc" ]; then
-            title="$($target -f "%filename%" | head -n 1 | sed 's/.*\///')"
+            title="$($target -f "%filename%" | head -n 1 | sed 's/.*\///;')"
         else
             title="$($target -f "%file%" | head -n 1 | sed 's/.*\///')"
         fi
 
         # peel some stuff
-        title="$(echo "$title" | sed 's/【.*】//')"
+        title="$(echo "$title" | sed 's/【.*】//' | sed 's/\.[^.]*$//')"
     fi
 else
   title="Stopped"
 fi
 
+# set $1 length to $maxWinNameLen chars (trim or pad)
+setLength() {
+    content="$1"
+
+    count=$(echo -n "$content" | wc -m)
+    remain=$(( $maxWinNameLen - $count ))
+
+    extra=""
+    if [ $(( $remain % 2 )) -ne 0 ]; then
+        remain=$(( $remain - 1 ))
+        extra=" "
+    fi
+
+    padding=""
+    for i in $(seq $remain); do
+        padding="$padding "
+    done
+
+    echo "$content$padding$extra";
+}
+
+
+maxWinNameLen=$(echo "$title" | cut -c 1-$maxWinNameLen | wc -m)
 if [  "$title" = "Stopped" ]; then
     icon music
     echo Stopped
 else
-    icon music
-    $playing && icon pause
-    $paused && icon play
-    echo "$title" | cut -c 1-$maxWinNameLen
+    printf "%s\n" "$title" | skroll -r -n $((maxWinNameLen-1)) -d 0 | head -n -1 | while IFS='\n' read -r out; do
+        icon music
+        $playing && icon pause
+        $paused && icon play
+        setLength "$out"
+        sleep 0.2
+    done
 fi

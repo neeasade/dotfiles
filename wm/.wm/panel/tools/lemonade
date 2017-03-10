@@ -77,7 +77,7 @@ for section in parser:
             print(array(section, key, ' '.join(current)))
 " $juicer 2>&3) 2>&3
 
-# "It is easier to port a shell than a shell script."
+# "IT is easier to port a shell than a shell script."
 #   -- Larry Wall
 
 echo asdf
@@ -268,49 +268,42 @@ format() {
 
                         if ! $hold; then
 
-                          #bar_message="${name}@$(eval "echo \${${name}_prefix"})${bar_message}$(eval "echo \${${name}_suffix"})"
                           bar_message="${name}@${bar_message}"
 
                           printf "%s" \
                               "${bar_message}" \
-                              $'\n' > "$process" &
+                              $'\n' > "$process" 
 
                           bar_message=
                         fi
                     done < <(eval "\${${name}_reload"} | "$lemons/$name") &
                 else
-                    while :; do
-                        bar_message=""
-
-                        while read -r output; do
+                    while true; do
+                        while IFS=$'\n' read -r output; do
                             if [[ "${output:0:4}" == "meta" ]]; then
                                 input="${output:4}"
                                 eval "$input"
-                                continue
                             else
-                                bar_message="${bar_message}$(printf "%s" \
+                                bar_message="${name}@$(printf "%s" \
                                     "$(eval "echo \${area[${name}_p]"})" \
                                     "$(eval "echo \${line[${name}]"})" \
                                     "%{F$(eval "echo \${${name}_fg}")}" \
                                     "%{B$(eval "echo \${${name}_bg"})}" \
-                                    "$padding" \
-                                    "$output" \
-                                    "$padding" \
+                                    "${padding}" \
+                                    "${output}" \
+                                    "${padding}" \
                                     "%{F-}%{B-}" \
                                     "$(eval "echo \${area[${name}_s]"})" \
                                     "%{-o}%{-uU-}")"
+
+                                #bar_message="${name}@${bar_message}"
+
+                                printf "%s" \
+                                       "${bar_message}" \
+                                       $'\n'
                             fi
 
                         done < <(eval "$lemons/$name")
-
-
-                        #bar_message="${name}@$(eval "echo \${${name}_prefix"})${bar_message}$(eval "echo \${${name}_suffix"})"
-                        # note: bar delimeter is handled in $position sed setup.
-                          bar_message="${name}@${bar_message}"
-
-                        printf "%s" \
-                            "${bar_message}" \
-                            $'\n' > "$process" &
 
                         sleep $(eval "echo \${${name}_reload"})
                     done > "$process" &
