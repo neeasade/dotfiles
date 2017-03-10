@@ -1,8 +1,7 @@
 #!/usr/bin/env dash
-# mpd
-# planned: left click is toggle pause, right click is next, scroll is mpd volume.
+# scrolling mpd text
 
-maxWinNameLen=30
+max_length=30
 
 # target is picked based on which might be playing.
 mpc | grep -q playing && mpcplaying=true || mpcplaying=false
@@ -15,13 +14,14 @@ else
   $mpcplaying && target='mpc'
 fi
 
-$target | grep -q playing && playing=true || playing=false
-$target | grep -q paused && paused=true || paused=false
+$target | grep -q playing && icon_target=pause
+$target | grep -q paused && icon_target=play
 
 if $playing || $paused; then
-    title="$($target -f "%title%" | head -n 1)"
+    title="$($target -f "%title% - %artist%" | head -n 1)"
     # if title is empty, try file and trim from last / if exists.
-    if [ -z "$title" ]; then
+    if [ "$title" = " - " ]; then
+        # https://github.com/wildefyr/mpvc/issues/29
         if [ "$target" = "mpvc" ]; then
             title="$($target -f "%filename%" | head -n 1 | sed 's/.*\///;')"
         else
@@ -35,38 +35,35 @@ else
   title="Stopped"
 fi
 
-# set $1 length to $maxWinNameLen chars (trim or pad)
-setLength() {
-    content="$1"
-
-    count=$(echo -n "$content" | wc -m)
-    remain=$(( $maxWinNameLen - $count ))
-
-    extra=""
-    if [ $(( $remain % 2 )) -ne 0 ]; then
-        remain=$(( $remain - 1 ))
-        extra=" "
-    fi
+# set $1 length to $max_length chars (trim or pad)
+pad() {
+    count=$(echo -n "$1" | wc -m)
+    remain=$(( $max_length - $count ))
 
     padding=""
+    if [ $(( $remain % 2 )) -ne 0 ]; then
+        remain=$(( $remain - 1 ))
+        padding=" "
+    fi
+
     for i in $(seq $remain); do
         padding="$padding "
     done
 
-    echo "$content$padding$extra";
+    echo "$1$padding";
 }
 
 
-maxWinNameLen=$(echo "$title" | cut -c 1-$maxWinNameLen | wc -m)
+max_length=$(echo "$title" | cut -c 1-$max_length | wc -m)
 if [  "$title" = "Stopped" ]; then
     icon music
     echo Stopped
 else
-    printf "%s\n" "$title" | skroll -r -n $((maxWinNameLen-1)) -d 0 | head -n -1 | while IFS='\n' read -r out; do
+    echo "$title" | skroll -r -n $((max_length-1)) -d 0 | head -n -1 | \
+    while IFS='\n' read -r out; do
         icon music
-        $playing && icon pause
-        $paused && icon play
-        setLength "$out"
+        icon $icon_target
+        pad "$out"
         sleep 0.2
-    done
+    done 
 fi
