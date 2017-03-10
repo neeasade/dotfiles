@@ -29,6 +29,9 @@ xsetroot -cursor_name left_ptr &
 # dunst
 dunst &
 
+# cursor dissapear nicety.
+unclutter &
+
 # java fixes:
 wmname LG3D &
 alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
@@ -40,9 +43,9 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 # set shell that sxhkd uses to execute commands:
 export SXHKD_SHELL=dash
 
-# note a start time to use for initial launch trigger.
 export xstart=`date +%s`
 
 # start bspwm and sxhkd
 sxhkd -c $HOME/.config/sxhkd/sxhkdrc &
-exec bspwm -c $HOME/.wm/bspwmrc > .xinit.log 2>&1
+
+exec $HOME/.wm/wm
