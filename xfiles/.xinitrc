@@ -1,4 +1,6 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
+
+. $HOME/.profile
 
 # xrandr script(generated with arandr)
 ~/.screenlayout/display.sh
@@ -30,22 +32,20 @@ xsetroot -cursor_name left_ptr &
 dunst &
 
 # cursor dissapear nicety.
-unclutter &
+# handled by service now.
+# unclutter &
 
 # java fixes:
 wmname LG3D &
 alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 export _JAVA_AWT_WM_NONREPARENTING=1
 
-# check if existing socket exists and killl for bspwm(doesn't play nice with logging out and in)
-# rm /tmp/$(ls /tmp | grep bspwm)
-
 # set shell that sxhkd uses to execute commands:
 export SXHKD_SHELL=dash
 
 export xstart=`date +%s`
 
-# start bspwm and sxhkd
-sxhkd -c $HOME/.config/sxhkd/sxhkdrc &
+# launched by display manager bspwm desktop entry.
+# sxhkd -c $HOME/.config/sxhkd/sxhkdrc &
 
 exec $HOME/.wm/wm
