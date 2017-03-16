@@ -53,6 +53,7 @@ for mon in $(bspc query -M); do
 	conf=`ls juicers | sed -n "$i p"`
 	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
 	geom="$(( $(dim $mon width)-(p_gap*2) ))x$p_height+$(( $(dim $mon x)+p_gap ))+$p_gap"
+	echo tools/lemonade "$conf" "$geom" &
 	tools/lemonade "$conf" "$geom" &
 done
 

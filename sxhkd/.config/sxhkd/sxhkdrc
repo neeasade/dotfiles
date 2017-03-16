@@ -65,13 +65,9 @@ super + {o,e,Return}
     ${BROWSER,FILEBROWSER,TERMINAL}
 
 # launch a program, ensure GTK3 theme.
-super + {_,alt} + space
+super + {_,shift,alt} + space
     export GTK_THEME="`cat $HOME/.themes/ACTIVE_THEME 2>/dev/null`"; \
-    eval dmenu_{run,slop} $(dmenu_options)
-
-# A nice wrapper script for password store.
-super + shift + space
-    eval passmenu $(dmenu_options)
+    eval dmenu_{run,pass,slop} $(dmenu_options)
 
 XF86Audio{Prev,Next,Play}
      mpc -q {prev,next,toggle}

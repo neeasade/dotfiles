@@ -1,5 +1,6 @@
 #!/usr/bin/env dash
 # scrolling mpd text
+# limitation of this is it only works with monospace fonts.
 
 max_length=30
 

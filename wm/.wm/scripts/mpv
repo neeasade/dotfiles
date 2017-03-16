@@ -1,4 +1,4 @@
 #!/bin/sh
 
 # wrapper allowing mpvc
-/usr/bin/mpv --input-unix-socket=/tmp/mpvsocket $*
+$(which mpv) --input-unix-socket=/tmp/mpvsocket $*

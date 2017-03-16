@@ -6,6 +6,7 @@ set -a
 
 # get settings
 . ~/.bspwm_theme
+PATH=$PATH:$HOME/.wm/scripts
 
 LAUNCH_PANEL=true
 kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null || LAUNCH_PANEL=false

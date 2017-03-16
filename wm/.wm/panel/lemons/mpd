@@ -1,5 +1,5 @@
 #!/usr/bin/env dash
-# mpd
+# mpd, or mpv.
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
 
 maxWinNameLen=30
@@ -19,14 +19,13 @@ $target | grep -q playing && playing=true || playing=false
 $target | grep -q paused && paused=true || paused=false
 
 if $playing || $paused; then
-    title="$($target -f "%title%" | head -n 1)"
+    title="$($target -f "%title% - %artist%" | head -n 1)"
+    # if title is empty, try file and trim from last / if exists.
+    if [ "$title" = " - " ]; then
+
     # if title is empty, try file and trim from last / if exists.
     if [ -z "$title" ]; then
-        if [ "$target" = "mpvc" ]; then
-            title="$($target -f "%filename%" | head -n 1 | sed 's/.*\///')"
-        else
-            title="$($target -f "%file%" | head -n 1 | sed 's/.*\///')"
-        fi
+        title="$($target -f "%file%" | head -n 1 | sed 's/.*\///')"
 
         # peel some stuff
         title="$(echo "$title" | sed 's/【.*】//')"

@@ -23,10 +23,10 @@ p_font_icon="FontAwesome-10"
 p_desktop_display_name=name
 p_desktop_show_free=false
 p_desktop_only_active=true
-p_title_only_show_active=false 
-p_bg_inactive=$(colort 20 $p_bg_normal)
+p_title_only_show_active=false
+p_bg_inactive=$p_bg_normal
 
-p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock" 
+p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock"
 
 #stepSetup() {}
 

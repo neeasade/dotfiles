@@ -8,21 +8,19 @@ lemon_target="$1"
 lemon_reload="$2"
 
 # barInfo example:
-# dropdown:desktop|title|clock
 barInfo="$p_format"
 
 # vanilla/theme intention for all targets:
-
 vanilla() {
   case $1 in
-    fg) echo  "$p_fg_inactive" ;;
-    bg) echo  "$p_bg_inactive" ;;
-    activefg) echo  "$p_fg_active" ;;
-    activebg) echo  "$p_bg_active" ;;
-    line) echo  "$p_bg_inactive" ;;
-    activeline) echo  "$p_bg_active" ;;
-    prefix) echo  "";;
-    suffix) echo  "";;
+    fg) echo "$p_fg_inactive" ;;
+    bg) echo "$p_bg_inactive" ;;
+    activefg) echo "$p_fg_active" ;;
+    activebg) echo "$p_bg_active" ;;
+    line) echo "$p_bg_inactive" ;;
+    activeline) echo "$p_bg_active" ;;
+    prefix) echo "";;
+    suffix) echo "";;
   esac
 }
 

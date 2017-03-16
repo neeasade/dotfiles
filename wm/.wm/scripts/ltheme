@@ -8,7 +8,6 @@ targetTheme="$HOME/.wm/themes/${1}.bspwm_theme"
 
 set -a
 
-unset block
 rm $HOME/.bspwm_theme
 ln -s "$targetTheme" "$HOME/.bspwm_theme"
 
@@ -70,7 +69,7 @@ load_xresources() {
     xrdb $HOME/.Xresources
 
     # tell all xsts to reload their theme:
-    killall -s USR1 st
+    pkill -x --signal USR1 st
 
     # locate a qutebrowser window and send bind to update from Xresources
     if pgrep qutebrowser >/dev/null; then
@@ -103,12 +102,12 @@ load_bspwm() {
     lemons=$(echo $p_format | tr ':|' ' ');
     IFS=' '
     for lemon in $lemons; do
-        colorchange.sh "$lemon" "$(eval "echo \${p_${lemon}_reload}")" >> ~/.wm/panel/juicers/juicer
-        echo "" >> ~/.wm/panel/juicers/juicer
+        colorchange.sh "$lemon" "$(eval "echo \${p_${lemon}_reload}")" >> $HOME/.wm/panel/juicers/juicer
+        echo "" >> $HOME/.wm/panel/juicers/juicer
     done
     IFS=
 
-    [ $(bspc config window_gap) -le 0 ] && export BSPWM_GAPS=false
+    [ $(bspc config window_gap) -le 0 ] && export BSPWM_GAPS=false || export BSPWM_GAPS=true
     "$HOME/.wm/bspwmrc"
 }
 
@@ -157,13 +156,23 @@ load_qutebrowser() {
 load_dunst() {
     trimAlphas
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
-    killall dunst
+    pkill -x dunst
 
     margs dunstrc .config/dunst/dunstrc
-    dunst &
+
+    # dunst needs delay(?)
+    sleep 2
+    dunst
 }
 
-# do the thing
-for conf in tmux xresources bspwm bg vim gtk dunst qutebrowser; do
+shift
+if [ -z "$1" ]; then
+    targets="tmux xresources bspwm bg vim gtk dunst qutebrowser"
+else
+    targets="$*"
+fi
+
+IFS=" "
+for conf in $targets; do
     load_$conf &
 done

@@ -38,7 +38,7 @@ set -a
 # Change the current directory to the lemonade directory always.
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 
-lemonadedir=$HOME/.wm/panel
+lemonadedir="$HOME/.wm/panel"
 ident="$(bspc query -M -m "$mon" --names)"
 
 mkdir -p $lemonadedir $lemonadedir/logs $lemonadedir/lemons
@@ -77,15 +77,16 @@ for section in parser:
             print(array(section, key, ' '.join(current)))
 " $juicer 2>&3) 2>&3
 
-# "IT is easier to port a shell than a shell script."
+# "It is easier to port a shell than a shell script."
 #   -- Larry Wall
 
-echo asdf
 process=/tmp/lemonade-process-$ident
 unique=/tmp/lemonade-stack-$ident
 
 # Always clean up when you are done.
 trap "rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
+
+
 
 # note enabled lemons.
 for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
@@ -272,7 +273,7 @@ format() {
 
                           printf "%s" \
                               "${bar_message}" \
-                              $'\n' > "$process" 
+                              $'\n' > "$process"
 
                           bar_message=
                         fi

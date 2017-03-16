@@ -32,8 +32,7 @@ xsetroot -cursor_name left_ptr &
 dunst &
 
 # cursor dissapear nicety.
-# handled by service now.
-# unclutter &
+unclutter &
 
 # java fixes:
 wmname LG3D &
