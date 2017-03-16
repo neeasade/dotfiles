@@ -1,50 +1,7 @@
 { config, lib, pkgs, ...}: with lib;
 {
-  services = {
-    xserver = {
-      enable = true;
-      layout = "us";
 
-      synaptics = {
-        enable = true;
-        twoFingerScroll = true;
-        tapButtons = false;
-        palmDetect = true;
-      };
-
-      windowManager = {
-        default = "bspwm";
-        bspwm = {
-          enable = true;
-        };
-      };
-
-      desktopManager = {
-        xterm.enable = false; 
-        default = "none";
-      };
-
-      displayManager.slim = {
-        enable = true;
-        extraConfig = ''
-        session_font Liberation Sans:size=16
-        session_color #000000
-        '';
-      };
-    };
-
-    #printing = {
-      #enable = true;
-      #drivers = [ pkgs.gutenprint pkgs.postscript-lexmark pkgs.splix ];
-    #};
-
-    #unclutter= true;
-    dbus.enable = true;
-    acpid.enable = true;
-    # todo : look into conf of ssh.
-    #openssh.enable = true;
-  };
-
+/*
   systemd.user.services.emacs = {
     description = "Emacs Daemon";
     environment = {
@@ -63,4 +20,5 @@
     };
     wantedBy = [ "default.target" ];
   };
+*/
 }
