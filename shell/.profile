@@ -8,7 +8,8 @@ export GIT_EDITOR='/usr/bin/vim'
 export BROWSER=qutebrowser
 export TERMINAL=st
 export FILEBROWSER=pcmanfm
-export NODE_PATH=/usr/lib/node_modules
+
+type npm >/dev/null && export NODE_PATH="$(npm root -g)"
 # }}}
 
 # {{{ alias
@@ -20,21 +21,47 @@ alias tmux='tmux -2' #Make tmux assume 256 colors.
 alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
 alias sysinfo='archey3 && dfc -p /dev && colors'
 alias ls='ls --color=auto'
-# alias vim='vim --servername `date +%s`'
-alias vim='emacs -nw'
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 alias grep="grep --color=auto"
 alias pacman="pacman --color=always"
 alias make="clear && make"
-alias shot="scrot ~/Screenshots/`date +%y-%m-%d-%H:%M:%S`.png"
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
 alias mpv='~/.wm/scripts/mpv'
 # }}}
 
 # {{{ func
+
+shot() {
+    mkdir -p $HOME/Screenshots
+    eval $(slop)
+    maim -g ${G} "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+}
+
+upshot() {
+    shot
+    uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
+}
+
+# nix query
+nq () {
+    local CACHE="$HOME/.cache/nq-cache"
+    if ! ( [ -e $CACHE ] && [ $(stat -c %Y $CACHE) -gt $(( $(date +%s) - 3600 )) ] ); then
+        echo "update cache" && nix-env -qa --json > "$CACHE"
+    fi
+    jq -r 'to_entries | .[] | .key + "|" + .value.meta.description' < "$CACHE" |
+        {
+            if [ $# -gt 0 ]; then
+                # double grep because coloring breaks column's char count
+                # $* so that we include spaces (could do .* instead?)
+                grep -i "$*" | column -t -s "|" | grep --color=always -i "$*"
+            else
+                column -t -s "|"
+            fi
+        }
+}
+
 setgitremote() {
     # I found myself doing this too often.
-    # todo: this better
     local remoteUrl="$(git remote -v | grep -oP "http[^ ]+" | head -1)"
     local domain="$(echo $remoteUrl | cut -f3 -d'/')"
     local username="$(echo $remoteUrl | cut -f4 -d'/')"
@@ -45,7 +72,11 @@ setgitremote() {
 }
 
 dec2hex() {
-    printf "%X" $1
+    printf "%X\n" $1
+}
+
+hex2dec() {
+    printf "%d\n" 0x$1
 }
 
 extract() {      # Handy Extract Program
@@ -78,8 +109,7 @@ case $TERM in
         ;;
 esac
 
-prompt ()
-{
+prompt () {
     _ERR=$?
     _prompt="${_prompt:->}"
     [ $(jobs | wc -l) -ne 0 ] && _prompt="$_prompt$_prompt"
@@ -90,21 +120,34 @@ prompt ()
 
 # {{{ shell
 cur_shell=$(ps | grep $$ |  sed 's/^.* //')
-historyLength=6000
+history_length=10000
+history_file="$HOME/.${cur_shell}_history"
 
-HISTFILE="$HOME/.${cur_shell}_history"
 case $cur_shell in
     bash)
-        HISTSIZE=200
-        HISTFILESIZE=$historyLength
-        HISTCONTROL=ignoredups:erasedups
+        set_history() {
+            HISTFILE="$history_file"
+            HISTFILESIZE="$history_length"
+            HISTSIZE="$history_length"
+
+            shopt -s histappend
+            HISTCONTROL=ignoredups:erasedups
+        }
         ;;
     zsh)
-        setopt hist_ignore_dups
-        SAVEHIST=$historyLength
+        set_history() {
+            HISTFILE="$HOME/.${cur_shell}_history"
+            SAVEHIST="$history_length"
+            HISTSIZE="$history_length"
+
+            setopt hist_ignore_dups
+            setopt share_history
+            setopt hist_ignore_all_dups
+            setopt hist_ignore_space
+        }
         ;;
 esac
 # }}}
 
 # autostartx if running on the first tty:
-[[ -z $DISPLAY && $XDG_VTNR -eq 1 && -z $TMUX ]] && exec startx
+#[[ -z $DISPLAY && $XDG_VTNR -eq 1 && -z $TMUX ]] && exec startx

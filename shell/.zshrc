@@ -1,8 +1,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-. $HOME/.profile
-
 # get the thing
 [ ! -d ~/.zplug ] && curl -sL zplug.sh/installer | zsh
 . ~/.zplug/init.zsh
@@ -17,6 +15,9 @@ zplug "djui/alias-tips"                                              # alias rem
 # load the thing
 ! zplug check && zplug install
 zplug load
+
+. $HOME/.profile
+set_history
 
 setopt PROMPT_SUBST
 PS1='$(prompt)'

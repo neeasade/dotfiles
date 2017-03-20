@@ -2,6 +2,7 @@
 [[ $- != *i* ]] && return
 
 . $HOME/.profile
+set_history
 PS1='$(prompt)'
 
 
