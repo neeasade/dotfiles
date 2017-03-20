@@ -9,7 +9,7 @@
 ### OPTIONS ###
 
 # only show the active window title at any time.
-onlyShowActive=${onlyShowActive:-false}
+onlyShowActive=${p_title_only_show_active:-false}
 # Maxium window title length
 maxWinNameLen=${maxWinNameLen:-25}
 # The delimiter to separate window sections

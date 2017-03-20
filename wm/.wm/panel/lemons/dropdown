@@ -3,4 +3,4 @@
 
 # only needs to display click, click action handled at juicer level.
 icon linux
-echo Arch
+hostname

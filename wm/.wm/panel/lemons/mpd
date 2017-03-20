@@ -22,9 +22,6 @@ if $playing || $paused; then
     title="$($target -f "%title% - %artist%" | head -n 1)"
     # if title is empty, try file and trim from last / if exists.
     if [ "$title" = " - " ]; then
-
-    # if title is empty, try file and trim from last / if exists.
-    if [ -z "$title" ]; then
         title="$($target -f "%file%" | head -n 1 | sed 's/.*\///')"
 
         # peel some stuff
