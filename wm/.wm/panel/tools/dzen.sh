@@ -1,4 +1,4 @@
-#!/usr/bin/env mksh
+#!/usr/bin/env bash
 # dzen dropdown functions
 
 # This function echos dzen dimensions at the panel centered to click
@@ -19,6 +19,8 @@ dzen_options() {
     Y=$miny
 
     length="${#content[@]}"
+
+    # todo: make this dynamic
     width=200
 
     # set the alignment(default to center)
@@ -107,13 +109,25 @@ dzen_cal() {
 
 # Theme switcher
 dzen_theme() {
-    length=`ls ~/.wm/themes | wc -l`
-    (( length -= 1 ))
-
     content+=("+")
     for theme in `ls ~/.wm/themes | grep -v base | sed s/.bspwm_theme// `; do
         content+=("^ca(1, nohup ltheme $theme & pkill dzen) $theme ^ca()")
     done
+}
+
+dzen_github() {
+    content+=("Notifications")
+    IFS=$'\n'
+    for input in $(jq '.[].subject.title, .[].subject.url' < "/tmp/gh_notify" | tr '\n' ','); do
+	      title="$(echo $input | cut -d ',' -f 1)"
+	      url="$(echo $input | cut -d ',' -f 2)"
+        url="$(echo $url | tr -d \")"
+
+        link="$(curl -H "Authorization: token $(pass github/token)" $url | jq '.html_url')"
+
+        content+=("^ca(1, nohup $BROWSER $link & pkill dzen) $title ^ca()")
+    done
+    IFS=
 }
 
 # This script is ment to be called with the desired function suffix.

@@ -1,0 +1,11 @@
+#!/bin/sh
+# gh notifier, with dzen2 dropdown.
+# when this is called, update ref.
+
+store="/tmp/gh_notify"
+echo "" > "$store"
+curl -H "Authorization: token $(pass github/token)" https://api.github.com/notifications > "$store"
+
+icon github
+
+jq '. | length' < "$store"

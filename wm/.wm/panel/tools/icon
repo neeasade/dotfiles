@@ -27,6 +27,7 @@ case $1 in
     world)    icon='ff0a e1a0 f4d3';;
     window)   icon='f2d0';;
     linux)    icon='f17c';;
+    github)    icon='f09b';;
     *) echo "icon type not found."
        exit 1;;
 esac
