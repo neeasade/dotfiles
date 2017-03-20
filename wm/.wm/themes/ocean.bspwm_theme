@@ -12,9 +12,11 @@ BG_COMMAND="feh --bg-fill $HOME/.wm/walls/ocean.jpg"
 
 # bspwm
 b_border_width=6
-b_window_gap=16
+b_window_gap=30
 
 # panel
+p_padding=3
+p_window_class=noshadow
 p_height=32
 p_gap=0
 p_underline=0
@@ -23,22 +25,71 @@ p_font_icon="FontAwesome-10"
 p_desktop_display_name=name
 p_desktop_show_free=false
 p_desktop_only_active=true
-p_title_only_show_active=false
+p_title_only_show_active=true
 p_bg_inactive=$p_bg_normal
+#p_bg_normal=\#00000000
 
 p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock"
 
-#stepSetup() {}
+stepSetup()  {
+  #togetherStep
+  # align is only set on sep step
+  separateStep
+  #reverseSteps
+}
 
 bg() {
-    #gradientGet
-    step=$((step+3))
-    eval "echo \#\${color$step}"
+    #step=$((step-2))
+    #input="$(eval "echo \#\${color$step}")"
+    input="$(gradientGet)"
+    #input="$(maxchroma "$(colort -t $input)")"
+    #echo "#ff$(colort -t -l -30 $input)"
+    echo "$input"
 }
 
 activebg() {
-    colort 20 "$(bg)"
+    colort -l 20 "$(bg)"
 }
 
-export -f bg
-export -f activebg
+#fg() {
+    #echo $p_fg_normal
+#}
+
+suffix() {
+
+    [ "$lemon_target" = "clock" ] && return
+
+    if echo "$lemon_target" | grep -E "mpd|title" >/dev/null; then
+        [ -z "$nextbg" ] && nextbg="$p_bg_normal"
+    fi
+
+    [ -z "$prevbg" ] && prevbg="$(bg)"
+
+    if [ "${lemon_target_align}" = "left" ]; then
+        step=$((step-1));
+    else
+        step=$((step+1));
+    fi
+    [ -z "$nextbg" ] && nextbg="$(bg)"
+
+    nextbg="$(colort -t $nextbg)"
+    prevbg="$(colort -t $prevbg)"
+
+    content=""
+    IFS=$'\n'
+    for color in $(gradient "$prevbg" "$nextbg" 3 | tail -n 4 | head -n -1); do
+        content="${content}%%{B#ff$(colort -t $color)} %%{B-}"
+        #content="%%{B#ff$(colort -t $color)} %%{B-}${content}"
+    done
+    IFS=
+
+    echo "${content}"
+}
+
+prefix() {
+    if echo "$lemon_target" | grep -E "volume|mpd" >/dev/null; then
+        prevbg="$p_bg_normal"
+        nextbg="$(bg)"
+        suffix
+    fi
+}
