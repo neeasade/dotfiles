@@ -1,0 +1,104 @@
+#!/usr/bin/env node
+// depends on package ciecam02, ciabase.
+// this is an example from the readme of the package.
+// usage: maxchroma <color>
+
+var ciebase = require("ciebase")
+var ciecam02 = require("ciecam02")
+
+var {lerp} = ciecam02;
+var merge = require('mout/object/merge')
+
+var {rgb, workspace, illuminant} = ciebase,
+    {cfs} = ciecam02,
+    xyz = ciebase.xyz(workspace.sRGB, illuminant.D65);
+
+var viewingConditions = {
+    whitePoint: illuminant.D65,
+    adaptingLuminance: 40,
+    backgroundLuminance: 20,
+    surroundType: "average",
+    discounting: false
+};
+
+// By default, 7 correlates are returned when converting from XYZ to CAM.
+// For the purpose of this example, we will limit ourselves to the JCh correlates.
+// (J is the lightness, C the chroma and h the hue.)
+var cam = ciecam02.cam(viewingConditions, cfs("JCh")),
+    gamut = ciecam02.gamut(xyz, cam),
+    {min, max} = Math;
+
+function hexToCam(hex) {
+    return cam.fromXyz(xyz.fromRgb(rgb.fromHex(hex)));
+}
+
+function camToHex(CAM) {
+	  return rgb.toHex(xyz.toRgb(cam.toXyz(CAM)));
+}
+
+function crop (v) {
+    return max(0, min(1, v));
+}
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _object = require("mout/object");
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+var _ciecam = ciecam02,
+    hq = _ciecam.hq,
+    ucs = ciecam02.ucs();
+
+function ucsLimit(camIn, camOut) {
+	var prec = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1e-3;
+
+	// UCS is based on the JMh correlates
+	var _map = [camIn, camOut].map(function (v) {
+      var inner = cfs("JMh");
+
+      var input = cam.fillOut(inner, v);
+
+		return ucs.fromCam(input);
+	}),
+	    _map2 = _slicedToArray(_map, 2),
+	    ucsIn = _map2[0],
+	    ucsOut = _map2[1];
+
+	while (ucs.distance(ucsIn, ucsOut) > prec) {
+		var ucsMid = lerp(ucsIn, ucsOut, 0.5),
+		    _gamut$contains = gamut.contains(ucs.toCam(ucsMid)),
+		    _gamut$contains2 = _slicedToArray(_gamut$contains, 1),
+		    isInside = _gamut$contains2[0];
+
+		if (isInside) {
+			ucsIn = ucsMid;
+		} else {
+			ucsOut = ucsMid;
+		}
+	}
+	return cam.fillOut((0, _object.map)(camIn, function (v) {
+		return true;
+	}), ucs.toCam(ucsIn));
+}
+
+// The hue notation is a different writting of the hue quadrant,
+// of the form a(p?b)? where a and b are in {R, Y, G, B} (a ≠ b)
+// and p is in ]0, 100[. apb = b(100-p)a, ab = a50b.
+function hue(N) {
+	return hq.toHue(hq.fromNotation(N));
+}
+
+var topChroma = max.apply(undefined, _toConsumableArray(["f00", "0f0", "00f"].map(function (v) {
+	return hexToCam(v).C;
+})));
+
+input = hexToCam(process.argv[2]);
+
+var hexCodes = [input].map(function (CAM) {
+	CAM = merge(CAM, { C: topChroma + 1 });
+	CAM = ucsLimit(gamut.spine(CAM.J / 100), CAM);
+	return camToHex(CAM);
+});
+
+hexCodes.forEach(color => console.log(color));

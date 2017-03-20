@@ -1,0 +1,36 @@
+#!/usr/bin/env dash
+# neeasade
+# depends on: colort, wmutils opt/chwb2
+# makes dual borders based on your bspwm colors
+
+borderWidth=`bspc config border_width`
+
+# _chwb2 [Focused|Normal] [nodeId]
+_chbr() {
+    colorType=$1
+    shift
+    eval ~/git_temp/opt/chbr -c \$border$colorType -C \$border${colorType}Fade -s $borderWidth $@ 2>/dev/null &
+}
+
+# define border colors based on bspwm border settings
+borderNormal="ff$(colort -t $(bspc config normal_border_color))"
+borderFocused="ff$(colort -t $(bspc config focused_border_color))"
+
+#borderNormalFade="aa$(colort -t $(bspc config normal_border_color))"
+#borderFocusedFade="aa$(colort -t $(bspc config focused_border_color))"
+#borderNormalFade="$borderNormal"
+#borderFocusedFade="$borderFocused"
+
+# mute for now.
+borderFocusedFade="00000000"
+borderNormalFade="00000000"
+
+# initial draw
+_chbr Normal  `bspc query -N -n .!descendant_of.window`
+_chbr Focused `bspc query -N -n .descendant_of.window`
+
+# reactive draw
+bspc subscribe node_geometry node_focus | while read msg; do
+    _chbr Normal  `bspc query -N -n .!descendant_of.window`
+    _chbr Focused `bspc query -N -n .descendant_of.window`
+done

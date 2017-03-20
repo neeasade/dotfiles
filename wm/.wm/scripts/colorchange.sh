@@ -47,6 +47,10 @@ separateStep() {
 
     IFS=':'
     for lemon in $section; do
+      [ "$i" = "0" ] && eval ${lemon}_align=left
+      [ "$i" = "1" ] && eval ${lemon}_align=center
+      [ "$i" = "2" ] && eval ${lemon}_align=right
+
       eval $lemon=$j
       [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
     done
@@ -127,7 +131,8 @@ if [ ! "$(type -t stepSetup)" = "function" ]; then
 fi
 
 stepSetup
-step="$(eval "echo \${${1}"})"
+step="$(eval "echo \${${1}}")"
+lemon_target_align="$(eval "echo \${${1}_align}")"
 
 # declare, reload.
 echo "[$lemon_target]"

@@ -1,0 +1,30 @@
+#!/bin/sh
+# usage: mkb ${percent}
+# port of http://git.z3bra.org/mkb/file/mkb.c.html
+
+size=${size:-32}
+char1="${char1:-━}"
+char2="${char2:-━}"
+start="${start:-}"
+end="${end:-}"
+sep="${sep:-╋}"
+
+# some ideas
+#char1="◼" sep="◼" char2="◻"
+#char1="▰" sep="▰" char2="▱"
+
+passed=false
+content=""
+
+content="${content}${start}"
+for i in $(seq 1 $size); do
+    if [ "$(echo "$i < $size / 100 * $size" | bc -l)" = 1 ]; then
+        current="$char1"
+    else
+        $passed && current="$char2" || current="$sep"
+        passed=true
+    fi
+    content="${content}${current}"
+done
+content="${content}${end}"
+echo "$content"

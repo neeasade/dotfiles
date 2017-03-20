@@ -16,12 +16,15 @@ _chwb2() {
     colorType=$1
     shift
     eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null &
+    eval echo chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null &
 }
 
 # define border colors based on bspwm border settings
 outerFocused=`bspc config focused_border_color | tr -d \#`
 colort -c "$outerFocused" && sign=+ || sign=-
 innerFocused=`colort -l $sign$focusedTint "$outerFocused"`
+echo $innerFocused
+echo $outerFocused
 
 outerNormal=`bspc config normal_border_color | tr -d \#`
 colort -c "$outerNormal" && sign=+ || sign=-
