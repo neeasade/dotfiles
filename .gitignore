@@ -1,5 +1,4 @@
 nohup.out
-.xinit.log
 
 wm/.wm/panel/juicers/
 
@@ -25,7 +24,6 @@ weechat/.weechat/perl
 weechat/.weechat/python
 
 qutebrowser/.config/qutebrowser/bookmarks
-qutebrowser/.config/qutebrowser/keys.conf
 qutebrowser/.config/qutebrowser/quickmarks
 qutebrowser/.config/qutebrowser/qutebrowser.conf
 qutebrowser/.config/qutebrowser/qsettings
