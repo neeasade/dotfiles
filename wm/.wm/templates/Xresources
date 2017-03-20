@@ -4,6 +4,8 @@ st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
 st.prompt_char: {{PROMPT_CHAR}}
 
+emacs.interalBorder: {{st_borderpx}}
+
 ! dmenu2 can read from Xresources.
 dmenu.font: {{p_font_main}}-{{p_font_main_size}}
 dmenu.foreground: #{{p_fg_normal}}

@@ -1,4 +1,0 @@
-#!/bin/sh
-
-st_borderpx="$(xrdb -query | grep st.borderpx | grep -o "[0-9]*")"
-env emacs --internal-border ${st_borderpx:-0}
