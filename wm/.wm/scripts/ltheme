@@ -26,9 +26,24 @@ if [ "$p_icon" = "unset" ]; then
     fi
 fi
 
-# mustache args
+# mustache args, cache.
 margs() {
+    cache=true
+
+    if $cache; then
+        cachefile="/tmp/template/$THEME_NAME/$2"
+        if [ ! -f "$cachefile" ]; then
+            mkdir -p "$(dirname "$cachefile")"
+            mustache < "$HOME/.wm/templates/$1" > "$cachefile"
+            cp "$cachefile" "$HOME/$2"
+            return 1
+        fi
+        cp "$cachefile" "$HOME/$2"
+        return 0
+    fi
+
     mustache < "$HOME/.wm/templates/$1" > "$HOME/$2"
+    return 1
 }
 
 trimAlphas() {
@@ -59,12 +74,13 @@ load_xresources() {
     p_font_main="$(echo $p_font_main | sed 's/-.*//')"
     p_height="$(( ($p_height-10) / 2 ))"
 
-    margs Xresources .Xresources
-
-    # handle any color definitions through 255
-    for i in `seq 0 255`; do
-        eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources"
-    done
+    if ! margs Xresources .Xresources; then
+        # handle any color definitions through 255
+        for i in `seq 0 255`; do
+            eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources"
+        done
+        [ ! -z "$cachefile" ] && cp "$HOME/.Xresources" "$cachefile"
+    fi
 
     xrdb $HOME/.Xresources
 
@@ -80,32 +96,34 @@ load_xresources() {
       xdotool windowactivate $wid
       xdotool key --window $wid  "shift+i"
     fi
+
 }
 
 # Keep the current gap setting and reload bspwm
 load_bspwm() {
     [ ! -d "$HOME/.wm/panel/juicers" ] && mkdir $HOME/.wm/panel/juicers
 
-    margs juicer .wm/panel/juicers/juicer
+    if ! margs juicer .wm/panel/juicers/juicer; then
+        # custom reload values:
+        p_mail_reload=30
+        p_desktop_reload="bspc subscribe"
+        p_title_reload="xtitle -s"
+        p_weather_reload=600
+        p_updates_reload=600
+        p_dropdown_reload="echo oneshot"
+        p_themeSwitch_reload="echo oneshot"
+        p_dynamicmpd_reload=0
 
-    # custom reload values:
-    p_mail_reload=30
-    p_desktop_reload="bspc subscribe"
-    p_title_reload="xtitle -s"
-    p_weather_reload=600
-    p_updates_reload=600
-    p_dropdown_reload="echo oneshot"
-    p_themeSwitch_reload="echo oneshot"
-    p_dynamicmpd_reload=0
-
-    # note all lemons, generate them.
-    lemons=$(echo $p_format | tr ':|' ' ');
-    IFS=' '
-    for lemon in $lemons; do
-        colorchange.sh "$lemon" "$(eval "echo \${p_${lemon}_reload}")" >> $HOME/.wm/panel/juicers/juicer
-        echo "" >> $HOME/.wm/panel/juicers/juicer
-    done
-    IFS=
+        # note all lemons, generate them.
+        lemons=$(echo $p_format | tr ':|' ' ');
+        IFS=' '
+        for lemon in $lemons; do
+            colorchange.sh "$lemon" "$(eval "echo \${p_${lemon}_reload}")" >> $HOME/.wm/panel/juicers/juicer
+            echo "" >> $HOME/.wm/panel/juicers/juicer
+        done
+        IFS=
+        [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
+    fi
 
     [ $(bspc config window_gap) -le 0 ] && export BSPWM_GAPS=false || export BSPWM_GAPS=true
     "$HOME/.wm/bspwmrc"
