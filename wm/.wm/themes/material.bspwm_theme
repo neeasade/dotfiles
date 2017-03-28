@@ -14,10 +14,12 @@ b_border_width=5
 b_window_gap=16
 
 # panel
+p_format="dropdown:desktop|title|mpd:volume:weather:clock" # Default options/items to include in info section of panel.
 p_height=32
 p_gap=6
-p_font_main="Droid Sans-10"
-d_font="Droid Sans 10"
+p_font_main="Roboto Light-10"
+d_font="Roboto Light 10"
+st_font="Roboto Mono-8"
 
 p_desktop_display_name=name
 p_desktop_show_free=false
@@ -44,4 +46,4 @@ b_focused_border_color="#$(colort -t $p_bg_active)"
 p_icon="$p_fg_normal"
 
 # other
-GTK_FONT="Droid Sans 10"
+GTK_FONT="Roboto Light 10"
