@@ -7,18 +7,5 @@
     *   figure out background storage first.
 *   make a new workflow webm.
 *   window decorations w/ lemonbar dickery
-*   scratchpad handling (bspwm)
+*   scratchpad handling?
 *   better document and 'clean' things within the dotfiles themselves(never ends)
-
-use this again somewhere(underline style block):
-```
-function block() {
-    [ ! -z $NoPadding ] && pPadding=$NoPadding
-    if [ "$blockActive" = true ] ; then
-        echo -n "%{B#ff$(colort 2 $(echo $pBG | cut -c4-))}%{-o}%{U$pBGActiveTab+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
-    else
-        echo -n "%{-o}%{U#ff$(colort -3 $(echo $pBGActiveTab | cut -c4-))+u}%{F$pFG}$(printf %${pPadding}s)$@$(printf %${pPadding}s)%{B$pBG}%{-u} "
-    fi
-}
-export -f block
-```

@@ -2,7 +2,7 @@
 
 [screenshot](https://u.teknik.io/3924Rl.png) | [webm](https://u.teknik.io/wk6knx.webm)
 ---------|------
-OS		 | Arch Linux
+OS		 | Nixos
 WM		 | BSPWM
 Panel	 | lemonbar (xft patch)
 Terminal | [xst](https://github.com/neeasade/xst)
