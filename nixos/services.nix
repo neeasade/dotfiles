@@ -1,5 +1,53 @@
-{ config, lib, pkgs, ...}: with lib;
+{ config, lib, pkgs, neeasade, ...}: with lib;
+
 {
+  services = {
+    xserver = {
+      enable = true;
+      layout = "us";
+      defaultDepth = 24;
+
+      synaptics = {
+        enable = true;
+        twoFingerScroll = true;
+        tapButtons = false;
+        palmDetect = true;
+      };
+
+      windowManager = {
+        default = "bspwm";
+        bspwm = {
+          package = neeasade.bspwm;
+          enable = true;
+        };
+      };
+
+      desktopManager = {
+        xterm.enable = false;
+        default = "none";
+      };
+
+      displayManager.slim = {
+        enable = true;
+        extraConfig = ''
+        session_font Liberation Sans:size=16
+        session_color #000000
+        '';
+      };
+    };
+
+    printing = {
+      enable = true;
+      drivers = [ pkgs.gutenprint pkgs.postscript-lexmark pkgs.splix ];
+    };
+
+    #dbus.enable = true;
+    acpid.enable = true;
+    # todo : look into conf of ssh.
+    #openssh.enable = true;
+
+    xserver.autorun = true;
+  };
 
 /*
   systemd.user.services.emacs = {
