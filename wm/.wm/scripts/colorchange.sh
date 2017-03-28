@@ -117,7 +117,7 @@ fi
 
 if [ ! "$(type -t activebg)" = "function" ]; then
     activebg() {
-        vanilla bg
+        vanilla activebg
     }
 fi
 

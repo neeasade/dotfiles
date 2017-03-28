@@ -9,7 +9,7 @@ borderWidth=`bspc config border_width`
 _chbr() {
     colorType=$1
     shift
-    eval ~/git_temp/opt/chbr -c \$border$colorType -C \$border${colorType}Fade -s $borderWidth $@ 2>/dev/null &
+    eval ~/git_temp/opt/chbr -c \"\$border$colorType\" -C \"\$border${colorType}Fade\" -s $borderWidth $@ 2>/dev/null &
 }
 
 # define border colors based on bspwm border settings
@@ -22,9 +22,11 @@ borderFocused="ff$(colort -t $(bspc config focused_border_color))"
 #borderFocusedFade="$borderFocused"
 
 # mute for now.
-borderFocusedFade="00000000"
-borderNormalFade="00000000"
+borderFocusedFade="0x000000"
+borderNormalFade="0x00555555"
 
+borderFocusedFade="0x00000000"
+borderNormalFade="0x00000000"
 # initial draw
 _chbr Normal  `bspc query -N -n .!descendant_of.window`
 _chbr Focused `bspc query -N -n .descendant_of.window`

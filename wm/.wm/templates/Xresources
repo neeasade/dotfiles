@@ -13,28 +13,20 @@ dmenu.background: #{{p_bg_normal}}
 dmenu.selforeground: #{{p_fg_active}}
 dmenu.selbackground: #{{p_bg_active}}
 
-! can be loaded from userscript
+! qutebrowser can be loaded from userscript
 qutebrowser.hints.border: 1px solid #{{p_fg_normal}}
+qutebrowser.tabs.padding: {{p_height}},{{p_height}},8,8
+
+qutebrowser.colors.completion.match.fg : #{{p_icon}}
+
+! all the other colors are tied to these, for reload speed.
 qutebrowser.colors.completion.fg: #{{p_fg_normal}}
 qutebrowser.colors.completion.bg: #{{p_bg_normal}}
 qutebrowser.colors.completion.category.fg: #{{p_fg_inactive}}
 qutebrowser.colors.completion.category.bg: #{{p_bg_inactive}}
 qutebrowser.colors.completion.item.selected.fg : #{{p_fg_active}}
 qutebrowser.colors.completion.item.selected.bg : #{{p_bg_active}}
-qutebrowser.colors.completion.item.selected.border.top : #{{p_bg_active}}
-qutebrowser.colors.completion.item.selected.border.bottom : #{{p_bg_active}}
-qutebrowser.colors.completion.match.fg : #{{p_icon}}
-qutebrowser.colors.statusbar.fg.insert : #{{p_fg_active}}
-qutebrowser.colors.statusbar.bg.insert : #{{p_bg_active}}
-qutebrowser.colors.tabs.fg.selected.odd : #{{p_fg_active}}
-qutebrowser.colors.tabs.bg.selected.odd : #{{p_bg_active}}
-qutebrowser.colors.tabs.fg.selected.even : #{{p_fg_active}}
-qutebrowser.colors.tabs.bg.selected.even : #{{p_bg_active}}
 
-qutebrowser.colors.downloads.fg.start : #{{p_fg_inactive}}
-qutebrowser.colors.downloads.bg.start : #{{p_bg_inactive}}
-qutebrowser.colors.downloads.fg.stop : #{{p_fg_active}}
-qutebrowser.colors.downloads.bg.stop : #{{p_bg_active}}
 qutebrowser.fonts._monospace: '"{{p_font_main}}", Terminus, Monospace'
 qutebrowser.fonts.tabbar : '{{p_font_main_bold}} {{p_font_main_size}}pt ${_monospace}'
 

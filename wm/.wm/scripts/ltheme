@@ -28,7 +28,7 @@ fi
 
 # mustache args, cache.
 margs() {
-    cache=true
+    cache=false
 
     if $cache; then
         cachefile="/tmp/template/$THEME_NAME/$2"

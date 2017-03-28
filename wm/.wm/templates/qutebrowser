@@ -153,8 +153,10 @@ prev-regexes = \bprev(ious)?\b,\bback\b,\bolder\b,\b[<←≪]\b,\b(<<|«)\b
 DEFAULT = https://google.com/search?q={}
 
 [aliases]
+b = buffer
 
 [colors]
+
 completion.fg = #{{p_fg_normal}}
 completion.bg = #{{p_bg_normal}}
 completion.alternate-bg = ${completion.bg}
@@ -165,11 +167,10 @@ completion.category.border.bottom = ${completion.category.border.top}
 
 completion.item.selected.fg = #{{p_fg_active}}
 completion.item.selected.bg = #{{p_bg_active}}
-completion.item.selected.border.top = #{{p_bg_active}}
-completion.item.selected.border.bottom = #{{p_bg_active}}
+completion.item.selected.border.top = ${completion.item.selected.bg}
+completion.item.selected.border.bottom = ${completion.item.selected.bg}
 
 completion.match.fg = #{{p_icon}}
-
 completion.scrollbar.fg = ${completion.fg}
 completion.scrollbar.bg = ${completion.bg}
 
@@ -180,8 +181,8 @@ statusbar.bg.error = red
 statusbar.fg.warning = ${statusbar.fg}
 statusbar.bg.warning = darkorange
 
-statusbar.fg.insert = #{{p_fg_active}}
-statusbar.bg.insert = #{{p_bg_active}}
+statusbar.fg.insert = ${completion.item.selected.fg}
+statusbar.bg.insert = ${completion.item.selected.bg}
 
 statusbar.fg.command = ${statusbar.fg}
 statusbar.bg.command = ${statusbar.bg}
@@ -203,8 +204,8 @@ tabs.bg.odd = ${completion.bg}
 tabs.fg.even = ${completion.fg}
 tabs.bg.even = ${completion.bg}
 
-tabs.fg.selected.odd = #{{p_fg_active}}
-tabs.bg.selected.odd = #{{p_bg_active}}
+tabs.fg.selected.odd = ${completion.item.selected.fg}
+tabs.bg.selected.odd = ${completion.item.selected.bg}
 tabs.fg.selected.even = ${tabs.fg.selected.odd}
 tabs.bg.selected.even = ${tabs.bg.selected.odd}
 
@@ -219,10 +220,12 @@ hints.bg = ${completion.bg}
 hints.fg.match = ${completion.match.fg}
 
 downloads.bg.bar = ${completion.bg}
-downloads.fg.start = #{{p_fg_inactive}}
-downloads.bg.start = #{{p_bg_inactive}}
-downloads.fg.stop = #{{p_fg_active}}
-downloads.bg.stop = #{{p_bg_active}}
+
+downloads.fg.start = ${completion.category.fg}
+downloads.bg.start = ${completion.category.bg}
+downloads.fg.stop = ${completion.item.selected.fg}
+downloads.bg.stop = ${completion.item.selected.bg}
+
 downloads.fg.system = none
 downloads.bg.system = none
 downloads.fg.error = white

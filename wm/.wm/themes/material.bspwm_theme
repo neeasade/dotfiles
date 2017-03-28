@@ -14,19 +14,34 @@ b_border_width=5
 b_window_gap=16
 
 # panel
-PANEL_HEIGHT=32
-PANEL_GAP=6
-PANEL_FONT_MAIN="Droid Sans-10"
-DUNST_FONT="Droid Sans 10"
-desktopDisplay=name
-showFreeDesktops=false
+p_height=32
+p_gap=6
+p_font_main="Droid Sans-10"
+d_font="Droid Sans 10"
+
+p_desktop_display_name=name
+p_desktop_show_free=false
+p_desktop_only_active=false
 
 # colors
-pBGInactiveTab="#ff37474f"
-pFGActiveTab="$pFG"
-pBGActiveTab="$(colort 45 "$pBG")"
-onlyShowActiveDesktop=true
+p_bg_inactive="#ff37474f"
+p_bg_active="$(colort -l 45 "$p_bg_normal")"
+
+p_fg_active="$(colort -l 45 "$p_fg_normal")"
+p_fg_inactive="$(colort -l -45 "$p_fg_normal")"
+#p_fg_inactive="$p_fg_normal"
+
+activefg() {
+    vanilla activefg
+}
+
+fg() {
+    vanilla fg
+}
+
+b_focused_border_color="#$(colort -t $p_bg_active)"
+
+p_icon="$p_fg_normal"
 
 # other
 GTK_FONT="Droid Sans 10"
-GTK_ICON_COLOR="$pFG"

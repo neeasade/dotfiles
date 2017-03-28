@@ -35,11 +35,11 @@ stepSetup()  {
   #togetherStep
   # align is only set on sep step
   separateStep
-  #reverseSteps
+  reverseSteps
 }
 
 bg() {
-    #step=$((step-2))
+    #step=$((step-1))
     #input="$(eval "echo \#\${color$step}")"
     input="$(gradientGet)"
     #input="$(maxchroma "$(colort -t $input)")"
@@ -66,9 +66,9 @@ suffix() {
     [ -z "$prevbg" ] && prevbg="$(bg)"
 
     if [ "${lemon_target_align}" = "left" ]; then
-        step=$((step-1));
-    else
         step=$((step+1));
+    else
+        step=$((step-1));
     fi
     [ -z "$nextbg" ] && nextbg="$(bg)"
 
@@ -76,8 +76,9 @@ suffix() {
     prevbg="$(colort -t $prevbg)"
 
     content=""
+    size=3
     IFS=$'\n'
-    for color in $(gradient "$prevbg" "$nextbg" 3 | tail -n 4 | head -n -1); do
+    for color in $(gradient "$prevbg" "$nextbg" $size | tail -n $((size+1)) | head -n -1); do
         content="${content}%%{B#ff$(colort -t $color)} %%{B-}"
         #content="%%{B#ff$(colort -t $color)} %%{B-}${content}"
     done
