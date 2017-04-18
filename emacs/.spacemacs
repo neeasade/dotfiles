@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     themes-megapack
      ; note: sync with f e R
      evil-commentary
 
@@ -59,6 +60,7 @@ values."
 
      ; misc
      git version-control
+     org
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -142,11 +144,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Roboto Mono"
+   dotspacemacs-default-font '("Tewi"
                                :size 12
                                :weight normal
                                :width normal
-                               :powerline-scale 1.1)
+                               :powerline-scale 1.2)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The key used for Emacs commands (M-x) (after pressing on the leader key).
@@ -310,10 +312,12 @@ This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
-  (add-hook 'before-save-hook 'tide-format-before-save)
+  ;;(add-hook 'before-save-hook 'tide-format-before-save)
 
   ;; disable bold fonts
   (set-face-bold-p 'bold nil)
+  ;; disable comment backgrounds
+  (set-face-background 'font-lock-comment-face nil)
 
   ;; auto accept changes made to file if not changed in current buffer.
   (global-auto-revert-mode t)
@@ -322,7 +326,7 @@ you should place your code here."
   (setq vc-follow-symlinks t)
 
   ;; style
-  (setq powerline-default-separator 'slant)
+  (setq powerline-default-separator 'bar)
   (setq org-bullets-bullet-list '("■" "◤" "▶" "●"))
 
   ;; helm
