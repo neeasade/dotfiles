@@ -1,11 +1,13 @@
 { config, lib, pkgs, neeasade, ...}: with lib;
 
 {
+
   services = {
     xserver = {
       enable = true;
       layout = "us";
       defaultDepth = 24;
+      videoDrivers = [ "ati" ];
 
       synaptics = {
         enable = true;
@@ -13,7 +15,6 @@
         tapButtons = false;
         palmDetect = true;
       };
-
       windowManager = {
         default = "bspwm";
         bspwm = {

@@ -1,6 +1,5 @@
 { config, pkgs, lib, stable, rolling, neeasade, ...}:
 with lib;
-
 {
   i18n = {
     consoleFont = "Lat2-Terminus16";
@@ -9,7 +8,9 @@ with lib;
   };
 
   hardware = {
+    opengl.driSupport = true;
     pulseaudio.enable = true;
+    opengl.driSupport32Bit = true;
     pulseaudio.support32Bit = true;
   };
 
@@ -19,7 +20,7 @@ with lib;
     isNormalUser = true;
     uid = 1000;
     extraGroups= [
-      "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers"
+      "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers"
     ];
     createHome=true;
     home="/home/neeasade";
@@ -27,81 +28,81 @@ with lib;
     initialPassword="password";
   };
 
-  environment.systemPackages = [
-      stable.curl
-      stable.dash
-      stable.deluge
-      stable.feh
-      stable.firefox
-      stable.ghostscript
-      stable.gimp
-      stable.inkscape
-      stable.jq
-      stable.leafpad
-      stable.libreoffice
-      stable.libtiff
-      stable.mpd
-      stable.mpv
-      stable.mupdf
-      stable.ncmpcpp
-      stable.ntfs3g
-      stable.p7zip
-      stable.pciutils
-      stable.stow
-      stable.sudo
-      stable.tmux
-      stable.unzip
-      stable.wget
-      stable.zlib
-      stable.zsh
-      stable.ioquake3
-      stable.unclutter
-      stable.maim
-      stable.slop
-      stable.bash-completion
-      stable.zsh-completions
-      stable.lxappearance
-      stable.neofetch
-      stable.libnotify
+  environment.systemPackages =
+  (with stable; [
+    bash-completion
+    bc
+    binutils
+    curl
+    dash
+    deluge
+    feh
+    firefox
+    ghostscript
+    gimp
+    gitAndTools.gitFull
+    inkscape
+    ioquake3
+    jq
+    leafpad
+    libnotify
+    libreoffice
+    libtiff
+    lxappearance
+    maim
+    mpd
+    mpv
+    mupdf
+    ncmpcpp
+    neofetch
+    nix
+    nix-prefetch-scripts
+    nix-repl
+    ntfs3g
+    p7zip
+    pciutils
+    slop
+    stow
+    sudo
+    tmux
+    unclutter
+    unzip
+    wget
+    wget
+    wine
+    zlib
+    zsh
+    zsh-completions
 
-      # these weren't found?
-      #stable.password-store
-      #rolling.xwininfo
+  ]) ++ (with rolling; [
+    (steam.override {newStdcpp = true; nativeOnly = true;})
+    bevelbar
+    colort
+    compton
+    dmenu2
+    dunst
+    dzen2
+    emacs
+    firefox
+    i3lock
+    lemonbar-xft
+    mesa_drivers
+    mesa_glu
+    mpvc
+    neovim
+    pcmanfm
+    qutebrowser
+    rxvt_unicode
+    sxhkd
+    vim
+    xdo
+    xdotool
+    xtitle
 
-      stable.nix
-      stable.nix-repl
-      stable.nix-prefetch-scripts
-
-      stable.binutils
-      stable.bc
-      stable.gitAndTools.gitFull
-      stable.wget
-
-      rolling.bevelbar
-      rolling.compton
-      rolling.dmenu2
-      rolling.dunst
-      rolling.dzen2
-      rolling.firefox
-      rolling.i3lock
-      rolling.lemonbar-xft
-      rolling.pcmanfm
-      rolling.qutebrowser
-      rolling.rxvt_unicode
-      rolling.xdo
-      rolling.xdotool
-      rolling.xtitle
-      rolling.sxhkd
-      rolling.colort
-      rolling.mpvc
-
-      rolling.neovim
-      rolling.emacs
-      rolling.vim
-
-      neeasade.bspwm
-      neeasade.xst
-  ];
+  ]) ++ (with neeasade; [
+    bspwm
+    xst
+  ]);
 
   # todo: consider:
   #system.activationScripts.dotfiles = stringAfter [ "users" ] ''

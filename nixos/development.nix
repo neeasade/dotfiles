@@ -14,9 +14,4 @@
       ghc
       # todo: dotnet
   ];
-
-  # todo: consider:
-  #system.activationScripts.dotfiles = stringAfter [ "users" ] ''
-    #export USER_HOME=${users.extraUsers.neeasade.home}
-  #'';
 }
