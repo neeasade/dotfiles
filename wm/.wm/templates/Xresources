@@ -4,7 +4,7 @@ st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
 st.prompt_char: {{PROMPT_CHAR}}
 
-emacs.interalBorder: {{st_borderpx}}
+Emacs.internalBorder: {{st_borderpx}}
 
 ! dmenu2 can read from Xresources.
 dmenu.font: {{p_font_main}}-{{p_font_main_size}}
@@ -14,7 +14,7 @@ dmenu.selforeground: #{{p_fg_active}}
 dmenu.selbackground: #{{p_bg_active}}
 
 ! qutebrowser can be loaded from userscript
-qutebrowser.hints.border: 1px solid #{{p_fg_normal}}
+qutebrowser.hints.border: '1px solid #{{p_fg_normal}}'
 qutebrowser.tabs.padding: {{p_height}},{{p_height}},8,8
 
 qutebrowser.colors.completion.match.fg : #{{p_icon}}
