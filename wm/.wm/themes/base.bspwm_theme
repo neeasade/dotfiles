@@ -1,11 +1,7 @@
 #!/usr/bin/env dash
 # This script will be sourced by themes and then have options overridden
-# assumes that $1 is the termite config name
 
-# Things a theme is expected to define at a minimum:
-# THEME_NAME
-# VIM_COLORS
-
+# THEME_NAME="${1-:Untitled}"
 . "$HOME/.wm/themes/colors/$THEME_NAME"
 
 [ -z "$BSPWM_GAPS"  ] && BSPWM_GAPS=true || BSPWM_GAPS=false
@@ -56,6 +52,19 @@ p_desktop_empty_label='[ ]'
 p_desktop_tiling_label='T'
 p_desktop_monocle_label='M'
 
+# default reload times for panel sections
+p_mail_reload=30
+p_desktop_reload="bspc subscribe"
+p_title_reload="xtitle -s"
+p_weather_reload=600
+p_updates_reload=600
+p_dropdown_reload="echo oneshot"
+p_themeSwitch_reload="echo oneshot"
+p_dynamicmpd_reload=0
+
+# default click actions for panel sections
+p_themeSwitch_mouse_left="dzen.sh theme"
+
 # xst
 st_font="Droid Sans Mono-8:pixelsize=11:antialias=true:autohint=true;"
 st_borderpx=10
@@ -77,14 +86,12 @@ p_format="dropdown:desktop|title|mpd:volume:weather:clock" # Default options/ite
 
 # Customize options on different computers by hostname.
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.
-HOSTNAME="$(hostname)"
-
-if [ "$HOSTNAME" = "littleapple" ]; then
+if [ "$(hostname)" = "littleapple" ]; then
   barInfo1="desktop|title|yaourtUpdates"
   barInfo2="desktop|title|themeSwitch:volume:clock"
   barInfo3="desktop|title|mpd:clock"
 fi
 
-if [ "$HOSTNAME" = "home2" ]; then
+if [ "$(hostname)" = "home2" ]; then
   barInfo="desktop:title||battery:network:volume:clock"
 fi

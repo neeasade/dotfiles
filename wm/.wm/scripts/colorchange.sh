@@ -5,7 +5,7 @@
 # theme variables are exposed here to use and reference.
 
 lemon_target="$1"
-lemon_reload="$2"
+#lemon_reload="$2"
 
 # barInfo example:
 barInfo="$p_format"
@@ -169,3 +169,14 @@ done
 if [ ! -z "$(eval echo \$p_${lemon_target}_theme)" ]; then
   eval echo "\$p_${lemon_target}_theme"
 fi
+
+# things that aren't colors may be provided by p_{lemon_target}_{option}
+options="reload mouse_left mouse_right mouse_middle scroll_up scroll_down overline underline"
+IFS=' '
+for option in $options; do
+    if [ ! -z "$(eval echo "\$p_${lemon_target}_${option}")" ]; then
+        echo $(tr '_' '-' <<< $option) = \"$(eval echo "\$p_${lemon_target}_${option}")\"
+    fi
+done
+IFS=
+# check for any

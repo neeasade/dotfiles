@@ -88,13 +88,16 @@ load_xresources() {
     pkill -x --signal USR1 st
 
     # locate a qutebrowser window and send bind to update from Xresources
+    # do so by the keybindings associated, then switch back.
     if pgrep qutebrowser >/dev/null; then
+      curren_wid=`bspc query -N -n `
       wid=$(xdotool search --any --pid "$(pgrep qutebrowser)")
       # only send to one
       wid=$(echo $wid | cut -d ' ' -f 1)
       # pending https://github.com/qutebrowser/qutebrowser/issues/1741
       xdotool windowactivate $wid
       xdotool key --window $wid  "shift+i"
+      bspc node -f $current_wid
     fi
 
 }
@@ -104,21 +107,11 @@ load_bspwm() {
     [ ! -d "$HOME/.wm/panel/juicers" ] && mkdir $HOME/.wm/panel/juicers
 
     if ! margs juicer .wm/panel/juicers/juicer; then
-        # custom reload values:
-        p_mail_reload=30
-        p_desktop_reload="bspc subscribe"
-        p_title_reload="xtitle -s"
-        p_weather_reload=600
-        p_updates_reload=600
-        p_dropdown_reload="echo oneshot"
-        p_themeSwitch_reload="echo oneshot"
-        p_dynamicmpd_reload=0
-
         # note all lemons, generate them.
         lemons=$(echo $p_format | tr ':|' ' ');
         IFS=' '
         for lemon in $lemons; do
-            colorchange.sh "$lemon" "$(eval "echo \${p_${lemon}_reload}")" >> $HOME/.wm/panel/juicers/juicer
+            colorchange.sh "$lemon" >> $HOME/.wm/panel/juicers/juicer
             echo "" >> $HOME/.wm/panel/juicers/juicer
         done
         IFS=
@@ -137,9 +130,24 @@ load_vim() {
     done
 }
 
+load_emacs() {
+    # todo: associate
+    emacsTheme="material"
+    #emacsclient --no-wait --eval "(load-theme '${emacsTheme})"
+
+    # overrides
+    emacsclient --no-wait --eval "(set-face-background 'font-lock-comment-face nil)"
+    #emacsclient --no-wait --eval "(set-face-bold-p 'bold nil)"
+    emacsclient --no-wait --eval "(set-face-attribute 'font-lock-comment-face nil :weight 'normal :family 'tewi)"
+
+    # ALL SHALL BE NORMAL WEIGHT
+    #emacsclient --no-wait --eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family 'tewi)) (face-list))"
+}
+
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
     trimAlphas
+
     margs gtkrc .gtkrc-2.0
 
     if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
@@ -173,6 +181,7 @@ load_qutebrowser() {
 # dunst
 load_dunst() {
     trimAlphas
+
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
     pkill -x dunst
 

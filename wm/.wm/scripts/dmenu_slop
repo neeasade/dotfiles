@@ -2,6 +2,10 @@
 # neeasade
 # depends: dmenu slop xdo bspc
 
+# mark external rules for reset
+external_rules="$(bspc config external_rules_command)"
+bspc config external_rules_command ""
+
 # get program name to launch using dmenu cache:
 cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
 [ -d "$cachedir" ] && cache=$cachedir/dmenu_run || cache=$HOME/.dmenu_cache
@@ -29,5 +33,6 @@ while [ "$newwin" = "$win" ]; do
 	newwin=`bspc query -N -n`
 done
 
-xdo move -x $X -y $Y $newwin &
-xdo resize -w $W -h $H $newwin &
+xdo move -x $X -y $Y $newwin
+xdo resize -w $W -h $H $newwin
+bspc config external_rules_command "$external_rules"

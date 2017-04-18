@@ -18,7 +18,7 @@ content=""
 
 content="${content}${start}"
 for i in $(seq 1 $size); do
-    if [ "$(echo "$i < $size / 100 * $size" | bc -l)" = 1 ]; then
+    if [ "$(echo "$i < $1 / 100 * $size" | bc -l)" = 1 ]; then
         current="$char1"
     else
         $passed && current="$char2" || current="$sep"
