@@ -20,19 +20,14 @@ program=$(
 )
 
 eval `slop`
-
-# Get current window
-win=`bspc query -N -n`
 bspc rule -a \* -o state=floating
 
 $program &
 
-# Wait for window to spawn and move with xdo.
-newwin=$win
-while [ "$newwin" = "$win" ]; do
-	newwin=`bspc query -N -n`
-done
+while read -r event monId deskId nodeId ipId; do
+	xdotool windowmove $nodeId $X $Y &
+	xdotool windowsize $nodeId $W $H &
 
-xdo move -x $X -y $Y $newwin
-xdo resize -w $W -h $H $newwin
-bspc config external_rules_command "$external_rules"
+	bspc config external_rules_command "$external_rules"
+	break
+done < <(bspc subscribe node_manage)
