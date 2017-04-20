@@ -14,20 +14,22 @@ b_border_width=4
 b_window_gap=16
 
 # panel
-PANEL_HEIGHT=32
-PANEL_FONT_MAIN="Droid Sans Mono-8"
-PANEL_GAP=6
-DO=+
-DF=-
-pPadding=2
-desktopDisplayType=separate
+p_height=32
+p_font_main="Droid Sans Mono-8"
+p_gap=6
+
+p_desktop_occupied_label=+
+p_desktop_empty_label=-
+p_desktop_display_format=separate
+
+p_padding=2
 
 # colors
-pBGInactiveTab="#ffc6c7c9"
-pBGActiveTab="#ffc6c7c9"
-pFGActiveTab="$pFG"
-pBG="#ffe7e8eb"
-pIcon="#ff606060"
+p_bg_inactive="#ffc6c7c9"
+p_bg_active="#ffc6c7c9"
+p_fg_active="$p_fg_normal"
+p_bg_normal="#ffe7e8eb"
+p_icon="#ff606060"
 
 # other
-DUNST_FONT="Droid Sans Mono 8" # Font used by dunst on startup
+d_font="Droid Sans Mono 8" # Font used by dunst on startup

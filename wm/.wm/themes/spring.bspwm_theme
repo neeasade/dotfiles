@@ -18,15 +18,13 @@ b_window_gap=16
 p_height=24
 p_gap=0
 p_line="5"
-
-p_font_main="Droid Sans-10:style=Bold"
-d_font="Droid Sans 10"
-
 p_padding=2
+p_font_main="Droid Sans-10:style=Bold"
 p_window_class="noshadow"
-
 p_delimiter="   "
 p_line=5
+p_desktop_occupied_label="        "
+p_desktop_empty_label="        "
 
 maxWinNameLen=50
 
@@ -34,8 +32,7 @@ maxWinNameLen=50
 p_bg_inactive="#bb$(colort -t $p_bg_normal)"
 p_bg_normal="#00$(colort -t $p_bg_normal)"
 
-p_desktop_occupied_label="        "
-p_desktop_empty_label="        "
+d_font="Droid Sans 10"
 
 # other
 GTK_FONT="Droid Sans 10"

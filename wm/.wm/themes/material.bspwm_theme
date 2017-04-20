@@ -14,7 +14,7 @@ b_border_width=5
 b_window_gap=16
 
 # panel
-p_format="dropdown:desktop|title|mpd:volume:weather:clock" # Default options/items to include in info section of panel.
+p_format="dropdown:desktop:mail:themeSwitch|title|mpd:volume:weather:clock" # Default options/items to include in info section of panel.
 p_height=32
 p_gap=6
 p_font_main="Roboto Light-10"
