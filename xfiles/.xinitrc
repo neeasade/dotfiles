@@ -5,20 +5,17 @@
 # xrandr script(generated with arandr)
 $HOME/.screenlayout/display.sh
 
-for launch in \
-	"xrdb -load $HOME/.Xresources" \
-	"xmodmap $HOME/.Xmodmap" \
-	"compton" \
-	"unclutter" \
-	"pcmanfm -d" \
-	"mpd $HOME/.config/mpd/mpd.conf" \
-	"mpdcron" \
-	"dunst" \
-	"wmname LG3D" \
-	"xsetroot -cursor_name left_ptr" \
-	"(. $HOME/.bspwm_theme; $BG_COMMAND)"
-	do eval $launch &
-done
+xrdb -load $HOME/.Xresources &
+xmodmap $HOME/.Xmodmap &
+compton &
+unclutter &
+pcmanfm -d &
+mpd $HOME/.config/mpd/mpd.conf &
+mpdcron &
+dunst &
+wmname LG3D &
+xsetroot -cursor_name left_ptr &
+(. $HOME/.bspwm_theme; $BG_COMMAND) &
 
 export xstart=`date +%s`
 
