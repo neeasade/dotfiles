@@ -9,21 +9,25 @@ export BROWSER=qutebrowser
 export TERMINAL=st
 export FILEBROWSER=pcmanfm
 
+export MPDCRON_DIR="$HOME/.config/mpd"
+export SXHKD_SHELL=sh
+export _JAVA_AWT_WM_NONREPARENTING=1
+
 type npm >/dev/null && export NODE_PATH="$(npm root -g)"
 # }}}
 
 # {{{ alias
-alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/Steam.exe >/dev/null 2>&1 &'
-alias tmux='tmux -2' #Make tmux assume 256 colors.
-alias cavampd='cava -i fifo -p /tmp/mpd.fifo -b 20'
-alias sysinfo='archey3 && dfc -p /dev && colors'
-alias ls='ls --color=auto'
-alias paste="curl -F 'sprunge=<-' http://sprunge.us"
-alias grep="grep --color=auto"
-alias pacman="pacman --color=always"
-alias make="clear && make"
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
+alias grep="grep --color=auto"
+alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
+alias ls='ls --color=auto'
+alias make="clear && make"
 alias mpv='~/.wm/scripts/mpv'
+alias pacman="pacman --color=always"
+alias paste="curl -F 'sprunge=<-' http://sprunge.us"
+alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/Steam.exe >/dev/null 2>&1 &'
+alias sysinfo='archey3 && dfc -p /dev && colors'
+alias tmux='tmux -2' #Make tmux assume 256 colors.
 # }}}
 
 # {{{ func
