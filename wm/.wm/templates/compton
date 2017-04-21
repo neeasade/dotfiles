@@ -2,19 +2,19 @@
 ## based on dkeg 2015 'candy' config, with slight edits.
 
 ## Sometimes a little transparency can soften the edges
-shadow-opacity = 0.4;
+shadow-opacity = {{c_shadow_opacity}};
 shadow-red = 0.0;
 shadow-green = 0.0;
 shadow-blue = 0.0;
 
 ## transparent borders are pretty okay
-#frame-opacity = 0.8;
+frame-opacity = {{c_frame_opacity}};
 
 ## Keep the shadows tight
-shadow = true;
-shadow-radius = 1;
-shadow-offset-x = 1;
-shadow-offset-y = 1;
+shadow = {{c_shadow}};
+shadow-radius = {{c_shadow_radius}};
+shadow-offset-x = {{c_shadow_offset_x}};
+shadow-offset-y = {{c_shadow_offset_y}};
 no-dock-shadow = false;
 no-dnd-shadow = true;
 shadow-exclude = [
@@ -22,12 +22,10 @@ shadow-exclude = [
 ];
 
 ## Soften the window and workspace changes
-fading = false;
-fade-in-step = 0.1;
-fade-out-step = 0.1;
-fade-exclude = [
-	"name = 'lemonbar'"
-];
+fading = {{c_fading}};
+fade-in-step = {{c_fade_in_step}};
+fade-out-step = {{c_fade_out_step}};
+fade-exclude = [ ];
 
 ## Extras
 use-ewmh-active-win = false;
@@ -36,5 +34,5 @@ sw-opti = true;
 backend = "glx"
 detect-transient = true;
 detect-client-leader = true;
-shadow-ignore-shaped = true;
+shadow-ignore-shaped = false;
 detect-rounded-corners = true;

@@ -73,8 +73,21 @@ st_cursorthickness=2
 
 GTK_FONT="Droid Sans 10" # GTK font to be used.
 
+# dunst
 d_font="Droid Sans 10" # Font used by dunst on startup
 d_border_color="$b_normal_border_color" # Font used by dunst on startup
+
+# compton
+c_frame_opacity="1.0"
+c_shadow_opacity="0.4"
+c_shadow="false"
+c_shadow_radius="1"
+c_shadow_offset_x="1"
+c_shadow_offset_y="1"
+
+c_fading="false";
+c_fade_in_step="0.1"
+c_fade_out_step="0.1"
 
 # promptchar to be set for st and dmenu
 PROMPT_CHAR='$'
