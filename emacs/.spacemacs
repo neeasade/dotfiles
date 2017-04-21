@@ -43,6 +43,7 @@ values."
      javascript
      markdown
      nixos
+     rust
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -144,10 +145,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Tewi"
+   ;; dotspacemacs-default-font '("Tewi"
+   dotspacemacs-default-font (list (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.font'"))
                                :size 12
-                               :weight normal
-                               :width normal
+                               :weight 'normal
+                               :width 'normal
                                :powerline-scale 1.2)
    ;; The leader key
    dotspacemacs-leader-key "SPC"

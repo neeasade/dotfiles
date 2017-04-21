@@ -15,7 +15,7 @@ b_window_gap=8
 
 # panel
 p_height=20
-p_font_main="tewi-8"
+p_font_main="Tewi-8"
 p_font_icon="wuncon siji-8"
 p_gap=4
 p_underline=0

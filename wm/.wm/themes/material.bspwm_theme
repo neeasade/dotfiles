@@ -8,6 +8,7 @@ THEME_NAME=material
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/worlds.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
+emacs_theme=material
 
 # bspwm
 b_border_width=5
@@ -32,6 +33,7 @@ p_bg_active="$(colort -l 45 "$p_bg_normal")"
 p_fg_active="$(colort -l 45 "$p_fg_normal")"
 p_fg_inactive="$(colort -l -45 "$p_fg_normal")"
 #p_fg_inactive="$p_fg_normal"
+
 
 activefg() {
     vanilla activefg

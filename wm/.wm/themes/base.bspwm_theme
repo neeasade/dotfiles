@@ -65,6 +65,8 @@ p_dynamicmpd_reload=0
 # default click actions for panel sections
 p_themeSwitch_mouse_left="dzen.sh theme"
 
+emacs_theme="spacemacs-dark"
+
 # xst
 st_font="Droid Sans Mono-8:pixelsize=11:antialias=true:autohint=true;"
 st_borderpx=10

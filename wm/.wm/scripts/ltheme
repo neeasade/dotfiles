@@ -137,17 +137,22 @@ load_vim() {
 }
 
 load_emacs() {
-    # todo: associate
-    emacsTheme="material"
-    #emacsclient --no-wait --eval "(load-theme '${emacsTheme})"
+    # todo: incorporate size
+    emacs_font="$(echo $st_font | sed 's/-.*//')"
+    emacs_font="\"${emacs_font}\""
 
-    # overrides
+    echo emacs theme: $emacs_theme
+    echo emacs theme: $emacs_font
+
+    emacsclient --no-wait --eval "(load-theme '${emacs_theme})"
+    emacsclient --no-wait --eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family '${emacs_font})) (face-list))"
+
+    # overrides (success seems to vary with font)
+    emacsclient --no-wait --eval "(set-face-bold-p 'bold nil)"
     emacsclient --no-wait --eval "(set-face-background 'font-lock-comment-face nil)"
-    #emacsclient --no-wait --eval "(set-face-bold-p 'bold nil)"
-    emacsclient --no-wait --eval "(set-face-attribute 'font-lock-comment-face nil :weight 'normal :family 'tewi)"
 
-    # ALL SHALL BE NORMAL WEIGHT
-    #emacsclient --no-wait --eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family 'tewi)) (face-list))"
+    # don't appear to need
+    emacsclient --no-wait --eval "(set-face-attribute 'font-lock-comment-face nil :weight 'normal :family '${emacs_font})"
 }
 
 # GTK (make theme if it does not exist, then reload)
@@ -200,7 +205,7 @@ load_dunst() {
 
 shift
 if [ -z "$1" ]; then
-    targets="compton tmux xresources bspwm bg vim gtk dunst qutebrowser"
+    targets="emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser"
 else
     targets="$*"
 fi
