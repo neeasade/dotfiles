@@ -1,6 +1,6 @@
 PATH=$PATH:$HOME/bin
 PATH=$PATH:$HOME/.wm/scripts
-PATH=$PATH:$HOME/.gem/ruby/2.3.0/bin
+PATH=$PATH:$HOME/.gem/bin
 
 # {{{ env
 export EDITOR='vim'
@@ -14,6 +14,8 @@ export SXHKD_SHELL=sh
 export _JAVA_AWT_WM_NONREPARENTING=1
 
 type npm >/dev/null && export NODE_PATH="$(npm root -g)"
+type ruby >/dev/null && export GEM_HOME="$HOME/.gem"
+
 # }}}
 
 # {{{ alias
