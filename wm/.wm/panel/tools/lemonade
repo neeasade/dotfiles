@@ -84,7 +84,7 @@ process=/tmp/lemonade-process-$ident
 unique=/tmp/lemonade-stack-$ident
 
 # Always clean up when you are done.
-trap "rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
+trap "error; rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
 
 
 

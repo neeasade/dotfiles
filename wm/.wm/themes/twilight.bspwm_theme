@@ -9,6 +9,7 @@ VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/lake.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
+emacs_theme="base16-twilight"
 
 # bspwm
 b_border_width=6
@@ -32,4 +33,4 @@ p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock" #
 # colors
 p_bg_inactive="#ff1e1e1e"
 p_bg_active="#ff2d2d2d"
-p_fg_active="$pFG"
+p_fg_active="$p_fg_normal"

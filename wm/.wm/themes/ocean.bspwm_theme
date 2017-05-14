@@ -9,6 +9,7 @@ VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/ocean.jpg"
 . $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
+emacs_theme="base16-ocean"
 
 # bspwm
 b_border_width=6

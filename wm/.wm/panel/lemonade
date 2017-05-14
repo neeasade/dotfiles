@@ -20,6 +20,8 @@ error() {
 }
 trap 'error "${BASH_SOURCE}" "${LINENO}"' ERR
 
+export -f error
+
 # todo: reconsider this, is the different between juicer
 # being main config point and themes passing into lemons..
 set -a

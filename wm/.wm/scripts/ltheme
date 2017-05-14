@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Load a bspwm theme based on argument
-# This loads settings for: bspwm, xst, tmux, vim, lemonbar, GTK/Icons, qutebrowser, dunst.
-# This makes heavy use of a posix implementation of mustache templates.
+# Load themes for programs
+# Check 'targets' variable at end for all posibilities.
 
 targetTheme="$HOME/.wm/themes/${1}.bspwm_theme"
 [ -f "$targetTheme" ] || exit 1
@@ -141,17 +140,12 @@ load_emacs() {
     emacs_font="$(echo $st_font | sed 's/-.*//')"
     emacs_font="\"${emacs_font}\""
 
-    echo emacs theme: $emacs_theme
-    echo emacs theme: $emacs_font
-
     emacsclient --no-wait --eval "(load-theme '${emacs_theme})"
     emacsclient --no-wait --eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family '${emacs_font})) (face-list))"
 
     # overrides (success seems to vary with font)
     emacsclient --no-wait --eval "(set-face-bold-p 'bold nil)"
     emacsclient --no-wait --eval "(set-face-background 'font-lock-comment-face nil)"
-
-    # don't appear to need
     emacsclient --no-wait --eval "(set-face-attribute 'font-lock-comment-face nil :weight 'normal :family '${emacs_font})"
 }
 

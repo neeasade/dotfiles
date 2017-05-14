@@ -6,6 +6,7 @@
   "Configuration Layers declaration.
 You should not put any user code in this function besides modifying the variable
 values."
+
   (setq-default
    ;; Base distribution to use. This is a layer contained in the directory
    ;; `+distribution'. For now available distributions are `spacemacs-base'
@@ -31,6 +32,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     yaml
      themes-megapack
      ; note: sync with f e R
      evil-commentary
@@ -54,8 +56,12 @@ values."
      ranger
 
      ; features
-     (auto-completion  :variables auto-completion-tab-key-behavior 'complete)
-     (colors :variables colors-enable-nyan-cat-progress-bar t)
+     (auto-completion  :variables
+                       auto-completion-tab-key-behavior 'complete
+                       auto-completion-complete-with-key-sequence-delay 0
+                       )
+
+     colors
      syntax-checking
      spell-checking
 
@@ -67,7 +73,9 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+                                      base16-theme
+                                      )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
@@ -79,7 +87,8 @@ values."
    ;; `used-but-keep-unused' installs only the used packages but won't uninstall
    ;; them if they become unused. `all' installs *all* packages supported by
    ;; Spacemacs and never uninstall them. (default is `used-only')
-   dotspacemacs-install-packages 'used-only))
+   dotspacemacs-install-packages 'used-only)
+  )
 
 (defun dotspacemacs/init ()
   "Initialization function.
@@ -87,6 +96,7 @@ This function is called at the very startup of Spacemacs initialization
 before layers configuration.
 You should not put any user code in there besides modifying the variable
 values."
+
   ;; This setq-default sexp is an exhaustive list of all the supported
   ;; spacemacs settings.
   (setq-default
@@ -139,13 +149,13 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
-                         spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   ;; dotspacemacs-default-font '("Tewi"
+   ;;dotspacemacs-themes '(spacemacs-dark)
+   dotspacemacs-themes (list (intern (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.theme'"))))
+
    dotspacemacs-default-font (list (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.font'"))
                                :size 12
                                :weight 'normal
@@ -304,6 +314,8 @@ executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
 `dotspacemacs/user-config' first."
+  (setq custom-file (file-truename (concat dotspacemacs-directory ".spacemacs-custom")))
+  (load custom-file)
   )
 
 (defun dotspacemacs/user-config ()
@@ -313,7 +325,6 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-
   ;;(add-hook 'before-save-hook 'tide-format-before-save)
 
   ;; disable bold fonts
@@ -330,12 +341,7 @@ you should place your code here."
   ;; style
   (setq powerline-default-separator 'bar)
   (setq org-bullets-bullet-list '("■" "◤" "▶" "●"))
-
   ;; helm
   (define-key helm-map (kbd "C-j") 'helm-next-line)
   (define-key helm-map (kbd "C-k") 'helm-previous-line)
-
-  ;; Prevent Custom from dumping its local settings into this file.
-  (setq custom-file "~/.spacemacs.custom")
-  (load-file custom-file)
   )

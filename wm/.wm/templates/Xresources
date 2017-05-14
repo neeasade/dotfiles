@@ -6,6 +6,7 @@ st.prompt_char: {{PROMPT_CHAR}}
 
 Emacs.internalBorder: {{st_borderpx}}
 Emacs.font: {{`echo $st_font | sed 's/-.*//'`}}
+Emacs.theme: {{emacs_theme}}
 
 ! dmenu2 can read from Xresources.
 dmenu.font: {{p_font_main}}-{{p_font_main_size}}
