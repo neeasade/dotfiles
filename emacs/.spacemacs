@@ -1,9 +1,8 @@
 ;; -*- mode: emacs-lisp -*-
-;; This file is loaded by Spacemacs at startup.
-;; It must be stored in your home directory.
+;; options reference: https://github.com/syl20bnr/spacemacs/blob/master/core/templates/.spacemacs.template
 
-;; split a list into 2, every other element.
 (defun split-list (lst)
+  "Split a list down the middle, into 2 lists."
   (if lst
       (if (cddr lst)
           (let ((l (split-list (cddr lst))))
@@ -13,8 +12,8 @@
         `((,(car lst)) ,(cdr lst)))
     '(nil nil)))
 
-;; load dotspacemacs settings from a list
 (defun load-spacemacs-settings(lst)
+  "Set dotspacemacs- prefixed variable values from a list."
   (mapcar*
    (lambda (key value)
      (set-default
@@ -33,47 +32,48 @@
       enable-lazy-installation 'unused
       ask-for-lazy-installation t
       configuration-layer-path '()
-
-      configuration-layers '(
-        ; languages
-        c-c++ clojure
-        emacs-lisp
-        html
-        javascript
-        markdown
-        nixos
-        rust
-        (typescript :variables
-                    typescript-fmt-on-save t)
-        (shell :variables
-                shell-default-height 30
-                shell-default-position 'bottom)
-
-        ; interface
-        better-defaults helm ranger
-
-        ; features
-        (auto-completion  :variables
-                          auto-completion-tab-key-behavior 'complete
-                          auto-completion-complete-with-key-sequence-delay 0
-                          )
-
-        colors syntax-checking spell-checking
-
-        ; misc
-        yaml
-        themes-megapack
-        evil-commentary
-        git version-control
-        org
-        )
-
-      additional-packages '( base16-theme )
       frozen-packages '()
       excluded-packages '()
       install-packages 'used-only
-    ))
-  )
+      additional-packages '( base16-theme )
+    )
+
+  ;; setting this here allows spacemacs to add layers.
+  (setq dotspacemacs-configuration-layers
+    ; languages
+    c-c++ clojure
+    emacs-lisp
+    html
+    javascript
+    markdown
+    nixos
+    rust
+    (typescript
+      :variables
+        typescript-fmt-on-save t)
+    (shell
+      :variables
+        shell-default-height 30
+        shell-default-position 'bottom)
+
+    ; interface
+    better-defaults helm ranger
+
+    ; features
+    colors syntax-checking spell-checking
+    (auto-completion
+      :variables
+        auto-completion-tab-key-behavior 'complete
+        auto-completion-complete-with-key-sequence-delay 0
+    )
+
+    ; misc
+    yaml
+    themes-megapack
+    evil-commentary
+    git version-control
+    org
+    )))
 
 (defun dotspacemacs/init ()
   (load-spacemacs-settings '(
@@ -87,15 +87,17 @@
       verbose-loading nil
       startup-lists '((recents . 5)
                       (projects . 7))
+
       startup-buffer-responsive t
       scratch-mode 'text-mode
       colorize-cursor-according-to-state t
-      themes (list (intern (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.theme'"))))
-      default-font (list (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.font'"))
-                          :size 12
-                          :weight normal
-                          :width normal
-                          :powerline-scale 1.4)
+      ;; todo: conditionally fallback if xrq isn't found.
+      themes '(base16-ocean)
+      default-font '("Consolas"
+                      :size 12
+                      :weight normal
+                      :width normal
+                      :powerline-scale 1.6)
       leader-key "SPC"
       emacs-command-key "SPC"
       ex-command-key ":"
@@ -142,29 +144,25 @@
   )
 
 (defun dotspacemacs/user-init ()
-  ;; todo here: make the file if it doesn't exist
+  ;; todo: make the file if it doesn't exist
   (setq custom-file (file-truename (concat dotspacemacs-directory ".spacemacs-custom")))
   (load custom-file)
   )
 
 (defun dotspacemacs/user-config ()
-  (add-hook 'before-save-hook 'tide-format-before-save)
-
-  ;; disable bold fonts
-  (set-face-bold-p 'bold nil)
-  ;; disable comment backgrounds
-  (set-face-background 'font-lock-comment-face nil)
-
   ;; auto accept changes made to file if not changed in current buffer.
   (global-auto-revert-mode t)
 
   ;; auto-follow symlinks when editing
   (setq vc-follow-symlinks t)
 
-  ;; style
-  (setq powerline-default-separator 'bar)
-  (setq org-bullets-bullet-list '("■" "◤" "▶" "●"))
   ;; helm
   (define-key helm-map (kbd "C-j") 'helm-next-line)
   (define-key helm-map (kbd "C-k") 'helm-previous-line)
+
+  ;; style options
+  (setq powerline-default-separator 'bar)
+  (setq org-bullets-bullet-list '("■" "◤" "▶" "●"))
+  (set-face-bold-p 'bold nil)
+  (set-face-background 'font-lock-comment-face nil)
   )
