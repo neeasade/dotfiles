@@ -14,12 +14,12 @@
     '(nil nil)))
 
 ;; load dotspacemacs settings from a list
-(defun load-spacemacs-settings (lst)
+(defun load-spacemacs-settings(lst)
   (mapcar*
    (lambda (key value)
      (set-default
       (intern (concat "dotspacemacs-" (prin1-to-string key)))
-      value
+      (eval value)
       )
      )
    (car (split-list lst))
@@ -29,12 +29,12 @@
 
 (defun dotspacemacs/layers ()
   (load-spacemacs-settings '(
-      distribution spacemacs
-      enable-lazy-installation unused
+      distribution 'spacemacs
+      enable-lazy-installation 'unused
       ask-for-lazy-installation t
-      configuration-layer-path ()
+      configuration-layer-path '()
 
-      configuration-layers (
+      configuration-layers '(
         ; languages
         c-c++ clojure
         emacs-lisp
@@ -43,6 +43,8 @@
         markdown
         nixos
         rust
+        (typescript :variables
+                    typescript-fmt-on-save t)
         (shell :variables
                 shell-default-height 30
                 shell-default-position 'bottom)
@@ -66,76 +68,76 @@
         org
         )
 
-      additional-packages ( base16-theme )
-      frozen-packages ()
-      excluded-packages ()
-      install-packages used-only
+      additional-packages '( base16-theme )
+      frozen-packages '()
+      excluded-packages '()
+      install-packages 'used-only
     ))
   )
 
 (defun dotspacemacs/init ()
-  (load-spacemacs-settings `(
-      startup-banner ,nil
+  (load-spacemacs-settings '(
+      startup-banner nil
       elpa-https t
-      line-numbers relative
-      elpa-timeout ,5
-      check-for-update ,nil
-      elpa-subdirectory ,nil
-      editing-style hybrid
-      verbose-loading ,nil
-      startup-lists ((recents . 5)
+      line-numbers 'relative
+      elpa-timeout 5
+      check-for-update nil
+      elpa-subdirectory nil
+      editing-style 'hybrid
+      verbose-loading nil
+      startup-lists '((recents . 5)
                       (projects . 7))
       startup-buffer-responsive t
-      scratch-mode text-mode
+      scratch-mode 'text-mode
       colorize-cursor-according-to-state t
-      themes ,(list (intern (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.theme'"))))
-      default-font ,(list (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.font'"))
+      themes (list (intern (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.theme'"))))
+      default-font (list (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq 'Emacs.font'"))
                           :size 12
-                          :weight 'normal
-                          :width 'normal
-                          :powerline-scale 1.2)
-      leader-key ,"SPC"
-      emacs-command-key ,"SPC"
-      ex-command-key ,":"
-      emacs-leader-key ,"M-m"
-      major-mode-leader-key ,","
-      major-mode-emacs-leader-key ,"C-M-m"
-      distinguish-gui-tab ,nil
+                          :weight normal
+                          :width normal
+                          :powerline-scale 1.4)
+      leader-key "SPC"
+      emacs-command-key "SPC"
+      ex-command-key ":"
+      emacs-leader-key "M-m"
+      major-mode-leader-key ","
+      major-mode-emacs-leader-key "C-M-m"
+      distinguish-gui-tab nil
       remap-Y-to-y$ t
       retain-visual-state-on-shift t
-      visual-line-move-text ,nil
-      ex-substitute-global ,nil
+      visual-line-move-text nil
+      ex-substitute-global nil
       default-layout-name "Default"
-      display-default-layout ,nil
+      display-default-layout nil
       auto-resume-layouts t
-      large-file-size ,1
-      auto-save-file-location cache
-      max-rollback-slots ,5
-      helm-resize ,nil
+      large-file-size 1
+      auto-save-file-location 'cache
+      max-rollback-slots 5
+      helm-resize nil
       helm-no-header t
-      helm-position top
-      helm-use-fuzzy always
-      enable-paste-transient-state ,nil
-      which-key-delay ,0.4
-      which-key-position right-then-bottom
+      helm-position 'top
+      helm-use-fuzzy 'always
+      enable-paste-transient-state nil
+      which-key-delay 0.4
+      which-key-position 'right-then-bottom
       loading-progress-bar t
-      fullscreen-at-startup ,nil
-      fullscreen-use-non-native ,nil
-      maximized-at-startup ,nil
-      active-transparency ,90
-      inactive-transparency ,90
+      fullscreen-at-startup nil
+      fullscreen-use-non-native nil
+      maximized-at-startup nil
+      active-transparency 90
+      inactive-transparency 90
       show-transient-state-title t
       show-transient-state-color-guide t
-      mode-line-unicode-symbols ,nil
+      mode-line-unicode-symbols nil
       smooth-scrolling t
-      folding-method evil
-      smartparens-strict-mode ,nil
+      folding-method 'evil
+      smartparens-strict-mode nil
       smart-closing-parenthesis t
-      highlight-delimiters all
-      persistent-server ,nil
-      search-tools ("ag" "pt" "ack" "grep")
-      default-package-repository ,nil
-      whitespace-cleanup trailing
+      highlight-delimiters 'all
+      persistent-server nil
+      search-tools '("ag" "pt" "ack" "grep")
+      default-package-repository nil
+      whitespace-cleanup 'trailing
     ))
   )
 
@@ -146,7 +148,7 @@
   )
 
 (defun dotspacemacs/user-config ()
-  ;;(add-hook 'before-save-hook 'tide-format-before-save)
+  (add-hook 'before-save-hook 'tide-format-before-save)
 
   ;; disable bold fonts
   (set-face-bold-p 'bold nil)
