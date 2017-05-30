@@ -36,10 +36,10 @@
       excluded-packages '()
       install-packages 'used-only
       additional-packages '( base16-theme )
-    )
+    ))
 
   ;; setting this here allows spacemacs to add layers.
-  (setq dotspacemacs-configuration-layers
+  (setq dotspacemacs-configuration-layers '(
     ; languages
     c-c++ clojure
     emacs-lisp
@@ -73,7 +73,7 @@
     evil-commentary
     git version-control
     org
-    )))
+  )))
 
 (defun dotspacemacs/init ()
   (load-spacemacs-settings '(
@@ -162,6 +162,7 @@
 
   ;; style options
   (setq powerline-default-separator 'bar)
+  (spaceline-compile)
   (setq org-bullets-bullet-list '("■" "◤" "▶" "●"))
   (set-face-bold-p 'bold nil)
   (set-face-background 'font-lock-comment-face nil)
