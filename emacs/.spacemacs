@@ -26,6 +26,14 @@
    )
   )
 
+(defun get-resource (name default)
+  "Get X resource value, with a fallback value."
+  (if (executable-find "xrq")
+      (list (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq '" name "'")))
+    default
+    )
+  )
+
 (defun dotspacemacs/layers ()
   (load-spacemacs-settings '(
       distribution 'spacemacs
@@ -51,6 +59,7 @@
     (typescript
       :variables
         typescript-fmt-on-save t)
+
     (shell
       :variables
         shell-default-height 30
@@ -65,7 +74,8 @@
       :variables
         auto-completion-tab-key-behavior 'complete
         auto-completion-complete-with-key-sequence-delay 0
-    )
+        auto-completion-enable-help-tooltip t
+        company-quickhelp-delay 0.1)
 
     ; misc
     yaml
@@ -91,13 +101,15 @@
       startup-buffer-responsive t
       scratch-mode 'text-mode
       colorize-cursor-according-to-state t
-      ;; todo: conditionally fallback if xrq isn't found.
-      themes '(base16-ocean)
-      default-font '("Consolas"
+
+      themes (list (intern (get-resource "Emacs.theme" "spacemacs-dark")))
+
+      default-font (list (get-resource "Emacs.font" "Consolas")
                       :size 12
-                      :weight normal
-                      :width normal
+                      :weight 'normal
+                      :width 'normal
                       :powerline-scale 1.6)
+
       leader-key "SPC"
       emacs-command-key "SPC"
       ex-command-key ":"
@@ -144,8 +156,10 @@
   )
 
 (defun dotspacemacs/user-init ()
-  ;; todo: make the file if it doesn't exist
-  (setq custom-file (file-truename (concat dotspacemacs-directory ".spacemacs-custom")))
+  (defconst custom-file (expand-file-name "custom.el" user-home-directory))
+  (unless (file-exists-p custom-file)
+    (write-region "" nil custom-file))
+
   (load custom-file)
   )
 
@@ -163,7 +177,7 @@
   ;; style options
   (setq powerline-default-separator 'bar)
   (spaceline-compile)
-  (setq org-bullets-bullet-list '("■" "◤" "▶" "●"))
+  (setq org-bullets-bullet-list '("@" "%" ">" ">"))
   (set-face-bold-p 'bold nil)
   (set-face-background 'font-lock-comment-face nil)
   )
