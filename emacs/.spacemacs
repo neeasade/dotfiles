@@ -29,7 +29,7 @@
 (defun get-resource (name default)
   "Get X resource value, with a fallback value."
   (if (executable-find "xrq")
-      (list (replace-regexp-in-string "\n$" "" (shell-command-to-string "xrq '" name "'")))
+      (replace-regexp-in-string "\n$" "" (shell-command-to-string (concat "xrq '" name "'")))
     default
     )
   )
