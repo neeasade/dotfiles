@@ -32,7 +32,6 @@ p_bg_active="$(colort -l 45 "$p_bg_normal")"
 
 p_fg_active="$(colort -l 45 "$p_fg_normal")"
 p_fg_inactive="$(colort -l -45 "$p_fg_normal")"
-#p_fg_inactive="$p_fg_normal"
 
 
 activefg() {

@@ -4,7 +4,7 @@
 # THEME_NAME="${1-:Untitled}"
 . "$HOME/.wm/themes/colors/$THEME_NAME"
 
-[ -z "$BSPWM_GAPS"  ] && BSPWM_GAPS=true || BSPWM_GAPS=false
+BSPWM_GAPS="${BSPWM_GAPS:-true}"
 
 # bspwm settings. Naming convention is b_<config_option>
 b_border_width=3
@@ -21,7 +21,7 @@ p_font_main="Droid Sans-8"   # Panel main font.
 p_font_icon="FontAwesome-10" # Panel Icon font.
 p_gap=4                      # Gaps of panel off screen.
 p_underline=0                # This value is used for both underline and overline
-p_padding=3                       # number of spaces to pad panel information (sections/blocks) with
+p_padding=3                  # number of spaces to pad panel information (sections/blocks) with
 p_line=2 # width of the over/underlines
 
 # note: this name should maybe indicate a color more.
@@ -42,8 +42,8 @@ p_bg_normal="#ff$background"            # Default foreground
 p_fg_normal="#ff$foreground"            # Default foreground
 p_bg_active="$p_fg_normal"              # Active title tab - also used as gtk select color value.
 p_fg_active="$p_bg_normal"              # Active title tab - also used as gtk select color value.
-p_bg_inactive="$p_bg_normal"              # Active title tab - also used as gtk select color value.
-p_fg_inactive="$p_fg_normal"              # Active title tab - also used as gtk select color value.
+p_bg_inactive="$p_bg_normal"            # Active title tab - also used as gtk select color value.
+p_fg_inactive="$p_fg_normal"            # Active title tab - also used as gtk select color value.
 
 # panel icon colors - also used to color acyl icons, and qutebrowser match color.
 # Workspace variables
@@ -66,9 +66,11 @@ p_dynamicmpd_reload=0
 p_themeSwitch_mouse_left="dzen.sh theme"
 
 emacs_theme="spacemacs-dark"
+emacs_powerline_scale="1.6"
+emacs_powerline="bar"
 
 # xst
-st_font="Droid Sans Mono-8:pixelsize=11:antialias=true:autohint=true;"
+st_font="Droid Sans Mono-8"
 st_borderpx=10
 st_cursorshape=2
 st_cursorthickness=2

@@ -28,17 +28,17 @@ bspc config remove_unplugged_monitors true &
 bspc config remove_disabled_monitors true &
 
 # external rules
-bspc config external_rules_command `which external_rules.sh` &
+bspc config external_rules_command "$(which external_rules.sh)" &
 
 # to gap or not to gap
 bspc config window_gap $b_window_gap &
-bspc config top_padding $((0 `$BSPWM_GAPS || echo + b_border_width ` `$LAUNCH_PANEL && echo + PANEL_HEIGHT + PANEL_GAP`)) &
+bspc config top_padding $((0 $($BSPWM_GAPS || echo + b_border_width ) $($LAUNCH_PANEL && echo + PANEL_HEIGHT + PANEL_GAP))) &
 
 for side in right bottom left; do
-    bspc config ${side}_padding $((0 `$BSPWM_GAPS || echo + $b_border_width`)) &
+    bspc config ${side}_padding $((0 $($BSPWM_GAPS || echo + $b_border_width))) &
 done
 
-bspc config borderless_monocle `$BSPWM_GAPS && echo false || echo true` &
+bspc config borderless_monocle $($BSPWM_GAPS && echo false || echo true) &
 
 # declare desktops per monitor
 for monitor in $(bspc query -M); do
@@ -54,7 +54,7 @@ pgrep -f 2bspwm >/dev/null 2>&1 && pkill -f 2bspwm
 # [ $b_border_width -gt 4 ] && (nohup 2bspwm &) || (nohup pulse.sh &) &
 
 # check if just starting
-if [ $(( `date +%s` - xstart )) -lt 2 ]; then
+if [ $(( $(date +%s) - xstart )) -lt 2 ]; then
     $HOME/.wm/startup.sh &
     $HOME/.wm/panel/lemonade &
 fi

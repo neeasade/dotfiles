@@ -1,12 +1,16 @@
-st.font: {{st_font}}
+st.font: {{st_font}}-{{st_font_size}}
 st.borderpx: {{st_borderpx}}
 st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
 st.prompt_char: {{PROMPT_CHAR}}
 
 Emacs.internalBorder: {{st_borderpx}}
-Emacs.font: {{`echo $st_font | sed 's/-.*//'`}}
+
+! note: these aren't official, I'm referencing them in config.
+Emacs.fontsize: {{emacs_font_size}}
 Emacs.theme: {{emacs_theme}}
+Emacs.powerlinescale: {{emacs_powerline_scale}}
+Emacs.powerline: {{emacs_powerline}}
 
 ! dmenu2 can read from Xresources.
 dmenu.font: {{p_font_main}}-{{p_font_main_size}}

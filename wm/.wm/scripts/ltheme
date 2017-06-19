@@ -15,33 +15,30 @@ ln -s "$targetTheme" "$HOME/.bspwm_theme"
 
 # adjust pIcon to theme (rel for panel, acyl, qutebrowser.)
 if [ "$p_icon" = "unset" ]; then
-    if colort -c "$p_bg_active"; then
-        p_icon=$(colort -c "$p_fg_inactive" && colort -l -40 "$p_fg_inactive" || colort -l 40 "$p_fg_inactive")
-        [ $? -ne 0 ] && p_icon=$(colort -c "$p_fg_inactive" && colort 50 "$p_fg_inactive" || colort -50 "$p_fg_inactive")
-    else
-        # light, assume invert
-        p_icon=$(colort -c "$p_fg_inactive" && colort -l 60 "$p_fg_inactive" || colort -l -60 "$p_fg_inactive")
-        [ $? -ne 0 ] && p_icon=$(colort -c "$p_fg_inactive" && colort -60 "$p_fg_inactive" || colort 60 "$p_fg_inactive")
-    fi
+    colort -c "$p_bg_active" && intensity=40 || intensity=60
+    p_icon=$(colort -c "$p_fg_inactive" && colort -l intensity "$p_fg_inactive" || colort -l -intensity "$p_fg_inactive")
+    [ $? -ne 0 ] && p_icon=$(colort -c "$p_fg_inactive" && colort -intensity "$p_fg_inactive" || colort intensity "$p_fg_inactive")
 fi
 
 # mustache args, cache.
 margs() {
     cache=false
+    target="$HOME/$2"
+    mkdir -p "${target%/*}"
 
     if $cache; then
         cachefile="/tmp/template/$THEME_NAME/$2"
         if [ ! -f "$cachefile" ]; then
             mkdir -p "$(dirname "$cachefile")"
             mustache < "$HOME/.wm/templates/$1" > "$cachefile"
-            cp "$cachefile" "$HOME/$2"
+            cp "$cachefile" "$target"
             return 1
         fi
-        cp "$cachefile" "$HOME/$2"
+        cp "$cachefile" "$target"
         return 0
     fi
 
-    mustache < "$HOME/.wm/templates/$1" > "$HOME/$2"
+    mustache < "$HOME/.wm/templates/$1" > "$target"
     return 1
 }
 
@@ -73,11 +70,15 @@ load_bg() {
 load_xresources() {
     trimAlphas
 
-    # qutebrowser related:
+    # qutebrowser + emacs related:
     echo $p_font_main | grep -q Bold && p_font_main_bold="bold"
     p_font_main_size="$(echo $p_font_main | grep -Eo '[0-9]+')"
     p_font_main="$(echo $p_font_main | sed 's/-.*//')"
+    p_font_main_dize="$(echo $p_font_main | sed 's/-.*//')"
     p_height="$(( ($p_height-10) / 2 ))"
+
+    st_font_size="$(echo $st_font | sed 's/.*-//')"
+    st_font="$(echo $st_font | sed 's/-.*//')"
 
     if ! margs Xresources .Xresources; then
         # handle any color definitions through 255
@@ -100,8 +101,7 @@ load_xresources() {
       # only send to one
       wid=$(echo $wid | cut -d ' ' -f 1)
       # pending https://github.com/qutebrowser/qutebrowser/issues/1741
-      xdotool windowactivate $wid
-      xdotool key --window $wid  "shift+i"
+      xdotool windowactivate $wid xdotool key --window $wid  "shift+q"
       bspc node -f $current_wid
     fi
 
@@ -109,8 +109,6 @@ load_xresources() {
 
 # Keep the current gap setting and reload bspwm
 load_bspwm() {
-    [ ! -d "$HOME/.wm/panel/juicers" ] && mkdir $HOME/.wm/panel/juicers
-
     if ! margs juicer .wm/panel/juicers/juicer; then
         # note all lemons, generate them.
         lemons=$(echo $p_format | tr ':|' ' ');
@@ -123,7 +121,7 @@ load_bspwm() {
         [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
     fi
 
-    [ $(bspc config window_gap) -le 0 ] && export BSPWM_GAPS=false || export BSPWM_GAPS=true
+    [ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false || BSPWM_GAPS=true
     "$HOME/.wm/bspwmrc"
 }
 
@@ -140,7 +138,7 @@ load_emacs() {
     emacs_font="$(echo $st_font | sed 's/-.*//')"
     emacs_font="\"${emacs_font}\""
 
-    emacsclient --no-wait --eval "(load-theme '${emacs_theme})"
+    emacsclient --eval "(load-theme '${emacs_theme})"
     emacsclient --no-wait --eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family '${emacs_font})) (face-list))"
 
     # overrides (success seems to vary with font)
@@ -198,13 +196,11 @@ load_dunst() {
 }
 
 shift
-if [ -z "$1" ]; then
-    targets="emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser"
-else
-    targets="$*"
-fi
+
+targets="${*:-emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser}"
 
 IFS=" "
 for conf in $targets; do
     load_$conf &
 done
+IFS=

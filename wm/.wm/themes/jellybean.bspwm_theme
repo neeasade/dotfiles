@@ -18,6 +18,7 @@ b_window_gap=8
 p_height=20
 p_font_main="Tewi-8"
 p_font_icon="wuncon siji-8"
+p_font_icon="Siji-8"
 p_gap=4
 p_underline=0
 
@@ -43,7 +44,7 @@ p_icon="$p_fg_normal"
 d_font="xos4 Terminus 8"
 
 GTK_FONT="tewi 8"
-st_font="tewi-8:pixelsize=12:antialias=true:autohint=true;"
+st_font="tewi-8"
 st_borderpx=4
 st_cursorshape=3
 st_cursorthickness=1
