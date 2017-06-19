@@ -29,10 +29,18 @@
 (defun get-resource (name default)
   "Get X resource value, with a fallback value."
   (if (executable-find "xrq")
-      (replace-regexp-in-string "\n$" "" (shell-command-to-string (concat "xrq '" name "'")))
+      (let ((result
+             ; shell-command-to-string appends newline
+             (replace-regexp-in-string "\n$" ""
+               (shell-command-to-string
+                 (concat "xrq '" name "' 2>/dev/null")))))
+        (if (string= result "")
+            ; we didn't find it in xrdb.
+            default
+          result
+          ))
     default
-    )
-  )
+    ))
 
 (defun dotspacemacs/layers ()
   (load-spacemacs-settings '(
@@ -104,11 +112,16 @@
 
       themes (list (intern (get-resource "Emacs.theme" "spacemacs-dark")))
 
-      default-font (list (get-resource "Emacs.font" "Consolas")
-                      :size 12
+      default-font (list
+                      ; xft format, match term.
+                      ; todo: check if this works on windows
+                      (concat (get-resource "Emacs.fontmine" "Consolas")
+                              "-"
+                              (get-resource "Emacs.fontsize" "12"))
+                      ;:size (string-to-number (get-resource "Emacs.fontsize" "12"))
                       :weight 'normal
                       :width 'normal
-                      :powerline-scale 1.6)
+                      :powerline-scale (string-to-number (get-resource "Emacs.powerlinescale" "1.6")))
 
       leader-key "SPC"
       emacs-command-key "SPC"
@@ -175,8 +188,9 @@
   (define-key helm-map (kbd "C-k") 'helm-previous-line)
 
   ;; style options
-  (setq powerline-default-separator 'bar)
+  (setq powerline-default-separator (get-resource "emacs.powerline" "bar"))
   (spaceline-compile)
+
   (setq org-bullets-bullet-list '("@" "%" ">" ">"))
   (set-face-bold-p 'bold nil)
   (set-face-background 'font-lock-comment-face nil)
