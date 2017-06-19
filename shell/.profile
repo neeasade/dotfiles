@@ -40,6 +40,11 @@ shot() {
     maim -g ${G} "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
 }
 
+fullshot() {
+    mkdir -p $HOME/Screenshots
+    maim "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+}
+
 upshot() {
     shot
     uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
