@@ -74,7 +74,7 @@ gen_vim()
         if [[ ! -z $line ]]; then
             case "$line" in
                 \#*) ;;
-                $'    Plug'*)
+                $'  Plug'*)
                     url="https://github.com/$(echo "$line" | grep -oE "[^']+/[^']+" | head -n 1)"
                     name="$(echo "$line" | grep -oE "[^']+/[^']+" | head -n 1)"
                     desc="$(echo "$line" | grep -oE "\".*" | cut -c2-)"
@@ -93,10 +93,12 @@ value=
 for conf in "$*"; do
     case $conf in
         sxhkd) file="../sxhkd/.config/sxhkd/sxhkdrc" ;;
-        bspwm) file="../bspwm/.config/bspwm/themes/base.theme"
-        vim) file="../vim/.vimrc"
+        bspwm) file="../wm/.wm/themes/base.bspwm_theme";;
+        vim) file="../vim/.vimrc";;
         *) ;;
     esac
+
+    gen_$conf "$file"
 done
 
 
