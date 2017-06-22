@@ -69,6 +69,13 @@ emacs_theme="spacemacs-dark"
 emacs_powerline_scale="1.6"
 emacs_powerline="bar"
 
+weechat_prefix_join="▶"
+weechat_prefix_quit="◀"
+weechat_separator_horizontal="━"
+weechat_separator_vertical="┃"
+weechat_prefix_suffix="▌"
+weechat_input_items="[input_search],[input_paste],         ▙,input_text"
+
 # xst
 st_font="Droid Sans Mono-8"
 st_borderpx=10
