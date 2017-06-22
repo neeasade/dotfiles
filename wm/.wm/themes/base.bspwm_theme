@@ -103,6 +103,24 @@ c_fade_out_step="0.1"
 # promptchar to be set for st and dmenu
 PROMPT_CHAR='$'
 
+tmux_statusbar="$(cat <<EOF
+setw -g window-status-current-format '▄▄'
+setw -g window-status-format '▄▄'
+setw -g window-status-bg default
+setw -g window-status-fg blue
+setw -g window-status-current-bg default
+setw -g window-status-current-fg white
+setw -g window-status-current-attr bright
+
+set-option -g status-position bottom
+set -g status-bg default
+set -g status-fg default
+set -g status-justify right
+set -g status-left 'asdf'
+set -g status-right ''
+EOF
+)"
+
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.
 # it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"

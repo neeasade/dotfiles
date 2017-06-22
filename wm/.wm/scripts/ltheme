@@ -21,6 +21,8 @@ if [ "$p_icon" = "unset" ]; then
 fi
 
 # mustache args, cache.
+# usage: margs <template name> <destination>
+# <destination> is relative to $HOME
 margs() {
     cache=false
     target="$HOME/$2"
@@ -52,7 +54,8 @@ trimAlphas() {
 }
 
 load_tmux() {
-    tmux source-file $HOME/.tmux.conf > /dev/null 2>&1
+    margs tmux .tmux.conf
+    tmux source-file "$HOME/.tmux.conf"
 }
 
 load_weechat() {
@@ -65,7 +68,7 @@ load_weechat() {
 
     # check for buffers.pl, assume we need to install plugins if it's not present.
     [ ! -f "$HOME/.weechat/perl/buffers.pl" ] && \
-        wee_cmd "/script install autoconnect.py buffers.pl highmon.pl autosort.py notify.py"
+        wee_cmd '/script install autoconnect.py buffers.pl highmon.pl autosort.py notify.py'
 
     wee_cmd '/reload'
 

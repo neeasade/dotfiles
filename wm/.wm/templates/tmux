@@ -20,19 +20,11 @@ set-option -g bell-action none
 # some key-binding changes
 bind x kill-pane
 
-#{{{ Theme
+#Theme
 
 # panes
 set -g pane-border-fg black
 set -g pane-active-border-fg white
-
-setw -g window-status-current-format '▄▄'
-setw -g window-status-format '▄▄'
-setw -g window-status-bg default
-setw -g window-status-fg blue
-setw -g window-status-current-bg default
-setw -g window-status-current-fg white
-setw -g window-status-current-attr bright
 
 # message colors
 set -g message-fg white
@@ -40,16 +32,13 @@ set -g message-bg default
 set -g message-attr bright
 
 # Status Bar
-set-option -g status-position bottom
-set -g status-bg default
-set -g status-fg default
-set -g status-justify right
-set -g status-left ''
-set -g status-right ''
-#}}}
+
+{{tmux_statusbar}}
+
 
 
 # moving between panes with vim movement keys
+# TODO: reconsider these.
 is_vim='echo "#{pane_current_command}" | grep -iqE "(^|\/)g?(view|n?vim?x?)(diff)?$"'
 bind -n C-h if-shell "$is_vim" "send-keys C-h" "select-pane -L"
 bind -n C-j if-shell "$is_vim" "send-keys C-j" "select-pane -D"
