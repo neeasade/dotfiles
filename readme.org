@@ -1,0 +1,10 @@
+* Neeasade's dotfiles
+
+| [screenshots](http://notes.neeasade.net/desktop/) |                                          |
+| OS                                                | Nixos                                    |
+| WM                                                | BSPWM                                    |
+| Panel                                             | lemonbar                                 |
+| Terminal                                          | [[[[xst][https://github.com/neeasade/xst]]][xst]] |
+| GTK                                               | [[https://github.com/actionless/oomox][oomox]] with [[http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910][ACYL]] icons.                   |
+
+These are managed with stow. Some of my configs are [[https://github.com/neeasade/dotfiles/tree/master/wm/.wm/templates][templates]].
