@@ -47,12 +47,12 @@ super + {p,b,comma,period}
 # kill panel, nicely ask all windows to close, quit.
 # todo: ask nicely for real.
 super + shift + q
-    pgrep lemonbar && ~/.wm/scripts/panelt; \
+    pgrep lemonbar && panelt; \
     zenity --question "Quit wm?" && bspc quit
 
 # toggle panel or gaps.
 super + {_,shift} + slash
-    ~/.wm/scripts/{gap,panel}t
+    {gap,panel}t
 
 # }}}
 

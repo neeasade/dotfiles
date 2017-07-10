@@ -110,7 +110,7 @@ dzen_cal() {
 # Theme switcher
 dzen_theme() {
     content+=("+")
-    for theme in `ls ~/.wm/themes | grep -v base | sed s/.bspwm_theme// `; do
+    for theme in `ls $HOME/.wm/themes | grep -v base | sed s/.bspwm_theme// `; do
         content+=("^ca(1, nohup ltheme $theme & pkill dzen) $theme ^ca()")
     done
 }

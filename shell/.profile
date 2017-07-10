@@ -1,6 +1,8 @@
 PATH=$PATH:$HOME/bin
-PATH=$PATH:$HOME/.wm/scripts
 PATH=$PATH:$HOME/.gem/bin
+PATH=$PATH:$HOME/.wm/scripts/theming
+PATH=$PATH:$HOME/.wm/scripts/interact
+PATH=$PATH:$HOME/.wm/scripts/visual
 
 # {{{ env
 export EDITOR='vim'
@@ -48,6 +50,10 @@ fullshot() {
 upshot() {
     shot
     uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
+}
+
+mpv() {
+    $(which mpv) --input-unix-socket=/tmp/mpvsocket "$*"
 }
 
 # nix query
