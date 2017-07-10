@@ -3,11 +3,6 @@
 # note: this has to be bash or it won't die correctly..
 # todo: understand ^
 
-# iff condition true false
-iff() {
-    eval $1 && echo -n "$2" || echo -n "$3"
-}
-
 echo -e -n "
 ==== ==== ==== ==== ==== \033[1;33m
  ,.        ,.        ,.
