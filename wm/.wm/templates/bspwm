@@ -6,17 +6,17 @@ set -a
 
 # iff condition true false
 iff() {
-    eval $1 && echo -n "$2" || echo -n "$3"
+    eval $1 && echo -n "${2:-true}" || echo -n "${3:-false}"
 }
 
 # if none set, keep whatever is open.
 gapped="$1"
-[ -z "$gapped" ] && gapped=$(iff "[ $(bspc config window_gap) -le 0 ]" false true)
+[ -z "$gapped" ] && gapped=$(iff "[ ! $(bspc config window_gap) -le 0 ]")
 
 # get settings
 PATH=$PATH:$HOME/.wm/scripts
 
-relaunch_panel=$(iff "kill -s TERM $(cat /tmp/panel-pid)" true false)
+relaunch_panel=$(iff "kill -s TERM $(cat /tmp/panel-pid)")
 
 bspc config border_width {{b_border_width}}
 bspc config split_ratio  {{b_split_ratio}}
@@ -45,8 +45,8 @@ for side in right bottom left; do
     bspc config ${side}_padding $side_padding
 done
 
-bspc config borderless_monocle $(iff $gapped false true)
-bspc config single_monocle     $(iff $gapped false true)
+bspc config borderless_monocle $(iff "! $gapped")
+bspc config single_monocle     $(iff "! $gapped")
 
 # declare desktops per monitor
 # todo: change monitor names/transfer script, or
