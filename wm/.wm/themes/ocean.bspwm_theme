@@ -34,9 +34,11 @@ p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock"
 
 stepSetup()  {
   #togetherStep
-  # align is only set on sep step
+  #reverseSteps
   separateStep
-  reverseSteps
+  #reverseSteps
+  # align is only set on sep step
+  #separateStep
 }
 
 bg() {
@@ -52,10 +54,7 @@ activebg() {
     colort -l 20 "$(bg)"
 }
 
-#fg() {
-    #echo $p_fg_normal
-#}
-
+# gradient
 suffix() {
 
     [ "$lemon_target" = "clock" ] && return
@@ -67,10 +66,11 @@ suffix() {
     [ -z "$prevbg" ] && prevbg="$(bg)"
 
     if [ "${lemon_target_align}" = "left" ]; then
-        step=$((step+1));
+        step=$((step-1))
     else
-        step=$((step-1));
+        step=$((step+1));
     fi
+
     [ -z "$nextbg" ] && nextbg="$(bg)"
 
     nextbg="$(colort -t $nextbg)"
@@ -79,7 +79,7 @@ suffix() {
     content=""
     size=3
     IFS=$'\n'
-    for color in $(gradient "$prevbg" "$nextbg" $size | tail -n $((size+1)) | head -n -1); do
+    for color in $(gradient "$prevbg" "$nextbg" $size); do
         content="${content}%%{B#ff$(colort -t $color)} %%{B-}"
         #content="%%{B#ff$(colort -t $color)} %%{B-}${content}"
     done

@@ -133,6 +133,11 @@ load_bspwm() {
     if ! margs juicer .wm/panel/juicers/juicer; then
         # note all lemons, generate them.
         lemons=$(echo $p_format | tr ':|' ' ');
+
+        # get the meta data associated with all lemons.
+        . colorsetup.sh
+
+        # generate
         IFS=' '
         for lemon in $lemons; do
             colorchange.sh "$lemon" >> $HOME/.wm/panel/juicers/juicer
@@ -142,8 +147,9 @@ load_bspwm() {
         [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
     fi
 
-    [ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false || BSPWM_GAPS=true
-    "$HOME/.wm/bspwmrc"
+    margs bspwm .config/bspwm/bspwmrc
+    chmod +x "$HOME/.config/bspwm/bspwmrc"
+    "$HOME/.config/bspwm/bspwmrc"
 }
 
 # vim reload
@@ -159,13 +165,16 @@ load_emacs() {
     emacs_font="$(echo $st_font | sed 's/-.*//')"
     emacs_font="\"${emacs_font}\""
 
-    emacsclient --eval "(load-theme '${emacs_theme})"
-    emacsclient --no-wait --eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family '${emacs_font})) (face-list))"
+    mx_eval() {
+        emacsclient --no-wait --eval "$*"
+    }
 
-    # overrides (success seems to vary with font)
-    emacsclient --no-wait --eval "(set-face-bold-p 'bold nil)"
-    emacsclient --no-wait --eval "(set-face-background 'font-lock-comment-face nil)"
-    emacsclient --no-wait --eval "(set-face-attribute 'font-lock-comment-face nil :weight 'normal :family '${emacs_font})"
+    mx_eval "(load-theme '${emacs_theme})"
+    mx_eval "(set-frame-parameter (selected-frame) 'internal-border-width ${st_borderpx})"
+    mx_eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family '${emacs_font})) (face-list))"
+    mx_eval "(set-face-bold-p 'bold nil)"
+    mx_eval "(set-face-background 'font-lock-comment-face nil)"
+    mx_eval "(set-face-attribute 'font-lock-comment-face nil :weight 'normal :family '${emacs_font})"
 }
 
 # GTK (make theme if it does not exist, then reload)

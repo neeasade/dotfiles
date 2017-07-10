@@ -2,5 +2,5 @@
 
 while true; do
 	export xstart=`date +%s`
-	bspwm -c $HOME/.wm/bspwmrc > .xinit-${xstart}.log 2>&1 || break
+	bspwm > .xinit-${xstart}.log 2>&1 || break
 done

@@ -4,8 +4,6 @@
 # THEME_NAME="${1-:Untitled}"
 . "$HOME/.wm/themes/colors/$THEME_NAME"
 
-BSPWM_GAPS="${BSPWM_GAPS:-true}"
-
 # bspwm settings. Naming convention is b_<config_option>
 b_border_width=3
 b_window_gap=10
@@ -15,6 +13,9 @@ b_active_border_color="#$color8"
 b_focused_border_color="#$foreground"
 b_presel_feedback_color="#$color8"
 
+# meant to be used for effects, like pulse or 2bspwm
+b_bspwmrc_extend=""
+
 # Panel variables
 p_height=16                  # Panel height.
 p_font_main="Droid Sans-8"   # Panel main font.
@@ -23,6 +24,7 @@ p_gap=4                      # Gaps of panel off screen.
 p_underline=0                # This value is used for both underline and overline
 p_padding=3                  # number of spaces to pad panel information (sections/blocks) with
 p_line=2 # width of the over/underlines
+p_launch_cmd="$HOME/.wm/panel/lemonade"
 
 # note: this name should maybe indicate a color more.
 p_icon=unset
@@ -116,7 +118,7 @@ set-option -g status-position bottom
 set -g status-bg default
 set -g status-fg default
 set -g status-justify right
-set -g status-left 'asdf'
+set -g status-left '#W'
 set -g status-right ''
 EOF
 )"

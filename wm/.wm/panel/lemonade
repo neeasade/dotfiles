@@ -3,6 +3,11 @@
 # note: this has to be bash or it won't die correctly..
 # todo: understand ^
 
+# iff condition true false
+iff() {
+    eval $1 && echo -n "$2" || echo -n "$3"
+}
+
 echo -e -n "
 ==== ==== ==== ==== ==== \033[1;33m
  ,.        ,.        ,.
@@ -14,8 +19,6 @@ echo -e -n "
 error() {
    local sourcefile=$1
    local lineno=$2
-   # ...logic for reporting an error at line $lineno
-   #    of file $sourcefile goes here...
    echo err: $sourcefile $lineno
 }
 trap 'error "${BASH_SOURCE}" "${LINENO}"' ERR
@@ -26,12 +29,11 @@ export -f error
 # being main config point and themes passing into lemons..
 set -a
 
-[ $(bspc config window_gap) -le 0 ] && BSPWM_GAPS=false || BSPWM_GAPS=true
+[ $(bspc config window_gap) -le 0 ] && gapped=false || gapped=true
 
 # only need this for p_gap and b_border_width values.
 . $HOME/.bspwm_theme
-
-"$BSPWM_GAPS" || p_gap=0
+$gapped || p_gap=0
 
 # relevance
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
@@ -42,7 +44,7 @@ dim() {
 	bspc query -T -m $1 | jq .rectangle.$2
 }
 
-if $BSPWM_GAPS; then
+if $gapped; then
 	bspc config top_padding $(( p_height+p_gap ))
 else
 	bspc config top_padding $(( p_height+p_gap+b_border_width ))
@@ -59,7 +61,7 @@ for mon in $(bspc query -M); do
 	tools/lemonade "$conf" "$geom" &
 done
 
-if $BSPWM_GAPS; then
+if $gapped; then
 	trap "bspc config top_padding 0; trap - TERM; kill 0;" INT TERM QUIT
 else
 	trap "bspc config top_padding $b_border_width; trap - TERM; kill 0;" INT TERM QUIT

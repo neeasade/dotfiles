@@ -48,5 +48,11 @@ function gradient (camStart, camEnd, steps=3) {
     return result;
 }
 
-gradient(camStart, camEnd, parseInt(process.argv[4]))
-    .forEach(color => console.log(color));
+var result = gradient(camStart, camEnd, parseInt(process.argv[4]));
+
+// only use the steps, not the ends.
+result.pop();
+result.reverse().pop();
+result.reverse();
+
+result.forEach(color => console.log(color));
