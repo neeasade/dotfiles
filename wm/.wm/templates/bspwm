@@ -14,9 +14,9 @@ gapped="$1"
 [ -z "$gapped" ] && gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
 
 # get settings
-PATH=$PATH:$HOME/.wm/scripts
+PATH=$PATH:$HOME/.wm/scripts/visual
 
-relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid)")
+relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null")
 
 bspc config border_width {{b_border_width}}
 bspc config split_ratio  {{b_split_ratio}}

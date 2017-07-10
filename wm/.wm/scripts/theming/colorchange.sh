@@ -60,3 +60,5 @@ for option in $options; do
     fi
 done
 IFS=
+
+echo ""

@@ -7,6 +7,9 @@ targetTheme="$HOME/.wm/themes/${1}.bspwm_theme"
 
 set -a
 
+# relative:
+cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
+
 rm $HOME/.bspwm_theme
 ln -s "$targetTheme" "$HOME/.bspwm_theme"
 
@@ -55,7 +58,7 @@ trimAlphas() {
 
 load_tmux() {
     margs tmux .tmux.conf
-    tmux source-file "$HOME/.tmux.conf"
+    pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
 load_weechat() {
@@ -80,7 +83,7 @@ load_weechat() {
 load_compton() {
     pkill compton
     margs compton .config/compton.conf
-    compton
+    compton &
 }
 
 load_bg() {
@@ -132,18 +135,21 @@ load_xresources() {
 load_bspwm() {
     if ! margs juicer .wm/panel/juicers/juicer; then
         # note all lemons, generate them.
-        lemons=$(echo $p_format | tr ':|' ' ');
+        lemons=$(echo $p_format | tr ':|' ',');
 
         # get the meta data associated with all lemons.
         . colorsetup.sh
 
         # generate
-        IFS=' '
+        IFS=','
         for lemon in $lemons; do
-            colorchange.sh "$lemon" >> $HOME/.wm/panel/juicers/juicer
-            echo "" >> $HOME/.wm/panel/juicers/juicer
+            colorchange.sh "$lemon" > /tmp/juicertmp-$lemon &
         done
         IFS=
+        wait
+
+        eval cat /tmp/juicertmp-{$lemons} >> $HOME/.wm/panel/juicers/juicer
+
         [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
     fi
 
@@ -154,10 +160,12 @@ load_bspwm() {
 
 # vim reload
 load_vim() {
-    VIMS=`vim --serverlist`
-    for vim in $VIMS; do
-        vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
-    done
+    # defunct.
+    return
+    #VIMS=`vim --serverlist`
+    #for vim in $VIMS; do
+        #vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
+    #done
 }
 
 load_emacs() {
@@ -222,7 +230,7 @@ load_dunst() {
 
     # dunst needs delay(?)
     sleep 2
-    dunst
+    dunst &
 }
 
 shift
@@ -231,6 +239,10 @@ targets="${*:-emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser w
 
 IFS=" "
 for conf in $targets; do
+    #time="$((time load_$conf) 2>&1 1>/dev/null | head -n 2 | tail -n 1)"
+    #echo $conf : $time >> theme_perf.txt
     load_$conf &
 done
 IFS=
+
+wait
