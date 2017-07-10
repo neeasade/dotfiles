@@ -4,19 +4,19 @@
 
 set -a
 
-# iff condition true false
-iff() {
+# inline if: iif condition true false
+iif() {
     eval $1 && echo -n "${2:-true}" || echo -n "${3:-false}"
 }
 
 # if none set, keep whatever is open.
 gapped="$1"
-[ -z "$gapped" ] && gapped=$(iff "[ ! $(bspc config window_gap) -le 0 ]")
+[ -z "$gapped" ] && gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
 
 # get settings
 PATH=$PATH:$HOME/.wm/scripts
 
-relaunch_panel=$(iff "kill -s TERM $(cat /tmp/panel-pid)")
+relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid)")
 
 bspc config border_width {{b_border_width}}
 bspc config split_ratio  {{b_split_ratio}}
@@ -35,18 +35,18 @@ bspc config remove_disabled_monitors  true
 bspc config external_rules_command "{{`echo -n $(which external_rules.sh)`}}"
 
 # to gap or not to gap
-bspc config window_gap $(iff $gapped {{b_window_gap}} -{{b_border_width}})
+bspc config window_gap $(iif $gapped {{b_window_gap}} -{{b_border_width}})
 
-side_padding=$(iff $gapped 0 {{b_border_width}})
-panel_padding=$(iff $relaunch_panel "{{p_height}}+{{p_gap}}" 0)
+side_padding=$(iif $gapped 0 {{b_border_width}})
+panel_padding=$(iif $relaunch_panel "{{p_height}}+{{p_gap}}" 0)
 
 bspc config top_padding $(($side_padding + $panel_padding))
 for side in right bottom left; do
     bspc config ${side}_padding $side_padding
 done
 
-bspc config borderless_monocle $(iff "! $gapped")
-bspc config single_monocle     $(iff "! $gapped")
+bspc config borderless_monocle $(iif "! $gapped")
+bspc config single_monocle     $(iif "! $gapped")
 
 # declare desktops per monitor
 # todo: change monitor names/transfer script, or
