@@ -26,14 +26,16 @@ export -f error
 # todo: reconsider this, is the different between juicer
 # being main config point and themes passing into lemons..
 set -a
+THEME_NAME="${1}"
+. "$HOME/.wm/scripts/theming/defaults"
+. "$HOME/.bspwm_theme"
+$gapped || p_gap=0
+
 
 gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
 top=$(iif "[ "$p_position" = "top" ]")
 
 # only need this for p_gap and b_border_width values.
-. $HOME/.bspwm_theme
-$gapped || p_gap=0
-
 # relevance
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 PATH=$PATH:`pwd`/tools
