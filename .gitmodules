@@ -1,3 +1,6 @@
 [submodule "acyl"]
 	path = gtk/.icons/acyl
 	url = https://github.com/neeasade/acyl
+[submodule "walls"]
+	path = wm/.wm/walls
+	url = http://code.neeasade.net/walls
