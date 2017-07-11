@@ -156,6 +156,7 @@ load_bspwm() {
     fi
 
     bspwmrc=".config/bspwm/bspwmrc"
+    margs panelt .wm/scripts/interact/panelt
     margs bspwm "$bspwmrc"
     chmod +x "$HOME/$bspwmrc"
     "$HOME/$bspwmrc"
