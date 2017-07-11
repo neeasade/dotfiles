@@ -1,6 +1,7 @@
 nohup.out
 
 wm/.wm/panel/juicers/
+wm/.wm/panel/logs
 wm/.wm/timestamp
 
 mpd/.config/mpd/pid
