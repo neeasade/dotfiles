@@ -1,4 +1,0 @@
-#!/usr/bin/env dash
-# Toggle the panel on/off
-
-kill -s TERM $(cat /tmp/panel-pid) || $HOME/.wm/panel/lemonade

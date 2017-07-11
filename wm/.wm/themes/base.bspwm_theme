@@ -118,7 +118,7 @@ set-option -g status-position bottom
 set -g status-bg default
 set -g status-fg default
 set -g status-justify right
-set -g status-left '#W'
+set -g status-left ''
 set -g status-right ''
 EOF
 )"

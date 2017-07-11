@@ -131,31 +131,34 @@ load_xresources() {
 
 }
 
-# Keep the current gap setting and reload bspwm
+# bspwm, panel
 load_bspwm() {
-    if ! margs juicer .wm/panel/juicers/juicer; then
-        # note all lemons, generate them.
-        lemons=$(echo $p_format | tr ':|' ',');
+    if [ "$(basename "$p_launch_cmd")" = "lemonade" ]; then
+        if ! margs juicer .wm/panel/juicers/juicer; then
+            # note all lemons, generate them.
+            lemons=$(echo $p_format | tr ':|' ',');
 
-        # get the meta data associated with all lemons.
-        . colorsetup.sh
+            # get the meta data associated with all lemons.
+            . colorsetup.sh
 
-        # generate
-        IFS=','
-        for lemon in $lemons; do
-            colorchange.sh "$lemon" > /tmp/juicertmp-$lemon &
-        done
-        IFS=
-        wait
+            # generate
+            IFS=','
+            for lemon in $lemons; do
+                colorchange.sh "$lemon" > /tmp/juicertmp-$lemon &
+            done
+            IFS=
+            wait
 
-        eval cat /tmp/juicertmp-{$lemons} >> $HOME/.wm/panel/juicers/juicer
+            eval cat /tmp/juicertmp-{$lemons} >> $HOME/.wm/panel/juicers/juicer
 
-        [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
+            [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
+        fi
     fi
 
-    margs bspwm .config/bspwm/bspwmrc
-    chmod +x "$HOME/.config/bspwm/bspwmrc"
-    "$HOME/.config/bspwm/bspwmrc"
+    bspwmrc=".config/bspwm/bspwmrc"
+    margs bspwm "$bspwmrc"
+    chmod +x "$HOME/$bspwmrc"
+    "$HOME/$bspwmrc"
 }
 
 # vim reload

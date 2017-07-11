@@ -137,4 +137,5 @@ if [ ! "$(type -t stepSetup)" = "function" ]; then
     }
 fi
 
+lemons=$(echo $p_format | tr ':|' ' ');
 stepSetup
