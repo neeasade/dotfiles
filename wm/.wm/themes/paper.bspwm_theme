@@ -1,13 +1,9 @@
 #!/usr/bin/env dash
 # berry theme
 
-set -a
-
 # theme
-THEME_NAME=paper
 VIM_COLORS=PaperColor
 BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 st_font="Roboto Mono-10:pixelsize=11:antialias=true:autohint=true;"
 
 # bspwm

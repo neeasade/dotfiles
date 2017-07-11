@@ -1,13 +1,9 @@
 #!/usr/bin/env dash
 # base16 material theme
 
-set -a
-
 # theme
-THEME_NAME=material
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/worlds.jpg"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 emacs_theme=material
 
 # bspwm

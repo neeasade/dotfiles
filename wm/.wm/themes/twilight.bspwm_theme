@@ -1,13 +1,9 @@
 #!/usr/bin/env dash
 # base16 twilight theme
 
-set -a
-
 # theme
-THEME_NAME=twilight
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/lake.jpg"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 emacs_theme="base16-twilight"
 

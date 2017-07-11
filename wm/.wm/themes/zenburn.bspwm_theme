@@ -1,13 +1,9 @@
 #!/usr/bin/env dash
 # zenburn theme
 
-set -a
-
 # theme
-THEME_NAME=zenburn
 VIM_COLORS=zenburn
 export BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/desert.png"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=4

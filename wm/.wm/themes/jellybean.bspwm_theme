@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 # jellybean theme
 
-set -a
-
 # theme
-THEME_NAME=jellybean
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/random_grey_variations.png"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 emacs_theme=ujelly
 
 # bspwm

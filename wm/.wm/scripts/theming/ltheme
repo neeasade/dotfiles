@@ -13,6 +13,8 @@ cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 rm $HOME/.bspwm_theme
 ln -s "$targetTheme" "$HOME/.bspwm_theme"
 
+THEME_NAME="${1}";
+. "defaults"
 . "$HOME/.bspwm_theme"
 . "$HOME/.wm/templates/mustache.sh"
 

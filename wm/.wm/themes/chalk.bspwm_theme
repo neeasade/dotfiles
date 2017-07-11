@@ -1,13 +1,9 @@
 #!/usr/bin/env dash
 # base16 chalk theme
 
-set -a
-
 # theme
-THEME_NAME=chalk
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/evian.jpg"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=4

@@ -2,13 +2,9 @@
 # spring theme
 # based off of my submission to the fist #rice contest 2015.
 
-set -a
-
 # theme
-THEME_NAME=spring
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/spring.jpg"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=7

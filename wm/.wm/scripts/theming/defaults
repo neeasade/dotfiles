@@ -1,7 +1,6 @@
 #!/usr/bin/env dash
 # This script will be sourced by themes and then have options overridden
 
-# THEME_NAME="${1-:Untitled}"
 . "$HOME/.wm/themes/colors/$THEME_NAME"
 
 # bspwm settings. Naming convention is b_<config_option>

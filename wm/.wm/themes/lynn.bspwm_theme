@@ -1,13 +1,10 @@
 #!/usr/bin/env dash
 # named for the ricer in #rice.
 
-set -a
-
 # theme
 THEME_NAME=lynn
 VIM_COLORS=term
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/bamboo.jpg"
-. $HOME/.wm/themes/base.bspwm_theme $THEME_NAME
 
 # bspwm
 b_border_width=4
