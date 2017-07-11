@@ -29,6 +29,7 @@ p_launch_cmd="$HOME/.wm/panel/lemonade"
 # note: this name should maybe indicate a color more.
 p_icon=unset
 p_window_class="lemonbar"
+p_position="top"
 
 # variables for desktop area
 p_desktop_display_name=icon # [icon|name] - display desktop names or DO/DF variables.
@@ -36,7 +37,6 @@ p_desktop_display_format=together  # [together|separate] - show desktops in sepa
 p_desktop_show_free=true # option to show nothing for free desktops.
 p_desktop_mode_toggle=true # monocle/tiling toggle.
 p_desktop_only_active=false # only show the active desktop name
-
 p_title_only_show_active=false # used by title.
 
 # Panel colors

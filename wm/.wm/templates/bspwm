@@ -40,8 +40,9 @@ bspc config window_gap $(iif $gapped {{b_window_gap}} -{{b_border_width}})
 side_padding=$(iif $gapped 0 {{b_border_width}})
 panel_padding=$(iif $relaunch_panel "{{p_height}}+{{p_gap}}" 0)
 
-bspc config top_padding $(($side_padding + $panel_padding))
-for side in right bottom left; do
+bspc config {{p_position}}_padding $((side_padding + panel_padding))
+
+for side in right {{`[ "$p_position" = "top" ] && echo -n bottom || echo -n top`}} left; do
     bspc config ${side}_padding $side_padding
 done
 
@@ -57,10 +58,9 @@ done
 
 $relaunch_panel && "{{p_launch_cmd}}" &
 
-# kill off bling - to do: see if we can track this somewhere else/automatically?
-# probably do something like stick script in 'effect' dir and pgrep/pkill those.
-pgrep -f pulse.sh >/dev/null 2>&1 && pkill -f pulse.sh
-pgrep -f 2bspwm >/dev/null 2>&1 && pkill -f 2bspwm
+for visual in $(ls $HOME/.wm/scripts/visual); do
+    pkill -x $visual 2>/dev/null
+done
 
 # extensions may be defined in themes here:
 {{b_bspwmrc_extend}}

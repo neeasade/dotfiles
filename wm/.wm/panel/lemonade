@@ -10,6 +10,9 @@ echo -e -n "
  \`'        \`'        \` \e[0m
 ==== ==== ==== ==== ===="
 
+iif() {
+    eval $1 && echo -n "${2:-true}" || echo -n "${3:-false}"
+}
 
 error() {
    local sourcefile=$1
@@ -24,7 +27,8 @@ export -f error
 # being main config point and themes passing into lemons..
 set -a
 
-[ $(bspc config window_gap) -le 0 ] && gapped=false || gapped=true
+gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
+top=$(iif "[ "$p_position" = "top" ]")
 
 # only need this for p_gap and b_border_width values.
 . $HOME/.bspwm_theme
@@ -36,14 +40,11 @@ PATH=$PATH:`pwd`/tools
 
 # mon dim
 dim() {
-	bspc query -T -m $1 | jq .rectangle.$2
+	bspc query -T -m $mon | jq .rectangle.$1
 }
 
-if $gapped; then
-	bspc config top_padding $(( p_height+p_gap ))
-else
-	bspc config top_padding $(( p_height+p_gap+b_border_width ))
-fi
+eval bspc config ${p_position}_padding \
+     $(iif $gapped $((p_height+p_gap)) $((p_height+p_gap+b_border_width)) )
 
 i=0
 # note: mon will be available to all lemons as reference.
@@ -51,15 +52,14 @@ for mon in $(bspc query -M); do
 	i=$(($i+1))
 	conf=`ls juicers | sed -n "$i p"`
 	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
-	geom="$(( $(dim $mon width)-(p_gap*2) ))x$p_height+$(( $(dim $mon x)+p_gap ))+$p_gap"
-	echo tools/lemonade "$conf" "$geom" &
+	geom="$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
 	tools/lemonade "$conf" "$geom" &
 done
 
 if $gapped; then
-	trap "bspc config top_padding 0; trap - TERM; kill 0;" INT TERM QUIT
+	trap "eval bspc config ${p_position}_padding 0; trap - TERM; kill 0;" INT TERM QUIT
 else
-	trap "bspc config top_padding $b_border_width; trap - TERM; kill 0;" INT TERM QUIT
+	trap "eval bspc config ${p_position}_padding $b_border_width; trap - TERM; kill 0;" INT TERM QUIT
 fi
 
 # where are we?
