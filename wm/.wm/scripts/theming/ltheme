@@ -15,8 +15,8 @@ ln -s "$targetTheme" "$HOME/.bspwm_theme"
 
 THEME_NAME="${1}"
 . "defaults"
-. "$HOME/.bspwm_theme"
-. "$HOME/.wm/templates/mustache.sh"
+. "$targetTheme"
+. "./mustache.sh"
 
 # adjust pIcon to theme (rel for panel, acyl, qutebrowser.)
 if [ "$p_icon" = "unset" ]; then
