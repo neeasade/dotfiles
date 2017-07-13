@@ -130,18 +130,19 @@ load_xresources() {
       xdotool windowactivate $wid xdotool key --window $wid  "shift+q"
       bspc node -f $current_wid
     fi
-
 }
 
 # bspwm, panel
 load_bspwm() {
-    if [ "$(basename "$p_launch_cmd")" = "lemonade" ]; then
+    if [ "${p_launch_cmd##*/}" = "lemonade" ]; then
         if ! margs juicer .wm/panel/juicers/juicer; then
             # note all lemons, generate them.
             lemons=$(echo $p_format | tr ':|' ' ');
 
             . ripen
-            IFS=' ' parallel "squeeze {}" ::: $lemons >> $HOME/.wm/panel/juicers/juicer
+            IFS=' ' 
+            parallel "squeeze {}" ::: $lemons >> $HOME/.wm/panel/juicers/juicer
+            IFS=
 
             [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
         fi
@@ -223,12 +224,10 @@ load_dunst() {
     trimAlphas
 
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
-    pkill -x dunst
-
     margs dunstrc .config/dunst/dunstrc
 
-    # dunst needs delay(?)
-    sleep 2
+    pkill -x dunst
+    sleep 2 # dunst needs delay(?)
     dunst &
 }
 
@@ -238,9 +237,8 @@ targets="${*:-emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser w
 
 IFS=" "
 for conf in $targets; do
-    #time="$((time load_$conf) 2>&1 1>/dev/null | head -n 2 | tail -n 1)"
-    #echo $conf : $time >> theme_perf.txt
-    load_$conf &
+    time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
+    echo $conf : $time >> theme_perf.txt
 done
 IFS=
 

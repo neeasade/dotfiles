@@ -33,32 +33,32 @@ fi
 
 targets="$targets prefix suffix"
 
-IFS=" "
-for target in $targets; do
-    if type -t $target > /dev/null; then
-      input="$(eval $target)"
-    else
-      input="$(vanilla $target)"
-    fi
+process_target() {
+    type -t $1 > /dev/null && \
+      input="$(eval $1)" || \
+      input="$(vanilla $1)"
 
-    if [ ! -z "$input" ]; then
-      echo "$target = \"${input}\""
-    fi
+    [ ! -z "$input" ] && echo "$1 = \"${input}\""
+}
+
+IFS=' '
+for target in $targets; do
+  process_target $target &
 done
+IFS=
 
 # after that, add any overrides from theme.
-if [ ! -z "$(eval echo \$p_${lemon_target}_theme)" ]; then
-  eval echo "\$p_${lemon_target}_theme"
-fi
+[ ! -z "$(eval echo \$p_${lemon_target}_theme)" ] && \
+  eval echo "\$p_${lemon_target}_theme" &
 
 # things that aren't colors may be provided by p_{lemon_target}_{option}
 options="reload mouse_left mouse_right mouse_middle scroll_up scroll_down overline underline"
 IFS=' '
 for option in $options; do
-    if [ ! -z "$(eval echo "\$p_${lemon_target}_${option}")" ]; then
-        echo $(tr '_' '-' <<< $option) = \"$(eval echo "\$p_${lemon_target}_${option}")\"
-    fi
+    [ ! -z "$(eval echo "\$p_${lemon_target}_${option}")" ] && \
+        echo $(tr '_' '-' <<< $option) = \"$(eval echo "\$p_${lemon_target}_${option}")\" &
 done
 IFS=
 
+wait
 echo ""
