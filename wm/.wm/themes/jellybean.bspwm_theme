@@ -10,6 +10,8 @@ emacs_theme=ujelly
 b_border_width=1
 b_window_gap=8
 
+b_bspwmrc_extend="pulse.sh &"
+
 # panel
 p_height=20
 p_font_main="Tewi-8"

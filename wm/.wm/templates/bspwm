@@ -59,7 +59,7 @@ done
 $relaunch_panel && "{{p_launch_cmd}}" &
 
 for visual in $(ls $HOME/.wm/scripts/visual); do
-    pkill -x $visual 2>/dev/null
+    pkill -f $HOME/.wm/scripts/visual/$visual 2>/dev/null
 done
 
 # extensions may be defined in themes here:

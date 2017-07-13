@@ -11,6 +11,7 @@ emacs_theme="base16-ocean"
 # bspwm
 b_border_width=6
 b_window_gap=30
+b_bspwmrc_extend="2bspwm &"
 
 # panel
 p_padding=3
@@ -53,7 +54,6 @@ activebg() {
 
 # gradient
 suffix() {
-
     [ "$lemon_target" = "clock" ] && return
 
     if echo "$lemon_target" | grep -E "mpd|title" >/dev/null; then

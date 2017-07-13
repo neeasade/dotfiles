@@ -1,38 +1,24 @@
 #!/usr/bin/env bash
-# override theme intentions in a generative fashion.
-# takes 2 arguments, the lemon and the target.
-# target may be one of: bg, fg, activefg, activebg, line, activeline
-# theme variables are exposed here to use and reference.
-# prereq: colorsetup.sh
+# squeeze lemons
 
+# information from ripening
 lemon_target="$1"
 step="$(eval "echo \${${1}}")"
 lemon_target_align="$(eval "echo \${${1}_align}")"
 
-# ignore lemons not included.
-if ! echo $barInfo | grep -q $lemon_target; then
-    vanilla
-    exit
-fi
-
 # declare, reload.
 echo "[$lemon_target]"
-if [ ! -z "$lemon_reload" ]; then
-    echo "reload = \"$lemon_reload\""
-fi
+[ ! -z "$lemon_reload" ] && echo "reload = \"$lemon_reload\""
 
-# todo: account for mouse generative things here
 
-# targets may be exported functions by themes in bash.
-# resources include: gradientStep, step reference, theme variables.
-targets="bg fg line"
+# targets will be exported functions by themes in bash.
+# they use resources from the theming scripts dir.
+targets="bg fg line prefix suffix"
 
-if grep -q "meta active" < "$HOME/.wm/panel/lemons/$lemon_target"; then
+grep -q "meta active" < "$HOME/.wm/panel/lemons/$lemon_target" && \
     targets="$targets activebg activefg activeline"
-fi
 
-targets="$targets prefix suffix"
-
+# emit a setting, or fallback on default (vanilla)
 process_target() {
     type -t $1 > /dev/null && \
       input="$(eval $1)" || \
@@ -41,22 +27,21 @@ process_target() {
     [ ! -z "$input" ] && echo "$1 = \"${input}\""
 }
 
-IFS=' '
 for target in $targets; do
   process_target $target &
 done
-IFS=
 
 # after that, add any overrides from theme.
-[ ! -z "$(eval echo \$p_${lemon_target}_theme)" ] && \
-  eval echo "\$p_${lemon_target}_theme" &
+eval echo "\$p_${lemon_target}_theme"
 
 # things that aren't colors may be provided by p_{lemon_target}_{option}
 options="reload mouse_left mouse_right mouse_middle scroll_up scroll_down overline underline"
+
 IFS=' '
 for option in $options; do
-    [ ! -z "$(eval echo "\$p_${lemon_target}_${option}")" ] && \
-        echo $(tr '_' '-' <<< $option) = \"$(eval echo "\$p_${lemon_target}_${option}")\" &
+    value="$(eval echo "\$p_${lemon_target}_${option}")"
+    [ ! -z "$value" ] && \
+        echo $(tr '_' '-' <<< $option) = \"$value\" &
 done
 IFS=
 

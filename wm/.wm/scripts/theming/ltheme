@@ -29,7 +29,7 @@ fi
 # usage: margs <template name> <destination>
 # <destination> is relative to $HOME
 margs() {
-    cache=false
+    cache=true
     target="$HOME/$2"
     mkdir -p "${target%/*}"
 
@@ -122,10 +122,10 @@ load_xresources() {
     # locate a qutebrowser window and send bind to update from Xresources
     # do so by the keybindings associated, then switch back.
     if pgrep qutebrowser >/dev/null; then
-      curren_wid=`bspc query -N -n `
+      current_wid=`bspc query -N -n`
       wid=$(xdotool search --any --pid "$(pgrep qutebrowser)")
       # only send to one
-      wid=$(echo $wid | cut -d ' ' -f 1)
+      wid=$(echo $wid | head -n 1)
       # pending https://github.com/qutebrowser/qutebrowser/issues/1741
       xdotool windowactivate $wid xdotool key --window $wid  "shift+q"
       bspc node -f $current_wid
@@ -140,8 +140,8 @@ load_bspwm() {
             lemons=$(echo $p_format | tr ':|' ' ');
 
             . ripen
-            IFS=' ' 
-            parallel "squeeze {}" ::: $lemons >> $HOME/.wm/panel/juicers/juicer
+            IFS=' '
+            parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/.wm/panel/juicers/juicer
             IFS=
 
             [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
@@ -237,9 +237,10 @@ targets="${*:-emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser w
 
 IFS=" "
 for conf in $targets; do
-    time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
-    echo $conf : $time >> theme_perf.txt
+    #time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
+    #echo $conf : $time >> theme_perf.txt
+    load_conf &
 done
 IFS=
 
-wait
+disown

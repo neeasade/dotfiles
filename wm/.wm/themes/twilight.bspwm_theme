@@ -15,7 +15,7 @@ b_normal_border_color="#2e2e2e"
 # panel
 p_height=32
 p_gap=0
-p_line=0
+p_line=2
 p_font_main="Droid Sans-10"
 p_font_icon="FontAwesome-10"
 
