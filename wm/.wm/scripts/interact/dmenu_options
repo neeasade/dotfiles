@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
-# print dmenu dimentions for current monitor, and set prompt.
+# print dmenu dimensions for current monitor, and set prompt.
 # colors are set by Xresources.
 
-# get gap values
-. ~/.bspwm_theme
+width=300
+height=200
+lines=15
 
-[ $(bspc config window_gap) -le 0 ] && p_gap=0
+mon="$(bspc query -M -m)"
+dim() {
+     bspc query -T -m $mon | jq .rectangle.$1
+}
 
-p_width=$(bspc query -T -m | jq -r '.rectangle.width')
-p_width=$(( p_width - (p_gap + p_gap) ))
-
-echo "-y $p_gap -x $p_gap -h $p_height -w $p_width -i -q -p \"${PROMPT_CHAR}\""
+x="$(( ($(dim width) - width) / 2 ))"
+y="$(( ($(dim height) - height) / 2))"
+ 
+# TODO: consider templating this for prompt char and/or dimensions.
+echo "-y $y -x $x -h $height -w $width -l $lines -i -q -p \"YEAH:\""
