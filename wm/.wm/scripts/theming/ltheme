@@ -5,10 +5,10 @@
 targetTheme="$HOME/.wm/themes/${1}.bspwm_theme"
 [ -f "$targetTheme" ] || exit 1
 
-set -a
-
 # relative:
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
+
+set -a
 
 rm $HOME/.bspwm_theme
 ln -s "$targetTheme" "$HOME/.bspwm_theme"
@@ -36,7 +36,7 @@ margs() {
     if $cache; then
         cachefile="/tmp/template/$THEME_NAME/$2"
         if [ ! -f "$cachefile" ]; then
-            mkdir -p "$(dirname "$cachefile")"
+            mkdir -p "${cachefile%/*}"
             mustache < "$HOME/.wm/templates/$1" > "$cachefile"
             cp "$cachefile" "$target"
             return 1
@@ -141,20 +141,18 @@ load_bspwm() {
             lemons=$(echo $p_format | tr ':|' ' ');
 
             . ripen
-
-            IFS=' '
-            parallel "squeeze {}" ::: $lemons >> $HOME/.wm/panel/juicers/juicer
-            IFS=
+            IFS=' ' parallel "squeeze {}" ::: $lemons >> $HOME/.wm/panel/juicers/juicer
 
             [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
         fi
     fi
 
     bspwmrc=".config/bspwm/bspwmrc"
-    margs panelt .wm/scripts/interact/panelt
+    panelt=".wm/scripts/interact/panelt"
     margs bspwm "$bspwmrc"
-    chmod +x "$HOME/$bspwmrc"
-    chmod +x "$HOME/.wm/scripts/interact/panelt"
+    margs panelt "$panelt"
+    chmod +x "$HOME/$bspwmrc" "$HOME/$panelt"
+
     "$HOME/$bspwmrc"
 }
 
@@ -162,6 +160,7 @@ load_bspwm() {
 load_vim() {
     # defunct.
     return
+
     #VIMS=`vim --serverlist`
     #for vim in $VIMS; do
         #vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
