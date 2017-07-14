@@ -97,7 +97,7 @@
   (load-spacemacs-settings '(
       startup-banner nil
       elpa-https t
-      line-numbers 'relative
+      line-numbers nil
       elpa-timeout 5
       check-for-update nil
       elpa-subdirectory nil
@@ -195,3 +195,11 @@
   (set-face-bold-p 'bold nil)
   (set-face-background 'font-lock-comment-face nil)
   )
+
+(defun what-face (pos)
+  (interactive "d")
+  (let ((face (or (get-char-property (point) 'read-face-name)
+                  (get-char-property (point) 'face))))
+    (if face (message "Face: %s" face) (message "No face at %d" pos))))
+
+(face-list)

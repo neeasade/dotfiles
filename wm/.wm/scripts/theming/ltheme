@@ -169,20 +169,27 @@ load_vim() {
 }
 
 load_emacs() {
-    # todo: incorporate size
-    emacs_font="$(echo $st_font | sed 's/-.*//')"
-    emacs_font="\"${emacs_font}\""
+    # Todo: incorporate size
 
     mx_eval() {
-        emacsclient --no-wait --eval "$*"
+        emacsclient --eval --no-wait "$*"
     }
 
     mx_eval "(load-theme '${emacs_theme})"
+
+    # match term padding
     mx_eval "(set-frame-parameter (selected-frame) 'internal-border-width ${st_borderpx})"
-    mx_eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :family '${emacs_font})) (face-list))"
-    mx_eval "(set-face-bold-p 'bold nil)"
+
+    # set font on current and future.
+    mx_eval "(set-face-attribute 'default nil :font \"${st_font}\" )"
+    mx_eval "(set-frame-font \"${st_font}\" nil t)"
+
+    # remove commend background from themes that set that.
     mx_eval "(set-face-background 'font-lock-comment-face nil)"
-    mx_eval "(set-face-attribute 'font-lock-comment-face nil :weight 'normal :family '${emacs_font})"
+
+    # no bold:
+    mx_eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :underline nil :inherit nil :slant 'normal)) (face-list))"
+    mx_eval "(set-face-bold-p 'bold nil)"
 }
 
 # GTK (make theme if it does not exist, then reload)
@@ -239,7 +246,7 @@ IFS=" "
 for conf in $targets; do
     #time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
     #echo $conf : $time >> theme_perf.txt
-    load_conf &
+    load_$conf &
 done
 IFS=
 
