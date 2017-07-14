@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# base16 ocean theme
+
+# theme
+THEME_NAME=ocean
+VIM_COLORS=chameleon
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/ocean.jpg"
+
+# use to surround with 'blocks'
+border_width=2
+p_delimiter=" "
+
+emacs_theme="base16-ocean"
+
+# bspwm
+b_border_width=6
+b_window_gap=30
+
+# panel
+p_padding=3
+p_window_class=noshadow
+p_height=32
+p_gap=0
+p_underline=$border_width
+p_font_main="Droid Sans-10"
+p_font_icon="FontAwesome-10"
+p_desktop_display_name=name
+p_desktop_show_free=false
+p_desktop_only_active=true
+p_title_only_show_active=true
+p_bg_inactive=$p_bg_normal
+p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock"
+
+# gradient
+suffix() {
+	echo "%{O${border_width}}"
+}
+
+prefix() {
+	echo "%{O${border_width}}"
+}
