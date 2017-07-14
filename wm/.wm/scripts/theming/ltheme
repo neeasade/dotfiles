@@ -29,7 +29,7 @@ fi
 # usage: margs <template name> <destination>
 # <destination> is relative to $HOME
 margs() {
-    cache=true
+    cache=false
     target="$HOME/$2"
     mkdir -p "${target%/*}"
 
@@ -97,10 +97,11 @@ load_xresources() {
     trimAlphas
 
     # qutebrowser + emacs related:
-    echo $p_font_main | grep -q Bold && p_font_main_bold="bold"
+    echo $p_font_main | grep -q Bold && p_font_main_bold="bold "
     p_font_main_size="$(echo $p_font_main | grep -Eo '[0-9]+')"
+    p_font_main_size="${p_font_main_bold}$(echo $p_font_main | grep -Eo '[0-9]+')"
+
     p_font_main="$(echo $p_font_main | sed 's/-.*//')"
-    p_font_main_dize="$(echo $p_font_main | sed 's/-.*//')"
     p_height="$(( ($p_height-10) / 2 ))"
 
     st_font_size="$(echo $st_font | sed 's/.*-//')"
@@ -127,7 +128,7 @@ load_xresources() {
       # only send to one
       wid=$(echo $wid | head -n 1)
       # pending https://github.com/qutebrowser/qutebrowser/issues/1741
-      xdotool windowactivate $wid xdotool key --window $wid  "shift+q"
+      xdotool windowactivate $wid xdotool key --window $wid  "shift+i"
       bspc node -f $current_wid
     fi
 }
@@ -169,10 +170,8 @@ load_vim() {
 }
 
 load_emacs() {
-    # Todo: incorporate size
-
     mx_eval() {
-        emacsclient --eval --no-wait "$*"
+        emacsclient --eval "$*"
     }
 
     mx_eval "(load-theme '${emacs_theme})"
@@ -190,7 +189,7 @@ load_emacs() {
     # no bold:
     mx_eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :underline nil :inherit nil :slant 'normal)) (face-list))"
     mx_eval "(set-face-bold-p 'bold nil)"
-}
+  }
 
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
@@ -218,8 +217,8 @@ load_gtk() {
 load_qutebrowser() {
     trimAlphas
 
-    echo $p_font_main | grep -q Bold && p_font_main_bold="bold"
-    p_font_main_size="$(echo $p_font_main | grep -Eo '[0-9]+')"
+    echo $p_font_main | grep -q Bold && p_font_main_bold="bold "
+    p_font_main_size="${p_font_main_bold}$(echo $p_font_main | grep -Eo '[0-9]+')"
     p_font_main="$(echo $p_font_main | sed 's/-.*//')"
     p_height="$(( ($p_height-10) / 2 ))"
 

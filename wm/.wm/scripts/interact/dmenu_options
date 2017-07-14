@@ -3,7 +3,7 @@
 # colors are set by Xresources.
 
 width=300
-height=200
+height=10
 lines=15
 
 mon="$(bspc query -M -m)"
@@ -13,6 +13,8 @@ dim() {
 
 x="$(( ($(dim width) - width) / 2 ))"
 y="$(( ($(dim height) - height) / 2))"
- 
+y=$((y-(height*lines)))
+y=$((y-(height*lines)))
+
 # TODO: consider templating this for prompt char and/or dimensions.
 echo "-y $y -x $x -h $height -w $width -l $lines -i -q -p \"YEAH:\""
