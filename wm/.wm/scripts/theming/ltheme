@@ -128,7 +128,8 @@ load_xresources() {
       # only send to one
       wid=$(echo $wid | head -n 1)
       # pending https://github.com/qutebrowser/qutebrowser/issues/1741
-      xdotool windowactivate $wid xdotool key --window $wid  "shift+i"
+      xdotool windowactivate $wid
+      xdotool key --window $wid  "shift+i"
       bspc node -f $current_wid
     fi
 }

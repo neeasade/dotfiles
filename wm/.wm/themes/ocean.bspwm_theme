@@ -4,7 +4,7 @@
 # theme
 THEME_NAME=ocean
 VIM_COLORS=chameleon
-BG_COMMAND="feh --bg-fill $HOME/.wm/walls/ocean.jpg"
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/ocean.jpg"
 
 emacs_theme="base16-ocean"
 
