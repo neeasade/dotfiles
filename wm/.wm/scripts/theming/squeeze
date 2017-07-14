@@ -31,8 +31,6 @@ for target in $targets; do
   process_target $target &
 done
 
-# after that, add any overrides from theme.
-eval echo "\$p_${lemon_target}_theme"
 
 # things that aren't colors may be provided by p_{lemon_target}_{option}
 options="reload mouse_left mouse_right mouse_middle scroll_up scroll_down overline underline"
@@ -46,4 +44,7 @@ done
 IFS=
 
 wait
+
+# after that, add any overrides from theme.
+eval echo "\$p_${lemon_target}_theme"
 echo ""
