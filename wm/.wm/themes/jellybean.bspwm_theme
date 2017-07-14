@@ -14,7 +14,7 @@ b_bspwmrc_extend="pulse.sh &"
 
 # panel
 p_height=20
-p_font_main="Tewi-8"
+p_font_main="tewi-8"
 p_font_icon="wuncon siji-8"
 p_font_icon="Siji-8"
 p_gap=4
@@ -29,6 +29,7 @@ p_desktop_display_name=name
 p_desktop_show_free=false
 p_desktop_only_active=true
 p_title_only_show_active=false
+p_position=bottom
 
 
 # colors
