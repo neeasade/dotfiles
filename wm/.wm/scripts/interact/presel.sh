@@ -29,7 +29,7 @@ if bspc query -N -n focused.leaf && which chbpresel 2>/dev/null 1>&2; then
         west) dir=2 ;;
     esac
 
-    chbpresel -c $forward -C $back -d $dir $(bspc query -N -n)
+    chbpresel -C $forward -c $back -d $dir $(bspc query -N -n)
 else
     bspc node -p $*
 fi

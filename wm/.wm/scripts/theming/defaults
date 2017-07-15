@@ -1,13 +1,13 @@
 #!/usr/bin/env dash
 # This script will be sourced by themes and then have options overridden
 
-. "$HOME/.wm/themes/colors/$THEME_NAME"
+. "$HOME/.wm/themes/colors/${THEME_NAME}"
 
 # bspwm settings. Naming convention is b_<config_option>
 b_border_width=3
 b_window_gap=10
 b_split_ratio=0.5
-b_normal_border_color="#$color0"
+_normal_border_color="#$color0"
 b_active_border_color="#$color8"
 b_focused_border_color="#$foreground"
 b_presel_feedback_color="#$color8"

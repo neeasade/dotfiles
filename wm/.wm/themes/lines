@@ -7,7 +7,6 @@ VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/ocean.jpg"
 
 # use to surround with 'blocks'
-border_width=2
 p_delimiter="   "
 
 emacs_theme="base16-ocean"
@@ -26,11 +25,10 @@ p_font_icon="FontAwesome-10"
 p_desktop_display_name=name
 p_desktop_show_free=false
 p_desktop_only_active=true
-p_title_only_show_active=true
+p_title_only_show_active=false
 p_bg_inactive=$p_bg_normal
 p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock"
 
-p_underline=$border_width
 
 
 for item in dropdown themeSwitch desktop title mpd volume updates weather clock;
@@ -41,15 +39,29 @@ done
 
 border_color="$(colort -50 -t "$p_fg_normal")"
 
-line() {
-    echo \#ff$border_color
+bg() {
+    #colort 30 $p_bg_normal
+    step=$((step+1))
+    eval echo \\\#\$color${step}
 }
 
-# gradient
+line() {
+    colort -i $(bg)
+    #echo \#ff$border_color
+}
+
+border_width=6
+p_underline=$border_width
 suffix() {
+  border_color="$(colort -i -t $(bg))"
+  border_color="$(maxchroma $border_color)"
+  border_color="$(colort -t $border_color)"
   echo "%%{B#ff${border_color}}%%{O${border_width}}%%{B-}"
 }
 
 prefix() {
+  border_color="$(colort -i -t $(bg))"
+  border_color="$(maxchroma $border_color)"
+  border_color="$(colort -t $border_color)"
   echo "%%{B#ff${border_color}}%%{O${border_width}}%%{B-}"
 }

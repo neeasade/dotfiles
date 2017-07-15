@@ -2,7 +2,7 @@
 # Load themes for programs
 # Check 'targets' variable at end for all posibilities.
 
-targetTheme="$HOME/.wm/themes/${1}.bspwm_theme"
+targetTheme="$HOME/.wm/themes/${1}"
 [ -f "$targetTheme" ] || exit 1
 
 # relative:

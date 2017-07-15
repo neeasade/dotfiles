@@ -2,7 +2,6 @@
 # base16 ocean theme
 
 # theme
-THEME_NAME=ocean
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/ocean.jpg"
 
