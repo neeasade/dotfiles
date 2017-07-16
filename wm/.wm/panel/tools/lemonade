@@ -86,27 +86,6 @@ unique=/tmp/lemonade-stack-$ident
 # Always clean up when you are done.
 trap "error; rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
 
-
-
-# note enabled lemons.
-for lemon in $(sed 's/:/ /g;s/|/ /g;' <<< $bar_format); do
-    juicedLemons="$juicedLemons $lemon"
-done
-
-# transform format with delimiters and alignment
-# do so in an array mapped to name
-
-#position="%{l}$(echo $bar_format | tr ':' ' ')"
-position="%{l}$(echo $bar_format | sed "s/|/%{c}/;s/|/%{r}/;s/:/$bar_delimiter/g;")"
-
-# build the panel switch
-switch=""
-for script in $juicedLemons; do
-    position=$(sed "s/${script}/\$__${script}/g" <<< $position)
-    switch="$switch ${script}) __${script}=\${line#*@} ;;"
-done
-
-
 # Retrieve a value from the stack, the stack is a collection of all scripts with
 # unique sets of characters that are used for event handles.
 stack() {
@@ -138,6 +117,9 @@ format() {
     } 2>&3
 }
 
+# note enabled lemons.
+juicedLemons="$(sed 's/:/ /g;s/|/ /g;' <<< $bar_format)"
+
 # The defaults for the [bar] section. Most of the values are simplified and
 # require some extra attention to be formatted correctly.
 {
@@ -146,21 +128,27 @@ format() {
         [bg]="#FF000000"
         [format]="||"
         [offset]=0
+
         [line]=2
+
+        [underline]=false
+        [overline]=false
+
         # padding inside sections
         [padding]=0
 
         [fonts]="monospace-9"
         [force]=true
         [class]="lemonbar"
-        [clickables]=10
-        [dock]="top")
+        [clickables]=10)
+
     for section in "${!bar[@]}"; do
         if [[ $(eval "echo \${#bar_${section}}") -eq 0 ]]; then
             echo "No value for 'bar-$section' -> using ${bar[${section}]}"
             eval "bar_${section}=${bar[${section}]}"
         fi
     done
+
     for section in $juicedLemons; do
         printf "%s" "${section}:" {A..E} $'\n' >> $unique
     done
@@ -185,6 +173,31 @@ format() {
         done
     done
 } 2>&3
+
+# now that all values will be set, process things:
+
+# handle panel-side options
+# note: pending https://github.com/LemonBoy/bar/issues/203
+# todo: consider just making a lemonbar under/over to fake the line.
+pos_start=""
+$bar_underline && pos_start+="+u"
+$bar_overline && pos_start+="+o"
+if [ ! -z "$pos_start" ]; then
+    # todo: make this a bar property
+    pos_start="%{${pos_start}U#ffffffff}"
+    pos_end="%{-o}%{-uU-}"
+    bar_delimiter="${pos_start}${bar_delimiter}${pos_end}"
+    position="%{l}$(echo $bar_format | sed "s/|/${pos_start}%{c}${pos_end}/; s/|/${pos_start}%{r}${pos_end}/; s/:/$bar_delimiter/g;")"
+else
+    position="%{l}$(echo $bar_format | sed "s/|/%{c}/;s/|/%{r}/;s/:/$bar_delimiter/g;")"
+fi
+
+# build the panel switch
+switch=""
+for script in $juicedLemons; do
+    position=$(sed "s/${script}/\$__${script}/g" <<< $position)
+    switch="$switch ${script}) __${script}=\${line#*@} ;;"
+done
 
 # Define what lines to draw (under & over), and what color they should be..
 {
