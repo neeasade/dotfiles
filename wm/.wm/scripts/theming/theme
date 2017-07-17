@@ -1,0 +1,31 @@
+#!/bin/sh
+# operate around a temp theme
+
+target=temp
+theme_dir="$HOME/.wm/themes"
+
+die() {
+  echo $*
+  exit 1
+}
+
+# load existing theme into target editing
+load() {
+  [ -z "$1" ] && die load needs a name. 
+  [ ! -f "$theme_dir/$1" ] && die $1 not found 
+  mv "$theme_dir/$1" "$theme_dir/$target" 
+  mv "$theme_dir/colors/$1" "$theme_dir/colors/$target"
+
+  ltheme "$target"
+}
+
+edit() {
+  $EDITOR "$theme_dir/$target"
+}
+
+save() {
+  mv "$theme_dir/$target" "$theme_dir/$1"
+  mv "$theme_dir/colors/$target" "$theme_dir/colors/$1"
+}
+
+$*
