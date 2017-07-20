@@ -1,12 +1,19 @@
 PATH=$PATH:$HOME/bin
 PATH=$PATH:$HOME/.gem/bin
-PATH=$PATH:$HOME/.wm/scripts/theming
 PATH=$PATH:$HOME/.wm/scripts/interact
 PATH=$PATH:$HOME/.wm/scripts/visual
+PATH=$PATH:$HOME/git_temp/opt
 
 # {{{ env
-export EDITOR='vim'
-export GIT_EDITOR='/usr/bin/vim'
+if type emacs >/dev/null; then
+    export EDITOR='emacsclient'
+    export GIT_EDITOR="$(which emacsclient)"
+else
+    export EDITOR='vim'
+    export GIT_EDITOR='/usr/bin/vim'
+fi
+
+
 export BROWSER=qutebrowser
 export TERMINAL=st
 export FILEBROWSER=pcmanfm
@@ -16,7 +23,7 @@ export SXHKD_SHELL=sh
 export _JAVA_AWT_WM_NONREPARENTING=1
 
 type npm >/dev/null && export NODE_PATH="$(npm root -g)"
-type ruby >/dev/null && export GEM_HOME="$HOME/.gem"
+export GEM_HOME="$HOME/.gem"
 
 # }}}
 
@@ -26,7 +33,6 @@ alias grep="grep --color=auto"
 alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 alias ls='ls --color=auto'
 alias make="clear && make"
-alias mpv='~/.wm/scripts/mpv'
 alias pacman="pacman --color=always"
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files\ \(x86\)/Steam/Steam.exe >/dev/null 2>&1 &'
@@ -50,10 +56,6 @@ fullshot() {
 upshot() {
     shot
     uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
-}
-
-mpv() {
-    $(which mpv) --input-unix-socket=/tmp/mpvsocket "$*"
 }
 
 # nix query
