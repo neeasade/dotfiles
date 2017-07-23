@@ -1,0 +1,24 @@
+cur_shell=$(ps | grep $$ |  sed 's/^.* //')
+history_length=10000
+history_file="$HOME/.${cur_shell}_history"
+
+set_history_bash() {
+  HISTFILE="$history_file"
+  HISTFILESIZE="$history_length"
+  HISTSIZE="$history_length"
+
+  shopt -s histappend
+  HISTCONTROL=ignoredups:erasedups
+}
+
+set_history_zsh() {
+  HISTFILE="$HOME/.${cur_shell}_history"
+  SAVEHIST="$history_length"
+  HISTSIZE="$history_length"
+
+  setopt hist_ignore_dups
+  setopt hist_ignore_all_dups
+  setopt hist_ignore_space
+}
+
+set_history_$cur_shell

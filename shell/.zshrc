@@ -1,5 +1,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+. $HOME/.profile
 
 # get the thing
 [ ! -d ~/.zplug ] && curl -sL zplug.sh/installer | zsh
@@ -7,22 +8,16 @@
 
 # config the thing
 zplug "plugins/git", from:oh-my-zsh, defer:0                         # git aliases
-zplug "plugins/colored-man-pages", from:oh-my-zsh                    # distinct man page colors
 zplug "zsh-users/zsh-autosuggestions", use:"zsh-autosuggestions.zsh" # fish-like suggestions
-zplug "supercrabtree/k"                                              # ls-like with niceties
 zplug "djui/alias-tips"                                              # alias reminder
+zplug "junegunn/fzf", use:"shell/completion.zsh"                     # fzf
+zplug "junegunn/fzf", use:"shell/key-bindings.zsh"                   # fzf
 
 # load the thing
 ! zplug check && zplug install
 zplug load
 
-. $HOME/.profile
-set_history
-
 setopt PROMPT_SUBST
-PS1='$(prompt)'
 
 # allow emacs like bindings to work
 bindkey -e
-
-[ -f ~/.fzf.zsh ] && . ~/.fzf.zsh || true

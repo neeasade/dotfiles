@@ -1,0 +1,34 @@
+PATH=$PATH:$HOME/bin
+PATH=$PATH:$HOME/.gem/bin
+PATH=$PATH:$HOME/.wm/scripts/interact
+PATH=$PATH:$HOME/.wm/scripts/visual
+PATH=$PATH:$HOME/git_temp/opt
+
+export PAGER="less"
+export BROWSER=qutebrowser
+export TERMINAL=st
+export FILEBROWSER=pcmanfm
+
+export SXHKD_SHELL=sh
+export MPDCRON_DIR="$HOME/.config/mpd"
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+if type emacs >/dev/null; then
+    export EDITOR='emacsclient'
+    export GIT_EDITOR="$(which emacsclient)"
+else
+    export EDITOR='vim'
+    export GIT_EDITOR='/usr/bin/vim'
+fi
+
+if type npm >/dev/null; then
+    if [ -d "$HOME/.npm-packages" ]; then
+        export NODE_PATH="$HOME/.npm-packages/lib/node_modules"
+        PATH="$PATH:$HOME/.npm-packages/bin"
+    else
+        export NODE_PATH="$(npm root -g)"
+        PATH="$PATH:$(npm bin -g 2>/dev/null)"
+    fi
+fi
+
+export GEM_HOME="$HOME/.gem"
