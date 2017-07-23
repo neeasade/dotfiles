@@ -5,9 +5,10 @@
   services = {
     xserver = {
       enable = true;
+      autorun = true;
       layout = "us";
       defaultDepth = 24;
-      videoDrivers = [ "ati" ];
+      #videoDrivers = [ "ati_unfree" ];
 
       synaptics = {
         enable = true;
@@ -28,12 +29,8 @@
         default = "none";
       };
 
-      displayManager.slim = {
+      displayManager.lightdm = {
         enable = true;
-        extraConfig = ''
-        session_font Liberation Sans:size=16
-        session_color #000000
-        '';
       };
     };
 
@@ -46,8 +43,6 @@
     acpid.enable = true;
     # todo : look into conf of ssh.
     #openssh.enable = true;
-
-    xserver.autorun = true;
   };
 
 /*

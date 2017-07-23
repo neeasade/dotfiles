@@ -30,14 +30,21 @@ with lib;
 
   environment.systemPackages =
   (with stable; [
+(chromium.override {enablePepperFlash = true;})
+tree
+hfsprogs
+    parallel
+    pango
+    aspell
+    aspellDicts.en
     bash-completion
     bc
+    xorg.xmodmap
     binutils
     curl
     dash
     deluge
     feh
-    firefox
     ghostscript
     gimp
     gitAndTools.gitFull
@@ -59,6 +66,7 @@ with lib;
     nix-prefetch-scripts
     nix-repl
     ntfs3g
+    pass
     p7zip
     pciutils
     slop
@@ -73,8 +81,17 @@ with lib;
     zlib
     zsh
     zsh-completions
+    htop
+    hsetroot
+    xurls
+    xclip
+    imagemagick
 
   ]) ++ (with rolling; [
+
+    # lowprio so that ncurses st terminfo doesn't conflict with xst.
+    (lib.lowPrio ranger)
+
     (steam.override {newStdcpp = true; nativeOnly = true;})
     bevelbar
     colort
@@ -97,11 +114,18 @@ with lib;
     vim
     xdo
     xdotool
+    xorg.xwininfo
     xtitle
-
+    weechat
+    txtw
+    xrq
+    wmutils-core
+    wmutils-opt
+    ffmpeg
   ]) ++ (with neeasade; [
-    bspwm
     xst
+    bspwm
+    #wmutils-opt
   ]);
 
   # todo: consider:

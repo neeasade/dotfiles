@@ -26,5 +26,25 @@
     [ { device = "/dev/disk/by-uuid/f20e85be-ce18-474b-8b10-37d70b8f2a3d"; }
     ];
 
+  fileSystems."/media/LIVEWIRE" =
+    { device = "/dev/disk/by-uuid/2cf891b0-4adf-4fa0-bd80-e335303a1b13";
+      fsType = "btrfs";
+    };
+
+  fileSystems."/media/CODERED" =
+    { device = "/dev/disk/by-uuid/8c484b3d-b026-41f9-9cbe-dd551d1aead3";
+      fsType = "ext4";
+    };
+
+  fileSystems."/media/VOLTAGE" =
+    { device = "/dev/disk/by-uuid/00ebaffa-6c52-4422-8168-4a84622bad0c";
+      fsType = "btrfs";
+    };
+
+  fileSystems."/media/KICKSTART" =
+    { device = "/dev/disk/by-uuid/84894ed7-8e80-49a5-8951-ac61c23a6564";
+      fsType = "btrfs";
+    };
+
   nix.maxJobs = lib.mkDefault 8;
 }

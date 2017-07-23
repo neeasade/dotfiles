@@ -7,11 +7,14 @@
       nodejs
       go
       rustc rustracer rustfmt
-      jdk8 jre8 maven gradle
-      clojure leiningen
+      jdk8 maven gradle
+      clojure leiningen boot
       ruby
       # haskell
       ghc
-      # todo: dotnet
+      guile
+
+      # libs
+      zlib
   ];
 }
