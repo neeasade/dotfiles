@@ -11,14 +11,15 @@ die() {
 
 # load existing theme into target editing
 load() {
-    name="$*"
+  name="$1"
+  shift
   [ -z "$name" ] && die load needs a name.
   [ ! -f "$theme_dir/$name" ] && die $* not found
 
   cp "$theme_dir/$name" "$theme_dir/$target"
   cp "$theme_dir/colors/$name" "$theme_dir/colors/$target"
 
-  "$HOME/.wm/scripts/theming/ltheme" "$target"
+  "$HOME/.wm/scripts/theming/ltheme" "$target" $*
 }
 
 edit() {
