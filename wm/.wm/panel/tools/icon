@@ -32,6 +32,8 @@ case $1 in
        exit 1;;
 esac
 
+[ "$p_font_icon" = "none" ] && exit
+
 # ick
 # todo: handle/define this at a theme level somehow.
 [ ! -z "$2" ] && iconfont="$2" || iconfont="$(echo $p_font_icon | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic')"
