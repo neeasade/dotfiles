@@ -108,16 +108,13 @@
 
       startup-buffer-responsive t
       scratch-mode 'text-mode
-      colorize-cursor-according-to-state t
+      colorize-cursor-according-to-state nil
 
       themes (list (intern (get-resource "Emacs.theme" "spacemacs-dark")))
 
       default-font (list
                       ; xft format, match term.
-                      ; todo: check if this works on windows
-                      (concat (get-resource "Emacs.fontmine" "Consolas")
-                              "-"
-                              (get-resource "Emacs.fontsize" "12"))
+                      (get-resource "st.font" "Consolas-12")
                       ;:size (string-to-number (get-resource "Emacs.fontsize" "12"))
                       :weight 'normal
                       :width 'normal
@@ -189,6 +186,8 @@
 
   ;; style options
   (setq powerline-default-separator (get-resource "emacs.powerline" "bar"))
+  (custom-set-faces
+   '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
   (spaceline-compile)
 
   (setq org-bullets-bullet-list '("@" "%" ">" ">"))
