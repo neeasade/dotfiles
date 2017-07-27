@@ -7,6 +7,7 @@ targetTheme="$HOME/.wm/themes/${1}"
 
 # relative:
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
+PATH="$PATH:."
 
 set -a
 
@@ -176,6 +177,10 @@ load_emacs() {
     }
 
     mx_eval "(load-theme '${emacs_theme})"
+
+    # conform spaceline and helm prompts to colorscheme
+    mx_eval "(custom-set-faces '(spacemacs-normal-face ((t (:inherit 'mode-line)))))"
+    mx_eval "(spaceline-compile)"
 
     # match term padding
     mx_eval "(set-frame-parameter (selected-frame) 'internal-border-width ${st_borderpx})"

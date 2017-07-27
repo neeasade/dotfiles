@@ -7,10 +7,10 @@
 b_border_width=3
 b_window_gap=10
 b_split_ratio=0.5
-_normal_border_color="#$color0"
-b_active_border_color="#$color8"
-b_focused_border_color="#$foreground"
-b_presel_feedback_color="#$color8"
+b_normal_border_color="$color0"
+b_active_border_color="$color8"
+b_focused_border_color="$foreground"
+b_presel_feedback_color="$color8"
 
 # meant to be used for effects, like pulse or 2bspwm
 b_bspwmrc_extend=""
@@ -23,28 +23,27 @@ p_gap=4                      # Gaps of panel off screen.
 p_underline=0                # This value is used for both underline and overline
 p_padding=3                  # number of spaces to pad panel information (sections/blocks) with
 p_line=2 # width of the over/underlines
-p_launch_cmd="$HOME/.wm/panel/lemonade"
+p_launch_cmd="$HOME/.wm/panel/lemonade" # The command to launch the panel
 
-# note: this name should maybe indicate a color more.
-p_icon=unset
-p_window_class="lemonbar"
-p_position="top"
+p_icon=unset              # icon color - used in qutebrowser completion, ACYL icons color
+p_window_class="lemonbar" # window class to use in lemonade's juicer
+p_position="top"          # panel position - top|bottom
 
 # variables for desktop area
-p_desktop_display_name=icon # [icon|name] - display desktop names or DO/DF variables.
-p_desktop_display_format=together  # [together|separate] - show desktops in separate blocks or together in one block.
-p_desktop_show_free=true # option to show nothing for free desktops.
-p_desktop_mode_toggle=true # monocle/tiling toggle.
-p_desktop_only_active=false # only show the active desktop name
-p_title_only_show_active=false # used by title.
+p_desktop_display_name=icon       # [icon|name] - display desktop names or DO/DF variables.
+p_desktop_display_format=together # [together|separate] - show desktops in separate blocks or together in one block.
+p_desktop_show_free=true          # option to show nothing for free desktops.
+p_desktop_mode_toggle=true        # monocle/tiling toggle.
+p_desktop_only_active=false       # only show the active desktop name
+p_title_only_show_active=false    # used by title.
 
 # Panel colors
-p_bg_normal="#ff$background"            # Default foreground
-p_fg_normal="#ff$foreground"            # Default foreground
-p_bg_active="$p_fg_normal"              # Active title tab - also used as gtk select color value.
-p_fg_active="$p_bg_normal"              # Active title tab - also used as gtk select color value.
-p_bg_inactive="$p_bg_normal"            # Active title tab - also used as gtk select color value.
-p_fg_inactive="$p_fg_normal"            # Active title tab - also used as gtk select color value.
+p_bg_normal="#ff$background"
+p_fg_normal="#ff$foreground"
+p_bg_active="$p_fg_normal"
+p_fg_active="$p_bg_normal"
+p_bg_inactive="$p_bg_normal"
+p_fg_inactive="$p_fg_normal"
 
 # panel icon colors - also used to color acyl icons, and qutebrowser match color.
 # Workspace variables

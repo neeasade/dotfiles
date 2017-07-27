@@ -10,14 +10,17 @@ bspc config external_rules_command ""
 cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
 [ -d "$cachedir" ] && cache=$cachedir/dmenu_run || cache=$HOME/.dmenu_cache
 
-program=$(
-	IFS=:
-	if stest -dqr -n "$cache" $PATH; then
-		stest -flx $PATH | sort -u | tee "$cache" | eval dmenu "$@"
-	else
-		eval dmenu "$@" < "$cache"
-	fi
-)
+program="$*"
+if [ -z "$program" ]; then
+    program=$(
+    IFS=:
+    if stest -dqr -n "$cache" $PATH; then
+        stest -flx $PATH | sort -u | tee "$cache" | eval dmenu "$@"
+    else
+        eval dmenu "$@" < "$cache"
+    fi
+    )
+fi
 
 eval `slop`
 bspc rule -a \* -o state=floating

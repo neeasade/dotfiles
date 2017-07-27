@@ -35,7 +35,7 @@ _chwb2 Normal  `bspc query -N -n .!descendant_of.window`
 _chwb2 Focused `bspc query -N -n .descendant_of.window`
 
 # reactive draw
-bspc subscribe node_geometry node_focus | while read msg; do
+bspc subscribe node_state node_geometry node_focus | while read msg; do
     _chwb2 Normal  `bspc query -N -n .!descendant_of.window`
     _chwb2 Focused `bspc query -N -n .descendant_of.window`
 done
