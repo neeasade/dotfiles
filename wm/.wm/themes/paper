@@ -9,15 +9,16 @@ emacs_theme="base16-grayscale-light"
 b_border_width=6
 b_window_gap=20
 b_normal_border_color=$(colort -20 -t $p_bg_normal)
-b_active_border_color=$(colort -40 -t $p_bg_normal)
-b_focused_border_color=$(colort -100 -t $p_bg_normal)
+b_active_border_color=$(colort -50 -t $p_bg_normal)
+b_focused_border_color=$(colort -80 -t $p_bg_normal)
 
 p_bg_active="#ff$b_focused_border_color"
 
 theme_section_bg="$(colort -10 $p_bg_normal)"
 p_bg_normal="#ff$b_active_border_color"
+p_fg_active=$p_fg_normal
 
-p_format="dropdown:desktop|title|mpd:volume:weather:clock" # Default options/items to include in info section of panel.
+p_format="dropdown:desktop|title|dynamicmpd:volume:weather:clock" # Default options/items to include in info section of panel.
 
 background=$(colort -3 -t $background)
 
@@ -31,36 +32,46 @@ p_padding=1
 
 st_font="Roboto Mono-11"
 p_font_main="Roboto Mono-11"
-p_font_icon="none"
+p_font_icon="FontAwesome-12" # Panel Icon font.
+p_icon_enable=false
 d_font="Roboto Mono 10"
 
-onlyShowActiveDesktop=true
-maxWinNameLen=16
+p_desktop_occupied_label="$(echo -n -e '\uf004')"
+p_desktop_empty_label="$(echo -n -e '\uf08a')"
+
+# p_desktop_occupied_label='X'
+# p _desktop_empty_label='O'
+p_desktop_display_format=together
+
+p_title_only_show_active=true
+maxWinNameLen=30
 
 GTK_FONT="Roboto Mono 10"
 
-
-set_even() {
-    #[ $((step%2)) -eq 0 ] && even=true || even=false
-    [ $((step%2)) -eq 0 ] && even=false || even=true
+fg() {
+    colort -c "$(bg)" && check="$p_bg_normal" || check="$p_fg_normal"
+    input="$(colort -c "$check" && echo $p_fg_normal || echo $p_bg_normal)"
+    [ $((step%2)) -eq 0 ] && even=true || even=false
+    $even && echo "$input" || echo "$(colort 60 $input)"
 }
 
 bg() {
-  set_even
-  [ $((step%2)) -eq 0 ] && even=false || even=true
-  $even && echo "$theme_section_bg" || activebg
+  [ $((step%2)) -eq 0 ] && even=true || even=false
+  $even && activebg || echo "$theme_section_bg"
 }
 
 suffix() {
-  set_even
-  [ $((step%2)) -eq 0 ] && even=false || even=true
-  border="%%{B$(colort +50 $(bg))}%%{O2}%%{B-}"
+  [ $((step%2)) -eq 0 ] && even=true || even=false
+  border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
+  #$even && echo "$border" || echo ""
   $even && echo "" || echo "$border"
 }
 
 prefix() {
-  set_even
-  [ $((step%2)) -eq 0 ] && even=false || even=true
-  border="%%{B$(colort +50 $(bg))}%%{O2}%%{B-}"
+  [ $((step%2)) -eq 0 ] && even=true || even=false
+  #border="%%{B$(colort -40 $(bg))}%%{O2}%%{B-}"
+  #$even && echo "" || echo "$border"
+  border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
+  #$even && echo "$border" || echo ""
   $even && echo "" || echo "$border"
 }
