@@ -79,8 +79,8 @@ load_weechat() {
     wee_cmd '/reload'
 
     # buffers.pl dies on reload
-    wee_cmd '/perl unload'
-    wee_cmd '/perl autoload'
+    wee_cmd '/perl unload buffers'
+    wee_cmd '/perl load buffers.pl'
 }
 
 load_compton() {
@@ -173,28 +173,29 @@ load_vim() {
 
 load_emacs() {
     mx_eval() {
-        emacsclient --eval "$*"
+        emacsclient --eval "($*)"
     }
 
-    mx_eval "(load-theme '${emacs_theme})"
+    mx_eval "load-theme '${emacs_theme}"
 
     # conform spaceline and helm prompts to colorscheme
-    mx_eval "(custom-set-faces '(spacemacs-normal-face ((t (:inherit 'mode-line)))))"
-    mx_eval "(spaceline-compile)"
+    mx_eval "custom-set-faces '(spacemacs-normal-face ((t (:inherit 'mode-line))))"
+    mx_eval "spaceline-compile"
+    mx_eval "set-face-attribute 'fringe nil :background nil"
 
     # match term padding
-    mx_eval "(set-frame-parameter (selected-frame) 'internal-border-width ${st_borderpx})"
+    mx_eval "set-frame-parameter (selected-frame) 'internal-border-width ${st_borderpx}"
 
     # set font on current and future.
-    mx_eval "(set-face-attribute 'default nil :font \"${st_font}\" )"
-    mx_eval "(set-frame-font \"${st_font}\" nil t)"
+    mx_eval "set-face-attribute 'default nil :font \"${st_font}\" "
+    mx_eval "set-frame-font \"${st_font}\" nil t"
 
     # remove commend background from themes that set that.
-    mx_eval "(set-face-background 'font-lock-comment-face nil)"
+    mx_eval "set-face-background 'font-lock-comment-face nil"
 
     # no bold:
-    mx_eval "(mapc (lambda (face) (set-face-attribute face nil :weight 'normal :underline nil :inherit nil :slant 'normal)) (face-list))"
-    mx_eval "(set-face-bold-p 'bold nil)"
+    mx_eval "mapc (lambda (face) (set-face-attribute face nil :weight 'normal :underline nil :inherit nil :slant 'normal)) (face-list)"
+    mx_eval "set-face-bold-p 'bold nil"
   }
 
 # GTK (make theme if it does not exist, then reload)
