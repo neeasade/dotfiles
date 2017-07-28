@@ -19,6 +19,7 @@ b_bspwmrc_extend=""
 p_height=16                  # Panel height.
 p_font_main="Droid Sans-8"   # Panel main font.
 p_font_icon="FontAwesome-10" # Panel Icon font.
+p_icon_enable=true           # toggle icon script output
 p_gap=4                      # Gaps of panel off screen.
 p_underline=0                # This value is used for both underline and overline
 p_padding=3                  # number of spaces to pad panel information (sections/blocks) with

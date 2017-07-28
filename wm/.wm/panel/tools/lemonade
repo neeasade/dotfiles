@@ -274,9 +274,9 @@ done
                                   "%{F-}%{B-}" \
                                   "%{-o}%{-uU-}")"
 
-                              if $hold; then
-                                  bar_message="${bar_message}${bar_delimiter}"
-                              fi
+                              # if $hold; then
+                              #     bar_message="${bar_message}"
+                              # fi
                             fi
                         fi
 

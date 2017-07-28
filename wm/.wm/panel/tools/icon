@@ -4,6 +4,10 @@
 # targetting: awesome, siji, ionic.
 # usage: $0  <icon_type> [<font_type>] (you can define font via iconfont var)
 
+if ! $p_icon_enable; then
+    exit
+fi
+
 case $1 in
     # awesome, siji, ionic.
     desktop)  icon='f108 e1d7 f380';;
@@ -31,8 +35,6 @@ case $1 in
     *) echo "icon type not found."
        exit 1;;
 esac
-
-[ "$p_font_icon" = "none" ] && exit
 
 # ick
 # todo: handle/define this at a theme level somehow.
