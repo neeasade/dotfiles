@@ -180,6 +180,9 @@
   ;; auto-follow symlinks when editing
   (setq vc-follow-symlinks t)
 
+  ;; git
+  (setq magit-repository-directories "~/git")
+
   ;; helm
   (define-key helm-map (kbd "C-j") 'helm-next-line)
   (define-key helm-map (kbd "C-k") 'helm-previous-line)
@@ -190,9 +193,17 @@
    '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
   (spaceline-compile)
 
-  (setq org-bullets-bullet-list '("@" "%" ">" ">"))
   (set-face-bold-p 'bold nil)
   (set-face-background 'font-lock-comment-face nil)
+  (set-face-attribute 'fringe nil :background nil)
+
+  ;; org
+  (setq org-bullets-bullet-list '("@" "%" ">" ">"))
+  (setq org-directory "~/org")
+  (setq org-startup-indented t)
+  (setq org-todo-keywords '((type "TODO" "NEXT" "WAITING" "DONE")))
+  (setq org-blank-before-new-entry '((heading . t) (plainlist-item . nil)))
+  (setq org-ellipsis "…")
   )
 
 (defun what-face (pos)
