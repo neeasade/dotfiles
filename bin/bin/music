@@ -1,0 +1,28 @@
+#!/bin/sh
+
+musicdir="$HOME/Music"
+
+# add a url to library, fallback on clipboard content
+add() {
+  url="$*"
+  [ -z "$url" ] && url="$(xclip -o -selection clipboard)"
+  mkdir -p "$musicdir/import"
+  youtube-dl -x -o "$musicdir/import/%(uploader)s/%(title)s.%(ext)s" "$url"
+}
+
+# remove the currently playing song, permanently
+del() {
+  location="$(mpc -f "%file%" | head -n 1)"
+  rm "$musicdir/$location"
+}
+
+# reshuffle current selection from all
+play() {
+  mpc clear
+  mpc listall | sort -R | head -n 1000 | mpc add
+  mpc play
+}
+
+op=${1:-play}
+shift
+$op "$*"
