@@ -14,6 +14,7 @@ add() {
 del() {
   location="$(mpc -f "%file%" | head -n 1)"
   rm "$musicdir/$location"
+  mpc next
 }
 
 # reshuffle current selection from all
@@ -21,6 +22,11 @@ play() {
   mpc clear
   mpc listall | sort -R | head -n 1000 | mpc add
   mpc play
+}
+
+now() {
+  mpc listall | fzf | mpc insert
+  mpc next
 }
 
 op=${1:-play}
