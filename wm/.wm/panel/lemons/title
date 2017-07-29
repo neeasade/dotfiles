@@ -10,14 +10,12 @@
 
 # only show the active window title at any time.
 onlyShowActive=${p_title_only_show_active:-true}
-onlyShowActive=true
 # Maxium window title length
 maxWinNameLen=${maxWinNameLen:-25}
 # The delimiter to separate window sections
 win_delim=${win_delim:-\|}
 # The delimiter to separate the window name from the window in a window section.
 win_id_delim=${win_id_delim:-//}
-
 
 # not setting any settings if $onlyShowActive.
 _meta="$(which meta)"
@@ -51,10 +49,10 @@ declare -A titleMap
 
 doTheThing() {
     meta start
-    active="$(bspc query -N -m $mon -n .focused.active || echo '')"
+    active="$(bspc query -N -n)"
 
     if $onlyShowActive; then
-      input="$(bspc query -N -n || echo '')"
+      input="$(bspc query -N -d $mon:focused -n .focused.active || echo '')"
     else
       input="$(bspc query -N -d $mon:focused -n .window || echo '')"
     fi
@@ -63,16 +61,14 @@ doTheThing() {
         [[ -z "$wid" ]] && continue
 
         # fill in if empty
-        [[ -z "${titleMap[$wid]}" ]] && titleMap[$wid]="$(setLength "$(xtitle $wid)")"
-
-        # force refresh on active, set colors
-        if [[ "$wid" = "$active" ]]; then
-            titleMap[$wid]="$(setLength "$(xtitle $wid)")"
-            meta active
+        if [[ -z "${titleMap[$wid]}" ]] || \
+           [[ "$wid" = "$active" ]]; then
+           titleMap[$wid]="$(setLength "$(xtitle $wid)")"
         fi
 
         # print
-        [ ! -z "${titleMap[$wid]}" ] && echo "${titleMap[$wid]}"
+        [[ "$wid" = "$active" ]] && meta active
+        echo "${titleMap[$wid]}"
         [[ "$wid" = "$active" ]] && meta reset
 
       done < <(echo "$input")

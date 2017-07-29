@@ -10,9 +10,11 @@ echo -e -n "
  \`'        \`'        \` \e[0m
 ==== ==== ==== ==== ===="
 
+# inline if: iif condition true false
 iif() {
-    eval $1 && echo -n "${2:-true}" || echo -n "${3:-false}"
+    eval $1 && echo -n "${2-true}" || echo -n "${3-false}"
 }
+export -f iif
 
 error() {
    local sourcefile=$1
@@ -27,7 +29,6 @@ export -f error
 # being main config point and themes passing into lemons..
 # note: some scripts may rely on variables from here, eg icon
 set -a
-THEME_NAME="${1}"
 . "$HOME/.wm/scripts/theming/defaults"
 . "$HOME/.bspwm_theme"
 $gapped || p_gap=0
@@ -59,11 +60,7 @@ for mon in $(bspc query -M); do
 	tools/lemonade "$conf" "$geom" &
 done
 
-if $gapped; then
-	trap "eval bspc config ${p_position}_padding 0; trap - TERM; kill 0;" INT TERM QUIT
-else
-	trap "eval bspc config ${p_position}_padding $b_border_width; trap - TERM; kill 0;" INT TERM QUIT
-fi
+trap "eval bspc config ${p_position}_padding $(iif $gapped 0 $b_border_width); trap - TERM; kill 0;" INT TERM QUIT
 
 # where are we?
 echo $$ > /tmp/panel-pid

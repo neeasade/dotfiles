@@ -26,10 +26,8 @@ meta() {
         case $1 in
             start) $_meta start;;
             end) $_meta end ;;
-            active)
-                ;;
-            inactive)
-                ;;
+            active) ;;
+            inactive) ;;
             *) ;;
         esac
     fi

@@ -4,25 +4,14 @@
 
 maxWinNameLen=30
 
-# target is picked based on which might be playing.
-mpc | grep -q playing && mpcplaying=true || mpcplaying=false
-mpvc | grep -q playing && mpvcplaying=true || mpvcplaying=false
-
-if ! $mpvcplaying && ! $mpcplaying; then
-  mpvc >/dev/null && target='mpvc' || target='mpc'
-else
-  $mpvcplaying && target='mpvc'
-  $mpcplaying && target='mpc'
-fi
-
-$target | grep -q playing && playing=true || playing=false
-$target | grep -q paused && paused=true || paused=false
+player.sh | grep -q playing && playing=true || playing=false
+player.sh | grep -q paused && paused=true || paused=false
 
 if $playing || $paused; then
-    title="$($target -f "%title% - %artist%" | head -n 1)"
+    title="$(player.sh -f "%title% - %artist%" | head -n 1)"
     # if title is empty, try file and trim from last / if exists.
     if [ "$title" = " - " ]; then
-        title="$($target -f "%file%" | head -n 1 | sed 's/.*\///')"
+        title="$(player.sh -f "%file%" | head -n 1 | sed 's/.*\///')"
 
         # peel some stuff
         title="$(echo "$title" | sed 's/【.*】//')"

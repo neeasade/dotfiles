@@ -2,32 +2,17 @@
 # scrolling mpd text
 # limitation of this is it only works with monospace fonts.
 
-max_length=30
+max_length=20
 
 # target is picked based on which might be playing.
-mpc | grep -q playing && mpcplaying=true || mpcplaying=false
-mpvc | grep -q playing && mpvcplaying=true || mpvcplaying=false
-
-if ! $mpvcplaying && ! $mpcplaying; then
-  mpvc >/dev/null && target='mpvc' || target='mpc'
-else
-  $mpvcplaying && target='mpvc'
-  $mpcplaying && target='mpc'
-fi
-
-$target | grep -q playing && icon_target=pause
-$target | grep -q paused && icon_target=play
+player.sh | grep -q playing && icon_target=pause
+player.sh | grep -q paused && icon_target=play
 
 if $playing || $paused; then
-    title="$($target -f "%title% - %artist%" | head -n 1)"
+    title="$(player.sh -f "%title% - %artist%" | head -n 1)"
     # if title is empty, try file and trim from last / if exists.
     if [ "$title" = " - " ]; then
-        # https://github.com/wildefyr/mpvc/issues/29
-        if [ "$target" = "mpvc" ]; then
-            title="$($target -f "%filename%" | head -n 1 | sed 's/.*\///;')"
-        else
-            title="$($target -f "%file%" | head -n 1 | sed 's/.*\///')"
-        fi
+        title="$(player.sh -f "%file%" | head -n 1 | sed 's/.*\///')"
 
         # peel some stuff
         title="$(echo "$title" | sed 's/【.*】//' | sed 's/\.[^.]*$//')"
@@ -66,5 +51,5 @@ else
         icon $icon_target
         pad "$out"
         sleep 0.2
-    done 
+    done
 fi
