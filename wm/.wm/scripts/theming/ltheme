@@ -12,6 +12,12 @@ PATH="$PATH:."
 set -a
 
 rm $HOME/.bspwm_theme
+
+# inline if: iif condition true false
+iif() {
+    eval $1 && echo -n "${2-true}" || echo -n "${3-false}"
+}
+
 ln -s "$targetTheme" "$HOME/.bspwm_theme"
 
 THEME_NAME="${1}"
@@ -80,6 +86,10 @@ load_weechat() {
 
     # buffers.pl dies on reload
     wee_cmd '/perl unload buffers'
+
+    # needs delay
+    sleep 0.2
+
     wee_cmd '/perl load buffers.pl'
 }
 
@@ -123,14 +133,14 @@ load_xresources() {
 
     # locate a qutebrowser window and send bind to update from Xresources
     # do so by the keybindings associated, then switch back.
-    if pgrep qutebrowser >/dev/null; then
+    if pgrep -f qutebrowser >/dev/null; then
       current_wid=`bspc query -N -n`
-      wid=$(xdotool search --any --pid "$(pgrep qutebrowser)")
       # only send to one
-      wid=$(echo $wid | head -n 1)
+      wid="$(xdotool search --class qutebrowser | head -n 1)"
+
       # pending https://github.com/qutebrowser/qutebrowser/issues/1741
       xdotool windowactivate $wid
-      xdotool key --window $wid  "shift+i"
+      xdotool key --window $wid "shift+i"
       bspc node -f $current_wid
     fi
 }

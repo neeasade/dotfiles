@@ -22,7 +22,7 @@ p_font_icon="FontAwesome-10" # Panel Icon font.
 p_icon_enable=true           # toggle icon script output
 p_gap=4                      # Gaps of panel off screen.
 p_underline=0                # This value is used for both underline and overline
-p_padding=3                  # number of spaces to pad panel information (sections/blocks) with
+p_padding=4                  # number of pixels to pad panel information (sections/blocks) with
 p_line=2 # width of the over/underlines
 p_launch_cmd="$HOME/.wm/panel/lemonade" # The command to launch the panel
 
@@ -37,6 +37,7 @@ p_desktop_show_free=true          # option to show nothing for free desktops.
 p_desktop_mode_toggle=true        # monocle/tiling toggle.
 p_desktop_only_active=false       # only show the active desktop name
 p_title_only_show_active=false    # used by title.
+p_delimiter=""                    # delimiter between lemons
 
 # Panel colors
 p_bg_normal="#ff$background"
