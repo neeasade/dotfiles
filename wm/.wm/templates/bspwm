@@ -6,7 +6,7 @@ set -a
 
 # inline if: iif condition true false
 iif() {
-    eval $1 && echo -n "${2:-true}" || echo -n "${3:-false}"
+    eval $1 && echo -n "${2-true}" || echo -n "${3-false}"
 }
 
 # if none set, keep whatever is open.

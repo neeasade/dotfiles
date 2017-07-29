@@ -35,6 +35,8 @@ qutebrowser.colors.completion.item.selected.bg : #{{p_bg_active}}
 
 qutebrowser.fonts._monospace: '"{{p_font_main}}", Terminus, Monospace'
 qutebrowser.fonts.tabbar : '{{p_font_main_size}}pt ${_monospace}'
+qutebrowser.fonts.statusbar : '{{p_font_main_size}}pt ${_monospace}'
+qutebrowser.fonts.completion : '{{st_font_size}}pt ${_monospace}'
 
 
 ! colors (appended in ltheme script)
