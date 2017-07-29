@@ -1,12 +1,18 @@
 #!/bin/sh
 #
 
-target=current
 theme_dir="$HOME/.wm/themes"
 
 die() {
   echo $*
   exit 1
+}
+
+# load the current theme values (meant to be eval'd)
+get() {
+    echo THEME_NAME="$(basename $(readlink "$HOME/.bspwm_theme"))"
+    echo . "$HOME/.wm/scripts/theming/defaults"
+    echo . "$HOME/.bspwm_theme"
 }
 
 # load existing theme into target editing
@@ -16,19 +22,11 @@ load() {
   [ -z "$name" ] && die load needs a name.
   [ ! -f "$theme_dir/$name" ] && die $* not found
 
-  cp "$theme_dir/$name" "$theme_dir/$target"
-  cp "$theme_dir/colors/$name" "$theme_dir/colors/$target"
-
-  "$HOME/.wm/scripts/theming/ltheme" "$target" $*
+  "$HOME/.wm/scripts/theming/ltheme" "$name" $*
 }
 
 edit() {
   $EDITOR "$theme_dir/$target"
-}
-
-save() {
-  cp "$theme_dir/$target" "$theme_dir/$1"
-  cp "$theme_dir/colors/$target" "$theme_dir/colors/$1"
 }
 
 new() {

@@ -29,8 +29,8 @@ export -f error
 # being main config point and themes passing into lemons..
 # note: some scripts may rely on variables from here, eg icon
 set -a
-. "$HOME/.wm/scripts/theming/defaults"
-. "$HOME/.bspwm_theme"
+eval "$(theme get)"
+
 $gapped || p_gap=0
 
 
@@ -40,7 +40,7 @@ top=$(iif "[ "$p_position" = "top" ]")
 # only need this for p_gap and b_border_width values.
 # relevance
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
-PATH=$PATH:`pwd`/tools
+export PATH=$PATH:`pwd`/tools
 
 # mon dim
 dim() {
@@ -56,6 +56,7 @@ for mon in $(bspc query -M); do
 	i=$(($i+1))
 	conf=`ls juicers | sed -n "$i p"`
 	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
+
 	geom="$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
 	tools/lemonade "$conf" "$geom" &
 done

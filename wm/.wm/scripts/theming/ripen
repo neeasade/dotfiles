@@ -19,19 +19,20 @@ vanilla() {
 
 # step will be per section, total will be largest section.
 separateStep() {
-  step_type="separate"
   IFS=\|
   total=0
+  leftTotal=""
   for section in $barInfo; do
     temptotal=$(echo $section | tr ':' ' '| wc -w)
     [ $temptotal -gt $total ] && total=$temptotal
+    [ -z "$leftTotal" ] && leftTotal=$temptotal
   done
 
   IFS=\|
   i=0
   for section in $barInfo; do
     # reverse count on left
-    [ "$i" = "0" ] && j=$((total-1)) || j=0
+    [ "$i" = "0" ] && j=$((leftTotal-1)) || j=0
 
     IFS=':'
     for lemon in $section; do
@@ -49,7 +50,6 @@ separateStep() {
 
 # step will be across all sections, total will be number of lemons
 togetherStep() {
-  step_type="together"
   total=$(echo $barInfo | tr ':|' ' '| wc -w)
 
   # set step

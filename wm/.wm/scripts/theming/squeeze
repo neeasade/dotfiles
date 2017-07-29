@@ -45,6 +45,10 @@ IFS=
 
 wait
 
+# debug reference
+echo \; step=$step
+echo \; align=$lemon_target_align
+
 # after that, add any overrides from theme.
 eval echo "\$p_${lemon_target}_theme"
 echo ""

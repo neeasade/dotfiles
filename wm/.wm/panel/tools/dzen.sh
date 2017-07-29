@@ -111,21 +111,24 @@ dzen_cal() {
 dzen_theme() {
     content+=("+")
     for theme in `ls $HOME/.wm/themes | grep -v base | sed s/.bspwm_theme// `; do
-        content+=("^ca(1, nohup ltheme $theme & pkill dzen) $theme ^ca()")
+        content+=("^ca(1, nohup theme load $theme & pkill dzen) $theme ^ca()")
     done
 }
 
 dzen_github() {
     content+=("Notifications")
     IFS=$'\n'
-    for input in $(jq '.[].subject.title, .[].subject.url' < "/tmp/gh_notify" | tr '\n' ','); do
-	      title="$(echo $input | cut -d ',' -f 1)"
-	      url="$(echo $input | cut -d ',' -f 2)"
+
+    for input in $( jq -r '.[].subject | [.title, .url] |join("^")' < "/tmp/gh_notify"); do
+        # breaks if issue title contains a ^
+
+	      title="$(echo $input | cut -d '^' -f 1)"
+	      url="$(echo $input | cut -d '^' -f 2)"
         url="$(echo $url | tr -d \")"
 
-        link="$(curl -H "Authorization: token $(pass github/token)" $url | jq '.html_url')"
 
-        content+=("^ca(1, nohup $BROWSER $link & pkill dzen) $title ^ca()")
+
+        content+=("^ca(1, github_nav \"$url\" & pkill dzen) $title ^ca()")
     done
     IFS=
 }
@@ -133,9 +136,6 @@ dzen_github() {
 # This script is ment to be called with the desired function suffix.
 # eg: ./dzen.sh mpd, to call dzen_mpd()
 [ -z $1 ] && exit 1
-
-# Get panel, font, colors values.
-. ~/.bspwm_theme
 
 # These will get filled by the function called.
 content=()

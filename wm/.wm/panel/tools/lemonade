@@ -234,9 +234,9 @@ done
         [scroll_up]=4)
     for name in $juicedLemons; do
         for event in ${!events[@]}; do
-            if [[ ! -z $(eval "echo \${${name}_${event}}") ]]; then
+            if [[ ! -z $(get_conf ${name}_${event}) ]]; then
                 uid="$(stack ${name})${name}"
-                handle["${uid}"]="$(eval "echo \${${name}_${event}}")"
+                handle["${uid}"]="$(get_conf ${name}_${event})"
                 area["${name}_p"]+="%{A${events[$event]}:${uid}:}"
                 area["${name}_s"]+="%{A}"
             else
@@ -271,6 +271,7 @@ done
                                   "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
                                   "$output" \
                                   "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
+                                    "$(get_conf area[${name}_s])" \
                                   "%{F-}%{B-}" \
                                   "%{-o}%{-uU-}")"
                             fi
@@ -307,8 +308,8 @@ done
                                     "%{O${bar_padding}}" \
                                     "${output}" \
                                     "%{O${bar_padding}}" \
-                                    "%{F-}%{B-}" \
                                     "$(get_conf area[${name}_s])" \
+                                    "%{F-}%{B-}" \
                                     "%{-o}%{-uU-}")"
 
                                 if [[ ! -z "${bar_message}" ]]; then

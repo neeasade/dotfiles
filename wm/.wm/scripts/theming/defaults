@@ -62,9 +62,13 @@ p_updates_reload=600
 p_dropdown_reload="echo oneshot"
 p_themeSwitch_reload="echo oneshot"
 p_dynamicmpd_reload=0
+p_github_reload=120
 
 # default click actions for panel sections
 p_themeSwitch_mouse_left="dzen.sh theme"
+p_dropdown_mouse_left="dzen.sh menu"
+p_github_mouse_left="dzen.sh github"
+p_clock_mouse_left="dzen.sh cal"
 
 emacs_theme="spacemacs-dark"
 emacs_powerline_scale="1.6"

@@ -3,7 +3,6 @@
 # Check 'targets' variable at end for all posibilities.
 
 targetTheme="$HOME/.wm/themes/${1}"
-[ -f "$targetTheme" ] || exit 1
 
 # relative:
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
@@ -12,17 +11,14 @@ PATH="$PATH:."
 set -a
 
 rm $HOME/.bspwm_theme
+ln -s "$targetTheme" "$HOME/.bspwm_theme"
+eval "$(theme get)"
 
 # inline if: iif condition true false
 iif() {
     eval $1 && echo -n "${2-true}" || echo -n "${3-false}"
 }
 
-ln -s "$targetTheme" "$HOME/.bspwm_theme"
-
-THEME_NAME="${1}"
-. "defaults"
-. "$targetTheme"
 . "./mustache.sh"
 
 # adjust pIcon to theme (rel for panel, acyl, qutebrowser.)

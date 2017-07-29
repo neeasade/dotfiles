@@ -1,0 +1,4 @@
+#!/bin/sh
+# couldn't fit this inside dzen nicely.
+link="$(curl -H "Authorization: token $(pass github/token)" $1 | jq -r '.html_url')"
+nohup $BROWSER "$link" &
