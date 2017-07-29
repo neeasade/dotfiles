@@ -45,6 +45,11 @@ mkdir -p $lemonadedir $lemonadedir/logs $lemonadedir/lemons
 [ -f "$lemonadedir/logs/$ident.log" ] && rm "$lemonadedir/logs/$ident.log"
 exec 3<> "$lemonadedir/logs/$ident.log"
 
+# helper
+get_conf() {
+    eval "echo \"\${${*}}\""
+}
+
 # Create the scripts directory.
 lemons=$lemonadedir/lemons
 juicer=$lemonadedir/juicers/$1
@@ -143,7 +148,7 @@ juicedLemons="$(sed 's/:/ /g;s/|/ /g;' <<< $bar_format)"
         [clickables]=10)
 
     for section in "${!bar[@]}"; do
-        if [[ $(eval "echo \${#bar_${section}}") -eq 0 ]]; then
+        if [[ $(get_conf \#bar_${section}) -eq 0 ]]; then
             echo "No value for 'bar-$section' -> using ${bar[${section}]}"
             eval "bar_${section}=${bar[${section}]}"
         fi
@@ -166,7 +171,7 @@ juicedLemons="$(sed 's/:/ /g;s/|/ /g;' <<< $bar_format)"
         [reload]=5)
     for name in $juicedLemons; do
         for section in "${!choices[@]}"; do
-            if [[ $(eval "echo \${#${name}_${section}}") -eq 0 ]]; then
+            if [[ $(get_conf \#${name}_${section}) -eq 0 ]]; then
                 echo "No value for '${name}-$section' -> using ${choices[${section}]}"
                 eval "${name}_${section}=${choices[${section}]}"
             fi
@@ -203,19 +208,19 @@ done
 {
     declare -A line
     for name in $juicedLemons; do
-        if [[ $(eval "echo \${#${name}_line}") -eq 0 ]]; then
+        if [[ $(get_conf \#${name}_line) -eq 0 ]]; then
             echo "No value for '${name}-line' -> using ${choices[fg]}"
             eval "${name}_line=${choices[fg]}"
         fi
         line["${name}"]="%{"
         for section in underline overline; do
-            if [[ $(eval "echo \${${name}_${section}}") = true ]]; then
+            if [[ $(get_conf ${name}_${section}) = true ]]; then
                 line["${name}"]+="+${section:0:1}"
             else
                 echo "No value for '${name}-${section}' -> using false"
             fi
         done
-        line["${name}"]+="U$(eval "echo \${${name}_line}")}"
+        line["${name}"]+="U$(get_conf ${name}_line)}"
     done
 } 2>&2
 
@@ -246,15 +251,10 @@ done
     [[ -e "$process" ]] && rm "$process"
     mkfifo "$process"
 
-    padding=
-    for i in $(seq $bar_padding); do
-        padding="$padding "
-    done
-
     for name in $juicedLemons; do
         export juicedLemon="$name";
-        if [[ ! -z $(eval "echo \${${name}_reload"}) ]]; then
-            if [[ ! -z $(tr -d [:digit:]. <<< $(eval "echo \${${name}_reload"})) ]]; then
+        if [[ ! -z $(get_conf ${name}_reload) ]]; then
+            if [[ ! -z $(tr -d [:digit:]. <<< $(get_conf ${name}_reload)) ]]; then
                 hold=false;
                 bar_message=
 
@@ -264,29 +264,29 @@ done
                         else
                             if [[ ! -z "$output" ]]; then
                               bar_message="${bar_message}$(printf "%s" \
-                                  "$(eval "echo \${area[${name}_p]"})" \
-                                  "$(eval "echo \${line[${name}]"})" \
-                                  "%{F$(eval "echo \${${name}_fg}")}" \
-                                  "%{B$(eval "echo \${${name}_bg"})}" \
-                                  "$padding" \
+                                  "$(get_conf area[${name}_p])" \
+                                  "$(get_conf line[${name}])" \
+                                  "%{F$(get_conf ${name}_fg)}" \
+                                  "%{B$(get_conf ${name}_bg)}" \
+                                  "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
                                   "$output" \
-                                  "$padding" \
+                                  "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
                                   "%{F-}%{B-}" \
                                   "%{-o}%{-uU-}")"
-
-                              # if $hold; then
-                              #     bar_message="${bar_message}"
-                              # fi
                             fi
                         fi
 
                         if ! $hold; then
 
+                          if [[ ! -z "${bar_message}" ]]; then
+                             bar_message="$(printf "%s" \
+                              "$(get_conf ${name}_prefix)" \
+                              "${bar_message}" \
+                              "$(get_conf ${name}_suffix)")"
+                          fi
+
                           printf "%s" \
-                                 "${name}@" \
-                                 "$(eval "echo \"\${${name}_prefix"}\")" \
-                                 "${bar_message}" \
-                                 "$(eval "echo \"\${${name}_suffix"}\")" \
+                                 "${name}@${bar_message}" \
                                  $'\n' > "$process"
 
                           bar_message=
@@ -300,30 +300,32 @@ done
                                 eval "$input"
                             else
                                 bar_message="$(printf "%s" \
-                                    "$(eval "echo \${area[${name}_p]"})" \
-                                    "$(eval "echo \${line[${name}]"})" \
-                                    "%{F$(eval "echo \${${name}_fg}")}" \
-                                    "%{B$(eval "echo \${${name}_bg"})}" \
-                                    "${padding}" \
+                                    "$(get_conf area[${name}_p])" \
+                                    "$(get_conf line[${name}])" \
+                                    "%{F$(get_conf ${name}_fg)}" \
+                                    "%{B$(get_conf ${name}_bg)}" \
+                                    "%{O${bar_padding}}" \
                                     "${output}" \
-                                    "${padding}" \
+                                    "%{O${bar_padding}}" \
                                     "%{F-}%{B-}" \
-                                    "$(eval "echo \${area[${name}_s]"})" \
+                                    "$(get_conf area[${name}_s])" \
                                     "%{-o}%{-uU-}")"
 
-                                #bar_message="${name}@${bar_message}"
+                                if [[ ! -z "${bar_message}" ]]; then
+                                    bar_message="$(printf "%s" \
+                                        "$(get_conf ${name}_prefix)" \
+                                        "${bar_message}" \
+                                        "$(get_conf ${name}_suffix)")"
+                                fi
 
                                 printf "%s" \
-                                       "${name}@" \
-                                       "$(eval "echo \"\${${name}_prefix"}\")" \
-                                       "${bar_message}" \
-                                       "$(eval "echo \"\${${name}_suffix"}\")" \
-                                       $'\n'
+                                       "${name}@${bar_message}" \
+                                       $'\n' > "$process"
                             fi
 
                         done < <(eval "$lemons/$name")
 
-                        sleep $(eval "echo \${${name}_reload"})
+                        sleep $(get_conf ${name}_reload)
                     done > "$process" &
                 fi
             fi

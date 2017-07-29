@@ -31,7 +31,7 @@ case $1 in
     world)    icon='ff0a e1a0 f4d3';;
     window)   icon='f2d0';;
     linux)    icon='f17c';;
-    github)    icon='f09b';;
+    github)   icon='f09b';;
     *) echo "icon type not found."
        exit 1;;
 esac
@@ -44,8 +44,7 @@ case $iconfont in
     awesome) index=1;;
     siji)    index=2;;
     ionic)   index=3;;
-    *) echo "icon font not found: $iconfont"
-       exit 1;;
+    *) exit 1;;
 esac
 
 env printf "\u$(echo $icon | cut -d ' ' -f$index) "

@@ -11,4 +11,4 @@ else
   $mpcplaying && target='mpc'
 fi
 
-$target $*
+$target "$@"
