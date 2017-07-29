@@ -1,3 +1,5 @@
+# -*- mode: sh -*-
+
 # if we're in st TERM, assume we're in xst and set to esc code, else default.
 # dirty, but AFAIK there is no way to detect if esc code yields nothing visible from
 # the shell (as it will see the escape code only either way).

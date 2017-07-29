@@ -1,8 +1,9 @@
+# -*- mode: sh -*-
+
 PATH=$PATH:$HOME/bin
 PATH=$PATH:$HOME/.gem/bin
 PATH=$PATH:$HOME/.wm/scripts/interact
 PATH=$PATH:$HOME/.wm/scripts/visual
-PATH=$PATH:$HOME/git_temp/opt
 
 export PAGER="less"
 export BROWSER=qutebrowser

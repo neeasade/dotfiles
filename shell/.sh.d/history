@@ -1,3 +1,5 @@
+# -*- mode: sh -*-
+
 cur_shell=$(ps | grep $$ |  sed 's/^.* //')
 history_length=10000
 history_file="$HOME/.${cur_shell}_history"
