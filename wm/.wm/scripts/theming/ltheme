@@ -74,6 +74,7 @@ load_weechat() {
     # weechat opens a fifo in this location that is on/enabled by default.
     wee_cmd() {
         echo "*$*" > "$HOME/.weechat/weechat_fifo"
+        sleep 0.5
     }
 
     margs weechat .weechat/weechat.conf
@@ -86,9 +87,6 @@ load_weechat() {
 
     # buffers.pl dies on reload
     wee_cmd '/perl unload buffers'
-
-    # needs delay
-    sleep 0.2
 
     wee_cmd '/perl load buffers.pl'
 }
@@ -134,31 +132,48 @@ load_xresources() {
     # locate a qutebrowser window and send bind to update from Xresources
     # do so by the keybindings associated, then switch back.
     if pgrep -f qutebrowser >/dev/null; then
-      current_wid=`bspc query -N -n`
-      # only send to one
-      wid="$(xdotool search --class qutebrowser | head -n 1)"
+        current_wid=`bspc query -N -n`
+        # only send to one
+        wid="$(xdotool search --class qutebrowser | head -n 1)"
 
-      # pending https://github.com/qutebrowser/qutebrowser/issues/1741
-      xdotool windowactivate $wid
-      xdotool key --window $wid "shift+i"
-      bspc node -f $current_wid
+        # pending https://github.com/qutebrowser/qutebrowser/issues/1741
+        xdotool windowactivate $wid
+        xdotool key --window $wid "shift+i"
+        bspc node -f $current_wid
     fi
 }
 
 # bspwm, panel
 load_bspwm() {
     if [ "${p_launch_cmd##*/}" = "lemonade" ]; then
-        if ! margs juicer .wm/panel/juicers/juicer; then
-            # note all lemons, generate them.
-            lemons=$(echo $p_format | tr ':|' ' ');
+        rm $HOME/.wm/panel/juicers/*
 
-            . ripen
-            IFS=' '
-            parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/.wm/panel/juicers/juicer
-            IFS=
+        p_format_1="$p_format"
+        juice_index=0
+        IFS=$'\n'
+        for mon in $(bspc query -M); do
+            juice_index=$((juice_index+1))
 
-            [ ! -z "$cachefile" ] && cp "$HOME/.wm/panel/juicers/juicer" "$cachefile"
-        fi
+            (
+            conf="$(eval echo "\${p_format_${juice_index}}")"
+            [ -z "$conf" ] && conf="$p_format"
+            p_format="$conf"
+
+            juicer_target=".wm/panel/juicers/juicer$juice_index"
+
+            if ! margs juicer "$juicer_target"; then
+                # note all lemons, generate them.
+                lemons=$(echo $p_format | tr ':|' ' ');
+
+                . ripen
+                IFS=' '
+                parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/$juicer_target
+                IFS=
+
+                [ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
+            fi
+            ) &
+        done
     fi
 
     bspwmrc=".config/bspwm/bspwmrc"
@@ -167,6 +182,7 @@ load_bspwm() {
     margs panelt "$panelt"
     chmod +x "$HOME/$bspwmrc" "$HOME/$panelt"
 
+    wait
     "$HOME/$bspwmrc"
 }
 
@@ -177,7 +193,7 @@ load_vim() {
 
     #VIMS=`vim --serverlist`
     #for vim in $VIMS; do
-        #vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
+    #vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
     #done
 }
 
@@ -206,7 +222,7 @@ load_emacs() {
     # no bold:
     mx_eval "mapc (lambda (face) (set-face-attribute face nil :weight 'normal :underline nil :inherit nil :slant 'normal)) (face-list)"
     mx_eval "set-face-bold-p 'bold nil"
-  }
+}
 
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
