@@ -45,6 +45,7 @@ if [  "$title" = "Stopped" ]; then
     icon music
     echo Stopped
 else
+    [ -z "$title" ] && exit
     echo "$title" | skroll -r -n $((max_length-1)) -d 0 | head -n -1 | \
     while IFS='\n' read -r out; do
         icon music
