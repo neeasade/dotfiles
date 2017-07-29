@@ -21,7 +21,6 @@ p_font_main="Droid Sans-8"   # Panel main font.
 p_font_icon="FontAwesome-10" # Panel Icon font.
 p_icon_enable=true           # toggle icon script output
 p_gap=4                      # Gaps of panel off screen.
-p_underline=0                # This value is used for both underline and overline
 p_padding=4                  # number of pixels to pad panel information (sections/blocks) with
 p_line=2 # width of the over/underlines
 p_launch_cmd="$HOME/.wm/panel/lemonade" # The command to launch the panel

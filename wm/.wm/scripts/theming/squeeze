@@ -33,7 +33,7 @@ done
 
 
 # things that aren't colors may be provided by p_{lemon_target}_{option}
-options="reload mouse_left mouse_right mouse_middle scroll_up scroll_down overline underline"
+options="reload mouse_left mouse_right mouse_middle scroll_up scroll_down overline underline activeoverline activeunderline"
 
 IFS=' '
 for option in $options; do
