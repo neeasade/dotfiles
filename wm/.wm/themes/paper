@@ -19,7 +19,9 @@ theme_section_bg="$(colort -10 $p_bg_normal)"
 p_bg_normal="#ff$b_active_border_color"
 p_fg_active=$p_fg_normal
 
-p_format="dropdown:desktop|title|dynamicmpd:volume:weather:clock"
+p_format="dropdown:desktop|title|clock"
+p_format_2="desktop|title|dynamicmpd:volume:clock"
+p_format_3="desktop|title|weather"
 
 background=$(colort -3 -t $background)
 
@@ -50,7 +52,11 @@ maxWinNameLen=30
 GTK_FONT="Roboto Mono 10"
 
 even_section() {
-    iif "[ $((step%2)) -eq 0 ]"
+    iif "[ $((step%2)) -eq 0 ]" false true
+}
+
+stepSetup() {
+    separateStep
 }
 
 fg() {
@@ -59,13 +65,16 @@ fg() {
     iif $(even_section) "$input" "$(colort 60 $input)"
 }
 
+activebg() {
+    bg
+}
+
 bg() {
-  iif $(even_section) "$(activebg)" "$theme_section_bg"
+    iif $(even_section) "$p_bg_active" "$theme_section_bg"
 }
 
 suffix() {
   border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
-  #border="%%{O2}"
   iif $(even_section) "" "$border"
 }
 
