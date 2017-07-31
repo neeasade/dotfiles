@@ -66,8 +66,10 @@ super + {o,e,Return}
 
 # launch a program, ensure GTK3 theme.
 super + {_,shift,alt} + space
-    export GTK_THEME="`cat $HOME/.themes/ACTIVE_THEME 2>/dev/null`"; \
-    eval dmenu_{run,pass,slop} $(dmenu_options)
+    action={run,pass,slop}; \
+    eval "$(theme get | head -n 1)"; \
+    export GTK_THEME="$THEME_NAME"; \
+    eval dmenu_$action $(dmenu_options $action)
 
 XF86Audio{Prev,Next,Play}
      mpc -q {prev,next,toggle}
