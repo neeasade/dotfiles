@@ -5,7 +5,17 @@
 # the prefix used to signal upper panel:
 prefix=meta
 
+
+
 case "$*" in
+  mouse_middle*|scroll_down*|mouse_right*|mouse_left*|scroll_up*)
+    event="$1"
+    shift
+    action="$*"
+
+    echo ${prefix}${juicedLemon}_${event}=\"${action}\"
+    echo ${prefix}generate_mouse_events ${juicedLemon}
+    ;;
   invert)
     eval echo ${prefix}${juicedLemon}_bg="\$${juicedLemon}_fg"
     eval echo ${prefix}${juicedLemon}_fg="\$${juicedLemon}_bg"

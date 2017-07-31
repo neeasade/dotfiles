@@ -86,27 +86,19 @@ for section in parser:
 #   -- Larry Wall
 
 process=/tmp/lemonade-process-$ident
-unique=/tmp/lemonade-stack-$ident
 
 # Always clean up when you are done.
 trap "error; rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
 
 # Retrieve a value from the stack, the stack is a collection of all scripts with
 # unique sets of characters that are used for event handles.
-stack() {
-    {
-    IFS=":" read -a char < <(grep -e "$1" < <(cat $unique))
-    sed -i "/$1:/d" $unique
-    echo "${char[0]}:${char[1]:1:$((${#char[1]} + 1))}" >> $unique
-    echo ${char[1]:0:1}
-    } 2>&3
-}
 
 # Catch the strings send to stdout and execute the matching command.
 handle() {
     {
     while read -r line; do
-        echo "${handle[$line]} &" &
+        echo $line
+        sh -c "eval $line" &
     done
     } 2>&3
 }
@@ -149,13 +141,9 @@ juicedLemons="$(sed 's/:/ /g;s/|/ /g;' <<< $bar_format)"
 
     for section in "${!bar[@]}"; do
         if [[ $(get_conf \#bar_${section}) -eq 0 ]]; then
-            echo "No value for 'bar-$section' -> using ${bar[${section}]}"
+            #echo "No value for 'bar-$section' -> using ${bar[${section}]}"
             eval "bar_${section}=${bar[${section}]}"
         fi
-    done
-
-    for section in $juicedLemons; do
-        printf "%s" "${section}:" {A..E} $'\n' >> $unique
     done
 } 2>&3
 
@@ -172,7 +160,7 @@ juicedLemons="$(sed 's/:/ /g;s/|/ /g;' <<< $bar_format)"
     for name in $juicedLemons; do
         for section in "${!choices[@]}"; do
             if [[ $(get_conf \#${name}_${section}) -eq 0 ]]; then
-                echo "No value for '${name}-$section' -> using ${choices[${section}]}"
+                #echo "No value for '${name}-$section' -> using ${choices[${section}]}"
                 eval "${name}_${section}=${choices[${section}]}"
             fi
         done
@@ -209,7 +197,7 @@ done
     declare -A line
     for name in $juicedLemons; do
         if [[ $(get_conf \#${name}_line) -eq 0 ]]; then
-            echo "No value for '${name}-line' -> using ${choices[fg]}"
+            #echo "No value for '${name}-line' -> using ${choices[fg]}"
             eval "${name}_line=${choices[fg]}"
         fi
         line["${name}"]="%{"
@@ -224,27 +212,28 @@ done
     done
 } 2>&2
 
+declare -A area events=(
+    [mouse_middle]=2
+    [scroll_down]=5
+    [mouse_right]=3
+    [mouse_left]=1
+    [scroll_up]=4)
+
 # Create event handles and add them in the area.
-{
-    declare -A area handle events=(
-        [mouse_middle]=2
-        [scroll_down]=5
-        [mouse_right]=3
-        [mouse_left]=1
-        [scroll_up]=4)
-    for name in $juicedLemons; do
+generate_mouse_events() {
+    for name in ${1:-$juicedLemons}; do
+        area["${name}_p"]=""
+        area["${name}_s"]=""
         for event in ${!events[@]}; do
-            if [[ ! -z $(get_conf ${name}_${event}) ]]; then
-                uid="$(stack ${name})${name}"
-                handle["${uid}"]="$(get_conf ${name}_${event})"
-                area["${name}_p"]+="%{A${events[$event]}:${uid}:}"
-                area["${name}_s"]+="%{A}"
-            else
-                echo "No events specified for '${name}-${event/_/-}' -> using none."
+            action="$(get_conf ${name}_${event})"
+            if [[ ! -z "$action" ]]; then
+              area["${name}_p"]+="%{A${events[$event]}:\"${action}\":}"
+              area["${name}_s"]+="%{A}"
             fi
         done
     done
-} 2>&3
+}
+generate_mouse_events
 
 # Parse our previously collected elements to a full string.
 {
@@ -263,6 +252,7 @@ done
                             eval "${output:4}"
                         else
                             if [[ ! -z "$output" ]]; then
+                              get_conf area[${name}_p]
                               bar_message="${bar_message}$(printf "%s" \
                                   "$(get_conf area[${name}_p])" \
                                   "$(get_conf line[${name}])" \
@@ -342,6 +332,6 @@ cat "$process" | format | eval lemonbar \
     -a $bar_clickables \
     -o $bar_offset \
     -n "$bar_class" \
-    -g $geometry -F "\\$bar_fg" -B "\\$bar_bg" | handle | sh
+    -g $geometry -F "\\$bar_fg" -B "\\$bar_bg" | handle
 
 wait
