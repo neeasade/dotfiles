@@ -1,5 +1,4 @@
 #!/bin/sh
-#
 
 theme_dir="$HOME/.wm/themes"
 
@@ -10,9 +9,10 @@ die() {
 
 # load the current theme values (meant to be eval'd)
 get() {
-    echo THEME_NAME=\"$(basename "$(readlink "$HOME/.bspwm_theme")")\"
+    echo unset bg fg line prefix suffix activebg activefg activeline
+    echo THEME_NAME=\"$(basename "$(readlink "$HOME/.wm_theme")")\"
     echo . "$HOME/.wm/scripts/theming/defaults"
-    echo . "$HOME/.bspwm_theme"
+    echo . "$HOME/.wm_theme"
 }
 
 # load existing theme into target editing
@@ -22,7 +22,10 @@ load() {
   [ -z "$name" ] && die load needs a name.
   [ ! -f "$theme_dir/$name" ] && die $name not found
 
-  "$HOME/.wm/scripts/theming/ltheme" "$name" $*
+  rm $HOME/.wm_theme
+  ln -s "$targetTheme" "$HOME/.wm_theme"
+
+  "$HOME/.wm/scripts/theming/ltheme" $*
 }
 
 edit() {
@@ -32,7 +35,8 @@ edit() {
 new() {
     name="$*"
     [ -z "$name" ] && die new needs a name.
-    cp "$theme_dir/colors/default" "$theme_dir/colors/$name"
+    eval "$(theme get)"
+    cp "$theme_dir/colors/THEME_NAME" "$theme_dir/colors/$name"
     echo "#/bin/sh" > "$theme_dir/$name"
     ltheme "$name"
     edit "$name"

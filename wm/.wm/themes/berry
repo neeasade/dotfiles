@@ -1,9 +1,8 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # berry theme
 
-# theme
-VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/berry.jpg"
+emacs_theme=base16-atelier-forest
 
 # bspwm
 b_border_width=4
@@ -21,24 +20,19 @@ p_padding=2
 p_window_class="noshadow"
 p_offset=-1
 
-onlyShowActive=true
+p_title_only_show_active=true
 
-DO="$(echo -n -e '\uf004')"
-DF="$(echo -n -e '\uf08a')"
+p_desktop_display_format=separate
+p_desktop_occupied_label="$(echo -n -e '\uf004')"
+p_desktop_empty_label="$(echo -n -e '\uf08a')"
 
-pLeftDelimiter="   "
-pRightDelimiter="   "
-pCenterDelimiter="   "
-pLeftAppend="   "
-pRightAppend="   "
-pCenterAppendLeft="   "
-pCenterAppendRight="   "
+p_delimiter="   "
 
-barInfo="dropdown:mpd:title|desktop|themeSwitch:volume:updates:weather:clock" # Default options/items to include in info section of panel.
+p_format="dropdown:mpd:title|desktop|themeSwitch:volume:updates:weather:clock"
 
 # colors
 #pBGInactiveTab="#99`echo "$pBG" | cut -c4-`"
-pBG="#00`echo "$pBG" | cut -c4-`"
+p_bg_normal="#00$(colort -t $p_bg_normal)"
 
 # other
 GTK_FONT="Droid Sans 10"

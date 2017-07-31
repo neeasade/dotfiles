@@ -158,15 +158,7 @@ let &t_EI = "\<Esc>[2 q"
 
 " Colors
 " set background=dark
-
-if empty(glob('~/.bspwm_theme'))
-    colorscheme zenburn
-else
-    let vim_colors=system("cat ~/.bspwm_theme | grep VIM_COLORS | cut -c 12-")
-    "execute 'colorscheme ' zenburn
-    colorscheme zenburn
-endif
-
+colorscheme default
 set encoding=utf-8
 
 " General UI Options

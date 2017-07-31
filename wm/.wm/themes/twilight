@@ -10,7 +10,7 @@ emacs_theme="base16-twilight"
 # bspwm
 b_border_width=6
 b_window_gap=16
-b_normal_border_color="#2e2e2e"
+b_normal_border_color="2e2e2e"
 
 # panel
 p_height=32
@@ -18,11 +18,12 @@ p_gap=0
 p_line=2
 p_font_main="Droid Sans-10"
 p_font_icon="FontAwesome-10"
+p_padding=12
 
-desktopDisplay=name
-showFreeDesktops=false
-onlyShowActive=true
-onlyShowActiveDesktop=true
+p_desktop_show_free=false          # option to show nothing for free desktops.
+p_desktop_display_name=name
+p_desktop_only_active=false       # only show the active desktop name
+p_title_only_show_active=true    # used by title.
 
 p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock" # Default options/items to include in info section of panel.
 

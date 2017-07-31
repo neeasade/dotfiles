@@ -29,39 +29,34 @@ p_title_only_show_active=false
 p_bg_inactive=$p_bg_normal
 p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock"
 
-
-
 for item in dropdown themeSwitch desktop title mpd volume updates weather clock;
 do
     eval p_${item}_underline=true
     eval p_${item}_overline=true
 done
 
-border_color="$(colort -50 -t "$p_fg_normal")"
 
-bg() {
+#bg() {
     #colort 30 $p_bg_normal
-    step=$((step+1))
-    eval echo \\\#\$color${step}
-}
+    #step=$((step+1))
+    #eval echo \\\#\$color${step}
+#}
+
+border_color="$(colort -50 -t "$p_fg_normal")"
+border_width=1
 
 line() {
-    colort -i $(bg)
-    #echo \#ff$border_color
+    #colort -i $(bg)
+    echo \#ff$border_color
 }
 
-border_width=6
-p_underline=$border_width
+p_line=$border_width
 suffix() {
-  border_color="$(colort -i -t $(bg))"
-  border_color="$(maxchroma $border_color)"
-  border_color="$(colort -t $border_color)"
+  #border_color="$(colort -t $(bg))"
   echo "%%{B#ff${border_color}}%%{O${border_width}}%%{B-}"
 }
 
 prefix() {
-  border_color="$(colort -i -t $(bg))"
-  border_color="$(maxchroma $border_color)"
-  border_color="$(colort -t $border_color)"
+  #border_color="$(colort -t $(bg))"
   echo "%%{B#ff${border_color}}%%{O${border_width}}%%{B-}"
 }

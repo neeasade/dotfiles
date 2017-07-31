@@ -15,7 +15,6 @@ b_bspwmrc_extend="pulse.sh &"
 # panel
 p_height=20
 p_font_main="tewi-8"
-p_font_icon="wuncon siji-8"
 p_font_icon="Siji-8"
 p_gap=4
 p_underline=0

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Load themes for programs
+# Load themes for programs from current theme
 # Check 'targets' variable at end for all posibilities.
 
 targetTheme="$HOME/.wm/themes/${1}"
@@ -10,8 +10,6 @@ PATH="$PATH:."
 
 set -a
 
-rm $HOME/.bspwm_theme
-ln -s "$targetTheme" "$HOME/.bspwm_theme"
 eval "$(theme get)"
 
 # inline if: iif condition true false

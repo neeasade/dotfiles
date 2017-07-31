@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
 
 # theme
-VIM_COLORS=PaperColor
 BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
-emacs_theme="base16-grayscale-light"
+emacs_theme="base16-grayscale-dark"
 emacs_powerline_scale="1.2"
 
 # bspwm
 b_border_width=4
 b_window_gap=20
-b_normal_border_color=$(colort -20 -t $p_bg_normal)
-b_active_border_color=$(colort -50 -t $p_bg_normal)
-b_focused_border_color=$(colort -80 -t $p_bg_normal)
+b_normal_border_color=$(colort 20 -t $p_bg_normal)
+b_active_border_color=$(colort 50 -t $p_bg_normal)
+b_focused_border_color=$(colort 80 -t $p_bg_normal)
 
 
 #panel
 p_bg_active="#ff$b_focused_border_color"
 
-theme_section_bg="$(colort -10 $p_bg_normal)"
+theme_section_bg="$(colort +10 $p_bg_normal)"
 p_bg_normal="#ff$b_active_border_color"
 p_fg_active=$p_fg_normal
 
@@ -25,7 +24,7 @@ p_format="dropdown:desktop|title|clock"
 p_format_2="desktop:github:themeSwitch|title|dynamicmpd:volume:clock"
 p_format_3="desktop|title|weather"
 
-background="$(colort -3 -t $background)"
+background="$(colort 3 -t $background)"
 
 p_height=24
 p_gap=0
@@ -42,9 +41,13 @@ d_font="Roboto Mono 10"
 p_desktop_occupied_label="$(echo -n -e '\uf111')"
 p_desktop_empty_label="$(echo -n -e '\uf1db')"
 
+p_desktop_display_format=together
+
 st_font="Roboto Mono-11"
 p_title_only_show_active=true
 maxWinNameLen=30
+
+GTK_FONT="Roboto Mono 10"
 
 activeline() {
     activefg
@@ -77,11 +80,11 @@ bg() {
 }
 
 suffix() {
-  border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
+  border="%%{B$(colort 30 $theme_section_bg)}%%{O2}%%{B-}"
   iif $(even_section) "" "$border"
 }
 
 prefix() {
-  border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
+  border="%%{B$(colort 30 $theme_section_bg)}%%{O2}%%{B-}"
   iif $(even_section) "" "$border"
 }

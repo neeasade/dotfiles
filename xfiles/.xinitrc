@@ -15,7 +15,7 @@ mpdcron &
 dunst &
 wmname LG3D &
 xsetroot -cursor_name left_ptr &
-(. $HOME/.bspwm_theme; $BG_COMMAND) &
+(. $HOME/.wm_theme; $BG_COMMAND) &
 
 export xstart=`date +%s`
 
