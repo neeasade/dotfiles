@@ -22,11 +22,12 @@ dzen_options() {
         Y=$miny
     fi
 
-
-    length="${#content[@]}"
-
-    # todo: use txtw w/ longest content lengther here
-    width=400
+    longestLine=$(printf '%s\n' "${content[@]}" | sed 's/\^ca([^)]*)//;s/\^ca()//' | wc -L)
+    font_name="$(echo $p_font_main | sed 's/-.*//')"
+    font_size="$(echo $p_font_main | sed 's/.*-//')"
+    width="$(txtw -f "$font_name" -s $font_size a)"
+    width="$(echo $width \* $longestLine | bc)"
+    width=$((width + 20))
 
     # set the alignment(default to center)
     [[ -z $align ]] && align=c
