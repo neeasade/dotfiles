@@ -1,3 +1,5 @@
+; -*- mode: conf -*-
+
 [bar]
 line={{p_line}}
 padding={{p_padding}}
@@ -13,4 +15,3 @@ delimiter= "{{p_delimiter}}"
 
 ; todo: consider calculating this at runtime?
 clickables = 40
-

@@ -1,11 +1,25 @@
 NAME="{{THEME_NAME}}"
-BG={{pBG}}
-FG={{pFG}}
+BG={{background}}
+FG={{foreground}}
 TXT_BG=$BG
 TXT_FG=$FG
 MENU_BG=$BG
 MENU_FG=$FG
-SEL_BG={{pBGActiveTab}}
-SEL_FG={{pFGActiveTab}}
+SEL_BG={{p_bg_active}}
+SEL_FG={{p_fg_active}}
 BTN_BG=$BG
 BTN_FG=$FG
+
+# what is this?
+HDR_BTN_BG=$BG
+HDR_BTN_FG=$FG
+
+ROUNDNESS=0
+SPACING=3
+GRADIENT=0.0
+
+GTK3_GENERATE_DARK={{`colort -c $background && echo true || echo false`}}
+ICONS_LIGHT_FOLDER={{p_icon}}
+ICONS_LIGHT={{p_icon}}
+ICONS_MEDIUM={{p_icon}}
+ICONS_DARK={{p_icon}}
