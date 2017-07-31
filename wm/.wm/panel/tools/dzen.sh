@@ -4,24 +4,29 @@
 # This function echos dzen dimensions at the panel centered to click
 # along with options from current theme(font)
 dzen_options() {
-    #if [[ ! "$1" = "cal" ]]; then
-        p_bg_normal="$(colort -t $p_bg_normal)"
-        p_fg_normal="$(colort -t $p_fg_normal)"
-        p_bg_active="$(colort -t $p_bg_active)"
-    #fi
+    p_bg_normal="$(colort -t $p_bg_normal)"
+    p_fg_normal="$(colort -t $p_fg_normal)"
+    p_bg_active="$(colort -t $p_bg_active)"
 
     eval $(xdotool getmouselocation --shell)
 
     #X=$((X+$(bspc query -T -m $mon | jq .rectangle.x)))
 
     miny=$(bspc query -T -m | jq .rectangle.y)
-    miny=$((miny+p_height+p_gap))
-    Y=$miny
+    if [ "$p_position" = "top" ]; then
+        miny=$((miny+p_height+p_gap))
+        Y=$miny
+    else
+        # todo here: use txth w/ line count to calculate where y should be.
+        miny=$((miny+p_height+p_gap))
+        Y=$miny
+    fi
+
 
     length="${#content[@]}"
 
-    # todo: make this dynamic
-    width=200
+    # todo: use txtw w/ longest content lengther here
+    width=400
 
     # set the alignment(default to center)
     [[ -z $align ]] && align=c
@@ -116,7 +121,7 @@ dzen_theme() {
 }
 
 dzen_github() {
-    content+=("Notifications")
+    content+=("Github Notifications")
     IFS=$'\n'
 
     for input in $( jq -r '.[].subject | [.title, .url] |join("^")' < "/tmp/gh_notify"); do
@@ -125,8 +130,6 @@ dzen_github() {
 	      title="$(echo $input | cut -d '^' -f 1)"
 	      url="$(echo $input | cut -d '^' -f 2)"
         url="$(echo $url | tr -d \")"
-
-
 
         content+=("^ca(1, github_nav \"$url\" & pkill dzen) $title ^ca()")
     done
