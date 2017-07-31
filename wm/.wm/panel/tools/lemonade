@@ -97,7 +97,6 @@ trap "error; rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
 handle() {
     {
     while read -r line; do
-        echo $line
         sh -c "eval $line" &
     done
     } 2>&3
@@ -252,7 +251,6 @@ generate_mouse_events
                             eval "${output:4}"
                         else
                             if [[ ! -z "$output" ]]; then
-                              get_conf area[${name}_p]
                               bar_message="${bar_message}$(printf "%s" \
                                   "$(get_conf area[${name}_p])" \
                                   "$(get_conf line[${name}])" \

@@ -2,8 +2,6 @@
 # Load themes for programs from current theme
 # Check 'targets' variable at end for all posibilities.
 
-targetTheme="$HOME/.wm/themes/${1}"
-
 # relative:
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 PATH="$PATH:."

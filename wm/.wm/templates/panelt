@@ -1,5 +1,4 @@
 #!/usr/bin/env dash
 # Toggle the panel on/off
 
-kill -s TERM $(cat /tmp/panel-pid) || ("{{p_launch_cmd}}" &)
-disown
+kill -s TERM $(cat /tmp/panel-pid) || ("nohup {{p_launch_cmd}}" &)

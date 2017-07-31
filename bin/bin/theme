@@ -23,7 +23,7 @@ load() {
   [ ! -f "$theme_dir/$name" ] && die $name not found
 
   rm $HOME/.wm_theme
-  ln -s "$targetTheme" "$HOME/.wm_theme"
+  ln -s "$theme_dir/$name" "$HOME/.wm_theme"
 
   "$HOME/.wm/scripts/theming/ltheme" $*
 }
