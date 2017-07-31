@@ -10,7 +10,7 @@ die() {
 
 # load the current theme values (meant to be eval'd)
 get() {
-    echo THEME_NAME="$(basename $(readlink "$HOME/.bspwm_theme"))"
+    echo THEME_NAME=\"$(basename "$(readlink "$HOME/.bspwm_theme")")\"
     echo . "$HOME/.wm/scripts/theming/defaults"
     echo . "$HOME/.bspwm_theme"
 }
@@ -20,7 +20,7 @@ load() {
   name="$1"
   shift
   [ -z "$name" ] && die load needs a name.
-  [ ! -f "$theme_dir/$name" ] && die $* not found
+  [ ! -f "$theme_dir/$name" ] && die $name not found
 
   "$HOME/.wm/scripts/theming/ltheme" "$name" $*
 }
@@ -38,4 +38,4 @@ new() {
     edit "$name"
 }
 
-$*
+"$@"
