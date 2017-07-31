@@ -33,7 +33,7 @@ p_position="top"          # panel position - top|bottom
 p_desktop_display_name=icon       # [icon|name] - display desktop names or DO/DF variables.
 p_desktop_display_format=together # [together|separate] - show desktops in separate blocks or together in one block.
 p_desktop_show_free=true          # option to show nothing for free desktops.
-p_desktop_mode_toggle=true        # monocle/tiling toggle.
+p_desktop_mode_toggle=false       # monocle/tiling toggle.
 p_desktop_only_active=false       # only show the active desktop name
 p_title_only_show_active=false    # used by title.
 p_delimiter=""                    # delimiter between lemons
@@ -69,6 +69,11 @@ p_themeSwitch_mouse_left="dzen.sh theme"
 p_dropdown_mouse_left="dzen.sh menu"
 p_github_mouse_left="dzen.sh github"
 p_clock_mouse_left="dzen.sh cal"
+p_mpd_mouse_left="player.sh toggle"
+p_dynamicmpd_mouse_left="player.sh toggle"
+
+p_mpd_mouse_right="player.sh next"
+p_dynamicmpd_mouse_right="player.sh next"
 
 emacs_theme="spacemacs-dark"
 emacs_powerline_scale="1.6"
@@ -125,6 +130,12 @@ set -g status-left ''
 set -g status-right ''
 EOF
 )"
+
+# default template targets
+# this allows themes to replace template files with different targets, by defining ${target}_template
+for template in $(ls $HOME/.wm/templates); do
+    eval ${template}_template="$HOME/.wm/templates/${template}"
+done
 
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
 # If empty, all are used.

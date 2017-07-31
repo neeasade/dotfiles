@@ -17,4 +17,4 @@ y=$((y-(height*lines)))
 y=$((y-(height*lines)))
 
 # TODO: consider templating this for prompt char and/or dimensions.
-echo "-y $y -x $x -h $height -w $width -l $lines -i -q -p \"YEAH:\""
+echo "-y $y -x $x -h $height -w $width -l $lines -i -q -p \"Run:\""
