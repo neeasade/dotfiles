@@ -13,7 +13,12 @@ fi
 
 if ! bspc node -f $dir.local; then
     bspc config focus_follows_pointer false
-    bspc monitor -f $dir
+    if ! bspc monitor -f $dir; then
+      # assume we went up or down and failed, assume monocle, shuffle through style
+      [ "$dir" = "north" ] && bspc node -f next.local
+      [ "$dir" = "south" ] && bspc node -f prev.local
+    fi
+
     bspc config focus_follows_pointer true
 fi
 

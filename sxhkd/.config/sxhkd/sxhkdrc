@@ -1,3 +1,4 @@
+# -*- mode: conf -*-
 # bspwm hotkeys {{{
 super + {_,shift} + w
     bspc node -{c,k}

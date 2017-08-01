@@ -268,8 +268,6 @@ load_dunst() {
     dunst &
 }
 
-shift
-
 targets="${*:-emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat}"
 
 IFS=" "
