@@ -14,7 +14,7 @@ set_history_bash() {
 }
 
 set_history_zsh() {
-  HISTFILE="$HOME/.${cur_shell}_history"
+  HISTFILE="$history_file"
   SAVEHIST="$history_length"
   HISTSIZE="$history_length"
 

@@ -1,35 +1,44 @@
 # -*- mode: sh -*-
+set -a
 
 PATH=$PATH:$HOME/bin
 PATH=$PATH:$HOME/.gem/bin
 PATH=$PATH:$HOME/.wm/scripts/interact
 PATH=$PATH:$HOME/.wm/scripts/visual
+PATH=$PATH:$HOME/git_temp/opt
 
-export PAGER="less"
-export BROWSER=qutebrowser
-export TERMINAL=st
-export FILEBROWSER=pcmanfm
+# SVG loader for pixbuf (needed for GTK svg icon themes)
+# todo: this right, see ref https://github.com/bennofs/etc-nixos/blob/master/conf/desktop.nix#L24
+GDK_PIXBUF_MODULE_FILE="$(echo /nix/store/0m0c4qf9pyd9770qd0q7hbgpvz1i78x3-librsvg-2.40.17/lib/gdk-pixbuf-2.0/*/loaders.cache)"
 
-export SXHKD_SHELL=sh
-export MPDCRON_DIR="$HOME/.config/mpd"
-export _JAVA_AWT_WM_NONREPARENTING=1
+PAGER="less"
+BROWSER=qutebrowser
+TERMINAL=st
+FILEBROWSER=thunar
+
+SXHKD_SHELL=sh
+MPDCRON_DIR="$HOME/.config/mpd"
+_JAVA_AWT_WM_NONREPARENTING=1
+LANG="en_US.UTF-8"
 
 if type emacs >/dev/null; then
-    export EDITOR='emacsclient'
-    export GIT_EDITOR="$(which emacsclient)"
+    EDITOR='emacsclient'
+    GIT_EDITOR="$(which emacsclient)"
 else
-    export EDITOR='vim'
-    export GIT_EDITOR='/usr/bin/vim'
+    EDITOR='vim'
+    GIT_EDITOR='/usr/bin/vim'
 fi
 
 if type npm >/dev/null; then
     if [ -d "$HOME/.npm-packages" ]; then
-        export NODE_PATH="$HOME/.npm-packages/lib/node_modules"
+        NODE_PATH="$HOME/.npm-packages/lib/node_modules"
         PATH="$PATH:$HOME/.npm-packages/bin"
     else
-        export NODE_PATH="$(npm root -g)"
+        NODE_PATH="$(npm root -g)"
         PATH="$PATH:$(npm bin -g 2>/dev/null)"
     fi
 fi
 
-export GEM_HOME="$HOME/.gem"
+GEM_HOME="$HOME/.gem"
+
+set +a
