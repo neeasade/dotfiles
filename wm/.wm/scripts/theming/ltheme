@@ -108,7 +108,7 @@ load_xresources() {
     p_font_main="$(echo $p_font_main | sed 's/-.*//')"
     p_height="$(( ($p_height-10) / 2 ))"
 
-    st_font_size="$(echo $st_font | sed 's/.*-//')"
+    st_font_size="$(echo $st_font | grep -Eo '[0-9]+')"
     st_font="$(echo $st_font | sed 's/-.*//')"
 
     if ! margs Xresources .Xresources; then
@@ -173,9 +173,12 @@ load_bspwm() {
 
     bspwmrc=".config/bspwm/bspwmrc"
     panelt=".wm/scripts/interact/panelt"
+    icon=".wm/panel/tools/icon"
+
     margs bspwm "$bspwmrc"
+    margs icon "$icon"
     margs panelt "$panelt"
-    chmod +x "$HOME/$bspwmrc" "$HOME/$panelt"
+    chmod +x "$HOME/$bspwmrc" "$HOME/$panelt" "$HOME/$icon"
 
     wait
     setsid "$HOME/$bspwmrc"
@@ -226,9 +229,7 @@ load_emacs() {
 load_gtk() {
     trimAlphas
 
-    margs gtkrc .gtkrc-2.0
-
-    if [ ! -d "$HOME/.themes/$THEME_NAME" ]; then
+    if ! margs gtkrc .gtkrc-2.0; then
         target="$HOME/.themes/${THEME_NAME}_template"
         mustache < $HOME/.wm/templates/oomox > $target
         oomox-cli -o "$THEME_NAME" "$target"

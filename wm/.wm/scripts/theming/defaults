@@ -11,6 +11,7 @@ b_normal_border_color="$color0"
 b_active_border_color="$color8"
 b_focused_border_color="$foreground"
 b_presel_feedback_color="$color8"
+b_desktop_names="00 01 10 11"
 
 # meant to be used for effects, like pulse or 2bspwm
 b_bspwmrc_extend=""
@@ -24,6 +25,8 @@ p_gap=4                      # Gaps of panel off screen.
 p_padding=4                  # number of pixels to pad panel information (sections/blocks) with
 p_line=2 # width of the over/underlines
 p_launch_cmd="$HOME/.wm/panel/lemonade" # The command to launch the panel
+
+p_icon_handler="env printf \"\$icon_result\""
 
 p_icon=unset              # icon color - used in qutebrowser completion, ACYL icons color
 p_window_class="lemonbar" # window class to use in lemonade's juicer
@@ -50,7 +53,7 @@ p_fg_inactive="$p_fg_normal"
 # Workspace variables
 p_desktop_occupied_label='[-]'
 p_desktop_empty_label='[ ]'
-p_desktop_tiling_label='T'
+p_desktop_tiling_label=''
 p_desktop_monocle_label='M'
 
 # default reload times for panel sections
@@ -145,11 +148,11 @@ p_format="dropdown:desktop|title|mpd:volume:weather:clock" # Default options/ite
 # Customize options on different computers by hostname.
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.
 if [ "$(hostname)" = "littleapple" ]; then
-  barInfo1="desktop|title|yaourtUpdates"
-  barInfo2="desktop|title|themeSwitch:volume:clock"
-  barInfo3="desktop|title|mpd:clock"
+    p_format="dropdown:desktop|title|clock"
+    p_format_2="desktop:github:themeSwitch|title|mpd:volume:clock"
+    p_format_3="desktop|title|weather"
 fi
 
 if [ "$(hostname)" = "home2" ]; then
-  barInfo="desktop:title||battery:network:volume:clock"
+    p_format="dropdown:desktop|title|clock"
 fi

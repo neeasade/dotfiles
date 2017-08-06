@@ -13,10 +13,7 @@ echo "[$lemon_target]"
 
 # targets will be exported functions by themes in bash.
 # they use resources from the theming scripts dir.
-targets="bg fg line prefix suffix"
-
-grep -q "meta active" < "$HOME/.wm/panel/lemons/$lemon_target" && \
-    targets="$targets activebg activefg activeline"
+targets="bg fg line prefix suffix activebg activefg activeline"
 
 # emit a setting, or fallback on default (vanilla)
 process_target() {
