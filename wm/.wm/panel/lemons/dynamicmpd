@@ -4,42 +4,7 @@
 
 max_length=20
 
-# target is picked based on which might be playing.
-player.sh | grep -q playing && icon_target=pause
-player.sh | grep -q paused && icon_target=play
-
-if $playing || $paused; then
-    title="$(player.sh -f "%title% - %artist%" | head -n 1)"
-    # if title is empty, try file and trim from last / if exists.
-    if [ "$title" = " - " ]; then
-        title="$(player.sh -f "%file%" | head -n 1 | sed 's/.*\///')"
-
-        # peel some stuff
-        title="$(echo "$title" | sed 's/【.*】//' | sed 's/\.[^.]*$//')"
-    fi
-else
-  title="Stopped"
-fi
-
-# set $1 length to $max_length chars (trim or pad)
-pad() {
-    count=$(echo -n "$1" | wc -m)
-    remain=$(( $max_length - $count ))
-
-    padding=""
-    if [ $(( $remain % 2 )) -ne 0 ]; then
-        remain=$(( $remain - 1 ))
-        padding=" "
-    fi
-
-    for i in $(seq $remain); do
-        padding="$padding "
-    done
-
-    echo "$1$padding";
-}
-
-
+title="$($HOME/.wm/panel/lemons/mpd)"
 max_length=$(echo "$title" | cut -c 1-$max_length | wc -m)
 if [  "$title" = "Stopped" ]; then
     icon music
@@ -50,7 +15,7 @@ else
     while IFS='\n' read -r out; do
         icon music
         icon $icon_target
-        pad "$out"
+        echo "$out"
         sleep 0.2
     done
 fi

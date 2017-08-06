@@ -2,7 +2,6 @@
 # counter test to ensure sleep reload is working correctly.
 
 target=/tmp/counter
-
 [ ! -e $target ] && echo 0 > $target
 
 counter=$(cat $target)

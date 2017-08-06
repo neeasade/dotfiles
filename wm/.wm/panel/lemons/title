@@ -12,10 +12,6 @@
 onlyShowActive=${p_title_only_show_active:-true}
 # Maxium window title length
 maxWinNameLen=${maxWinNameLen:-25}
-# The delimiter to separate window sections
-win_delim=${win_delim:-\|}
-# The delimiter to separate the window name from the window in a window section.
-win_id_delim=${win_id_delim:-//}
 
 # not setting any settings if $onlyShowActive.
 _meta="$(which meta)"

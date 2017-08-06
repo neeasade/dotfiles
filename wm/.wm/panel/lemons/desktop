@@ -12,6 +12,9 @@ focusMonitor=$(bspc query -M -m $mon --names)
 # temp/compat
 DO="$p_desktop_occupied_label"
 DF="$p_desktop_empty_label"
+DT="$p_desktop_tiling_label"
+DM="$p_desktop_monocle_label"
+
 NoModeToggle="$p_desktop_mode_toggle"
 showFreeDesktops="$p_desktop_show_free"
 desktopDisplay="$p_desktop_display_name"
@@ -38,7 +41,7 @@ while read -r line; do
     shift
 
     while [ $# -gt 0 ] ; do
-      item=$1
+        item=$1
         ident="$(echo $item | cut -c1)"
         content="$(echo $item | cut -c2-)"
         layout=false
@@ -56,19 +59,21 @@ while read -r line; do
             L) layout=true
                meta reset
                [ "$content" = "T" ] && dDisplay="$DT" || dDisplay="$DM"
-               $NoModeToggle && dDisplay="" ;;
+               $NoModeToggle && dDisplay=""
+               [ ! -z "$dDisplay" ] && meta mouse_left bspc desktop -l next
+               ;;
             *) layout=true; dDisplay="" ;;
         esac
 
         if ! $layout; then
-          [ "$desktopDisplay" = "name" ] && dDisplay="$content"
-          if ! $showFreeDesktops && ! $active; then
-              ! $free && echo "$dDisplay"
-          else
-              echo "$dDisplay"
-          fi
+            [ "$desktopDisplay" = "name" ] && dDisplay="$content"
+            if ! $showFreeDesktops && ! $active; then
+                ! $free && echo "$dDisplay"
+            else
+                echo "$dDisplay"
+            fi
         else
-          echo "$dDisplay"
+            echo "$dDisplay"
         fi
 
         shift

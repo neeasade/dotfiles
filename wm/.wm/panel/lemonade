@@ -31,9 +31,6 @@ export -f error
 set -a
 eval "$(theme get)"
 
-$gapped || p_gap=0
-
-
 gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
 top=$(iif "[ "$p_position" = "top" ]")
 
