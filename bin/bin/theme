@@ -1,45 +1,60 @@
 #!/bin/sh
 
 theme_dir="$HOME/.wm/themes"
+theme_load="$HOME/.wm_theme"
 
 die() {
   echo $*
   exit 1
 }
 
-# load the current theme values (meant to be eval'd)
+# (meant to be eval'd)
 get() {
     echo unset bg fg line prefix suffix activebg activefg activeline
-    echo THEME_NAME=\"$(basename "$(readlink "$HOME/.wm_theme")")\"
+    echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
     echo . "$HOME/.wm/scripts/theming/defaults"
-    echo . "$HOME/.wm_theme"
+    echo PATH=$PATH:$HOME/.wm/panel/tools
+    echo . "$theme_load"
 }
 
-# load existing theme into target editing
 load() {
   name="$1"
   shift
   [ -z "$name" ] && die load needs a name.
   [ ! -f "$theme_dir/$name" ] && die $name not found
 
-  rm $HOME/.wm_theme
-  ln -s "$theme_dir/$name" "$HOME/.wm_theme"
+  rm "$theme_load"
+  ln -s "$theme_dir/$name" "$theme_load"
 
   "$HOME/.wm/scripts/theming/ltheme" $*
 }
 
 edit() {
-  $EDITOR "$theme_dir/$target"
+  $EDITOR "$theme_load"
 }
 
 new() {
     name="$*"
     [ -z "$name" ] && die new needs a name.
-    eval "$(theme get)"
-    cp "$theme_dir/colors/THEME_NAME" "$theme_dir/colors/$name"
+    eval "$(get)"
+    cp "$theme_dir/colors/$THEME_NAME" "$theme_dir/colors/$name"
     echo "#/bin/sh" > "$theme_dir/$name"
-    ltheme "$name"
+    load "$name"
     edit "$name"
 }
 
-"$@"
+list() {
+    ls "$theme_dir"
+}
+
+choose() {
+    target=$(list | fzf) && load "$target"
+}
+
+refresh() {
+    eval "$(get)"
+    load "$THEME_NAME" "$@"
+}
+
+# future self: this is done on purpose, shell arg quoting is dumb.
+[ -z "$*" ] && choose || "$@"
