@@ -283,23 +283,28 @@ generate_mouse_events
                     done < <(eval "\${${name}_reload"} | "$lemons/$name") &
                 else
                     while true; do
+
+                        hold=false;
+                        bar_message=
                         while IFS=$'\n' read -r output; do
                             if [[ "${output:0:4}" == "meta" ]]; then
                                 input="${output:4}"
                                 eval "$input"
                             else
-                                bar_message="$(printf "%s" \
+                                bar_message="${bar_message}$(printf "%s" \
                                     "$(get_conf area[${name}_p])" \
                                     "$(get_conf line[${name}])" \
                                     "%{F$(get_conf ${name}_fg)}" \
                                     "%{B$(get_conf ${name}_bg)}" \
                                     "%{O${bar_padding}}" \
-                                    "${output}" \
+                                    "$output" \
                                     "%{O${bar_padding}}" \
                                     "$(get_conf area[${name}_s])" \
                                     "%{F-}%{B-}" \
                                     "%{-o}%{-uU-}")"
+                            fi
 
+                            if ! $hold; then
                                 if [[ ! -z "${bar_message}" ]]; then
                                     bar_message="$(printf "%s" \
                                         "$(get_conf ${name}_prefix)" \
@@ -309,9 +314,10 @@ generate_mouse_events
 
                                 printf "%s" \
                                        "${name}@${bar_message}" \
-                                       $'\n' > "$process"
-                            fi
+                                       $'\n'
 
+                                bar_message=
+                            fi
                         done < <(eval "$lemons/$name")
 
                         sleep $(get_conf ${name}_reload)
