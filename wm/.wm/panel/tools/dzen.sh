@@ -8,9 +8,27 @@ dzen_options() {
     p_fg_normal="$(colort -t $p_fg_normal)"
     p_bg_active="$(colort -t $p_bg_active)"
 
+    longestLine=$(printf '%s\n' "${content[@]}" | sed 's/\^ca([^)]*)//;s/\^ca()//' | wc -L)
+    font_name="$(echo $p_font_main | sed 's/-.*//')"
+    font_size="$(echo $p_font_main | sed 's/.*-//')"
+    width="$(txtw -f "$font_name" -s $font_size a)"
+    width="$(echo $width \* $longestLine | bc)"
+    width=$((width + 20))
+
     eval $(xdotool getmouselocation --shell)
 
     #X=$((X+$(bspc query -T -m $mon | jq .rectangle.x)))
+
+    # slide x over by half width, then fit to conflicting monitor edges
+    X=$((X-(width/2)))
+
+    # left
+    monx=$(bspc query -T -m $mon | jq .rectangle.x)
+    [ "$X" -lt "$((monx+p_gap))" ] && X=$((monx+p_gap))
+    # right
+    monwidth=$(bspc query -T -m $mon | jq .rectangle.width)
+    [ "$((X+width))" -gt "$((monx+monwidth+p_gap))" ] && X=$((monx+monwidth-width-p_gap))
+
 
     miny=$(bspc query -T -m | jq .rectangle.y)
     if [ "$p_position" = "top" ]; then
@@ -22,14 +40,7 @@ dzen_options() {
         Y=$miny
     fi
 
-    longestLine=$(printf '%s\n' "${content[@]}" | sed 's/\^ca([^)]*)//;s/\^ca()//' | wc -L)
-    font_name="$(echo $p_font_main | sed 's/-.*//')"
-    font_size="$(echo $p_font_main | sed 's/.*-//')"
-    width="$(txtw -f "$font_name" -s $font_size a)"
-    width="$(echo $width \* $longestLine | bc)"
-    width=$((width + 20))
-
-    # set the alignment(default to center)
+        # set the alignment(default to center)
     [[ -z $align ]] && align=c
     echo -l $((${#content[@]}-1)) -fg \"#$p_fg_normal\" -bg \"#$p_bg_normal\" -fn \"$p_font_main\" -x \"$X\" -y \"$Y\" -w \"$width\" -p 5 -sa $align -e \'onstart=uncollapse\;button1=menuprint,exit\;button3=exit\;button4=scrollup\;button5=scrolldown\' -m v
 
@@ -115,8 +126,8 @@ dzen_cal() {
 
 # Theme switcher
 dzen_theme() {
-    content+=("+")
-    for theme in $(ls $HOME/.wm/themes); do
+    content+=("load theme")
+    for theme in $(theme list); do
         content+=("^ca(1, nohup theme load \"$theme\" & pkill dzen) $theme ^ca()")
     done
 }
