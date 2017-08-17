@@ -23,4 +23,10 @@ set_history_zsh() {
   setopt hist_ignore_space
 }
 
+set_history_mksh() {
+    HISTFILE="$history_file"
+}
+
+
+
 set_history_$cur_shell

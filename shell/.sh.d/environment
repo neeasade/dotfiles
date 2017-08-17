@@ -12,6 +12,11 @@ PATH=$PATH:$HOME/git_temp/opt
 GDK_PIXBUF_MODULE_FILE="$(echo /nix/store/0m0c4qf9pyd9770qd0q7hbgpvz1i78x3-librsvg-2.40.17/lib/gdk-pixbuf-2.0/*/loaders.cache)"
 
 PAGER="less"
+
+# less status line
+LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+LESSCHARSET='utf-8'
+
 BROWSER=qutebrowser
 TERMINAL=st
 FILEBROWSER=thunar
@@ -23,11 +28,13 @@ LANG="en_US.UTF-8"
 
 if type emacs >/dev/null; then
     EDITOR='emacsclient'
-    GIT_EDITOR="$(which emacsclient)"
 else
     EDITOR='vim'
-    GIT_EDITOR='/usr/bin/vim'
 fi
+
+GIT_EDITOR="$EDITOR"
+SVN_EDITOR="$EDITOR"
+CVSEDITOR="$EDITOR"
 
 if type npm >/dev/null; then
     if [ -d "$HOME/.npm-packages" ]; then

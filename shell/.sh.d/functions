@@ -12,8 +12,22 @@ fullshot() {
 }
 
 upshot() {
-    shot
     uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
+}
+
+gitupdate() {
+    cur_dir=$(pwd)
+
+    # Find all git repositories and update it to the master latest revision
+    for i in $(find . -name ".git" | cut -c 3-); do
+        echo "$i";
+
+        cd "$i";
+        cd ..;
+
+        git pull origin master;
+        cd $cur_dir
+    done
 }
 
 # nix query
@@ -34,14 +48,14 @@ nq () {
         }
 }
 
-setgitremote() {
-    # I found myself doing this too often.
-    local remoteUrl="$(git remote -v | grep -oP "http[^ ]+" | head -1)"
+# set the remote using ssh
+gitssh() {
+    local remoteUrl="$(git remote -v | sed 's/origin //' | head -1)"
     local domain="$(echo $remoteUrl | cut -f3 -d'/')"
     local username="$(echo $remoteUrl | cut -f4 -d'/')"
     local reponame="$(echo $remoteUrl | cut -f5 -d'/' | cut -f1 -d'.' )"
-    local newRemote="git@$domain:$username/$reponame.git"
-    echo Setting git remote to $newRemote
+    local newRemote="git@$domain:$username/$reponame"
+    echo git remote set-url origin $newRemote
     git remote set-url origin $newRemote
 }
 
@@ -72,4 +86,16 @@ extract() {      # Handy Extract Program
     else
         echo "'$1' is not a valid file!"
     fi
+}
+
+# manpages with colors
+man() {
+	  env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
+		    LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
+		    LESS_TERMCAP_me=$(printf '\e[0m') \
+		    LESS_TERMCAP_se=$(printf '\e[0m') \
+		    LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
+		    LESS_TERMCAP_ue=$(printf '\e[0m') \
+		    LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
+        man "$@"
 }
