@@ -38,7 +38,7 @@ p_desktop_display_format=together # [together|separate] - show desktops in separ
 p_desktop_show_free=true          # option to show nothing for free desktops.
 p_desktop_mode_toggle=false       # monocle/tiling toggle.
 p_desktop_only_active=false       # only show the active desktop name
-p_title_only_show_active=false    # used by title.
+p_title_show_mode=monocle         # used by title.
 p_delimiter=""                    # delimiter between lemons
 
 # Panel colors

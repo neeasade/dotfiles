@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# neeasade
+# window switcher dmenu
+
+switch=""
+wids="$(bspc query -N -n .leaf)"
+
+for wid in $wids; do
+  title="$(xtitle $wid)"
+  switch="$switch \"${title}\") bspc node -f $wid;;"
+done
+
+selection="$(echo $wids | xargs xtitle | dmenu "$@")"
+eval "case \"$selection\" in $switch esac"

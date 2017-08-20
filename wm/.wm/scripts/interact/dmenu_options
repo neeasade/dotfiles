@@ -4,6 +4,7 @@
 
 width=300
 height=10
+
 lines=15
 
 mon="$(bspc query -M -m)"

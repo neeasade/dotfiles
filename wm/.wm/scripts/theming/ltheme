@@ -10,11 +10,6 @@ set -a
 
 eval "$(theme get)"
 
-# inline if: iif condition true false
-iif() {
-    eval $1 && echo -n "${2-true}" || echo -n "${3-false}"
-}
-
 . "./mustache.sh"
 
 # adjust pIcon to theme (rel for panel, acyl, qutebrowser.)
@@ -103,6 +98,7 @@ load_xresources() {
     # qutebrowser + emacs related:
     echo $p_font_main | grep -q Bold && p_font_main_bold="bold "
     p_font_main_size="$(echo $p_font_main | grep -Eo '[0-9]+')"
+
     p_font_main_size="${p_font_main_bold}$(echo $p_font_main | grep -Eo '[0-9]+')"
 
     p_font_main="$(echo $p_font_main | sed 's/-.*//')"
@@ -156,9 +152,10 @@ load_bspwm() {
 
             juicer_target=".wm/panel/juicers/juicer$juice_index"
 
+            # note all lemons, generate them.
+            lemons=$(echo $p_format | tr ':|' ' ');
+
             if ! margs juicer "$juicer_target"; then
-                # note all lemons, generate them.
-                lemons=$(echo $p_format | tr ':|' ' ');
 
                 . ripen
                 IFS=' '
