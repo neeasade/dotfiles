@@ -1,3 +1,0 @@
-#!/bin/sh
-cd "$HOME/git_temp/oomox"
-exec ./change_color.sh "$@"
