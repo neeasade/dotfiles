@@ -40,7 +40,11 @@ while read -r line; do
     # the desktop name
     shift
 
+    desktop_index=1
     while [ $# -gt 0 ] ; do
+        meta mouse_left "bspc desktop -f ${mon}:^${desktop_index}"
+        desktop_index=$((desktop_index + 1))
+
         item=$1
         ident="$(echo $item | cut -c1)"
         content="$(echo $item | cut -c2-)"

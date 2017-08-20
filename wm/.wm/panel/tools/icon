@@ -2,7 +2,7 @@
 # neeasade
 # print icon for different symbols in a few different fonts
 # targetting: awesome, siji, ionic.
-# usage: $0  <icon_type> [<font_type>] (you can define font via iconfont var)
+# usage: $0  <icon_type/code>
 
 if ! $p_icon_enable; then
     exit
@@ -32,13 +32,11 @@ case $1 in
     window)   icon='f2d0';;
     linux)    icon='f17c';;
     github)   icon='f09b';;
-    *) echo "icon type not found."
-       exit 1;;
+    *)        icon="$*";;
 esac
 
-# ick
-# todo: handle/define this at a theme level somehow.
-[ ! -z "$2" ] && iconfont="$2" || iconfont="$(echo $p_font_icon | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic')"
+iconfont=awesome
+
 
 case $iconfont in
     awesome) index=1;;
@@ -47,6 +45,6 @@ case $iconfont in
     *) exit 1;;
 esac
 
-env printf "\u$(echo $icon | cut -d ' ' -f$index) "
+icon_result="$(env printf "\u$(echo $icon | cut -d ' ' -f$index) ")"
 
-# separate icon option:
+env printf "$icon_result"

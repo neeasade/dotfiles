@@ -1,20 +1,17 @@
 #!/usr/bin/env dash
 # eval things, handle special cases.
-# todo: consider handling padding case
 
 # the prefix used to signal upper panel:
 prefix=meta
-
-
 
 case "$*" in
   mouse_middle*|scroll_down*|mouse_right*|mouse_left*|scroll_up*)
     event="$1"
     shift
-    action="$*"
+    action="$@"
 
-    echo ${prefix}${juicedLemon}_${event}=\"${action}\"
-    echo ${prefix}generate_mouse_events ${juicedLemon}
+    echo "${prefix}${juicedLemon}_${event}='${action}'"
+    echo "${prefix}generate_mouse_events ${juicedLemon}"
     ;;
   invert)
     eval echo ${prefix}${juicedLemon}_bg="\$${juicedLemon}_fg"
@@ -46,7 +43,6 @@ case "$*" in
     done
     result="${result}U$(eval "echo \${${juicedLemon}_line}")}"
     echo "${prefix}line[\"${juicedLemon}\"]=\"$result\""
-
     ;;
   start)
     echo ${prefix}hold=true
@@ -54,6 +50,9 @@ case "$*" in
   end)
     echo ${prefix}hold=false
     ;;
+  # pad)
+  #   printf "%s" "%{O$1}"
+    # ;;
   set*)
     # assume "set <content>", eg "set fg=#ffffff"
     shift

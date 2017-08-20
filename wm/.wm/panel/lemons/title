@@ -8,8 +8,12 @@
 
 ### OPTIONS ###
 
-# only show the active window title at any time.
-onlyShowActive=${p_title_only_show_active:-true}
+# p_title_show_mode
+# active - only active
+# all - all all the time
+# monocle - only active when tiling, all when tiled
+show_mode=${p_title_show_mode:-monocle}
+
 # Maxium window title length
 maxWinNameLen=${maxWinNameLen:-25}
 
@@ -44,6 +48,18 @@ setLength() {
 declare -A titleMap
 
 doTheThing() {
+    case $show_mode in
+        all) onlyShowActive=false;;
+        active) onlyShowActive=true;;
+        monocle)
+            [ "$(bspc query -T -m $mon -d | jq -r .layout)" = "monocle" ] && \
+                onlyShowActive=false || \
+                onlyShowActive=true
+            ;;
+    esac
+
+    [ "$(bspc query -T -m $mon -d | jq -r .layout)" = "monocle" ] && \
+
     meta start
     active="$(bspc query -N -n)"
 
