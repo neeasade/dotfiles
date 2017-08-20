@@ -51,7 +51,9 @@
       frozen-packages '()
       excluded-packages '()
       install-packages 'used-only
-      additional-packages '( base16-theme )
+      additional-packages '(
+                            base16-theme
+                            )
     ))
 
   ;; setting this here allows spacemacs to add layers.
@@ -67,14 +69,15 @@
     (typescript
       :variables
         typescript-fmt-on-save t)
-
-    (shell
-      :variables
-        shell-default-height 30
-        shell-default-position 'bottom)
+    vimscript
 
     ; interface
-    better-defaults helm ranger
+    (shell
+     :variables
+     shell-default-height 40
+     shell-default-position 'top)
+
+   better-defaults helm ranger
 
     ; features
     colors syntax-checking spell-checking
@@ -196,6 +199,8 @@
   (set-face-bold-p 'bold nil)
   (set-face-background 'font-lock-comment-face nil)
   (set-face-attribute 'fringe nil :background nil)
+
+  (set-background-color (get-resource "*.background" (face-attribute 'default :background)))
 
   ;; org
   (setq org-bullets-bullet-list '("@" "%" ">" ">"))
