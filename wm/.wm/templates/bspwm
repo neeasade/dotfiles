@@ -12,7 +12,9 @@ xinit=$(iif "[ $(( $(date +%s) - xstart )) -lt 2 ]")
 
 PATH=$PATH:$HOME/.wm/scripts/visual
 
-relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null")
+$(iif "[ \"{{p_gap}}\" = \"0\" ]") &&
+    relaunch_panel=true || \
+    relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null")
 
 bspc config border_width {{b_border_width}}
 bspc config split_ratio  {{b_split_ratio}}
@@ -38,7 +40,7 @@ panel_padding=$(iif $relaunch_panel "{{p_height}}+{{p_gap}}" 0)
 
 bspc config {{p_position}}_padding $((side_padding + panel_padding))
 
-for side in right {{`[ "$p_position" = "top" ] && echo -n bottom || echo -n top`}} left; do
+for side in right {{`iif "[ \"$p_position\" = \"top\" ]" bottom top`}} left; do
     bspc config ${side}_padding $side_padding
 done
 
@@ -50,7 +52,9 @@ for monitor in $(bspc query -M); do
     bspc monitor $monitor -d {{b_desktop_names}}
 done
 
-$relaunch_panel && "{{p_launch_cmd}}" &
+if $relaunch_panel && ! ps -p $(cat /tmp/panel-pid); then
+    "{{p_launch_cmd}}" &
+fi
 
 for visual in $(ls $HOME/.wm/scripts/visual); do
     pkill -f $HOME/.wm/scripts/visual/$visual 2>/dev/null

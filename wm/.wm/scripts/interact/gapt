@@ -1,4 +1,4 @@
 #!/bin/sh
 # toggle gaps on and off
 
-$HOME/.config/bspwm/bspwmrc $([ $(bspc config window_gap) -le 0 ] && echo true || echo false)
+$HOME/.config/bspwm/bspwmrc $(iif "[ $(bspc config window_gap) -le 0 ]")

@@ -67,7 +67,7 @@ super + {o,e,Return}
 
 # launch a program, ensure GTK3 theme.
 super + {_,shift,alt} + space
-    action={run,pass,slop}; \
+    action={run,pass,windows}; \
     eval "$(theme get | head -n 1)"; \
     export GTK_THEME="$THEME_NAME"; \
     eval dmenu_$action $(dmenu_options $action)
