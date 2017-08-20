@@ -5,16 +5,21 @@
 # the shell (as it will see the escape code only either way).
 case $TERM in
     st*)
-        [ -z "$TMUX" ] && _prompt=$'\e[z'
+        # don't do so in tmux, ssh access won't understand.
+        [ -z "$TMUX" ] && \
+            _prompt=$'\e[z' || \
+            _prompt='$'
+        ;;
+    *)
+        _prompt='$'
         ;;
 esac
 
-prompt () {
+prompt() {
     _ERR=$?
-    _prompt="${_prompt:->}"
     [ $(jobs | wc -l) -ne 0 ] && _prompt="$_prompt$_prompt"
     [ $_ERR -ne 0 ] && _prompt="\e[7m$_prompt\e[0m" # invert
-    echo -n -e "$_prompt "
+    printf "%b%s" "$_prompt "
 }
 
 PS1='$(prompt)'

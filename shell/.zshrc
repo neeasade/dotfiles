@@ -1,5 +1,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
 . $HOME/.profile
 
 [ ! -d ~/.zplug ] && curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
@@ -24,9 +25,6 @@ fi
 zplug "plugins/catimg", from:oh-my-zsh                               # term image rendering
 zplug "plugins/gitignore", from:oh-my-zsh                            # access default gitignores, from gitignore.io api. (gi)
 zplug "plugins/jsontools", from:oh-my-zsh                            # json helpers, {pp,is,urlencode,urldecode}_json
-
-export ENHANCD_DOT_SHOW_FULLPATH=1
-zplug "b4b4r07/enhancd", use:init.sh                                 # fuzzy cd tool thing
 
 # maybe:
 # https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/per-directory-history
