@@ -13,5 +13,5 @@ class = "{{p_window_class}}"
 offset = {{p_offset}}
 delimiter= "{{p_delimiter}}"
 
-; todo: consider calculating this at runtime?
-clickables = 40
+; guesstimate 3 clickables per section
+clickables = {{`echo "3 * $(echo $lemons | wc -w)" | bc`}}

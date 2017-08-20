@@ -4,11 +4,6 @@
 
 set -a
 
-# inline if: iif condition true false
-iif() {
-    eval $1 && echo -n "${2-true}" || echo -n "${3-false}"
-}
-
 # if none set, keep whatever is open.
 gapped="$1"
 [ -z "$gapped" ] && gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
