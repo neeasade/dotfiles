@@ -33,7 +33,7 @@ export PATH=$PATH:`pwd`/tools
 
 gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
 eval bspc config ${p_position}_padding \
-     $(iif $gapped $((p_height+p_gap)) $((p_height+p_gap+b_border_width)) )
+     $(iif $gapped $((p_height+p_gap)) $((p_height+b_border_width)) )
 
 i=0
 
