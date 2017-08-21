@@ -27,8 +27,6 @@
 # notes on differences with captain
 # takes 2 args, $conf and $geom
 
-geometry=$2
-
 # Obviously we set -e to quit at any error.
 set -e
 
@@ -60,7 +58,7 @@ import sys, re
 from configparser import ConfigParser
 
 def variable(*fmt):
-    return '{}_{}={}'.format(*fmt)
+    return '{}_{}="{}"'.format(*fmt)
 
 def array(*fmt):
     return '{}_{}=({})'.format(*fmt)
@@ -88,7 +86,7 @@ for section in parser:
 process=/tmp/lemonade-process-$ident
 
 # Always clean up when you are done.
-trap "error; rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
+trap "error; rm -f $process; trap - TERM; kill 0" INT ERR TERM QUIT
 
 # Retrieve a value from the stack, the stack is a collection of all scripts with
 # unique sets of characters that are used for event handles.
@@ -96,21 +94,41 @@ trap "error; rm -f $unique $process; trap - TERM; kill 0" INT ERR TERM QUIT
 # Catch the strings send to stdout and execute the matching command.
 handle() {
     {
-    while read -r line; do
-        echo "click event: $line"
-        sh -c "eval $line" &
-    done
+        while read -r line; do
+            echo "click event: $line"
+            sh -c "eval $line" &
+        done
     } 2>&3
 }
 
 # Dynamically format all the available options and display them accordingly.
 format() {
     {
-    while read -r line; do
-        eval "case ${line%%@*} in
-            $switch
-        esac ; echo \"$position\""
-    done
+        init=$1
+        ramfile="/dev/shm/lemonade-$ident"
+        ! $init && . "$ramfile"
+
+        update_state() {
+            rm "$ramfile"
+            for lemon in $juicedLemons; do
+                echo "__${lemon}='$(get_conf __${lemon})'" >> "$ramfile"
+            done
+        }
+
+        dump_state=0
+        while read -r line; do
+            eval "case ${line%%@*} in
+                $switch
+            esac ; echo \"$position\""
+
+            dump_state=$((dump_state + 1))
+
+            # dump state every 10?
+            if [ $dump_state -eq 10 ]; then
+                dump_state=0
+                update_state &
+            fi
+        done
     } 2>&3
 }
 
@@ -224,16 +242,60 @@ generate_mouse_events() {
     for name in ${1:-$juicedLemons}; do
         area["${name}_p"]=""
         area["${name}_s"]=""
-        for event in ${!events[@]}; do
+
+        if [ -z "$2" ]; then
+            events="${!events[@]}"
+        else
+            shift
+            events="$@"
+        fi
+
+        for event in $events; do
             action="$(get_conf ${name}_${event} | sed 's/:/\\:/g')"
             if [[ ! -z "$action" ]]; then
-              area["${name}_p"]+="%{A${events[$event]}:\"${action}\":}"
-              area["${name}_s"]+="%{A}"
+                area["${name}_p"]+="%{A${events[$event]}:\"${action}\":}"
+                area["${name}_s"]+="%{A}"
             fi
         done
     done
 }
 generate_mouse_events
+
+# Process input from a lemon, output settings
+process_line() {
+    if [[ "${output:0:4}" == "meta" ]]; then
+        eval "${output:4}"
+    else
+        if [[ ! -z "$output" ]]; then
+            bar_message="${bar_message}$(printf "%s" \
+                                  "$(get_conf area[${name}_p])" \
+                                  "$(get_conf line[${name}])" \
+                                  "%{F$(get_conf ${name}_fg)}" \
+                                  "%{B$(get_conf ${name}_bg)}" \
+                                  "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
+                                  "$output" \
+                                  "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
+                                    "$(get_conf area[${name}_s])" \
+                                  "%{F-}%{B-}" \
+                                  "%{-o}%{-uU-}")"
+        fi
+    fi
+
+    if ! $hold; then
+        if [[ ! -z "${bar_message}" ]]; then
+            bar_message="$(printf "%s" \
+                              "$(get_conf ${name}_prefix)" \
+                              "${bar_message}" \
+                              "$(get_conf ${name}_suffix)")"
+        fi
+
+        printf "%s" \
+               "${name}@${bar_message}" \
+               $'\n' > "$process"
+
+        bar_message=
+    fi
+}
 
 # Parse our previously collected elements to a full string.
 {
@@ -247,96 +309,68 @@ generate_mouse_events
                 hold=false;
                 bar_message=
 
+                while IFS=$'\n' read -r output; do
+                    process_line
+                done < <(eval "\${${name}_reload"} | "$lemons/$name") &
+            else
+                while true; do
+                    hold=false;
+                    bar_message=
                     while IFS=$'\n' read -r output; do
-                        if [[ "${output:0:4}" == "meta" ]]; then
-                            eval "${output:4}"
-                        else
-                            if [[ ! -z "$output" ]]; then
-                              bar_message="${bar_message}$(printf "%s" \
-                                  "$(get_conf area[${name}_p])" \
-                                  "$(get_conf line[${name}])" \
-                                  "%{F$(get_conf ${name}_fg)}" \
-                                  "%{B$(get_conf ${name}_bg)}" \
-                                  "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
-                                  "$output" \
-                                  "%{O$(iif $hold "$(($bar_padding / 2))" $bar_padding)}" \
-                                    "$(get_conf area[${name}_s])" \
-                                  "%{F-}%{B-}" \
-                                  "%{-o}%{-uU-}")"
-                            fi
-                        fi
+                        process_line
+                    done < <(eval "$lemons/$name")
 
-                        if ! $hold; then
-
-                          if [[ ! -z "${bar_message}" ]]; then
-                             bar_message="$(printf "%s" \
-                              "$(get_conf ${name}_prefix)" \
-                              "${bar_message}" \
-                              "$(get_conf ${name}_suffix)")"
-                          fi
-
-                          printf "%s" \
-                                 "${name}@${bar_message}" \
-                                 $'\n' > "$process"
-
-                          bar_message=
-                        fi
-                    done < <(eval "\${${name}_reload"} | "$lemons/$name") &
-                else
-                    while true; do
-
-                        hold=false;
-                        bar_message=
-                        while IFS=$'\n' read -r output; do
-                            if [[ "${output:0:4}" == "meta" ]]; then
-                                input="${output:4}"
-                                eval "$input"
-                            else
-                                bar_message="${bar_message}$(printf "%s" \
-                                    "$(get_conf area[${name}_p])" \
-                                    "$(get_conf line[${name}])" \
-                                    "%{F$(get_conf ${name}_fg)}" \
-                                    "%{B$(get_conf ${name}_bg)}" \
-                                    "%{O${bar_padding}}" \
-                                    "$output" \
-                                    "%{O${bar_padding}}" \
-                                    "$(get_conf area[${name}_s])" \
-                                    "%{F-}%{B-}" \
-                                    "%{-o}%{-uU-}")"
-                            fi
-
-                            if ! $hold; then
-                                if [[ ! -z "${bar_message}" ]]; then
-                                    bar_message="$(printf "%s" \
-                                        "$(get_conf ${name}_prefix)" \
-                                        "${bar_message}" \
-                                        "$(get_conf ${name}_suffix)")"
-                                fi
-
-                                printf "%s" \
-                                       "${name}@${bar_message}" \
-                                       $'\n'
-
-                                bar_message=
-                            fi
-                        done < <(eval "$lemons/$name")
-
-                        sleep $(get_conf ${name}_reload)
-                    done > "$process" &
-                fi
+                    sleep $(get_conf ${name}_reload)
+                done > "$process" &
             fi
-        done
-    } 2>&3
+        fi
+    done
+} 2>&3
+
+get_geometry() {
+    # mon dim
+    dim() {
+	      bspc query -T -m $mon | jq .rectangle.$1
+    }
+
+    gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
+    top=$(iif "[ "$p_position" = "top" ]")
+
+	  echo "$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
+}
 
 # Start lemonade
+launch_lemonbar() {
+    set +e
 
-cat "$process" | format | eval lemonbar \
-    $(printf " -f \"%s\"" "${bar_fonts[@]}") \
-    $([[ $bar_force = true ]] && echo "-d") \
-    -u $bar_line \
-    -a $bar_clickables \
-    -o $bar_offset \
-    -n "$bar_class" \
-    -g $geometry -F "\\$bar_fg" -B "\\$bar_bg" | handle
+    if ps -p $(echo $active_pids | sed 's/ .*//'); then
+        for pid in $active_pids; do
+            echo pkill $pid
+            pkill $pid
+            pkill lemonbar
+        done
+    fi
 
-wait
+    cat "$process" | format $init | eval lemonbar \
+                                   $(printf " -f \"%s\"" "${bar_fonts[@]}") \
+                                   $([[ $bar_force = true ]] && echo "-d") \
+                                   -u $bar_line \
+                                   -a $bar_clickables \
+                                   -o $bar_offset \
+                                   -n "$bar_class" \
+                                   -g "$(get_geometry)" \
+                                   -F "\\$bar_fg" \
+                                   -B "\\$bar_bg" \
+                                   | handle &
+
+    active_pids=$(jobs -l | tail -n 4 | grep -Eo ' [0-9]+')
+    jobs -l
+    echo $active_pids
+
+    trap launch_lemonbar USR1
+    init=false
+    wait
+}
+
+init=true
+launch_lemonbar

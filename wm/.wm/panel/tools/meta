@@ -11,7 +11,7 @@ case "$*" in
     action="$@"
 
     echo "${prefix}${juicedLemon}_${event}='${action}'"
-    echo "${prefix}generate_mouse_events ${juicedLemon}"
+    echo "${prefix}generate_mouse_events ${juicedLemon} ${event}"
     ;;
   invert)
     eval echo ${prefix}${juicedLemon}_bg="\$${juicedLemon}_fg"

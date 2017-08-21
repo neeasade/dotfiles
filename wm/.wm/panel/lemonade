@@ -25,36 +25,48 @@ export -f error
 set -a
 eval "$(theme get)"
 
-gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
-top=$(iif "[ "$p_position" = "top" ]")
 
 # only need this for p_gap and b_border_width values.
 # relevance
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 export PATH=$PATH:`pwd`/tools
 
-# mon dim
-dim() {
-	bspc query -T -m $mon | jq .rectangle.$1
-}
-
+gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
 eval bspc config ${p_position}_padding \
      $(iif $gapped $((p_height+p_gap)) $((p_height+p_gap+b_border_width)) )
 
 i=0
+
 # note: mon will be available to all lemons as reference.
 for mon in $(bspc query -M); do
 	i=$(($i+1))
 	conf=`ls juicers | sed -n "$i p"`
 	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
 
-	geom="$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
-	tools/lemonade "$conf" "$geom" &
+	tools/lemonade "$conf" &
+  lemonade_ids=$'\n'"$!$lemonade_ids"
 done
 
-trap "eval bspc config ${p_position}_padding $(iif $gapped 0 $b_border_width); trap - TERM; kill 0;" INT TERM QUIT
+
+set_refresh() {
+    trap "eval bspc config ${p_position}_padding $(iif $gapped 0 $b_border_width); trap - TERM; kill 0;" INT TERM QUIT
+
+
+    if ! $init; then
+        for id in $lemonade_ids; do
+            kill -USR1 $id
+        done
+    fi
+
+    trap set_refresh USR1
+    init=false
+    wait
+}
+
+init=true
+echo $$ > /tmp/panel-pid
+set_refresh
 
 # where are we?
-echo $$ > /tmp/panel-pid
 
-wait
+#wait
