@@ -1,6 +1,10 @@
 # -*- mode: sh -*-
 set -a
 
+has() {
+    type "$@" >/dev/null 2>&1
+}
+
 PATH=$PATH:$HOME/bin
 PATH=$PATH:$HOME/.gem/bin
 PATH=$PATH:$HOME/.wm/scripts/interact
@@ -21,28 +25,25 @@ BROWSER=qutebrowser
 TERMINAL=st
 FILEBROWSER=thunar
 
+# default
+GTK_THEME=${GTK_THEME:-adwaita}
 SXHKD_SHELL=sh
 MPDCRON_DIR="$HOME/.config/mpd"
 _JAVA_AWT_WM_NONREPARENTING=1
 LANG="en_US.UTF-8"
 
-if type emacs >/dev/null; then
-    EDITOR='emacsclient'
-else
-    EDITOR='vim'
-fi
-
+has emacs && EDITOR='emacsclient' || EDITOR=vim
 GIT_EDITOR="$EDITOR"
 SVN_EDITOR="$EDITOR"
-CVSEDITOR="$EDITOR"
 
-if type npm >/dev/null; then
+if has npm; then
     if [ -d "$HOME/.npm-packages" ]; then
+        # assume, faster startup time
         NODE_PATH="$HOME/.npm-packages/lib/node_modules"
         PATH="$PATH:$HOME/.npm-packages/bin"
     else
         NODE_PATH="$(npm root -g)"
-        PATH="$PATH:$(npm bin -g 2>/dev/null)"
+        PATH="$PATH:$(npm bin -g)"
     fi
 fi
 

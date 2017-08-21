@@ -30,6 +30,16 @@ gitupdate() {
     done
 }
 
+# Change to root of git repo
+function groot () {
+    if git status &> /dev/null; then
+        cd $(git rev-parse --show-toplevel)
+    else
+        echo "Error: Not a git repository"
+        return 128
+    fi
+}
+
 # nix query
 nq () {
     local CACHE="$HOME/.cache/nq-cache"
