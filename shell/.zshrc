@@ -51,3 +51,6 @@ zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 
 
 # if the entry is not a command but matches dir, cd to that dir.
 setopt autocd
+
+# Remove '/' and '-' from $WORDCHARS for finer Ctrl-w behaviour
+export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'

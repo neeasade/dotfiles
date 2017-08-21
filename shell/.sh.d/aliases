@@ -5,6 +5,7 @@ alias grep="grep --color=auto"
 alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 alias ls=' ls --color=auto'
 alias cd=' cd'
+alias pg=' pgrep'
 alias make=" clear && make"
 alias pacman="pacman --color=always"
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
