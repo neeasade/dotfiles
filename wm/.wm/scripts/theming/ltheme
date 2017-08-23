@@ -132,6 +132,8 @@ load_xresources() {
         xdotool key --window $wid "shift+i"
         bspc node -f $current_wid
     fi
+
+    load_emacs
 }
 
 # bspwm, panel
@@ -192,34 +194,14 @@ load_vim() {
     #done
 }
 
+# emacs reload - note: depends on xresources
 load_emacs() {
     mx_eval() {
         emacsclient --eval "($*)"
     }
 
     mx_eval "load-theme '${emacs_theme}"
-
-    # conform bg to match terminal
-    mx_eval "set-background-color \"\#$background\""
-
-    # conform spaceline and helm prompts to colorscheme
-    mx_eval "custom-set-faces '(spacemacs-normal-face ((t (:inherit 'mode-line))))"
-    mx_eval "spaceline-compile"
-    mx_eval "set-face-attribute 'fringe nil :background nil"
-
-    # match term padding
-    mx_eval "set-frame-parameter (selected-frame) 'internal-border-width ${st_borderpx}"
-
-    # set font on current and future.
-    mx_eval "set-face-attribute 'default nil :font \"${st_font}\" "
-    mx_eval "set-frame-font \"${st_font}\" nil t"
-
-    # remove commend background from themes that set that.
-    mx_eval "set-face-background 'font-lock-comment-face nil"
-
-    # no bold:
-    mx_eval "mapc (lambda (face) (set-face-attribute face nil :weight 'normal :underline nil :inherit nil :slant 'normal)) (face-list)"
-    mx_eval "set-face-bold-p 'bold nil"
+    mx_eval "neeasade/style"
 }
 
 # GTK (make theme if it does not exist, then reload)
@@ -266,7 +248,7 @@ load_dunst() {
     dunst &
 }
 
-targets="${*:-emacs compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat}"
+targets="${*:-compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat}"
 
 IFS=" "
 for conf in $targets; do
