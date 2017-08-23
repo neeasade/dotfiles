@@ -96,6 +96,10 @@
     org
   )))
 
+(defun dotspacemacs/getfont()
+  (get-resource "st.font" "Consolas-12")
+  )
+
 (defun dotspacemacs/init ()
   (load-spacemacs-settings '(
       startup-banner nil
@@ -117,8 +121,7 @@
 
       default-font (list
                       ; xft format, match term.
-                      (get-resource "st.font" "Consolas-12")
-                      ;:size (string-to-number (get-resource "Emacs.fontsize" "12"))
+                      (dotspacemacs/getfont)
                       :weight 'normal
                       :width 'normal
                       :powerline-scale (string-to-number (get-resource "Emacs.powerlinescale" "1.6")))
@@ -176,6 +179,51 @@
   (load custom-file)
   )
 
+(defun neeasade/style ()
+  ; re-reference
+  (dotspacemacs/init)
+
+  (setq powerline-default-separator (get-resource "emacs.powerline" "bar"))
+
+  (custom-set-faces
+   '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
+
+  (set-face-background 'font-lock-comment-face nil)
+  (set-face-attribute  'fringe                 nil :background nil)
+
+  ; todo: make this on all frames, not just current
+  (set-frame-parameter (selected-frame) 'internal-border-width
+                       (string-to-number (get-resource "st.borderpx" "10")))
+
+  ; sync w/ term background
+  (set-background-color
+   (get-resource "*.background"
+                 (face-attribute 'default :background)))
+
+  ; assume softer vertical border by matching comment face
+  (set-face-attribute 'vertical-border
+                      nil
+                      :foreground (face-attribute 'font-lock-comment-face :foreground))
+
+  ; set font on current and future
+  (dotspacemacs/getfont)
+  (set-face-attribute 'default nil :font (dotspacemacs/getfont))
+  (set-frame-font (dotspacemacs/getfont) nil t)
+
+  ; NO BOLD (set-face-bold-p doesn't cover everything, some fonts use slant and underline as bold...)
+  (mapc (lambda (face)
+          (set-face-attribute face nil
+                              :weight 'normal
+                              :underline nil
+                              :inherit nil
+                              :slant 'normal))
+        (face-list))
+
+  ; done at end so it has correct font reference
+  (spaceline-compile)
+  )
+
+
 (defun dotspacemacs/user-config ()
   ;; auto accept changes made to file if not changed in current buffer.
   (global-auto-revert-mode t)
@@ -191,16 +239,7 @@
   (define-key helm-map (kbd "C-k") 'helm-previous-line)
 
   ;; style options
-  (setq powerline-default-separator (get-resource "emacs.powerline" "bar"))
-  (custom-set-faces
-   '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
-  (spaceline-compile)
-
-  (set-face-bold-p 'bold nil)
-  (set-face-background 'font-lock-comment-face nil)
-  (set-face-attribute 'fringe nil :background nil)
-
-  (set-background-color (get-resource "*.background" (face-attribute 'default :background)))
+  (neeasade/style)
 
   ;; org
   (setq org-bullets-bullet-list '("@" "%" ">" ">"))
