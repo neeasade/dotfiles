@@ -1,33 +1,29 @@
 #!/usr/bin/env bash
 
 # theme
-VIM_COLORS=PaperColor
 BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
 emacs_theme="base16-grayscale-light"
-emacs_powerline_scale="1.2"
+emacs_powerline_scale="1.4"
 
 # bspwm
 b_border_width=4
 b_window_gap=20
+
 b_normal_border_color=$(colort -20 -t $p_bg_normal)
 b_active_border_color=$(colort -50 -t $p_bg_normal)
 b_focused_border_color=$(colort -80 -t $p_bg_normal)
 
+b_normal_border_color=$(colort -20 -t $p_bg_normal)
+b_active_border_color=cecece
+b_focused_border_color=b9b9b9
 
-#panel
-p_bg_active="#ff$b_focused_border_color"
+p_bg_normal="#ffe3e3e3"
+p_fg_active="#ff525252"
+p_bg_active="#ffb9b9b9"
 
-theme_section_bg="$(colort -10 $p_bg_normal)"
-p_bg_normal="#ff$b_active_border_color"
-p_fg_active=$p_fg_normal
-
-p_format="dropdown:desktop|title|clock"
 p_format_2="desktop:github:themeSwitch|title|dynamicmpd:volume:clock"
-p_format_3="desktop|title|weather"
 
-background="$(colort -3 -t $background)"
-
-p_height=24
+p_height=25
 p_gap=0
 p_line=3
 p_class="noshadow"
@@ -42,9 +38,15 @@ d_font="Roboto Mono 10"
 p_desktop_occupied_label="$(echo -n -e '\uf111')"
 p_desktop_empty_label="$(echo -n -e '\uf1db')"
 
+p_desktop_tiling_label=''
+p_desktop_monocle_label="$(echo -n -e '\uf00b')"
+
 st_font="Roboto Mono-11"
 p_title_only_show_active=true
 maxWinNameLen=30
+
+p_title_theme="fg=\"#ff$(colort -t 30 525252)\""
+p_desktop_theme="fg=\"#ff$(colort -t 30 525252)\""
 
 activeline() {
     activefg
@@ -55,7 +57,7 @@ line() {
 }
 
 even_section() {
-    iif "[ $((step%2)) -eq 0 ]" false true
+    iif "[ $((step%2)) -eq 0 ]"
 }
 
 stepSetup() {
@@ -63,25 +65,27 @@ stepSetup() {
 }
 
 fg() {
-    colort -c "$(bg)" && check="$p_bg_normal" || check="$p_fg_normal"
-    input="$(colort -c "$check" && echo $p_fg_normal || echo $p_bg_normal)"
-    iif $(even_section) "$input" "$(colort 60 $input)"
+    iif $(even_section) "525252" "a4a4a4"
 }
+
 
 activebg() {
     bg
 }
 
 bg() {
-    iif $(even_section) "$p_bg_active" "$theme_section_bg"
+    #iif $(even_section) "$p_bg_active" "e3e3e3"
+    iif $(even_section) "b9b9b9" "f7f7f7"
 }
 
 suffix() {
-  border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
-  iif $(even_section) "" "$border"
+  #border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
+  border="%%{B#FFcecece}%%{O2}%%{B-}"
+  iif $(even_section) "$border" ""
 }
 
 prefix() {
-  border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
-  iif $(even_section) "" "$border"
+  #border="%%{B$(colort -30 $theme_section_bg)}%%{O2}%%{B-}"
+  border="%%{B#FFcecece}%%{O2}%%{B-}"
+  iif $(even_section) "$border" ""
 }
