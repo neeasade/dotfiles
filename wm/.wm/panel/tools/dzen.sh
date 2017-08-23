@@ -15,6 +15,9 @@ dzen_options() {
     width="$(echo $width \* $longestLine | bc)"
     width=$((width + 20))
 
+    gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
+    p_gap=(iif $gapped $p_gap 0)
+
     eval $(xdotool getmouselocation --shell)
 
     #X=$((X+$(bspc query -T -m $mon | jq .rectangle.x)))
@@ -136,15 +139,28 @@ dzen_github() {
     content+=("Github Notifications")
     IFS=$'\n'
 
-    for input in $( jq -r '.[].subject | [.title, .url] |join("^")' < "/tmp/gh_notify"); do
-        # breaks if issue title contains a ^
+    declare -A issueMap
 
+    for input in $( jq -r '.[] | [.subject.title, .subject.url, .repository.name] |join("^")' < "/tmp/gh_notify"); do
+
+        # breaks if issue title contains a ^
 	      title="$(echo $input | cut -d '^' -f 1)"
 	      url="$(echo $input | cut -d '^' -f 2)"
         url="$(echo $url | tr -d \")"
+	      repo="$(echo $input | cut -d '^' -f 3)"
 
-        content+=("^ca(1, github_nav \"$url\" & pkill dzen) $title ^ca()")
+        #[[ -z "${issue[$repo]}" ]] && issuemap[$repo]=
+        issueMap[$repo]+=$'\n'"^ca(1, github_nav \"$url\" & pkill dzen) $title ^ca()"
     done
+
+    for repo in "${!issueMap[@]}"; do
+        content+=("*** $repo ***")
+        for entry in "${issueMap[$repo]}"; do
+            content+=($entry)
+        done
+    done
+
+    #content+=()
     IFS=
 }
 
