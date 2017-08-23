@@ -3,12 +3,13 @@
 # window switcher dmenu
 
 switch=""
-wids="$(bspc query -N -n .leaf)"
+wids="$(bspc query -N -n .leaf.\!hidden)"
 
 for wid in $wids; do
-  title="$(xtitle $wid)"
+  title="$(xtitle $wid | sed "s|'|\'\\\'\'|g")"
   switch="$switch '${title}') bspc node -f $wid;;"
 done
+switch="$switch *) ;;"
 
 selection="$(echo $wids | xargs xtitle | dmenu "$@")"
 eval "case \"$selection\" in $switch esac"
