@@ -294,13 +294,12 @@ process_line() {
                               "$(get_conf ${name}_prefix)" \
                               "${bar_message}" \
                               "$(get_conf ${name}_suffix)")"
+            printf "%s" \
+                   "${name}@${bar_message}" \
+                   $'\n' > "$process"
+
+            bar_message=
         fi
-
-        printf "%s" \
-               "${name}@${bar_message}" \
-               $'\n' > "$process"
-
-        bar_message=
     fi
 }
 
@@ -318,7 +317,7 @@ process_line() {
 
                 while IFS=$'\n' read -r output; do
                     process_line
-                done < <(eval "\${${name}_reload"} | "$lemons/$name") &
+                done < <(eval "$(get_conf ${name}_reload)" | "$lemons/$name") &
             else
                 while true; do
                     hold=false;

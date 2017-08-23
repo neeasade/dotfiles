@@ -42,6 +42,10 @@ separateStep() {
 
       eval $lemon=$j
       [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
+
+      grep "^${lemon}\|${lemon}$" <<< "${barInfo}" &&
+        eval ${lemon}_end=true ||
+        eval ${lemon}_end=false
     done
     i=$((i+1))
   done
@@ -70,6 +74,10 @@ togetherStep() {
           [ "$i" = "0" ] && eval ${lemon}_align=left
           [ "$i" = "1" ] && eval ${lemon}_align=center
           [ "$i" = "2" ] && eval ${lemon}_align=right
+
+          grep "^${lemon}\|${lemon}$" <<< "${barInfo}" &&
+              eval ${lemon}_end=true ||
+                  eval ${lemon}_end=false
       done
       i=$((i+1))
   done
@@ -101,41 +109,32 @@ gradientGet() {
   gradient $color0 $color7 $total | sed -n ${step}p
 }
 
+# default declare function if not defined
+# <func_name> <func_contents>...
+default_function() {
+    func_name="$1"
+    shift
+    $(iif "[ ! \"$(type -t $func_name)\" = \"function\" ]") && \
+        eval "$func_name () {
+            $@
+        }"
+}
 
 # keep these dynamic unless otherwise,
 # because the fg color peek is neat and saves time.
 # means we need default bg activebg as well...
-if [ ! "$(type -t fg)" = "function" ]; then
-  fg() {
+default_function fg '
     colort -c "$(bg)" && check="$p_bg_normal" || check="$p_fg_normal"
     colort -c "$check" && echo $p_fg_normal || echo $p_bg_normal
-  }
-fi
+'
 
-if [ ! "$(type -t activefg)" = "function" ]; then
-  activefg() {
+default_function activefg '
     colort -c "$(activebg)" && check="$p_bg_active" || check="$p_fg_active"
     colort -c "$check" && echo $p_fg_active || echo $p_bg_active
-  }
-fi
+'
 
-if [ ! "$(type -t bg)" = "function" ]; then
-    bg() {
-        vanilla bg
-    }
-fi
-
-if [ ! "$(type -t activebg)" = "function" ]; then
-    activebg() {
-        vanilla activebg
-    }
-fi
-
-if [ ! "$(type -t stepSetup)" = "function" ]; then
-    stepSetup() {
-        separateStep
-        reverseSteps
-    }
-fi
+default_function bg 'vanilla bg'
+default_function activebg 'vanilla activebg'
+default_function stepSetup 'separateStep'
 
 stepSetup

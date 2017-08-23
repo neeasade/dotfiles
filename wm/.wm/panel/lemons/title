@@ -58,7 +58,7 @@ doTheThing() {
             ;;
     esac
 
-    [ "$(bspc query -T -m $mon -d | jq -r .layout)" = "monocle" ] && \
+    $onlyShowActive && $_meta active
 
     meta start
     active="$(bspc query -N -n)"
@@ -73,8 +73,9 @@ doTheThing() {
         [[ -z "$wid" ]] && continue
 
         # fill in if empty
-        if [[ -z "${titleMap[$wid]}" ]] || \
-           [[ "$wid" = "$active" ]]; then
+        if [[ -z "${titleMap[$wid]}" ]] ||
+               [[ "$wid" = "$active" ]] ||
+                ! $onlyShowActive; then
            titleMap[$wid]="$(setLength "$(xtitle $wid)")"
         fi
 

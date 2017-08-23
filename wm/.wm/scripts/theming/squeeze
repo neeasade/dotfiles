@@ -5,15 +5,11 @@
 lemon_target="$1"
 step="$(eval "echo \${${1}}")"
 lemon_target_align="$(eval "echo \${${1}_align}")"
+lemon_target_end="$(eval "echo \${${1}_end}")"
 
 # declare, reload.
 echo "[$lemon_target]"
 [ ! -z "$lemon_reload" ] && echo "reload = \"$lemon_reload\""
-
-
-# targets will be exported functions by themes in bash.
-# they use resources from the theming scripts dir.
-targets="bg fg line prefix suffix activebg activefg activeline"
 
 # emit a setting, or fallback on default (vanilla)
 process_target() {
@@ -21,11 +17,23 @@ process_target() {
       input="$(eval $1)" || \
       input="$(vanilla $1)"
 
-    [ ! -z "$input" ] && echo "$1 = \"${input}\""
+    if [ ! -z "$input" ]; then
+       [ ${#input} -eq 6 ] && input="#ff${input}"
+       echo "$1 = \"${input}\""
+    fi
 }
 
+# targets will be exported functions by themes in bash.
+# they use resources from the theming scripts dir.
+targets="bg fg line prefix suffix activebg activefg activeline"
+
 for target in $targets; do
-  process_target $target &
+    case $target in
+        suffix) $lemon_target_end && [ "$lemon_target_align" = "right" ] && continue;;
+        prefix) $lemon_target_end && [ "$lemon_target_align" = "left" ] && continue;;
+    esac
+
+    process_target $target &
 done
 
 
@@ -42,10 +50,11 @@ IFS=
 
 wait
 
+# after that, add any overrides from theme.
+eval echo "\$p_${lemon_target}_theme"
+
 # debug reference
 echo \; step=$step
 echo \; align=$lemon_target_align
 
-# after that, add any overrides from theme.
-eval echo "\$p_${lemon_target}_theme"
 echo ""
