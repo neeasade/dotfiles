@@ -15,6 +15,14 @@ upshot() {
     uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
 }
 
+settitle() {
+    printf "%b%s" "\033]0;$*\a"
+}
+
+defaulttitle() {
+    settitle "$(basename $SHELL) - $(echo $TERM | sed 's/-.*//')"
+}
+
 gitupdate() {
     cur_dir=$(pwd)
 
@@ -31,7 +39,7 @@ gitupdate() {
 }
 
 # Change to root of git repo
-function groot () {
+groot() {
     if git status &> /dev/null; then
         cd $(git rev-parse --show-toplevel)
     else
@@ -41,7 +49,7 @@ function groot () {
 }
 
 # nix query
-nq () {
+nq() {
     local CACHE="$HOME/.cache/nq-cache"
     if ! ( [ -e $CACHE ] && [ $(stat -c %Y $CACHE) -gt $(( $(date +%s) - 3600 )) ] ); then
         echo "update cache" && nix-env -qa --json > "$CACHE"
@@ -100,6 +108,7 @@ extract() {      # Handy Extract Program
 
 # manpages with colors
 man() {
+    settitle "$* - manual"
     # removing standout means find highlights stay inverted..
     #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
 
@@ -110,4 +119,11 @@ man() {
 		    LESS_TERMCAP_ue=$(printf '\e[0m') \
 		    LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
         man "$@"
+    defaulttitle
+}
+
+l() {
+    settitle "$* - less"
+    less "$@"
+    defaulttitle
 }
