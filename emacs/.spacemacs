@@ -242,6 +242,7 @@
   (setq org-clock-x11idle-program-name "x11idle")
   (setq org-clock-idle-time 10)
   (setq org-clock-sound nil)
+  (setq org-pomodoro-play-sounds t)
   )
 
 
