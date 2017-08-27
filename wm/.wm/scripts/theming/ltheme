@@ -252,9 +252,12 @@ targets="${*:-compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat
 
 IFS=" "
 for conf in $targets; do
+    (
     #time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
     #echo $conf : $time >> theme_perf.txt
-    load_$conf &
+    load_$conf >/dev/null
+    echo done loading $conf
+    ) &
 done
 IFS=
 
