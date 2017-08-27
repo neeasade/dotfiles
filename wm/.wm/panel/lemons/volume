@@ -1,5 +1,4 @@
 #!/usr/bin/env dash
 
 icon sound
-
-amixer get Master | sed -n 's/^.*\[\([0-9]\+%\).*$/\1/p' | head -n 1
+echo $(ponymix get-volume)\%

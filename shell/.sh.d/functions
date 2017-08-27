@@ -122,7 +122,7 @@ man() {
     defaulttitle
 }
 
-l() {
+page() {
     settitle "$* - less"
     less "$@"
     defaulttitle
