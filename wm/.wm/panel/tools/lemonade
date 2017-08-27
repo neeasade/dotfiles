@@ -95,8 +95,9 @@ trap "error; rm -f $process; trap - TERM; kill 0" INT ERR TERM QUIT
 handle() {
     {
         while read -r line; do
+            line="$(echo $line | sed 's|"|\\"|g')"
             echo "click event: $line"
-            sh -c "eval $line" &
+            sh -c "eval \"$line\"" &
         done
     } 2>&3
 }
@@ -260,7 +261,7 @@ generate_mouse_events() {
         for event in $events; do
             action="$(get_conf ${name}_${event} | sed 's/:/\\:/g')"
             if [[ ! -z "$action" ]]; then
-                area["${name}_p"]+="%{A${events[$event]}:\"${action}\":}"
+                area["${name}_p"]+="%{A${events[$event]}:${action}:}"
                 area["${name}_s"]+="%{A}"
             fi
         done
