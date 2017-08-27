@@ -53,6 +53,7 @@
       install-packages 'used-only
       additional-packages '(
                             base16-theme
+                            editorconfig
                             )
     ))
 
@@ -189,7 +190,6 @@
    '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
 
   (set-face-background 'font-lock-comment-face nil)
-  (set-face-attribute  'fringe                 nil :background nil)
 
   ; todo: make this on all frames, not just current
   (set-frame-parameter (selected-frame) 'internal-border-width
@@ -204,6 +204,14 @@
   (set-face-attribute 'vertical-border
                       nil
                       :foreground (face-attribute 'font-lock-comment-face :foreground))
+
+  ; this doesn't persist across new frames even though the docs say it should
+  (set-face-attribute 'fringe nil :background nil)
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (set-face-attribute 'fringe nil :background nil)
+              )
+            )
 
   ; set font on current and future
   (dotspacemacs/getfont)
@@ -223,6 +231,19 @@
   (spaceline-compile)
   )
 
+(defun neeasade/org ()
+  (setq org-bullets-bullet-list '("@" "%" ">" ">"))
+  (setq org-directory "~/org")
+  (setq org-startup-indented t)
+  (setq org-todo-keywords '((type "TODO" "NEXT" "WAITING" "DONE")))
+  (setq org-blank-before-new-entry '((heading . t) (plainlist-item . nil)))
+  (setq org-ellipsis "…")
+
+  (setq org-clock-x11idle-program-name "x11idle")
+  (setq org-clock-idle-time 10)
+  (setq org-clock-sound nil)
+  )
+
 
 (defun dotspacemacs/user-config ()
   ;; auto accept changes made to file if not changed in current buffer.
@@ -238,16 +259,11 @@
   (define-key helm-map (kbd "C-j") 'helm-next-line)
   (define-key helm-map (kbd "C-k") 'helm-previous-line)
 
-  ;; style options
-  (neeasade/style)
+  ;; other
+  (editorconfig-mode 1)
 
-  ;; org
-  (setq org-bullets-bullet-list '("@" "%" ">" ">"))
-  (setq org-directory "~/org")
-  (setq org-startup-indented t)
-  (setq org-todo-keywords '((type "TODO" "NEXT" "WAITING" "DONE")))
-  (setq org-blank-before-new-entry '((heading . t) (plainlist-item . nil)))
-  (setq org-ellipsis "…")
+  (neeasade/style)
+  (neeasade/org)
   )
 
 (defun what-face (pos)
