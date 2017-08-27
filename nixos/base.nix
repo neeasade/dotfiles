@@ -30,9 +30,21 @@ with lib;
 
   environment.systemPackages =
   (with stable; [
-(chromium.override {enablePepperFlash = true;})
-tree
-hfsprogs
+    (chromium.override {enablePepperFlash = true;})
+
+    # packages for oomox:
+    gtk-engine-murrine
+    gdk_pixbuf
+    glib.dev
+    sassc
+    gtk3
+
+    arandr
+    expect
+    cron
+    tree
+    hfsprogs
+    lm_sensors
     parallel
     pango
     aspell
@@ -45,6 +57,7 @@ hfsprogs
     dash
     deluge
     feh
+    fzf
     ghostscript
     gimp
     gitAndTools.gitFull
@@ -58,21 +71,34 @@ hfsprogs
     lxappearance
     maim
     mpd
+    mpc_cli
     mpv
+    mksh
+    mumble
+    pavucontrol
+    patchelf
+    openssl
+    pstree
+    ponymix
+
+    # allow xst terminfo to have higher priority
+    (lib.lowPrio ncurses)
     mupdf
     ncmpcpp
     neofetch
-    nix
-    nix-prefetch-scripts
-    nix-repl
+    # unsure how to make these higher priority
+    #nix
+    #nix-prefetch-scripts
+    #nix-repl
+    #sudo
     ntfs3g
     pass
     p7zip
     pciutils
     slop
     stow
-    sudo
     tmux
+    screen
     unclutter
     unzip
     wget
@@ -80,17 +106,17 @@ hfsprogs
     wine
     zlib
     zsh
-    zsh-completions
     htop
     hsetroot
+    xorg.xev
     xurls
     xclip
     imagemagick
-
+    gnome2.zenity
+    pkgconfig
   ]) ++ (with rolling; [
-
-    # lowprio so that ncurses st terminfo doesn't conflict with xst.
-    (lib.lowPrio ranger)
+    ranger
+    x11idle
 
     (steam.override {newStdcpp = true; nativeOnly = true;})
     bevelbar
@@ -107,8 +133,9 @@ hfsprogs
     mesa_glu
     mpvc
     neovim
+    xfce.thunar
     pcmanfm
-    qutebrowser
+    (qutebrowser.override {withWebEngineDefault = true;})
     rxvt_unicode
     sxhkd
     vim
@@ -121,10 +148,12 @@ hfsprogs
     xrq
     wmutils-core
     wmutils-opt
+    youtube-dl
     ffmpeg
   ]) ++ (with neeasade; [
     xst
     bspwm
+    gtkrc-reload
     #wmutils-opt
   ]);
 

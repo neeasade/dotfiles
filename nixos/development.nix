@@ -16,5 +16,9 @@
 
       # libs
       zlib
+
+
+      # devops
+      docker
   ];
 }
