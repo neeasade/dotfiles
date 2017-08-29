@@ -1,8 +1,10 @@
 ;; -*- mode: emacs-lisp -*-
 ;; options reference: https://github.com/syl20bnr/spacemacs/blob/master/core/templates/.spacemacs.template
 
-(require 'load-directory)
-(load-directory "~/.emacs.d/neealisp")
+(load "~/.spacemacs.d/lisp/load-util")
+(load "~/.spacemacs.d/lisp/style")
+(load "~/.spacemacs.d/lisp/org")
+(load "~/.spacemacs.d/lisp/misc")
 
 (defun dotspacemacs/layers ()
   (load-spacemacs-settings '(
@@ -130,7 +132,7 @@
   )
 
 (defun dotspacemacs/user-init ()
-  (defconst custom-file (expand-file-name "custom.el" user-home-directory))
+  (defconst custom-file (expand-file-name ".spacemacs.custom.el" user-home-directory))
   (unless (file-exists-p custom-file)
     (write-region "" nil custom-file))
 
