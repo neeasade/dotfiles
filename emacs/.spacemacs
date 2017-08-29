@@ -1,46 +1,8 @@
 ;; -*- mode: emacs-lisp -*-
 ;; options reference: https://github.com/syl20bnr/spacemacs/blob/master/core/templates/.spacemacs.template
 
-(defun split-list (lst)
-  "Split a list down the middle, into 2 lists."
-  (if lst
-      (if (cddr lst)
-          (let ((l (split-list (cddr lst))))
-            (list
-             (cons (car lst) (car l))
-             (cons (cadr lst) (cadr l))))
-        `((,(car lst)) ,(cdr lst)))
-    '(nil nil)))
-
-(defun load-spacemacs-settings(lst)
-  "Set dotspacemacs- prefixed variable values from a list."
-  (mapcar*
-   (lambda (key value)
-     (set-default
-      (intern (concat "dotspacemacs-" (prin1-to-string key)))
-      (eval value)
-      )
-     )
-   (car (split-list lst))
-   (car (cdr (split-list lst)))
-   )
-  )
-
-(defun get-resource (name default)
-  "Get X resource value, with a fallback value."
-  (if (executable-find "xrq")
-      (let ((result
-             ; shell-command-to-string appends newline
-             (replace-regexp-in-string "\n$" ""
-               (shell-command-to-string
-                 (concat "xrq '" name "' 2>/dev/null")))))
-        (if (string= result "")
-            ; we didn't find it in xrdb.
-            default
-          result
-          ))
-    default
-    ))
+(require 'load-directory)
+(load-directory "~/.emacs.d/neealisp")
 
 (defun dotspacemacs/layers ()
   (load-spacemacs-settings '(
@@ -97,10 +59,6 @@
     org
   )))
 
-(defun dotspacemacs/getfont()
-  (get-resource "st.font" "Consolas-12")
-  )
-
 (defun dotspacemacs/init ()
   (load-spacemacs-settings '(
       startup-banner nil
@@ -121,7 +79,6 @@
       themes (list (intern (get-resource "Emacs.theme" "spacemacs-dark")))
 
       default-font (list
-                      ; xft format, match term.
                       (dotspacemacs/getfont)
                       :weight 'normal
                       :width 'normal
@@ -180,72 +137,6 @@
   (load custom-file)
   )
 
-(defun neeasade/style ()
-  ; re-reference
-  (dotspacemacs/init)
-
-  (setq powerline-default-separator (get-resource "emacs.powerline" "bar"))
-
-  (custom-set-faces
-   '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
-
-  (set-face-background 'font-lock-comment-face nil)
-
-  ; todo: make this on all frames, not just current
-  (set-frame-parameter (selected-frame) 'internal-border-width
-                       (string-to-number (get-resource "st.borderpx" "10")))
-
-  ; sync w/ term background
-  (set-background-color
-   (get-resource "*.background"
-                 (face-attribute 'default :background)))
-
-  ; assume softer vertical border by matching comment face
-  (set-face-attribute 'vertical-border
-                      nil
-                      :foreground (face-attribute 'font-lock-comment-face :foreground))
-
-  ; this doesn't persist across new frames even though the docs say it should
-  (set-face-attribute 'fringe nil :background nil)
-  (add-hook 'after-make-frame-functions
-            (lambda (frame)
-              (set-face-attribute 'fringe nil :background nil)
-              )
-            )
-
-  ; set font on current and future
-  (dotspacemacs/getfont)
-  (set-face-attribute 'default nil :font (dotspacemacs/getfont))
-  (set-frame-font (dotspacemacs/getfont) nil t)
-
-  ; NO BOLD (set-face-bold-p doesn't cover everything, some fonts use slant and underline as bold...)
-  (mapc (lambda (face)
-          (set-face-attribute face nil
-                              :weight 'normal
-                              :underline nil
-                              :inherit nil
-                              :slant 'normal))
-        (face-list))
-
-  ; done at end so it has correct font reference
-  (spaceline-compile)
-  )
-
-(defun neeasade/org ()
-  (setq org-bullets-bullet-list '("@" "%" ">" ">"))
-  (setq org-directory "~/org")
-  (setq org-startup-indented t)
-  (setq org-todo-keywords '((type "TODO" "NEXT" "WAITING" "DONE")))
-  (setq org-blank-before-new-entry '((heading . t) (plainlist-item . nil)))
-  (setq org-ellipsis "…")
-
-  (setq org-clock-x11idle-program-name "x11idle")
-  (setq org-clock-idle-time 10)
-  (setq org-clock-sound nil)
-  (setq org-pomodoro-play-sounds t)
-  )
-
-
 (defun dotspacemacs/user-config ()
   ;; auto accept changes made to file if not changed in current buffer.
   (global-auto-revert-mode t)
@@ -266,9 +157,3 @@
   (neeasade/style)
   (neeasade/org)
   )
-
-(defun what-face (pos)
-  (interactive "d")
-  (let ((face (or (get-char-property (point) 'read-face-name)
-                  (get-char-property (point) 'face))))
-    (if face (message "Face: %s" face) (message "No face at %d" pos))))

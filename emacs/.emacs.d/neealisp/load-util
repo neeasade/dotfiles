@@ -1,0 +1,46 @@
+;; -*- mode: emacs-lisp -*-
+
+(defun split-list (lst)
+  "Split a list down the middle, into 2 lists."
+  (if lst
+      (if (cddr lst)
+          (let ((l (split-list (cddr lst))))
+            (list
+             (cons (car lst) (car l))
+             (cons (cadr lst) (cadr l))))
+        `((,(car lst)) ,(cdr lst)))
+    '(nil nil)))
+
+(defun load-spacemacs-settings(lst)
+  "Set dotspacemacs- prefixed variable values from a list."
+  (mapcar*
+   (lambda (key value)
+     (set-default
+      (intern (concat "dotspacemacs-" (prin1-to-string key)))
+      (eval value)
+      )
+     )
+   (car (split-list lst))
+   (car (cdr (split-list lst)))
+   )
+  )
+
+(defun get-resource (name default)
+  "Get X resource value, with a fallback value."
+  (if (executable-find "xrq")
+      (let ((result
+             ; shell-command-to-string appends newline
+             (replace-regexp-in-string "\n$" ""
+               (shell-command-to-string
+                 (concat "xrq '" name "' 2>/dev/null")))))
+        (if (string= result "")
+            ; we didn't find it in xrdb.
+            default
+          result
+          ))
+    default
+    ))
+
+(defun dotspacemacs/getfont()
+  (get-resource "st.font" "Consolas-12")
+  )

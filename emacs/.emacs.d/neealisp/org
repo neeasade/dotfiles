@@ -1,0 +1,15 @@
+;; -*- mode: emacs-lisp -*-
+
+(defun neeasade/org ()
+  (setq org-bullets-bullet-list '("@" "%" ">" ">"))
+  (setq org-directory "~/org")
+  (setq org-startup-indented t)
+  (setq org-todo-keywords '((type "TODO" "NEXT" "WAITING" "DONE")))
+  (setq org-blank-before-new-entry '((heading . t) (plainlist-item . nil)))
+  (setq org-ellipsis "…")
+
+  (setq org-clock-x11idle-program-name "x11idle")
+  (setq org-clock-idle-time 10)
+  (setq org-clock-sound nil)
+  (setq org-pomodoro-play-sounds t)
+  )
