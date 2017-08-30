@@ -43,8 +43,8 @@
           (set-face-attribute face nil
                               :weight 'normal
                               :underline nil
+                              :slant 'normal
                               ;:inherit nil
-                              ;:slant 'normal
                               ))
         (face-list))
 

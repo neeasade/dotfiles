@@ -1,28 +1,18 @@
 ;; -*- mode: emacs-lisp -*-
 
-(defun split-list (lst)
-  "Split a list down the middle, into 2 lists."
-  (if lst
-      (if (cddr lst)
-          (let ((l (split-list (cddr lst))))
-            (list
-             (cons (car lst) (car l))
-             (cons (cadr lst) (cadr l))))
-        `((,(car lst)) ,(cdr lst)))
-    '(nil nil)))
-
 ; a namespace variable setting function
 (defun load-settings(namespace lst)
   "Set dotspacemacs- prefixed variable values from a list."
   (mapcar*
-   (lambda (key value)
+   (lambda (pair)
+     (let ((key (car pair))
+           (value (car (cdr pair))))
      (set-default
       (intern (concat namespace "-" (prin1-to-string key)))
       (eval value)
       )
-     )
-   (car (split-list lst))
-   (car (cdr (split-list lst)))
+     ))
+   (seq-partition lst 2)
    )
   )
 

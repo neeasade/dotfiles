@@ -9,9 +9,5 @@
 ;; git
 (setq magit-repository-directories "~/git")
 
-;; helm
-(define-key helm-map (kbd "C-j") 'helm-next-line)
-(define-key helm-map (kbd "C-k") 'helm-previous-line)
-
 ;; other
 (editorconfig-mode 1)

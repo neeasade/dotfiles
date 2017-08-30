@@ -123,7 +123,7 @@
       persistent-server nil
       search-tools '("ag" "pt" "ack" "grep")
       default-package-repository nil
-      frame-title-format "%f - %I"
+      frame-title-format "%b - %I"
       icon-title-format nil
       whitespace-cleanup 'trailing
       pretty-docs t
