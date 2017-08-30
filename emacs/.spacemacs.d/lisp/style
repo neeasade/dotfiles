@@ -2,7 +2,7 @@
 
 (defun neeasade/style ()
   ; re-reference
-  ; (dotspacemacs/init)
+  (dotspacemacs/init)
 
   (setq powerline-default-separator (get-resource "emacs.powerline" "bar"))
 
@@ -43,8 +43,9 @@
           (set-face-attribute face nil
                               :weight 'normal
                               :underline nil
-                              :inherit nil
-                              :slant 'normal))
+                              ;:inherit nil
+                              ;:slant 'normal
+                              ))
         (face-list))
 
   ; done at end so it has correct font reference

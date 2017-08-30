@@ -11,12 +11,13 @@
         `((,(car lst)) ,(cdr lst)))
     '(nil nil)))
 
-(defun load-spacemacs-settings(lst)
+; a namespace variable setting function
+(defun load-settings(namespace lst)
   "Set dotspacemacs- prefixed variable values from a list."
   (mapcar*
    (lambda (key value)
      (set-default
-      (intern (concat "dotspacemacs-" (prin1-to-string key)))
+      (intern (concat namespace "-" (prin1-to-string key)))
       (eval value)
       )
      )
