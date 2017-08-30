@@ -40,7 +40,12 @@
     better-defaults helm ranger
 
     ; features
-    colors syntax-checking spell-checking
+    colors syntax-checking
+
+	(spell-checking
+	 :variables spell-checking-enable-by-default nil
+	)
+
     (auto-completion
       :variables
         auto-completion-tab-key-behavior 'complete
@@ -73,13 +78,13 @@
       scratch-mode 'elisp-mode
       colorize-cursor-according-to-state nil
 
-      themes (list (intern (get-resource "Emacs.theme" "spacemacs-dark")))
+      themes (list (intern (get-resource "Emacs.theme")))
 
       default-font (list
-                      (dotspacemacs/getfont)
+                      (get-resource "st.font")
                       :weight 'normal
                       :width 'normal
-                      :powerline-scale (string-to-number (get-resource "Emacs.powerlinescale" "1.6")))
+                      :powerline-scale (string-to-number (get-resource "Emacs.powerlinescale")))
 
       leader-key "SPC"
       emacs-command-key "SPC"

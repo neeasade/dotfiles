@@ -4,7 +4,7 @@
   ; re-reference
   (dotspacemacs/init)
 
-  (setq powerline-default-separator (get-resource "emacs.powerline" "bar"))
+  (setq powerline-default-separator (get-resource "emacs.powerline"))
 
   (custom-set-faces
    '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
@@ -13,12 +13,11 @@
 
   ; todo: make this on all frames, not just current
   (set-frame-parameter (selected-frame) 'internal-border-width
-                       (string-to-number (get-resource "st.borderpx" "10")))
+                       (string-to-number (get-resource "st.borderpx")))
 
   ; sync w/ term background
   (set-background-color
-   (get-resource "*.background"
-                 (face-attribute 'default :background)))
+   (get-resource "*.background"))
 
   ; assume softer vertical border by matching comment face
   (set-face-attribute 'vertical-border
@@ -34,9 +33,8 @@
             )
 
   ; set font on current and future
-  (dotspacemacs/getfont)
-  (set-face-attribute 'default nil :font (dotspacemacs/getfont))
-  (set-frame-font (dotspacemacs/getfont) nil t)
+  (set-face-attribute 'default nil :font (get-resource "st.font"))
+  (set-frame-font (get-resource "st.font") nil t)
 
   ; NO BOLD (set-face-bold-p doesn't cover everything, some fonts use slant and underline as bold...)
   (mapc (lambda (face)
