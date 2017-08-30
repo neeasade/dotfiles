@@ -93,6 +93,7 @@
       visual-line-move-text nil
       ex-substitute-global nil
       default-layout-name "Default"
+      auto-generate-layout-names nil
       display-default-layout nil
       auto-resume-layouts t
       large-file-size 1
@@ -122,7 +123,11 @@
       persistent-server nil
       search-tools '("ag" "pt" "ack" "grep")
       default-package-repository nil
+      frame-title-format "%f - %I"
+      icon-title-format nil
       whitespace-cleanup 'trailing
+      pretty-docs t
+      zone-out-when-idle nil
     ))
   )
 

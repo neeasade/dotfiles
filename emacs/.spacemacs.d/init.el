@@ -1,13 +1,14 @@
 ;; -*- mode: emacs-lisp -*-
 
-(load "~/.spacemacs.d/lisp/load-util")
-(load "~/.spacemacs.d/lisp/spacemacs")
+(defun load-from-dots (targets)
+  (dolist (target (split-string targets " "))
+    (load (concat "~/.spacemacs.d/lisp/" target))
+    )
+  )
+
+(load-from-dots "load-util spacemacs")
 
 (defun dotspacemacs/user-config ()
-  (load "~/.spacemacs.d/lisp/config")
-  (load "~/.spacemacs.d/lisp/org")
-  (load "~/.spacemacs.d/lisp/util")
-
-  (load "~/.spacemacs.d/lisp/style")
+  (load-from-dots "config org util style")
   (neeasade/style)
   )
