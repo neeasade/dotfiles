@@ -16,7 +16,7 @@ zplug "spwhitt/nix-zsh-completions"                                  # completio
 zplug "plugins/lein", from:oh-my-zsh                                 # completions for lein
 zplug "zsh-users/zsh-completions"                                    # completions for everything else
 
-if type fzf >/dev/null 2>&1; then
+if has fzf; then
     zplug "junegunn/fzf", use:"shell/completion.zsh"                 # fzf
     zplug "junegunn/fzf", use:"shell/key-bindings.zsh"               # fzf
 fi
@@ -31,13 +31,9 @@ zplug "plugins/jsontools", from:oh-my-zsh                            # json help
 # https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/wd
 
 zplug check || zplug install
-
 zplug load
 
 setopt PROMPT_SUBST
-
-# allow emacs like bindings to work
-bindkey -e
 
 # completion like emacs, use cache
 zstyle ':completion:*:default' menu select=1
@@ -56,22 +52,22 @@ setopt autocd
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
 
 # vim bindings
-# cursor handling
+bindkey -v
+
 zle-keymap-select () {
-    if [ $TERM != "linux" ]; then
-        if [ $KEYMAP = vicmd ]; then
-            echo -ne "\e[2 q"
-        else
-            echo -ne "\e[6 q"
-        fi
+    if [ $KEYMAP = vicmd ]; then
+        cursorStyle block
+    else
+        cursorStyle bar
     fi
+    zle reset-prompt
+    zle -R
 }
 zle -N zle-keymap-select
+
 zle-line-init () {
     zle -K viins
-    if [ $TERM = "linux" ]; then
-        echo -ne "\e[6 q"
-    fi
+    cursorStyle bar
 }
 zle -N zle-line-init
 
@@ -84,8 +80,17 @@ for m in visual viopp; do
     done
 done
 
-# escape
-bindkey -v
-bindkey -rM viins '^X'
-bindkey -M vicmd '^[' undefined-key
+# match escape to evil
 bindkey fd vi-cmd-mode
+
+# match some standard readline binds in insert mode
+bindkey '^P' up-history
+bindkey '^N' down-history
+bindkey '^?' backward-delete-char
+bindkey '^h' backward-delete-char
+bindkey '^w' backward-kill-word
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
+
+# TODO: map this to fzf (plugin above is bindkey -e setup)
+bindkey '^r' history-incremental-search-backward

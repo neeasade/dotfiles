@@ -23,6 +23,18 @@ defaulttitle() {
     settitle "$(basename $SHELL) - $(echo $TERM | sed 's/-.*//')"
 }
 
+cursorStyle() {
+    [ "$TERM" = "linux" ] && return
+
+    case "$1" in
+        bar) index=6 ;;
+        underline) index=4 ;;
+        block) index=2 ;;
+    esac
+
+    printf "%b%s" "\e[${index} q"
+}
+
 gitupdate() {
     cur_dir=$(pwd)
 
