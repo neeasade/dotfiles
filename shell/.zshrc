@@ -54,3 +54,38 @@ setopt autocd
 
 # Remove '/' and '-' from $WORDCHARS for finer Ctrl-w behaviour
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
+
+# vim bindings
+# cursor handling
+zle-keymap-select () {
+    if [ $TERM != "linux" ]; then
+        if [ $KEYMAP = vicmd ]; then
+            echo -ne "\e[2 q"
+        else
+            echo -ne "\e[6 q"
+        fi
+    fi
+}
+zle -N zle-keymap-select
+zle-line-init () {
+    zle -K viins
+    if [ $TERM = "linux" ]; then
+        echo -ne "\e[6 q"
+    fi
+}
+zle -N zle-line-init
+
+# text object extension -- eg ci" da(:
+autoload -U select-quoted
+zle -N select-quoted
+for m in visual viopp; do
+    for c in {a,i}{\',\",\`}; do
+        bindkey -M $m $c select-quoted
+    done
+done
+
+# escape
+bindkey -v
+bindkey -rM viins '^X'
+bindkey -M vicmd '^[' undefined-key
+bindkey fd vi-cmd-mode
