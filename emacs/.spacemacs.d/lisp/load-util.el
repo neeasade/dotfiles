@@ -16,12 +16,12 @@
 
 ; for when we're away from $HOME.
 (defvar xrdb-fallback-values '(
-  ("Emacs.theme" . "base16-grayscale-light")
+  ("Emacs.theme"          . "base16-grayscale-light")
   ("Emacs.powerlinescale" . "1.4")
-  ("st.font" . "Consolas-12")
-  ("st.borderpx" . "10")
-  ("emacs.powerline" . "bar")
-  ("*.background" . (face-attribute 'default :background))
+  ("st.font"              . "Consolas-12")
+  ("st.borderpx"          . "10")
+  ("emacs.powerline"      . "bar")
+  ("*.background"         . (face-attribute 'default :background))
   ))
 
 (defun get-resource (name)
@@ -44,6 +44,6 @@
 ; used in others.
 (defun load-from (dir targets)
   (dolist (target (split-string targets " "))
-    (load (concat "~/.spacemacs.d/" dir "/" target))
+    (load (concat "~/.spacemacs.d/" dir "/" target ".el"))
     )
   )

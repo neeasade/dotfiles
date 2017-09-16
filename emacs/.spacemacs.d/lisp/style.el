@@ -1,13 +1,15 @@
 ;; -*- mode: emacs-lisp -*-
 
 (defun neeasade/style ()
-  ; re-reference
   (dotspacemacs/init)
+  (spacemacs/load-theme (car dotspacemacs-themes))
+  (spacemacs/set-default-font dotspacemacs-default-font)
 
   (setq powerline-default-separator (get-resource "emacs.powerline"))
 
-  (custom-set-faces
-   '(spacemacs-normal-face ((t (:inherit 'mode-line)))))
+  ; sync modeline background color?
+  ;(set-face-attribute
+   ;'spacemacs-normal-face nil :inherit 'mode-line)
 
   (set-face-background 'font-lock-comment-face nil)
 
@@ -40,11 +42,28 @@
   (mapc (lambda (face)
           (set-face-attribute face nil
                               :weight 'normal
-                              :underline nil
                               :slant 'normal
+                              :underline nil
                               ;:inherit nil
                               ))
         (face-list))
+
+  ; TODO make emms a bit prettier
+  ;(face-attribute 'font-lock-comment-face :foreground)
+  ;(set-face-attribute 'emms-browser  nil :background nil)
+  ;; emms-metaplaylist-mode-current-face
+  ;; emms-metaplaylist-mode-face
+  ;; emms-browser-track-face
+  ;; emms-browser-album-face
+  ;; emms-browser-performer-face
+  ;; emms-browser-composer-face
+  ;; emms-browser-artist-face
+  ;; emms-browser-year/genre-face
+  ;; emms-stream-url-face
+  ;; emms-stream-name-face
+  ;; emms-playlist-selected-face
+  ;; emms-playlist-track-face
+
 
   ; done at end so it has correct font reference
   (spaceline-compile)

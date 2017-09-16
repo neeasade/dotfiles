@@ -7,5 +7,5 @@
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 ;; 3rd party/other
-(load-from "lib" "le-eval-and-insert-results.el")
+(load-from "external" "le-eval-and-insert-results")
 (require 'le-eval-and-insert-results)

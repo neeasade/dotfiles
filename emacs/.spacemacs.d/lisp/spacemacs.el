@@ -1,8 +1,9 @@
 ;; -*- mode: emacs-lisp -*-
-;; options reference: https://github.com/syl20bnr/spacemacs/blob/master/core/templates/.spacemacs.template
+;; ref: https://github.com/syl20bnr/spacemacs/blob/master/core/templates/.spacemacs.template
 
 (defun dotspacemacs/layers ()
-  (load-settings "dotspacemacs" '(
+  (load-settings "dotspacemacs"
+       '(
       distribution 'spacemacs
       enable-lazy-installation 'unused
       ask-for-lazy-installation t
@@ -30,6 +31,7 @@
       :variables
         typescript-fmt-on-save t)
     vimscript
+    latex
 
     ; interface
     (shell
@@ -41,6 +43,7 @@
 
     ; features
     colors syntax-checking
+    music
 
 	(spell-checking
 	 :variables spell-checking-enable-by-default nil
@@ -79,6 +82,7 @@
       colorize-cursor-according-to-state nil
 
       themes (list (intern (get-resource "Emacs.theme")))
+
 
       default-font (list
                       (get-resource "st.font")
