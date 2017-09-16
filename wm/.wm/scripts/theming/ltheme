@@ -196,12 +196,7 @@ load_vim() {
 
 # emacs reload - note: depends on xresources
 load_emacs() {
-    mx_eval() {
-        emacsclient --eval "($*)"
-    }
-
-    mx_eval "load-theme '${emacs_theme}"
-    mx_eval "neeasade/style"
+    emacsclient --eval "(neeasade/style)"
 }
 
 # GTK (make theme if it does not exist, then reload)
