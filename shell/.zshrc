@@ -1,6 +1,3 @@
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
 . $HOME/.profile
 
 [ ! -d ~/.zplug ] && curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
@@ -24,7 +21,6 @@ fi
 # considering
 zplug "plugins/catimg", from:oh-my-zsh                               # term image rendering
 zplug "plugins/gitignore", from:oh-my-zsh                            # access default gitignores, from gitignore.io api. (gi)
-zplug "plugins/jsontools", from:oh-my-zsh                            # json helpers, {pp,is,urlencode,urldecode}_json
 
 # maybe:
 # https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/per-directory-history

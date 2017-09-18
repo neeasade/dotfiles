@@ -8,6 +8,7 @@ add() {
   [ -z "$url" ] && url="$(xclip -o -selection clipboard)"
   mkdir -p "$musicdir/import"
   youtube-dl -x -i -o "$musicdir/import/%(uploader)s/%(title)s.%(ext)s" "$url"
+  mpc update
 }
 
 # remove the currently playing song, permanently

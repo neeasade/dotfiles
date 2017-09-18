@@ -1,9 +1,9 @@
+# if not running interactively, bail
+test "${-#*i}" != "${-}" || exit
+
 # source everything
 for file in $HOME/.sh.d/*; do
     . $file
 done
 
 defaulttitle
-
-# autostartx if running on the first tty:
-#[[ -z $DISPLAY && $XDG_VTNR -eq 1 && -z $TMUX ]] && exec startx
