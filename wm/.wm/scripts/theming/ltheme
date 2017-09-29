@@ -243,7 +243,12 @@ load_dunst() {
     dunst &
 }
 
-targets="${*:-compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat}"
+load_mpdcron() {
+    # just handle template, not reload.
+    margs mpdcron .config/mpd/mpdcron.conf
+}
+
+targets="${*:-compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat mpdcron}"
 
 IFS=" "
 for conf in $targets; do
