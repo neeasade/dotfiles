@@ -23,7 +23,7 @@ progress() {
 }
 
 no_task() {
-    mpc pause >/dev/null
+    player.sh pause >/dev/null
     echo "No task!"
 }
 
@@ -33,7 +33,7 @@ case ${pomodoro_state} in
     :short-break) echo "Break $(progress 5)" ;;
     :long-break) echo "Long break $(progress 15)" ;;
     :pomodoro)
-        mpc play >/dev/null
+        player.sh play >/dev/null
         task="$(elisp org-clock-current-task | tr -d '"')"
         echo "${task} $(progress 20)"
         ;;
