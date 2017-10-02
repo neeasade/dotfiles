@@ -1,5 +1,3 @@
-;; -*- mode: emacs-lisp -*-
-
 (defun neeasade/style ()
   (dotspacemacs/init)
   (spacemacs/load-theme (car dotspacemacs-themes))
@@ -49,20 +47,38 @@
         (face-list))
 
   ; TODO make emms a bit prettier
-  ;(face-attribute 'font-lock-comment-face :foreground)
-  ;(set-face-attribute 'emms-browser  nil :background nil)
-  ;; emms-metaplaylist-mode-current-face
-  ;; emms-metaplaylist-mode-face
-  ;; emms-browser-track-face
-  ;; emms-browser-album-face
-  ;; emms-browser-performer-face
-  ;; emms-browser-composer-face
-  ;; emms-browser-artist-face
-  ;; emms-browser-year/genre-face
-  ;; emms-stream-url-face
-  ;; emms-stream-name-face
-  ;; emms-playlist-selected-face
-  ;; emms-playlist-track-face
+  (mapc (lambda (face)
+          (set-face-attribute face nil
+                              :foreground (face-attribute 'default :foreground)
+                              :background (face-attribute 'default :background)
+                              ))
+        ; all the emms faces
+        '(emms-browser-track-face
+          emms-browser-album-face
+          emms-browser-performer-face
+          emms-browser-composer-face
+          emms-browser-artist-face
+          emms-browser-year/genre-face
+          emms-stream-url-face
+          emms-stream-name-face
+          emms-playlist-track-face
+          emms-metaplaylist-mode-current-face
+          emms-metaplaylist-mode-face
+          )
+        )
+
+  (mapc (lambda (face)
+          (set-face-attribute face nil
+                              :foreground (face-attribute 'region :foreground)
+                              :background (face-attribute 'region :background)
+                              ))
+                              ; all the emms faces
+        '(
+          emms-playlist-selected-face
+          )
+        )
+
+
 
 
   ; done at end so it has correct font reference

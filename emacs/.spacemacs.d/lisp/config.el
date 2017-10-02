@@ -12,18 +12,22 @@
 ;; other
 (editorconfig-mode 1)
 
-; auto refresh latex compile doc
+;; auto refresh latex compile doc
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
-; give emms some decent auto-evil binds
-(add-hook 'emms-browser-show-display-hook 'evil-initialize)
+;; give emms some decent auto-evil binds
+;; this doesn't persist?
+;;(emms-player-mpd-connect)
 
-; add bindings for printing elisp eval
+;; add bindings for printing elisp eval
 (spacemacs/set-leader-keys-for-major-mode 'emacs-lisp-mode
-  ; inline
+  ;; inline
   "ei" 'le::eval-and-insert-results
-  ; buffer
+  ;; buffer
   "eb" 'le::eval-and-insert-all-sexps
   )
 
-;(setq emms-browser-default-format "")
+(golden-ratio-mode t)
+
+;; ensure we don't use outdated elc file
+(setq load-prefer-newer t)
