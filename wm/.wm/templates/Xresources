@@ -7,7 +7,6 @@ st.prompt_char: {{PROMPT_CHAR}}
 Emacs.internalBorder: {{st_borderpx}}
 
 ! note: these aren't official, I'm referencing them in config.
-Emacs.fontsize: {{emacs_font_size}}
 Emacs.theme: {{emacs_theme}}
 Emacs.powerlinescale: {{emacs_powerline_scale}}
 Emacs.powerline: {{emacs_powerline}}

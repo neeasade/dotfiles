@@ -1,26 +1,42 @@
 #!/bin/sh
-
-elisp() {
-  emacsclient --eval "(progn $@)"
-}
+# show status of org-pomodoro in a progress bar.
+# tied to mpd, toggles on when working, off on break
 
 calc() {
     echo "$*" | bc -l
 }
 
-task="$(elisp org-clock-current-task | tr -d '"')"
-task=${task:-nil}
-[ "${task}" = "nil" ] && echo "" && exit
+time_offset_percent() {
+    duration="$1" # minutes
 
-# assume we're doing pomorodo, show a bar w/ percentage to end of current cycle with task.
-interval="$(calc '25 * 60')"
-cycle_start=$(elisp "(format-time-string \"%s\" org-clock-start-time)" | tr -d '"')
+    interval="$(calc ${duration} \* 60)"
 
-cycle_end=$(echo $seconds_start \+ $interval)
-current_time=$(date +%s)
+    time_left="$(elisp '(format-time-string "%s" org-pomodoro-countdown)' | tr -d '"')"
+    percent="$(calc "((${interval} - ${time_left}) / ${interval}) * 100" | sed 's/\..*//')"
 
-progress="$(calc "${current_time} - ${cycle_start}")"
-percent="$(calc "${progress} / ${interval} * 100" | sed 's/\..*//')"
+    percent=${percent:-0}
+    echo "${percent}"
+}
 
-percent=${percent:-0}
-echo ${task} $(mkb ${percent} 10 ◼ ◻ ◼)
+progress() {
+    mkb "$(time_offset_percent "$1")" 10 ◼ ◻ ◻
+}
+
+no_task() {
+    mpc pause >/dev/null
+    echo "No task!"
+}
+
+pomodoro_state="$(elisp org-pomodoro-state)"
+
+case ${pomodoro_state} in
+    :short-break) echo "Break $(progress 5)" ;;
+    :long-break) echo "Long break $(progress 15)" ;;
+    :pomodoro)
+        mpc play >/dev/null
+        task="$(elisp org-clock-current-task | tr -d '"')"
+        echo "${task} $(progress 20)"
+        ;;
+    :none) no_task ;;
+    *) no_task ;;
+esac

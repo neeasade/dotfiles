@@ -1,0 +1,10 @@
+#!/bin/sh
+
+result="$(emacsclient --eval "(progn $@)")"
+
+if [ "$result" = "nil" ] || [ -z "$result" ]; then
+  exit 1
+else
+  echo "$result"
+  exit 0
+fi
