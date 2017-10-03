@@ -23,7 +23,10 @@
   startup-folded t
 
   ;; behavior
-  todo-keywords '((sequence "TODO" "NEXT" "WAITING" "INACTIVE" "CANCELLED" "MEETING" "DONE"))
+  ;; todo-keywords '((sequence "TODO" "NEXT" "WAITING" "INACTIVE" "CANCELLED" "MEETING" "DONE"))
+  todo-keywords
+  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+    (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
 
   blank-before-new-entry '((heading . t) (plainlist-item . nil))
   tag-alist '(
@@ -40,20 +43,28 @@
   pomodoro-ask-upon-killing nil
 
   ;; capture
-  capture-templates  '(("t" "todo" entry (file org-default-notes-file)
+  capture-templates
+  '(("t" "todo" entry (file org-default-notes-file)
      "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+
     ("b" "Blank" entry (file org-default-notes-file)
      "* %?\n%u")
+
     ("m" "Meeting" entry (file org-default-notes-file)
      "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
-    ("d" "Diary" entry (file+datetree "~/org/diary.org")
+
+    ("d" "Diary" entry (file+datetree org-default-diary-file)
      "* %?\n%U\n" :clock-in t :clock-resume t)
+
     ("D" "Daily Log" entry (file "~/org/daily-log.org")
      "* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
+
     ("i" "Idea" entry (file org-default-notes-file)
      "* %? :IDEA: \n%u" :clock-in t :clock-resume t)
+
     ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
-     "** NEXT %? \nDEADLINE: %t") )
+     "** NEXT %? \nDEADLINE: %t")
+    )
 
   ;; current file or any of the agenda-files, max 9 levels deep
   refile-targets '(

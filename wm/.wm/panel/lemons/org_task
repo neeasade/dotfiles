@@ -27,15 +27,19 @@ no_task() {
     echo "No task!"
 }
 
+get_length() {
+    elisp "org-pomodoro-${@}length"
+}
+
 pomodoro_state="$(elisp org-pomodoro-state)"
 
 case ${pomodoro_state} in
-    :short-break) echo "Break $(progress 5)" ;;
-    :long-break) echo "Long break $(progress 15)" ;;
+    :short-break) echo "Break $(progress $(get_length short-break-))" ;;
+    :long-break) echo "Long break $(progress $(get_length long-break-))" ;;
     :pomodoro)
         player.sh play >/dev/null
         task="$(elisp org-clock-current-task | tr -d '"')"
-        echo "${task} $(progress 20)"
+        echo "${task} $(progress $(get_length))"
         ;;
     :none) no_task ;;
     *) no_task ;;
