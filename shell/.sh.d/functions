@@ -27,9 +27,9 @@ cursorStyle() {
     [ "$TERM" = "linux" ] && return
 
     case "$1" in
-        bar) index=6 ;;
+        bar)       index=6 ;;
         underline) index=4 ;;
-        block) index=2 ;;
+        block)     index=2 ;;
     esac
 
     printf "%b%s" "\e[${index} q"

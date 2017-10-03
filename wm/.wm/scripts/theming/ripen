@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# barInfo example:
-barInfo="$p_format"
-
 # vanilla/theme intention for all targets:
 vanilla() {
   case $1 in
@@ -22,7 +19,7 @@ separateStep() {
   IFS=\|
   total=0
   leftTotal=""
-  for section in $barInfo; do
+  for section in $p_format; do
     temptotal=$(echo $section | tr ':' ' '| wc -w)
     [ $temptotal -gt $total ] && total=$temptotal
     [ -z "$leftTotal" ] && leftTotal=$temptotal
@@ -30,7 +27,7 @@ separateStep() {
 
   IFS=\|
   i=0
-  for section in $barInfo; do
+  for section in $p_format; do
     # reverse count on left
     [ "$i" = "0" ] && j=$((leftTotal-1)) || j=0
 
@@ -43,7 +40,7 @@ separateStep() {
       eval $lemon=$j
       [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
 
-      grep "^${lemon}\|${lemon}$" <<< "${barInfo}" &&
+      grep "^${lemon}\|${lemon}$" <<< "${p_format}" &&
         eval ${lemon}_end=true ||
         eval ${lemon}_end=false
     done
@@ -54,12 +51,12 @@ separateStep() {
 
 # step will be across all sections, total will be number of lemons
 togetherStep() {
-  total=$(echo $barInfo | tr ':|' ' '| wc -w)
+  total=$(echo $p_format | tr ':|' ' '| wc -w)
 
   # set step
   IFS=\|:
   j=0
-  for lemon in $barInfo; do
+  for lemon in $p_format; do
       eval $lemon=$j
       j=$((j+1))
   done
@@ -68,14 +65,14 @@ togetherStep() {
   # set align
   IFS=\|
   i=0
-  for section in $barInfo; do
+  for section in $p_format; do
       IFS=':'
       for lemon in $section; do
           [ "$i" = "0" ] && eval ${lemon}_align=left
           [ "$i" = "1" ] && eval ${lemon}_align=center
           [ "$i" = "2" ] && eval ${lemon}_align=right
 
-          grep "^${lemon}\|${lemon}$" <<< "${barInfo}" &&
+          grep "^${lemon}\|${lemon}$" <<< "${p_format}" &&
               eval ${lemon}_end=true ||
                   eval ${lemon}_end=false
       done
