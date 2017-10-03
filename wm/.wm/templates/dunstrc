@@ -28,10 +28,8 @@
     browser = /usr/bin/{{BROWSER}}
     icon_position = off
     icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
-
-[frame]
-    width = {{b_border_width}}
-    color = "{{d_border_color}}"
+    frame_width = {{b_border_width}}
+    frame_color = "{{d_border_color}}"
 
 [shortcuts]
     close = ctrl+space
