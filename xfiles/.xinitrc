@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-. $HOME/.profile
+
+. $HOME/.sh.d/environment
 
 # xrandr script(generated with arandr)
 $HOME/.screenlayout/display.sh

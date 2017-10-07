@@ -17,6 +17,7 @@ dmenu.foreground: #{{p_fg_normal}}
 dmenu.background: #{{p_bg_normal}}
 dmenu.selforeground: #{{p_fg_active}}
 dmenu.selbackground: #{{p_bg_active}}
+dmenu.dimcolor: #{{p_bg_normal}}
 
 ! qutebrowser can be loaded from userscript
 qutebrowser.hints.border: '1px solid #{{p_fg_normal}}'

@@ -25,6 +25,7 @@ defaulttitle() {
 
 cursorStyle() {
     [ "$TERM" = "linux" ] && return
+    [ "$TERM" = "eterm-color" ] && return
 
     case "$1" in
         bar)       index=6 ;;

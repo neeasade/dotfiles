@@ -2,6 +2,7 @@
 # print dmenu dimensions for current monitor, and set prompt.
 # colors are set by Xresources.
 
+# TODO: more dynamic width
 width=500
 height=15
 
@@ -16,6 +17,5 @@ x="$(( ($(dim width) - width) / 2 ))"
 y="$(( ($(dim height) - height) / 2))"
 
 y=$((y-(height*lines)))
-#y=$((y-(height*lines)))
 
-echo "-y $y -x $x -h $height -w $width -l $lines -i -q -p \"${*}:\""
+echo "-dim 0.8 -y $y -x $x -h $height -w $width -l $lines -i -p \"${1}:\""

@@ -29,6 +29,8 @@ set_history_mksh() {
     HISTFILE="$history_file"
 }
 
-
+set_history_sh() {
+    true
+}
 
 set_history_$cur_shell

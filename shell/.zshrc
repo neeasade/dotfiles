@@ -47,7 +47,9 @@ setopt autocd
 # Remove '/' and '-' from $WORDCHARS for finer Ctrl-w behaviour
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
 
-# vim bindings
+# vim bindings (if not eshell)
+[ "$TERM" = "eterm-color" ] && return
+
 bindkey -v
 
 zle-keymap-select () {
