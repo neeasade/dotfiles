@@ -18,9 +18,9 @@
 (editorconfig-mode 1)
 
 ; zoom testing
-;(setq zoom-size '(0.58 . 0.618))
-;(setq zoom-ignored-buffer-name-regexps '("^*helm" "^helm"))
-;(zoom-mode nil)
+(setq zoom-size '(0.58 . 0.618))
+(setq zoom-ignored-buffer-name-regexps '("^*helm" "^helm"))
+(zoom-mode t)
 
 ;; auto refresh latex compile doc
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)

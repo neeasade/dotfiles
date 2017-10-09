@@ -19,7 +19,7 @@
         base16-theme
         editorconfig
         helm-dash
-        ;zoom
+        zoom
                     )
 
       configuration-layers
