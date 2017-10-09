@@ -5,11 +5,15 @@ has() {
     type "$@" >/dev/null 2>&1
 }
 
-PATH=$PATH:$HOME/bin
-PATH=$PATH:$HOME/.gem/bin
-PATH=$PATH:$HOME/.wm/scripts/interact
-PATH=$PATH:$HOME/.wm/scripts/visual
-PATH=$PATH:$HOME/git_temp/opt
+path_add() {
+    PATH="$PATH:$HOME/$@"
+}
+
+path_add bin
+path_add .gem/bin
+path_add .wm/scripts/interact
+path_add .wm/scripts/visual
+path_add git_temp/opt
 
 # SVG loader for pixbuf (needed for GTK svg icon themes)
 # todo: this right, see ref https://github.com/bennofs/etc-nixos/blob/master/conf/desktop.nix#L24
@@ -31,6 +35,7 @@ SXHKD_SHELL=sh
 MPDCRON_DIR="$HOME/.config/mpd"
 _JAVA_AWT_WM_NONREPARENTING=1
 LANG="en_US.UTF-8"
+TERMCMD="$TERMINAL"
 
 has emacs && EDITOR='emacsclient' || EDITOR=vim
 GIT_EDITOR="$EDITOR"
