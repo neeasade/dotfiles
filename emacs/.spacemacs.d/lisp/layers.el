@@ -26,11 +26,13 @@
 
     themes-megapack
     git version-control
+    pdf-tools
+    mu4e
+    dash
 
     (org
      :variables
      org-want-todo-bindings t)
-
     ))
 
 (defvar spacemacs/layers/extra

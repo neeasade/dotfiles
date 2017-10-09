@@ -20,7 +20,7 @@
   bullets-bullet-list '("@" "%" ">" ">")
   ellipsis "…"
   startup-indented t
-  startup-folded t
+  startup-folded nil
 
   ;; behavior
   ;; todo-keywords '((sequence "TODO" "NEXT" "WAITING" "INACTIVE" "CANCELLED" "MEETING" "DONE"))
