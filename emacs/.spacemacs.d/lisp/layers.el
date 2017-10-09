@@ -37,8 +37,6 @@
 
 (defvar spacemacs/layers/extra
   '(
-    music
-    calendar
     ))
 
 (defvar spacemacs/layers/langs
