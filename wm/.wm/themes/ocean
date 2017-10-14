@@ -25,17 +25,13 @@ p_desktop_show_free=false
 p_desktop_only_active=true
 p_title_only_show_active=true
 p_bg_inactive=$p_bg_normal
-#p_bg_normal=\#00000000
 
 st_font="Droid Sans Mono-10"
-
-p_format="dropdown:themeSwitch:desktop:title|mpd|volume:updates:weather:clock"
 
 stepSetup()  {
   #togetherStep
   #reverseSteps
   separateStep
-  #reverseSteps
   # align is only set on sep step
   #separateStep
 }
@@ -55,7 +51,7 @@ activebg() {
 
 # gradient
 suffix() {
-    [ "$lemon_target" = "clock" ] && return
+    $(iif "[ \"$lemon_target_align\" = \"right\" ]") && return
 
     if echo "$lemon_target" | grep -E "mpd|title" >/dev/null; then
         [ -z "$nextbg" ] && nextbg="$p_bg_normal"
@@ -87,9 +83,9 @@ suffix() {
 }
 
 prefix() {
-    if echo "$lemon_target" | grep -E "volume|mpd" >/dev/null; then
-        prevbg="$p_bg_normal"
-        nextbg="$(bg)"
-        suffix
-    fi
+    $lemon_target_end && $(iif "[ \"$lemon_target_align\" = \"left\" ]") && return
+
+    prevbg="$p_bg_normal"
+    nextbg="$(bg)"
+    suffix
 }

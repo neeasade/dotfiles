@@ -11,11 +11,12 @@ b_border_width=5
 b_window_gap=16
 
 # panel
-p_format="dropdown:desktop:mail:themeSwitch|title|mpd:volume:weather:clock" # Default options/items to include in info section of panel.
 p_height=32
 p_gap=6
+p_padding=10
 p_font_main="Roboto Light-10"
 d_font="Roboto Light 10"
+p_font_icon="FontAwesome-12" # Panel Icon font.
 st_font="Roboto Mono-8"
 
 p_desktop_display_name=name
@@ -38,9 +39,6 @@ fg() {
     vanilla fg
 }
 
-b_focused_border_color="#$(colort -t $p_bg_active)"
+b_focused_border_color="$(colort -t $p_bg_active)"
 
 p_icon="$p_fg_normal"
-
-# other
-GTK_FONT="Roboto Light 10"
