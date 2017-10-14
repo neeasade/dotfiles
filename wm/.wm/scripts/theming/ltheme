@@ -91,21 +91,9 @@ load_bg() {
     eval $BG_COMMAND
 }
 
-# also loads xst, qutebrowser
+# also loads xst, emacs
 load_xresources() {
     trimAlphas
-
-    # qutebrowser + emacs related:
-    echo $p_font_main | grep -q Bold && p_font_main_bold="bold "
-    p_font_main_size="$(echo $p_font_main | grep -Eo '[0-9]+')"
-
-    p_font_main_size="${p_font_main_bold}$(echo $p_font_main | grep -Eo '[0-9]+')"
-
-    p_font_main="$(echo $p_font_main | sed 's/-.*//')"
-    p_height="$(( ($p_height-10) / 2 ))"
-
-    st_font_size="$(echo $st_font | grep -Eo '[0-9]+')"
-    st_font="$(echo $st_font | sed 's/-.*//')"
 
     if ! margs Xresources .Xresources; then
         # handle any color definitions through 255
@@ -119,19 +107,6 @@ load_xresources() {
 
     # tell all xsts to reload their theme:
     pkill -x --signal USR1 st
-
-    # locate a qutebrowser window and send bind to update from Xresources
-    # do so by the keybindings associated, then switch back.
-    if pgrep -f qutebrowser >/dev/null; then
-        current_wid=`bspc query -N -n`
-        # only send to one
-        wid="$(xdotool search --class qutebrowser | head -n 1)"
-
-        # pending https://github.com/qutebrowser/qutebrowser/issues/1741
-        xdotool windowactivate $wid
-        xdotool key --window $wid "shift+i"
-        bspc node -f $current_wid
-    fi
 
     load_emacs
 }
@@ -223,12 +198,27 @@ load_gtk() {
 load_qutebrowser() {
     trimAlphas
 
-    echo $p_font_main | grep -q Bold && p_font_main_bold="bold "
-    p_font_main_size="${p_font_main_bold}$(echo $p_font_main | grep -Eo '[0-9]+')"
-    p_font_main="$(echo $p_font_main | sed 's/-.*//')"
-    p_height="$(( ($p_height-10) / 2 ))"
+    # qutebrowser + emacs related:
+    q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
+    q_tab_bold="${q_tab_bold^}"  # bashism
 
-    margs qutebrowser .config/qutebrowser/qutebrowser.conf
+    q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
+    q_tab_font="$(echo $p_font_main | sed 's/-.*//')"
+
+    margs qutebrowser .config/qutebrowser/config.py
+
+    # locate a qutebrowser window and send bind to update from theme
+    # do so by the keybindings associated, then switch back.
+    if pgrep -f qutebrowser >/dev/null; then
+        current_wid=`bspc query -N -n`
+        # only send to one
+        wid="$(xdotool search --class qutebrowser | head -n 1)"
+
+        # pending https://github.com/qutebrowser/qutebrowser/issues/1741
+        xdotool windowactivate $wid
+        xdotool key --window $wid "shift+i"
+        bspc node -f $current_wid
+    fi
 }
 
 # dunst

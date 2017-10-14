@@ -1,5 +1,0 @@
-#!/bin/sh
-
-xrdb -query | grep qutebrowser | while read -r line; do
-  echo "set $(echo ${line:12} | sed 's/\./ /;s/:/ /')" > "$QUTE_FIFO"
-done

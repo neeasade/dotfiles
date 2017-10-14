@@ -1,254 +1,155 @@
-# -*- mode: conf -*-
-# quteconf
-# stripped of comments to iterate over faster in replace.
+# -*- mode: python -*-
+# colors and font in qutebrowser
 
-[general]
-ignore-case = smart
-wrap-search = true
-startpage = http://github.com,http://mail.airmail.cc
-default-page = http://google.com
-auto-search = naive
-auto-save-config = true
-auto-save-interval = 15000
-editor = {{EDITOR}} "{}"
-editor-encoding = utf-8
-private-browsing = false
-developer-extras = false
-print-element-backgrounds = true
-xss-auditing = false
-site-specific-quirks = true
-default-encoding =
-new-instance-open-target = tab
-log-javascript-console = none
-save-session = true
-session-default-name =
-url-incdec-segments = path,query
+import os
+from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
+from qutebrowser.config.config import ConfigContainer  # noqa: F401
+from enum import Enum
 
-[ui]
-zoom-levels = 25%,33%,50%,67%,75%,90%,100%,110%,125%,150%,175%,200%,250%,300%,400%,500%
-default-zoom = 100%
-downloads-position = bottom
-message-timeout = 2000
-message-unfocused = false
-confirm-quit = never
-display-statusbar-messages = false
-zoom-text-only = false
-frame-flattening = false
-user-stylesheet = ::-webkit-scrollbar { width: 0px; height: 0px; }
-css-media-type =
-smooth-scrolling = false
-remove-finished-downloads = 20000
-hide-statusbar = false
-statusbar-padding = 0,0,0,0
-window-title-format = {perc}{title}{title_sep}qutebrowser
-hide-mouse-cursor = false
-modal-js-dialog = false
-hide-wayland-decoration = false
+config = config  # type: ConfigAPI # noqa: F821
+c = c  # type: ConfigContainer # noqa: F821
 
-[network]
-do-not-track = true
-accept-language = en-US,en
-referer-header = same-domain
-user-agent =
-proxy = system
-proxy-dns-requests = true
-ssl-strict = ask
-dns-prefetch = true
+initial_start = c.tabs.background == False
 
-[completion]
-auto-open = true
-download-path-suggestion = path
-timestamp-format = %Y-%m-%d
-show = true
-height = 50%
-cmd-history-max-items = 100
-web-history-max-items = 1000
-quick-complete = true
-shrink = false
-scrollbar-width = 10
-scrollbar-padding = 2
+if initial_start:
+    # ui
+    c.completion.scrollbar.width = 10
+    c.tabs.position = 'top'
+    c.tabs.show = 'multiple'
+    c.tabs.favicons.show = False
+    c.tabs.width.indicator = 0
+    c.tabs.title.format = '{title}'
+    c.tabs.title.alignment = 'center'
+    c.downloads.position = 'bottom'
+    c.tabs.favicons.show = False
 
-[input]
-timeout = 500
-partial-timeout = 1000
-insert-mode-on-plugins = false
-auto-leave-insert-mode = true
-auto-insert-mode = true
-forward-unbound-keys = auto
-spatial-navigation = false
-links-included-in-focus-chain = true
-rocker-gestures = false
-mouse-zoom-divider = 512
+    # behavior
+    c.downloads.location.prompt = False
+    c.hints.scatter = False
+    c.url.searchengines = {'DEFAULT': 'https://google.com/search?q={}' }
+    c.input.insert_mode.auto_load = True
+    c.tabs.background = True
+    c.editor.command = [ os.environ['EDITOR'] + ' "{}"' ]
+    c.auto_save.session = True
 
-[tabs]
-background-tabs = true
-select-on-remove = right
-new-tab-position = right
-new-tab-position-explicit = last
-last-close = ignore
-show = multiple
-show-switching-delay = 800
-wrap = true
-movable = true
-close-mouse-button = middle
-position = top
-show-favicons = false
-width = 20%
-indicator-width = 0
-tabs-are-windows = false
-title-format = {title}
-title-alignment = center
-mousewheel-tab-switching = true
-padding = {{p_height}},{{p_height}},8,8
-indicator-padding = 0,0,0,0
+    # binds
+    config.bind('<Shift-i>', 'config-source')
 
-[storage]
-download-directory = {{`echo $HOME/Downloads`}}
-prompt-download-directory = false
-remember-download-directory = true
-maximum-pages-in-cache =
-object-cache-capacities =
-offline-storage-default-quota =
-offline-web-application-cache-quota =
-offline-storage-database = true
-offline-web-application-storage = true
-local-storage = true
-cache-size = 52428800
 
-[content]
-allow-images = true
-allow-javascript = true
-allow-plugins = false
-webgl = true
-css-regions = true
-hyperlink-auditing = false
-geolocation = ask
-notifications = ask
-javascript-can-open-windows = false
-javascript-can-close-windows = false
-javascript-can-access-clipboard = false
-ignore-javascript-prompt = false
-ignore-javascript-alert = false
-local-content-can-access-remote-urls = false
-local-content-can-access-file-urls = true
-cookies-accept = no-3rdparty
-cookies-store = true
-host-block-lists = http://www.malwaredomainlist.com/hostslist/hosts.txt,http://someonewhocares.org/hosts/hosts,http://winhelp2002.mvps.org/hosts.zip,http://malwaredomains.lehigh.edu/files/justdomains.zip,http://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&mimetype=plaintext
-host-blocking-enabled = true
-host-blocking-whitelist = piwik.org
-enable-pdfjs = true
+# mustache templated from current theme
+theme = {
+    'panel': {
+        'height': {{p_height}},
+    },
 
-[hints]
-border = 1px solid #{{p_fg_normal}}
-opacity = 0.7
-mode = letter
-chars = asdfghjkl
-min-chars = 1
-scatter = false
-uppercase = false
-auto-follow = true
-next-regexes = \bnext\b,\bmore\b,\bnewer\b,\b[>→≫]\b,\b(>>|»)\b,\bcontinue\b
-prev-regexes = \bprev(ious)?\b,\bback\b,\bolder\b,\b[<←≪]\b,\b(<<|«)\b
+    'fonts': {
+        'main': '{{q_tab_font}}',
+        'tab_bold': {{q_tab_bold}},
+        'tab_size': {{q_tab_fontsize}},
+    },
 
-[searchengines]
-DEFAULT = https://google.com/search?q={}
+    'colors': {
+        'bg': {
+            'normal': '#{{p_bg_normal}}',
+            'active': '#{{p_bg_active}}',
+            'inactive': '#{{p_bg_inactive}}',
+        },
 
-[aliases]
-b = buffer
+        'fg': {
+            'normal': '#{{p_fg_normal}}',
+            'active': '#{{p_fg_active}}',
+            'inactive': '#{{p_fg_inactive}}',
+        },
 
-[colors]
+        # completion and hints
+        'match': '#{{p_icon}}',
+    }
+}
 
-completion.fg = #{{p_fg_normal}}
-completion.bg = #{{p_bg_normal}}
-completion.alternate-bg = ${completion.bg}
+# colors
+colors = theme['colors']
 
-completion.category.fg = #{{p_fg_inactive}}
-completion.category.bg = #{{p_bg_inactive}}
-completion.category.border.bottom = ${completion.category.border.top}
+def setToBG(colortype, target):
+    config.set('colors.' + target, colors['bg'][colortype])
 
-completion.item.selected.fg = #{{p_fg_active}}
-completion.item.selected.bg = #{{p_bg_active}}
-completion.item.selected.border.top = ${completion.item.selected.bg}
-completion.item.selected.border.bottom = ${completion.item.selected.bg}
+def setToFG(colortype, target):
+    config.set('colors.' + target, colors['fg'][colortype])
 
-completion.match.fg = #{{p_icon}}
-completion.scrollbar.fg = ${completion.fg}
-completion.scrollbar.bg = ${completion.bg}
+def colorSync(colortype, setting):
+    if (setting.endswith('.fg')):
+        setToFG(colortype, setting)
+    elif (setting.endswith('.bg') or setting.endswith('.top') or setting.endswith('.bottom')):
+        setToBG(colortype, setting)
+    else:
+        setToFG(colortype, setting + '.fg')
+        setToBG(colortype, setting + '.bg')
 
-statusbar.fg = ${completion.fg}
-statusbar.bg = ${completion.bg}
-statusbar.fg.error = ${statusbar.fg}
-statusbar.bg.error = red
-statusbar.fg.warning = ${statusbar.fg}
-statusbar.bg.warning = darkorange
+targets = {
+    'normal' : [
+        'statusbar.normal',
+        'statusbar.command',
+        'tabs.even',
+        'tabs.odd',
+        'hints',
+        'downloads.bar.bg',
+    ],
 
-statusbar.fg.insert = ${completion.item.selected.fg}
-statusbar.bg.insert = ${completion.item.selected.bg}
+    'active' : [
+        'tabs.selected.even',
+        'tabs.selected.odd',
+        'statusbar.insert',
+        'downloads.stop',
+        'prompts',
+        'messages.warning',
+        'messages.error',
 
-statusbar.fg.command = ${statusbar.fg}
-statusbar.bg.command = ${statusbar.bg}
-statusbar.fg.caret = ${statusbar.fg}
-statusbar.bg.caret = purple
-statusbar.fg.caret-selection = ${statusbar.fg}
-statusbar.bg.caret-selection = #a12dff
-statusbar.progress.bg = ${completion.category.fg}
+        'completion.item.selected',
+        'completion.item.selected.border.top',
+        'completion.item.selected.border.bottom',
 
-statusbar.url.fg = ${completion.category.fg}
-statusbar.url.fg.success = ${completion.category.fg}
-statusbar.url.fg.success.https = ${completion.category.fg}
-statusbar.url.fg.error = orange
-statusbar.url.fg.warn = yellow
-statusbar.url.fg.hover = aqua
+        'statusbar.url.success.http.fg',
+        'statusbar.url.success.https.fg',
 
-tabs.fg.odd = ${completion.fg}
-tabs.bg.odd = ${completion.bg}
-tabs.fg.even = ${completion.fg}
-tabs.bg.even = ${completion.bg}
+        'completion.category',
+        'completion.category.border.top',
+        'completion.category.border.bottom',
+    ],
 
-tabs.fg.selected.odd = ${completion.item.selected.fg}
-tabs.bg.selected.odd = ${completion.item.selected.bg}
-tabs.fg.selected.even = ${tabs.fg.selected.odd}
-tabs.bg.selected.even = ${tabs.bg.selected.odd}
+    'inactive' : [
+        'completion.scrollbar',
+        'downloads.start',
+        'messages.info',
+        'completion.fg',
+        'completion.odd.bg',
+        'completion.even.bg',
+    ],
+}
 
-tabs.bg.bar = #555555
-tabs.indicator.start = #0000aa
-tabs.indicator.stop = #00aa00
-tabs.indicator.error = #ff0000
-tabs.indicator.system = rgb
+for colortype in targets:
+    for target in targets[colortype]:
+        colorSync(colortype, target)
 
-hints.fg = ${completion.fg}
-hints.bg = ${completion.bg}
-hints.fg.match = ${completion.match.fg}
+setToFG('active', 'statusbar.progress.bg')
 
-downloads.bg.bar = ${completion.bg}
+config.set('colors.completion.match.fg', colors['match'])
+config.set('colors.hints.match.fg', colors['match'])
+config.set('hints.border', '1px solid ' + colors['fg']['normal'])
 
-downloads.fg.start = ${completion.category.fg}
-downloads.bg.start = ${completion.category.bg}
-downloads.fg.stop = ${completion.item.selected.fg}
-downloads.bg.stop = ${completion.item.selected.bg}
+# tabbar
+def makePadding(top, bottom, left, right):
+    return { 'top': top, 'bottom': bottom, 'left': left , 'right': right }
 
-downloads.fg.system = none
-downloads.bg.system = none
-downloads.fg.error = white
-downloads.bg.error = red
+# TODO improve this logic
+# assume height of font is ~10px, pad top by half match panel height
+top_bottom_padding = round((theme['panel']['height'] - 10) / 2)
+c.tabs.padding = makePadding(top_bottom_padding,top_bottom_padding,8,8)
+c.tabs.indicator_padding = makePadding(0,0,0,0)
 
-webpage.bg = white
+# fonts
+c.fonts.monospace = theme['fonts']['main']
 
-[fonts]
-_monospace = "{{p_font_main}}", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream Vera Sans Mono", "Andale Mono", "Liberation Mono", "Courier New", Courier, monospace, Fixed, Consolas, Terminal
-completion = 9pt ${_monospace}
-tabbar = {{p_font_main_bold}} {{p_font_main_size}}pt ${_monospace}
-statusbar = 9pt ${_monospace}
-downloads = 9pt ${_monospace}
-hints = bold 13px Monospace
-debug-console = 8pt ${_monospace}
-web-family-standard =
-web-family-fixed =
-web-family-serif =
-web-family-sans-serif =
-web-family-cursive =
-web-family-fantasy =
-web-size-minimum =
-web-size-minimum-logical =
-web-size-default =
-web-size-default-fixed =
+tabFont = str(theme['fonts']['tab_size']) + 'pt ' + theme['fonts']['main']
+if theme['fonts']['tab_bold']:
+    tabFont = 'bold '  + tabFont
+
+c.fonts.tabs = tabFont

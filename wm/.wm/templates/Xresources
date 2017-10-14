@@ -1,4 +1,4 @@
-st.font: {{st_font}}-{{st_font_size}}
+st.font: {{st_font}}
 st.borderpx: {{st_borderpx}}
 st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
@@ -12,32 +12,12 @@ Emacs.powerlinescale: {{emacs_powerline_scale}}
 Emacs.powerline: {{emacs_powerline}}
 
 ! dmenu2 can read from Xresources.
-dmenu.font: {{p_font_main}}-{{p_font_main_size}}
+dmenu.font: {{p_font_main}}
 dmenu.foreground: #{{p_fg_normal}}
 dmenu.background: #{{p_bg_normal}}
 dmenu.selforeground: #{{p_fg_active}}
 dmenu.selbackground: #{{p_bg_active}}
 dmenu.dimcolor: #{{p_bg_normal}}
-
-! qutebrowser can be loaded from userscript
-qutebrowser.hints.border: '1px solid #{{p_fg_normal}}'
-qutebrowser.tabs.padding: {{p_height}},{{p_height}},8,8
-
-qutebrowser.colors.completion.match.fg : #{{p_icon}}
-
-! all the other colors are tied to these, for reload speed.
-qutebrowser.colors.completion.fg: #{{p_fg_normal}}
-qutebrowser.colors.completion.bg: #{{p_bg_normal}}
-qutebrowser.colors.completion.category.fg: #{{p_fg_inactive}}
-qutebrowser.colors.completion.category.bg: #{{p_bg_inactive}}
-qutebrowser.colors.completion.item.selected.fg : #{{p_fg_active}}
-qutebrowser.colors.completion.item.selected.bg : #{{p_bg_active}}
-
-qutebrowser.fonts._monospace: '"{{p_font_main}}", Terminus, Monospace'
-qutebrowser.fonts.tabbar : '{{p_font_main_size}}pt ${_monospace}'
-qutebrowser.fonts.statusbar : '{{p_font_main_size}}pt ${_monospace}'
-qutebrowser.fonts.completion : '{{st_font_size}}pt ${_monospace}'
-
 
 ! colors (appended in ltheme script)
 *.background: #{{background}}
