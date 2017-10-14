@@ -34,13 +34,28 @@ get_length() {
 pomodoro_state="$(elisp org-pomodoro-state)"
 
 case ${pomodoro_state} in
-    :short-break) echo "Break $(progress $(get_length short-break-))" ;;
-    :long-break) echo "Long break $(progress $(get_length long-break-))" ;;
+    :short-break)
+        player.sh pause >/dev/null
+        echo "Break $(progress $(get_length short-break-))"
+        ;;
+
+    :long-break)
+        player.sh pause >/dev/null
+        echo "Long break $(progress $(get_length long-break-))"
+        ;;
+
     :pomodoro)
         player.sh play >/dev/null
         task="$(elisp org-clock-current-task | tr -d '"')"
         echo "${task} $(progress $(get_length))"
         ;;
-    :none) no_task ;;
-    *) no_task ;;
+
+    :none)
+        player.sh play >/dev/null
+        echo "Pick a task!"
+        ;;
+
+    *)
+        echo "No Task!"
+        ;;
 esac
