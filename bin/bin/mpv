@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+# always run mpv w/ socket
+
+mpv="$(type -a mpv | tail -n 1 | sed 's/.* //')"
+
+mpc pause
+$mpv --input-ipc-server=/tmp/mpvsocket "$@"
