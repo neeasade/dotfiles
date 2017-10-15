@@ -2,36 +2,38 @@
 # zenburn theme
 
 # theme
-VIM_COLORS=zenburn
-export BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/desert.png"
+BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/desert.png"
+emacs_theme=base16-zenburn
+emacs_powerline_scale="1"
 
 # bspwm
 b_border_width=4
 b_window_gap=12
 
 # panel
-PANEL_HEIGHT=28
-PANEL_FONT_MAIN="Terminus-8"
-PANEL_FONT_ICON="Wuncon Siji-8"
-PANEL_GAP=2
-desktopDisplay=name
-NoModeToggle=true
+p_height=28
+p_font_main="terminus-8"
+p_font_icon="siji-8"
+p_gap=2
+
+desktopdisplay=name
+nomodetoggle=true
 # sneak an extra launch parameter onto lemonbar to show no shadows.
-PANEL_UNDERLINE="4"
-pWindowClass="noshadow"
+p_underline="4"
+p_window_class="noshadow"
 
 # colors
-pBG="#003f3f3f"
-pBGInactiveTab="#ff3f3f3f"
-pPadding=2
-GTK_ICON_COLOR="$(colort 40 "$pBG")"
+p_bg_normal="#003f3f3f"
+p_bg_inactive="#ff3f3f3f"
+p_padding=2
+# p_icon="$(colort 40 "$pBG")"
 
 # Workspace variables
 DT='[-]'
 DM='[]'
 
 # other
-DUNST_FONT="xos4 Terminus 8"
-GTK_FONT="xos4 Terminus 8"
-st_font="xos4 Terminus-8:pixelsize=12:antialias=true:autohint=true;"
+d_font="Terminess Powerline-8"
+GTK_FONT="Terminess Powerline-8"
+st_font="Terminess Powerline-12"
 st_borderpx=2
