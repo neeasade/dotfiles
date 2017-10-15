@@ -1,5 +1,4 @@
 # -*- mode: python -*-
-# colors and font in qutebrowser
 
 import os
 from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
@@ -28,6 +27,7 @@ if initial_start:
     c.hints.scatter = False
     c.url.searchengines = {'DEFAULT': 'https://google.com/search?q={}' }
     c.input.insert_mode.auto_load = True
+    c.input.insert_mode.auto_leave = False
     c.tabs.background = True
     c.editor.command = [ os.environ['EDITOR'] + ' "{}"' ]
     c.auto_save.session = True
@@ -59,10 +59,8 @@ theme = {
             'normal': '#{{p_fg_normal}}',
             'active': '#{{p_fg_active}}',
             'inactive': '#{{p_fg_inactive}}',
+            'match': '#{{p_icon}}', # completion and hints
         },
-
-        # completion and hints
-        'match': '#{{p_icon}}',
     }
 }
 
@@ -76,10 +74,12 @@ def setToFG(colortype, target):
     config.set('colors.' + target, colors['fg'][colortype])
 
 def colorSync(colortype, setting):
-    if (setting.endswith('.fg')):
+    if setting.endswith('.fg'):
         setToFG(colortype, setting)
-    elif (setting.endswith('.bg') or setting.endswith('.top') or setting.endswith('.bottom')):
+    elif setting.endswith('.bg'):
         setToBG(colortype, setting)
+    elif setting.endswith('.top') or setting.endswith('.bottom'):
+        setToFG(colortype, setting)
     else:
         setToFG(colortype, setting + '.fg')
         setToBG(colortype, setting + '.bg')
@@ -88,11 +88,13 @@ targets = {
     'normal' : [
         'statusbar.normal',
         'statusbar.command',
+        'statusbar.url.success.http.fg',
+        'statusbar.url.success.https.fg',
         'tabs.even',
         'tabs.odd',
         'hints',
         'downloads.bar.bg',
-    ],
+        ],
 
     'active' : [
         'tabs.selected.even',
@@ -102,17 +104,9 @@ targets = {
         'prompts',
         'messages.warning',
         'messages.error',
-
+        'statusbar.url.hover.fg',
         'completion.item.selected',
-        'completion.item.selected.border.top',
-        'completion.item.selected.border.bottom',
-
-        'statusbar.url.success.http.fg',
-        'statusbar.url.success.https.fg',
-
         'completion.category',
-        'completion.category.border.top',
-        'completion.category.border.bottom',
     ],
 
     'inactive' : [
@@ -122,7 +116,17 @@ targets = {
         'completion.fg',
         'completion.odd.bg',
         'completion.even.bg',
+
+        'completion.category.border.top',
+        'completion.category.border.bottom',
+        'completion.item.selected.border.top',
+        'completion.item.selected.border.bottom',
     ],
+
+    'match' : [
+        'completion.match.fg',
+        'hints.match.fg',
+    ]
 }
 
 for colortype in targets:
@@ -131,8 +135,6 @@ for colortype in targets:
 
 setToFG('active', 'statusbar.progress.bg')
 
-config.set('colors.completion.match.fg', colors['match'])
-config.set('colors.hints.match.fg', colors['match'])
 config.set('hints.border', '1px solid ' + colors['fg']['normal'])
 
 # tabbar
@@ -141,15 +143,16 @@ def makePadding(top, bottom, left, right):
 
 # TODO improve this logic
 # assume height of font is ~10px, pad top by half match panel height
-top_bottom_padding = round((theme['panel']['height'] - 10) / 2)
-c.tabs.padding = makePadding(top_bottom_padding,top_bottom_padding,8,8)
-c.tabs.indicator_padding = makePadding(0,0,0,0)
+surround = round((theme['panel']['height'] - 10) / 2)
+c.tabs.padding = makePadding(surround, surround, 8, 8)
+c.tabs.indicator_padding = makePadding(0, 0, 0, 0)
 
 # fonts
-c.fonts.monospace = theme['fonts']['main']
+fonts = theme['fonts']
+c.fonts.monospace = fonts['main']
 
-tabFont = str(theme['fonts']['tab_size']) + 'pt ' + theme['fonts']['main']
-if theme['fonts']['tab_bold']:
+tabFont = str(fonts['tab_size']) + 'pt ' + fonts['main']
+if fonts['tab_bold']:
     tabFont = 'bold '  + tabFont
 
 c.fonts.tabs = tabFont
