@@ -94,7 +94,7 @@ targets = {
         'tabs.odd',
         'hints',
         'downloads.bar.bg',
-        ],
+    ],
 
     'active' : [
         'tabs.selected.even',
