@@ -190,7 +190,8 @@ load_gtk() {
         oomox-cli -o "$THEME_NAME" "$target"
     fi
 
-    # icon color(ACYL)
+    # icon color (ACYL)
+    [ ! -d "$HOME/.icons/acyl" ] && git clone https://github.com/neeasade/acyl "$HOME/.icons/acyl"
     $HOME/.icons/acyl/icon.sh "#$p_icon"
 
     # reload
