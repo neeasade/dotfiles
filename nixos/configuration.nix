@@ -6,7 +6,7 @@ let
   rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   neeasade = import (fetchTarball https://github.com/neeasade/nixpkgs/archive/nixos-17.03.tar.gz) { config = nixcfg; };
   # bleeding
-  #rolling = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg };
+  edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
 
   # set system level
   pkgs = stable;
@@ -15,8 +15,8 @@ in
   imports = [
     ./hardware-configuration.nix
     ./boot.nix
-    (import ./services.nix {inherit config pkgs lib neeasade; })
-    (import ./base.nix {inherit lib config pkgs stable rolling neeasade; })
+    (import ./services.nix {inherit config pkgs lib rolling neeasade ; })
+    (import ./base.nix {inherit lib config pkgs stable rolling neeasade edge; })
     (import ./development.nix {inherit config pkgs stable rolling neeasade; })
   ];
 

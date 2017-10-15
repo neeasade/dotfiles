@@ -1,4 +1,4 @@
-{ config, pkgs, lib, stable, rolling, neeasade, ...}:
+{ config, pkgs, lib, stable, rolling, neeasade, edge, ...}:
 with lib;
 {
   i18n = {
@@ -30,6 +30,8 @@ with lib;
 
   environment.systemPackages =
   (with stable; [
+  dolphinEmu
+  gparted
     (chromium.override {enablePepperFlash = true;})
 
     # packages for oomox:
@@ -114,11 +116,15 @@ with lib;
     imagemagick
     gnome2.zenity
     pkgconfig
+
+    texlive.combined.scheme-full
+    zathura
   ]) ++ (with rolling; [
     ranger
     x11idle
+    meh
 
-    (steam.override {newStdcpp = true; nativeOnly = true;})
+    (steam.override {nativeOnly = true;})
     bevelbar
     colort
     compton
@@ -135,7 +141,7 @@ with lib;
     neovim
     xfce.thunar
     pcmanfm
-    (qutebrowser.override {withWebEngineDefault = true;})
+    # (qutebrowser.override {withWebEngineDefault = true;})
     rxvt_unicode
     sxhkd
     vim
@@ -155,6 +161,8 @@ with lib;
     bspwm
     gtkrc-reload
     #wmutils-opt
+  ]) ++ (with edge; [
+    qutebrowser
   ]);
 
   # todo: consider:

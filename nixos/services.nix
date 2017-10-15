@@ -1,7 +1,6 @@
-{ config, lib, pkgs, neeasade, ...}: with lib;
+{ config, lib, pkgs, neeasade, rolling, ...}: with lib;
 
 {
-
   services = {
     xserver = {
       enable = true;
@@ -16,6 +15,7 @@
         tapButtons = false;
         palmDetect = true;
       };
+
       windowManager = {
         default = "bspwm";
         bspwm = {
@@ -25,7 +25,7 @@
       };
 
       desktopManager = {
-        xterm.enable = false;
+        xterm.enable = true;
         default = "none";
       };
 
@@ -34,10 +34,10 @@
       };
     };
 
-    printing = {
-      enable = true;
-      drivers = [ pkgs.gutenprint pkgs.postscript-lexmark pkgs.splix ];
-    };
+    # printing = {
+    #   enable = true;
+    #   drivers = [ pkgs.gutenprint pkgs.postscript-lexmark pkgs.splix ];
+    # };
 
     #dbus.enable = true;
     acpid.enable = true;
