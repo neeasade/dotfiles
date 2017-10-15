@@ -107,6 +107,11 @@ targets = {
         'statusbar.url.hover.fg',
         'completion.item.selected',
         'completion.category',
+
+        'completion.category.border.top',
+        'completion.category.border.bottom',
+        'completion.item.selected.border.top',
+        'completion.item.selected.border.bottom',
     ],
 
     'inactive' : [
@@ -117,10 +122,6 @@ targets = {
         'completion.odd.bg',
         'completion.even.bg',
 
-        'completion.category.border.top',
-        'completion.category.border.bottom',
-        'completion.item.selected.border.top',
-        'completion.item.selected.border.bottom',
     ],
 
     'match' : [
