@@ -240,8 +240,11 @@ load_dunst() {
     dunst &
 }
 
-load_mpdcron() {
-    # just handle template, not reload.
+load_mpd() {
+    music_dir="$HOME/Music"
+    mpd_dir="$HOME/.config/mpd"
+
+    margs mpd .config/mpd/mpd.conf
     margs mpdcron .config/mpd/mpdcron.conf
 }
 
