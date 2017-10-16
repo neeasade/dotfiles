@@ -23,6 +23,10 @@ defaulttitle() {
     settitle "$(basename $SHELL) - $(echo $TERM | sed 's/-.*//')"
 }
 
+linewrap() {
+    ${1:-true} && echo $'\e[?7h' || echo $'\e[?7l'
+}
+
 cursorStyle() {
     [ "$TERM" = "linux" ] && return
     [ "$TERM" = "eterm-color" ] && return
