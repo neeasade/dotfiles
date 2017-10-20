@@ -6,31 +6,26 @@ cur_shell="${cur_shell##*/}"
 history_length=10000
 history_file="$HOME/.${cur_shell}_history"
 
-set_history_bash() {
-  HISTFILE="$history_file"
-  HISTFILESIZE="$history_length"
-  HISTSIZE="$history_length"
-
-  shopt -s histappend
-  HISTCONTROL=ignoredups:erasedups
-}
-
-set_history_zsh() {
-  HISTFILE="$history_file"
-  SAVEHIST="$history_length"
-  HISTSIZE="$history_length"
-
-  setopt hist_ignore_dups
-  setopt hist_ignore_all_dups
-  setopt hist_ignore_space
-}
-
-set_history_mksh() {
+case "$cur_shell" in
+bash)
     HISTFILE="$history_file"
-}
+    HISTFILESIZE="$history_length"
+    HISTSIZE="$history_length"
 
-set_history_sh() {
-    true
-}
+    shopt -s histappend
+    HISTCONTROL=ignoredups:erasedups
+    ;;
+zsh)
+    HISTFILE="$history_file"
+    SAVEHIST="$history_length"
+    HISTSIZE="$history_length"
 
-set_history_$cur_shell
+    setopt hist_ignore_dups
+    setopt hist_ignore_all_dups
+    setopt hist_ignore_space
+    ;;
+mksh)
+    HISTFILE="$history_file"
+    ;;
+esac
+
