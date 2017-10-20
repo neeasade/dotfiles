@@ -83,17 +83,6 @@ nq() {
         }
 }
 
-# set the remote using ssh
-gitssh() {
-    local remoteUrl="$(git remote -v | sed 's/origin //' | head -1)"
-    local domain="$(echo $remoteUrl | cut -f3 -d'/')"
-    local username="$(echo $remoteUrl | cut -f4 -d'/')"
-    local reponame="$(echo $remoteUrl | cut -f5 -d'/' | cut -f1 -d'.' )"
-    local newRemote="git@$domain:$username/$reponame"
-    echo git remote set-url origin $newRemote
-    git remote set-url origin $newRemote
-}
-
 dec2hex() {
     printf "%X\n" $1
 }
