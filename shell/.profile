@@ -1,5 +1,8 @@
 # if not running interactively, bail
-test "$- != *i*" || exit
+case "$-" in
+*i*) ;;
+*) return;;
+esac
 
 # source everything
 for file in $HOME/.sh.d/*; do
