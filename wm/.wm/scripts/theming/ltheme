@@ -205,27 +205,26 @@ load_gtk() {
 load_qutebrowser() {
     trimAlphas
 
+    (
+        margs css "git/solarized-everything-css/styl/my.styl"
+        cd "$HOME/git/solarized-everything-css/"
+        stylus --include styl --import styl/my.styl -p sites/all-sites.styl > css/all.css
+    )
+
     q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
     q_tab_bold="${q_tab_bold^}"  # bashism
-
     q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
     q_tab_font="$(echo $p_font_main | sed 's/-.*//')"
 
     margs qutebrowser .config/qutebrowser/config.py
 
-    # locate a qutebrowser window and send bind to update from theme
-    # do so by the keybindings associated, then switch back.
-    # pending https://github.com/qutebrowser/qutebrowser/issues/1741
-    if pgrep -f qutebrowser >/dev/null; then
-        current_wid=`bspc query -N -n`
-
-        # only send to one
-        wid="$(xdotool search --class qutebrowser | head -n 1)"
-
-        xdotool windowactivate $wid
-        xdotool key --window $wid "shift+i"
-        bspc node -f $current_wid
-    fi
+    # calling this focuses qutebrowser
+    wid=$(bspc query -N -n)
+    qutebrowser :config-source
+    # reload current page w/ css
+    qutebrowser :reload
+    # qutebrowser ":set content.user_stylesheets $HOME/git/solarized-everything-css/css/all.css"
+    bspc node -f $wid
 }
 
 # dunst
@@ -248,7 +247,12 @@ load_mpd() {
     margs mpdcron .config/mpd/mpdcron.conf
 }
 
-targets="${*:-compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat mpdcron}"
+load_zathura() {
+    trimAlphas
+    margs zathura .config/zathura/zathurarc
+}
+
+targets="${*:-compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat zathura}"
 
 IFS=" "
 for conf in $targets; do
