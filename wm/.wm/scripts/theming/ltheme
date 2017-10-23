@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Load themes for programs from current theme
-# Check 'targets' variable at end for all posibilities.
 
 # relative:
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
@@ -51,7 +50,22 @@ margs() {
     return 1
 }
 
-trimAlphas() {
+git_ensure() {
+    gitdir="$HOME/git"
+    case "$1" in
+        acyl) gittarget="https://github.com/neeasade/acyl"
+            gitdir="$HOME/.icons/"
+            ;;
+        oomox) gittarget="https://github.com/actionless/oomox-gtk-theme/" ;;
+        css) gittarget="https://github.com/neeasade/solarized-everything-css" ;;
+    esac
+
+    [ ! -d "$gitdir" ] && mkdir -p "$gitdir"
+    gitdest="$gitdir/$(basename "$gittarget")"
+    [ ! -d "$gitdest" ] && git clone "$gittarget" "$gitdest"
+}
+
+trim_alphas() {
     for target in active inactive normal; do
         eval p_fg_$target=$(eval colort -t "\$p_fg_$target")
         eval p_bg_$target=$(eval colort -t "\$p_bg_$target")
@@ -94,12 +108,12 @@ load_compton() {
 }
 
 load_bg() {
-    eval $BG_COMMAND
+    eval "$BG_COMMAND"
 }
 
 # also loads xst, emacs
 load_xresources() {
-    trimAlphas
+    trim_alphas
 
     if ! margs Xresources .Xresources; then
         # handle any color definitions through 255
@@ -111,24 +125,46 @@ load_xresources() {
 
     xrdb $HOME/.Xresources
 
-    # tell all xsts to reload their theme:
-    pkill -x --signal USR1 st
-
     load_emacs
+    load_xst
 }
 
-# bspwm, panel
+load_emacs() {
+    emacsclient --eval "(neeasade/style)"
+}
+
+load_xst() {
+    pkill -x --signal USR1 st
+}
+
 load_bspwm() {
     if [ "${p_launch_cmd##*/}" = "lemonade" ]; then
-        rm $HOME/.wm/panel/juicers/*
+        load_lemonade
+    fi
 
-        p_format_1="$p_format"
-        juice_index=0
-        IFS=$'\n'
-        for mon in $(bspc query -M); do
-            juice_index=$((juice_index+1))
+    bspwmrc=".config/bspwm/bspwmrc"
+    panelt=".wm/scripts/interact/panelt"
+    icon=".wm/panel/tools/icon"
 
-            (
+    margs bspwm "$bspwmrc"
+    margs icon "$icon"
+    margs panelt "$panelt"
+    chmod +x "$HOME/$bspwmrc" "$HOME/$panelt" "$HOME/$icon"
+
+    wait
+    setsid "$HOME/$bspwmrc"
+}
+
+load_lemonade() {
+    rm $HOME/.wm/panel/juicers/*
+
+    p_format_1="$p_format"
+    juice_index=0
+    IFS=$'\n'
+    for mon in $(bspc query -M); do
+        juice_index=$((juice_index+1))
+
+        (
             conf="$(eval echo "\${p_format_${juice_index}}")"
             [ -z "$conf" ] && conf="$p_format"
             p_format="$conf"
@@ -147,21 +183,8 @@ load_bspwm() {
 
                 [ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
             fi
-            ) &
-        done
-    fi
-
-    bspwmrc=".config/bspwm/bspwmrc"
-    panelt=".wm/scripts/interact/panelt"
-    icon=".wm/panel/tools/icon"
-
-    margs bspwm "$bspwmrc"
-    margs icon "$icon"
-    margs panelt "$panelt"
-    chmod +x "$HOME/$bspwmrc" "$HOME/$panelt" "$HOME/$icon"
-
-    wait
-    setsid "$HOME/$bspwmrc"
+        ) &
+    done
 }
 
 # vim reload
@@ -175,14 +198,10 @@ load_vim() {
     #done
 }
 
-# emacs reload - note: depends on xresources
-load_emacs() {
-    emacsclient --eval "(neeasade/style)"
-}
-
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
-    trimAlphas
+    trim_alphas
+    git_ensure oomox
 
     if ! margs gtkrc .gtkrc-2.0; then
         target="$HOME/.themes/${THEME_NAME}_template"
@@ -191,7 +210,7 @@ load_gtk() {
     fi
 
     # icon color (ACYL)
-    [ ! -d "$HOME/.icons/acyl" ] && git clone https://github.com/neeasade/acyl "$HOME/.icons/acyl"
+    git_ensure acyl
     $HOME/.icons/acyl/icon.sh "#$p_icon"
 
     # reload
@@ -203,7 +222,8 @@ load_gtk() {
 
 # qutebrowser
 load_qutebrowser() {
-    trimAlphas
+    trim_alphas
+    git_ensure css
 
     (
         margs css "git/solarized-everything-css/styl/my.styl"
@@ -221,15 +241,14 @@ load_qutebrowser() {
     # calling this focuses qutebrowser
     wid=$(bspc query -N -n)
     qutebrowser :config-source
-    # reload current page w/ css
-    qutebrowser :reload
-    # qutebrowser ":set content.user_stylesheets $HOME/git/solarized-everything-css/css/all.css"
+    qutebrowser :reload # reload current page w/ css
+
     bspc node -f $wid
 }
 
 # dunst
 load_dunst() {
-    trimAlphas
+    trim_alphas
 
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
     margs dunstrc .config/dunst/dunstrc
@@ -248,11 +267,11 @@ load_mpd() {
 }
 
 load_zathura() {
-    trimAlphas
+    trim_alphas
     margs zathura .config/zathura/zathurarc
 }
 
-targets="${*:-compton tmux xresources bspwm bg vim gtk dunst qutebrowser weechat zathura}"
+targets="${*:-compton tmux xresources bspwm bg gtk dunst qutebrowser zathura}"
 
 IFS=" "
 for conf in $targets; do
@@ -260,7 +279,7 @@ for conf in $targets; do
     #time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
     #echo $conf : $time >> theme_perf.txt
     load_$conf >/dev/null
-    echo done loading $conf
+    echo $conf
     ) &
 done
 IFS=
