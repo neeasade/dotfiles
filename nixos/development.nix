@@ -4,8 +4,10 @@
   environment.systemPackages = with stable; [
       gcc autoconf automake gnumake cmake
 
-      (python35.withPackages(ps: with ps; [
-        setuptools
+      (python36.withPackages(ps: with ps; [
+        # setuptools
+        virtualenv
+        django
       ]))
 
       nodejs

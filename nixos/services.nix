@@ -1,4 +1,4 @@
-{ config, lib, pkgs, neeasade, rolling, ...}: with lib;
+{ config, expr, lib, pkgs, neeasade, rolling, ...}: with lib;
 
 {
   services = {
@@ -19,7 +19,7 @@
       windowManager = {
         default = "bspwm";
         bspwm = {
-          package = neeasade.bspwm;
+          package = expr.bspwm-git;
           enable = true;
         };
       };
@@ -34,10 +34,10 @@
       };
     };
 
-    # printing = {
-    #   enable = true;
-    #   drivers = [ pkgs.gutenprint pkgs.postscript-lexmark pkgs.splix ];
-    # };
+    printing = {
+       enable = true;
+       drivers = [ pkgs.gutenprint pkgs.splix ];
+     };
 
     #dbus.enable = true;
     acpid.enable = true;

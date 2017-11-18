@@ -1,4 +1,5 @@
-{ config, pkgs, lib, stable, rolling, neeasade, edge, ...}:
+{ config, pkgs, expr, lib, stable, rolling, neeasade, edge, ...}:
+
 with lib;
 {
   i18n = {
@@ -28,10 +29,17 @@ with lib;
     initialPassword="password";
   };
 
+  environment.extraInit = ''
+    # SVG loader for pixbuf (needed for GTK svg icon themes)
+    export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
+
+    '';
+
   environment.systemPackages =
-  (with stable; [
-  dolphinEmu
-  gparted
+    (with stable; [
+    psmisc
+    dolphinEmu
+    gparted
     (chromium.override {enablePepperFlash = true;})
 
     # packages for oomox:
@@ -80,32 +88,26 @@ with lib;
     pavucontrol
     patchelf
     openssl
-    pstree
     ponymix
+
+    go-mtpfs
 
     # allow xst terminfo to have higher priority
     (lib.lowPrio ncurses)
     mupdf
     ncmpcpp
     neofetch
-    # unsure how to make these higher priority
-    #nix
-    #nix-prefetch-scripts
-    #nix-repl
-    #sudo
     ntfs3g
     pass
     p7zip
     pciutils
-    slop
     stow
     tmux
     screen
     unclutter
     unzip
     wget
-    wget
-    wine
+    wineUnstable
     zlib
     zsh
     htop
@@ -117,17 +119,21 @@ with lib;
     gnome2.zenity
     pkgconfig
 
-    texlive.combined.scheme-full
+    # ghostscript conflict
+    (lib.lowPrio texlive.combined.scheme-full)
     zathura
+    steam
+    socat
+    compton
   ]) ++ (with rolling; [
+    slop # needs rolling for eval args
+
     ranger
     x11idle
     meh
 
-    (steam.override {nativeOnly = true;})
     bevelbar
     colort
-    compton
     dmenu2
     dunst
     dzen2
@@ -141,7 +147,6 @@ with lib;
     neovim
     xfce.thunar
     pcmanfm
-    # (qutebrowser.override {withWebEngineDefault = true;})
     rxvt_unicode
     sxhkd
     vim
@@ -149,20 +154,19 @@ with lib;
     xdotool
     xorg.xwininfo
     xtitle
-    weechat
     txtw
     xrq
     wmutils-core
-    wmutils-opt
     youtube-dl
     ffmpeg
+    # python conflict?
+    (lib.lowPrio qutebrowser)
   ]) ++ (with neeasade; [
     xst
-    bspwm
     gtkrc-reload
-    #wmutils-opt
-  ]) ++ (with edge; [
-    qutebrowser
+  ]) ++ (with edge; [])
+    ++ ( with expr; [
+    wmutils-opt-git
   ]);
 
   # todo: consider:
