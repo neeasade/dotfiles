@@ -15,10 +15,6 @@ path_add .wm/scripts/interact
 path_add .wm/scripts/visual
 path_add git_temp/opt
 
-# SVG loader for pixbuf (needed for GTK svg icon themes)
-# todo: this right, see ref https://github.com/bennofs/etc-nixos/blob/master/conf/desktop.nix#L24
-GDK_PIXBUF_MODULE_FILE="$(echo /nix/store/0m0c4qf9pyd9770qd0q7hbgpvz1i78x3-librsvg-2.40.17/lib/gdk-pixbuf-2.0/*/loaders.cache)"
-
 PAGER="less"
 
 # less status line
@@ -53,5 +49,7 @@ if has npm; then
 fi
 
 GEM_HOME="$HOME/.gem"
+
+export WINEPREFIX=$HOME/.config/wine/
 
 set +a
