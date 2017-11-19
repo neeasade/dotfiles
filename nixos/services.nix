@@ -37,11 +37,11 @@ in
 
     printing = {
        enable = true;
-       drivers = [ pkgs.gutenprint pkgs.splix ];
+       drivers = (with pkgs; [ gutenprint splix ]);
      };
 
-    #dbus.enable = true;
     acpid.enable = true;
+
     # todo : look into conf of ssh.
     #openssh.enable = true;
   };

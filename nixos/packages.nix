@@ -191,10 +191,13 @@ in
     base ++
     extra ++
     development ++
-    games
-    ;
+    games ++
+    [];
 
-  fonts.fonts = basefonts ++ extrafonts;
+  fonts.fonts =
+    basefonts ++
+    extrafonts ++
+    [];
 
   environment.extraInit = ''
     # SVG loader for pixbuf (needed for GTK svg icon themes)

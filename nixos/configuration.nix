@@ -8,10 +8,8 @@
     (import ./services.nix {inherit config pkgs; })
   ];
 
-  networking.hostName = "littleapple"; # Define your hostname.
-  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  nixpkgs.config.allowUnfree = true;
+  networking.hostName = "littleapple";
+  networking.wireless.enable = true;  # wpa_supplicant.
 
   virtualisation = {
     virtualbox = {
@@ -32,6 +30,11 @@
     pulseaudio.support32Bit = true;
   };
 
+  environment.extraInit = ''
+    # SVG loader for pixbuf (needed for GTK svg icon themes)
+    export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
+    '';
+
   time.timeZone = "America/Chicago";
 
   users.extraUsers.neeasade = {
@@ -45,6 +48,9 @@
     shell="/run/current-system/sw/bin/zsh";
     initialPassword="password";
   };
+
+
+  nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
   nix.gc.dates = "weekly";
