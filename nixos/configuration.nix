@@ -1,65 +1,49 @@
 { config, pkgs, lib, ... }:
 
-let
-  nixcfg = {
-  allowUnfree = true;
-
-  permittedInsecurePackages = [
-    "samba-3.6.25"
-  ];
-};
-
-  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-17.09.tar.gz) { config = nixcfg; };
-  rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
-  neeasade = import (fetchTarball https://github.com/neeasade/nixpkgs/archive/nixos-17.03.tar.gz) { config = nixcfg; };
-  # bleeding
-  edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
-
-  # set system level
-  pkgs = stable;
-  expr = import ./expr { inherit pkgs; };
-in
 {
-  _module.args.expr = import ./expr { inherit pkgs; };
-
   imports = [
     ./hardware-configuration.nix
     ./boot.nix
-    (import ./services.nix {inherit expr config pkgs lib rolling neeasade ; })
-    (import ./base.nix {inherit lib expr config pkgs stable rolling neeasade edge; })
-    (import ./development.nix {inherit config pkgs stable rolling neeasade; })
+    (import ./packages.nix {inherit config pkgs; })
+    (import ./services.nix {inherit config pkgs; })
   ];
 
-   networking.hostName = "littleapple"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  networking.hostName = "littleapple"; # Define your hostname.
+  networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-nixpkgs.config.allowUnfree = true;
-
-  # wine dep
-   fonts = {
-    fonts = (with pkgs; [
-      powerline-fonts
-      font-awesome-ttf
-      siji
-      tewi-font
-      font-droid
-      fira-code
-      fira
-      fantasque-sans-mono
-      corefonts
-      dejavu_fonts
-      source-code-pro
-      noto-fonts
-      roboto
-      roboto-mono
-      roboto-slab
-    ]);
-  };
+  nixpkgs.config.allowUnfree = true;
 
   virtualisation = {
     virtualbox = {
       host.enable = true;
     };
+  };
+
+  i18n = {
+    consoleFont = "Lat2-Terminus16";
+    consoleKeyMap = "us";
+    defaultLocale = "en_US.UTF-8";
+  };
+
+  hardware = {
+    opengl.driSupport = true;
+    pulseaudio.enable = true;
+    opengl.driSupport32Bit = true;
+    pulseaudio.support32Bit = true;
+  };
+
+  time.timeZone = "America/Chicago";
+
+  users.extraUsers.neeasade = {
+    isNormalUser = true;
+    uid = 1000;
+    extraGroups= [
+      "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers"
+    ];
+    createHome=true;
+    home="/home/neeasade";
+    shell="/run/current-system/sw/bin/zsh";
+    initialPassword="password";
   };
 
   nix.gc.automatic = true;

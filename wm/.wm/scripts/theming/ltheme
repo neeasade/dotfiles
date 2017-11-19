@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Load themes for programs from current theme
 
-# relative:
+# setup:
+
+# relative calling
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 PATH="$PATH:."
 
@@ -24,6 +26,8 @@ if [ "$p_icon" = "unset" ]; then
                                  colort -l -$intensity "$p_fg_inactive")
     p_icon="$(colort -t $p_icon)"
 fi
+
+# util:
 
 # mustache args, cache.
 # usage: margs <template name> <destination>
@@ -54,7 +58,7 @@ git_ensure() {
     gitdir="$HOME/git"
     case "$1" in
         acyl) gittarget="https://github.com/neeasade/acyl"
-            gitdir="$HOME/.icons/"
+              gitdir="$HOME/.icons/"
             ;;
         oomox) gittarget="https://github.com/actionless/oomox-gtk-theme/" ;;
         css) gittarget="https://github.com/neeasade/solarized-everything-css" ;;
@@ -73,6 +77,8 @@ trim_alphas() {
 
     p_icon=$(colort -t "$p_icon")
 }
+
+# loaders:
 
 load_tmux() {
     margs tmux .tmux.conf
@@ -130,7 +136,7 @@ load_xresources() {
 }
 
 load_emacs() {
-    emacsclient --eval "(neeasade/style)"
+    elisp "(neeasade/style)"
 }
 
 load_xst() {
@@ -187,26 +193,27 @@ load_lemonade() {
     done
 }
 
-# vim reload
 load_vim() {
-    # defunct.
-    return
 
-    #VIMS=`vim --serverlist`
-    #for vim in $VIMS; do
-    #vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
-    #done
+    # for use with a wrapper to use --remote
+    # works with neovim using https://github.com/mhinz/neovim-remote
+    VIMS=`vim --serverlist`
+    for vim in $VIMS; do
+        vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
+    done
 }
 
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
     trim_alphas
-    git_ensure oomox
 
     if ! margs gtkrc .gtkrc-2.0; then
         target="$HOME/.themes/${THEME_NAME}_template"
         mustache < $HOME/.wm/templates/oomox > $target
-        oomox-cli -o "$THEME_NAME" "$target"
+
+        git_ensure oomox
+        cd "$gitdest"
+        "./change_color.sh" -o "$THEME_NAME" "$target"
     fi
 
     # icon color (ACYL)
@@ -234,6 +241,7 @@ load_qutebrowser() {
     q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
     q_tab_bold="${q_tab_bold^}"  # bashism
     q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
+    q_tab_fontsize_small="$(($q_tab_fontsize - 2))"
     q_tab_font="$(echo $p_font_main | sed 's/-.*//')"
 
     margs qutebrowser .config/qutebrowser/config.py
@@ -241,7 +249,7 @@ load_qutebrowser() {
     # calling this focuses qutebrowser
     wid=$(bspc query -N -n)
     qutebrowser :config-source
-    qutebrowser :reload # reload current page w/ css
+    # qutebrowser :reload # reload current page w/ css
 
     bspc node -f $wid
 }
@@ -255,7 +263,7 @@ load_dunst() {
 
     pkill -x dunst
     sleep 2 # dunst needs delay(?)
-    dunst &
+    setsid dunst
 }
 
 load_mpd() {

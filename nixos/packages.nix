@@ -1,0 +1,203 @@
+{ config, pkgs, ...}:
+
+let
+  nixcfg = {
+    allowUnfree = true;
+  };
+
+  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-17.09.tar.gz) { config = nixcfg; };
+  rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
+  edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
+  expr = import ./expr { inherit pkgs; };
+
+  pkgs = stable;
+
+  base = (with stable; [
+    arandr
+    aspell
+    aspellDicts.en
+    bash-completion
+    bc
+    binutils
+    cron
+    curl
+    dash
+    expect
+    feh
+    gitAndTools.gitFull
+    gnome2.zenity
+    go-mtpfs
+    gparted
+    hfsprogs
+    hsetroot
+    htop
+    imagemagick
+    jq
+    libnotify
+    lm_sensors
+    lxappearance
+    maim
+    mksh
+    mpc_cli
+    mpd
+    mpv
+    mumble
+    neofetch
+    ntfs3g
+    openssl
+    p7zip
+    parallel
+    pass
+    patchelf
+    pavucontrol
+    pkgconfig
+    ponymix
+    psmisc
+    screen
+    socat
+    stow
+    tmux
+    tree
+    unclutter
+    unzip
+    vim
+    wget
+    xclip
+    xorg.xev
+    xorg.xmodmap
+    xurls
+    zathura
+    zsh
+
+    # needed?
+    mesa_drivers
+    mesa_glu
+  ]) ++ (with rolling; [
+    bevelbar
+    colort
+    dmenu2
+    dunst
+    dzen2
+    emacs
+    ffmpeg
+    i3lock
+    lemonbar-xft
+    meh
+    mpvc
+    qutebrowser
+    ranger
+    slop
+    sxhkd
+    txtw
+    wmutils-core
+    x11idle
+    xdotool
+    xfce.thunar
+    xorg.xprop
+    xorg.xwininfo
+    xrq
+    xst
+    xtitle
+    youtube-dl
+  ]) ++ ( with expr; [
+    gtkrc-reload
+    wmutils-opt-git
+  ]);
+
+  extra = (with stable; [
+    # oomox
+    gdk_pixbuf
+    glib.dev
+    gtk-engine-murrine
+    gtk3
+    sassc
+
+    (chromium.override {enablePepperFlash = true;})
+    compton
+    deluge
+    firefox
+    fzf
+    gimp
+    inkscape
+    leafpad
+    libreoffice
+    libtiff
+    neovim
+    pcmanfm
+    rxvt_unicode
+    texlive.combined.scheme-full
+  ]);
+
+  games = (with stable; [
+    steam
+    ioquake3
+    wineUnstable
+    dolphinEmu
+  ]);
+
+  development = (with stable; [
+    (python36.withPackages(ps: with ps; [
+      virtualenv
+      django
+    ]))
+
+    autoconf
+    automake
+    boot
+    clojure
+    cmake
+    docker
+    gcc
+    ghc
+    guile
+    gnumake
+    go
+    gradle
+    jdk8
+    leiningen
+    maven
+    nodejs
+    ruby
+    rustc
+    rustfmt
+    rustracer
+    zlib
+  ]);
+
+  basefonts = (with pkgs; [
+    siji
+    tewi-font
+    roboto-mono
+  ]);
+
+  extrafonts = (with pkgs; [
+    corefonts
+    powerline-fonts
+    font-awesome-ttf
+    font-droid
+    fira-code
+    fira
+    fantasque-sans-mono
+    dejavu_fonts
+    source-code-pro
+    noto-fonts
+    roboto
+    roboto-slab
+  ]);
+
+in
+{
+  environment.systemPackages =
+    base ++
+    extra ++
+    development ++
+    games
+    ;
+
+  fonts.fonts = basefonts ++ extrafonts;
+
+  environment.extraInit = ''
+    # SVG loader for pixbuf (needed for GTK svg icon themes)
+    export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
+    '';
+}
