@@ -5,16 +5,6 @@ has() {
     type "$@" >/dev/null 2>&1
 }
 
-path_add() {
-    PATH="$PATH:$HOME/$@"
-}
-
-path_add bin
-path_add .gem/bin
-path_add .wm/scripts/interact
-path_add .wm/scripts/visual
-path_add git_temp/opt
-
 PAGER="less"
 
 # less status line
@@ -49,7 +39,19 @@ if has npm; then
 fi
 
 GEM_HOME="$HOME/.gem"
+BUNDLE_PATH="$HOME/.gem"
+GOPATH="$HOME/.go"
 
-export WINEPREFIX=$HOME/.config/wine/
+WINEPREFIX=$HOME/.config/wine/
+
+path_add() {
+    PATH="$PATH:$HOME/$@"
+}
+
+path_add bin
+path_add .gem/bin
+path_add .go/bin
+path_add .wm/scripts/interact
+path_add .wm/scripts/visual
 
 set +a

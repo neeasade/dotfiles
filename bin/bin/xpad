@@ -1,0 +1,41 @@
+#!/bin/sh
+# fake padding for gui windows (terrible)
+
+padding="$(xrq st.borderpx)"
+border_color="$(bspc config normal_border_color)"
+background_color="$(xrq background)"
+border_width="$(bspc config border_width)"
+
+dec2hex() {
+    printf "%X\n" $1
+}
+
+pad_window() {
+    chwb2 -I "$(colort -t $background_color)" -i "$padding" \
+          -O "$(colort -t $border_color)" -o "$border_width" \
+          $1
+}
+
+select_window() {
+    wid="$(slop -f %i)"
+    bspc config -n $wid border_width $((padding + border_width))
+    pad_window "$(dec2hex $wid)"
+}
+
+non_terminals() {
+    is_terminal() {
+        result="$(iif "xprop -id $1 | grep st-256color")"
+
+        ! $result && iif "xprop -id $1 | grep Emacs" || echo $result
+    }
+
+    for wid in $(bspc query -N -n .leaf.\!hidden); do
+        if ! $(is_terminal $wid); then
+            bspc config -n $wid border_width $((padding + border_width))
+            pad_window "$wid"
+        fi
+    done
+}
+
+# select_window
+non_terminals
