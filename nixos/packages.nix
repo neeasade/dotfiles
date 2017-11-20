@@ -112,6 +112,7 @@ let
   ]) ++ ( with expr; [
     gtkrc-reload
     wmutils-opt-git
+    neeasade-opt
   ]);
 
   extra = (with stable; [
