@@ -24,6 +24,8 @@ let
     dash
     expect
     feh
+    file
+    filezilla
     gitAndTools.gitFull
     gnome2.zenity
     go-mtpfs
@@ -40,9 +42,13 @@ let
     mksh
     mpc_cli
     mpd
+    mpdcron
     mpv
+    mu
     mumble
     neofetch
+    nix-prefetch-scripts
+    nix-repl
     ntfs3g
     openssl
     p7zip
@@ -59,9 +65,13 @@ let
     tmux
     tree
     unclutter
+    unrar
     unzip
+    usbutils
     vim
+    vlc
     wget
+    wmname
     xclip
     xorg.xev
     xorg.xmodmap
@@ -113,11 +123,14 @@ let
     sassc
 
     (chromium.override {enablePepperFlash = true;})
+    audacity
+    bfg-repo-cleaner
     compton
     deluge
     firefox
     fzf
     gimp
+    gnome3.gedit
     inkscape
     leafpad
     libreoffice
@@ -129,10 +142,12 @@ let
   ]);
 
   games = (with stable; [
-    steam
-    ioquake3
-    wineUnstable
     dolphinEmu
+    ioquake3
+    minecraft
+    steam
+    wineUnstable
+    winetricks
   ]);
 
   development = (with stable; [
@@ -144,45 +159,49 @@ let
     autoconf
     automake
     boot
+    bundler
     clojure
     cmake
     docker
     gcc
     ghc
-    guile
     gnumake
     go
     gradle
+    guile
     jdk8
     leiningen
     maven
+    mono
     nodejs
     ruby
     rustc
     rustfmt
     rustracer
+    sqlite
+    zeal
     zlib
   ]);
 
   basefonts = (with pkgs; [
+    roboto-mono
     siji
     tewi-font
-    roboto-mono
   ]);
 
   extrafonts = (with pkgs; [
     corefonts
-    powerline-fonts
+    dejavu_fonts
+    fantasque-sans-mono
+    fira
+    fira-code
     font-awesome-ttf
     font-droid
-    fira-code
-    fira
-    fantasque-sans-mono
-    dejavu_fonts
-    source-code-pro
     noto-fonts
+    powerline-fonts
     roboto
     roboto-slab
+    source-code-pro
   ]);
 
 in
@@ -198,9 +217,4 @@ in
     basefonts ++
     extrafonts ++
     [];
-
-  environment.extraInit = ''
-    # SVG loader for pixbuf (needed for GTK svg icon themes)
-    export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
-    '';
 }
