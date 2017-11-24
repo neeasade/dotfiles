@@ -4,7 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ./boot.nix
-    (import ./packages.nix {inherit config pkgs; })
+    (import ./packages.nix {inherit config pkgs lib; })
     (import ./services.nix {inherit config pkgs; })
   ];
 

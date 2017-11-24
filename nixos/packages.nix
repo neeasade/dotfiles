@@ -1,14 +1,18 @@
-{ config, pkgs, ...}:
+{ config, pkgs, lib, ...}:
 
 let
   nixcfg = {
     allowUnfree = true;
+
+    permittedInsecurePackages = [
+     "samba-3.6.25"
+    ];
   };
 
   stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-17.09.tar.gz) { config = nixcfg; };
   rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
-  expr = import ./expr { inherit pkgs; };
+  expr = import ./expr { inherit pkgs lib; };
 
   pkgs = stable;
 
@@ -83,7 +87,6 @@ let
     mesa_drivers
     mesa_glu
   ]) ++ (with rolling; [
-    bevelbar
     colort
     dmenu2
     dunst
@@ -110,6 +113,7 @@ let
     xtitle
     youtube-dl
   ]) ++ ( with expr; [
+    bevelbar
     gtkrc-reload
     wmutils-opt-git
     neeasade-opt
@@ -147,7 +151,8 @@ let
     ioquake3
     minecraft
     steam
-    wineUnstable
+    # wineUnstable
+    wineStaging
     winetricks
   ]);
 
