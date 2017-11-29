@@ -1,0 +1,31 @@
+#!/bin/sh
+# custom monocle mode
+
+# mon id
+target_mon="$1"
+
+# percent of the monitor to use for single node
+window_percent=.60
+
+mon_width=$(bspc query -T -m $target_mon | jq .rectangle.width)
+window_width=$(echo $window_percent \* $mon_width | bc -l)
+pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
+
+# don't do anything if our target monitor has wrong proportions
+mon_height=$(bspc query -T -m $target_mon | jq .rectangle.height)
+[ $mon_height -gt $mon_width ] && exit
+
+bspc subscribe node_{add,remove} desktop_{focus,layout} | while read nope; do
+    ! [ "$(bspc query -M -m)" = "$target_mon" ] && continue
+    desk=$(bspc query -D -d)
+
+    node_count=$(bspc query -N -d $desk -n .leaf | wc -l)
+    monocle_layout=$(iif "bspc query -T -d $desk | jq .layout | grep monocle")
+    if $monocle_layout || [ $node_count -lt 2 ]; then
+        bspc config -d $desk left_padding  $pad_width
+        bspc config -d $desk right_padding $pad_width
+    else
+        bspc config -d $desk left_padding  0
+        bspc config -d $desk right_padding 0
+    fi
+done

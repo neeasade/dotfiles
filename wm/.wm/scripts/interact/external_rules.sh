@@ -17,9 +17,14 @@ fi
 # preferred split directions:
 horiPref=east
 vertPref=south
+
 # if dimensions are within this percent, will split $horiPref,
 # else direction is determined by width or height being greater.
 percent=.33
+
+# if 1 node is open, switch directions (related to custom_monocle)
+node_count=$(bspc query -N -d $desk -n .leaf | wc -l)
+[ $node_count -eq 1 ] && vertPref=$horiPref
 
 # get any presels on the current desktop, select one if so.
 presel="$(bspc query -N -d -n .\!automatic | head -n 1)"
