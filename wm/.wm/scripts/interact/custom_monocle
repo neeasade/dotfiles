@@ -5,7 +5,7 @@
 target_mon="$1"
 
 # percent of the monitor to use for single node
-window_percent=.60
+window_percent=.55
 
 mon_width=$(bspc query -T -m $target_mon | jq .rectangle.width)
 window_width=$(echo $window_percent \* $mon_width | bc -l)

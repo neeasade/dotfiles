@@ -11,6 +11,7 @@ dec2hex() {
 }
 
 pad_window() {
+    bspc config -n $1 border_width $((padding + border_width))
     chwb2 -I "$(colort -t $background_color)" -i "$padding" \
           -O "$(colort -t $border_color)" -o "$border_width" \
           $1
@@ -18,10 +19,10 @@ pad_window() {
 
 select_window() {
     wid="$(slop -f %i)"
-    bspc config -n $wid border_width $((padding + border_width))
-    pad_window "$(dec2hex $wid)"
+    pad_window "0x$(dec2hex $wid)"
 }
 
+# also covers emacs
 non_terminals() {
     is_terminal() {
         result="$(iif "xprop -id $1 | grep st-256color")"
@@ -31,11 +32,10 @@ non_terminals() {
 
     for wid in $(bspc query -N -n .leaf.\!hidden); do
         if ! $(is_terminal $wid); then
-            bspc config -n $wid border_width $((padding + border_width))
             pad_window "$wid"
         fi
     done
 }
 
-# select_window
-non_terminals
+select_window
+# non_terminals
