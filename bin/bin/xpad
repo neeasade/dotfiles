@@ -1,41 +1,57 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # fake padding for gui windows (terrible)
 
 padding="$(xrq st.borderpx)"
-border_color="$(bspc config normal_border_color)"
+border_color_normal="$(bspc config normal_border_color)"
+border_color_active="$(bspc config focused_border_color)"
 background_color="$(xrq background)"
 border_width="$(bspc config border_width)"
+
+background_color=$(colort -t $background_color)
+border_color_normal=$(colort -t $border_color_normal)
+border_color_active=$(colort -t $border_color_active)
 
 dec2hex() {
     printf "%X\n" $1
 }
 
 pad_window() {
-    bspc config -n $1 border_width $((padding + border_width))
-    chwb2 -I "$(colort -t $background_color)" -i "$padding" \
-          -O "$(colort -t $border_color)" -o "$border_width" \
-          $1
+    bspc config -n $2 border_width $((padding + border_width))
+    chwb2 -I "$background_color" -i "$padding" \
+          -O "$1" -o "$border_width" \
+          $2 &
 }
 
-select_window() {
-    wid="$(slop -f %i)"
-    pad_window "0x$(dec2hex $wid)"
+declare -A term_map
+cached_is_terminal() {
+    if [[ -z "${term_map[$1]}" ]]; then
+        xprop="$(xprop -id $1)"
+        grep -q st-256color <<< "$xprop" && term_map[$1]=true && return
+        grep -q Emacs <<< "$xprop" && term_map[$1]=true && return
+
+        term_map[$1]=false
+    fi
+
+    return $(iif "${term_map[$1]}" 0 1)
 }
 
-# also covers emacs
 non_terminals() {
-    is_terminal() {
-        result="$(iif "xprop -id $1 | grep st-256color")"
-
-        ! $result && iif "xprop -id $1 | grep Emacs" || echo $result
-    }
-
-    for wid in $(bspc query -N -n .leaf.\!hidden); do
-        if ! $(is_terminal $wid); then
-            pad_window "$wid"
+    color=$1
+    shift
+    for wid in "$@"; do
+        if ! cached_is_terminal $wid; then
+            pad_window "$color" "$wid"
         fi
     done
 }
 
-select_window
-# non_terminals
+draw() {
+    non_terminals $border_color_active $(bspc query -N -n .descendant_of.window.leaf)
+    non_terminals $border_color_normal $(bspc query -N -n .!descendant_of.window.leaf)
+}
+
+draw
+
+bspc subscribe node_{geometry,focus} | while read msg; do
+    draw
+done
