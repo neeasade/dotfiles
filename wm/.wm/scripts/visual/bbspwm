@@ -23,6 +23,6 @@ draw() {
 draw
 
 # reactive draw
-bspc subscribe node_geometry node_focus | while read msg; do
+bspc subscribe node_{geometry,focus} | while read msg; do
     draw
 done

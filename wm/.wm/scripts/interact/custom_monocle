@@ -19,7 +19,7 @@ bspc subscribe node_{add,remove} desktop_{focus,layout} | while read nope; do
     ! [ "$(bspc query -M -m)" = "$target_mon" ] && continue
     desk=$(bspc query -D -d)
 
-    node_count=$(bspc query -N -d $desk -n .leaf | wc -l)
+    node_count=$(bspc query -N -d $desk -n .leaf.tiled | wc -l)
     monocle_layout=$(iif "bspc query -T -d $desk | jq .layout | grep monocle")
     if $monocle_layout || [ $node_count -lt 2 ]; then
         bspc config -d $desk left_padding  $pad_width

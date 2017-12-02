@@ -3,11 +3,12 @@ color-a = #{{p_fg_active}}
 color-a-visited = #{{p_fg_inactive}}
 
 color-background = #{{background}}
-color-background-highlight = #{{`greaten "$background" 20`}}
-color-background-highlight-extra = #{{`greaten "$background" 10`}}
-color-background-highlight-extra-less = #{{`greaten "$background" 5`}}
-color-background-highlight-extra-less-less = #{{`greaten "$background" 3`}}
-color-background-highlight-tad-extra = #{{`greaten "$background" 3`}}
+
+color-background-highlight = #{{`greaten "$background" 10`}}
+color-background-highlight-extra = #{{`greaten "$background" 20`}}
+color-background-highlight-extra-less = #{{`greaten "$background" 30`}}
+color-background-highlight-extra-less-less = #{{`greaten "$background" 40`}}
+color-background-highlight-tad-extra = #{{`greaten "$background" 5`}}
 
 
 color-border = #{{b_normal_border_color}}
@@ -22,17 +23,15 @@ emphasized-more-more = #{{`greaten "$foreground" 30`}}
 button-gradient-top = color-background-highlight
 button-gradient-bottom = color-background-highlight
 
-yellow = #{{color3}}
 
-// no orange, conforming to red?
 orange = #{{color1}}
-
-red = #{{color1}}
-magenta = #{{color5}}
-
-// make this a slightly darker/lighter blue(if dark/light, less emphasis is the goal.
-violet = #{{`lessen "$color4" 20`}}
-
-blue = #{{color4}}
-cyan = #{{color6}}
+red = #{{color1}} // no orange, conforming to red?
 green = #{{color2}}
+yellow = #{{color3}}
+blue = #{{color4}}
+magenta = #{{color5}}
+cyan = #{{color6}}
+
+// make this a slightly darker/lighter blue (if dark/light, less emphasis is the goal)
+// (there's no violet in term def)
+violet = #{{`lessen "$color4" 20`}}

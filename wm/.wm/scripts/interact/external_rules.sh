@@ -41,14 +41,17 @@ echo node=$targetNode
 # not specifying split dir if targetting presel
 [ ! -z $presel ] && exit 0
 
-# determine split dir on focused node with preferred direction.
-[ $width -gt $height ] && bcInput="($width-$height)/$width" || bcInput="($height-$width)/$height"
+
+bcInput="$(iif "[ $width -gt $height ]" \
+    "($width-$height)/$width" \
+    "($height-$width)/$height" )"
+
 result=$(echo "$bcInput < $percent" | bc -l)
 
 if [ "$result" -eq "1" ]; then
     split_dir=$vertPref
 else
-    [ $width -gt $height ] && split_dir=east || split_dir=south
+    split_dir=$(iif "[ $width -gt $height ]" $horiPref $vertPref)
 fi
 
 echo split_dir=$split_dir
