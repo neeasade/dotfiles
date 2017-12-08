@@ -24,6 +24,7 @@ if [ "$p_icon" = "unset" ]; then
     [ $? -ne 0 ] && p_icon=$(colort -c "$p_fg_inactive" && \
                                  colort -l $intensity "$p_fg_inactive" || \
                                  colort -l -$intensity "$p_fg_inactive")
+
     p_icon="$(colort -t $p_icon)"
 fi
 
@@ -79,7 +80,6 @@ trim_alphas() {
 }
 
 # loaders:
-
 load_tmux() {
     margs tmux .tmux.conf
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
@@ -267,11 +267,12 @@ load_dunst() {
 }
 
 load_mpd() {
-    music_dir="$HOME/Music"
-    mpd_dir="$HOME/.config/mpd"
-
     margs mpd .config/mpd/mpd.conf
     margs mpdcron .config/mpd/mpdcron.conf
+}
+
+load_mpd_windows() {
+    margs mpd_windows .config/mpd/mpd.conf
 }
 
 load_zathura() {
@@ -279,7 +280,34 @@ load_zathura() {
     margs zathura .config/zathura/zathurarc
 }
 
-targets="${*:-compton tmux xresources bspwm bg gtk dunst qutebrowser zathura}"
+load_mintty() {
+    trim_alphas
+
+    st_font="$(echo $st_font | sed 's/-.*//')"
+    st_font_size="$(echo $st_font | tr -dc '0-9')"
+
+    # limitation: ttf fonts
+    list_windows_fonts() {
+        powershell '
+        [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
+        $objFonts = New-Object System.Drawing.Text.InstalledFontCollection
+        $objFonts.Families
+        '
+    }
+
+    if ! list_windows_fonts | grep -q "$st_font"; then
+        st_font=Consolas
+    fi
+
+    margs mintty .minttyrc
+}
+
+if uname | grep -q MINGW; then
+    # windows
+    targets="${*:-mintty mpd_windows tmux}"
+else
+    targets="${*:-compton tmux xresources bspwm bg gtk dunst qutebrowser zathura}"
+fi
 
 IFS=" "
 for conf in $targets; do

@@ -138,6 +138,10 @@ set -g status-right ''
 EOF
 )"
 
+# mpd
+music_dir="$HOME/Music"
+mpd_dir="$HOME/.config/mpd"
+
 # default template targets
 # this allows themes to replace template files with different targets, by defining ${target}_template
 for template in $(ls $HOME/.wm/templates); do
