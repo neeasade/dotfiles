@@ -233,13 +233,15 @@ load_qutebrowser() {
     git_ensure css
 
     (
+        # can't use gitdest here, margs is relative to home
         margs css "git/solarized-everything-css/styl/my.styl"
-        cd "$HOME/git/solarized-everything-css/"
+
+        cd "${gitdest}"
         stylus --include styl --import styl/my.styl -p sites/all-sites.styl > css/all.css
     )
 
     q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
-    q_tab_bold="${q_tab_bold^}"  # bashism
+    q_tab_bold="${q_tab_bold^}"  # bashism, make first letter capital
     q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
     q_tab_fontsize_small="$(($q_tab_fontsize - 2))"
     q_tab_font="$(echo $p_font_main | sed 's/-.*//')"
@@ -249,7 +251,7 @@ load_qutebrowser() {
     # calling this focuses qutebrowser
     wid=$(bspc query -N -n)
     qutebrowser :config-source
-    # qutebrowser :reload # reload current page w/ css
+    qutebrowser :reload # reload current page w/ css
 
     bspc node -f $wid
 }
@@ -314,8 +316,8 @@ for conf in $targets; do
     (
     #time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
     #echo $conf : $time >> theme_perf.txt
-    load_$conf >/dev/null
-    echo $conf
+    load_$conf
+    echo $conf done
     ) &
 done
 IFS=

@@ -17,7 +17,7 @@ mon_height=$(bspc query -T -m $target_mon | jq .rectangle.height)
 
 bspc subscribe node_{add,remove} desktop_{focus,layout} | while read nope; do
     ! [ "$(bspc query -M -m)" = "$target_mon" ] && continue
-    desk=$(bspc query -D -d)
+    desk=$(bspc query -D -d $target_mon:focused)
 
     node_count=$(bspc query -N -d $desk -n .leaf.tiled | wc -l)
     monocle_layout=$(iif "bspc query -T -d $desk | jq .layout | grep monocle")

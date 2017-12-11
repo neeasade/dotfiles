@@ -46,3 +46,40 @@
  )
 
 (setq helm-dash-browser-func 'eww-browse-existing-or-new)
+
+(evil-vimish-fold-mode 1)
+
+;; testing out
+(defun myscroll(count)
+  ;; window-total-size gets lines count when called with no args
+  ;; note: this only works well for buffers that take more than the full screen...
+  (let (
+        (windowcount (/ (window-total-size) 2))
+        (scrollcount (/ (window-total-size) 6))
+        (buffercount (count-lines (point-min) (point-max)))
+        )
+    (if (> buffercount windowcount)
+        (evil-scroll-line-down scrollcount)
+        nil
+        )
+    )
+  )
+
+(add-function :after (symbol-function 'evil-scroll-line-to-center) #'myscroll)
+
+(setq alert-default-style 'libnotify)
+
+;; hooks for pomodoro mode pause/play
+(defun pomodoro-state-change(message option)
+  (alert message)
+  (shell-command (concat "player.sh " option))
+  )
+
+(add-hook 'org-pomodoro-started-hook
+          (apply-partially #'pomodoro-state-change "Pomodoro Started" "play"))
+
+(add-hook 'org-pomodoro-break-finished-hook
+          (apply-partially #'pomodoro-state-change "Break over, pick a task!" "play"))
+
+(add-hook 'org-pomodoro-finished-hook
+          (apply-partially #'pomodoro-state-change "Pomodoro finished" "pause"))

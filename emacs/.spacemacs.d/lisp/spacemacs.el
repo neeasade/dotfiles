@@ -20,6 +20,8 @@
         editorconfig
         helm-dash
         zoom
+        evil-vimish-fold
+        alda-mode
                     )
 
       configuration-layers

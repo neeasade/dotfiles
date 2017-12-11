@@ -11,7 +11,7 @@ time_offset_percent() {
 
     interval="$(calc ${duration} \* 60)"
 
-    time_left="$(elisp '(format-time-string "%s" org-pomodoro-countdown)' | tr -d '"')"
+    time_left="$(elisp '(format-time-string "%s" (org-pomodoro-remaining-seconds))' | tr -d '"')"
     percent="$(calc "((${interval} - ${time_left}) / ${interval}) * 100" | sed 's/\..*//')"
 
     percent=${percent:-0}
@@ -22,11 +22,6 @@ progress() {
     mkb "$(time_offset_percent "$1")" 10 ◼ ◻ ◻
 }
 
-no_task() {
-    player.sh pause >/dev/null
-    echo "No task!"
-}
-
 get_length() {
     elisp "org-pomodoro-${@}length"
 }
@@ -35,23 +30,19 @@ pomodoro_state="$(elisp org-pomodoro-state)"
 
 case ${pomodoro_state} in
     :short-break)
-        player.sh pause >/dev/null
         echo "Break $(progress $(get_length short-break-))"
         ;;
 
     :long-break)
-        player.sh pause >/dev/null
         echo "Long break $(progress $(get_length long-break-))"
         ;;
 
     :pomodoro)
-        player.sh play >/dev/null
         task="$(elisp org-clock-current-task | tr -d '"')"
         echo "${task} $(progress $(get_length))"
         ;;
 
     :none)
-        player.sh play >/dev/null
         echo "Pick a task!"
         ;;
 
