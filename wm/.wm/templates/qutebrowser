@@ -43,9 +43,12 @@ theme = {
     },
 
     'fonts': {
-        'main': '{{q_tab_font}}',
+        'tabbar': '{{q_tab_font}}',
+        'completion': '{{q_tab_font}}',
+        'completion_size': {{q_tab_fontsize_small}},
         'tab_bold': {{q_tab_bold}},
         'tab_size': {{q_tab_fontsize}},
+        'status_size': {{q_tab_fontsize_small}},
     },
 
     'colors': {
@@ -90,10 +93,9 @@ targets = {
         'statusbar.command',
         'statusbar.url.success.http.fg',
         'statusbar.url.success.https.fg',
-        'tabs.even',
-        'tabs.odd',
         'hints',
         'downloads.bar.bg',
+        'completion.category',
     ],
 
     'active' : [
@@ -106,10 +108,10 @@ targets = {
         'messages.error',
         'statusbar.url.hover.fg',
         'completion.item.selected',
-        'completion.category',
 
         'completion.category.border.top',
         'completion.category.border.bottom',
+
         'completion.item.selected.border.top',
         'completion.item.selected.border.bottom',
     ],
@@ -121,7 +123,8 @@ targets = {
         'completion.fg',
         'completion.odd.bg',
         'completion.even.bg',
-
+        'tabs.even',
+        'tabs.odd',
     ],
 
     'match' : [
@@ -150,10 +153,15 @@ c.tabs.indicator_padding = makePadding(0, 0, 0, 0)
 
 # fonts
 fonts = theme['fonts']
-c.fonts.monospace = fonts['main']
+c.fonts.monospace = fonts['tabbar']
 
-tabFont = str(fonts['tab_size']) + 'pt ' + fonts['main']
+def GetSize(fontType):
+    return str(fonts[fontType + '_size']) + 'pt '
+
+tabFont = GetSize('tab') + fonts['tabbar']
+
 if fonts['tab_bold']:
-    tabFont = 'bold '  + tabFont
+   tabFont = 'bold {0}'.format(tabFont)
 
 c.fonts.tabs = tabFont
+c.fonts.completion.entry = GetSize('completion') + fonts['completion']
