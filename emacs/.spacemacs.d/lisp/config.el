@@ -70,16 +70,11 @@
 (setq alert-default-style 'libnotify)
 
 ;; hooks for pomodoro mode pause/play
-(defun pomodoro-state-change(message option)
-  (alert message)
-  (shell-command (concat "player.sh " option))
-  )
-
 (add-hook 'org-pomodoro-started-hook
-          (apply-partially #'pomodoro-state-change "Pomodoro Started" "play"))
+          (apply-partially #'shell-command "player.sh play"))
 
 (add-hook 'org-pomodoro-break-finished-hook
-          (apply-partially #'pomodoro-state-change "Break over, pick a task!" "play"))
+          (apply-partially #'shell-command "player.sh play"))
 
 (add-hook 'org-pomodoro-finished-hook
-          (apply-partially #'pomodoro-state-change "Pomodoro finished" "pause"))
+          (apply-partially #'shell-command "player.sh pause"))
