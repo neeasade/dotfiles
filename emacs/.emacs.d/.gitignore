@@ -1,0 +1,11 @@
+auto-save-list
+%backup%~
+backups
+custom.el
+custom.el
+.cache
+
+straight/*
+!straight/versions
+straight/versions/*
+!straight/versions/default.el
