@@ -1,7 +1,3 @@
 [submodule "walls"]
 	path = wm/.wm/walls
 	url = http://code.neeasade.net/walls
-[submodule "emacs/.emacs.d"]
-	path = emacs/.emacs.d
-	url = https://github.com/syl20bnr/spacemacs/
-	branch = develop
