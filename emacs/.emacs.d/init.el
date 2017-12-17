@@ -1,10 +1,11 @@
 ;;; init.el --- neeasade
-;;; Commentary:
+;;; commentary:
 ;;; See the bottom.
+;;; code:
 
 ;; helpers
 (defun mapcar* (f &rest xs)
-  "MAPCAR for multiple sequences"
+  "MAPCAR for multiple sequences F XS."
   (if (not (memq nil xs))
       (cons (apply f (mapcar 'car xs))
 	    (apply 'mapcar* f (mapcar 'cdr xs)))))
@@ -24,6 +25,7 @@ buffer is not visiting a file."
 ;; a namespace variable setting function
 (defun load-settings(namespace lst)
   "Set dotspacemacs- prefixed variable values from a list."
+  (require 'seq)
   (mapcar*
    (lambda (pair)
      (let ((key (car pair))
@@ -47,7 +49,7 @@ buffer is not visiting a file."
     ))
 
 (defun get-resource (name)
-  "Get X resource value, with a fallback value."
+  "Get X resource value, with a fallback value NAME."
   (let ((default (eval (cdr (assoc name xrdb-fallback-values)))))
     (if (executable-find "xrq")
 	(let ((result
@@ -72,9 +74,13 @@ buffer is not visiting a file."
     (load user-init-file nil 'nomessage)
     (message "Reloading init.el... done.")))
 
-;; global prefix spot
 (defun neeasade/bind (&rest binds)
+  "Global prefix spot for BINDS."
   (apply 'general-define-key :prefix "SPC" binds)
+  )
+
+(defun neeasade/bindmode(mode &rest binds)
+  (apply 'general-define-key :keymaps mode binds)
   )
 
 ;; The content:
@@ -146,7 +152,11 @@ buffer is not visiting a file."
   (unless (file-exists-p custom-file)
     (write-region "" nil custom-file))
 
-  ;; save session
+  ;; allow things to load before we reload settings
+  (setq desktop-restore-eager 0)
+  (setq desktop-path (list "~/.emacs.d"))
+
+  ;; retain session
   (desktop-save-mode 1)
   )
 
@@ -154,24 +164,39 @@ buffer is not visiting a file."
   (load "~/.emacs.d/vendor/le-eval-and-insert-results.el")
 
   (setq lisp-indent-function 'common-lisp-indent-function)
-
   (evil-leader/set-key-for-mode
       'emacs-lisp-mode
       "er" 'eval-region
-      "ei" 'le::eval-and-insert-sexp
+      "ei" 'le::eval-and-insert-results
+      "eb" 'le::eval-and-insert-all-sexps
       )
   )
 
-;; approach: package things as functions/layers-esque, enable/disable
-;; at the end.
+;; zz behavior evil
+(defun myscroll(count)
+  ;; window-total-size gets lines count when called with no args
+  ;; note: this only works well for buffers that take more than the full screen...
+  (let (
+	(windowcount (/ (window-total-size) 2))
+	(scrollcount (/ (window-total-size) 6))
+	(buffercount (count-lines (point-min) (point-max)))
+	)
+    (if (> buffercount windowcount)
+	(evil-scroll-line-down scrollcount)
+      nil
+      )
+    )
+  )
+
 (defun neeasade/evil()
   (use-package evil
-    :config (evil-mode 1)
-    )
+      :config (evil-mode 1)
+      (add-function :after (symbol-function 'evil-scroll-line-to-center) #'myscroll)
+      )
   (use-package evil-numbers)
 
   (use-package evil-leader
-    :config
+      :config
     (evil-leader/set-leader ",")
 
     (global-evil-leader-mode)
@@ -200,45 +225,61 @@ buffer is not visiting a file."
 (defun neeasade/company()
   ;; asdf config packages
   (use-package company
-    :config
+      :config
     (global-company-mode)
     (use-package company-flx
-      :config
+	:config
       (company-flx-mode +1))
 
     (setq
-     company-idle-delay 0.5
+     company-idle-delay 0
      company-selection-wrap-around t
      company-tooltip-align-annotations t
+     company-dabbrev-downcase 0
      )
 
-    ;; TODO: consider these keybindings/investigate tab handling like VS
+    ;; TODO: investigate tab handling like VS completely
     (define-key company-active-map [tab] 'company-complete)
-    (define-key company-active-map (kbd "C-n") 'company-select-next)
-    (define-key company-active-map (kbd "C-p") 'company-select-previous))
+    )
 
   (use-package company-quickhelp
-    :init
-    (company-quickhelp-mode 1))
+      :init
+    (company-quickhelp-mode 1)
+    (setq company-quickhelp-delay 0.3)
+    )
   )
+
+(defun neeasade/editing()
+  ;; TODO here: figure out how I want to sync indent styles across modes
+  (use-package editorconfig)
+  )
+
+(defun spacemacs/compute-powerline-height ()
+  "Return an adjusted powerline height."
+  (let ((scale (if (and (boundp 'powerline-scale) powerline-scale)
+		   powerline-scale 1)))
+    (truncate (* scale (frame-char-height)))))
 
 (defun neeasade/style()
   (use-package base16-theme)
+  ;;(use-package ujelly-theme)
+
   (use-package spaceline
-    :config
+      :config
     (require 'spaceline-config)
+    (setq powerline-scale (string-to-number (get-resource "Emacs.powerlinescale")))
+    (setq powerline-height (spacemacs/compute-powerline-height))
     (spaceline-spacemacs-theme)
     )
 
-  (load-theme 'base16-grayscale-light)
-  (setq powerline-default-separator "bar")
+  (load-theme (intern (get-resource "Emacs.theme")))
+  (setq powerline-default-separator (get-resource "Emacs.powerline"))
   (set-face-attribute 'fringe nil :background nil)
 
   (setq powerline-default-separator (get-resource "emacs.powerline"))
 
   ;; sync modeline background color?
-  ;;(set-face-attribute
-  ;;'spacemacs-normal-face nil :inherit 'mode-line)
+  ;;(set-face-attribute 'spacemacs-normal-face nil :inherit 'mode-line)
 
   (set-face-background 'font-lock-comment-face nil)
 
@@ -283,17 +324,15 @@ buffer is not visiting a file."
 
 (defun neeasade/window-management()
   (use-package zoom
-    :config
+      :config
     (setq zoom-size '(0.58 . 0.618))
     (zoom-mode t)
     )
   )
 
 (defun neeasade/org()
-  (use-package org
-    :config
-    (load-settings
-     "org"
+  (use-package org :config
+    (load-settings "org"
      '(
        ;; where
        directory "~/org/projects"
@@ -361,8 +400,32 @@ buffer is not visiting a file."
      )
     )
 
-  (use-package org-pomodoro
-    :config
+  (use-package evil-org
+      :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+	      (lambda ()
+		(evil-org-set-key-theme))))
+
+  (add-hook
+   'org-mode-hook
+   ;; Configure leader key
+   (evil-leader/set-key-for-mode 'org-mode
+       "t" 'org-todo
+       "T" 'org-show-todo-tree
+       "v" 'org-mark-element
+       "a" 'org-agenda
+       "c" 'org-archive-subtree
+       "l" 'evil-org-open-links
+       "C" 'org-resolve-clocks)
+
+   (neeasade/bindmode
+    'org-mode-map
+    "t" 'org-todo
+    )
+   )
+
+  (use-package org-pomodoro :config
     (add-hook 'org-pomodoro-started-hook
 	      (apply-partially #'shell-command "player.sh play"))
 
@@ -387,15 +450,26 @@ buffer is not visiting a file."
   (use-package nix-mode)
   )
 
+(defun dynamic-ivy-height()
+  "Placeholder."
+  (let (
+	(computed (/ (window-total-size) 2))
+	)
+    (setq ivy-height computed)
+    (setq ivy-fixed-height-minibuffer computed)
+    )
+  )
+
 ;; bindings, ivy, counsel, alerts, which-key
 (defun neeasade/interface()
   ;; ref: http://oremacs.com/2016/01/06/ivy-flx/
   (use-package flx)
 
-  (setq ivy-height 20)
+  (dynamic-ivy-height)
+  (add-hook 'window-configuration-change-hook 'dynamic-ivy-height)
 
   (use-package ivy
-    :config
+      :config
     (setq ivy-re-builders-alist
 	  '((ivy-switch-buffer . ivy--regex-plus)
 	    (t . ivy--regex-fuzzy)))
@@ -405,12 +479,12 @@ buffer is not visiting a file."
 
   ;; counsel
   (use-package counsel
-    :bind
+      :bind
     ("C-c k" . counsel-ag))
 
   (use-package general
-    :config
-    ;; bind a key globally in normal state; keymaps must be quoted
+      :config
+    ;; bind a key globally in normal state
     (setq general-default-keymaps 'evil-normal-state-map)
     )
 
@@ -437,7 +511,7 @@ buffer is not visiting a file."
    )
 
   (use-package which-key
-    :config
+      :config
     (which-key-setup-side-window-right-bottom)
     (setq
      which-key-sort-order 'which-key-key-order-alpha
@@ -466,14 +540,19 @@ buffer is not visiting a file."
 
 (defun neeasade/git()
   (use-package magit
-    :config
+      :config
     (setq magit-repository-directories (list "~/git"))
     )
 
   (use-package evil-magit
-    :config
+      :config
     (evil-define-key evil-magit-state magit-mode-map "?" 'evil-search-backward)
     )
+
+  (neeasade/bind
+   "g" '(:ignore t :which-key "git")
+   "gs" 'magit-status
+   )
   )
 
 ;; (init-use-package)
@@ -483,6 +562,7 @@ buffer is not visiting a file."
   (neeasade/settings-sanity)
   (neeasade/evil)
   (neeasade/interface)
+  (neeasade/editing)
   )
 
 (defun neeasade/extra()
@@ -494,6 +574,7 @@ buffer is not visiting a file."
   (neeasade/ivy-style)
   (neeasade/window-management)
   (neeasade/style)
+  (neeasade/emms)
   )
 
 (defun neeasade/communication()
@@ -511,4 +592,6 @@ buffer is not visiting a file."
 (neeasade/development)
 
 (provide 'init)
+
 ;;; init.el ends here
+
