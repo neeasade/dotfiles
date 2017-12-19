@@ -14,7 +14,7 @@ super + y
     bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
 
 alt + {_,shift} + Tab
-    bspc node -f {next,prev}.local
+    bspc node -f {next,prev}.local.normal
 
 super + t
     bspc desktop -l next

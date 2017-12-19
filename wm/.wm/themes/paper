@@ -6,8 +6,8 @@ emacs_theme="base16-grayscale-light"
 emacs_powerline_scale="1.4"
 
 # bspwm
-b_border_width=4
-b_window_gap=20
+b_border_width=0
+b_window_gap=40
 st_borderpx=10
 
 b_normal_border_color=$(colort -20 -t $p_bg_normal)
@@ -26,9 +26,9 @@ p_format_2="desktop:github:themeSwitch:title|org_task|dynamicmpd:volume:clock"
 p_title_show_mode=active         # used by title.
 
 p_height=25
-p_gap=10
+p_gap=0
 p_line=3
-p_class="noshadow"
+p_window_class="noshadow"
 p_line=2
 p_padding=6
 
@@ -49,6 +49,18 @@ maxWinNameLen=30
 
 p_title_theme="fg=\"#ff$(colort -t 30 525252)\""
 p_desktop_theme="fg=\"#ff$(colort -t 30 525252)\""
+
+c_shadow="true"
+c_frame_opacity="1.0"
+c_shadow_opacity="0.5"
+c_shadow_radius="5"
+c_shadow_offset_x="-8"
+c_shadow_offset_y="-8"
+
+c_fading="false";
+c_fade_in_step="0.1"
+c_fade_out_step="0.1"
+
 
 activeline() {
     activefg

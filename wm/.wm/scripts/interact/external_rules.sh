@@ -8,11 +8,8 @@
 
 # if any one shot rule exists, defer to potentially that.
 # have to check a file/set outside of this script because bspc calls here make external rule take priority
-if cat /tmp/bspcrules | grep -q ' ->'; then
-    # todo: check class.
-    rm -rf /tmp/bspcrules
-    exit 0
-fi
+wid=$1
+class_name="$2"
 
 # preferred split directions:
 horiPref=east
@@ -23,13 +20,13 @@ vertPref=south
 percent=.33
 
 # if 1 node is open, switch directions (related to custom_monocle)
-
 mon_width=$(bspc query -T -m | jq .rectangle.width)
 mon_height=$(bspc query -T -m | jq .rectangle.height)
 if [ $mon_width -gt $mon_height ]; then
-    node_count=$(bspc query -N -d $desk -n .leaf | wc -l)
+    node_count=$(bspc query -N -d $desk -n .leaf.normal | wc -l)
     [ $node_count -eq 1 ] && vertPref=$horiPref
 fi
+
 
 # get any presels on the current desktop, select one if so.
 presel="$(bspc query -N -d -n .\!automatic | head -n 1)"
@@ -39,6 +36,9 @@ targetNode=${presel:-focused}
 # in an external rule after you start echoing.
 width=$(bspc query -T -n $targetNode | jq '.rectangle.width')
 height=$(bspc query -T -n $targetNode | jq '.rectangle.height')
+
+# see support_window
+[ "$class_name" = "below" ] && echo layer=below
 
 # set node
 echo node=$targetNode

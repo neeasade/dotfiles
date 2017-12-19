@@ -1,0 +1,68 @@
+#!/bin/sh
+# a window that follows the focused window, always hiding behind it.
+# this is because compton shadows stack, and this creates and effect
+# where the focused window has a darker shadow opacity, a feature not
+# in compton.
+
+key="below"
+
+cleanup() {
+    bspc node $wid -c
+}
+
+launch() {
+    xdo id -N $key ||
+        setsid st -c $key &
+
+    sleep 0.5
+
+    wid=$(xdo id -N $key)
+    bspc node $wid -t floating
+    border_width=$(bspc config border_width)
+}
+
+not_together() {
+    json="$(bspc query -T -n)"
+    jget() {
+        echo "$json" | jq -r ".client.$1"
+    }
+
+    state=$(jget state)
+    x=$(jget ${state}Rectangle.x)
+    y=$(jget ${state}Rectangle.y)
+    w=$(jget ${state}Rectangle.width)
+    h=$(jget ${state}Rectangle.height)
+
+    # xpad compatibility
+    if [ "$border_width" = "0" ]; then
+        b=$(jget borderWidth)
+        h=$((h+b+b))
+        w=$((w+b+b))
+    fi
+
+    json="$(bspc query -T -n $wid)"
+    state=floating
+    f_x=$(jget ${state}Rectangle.x)
+    f_y=$(jget ${state}Rectangle.y)
+    f_w=$(jget ${state}Rectangle.width)
+    f_h=$(jget ${state}Rectangle.height)
+
+    for attr in x y w h; do
+        eval "! [ "\$$attr" = "\$f_$attr" ] && return 1"
+    done
+
+    return 0
+}
+
+follow() {
+    xdo move -x $x -y $y $wid
+    xdo resize -w $w -h $h $wid
+}
+
+launch
+
+trap 'cleanup' TERM INT
+
+bspc subscribe node_{geometry,focus} | while read msg; do
+    not_together || follow
+done
