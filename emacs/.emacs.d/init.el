@@ -3,87 +3,7 @@
 ;;; See the bottom.
 ;;; code:
 
-;; helpers
-(defun mapcar* (f &rest xs)
-  "MAPCAR for multiple sequences F XS."
-  (if (not (memq nil xs))
-      (cons (apply f (mapcar 'car xs))
-	    (apply 'mapcar* f (mapcar 'cdr xs)))))
 
-(defun sudo-edit (&optional arg)
-  "Edit currently visited file as root.
-
-With a prefix ARG prompt for a file to visit.
-Will also prompt for a file to visit if current
-buffer is not visiting a file."
-  (interactive "P")
-  (if (or arg (not buffer-file-name))
-      (find-file (concat "/sudo:root@localhost:"
-			 (ido-read-file-name "Find file(as root): ")))
-    (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
-
-;; a namespace variable setting function
-(defun load-settings(namespace lst)
-  "Set dotspacemacs- prefixed variable values from a list."
-  (require 'seq)
-  (mapcar*
-   (lambda (pair)
-     (let ((key (car pair))
-	   (value (car (cdr pair))))
-       (set-default
-	(intern (concat namespace "-" (prin1-to-string key)))
-	(eval value)
-	)))
-   (seq-partition lst 2)
-   ))
-
-;; for when we're away from $HOME.
-(defvar xrdb-fallback-values
-  '(
-    ("Emacs.theme"          . "base16-grayscale-light")
-    ("Emacs.powerlinescale" . "1.4")
-    ("st.font"              . "Consolas-12")
-    ("st.borderpx"          . "10")
-    ("emacs.powerline"      . "bar")
-    ("*.background"         . (face-attribute 'default :background))
-    ))
-
-(defun get-resource (name)
-  "Get X resource value, with a fallback value NAME."
-  (let ((default (eval (cdr (assoc name xrdb-fallback-values)))))
-    (if (executable-find "xrq")
-	(let ((result
-	       ;; shell-command-to-string appends newline
-	       (replace-regexp-in-string "\n$" ""
-					 (shell-command-to-string
-					  (concat "xrq '" name "' 2>/dev/null")))))
-	  (if (string= result "")
-	      ;; we didn't find it in xrdb.
-	      default
-	    result
-	    ))
-      default
-      )))
-
-(defun reload-init()
-  "Reload init.el."
-  (interactive)
-  (straight-transaction
-      (straight-mark-transaction-as-init)
-      (message "Reloading init.el...")
-    (load user-init-file nil 'nomessage)
-    (message "Reloading init.el... done.")))
-
-(defun neeasade/bind (&rest binds)
-  "Global prefix spot for BINDS."
-  (apply 'general-define-key :prefix "SPC" binds)
-  )
-
-(defun neeasade/bindmode(mode &rest binds)
-  (apply 'general-define-key :keymaps mode binds)
-  )
-
-;; The content:
 (defun init-use-package()
   (require 'package)
   (setq package-enable-at-startup nil)
@@ -164,12 +84,12 @@ buffer is not visiting a file."
   (load "~/.emacs.d/vendor/le-eval-and-insert-results.el")
 
   (setq lisp-indent-function 'common-lisp-indent-function)
-  (evil-leader/set-key-for-mode
-      'emacs-lisp-mode
-      "er" 'eval-region
-      "ei" 'le::eval-and-insert-results
-      "eb" 'le::eval-and-insert-all-sexps
-      )
+  (neeasade/bind-leader-mode
+   'emacs-lisp-mode
+   "er" 'eval-region
+   "ei" 'le::eval-and-insert-results
+   "eb" 'le::eval-and-insert-all-sexps
+   )
   )
 
 ;; zz behavior evil
@@ -190,15 +110,15 @@ buffer is not visiting a file."
 
 (defun neeasade/evil()
   (use-package evil
-      :config (evil-mode 1)
-      (add-function :after (symbol-function 'evil-scroll-line-to-center) #'myscroll)
-      )
+    :config (evil-mode 1)
+    (add-function :after (symbol-function 'evil-scroll-line-to-center) #'myscroll)
+    )
+
   (use-package evil-numbers)
 
   (use-package evil-leader
-      :config
+    :config
     (evil-leader/set-leader ",")
-
     (global-evil-leader-mode)
     )
 
@@ -209,6 +129,23 @@ buffer is not visiting a file."
   ;; defaults to fd/spacemacs-like config
   (use-package evil-escape :config (evil-escape-mode))
 
+  ;; Overload shifts so that they don't lose the selection
+  (define-key evil-visual-state-map (kbd ">") 'djoyner/evil-shift-right-visual)
+  (define-key evil-visual-state-map (kbd "<") 'djoyner/evil-shift-left-visual)
+  (define-key evil-visual-state-map [tab] 'djoyner/evil-shift-right-visual)
+  (define-key evil-visual-state-map [S-tab] 'djoyner/evil-shift-left-visual)
+
+  (defun djoyner/evil-shift-left-visual ()
+    (interactive)
+    (evil-shift-left (region-beginning) (region-end))
+    (evil-normal-state)
+    (evil-visual-restore))
+
+  (defun djoyner/evil-shift-right-visual ()
+    (interactive)
+    (evil-shift-right (region-beginning) (region-end))
+    (evil-normal-state)
+    (evil-visual-restore))
   )
 
 (defun neeasade/flycheck()
@@ -225,17 +162,20 @@ buffer is not visiting a file."
 (defun neeasade/company()
   ;; asdf config packages
   (use-package company
-      :config
+    :config
     (global-company-mode)
     (use-package company-flx
-	:config
+      :config
       (company-flx-mode +1))
 
     (setq
      company-idle-delay 0
      company-selection-wrap-around t
      company-tooltip-align-annotations t
-     company-dabbrev-downcase 0
+     company-dabbrev-downcase nil
+     company-dabbrev-ignore-case t
+     company-tooltip-align-annotations t
+     company-tooltip-margin 2
      )
 
     ;; TODO: investigate tab handling like VS completely
@@ -243,7 +183,7 @@ buffer is not visiting a file."
     )
 
   (use-package company-quickhelp
-      :init
+    :init
     (company-quickhelp-mode 1)
     (setq company-quickhelp-delay 0.3)
     )
@@ -261,11 +201,12 @@ buffer is not visiting a file."
     (truncate (* scale (frame-char-height)))))
 
 (defun neeasade/style()
+  (interactive)
   (use-package base16-theme)
   ;;(use-package ujelly-theme)
 
   (use-package spaceline
-      :config
+    :config
     (require 'spaceline-config)
     (setq powerline-scale (string-to-number (get-resource "Emacs.powerlinescale")))
     (setq powerline-height (spacemacs/compute-powerline-height))
@@ -324,7 +265,7 @@ buffer is not visiting a file."
 
 (defun neeasade/window-management()
   (use-package zoom
-      :config
+    :config
     (setq zoom-size '(0.58 . 0.618))
     (zoom-mode t)
     )
@@ -332,76 +273,77 @@ buffer is not visiting a file."
 
 (defun neeasade/org()
   (use-package org :config
-    (load-settings "org"
-     '(
-       ;; where
-       directory "~/org/projects"
-       agenda-files (list org-directory)
-       default-notes-file  "~/org/inbox.org"
-       default-diary-file  "~/org/diary.org"
-       default-habits-file  "~/org/habits.org"
+	       (load-settings
+		"org"
+		'(
+		  ;; where
+		  directory "~/org/projects"
+		  agenda-files (list org-directory)
+		  default-notes-file  "~/org/inbox.org"
+		  default-diary-file  "~/org/diary.org"
+		  default-habits-file  "~/org/habits.org"
 
-       ;; style
-       bullets-bullet-list '("@" "%" ">" ">")
-       ellipsis "…"
-       startup-indented t
-       startup-folded nil
+		  ;; style
+		  bullets-bullet-list '("@" "%" ">" ">")
+		  ellipsis "…"
+		  startup-indented t
+		  startup-folded nil
 
-       ;; behavior
-       ;; todo-keywords '((sequence "TODO" "NEXT" "WAITING" "INACTIVE" "CANCELLED" "MEETING" "DONE"))
-       todo-keywords
-       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-	 (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
+		  ;; behavior
+		  ;; todo-keywords '((sequence "TODO" "NEXT" "WAITING" "INACTIVE" "CANCELLED" "MEETING" "DONE"))
+		  todo-keywords
+		  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+		    (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
 
-       blank-before-new-entry '((heading . t) (plainlist-item . nil))
-       tag-alist '(
-		   ("test" . ?t)
-		   ("endtest" . ?e)
-		   )
+		  blank-before-new-entry '((heading . t) (plainlist-item . nil))
+		  tag-alist '(
+			      ("test" . ?t)
+			      ("endtest" . ?e)
+			      )
 
-       ;; clock
-       clock-x11idle-program-name "x11idle"
-       clock-idle-time 10
-       clock-sound nil
-       pomodoro-play-sounds nil
-       pomodoro-keep-killed-pomodoro-time t
-       pomodoro-ask-upon-killing nil
+		  ;; clock
+		  clock-x11idle-program-name "x11idle"
+		  clock-idle-time 10
+		  clock-sound nil
+		  pomodoro-play-sounds nil
+		  pomodoro-keep-killed-pomodoro-time t
+		  pomodoro-ask-upon-killing nil
 
-       ;; capture
-       capture-templates
-       '(("t" "todo" entry (file org-default-notes-file)
-	  "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+		  ;; capture
+		  capture-templates
+		  '(("t" "todo" entry (file org-default-notes-file)
+		     "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
 
-	 ("b" "Blank" entry (file org-default-notes-file)
-	  "* %?\n%u")
+		    ("b" "Blank" entry (file org-default-notes-file)
+		     "* %?\n%u")
 
-	 ("m" "Meeting" entry (file org-default-notes-file)
-	  "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+		    ("m" "Meeting" entry (file org-default-notes-file)
+		     "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
 
-	 ("d" "Diary" entry (file+datetree org-default-diary-file)
-	  "* %?\n%U\n" :clock-in t :clock-resume t)
+		    ("d" "Diary" entry (file+datetree org-default-diary-file)
+		     "* %?\n%U\n" :clock-in t :clock-resume t)
 
-	 ("D" "Daily Log" entry (file "~/org/daily-log.org")
-	  "* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
+		    ("D" "Daily Log" entry (file "~/org/daily-log.org")
+		     "* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
 
-	 ("i" "Idea" entry (file org-default-notes-file)
-	  "* %? :IDEA: \n%u" :clock-in t :clock-resume t)
+		    ("i" "Idea" entry (file org-default-notes-file)
+		     "* %? :IDEA: \n%u" :clock-in t :clock-resume t)
 
-	 ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
-	  "** NEXT %? \nDEADLINE: %t")
-	 )
+		    ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+		     "** NEXT %? \nDEADLINE: %t")
+		    )
 
-       ;; current file or any of the agenda-files, max 9 levels deep
-       refile-targets '(
-			(nil :maxlevel . 9)
-			(org-agenda-files :maxlevel . 9)
-			)
-       )
-     )
-    )
+		  ;; current file or any of the agenda-files, max 9 levels deep
+		  refile-targets '(
+				   (nil :maxlevel . 9)
+				   (org-agenda-files :maxlevel . 9)
+				   )
+		  )
+		)
+	       )
 
   (use-package evil-org
-      :config
+    :config
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'evil-org-mode-hook
 	      (lambda ()
@@ -410,31 +352,40 @@ buffer is not visiting a file."
   (add-hook
    'org-mode-hook
    ;; Configure leader key
-   (evil-leader/set-key-for-mode 'org-mode
-       "t" 'org-todo
-       "T" 'org-show-todo-tree
-       "v" 'org-mark-element
-       "a" 'org-agenda
-       "c" 'org-archive-subtree
-       "l" 'evil-org-open-links
-       "C" 'org-resolve-clocks)
-
-   (neeasade/bindmode
-    'org-mode-map
+   (neeasade/bind-leader-mode
+    'org-mode
     "t" 'org-todo
+    "T" 'org-show-todo-tree
+    "v" 'org-mark-element
+    "a" 'org-agenda
+    "c" 'org-archive-subtree
+    "l" 'evil-org-open-links
+    "C" 'org-resolve-clocks
     )
+
+   (evil-define-key 'normal evil-org-mode-map
+     "t" 'org-todo
+     )
    )
 
   (use-package org-pomodoro :config
-    (add-hook 'org-pomodoro-started-hook
-	      (apply-partially #'shell-command "player.sh play"))
+	       (add-hook 'org-pomodoro-started-hook
+			 (apply-partially #'shell-command "player.sh play"))
 
-    (add-hook 'org-pomodoro-break-finished-hook
-	      (apply-partially #'shell-command "player.sh play"))
+	       (add-hook 'org-pomodoro-break-finished-hook
+			 (apply-partially #'shell-command "player.sh play"))
 
-    (add-hook 'org-pomodoro-finished-hook
-	      (apply-partially #'shell-command "player.sh pause"))
-    )
+	       (add-hook 'org-pomodoro-finished-hook
+			 (apply-partially #'shell-command "player.sh pause"))
+	       )
+
+  (neeasade/bind
+   "g" '(:ignore t :which-key "git")
+   "gs" 'magit-status
+   "gb" 'magit-blame
+   "gl" 'magit-log-current
+   )
+
   )
 
 ;; TODO: experiment with centered placement here
@@ -443,7 +394,14 @@ buffer is not visiting a file."
   )
 
 (defun neeasade/clojure()
+  (use-package clojure-mode)
   (use-package cider)
+  ;; (evil-leader/set-key-for-mode
+  ;;   '
+  ;;   "er" 'eval-region
+  ;;   "ei" 'le::eval-and-insert-results
+  ;;   "eb" 'le::eval-and-insert-all-sexps
+  ;; )
   )
 
 (defun neeasade/nix()
@@ -469,7 +427,7 @@ buffer is not visiting a file."
   (add-hook 'window-configuration-change-hook 'dynamic-ivy-height)
 
   (use-package ivy
-      :config
+    :config
     (setq ivy-re-builders-alist
 	  '((ivy-switch-buffer . ivy--regex-plus)
 	    (t . ivy--regex-fuzzy)))
@@ -479,11 +437,11 @@ buffer is not visiting a file."
 
   ;; counsel
   (use-package counsel
-      :bind
+    :bind
     ("C-c k" . counsel-ag))
 
   (use-package general
-      :config
+    :config
     ;; bind a key globally in normal state
     (setq general-default-keymaps 'evil-normal-state-map)
     )
@@ -511,7 +469,7 @@ buffer is not visiting a file."
    )
 
   (use-package which-key
-      :config
+    :config
     (which-key-setup-side-window-right-bottom)
     (setq
      which-key-sort-order 'which-key-key-order-alpha
@@ -531,7 +489,7 @@ buffer is not visiting a file."
   (use-package projectile)
   ;; (project-find-file-in)
   (neeasade/bind
-   
+
    "p" '(:ignore t :which-key "projects")
    "pf" 'project-find-file
    ;; "ad" 'dired
@@ -540,18 +498,122 @@ buffer is not visiting a file."
 
 (defun neeasade/git()
   (use-package magit
-      :config
+    :config
     (setq magit-repository-directories (list "~/git"))
     )
 
   (use-package evil-magit
-      :config
+    :config
     (evil-define-key evil-magit-state magit-mode-map "?" 'evil-search-backward)
     )
 
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
    "gs" 'magit-status
+   "gb" 'magit-blame
+   "gl" 'magit-log-current
+   )
+  )
+
+(defun neeasade/dumbjump()
+  (use-package dumb-jump
+    :config
+    (setq dumb-jump-selector 'ivy)
+    (neeasade/bind
+     "j" '(:ignore t :which-key "Jump")
+     "jj" 'dumb-jump-go
+     "jb" 'dumb-jump-back
+     )
+    )
+  )
+
+(progn circe-network-options)
+	;;; ⇒ (("Freenode" :tls t :nick "neeasade" :nickserv-password "asdf" :channels (:after-auth "#bspwm")))
+
+(defun neeasade/irc()
+  (use-package circe
+    :config
+    (setq circe-network-options
+	  `(
+	    ("Freenode"
+	     :tls t
+	     :nick "neeasade"
+	     :nickserv-password ,(pass "freenode")
+	     :channels (:after-auth "#bspwm")
+	     )
+	    ))
+    )
+
+
+  (defun circe-network-connected-p (network)
+    "Return non-nil if there's any Circe server-buffer whose
+`circe-server-netwok' is NETWORK."
+    (catch 'return
+      (dolist (buffer (circe-server-buffers))
+	(with-current-buffer buffer
+	  (if (string= network circe-server-network)
+	      (throw 'return t))))))
+
+  (defun circe-maybe-connect (network)
+    "Connect to NETWORK, but ask user for confirmation if it's
+already been connected to."
+    (interactive "sNetwork: ")
+    (if (or (not (circe-network-connected-p network))
+	    (y-or-n-p (format "Already connected to %s, reconnect?" network)))
+	(circe network)))
+
+  (defun connect-all-irc()
+    (interactive)
+    (circe-maybe-connect "Freenode")
+    ;;(circe-maybe-connect "Rizon")
+    )
+
+  ;; channel name in prompt
+  (add-hook 'circe-chat-mode-hook 'my-circe-prompt)
+  (defun my-circe-prompt ()
+    (lui-set-prompt
+     (concat (propertize (concat (buffer-name) ">") 'face 'circe-prompt-face) " ")))
+  
+  ;; prevent too long pastes/prompt on it:
+  (require 'lui-autopaste)
+  (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste)
+
+  ;; hide part, join, quit
+  (setq circe-reduce-lurker-spam t)
+
+  (setq circe-format-say "{nick:-8s} {body}")
+
+  (load "lui-logging" nil t)
+  (setq lui-logging-directory "~/.irc")
+  (enable-lui-logging-globally)
+
+  (setq
+   lui-time-stamp-position 'right-margin
+   lui-time-stamp-format "%H:%M")
+
+  (add-hook 'lui-mode-hook 'my-circe-set-margin)
+  (defun my-circe-set-margin ()
+    (setq right-margin-width 5))
+
+  ;; fluid width windows
+  (setq
+   lui-time-stamp-position 'right-margin
+   lui-fill-type nil)
+
+  (add-hook 'lui-mode-hook 'my-lui-setup)
+  (defun my-lui-setup ()
+    (setq
+     fringes-outside-margins t
+     right-margin-width 5
+     word-wrap t
+     wrap-prefix "    ")
+    (setf (cdr (assoc 'continuation fringe-indicator-alist)) nil)
+    )
+
+  (setq lui-highlight-keywords (list "neeasade"))
+  ;; TODO consider: a binding/function to search open channels
+  (neeasade/bind
+   "ai" 'connect-all-irc
    )
   )
 
@@ -559,10 +621,14 @@ buffer is not visiting a file."
 (init-straight)
 
 (defun neeasade/core()
+  (load "~/.emacs.d/lisp/helpers.el")
+
   (neeasade/settings-sanity)
   (neeasade/evil)
   (neeasade/interface)
   (neeasade/editing)
+
+  (load "~/.emacs.d/lisp/interactive.el")
   )
 
 (defun neeasade/extra()
@@ -575,15 +641,22 @@ buffer is not visiting a file."
   (neeasade/window-management)
   (neeasade/style)
   (neeasade/emms)
+  (neeasade/dumbjump)
   )
 
 (defun neeasade/communication()
   ;; TODO: irc, email, slack.
+  (neeasade/irc)
   )
 
 (defun neeasade/development()
   (neeasade/clojure)
   (neeasade/elisp)
+  (neeasade/nix)
+  )
+
+(defun neeasade/windows()
+  ;; TODO: windows-scripts layer from spacemacs
   )
 
 (neeasade/core)
@@ -594,4 +667,3 @@ buffer is not visiting a file."
 (provide 'init)
 
 ;;; init.el ends here
-
