@@ -64,6 +64,16 @@
     (load user-init-file nil 'nomessage)
     (message "Reloading init.el... done.")))
 
+;; if eww is displayed, use that, else open here.
+;; todo: this isn't working with anchors in other frames
+(defun eww-browse-existing-or-new (url)
+    (if (get-buffer-window "*eww*" 0)
+          (url-retrieve url 'eww-render
+                        (list url nil (get-buffer "*eww*")))
+        (eww url)
+      )
+ )
+
 ;; binding wrappers
 (defun neeasade/bind (&rest binds)
   (apply 'general-define-key :prefix "SPC" binds)
