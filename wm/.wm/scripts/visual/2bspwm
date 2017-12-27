@@ -31,11 +31,11 @@ colort -c "$outerNormal" && sign=+ || sign=-
 innerNormal=`colort -l $sign$normalTint "$outerNormal"`
 
 # initial draw
-_chwb2 Normal  `bspc query -N -n .!descendant_of.window`
-_chwb2 Focused `bspc query -N -n .descendant_of.window`
+_chwb2 Normal  `bspc query -N -n .!descendant_of.window.!fullscreen`
+_chwb2 Focused `bspc query -N -n .descendant_of.window.!fullscreen`
 
 # reactive draw
 bspc subscribe node_state node_geometry node_focus | while read msg; do
-    _chwb2 Normal  `bspc query -N -n .!descendant_of.window`
-    _chwb2 Focused `bspc query -N -n .descendant_of.window`
+    _chwb2 Normal  `bspc query -N -n .!descendant_of.window.!fullscreen`
+    _chwb2 Focused `bspc query -N -n .descendant_of.window.!fullscreen`
 done

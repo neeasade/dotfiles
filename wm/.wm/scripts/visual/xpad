@@ -46,8 +46,8 @@ non_terminals() {
 }
 
 draw() {
-    non_terminals $border_color_active $(bspc query -N -n .descendant_of.window.leaf)
-    non_terminals $border_color_normal $(bspc query -N -n .!descendant_of.window.leaf)
+    non_terminals $border_color_active $(bspc query -N -n .descendant_of.window.leaf.!fullscreen)
+    non_terminals $border_color_normal $(bspc query -N -n .!descendant_of.window.leaf.!fullscreen)
 }
 
 draw
