@@ -69,11 +69,18 @@
   (load custom-file)
 
   ;; allow things to load before we reload settings
-  (setq desktop-restore-eager 0)
+  (setq desktop-restore-eager 5)
   (setq desktop-path (list "~/.emacs.d"))
 
   ;; retain session
   (desktop-save-mode 1)
+
+  (setq browse-url-browser-function
+	(if sys/windows?
+	    'browse-url-default-windows-browser
+	  'browse-url-generic))
+
+  (setq browse-url-generic-program (getenv "BROWSER"))
   )
 
 (defun neeasade/elisp()
@@ -88,7 +95,6 @@
    )
   )
 
-;; zz behavior evil
 (defun neeasade/evil()
   (use-package evil)
   (evil-mode 1)
@@ -114,7 +120,7 @@
   (use-package evil-numbers)
 
   (use-package evil-leader
-      :config
+    :config
     (evil-leader/set-leader ",")
     (global-evil-leader-mode)
     )
@@ -156,13 +162,19 @@
    )
   )
 
+(defun neeasade/treemacs()
+  (use-package treemacs)
+  (use-package treemacs-evil)
+  (use-package treemacs-projectile)
+  )
+
 (defun neeasade/company()
   ;; asdf config packages
   (use-package company
-      :config
+    :config
     (global-company-mode)
     (use-package company-flx
-	:config
+      :config
       (company-flx-mode +1))
 
     (setq
@@ -180,11 +192,11 @@
     )
 
   (use-package company-quickhelp
-      :init
+    :init
     (company-quickhelp-mode 1)
     (setq company-quickhelp-delay 0.3)
     )
-	)
+  )
 
 (defun neeasade/editing()
   ;; TODO here: figure out how I want to sync indent styles across modes
@@ -272,7 +284,7 @@ current major mode."
   ;;(use-package ujelly-theme)
 
   (use-package spaceline
-      :config
+    :config
     (require 'spaceline-config)
     (setq powerline-scale (string-to-number (get-resource "Emacs.powerlinescale")))
     (setq powerline-height (spacemacs/compute-powerline-height))
@@ -331,14 +343,15 @@ current major mode."
 
 (defun neeasade/window-management()
   (use-package zoom
-      :config
+    :config
     (setq zoom-size '(0.58 . 0.618))
     (zoom-mode t)
     )
   )
 
 (defun neeasade/org()
-  (use-package org :config
+  (use-package org
+    :config
     (load-settings
      "org"
      '(
@@ -409,7 +422,7 @@ current major mode."
     )
 
   (use-package evil-org
-      :config
+    :config
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'evil-org-mode-hook
 	      (lambda ()
@@ -434,7 +447,8 @@ current major mode."
      )
    )
 
-  (use-package org-pomodoro :config
+  (use-package org-pomodoro
+    :config
     (add-hook 'org-pomodoro-started-hook
 	      (apply-partially #'shell-command "player.sh play"))
 
@@ -493,7 +507,7 @@ current major mode."
   (add-hook 'window-configuration-change-hook 'dynamic-ivy-height)
 
   (use-package ivy
-      :config
+    :config
     (setq ivy-re-builders-alist
 	  '((ivy-switch-buffer . ivy--regex-plus)
 	    (t . ivy--regex-fuzzy)))
@@ -503,11 +517,11 @@ current major mode."
 
   ;; counsel
   (use-package counsel
-      :bind
+    :bind
     ("C-c k" . counsel-ag))
 
   (use-package general
-      :config
+    :config
     ;; bind a key globally in normal state
     (setq general-default-keymaps 'evil-normal-state-map)
     )
@@ -535,10 +549,15 @@ current major mode."
    )
 
   (use-package alert
-    :config (setq alert-default-style 'libnotify))
+    ;; todo: switch on windows style
+    :config (setq alert-default-style
+		  (if sys/windows?
+		      'toaster
+		    'libnotify
+		    )))
 
   (use-package which-key
-      :config
+    :config
     (which-key-setup-side-window-right-bottom)
     (setq
      which-key-sort-order 'which-key-key-order-alpha
@@ -565,14 +584,18 @@ current major mode."
    )
   )
 
+(defun neeasade/javascript()
+  (use-package rjsx-mode)
+  )
+
 (defun neeasade/git()
   (use-package magit
-      :config
+    :config
     (setq magit-repository-directories (list "~/git"))
     )
 
   (use-package evil-magit
-      :config
+    :config
     (evil-define-key evil-magit-state magit-mode-map "?" 'evil-search-backward)
     )
 
@@ -586,7 +609,7 @@ current major mode."
 
 (defun neeasade/dumbjump()
   (use-package dumb-jump
-      :config
+    :config
     (setq dumb-jump-selector 'ivy)
     (neeasade/bind
      "j" '(:ignore t :which-key "Jump")
@@ -598,18 +621,30 @@ current major mode."
 
 (defun neeasade/irc()
   (use-package circe
-      :config
+    :config
     (setq circe-network-options
 	  `(
 	    ("Freenode"
-	     :tls t
 	     :nick "neeasade"
+	     :host "irc.freenode.net"
+	     :tls t
 	     :nickserv-password ,(pass "freenode")
 	     :channels (:after-auth "#bspwm")
 	     )
+	    ("Rizon"
+	     :nick "neeasade"
+	     :host "irc.rizon.net"
+	     :port (6667 . 6697)
+	     :tls t
+	     :channels (:after-auth "#rice")
+	     :nickserv-password ,(pass "rizon/pass")
+	     :nickserv-mask ,(rx bol "NickServ!service@rizon.net" eol)
+	     :nickserv-identify-challenge ,(rx bol "This nickname is registered and protected.")
+	     :nickserv-identify-command "PRIVMSG NickServ :IDENTIFY {password}"
+	     :nickserv-identify-confirmation ,(rx bol "Password accepted - you are now recognized." eol)
+	     )
 	    ))
     )
-
 
   (defun circe-network-connected-p (network)
     "Return non-nil if there's any Circe server-buffer whose `circe-server-netwok' is NETWORK."
@@ -629,7 +664,7 @@ current major mode."
   (defun connect-all-irc()
     (interactive)
     (circe-maybe-connect "Freenode")
-    ;;(circe-maybe-connect "Rizon")
+    (circe-maybe-connect "Rizon")
     )
 
   ;; channel name in prompt
@@ -675,8 +710,25 @@ current major mode."
     )
 
   (setq lui-highlight-keywords (list "neeasade"))
+
+  (use-package circe-notifications
+    :config
+    (autoload 'enable-circe-notifications "circe-notifications" nil t)
+
+    (eval-after-load "circe-notifications"
+      '(setq circe-notifications-watch-strings
+	;; example: '("people" "you" "like" "to" "hear" "from")))
+	'("neeasade")))
+
+    (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
+    )
+
   ;; TODO consider: a binding/function to search open channels
   (neeasade/bind
    "ai" 'connect-all-irc
    )
+  )
+
+(defun neeasade/slack()
+  ;; TODO: https://github.com/yuya373/emacs-slack
   )

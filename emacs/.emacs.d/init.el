@@ -29,6 +29,7 @@
   (neeasade/style)
   (neeasade/emms)
   (neeasade/dumbjump)
+  (neeasade/treemacs)
   )
 
 (defun neeasade/communication()
@@ -40,6 +41,7 @@
   (neeasade/clojure)
   (neeasade/elisp)
   (neeasade/nix)
+  (neeasade/javascript)
   )
 
 (defun neeasade/windows()

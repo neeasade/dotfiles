@@ -3,7 +3,7 @@
 (defun what-face (pos)
   (interactive "d")
   (let ((face (or (get-char-property (point) 'read-face-name)
-                  (get-char-property (point) 'face))))
+		  (get-char-property (point) 'face))))
     (if face (message "Face: %s" face) (message "No face at %d" pos))))
 
 (defun what-major-mode ()
@@ -23,8 +23,31 @@ buffer is not visiting a file."
 			 (ido-read-file-name "Find file(as root): ")))
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
+(defun neeasade/get-functions()
+  (use-package s)
+  (mapcar*
+   (lambda(item)
+     (s-chomp (s-chop-prefix "defun neeasade/" (car item))))
+   (s-match-strings-all
+    "defun neeasade/[^ \(\)]+"
+    (get-string-from-file "~/.emacs.d/lisp/theworld.el"))
+   )
+  )
+
+(defun neeasade/jump-config()
+  (interactive)
+  (ivy-read
+   "(): " (neeasade/get-functions)
+   :action
+   (lambda (option)
+     (find-file "~/.emacs.d/lisp/theworld.el")
+     (re-search-forward (concat "neeasade/" option))
+     ))
+  )
+
 (neeasade/bind
  "wf" 'what-face
  "wm" 'what-major-mode
  "fE" 'sudo-edit
+ "jc" 'neeasade/jump-config
  )

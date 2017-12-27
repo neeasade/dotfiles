@@ -74,6 +74,15 @@
       )
  )
 
+(setq sys/windows? (eq system-type 'windows-nt))
+(setq sys/linux? (eq system-type 'gnu/linux))
+
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))
+
 ;; binding wrappers
 (defun neeasade/bind (&rest binds)
   (apply 'general-define-key :prefix "SPC" binds)
