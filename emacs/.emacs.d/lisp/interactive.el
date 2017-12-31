@@ -41,6 +41,7 @@ buffer is not visiting a file."
    :action
    (lambda (option)
      (find-file "~/.emacs.d/lisp/theworld.el")
+     (goto-char (point-min))
      (re-search-forward (concat "neeasade/" option))
      ))
   )

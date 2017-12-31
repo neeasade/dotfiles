@@ -14,6 +14,7 @@
   (neeasade/evil)
   (neeasade/interface)
   (neeasade/editing)
+  (neeasade/indenting)
 
   (load "~/.emacs.d/lisp/interactive.el")
   )
@@ -46,6 +47,7 @@
 
 (defun neeasade/windows()
   ;; TODO: windows-scripts layer from spacemacs
+  (neeasade/targetprocess)
   )
 
 (neeasade/core)

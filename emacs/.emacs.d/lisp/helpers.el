@@ -1,3 +1,6 @@
+(setq sys/windows? (eq system-type 'windows-nt))
+(setq sys/linux? (eq system-type 'gnu/linux))
+
 (defun mapcar* (f &rest xs)
   "MAPCAR for multiple sequences F XS."
   (if (not (memq nil xs))
@@ -12,7 +15,7 @@
    (lambda (pair)
      (let ((key (car pair))
 	   (value (car (cdr pair))))
-       (set-default
+       (set
 	(intern (concat namespace "-" (prin1-to-string key)))
 	(eval value)
 	)))
@@ -52,7 +55,10 @@
   (replace-regexp-in-string
    "\n$" ""
    (shell-command-to-string
-    (concat "pass " key " 2>/dev/null")))
+    (if sys/windows?
+	;; todo: this should be something that prints, not clip.
+	(concat "p.bat " key)
+    (concat "pass " key " 2>/dev/null"))))
   )
 
 (defun reload-init()
@@ -67,21 +73,25 @@
 ;; if eww is displayed, use that, else open here.
 ;; todo: this isn't working with anchors in other frames
 (defun eww-browse-existing-or-new (url)
-    (if (get-buffer-window "*eww*" 0)
-          (url-retrieve url 'eww-render
-                        (list url nil (get-buffer "*eww*")))
-        (eww url)
-      )
- )
-
-(setq sys/windows? (eq system-type 'windows-nt))
-(setq sys/linux? (eq system-type 'gnu/linux))
+  (if (get-buffer-window "*eww*" 0)
+      (url-retrieve url 'eww-render
+		    (list url nil (get-buffer "*eww*")))
+    (eww url)
+    )
+  )
 
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
   (with-temp-buffer
     (insert-file-contents filePath)
     (buffer-string)))
+
+;; ref: https://emacs.stackexchange.com/questions/3197/best-way-to-retrieve-values-in-nested-assoc-lists
+(defun assoc-recursive (alist &rest keys)
+  "Recursively find KEYs in ALIST."
+  (while keys
+    (setq alist (cdr (assoc (pop keys) alist))))
+  alist)
 
 ;; binding wrappers
 (defun neeasade/bind (&rest binds)

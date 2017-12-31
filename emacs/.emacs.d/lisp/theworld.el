@@ -36,21 +36,20 @@
 (defun neeasade/settings-sanity()
   ;; sanity
   (setq
-   delete-old-versions -1
-   vc-make-backup-files t
-   backup-directory-alist `(("." . "~/.emacs.d/backups"))
-   vc-follow-symlinks t ;; auto follow symlinks
-   symlinked file
    auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
-   inhibit-startup-screen t
-   ring-bell-function 'ignore
+   backup-directory-alist `(("." . "~/.emacs.d/backups"))
    coding-system-for-read 'utf-8
    coding-system-for-write 'utf-8
-   sentence-end-double-space nil
-   initial-scratch-message ""
+   delete-old-versions -1
    global-auto-revert-mode t
-   ;; consider
-   version-control t
+   inhibit-startup-screen t
+   initial-scratch-message ""
+   ring-bell-function 'ignore
+   sentence-end-double-space nil
+   symlinked file
+   vc-follow-symlinks t ;; auto follow symlinks
+   vc-make-backup-files t
+   version-control t ;; todo: consider
    )
 
   ;; trim gui
@@ -177,14 +176,19 @@
       :config
       (company-flx-mode +1))
 
+    (load-settings
+     "company"
+     '(
+       idle-delay 0
+       selection-wrap-around t
+       tooltip-align-annotations t
+       dabbrev-downcase nil
+       dabbrev-ignore-case t
+       tooltip-align-annotations t
+       tooltip-margin 2
+       )
+     )
     (setq
-     company-idle-delay 0
-     company-selection-wrap-around t
-     company-tooltip-align-annotations t
-     company-dabbrev-downcase nil
-     company-dabbrev-ignore-case t
-     company-tooltip-align-annotations t
-     company-tooltip-margin 2
      )
 
     ;; TODO: investigate tab handling like VS completely
@@ -263,6 +267,12 @@ current major mode."
 	(setq-local evil-shift-width shift-width))))
 
   (add-hook 'after-change-major-mode-hook 'spacemacs//set-evil-shift-width 'append)
+
+  )
+
+(defun neeasade/indenting()
+  ;; some default indent preferences for different modes
+  (setq sh-basic-offset 2)
   )
 
 (defun neeasade/dashdocs()
@@ -449,15 +459,21 @@ current major mode."
 
   (use-package org-pomodoro
     :config
+    (defun neeasade/toggle-music(action)
+      (let ((command (concat (if sys/windows? "mpc" "player.sh") " " action)))
+	(shell-command command)
+	))
+
     (add-hook 'org-pomodoro-started-hook
-	      (apply-partially #'shell-command "player.sh play"))
+	      (apply-partially #'neeasade/toggle-music "play"))
 
     (add-hook 'org-pomodoro-break-finished-hook
-	      (apply-partially #'shell-command "player.sh play"))
+	      (apply-partially #'neeasade/toggle-music "play"))
 
     (add-hook 'org-pomodoro-finished-hook
-	      (apply-partially #'shell-command "player.sh pause"))
+	      (apply-partially #'neeasade/toggle-music "pause"))
     )
+  
 
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
@@ -486,6 +502,10 @@ current major mode."
 
 (defun neeasade/nix()
   (use-package nix-mode)
+  )
+
+(defun neeasade/target-process()
+    (load "~/.emacs.d/lisp/targetprocess.el")
   )
 
 (defun dynamic-ivy-height()
@@ -526,6 +546,8 @@ current major mode."
     (setq general-default-keymaps 'evil-normal-state-map)
     )
 
+  (use-package ranger)
+
   (neeasade/bind
    ;; simple command
    "'"   '(iterm-focus :which-key "iterm")
@@ -546,6 +568,10 @@ current major mode."
    "a" '(:ignore t :which-key "Applications")
    "ar" 'ranger
    "ad" 'dired
+
+   "b" '(:ignore t :which-key "Buffers")
+   "bd" '(kill-buffer nil)
+   "bs" '(switch-to-buffer (get-buffer-create "*scratch*"))
    )
 
   (use-package alert
@@ -599,6 +625,8 @@ current major mode."
     (evil-define-key evil-magit-state magit-mode-map "?" 'evil-search-backward)
     )
 
+  ;; (use-package git-gutter-fringe)
+
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
    "gs" 'magit-status
@@ -608,6 +636,7 @@ current major mode."
   )
 
 (defun neeasade/dumbjump()
+  ;; TODO: smart jump package
   (use-package dumb-jump
     :config
     (setq dumb-jump-selector 'ivy)
