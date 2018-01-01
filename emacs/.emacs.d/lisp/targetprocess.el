@@ -18,15 +18,17 @@
 	     (lambda (&key data &allow-other-keys)
 	       (let ((result
 		      (concat
-		       "\n\nFeature #" (number-to-string
-					(assoc-recursive data 'Feature 'Id)) " - "
-					(assoc-recursive data 'Feature 'Name)
-					"\nUser Story #" (number-to-string
-							  (assoc-recursive data 'Id)) " - "
-							  (assoc-recursive data 'Name)
-							  "\nhttps://civicplus.tpondemand.com/entity/"
-							  (number-to-string (assoc-recursive data 'Id))
-							  )))
+		       "\n\nFeature #"
+		       (number-to-string
+			(assoc-recursive data 'Feature 'Id)) " - "
+			(assoc-recursive data 'Feature 'Name)
+			"\nUser Story #"
+			(number-to-string
+			 (assoc-recursive data 'Id)) " - "
+			 (assoc-recursive data 'Name)
+			 "\nhttps://civicplus.tpondemand.com/entity/"
+			 (number-to-string (assoc-recursive data 'Id))
+			 )))
 		 (write-region result nil "~/.git_template")
 		 )
 	       )))
