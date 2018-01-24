@@ -1,0 +1,9 @@
+#!/bin/sh
+
+intensity="$2"
+
+if colort -c $1; then
+  colort -l $intensity "$1"
+else
+  colort -l -$intensity "$1"
+fi
