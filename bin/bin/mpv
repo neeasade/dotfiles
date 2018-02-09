@@ -3,5 +3,7 @@
 
 mpv="$(type -a mpv | tail -n 1 | sed 's/.* //')"
 
-mpc pause
+# todo: account for multiple instances here
+mpc pause >/dev/null
+
 $mpv --input-ipc-server=/tmp/mpvsocket "$@"
