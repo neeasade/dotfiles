@@ -16,4 +16,5 @@ else
   $mpcplaying  && target='mpc'
 fi
 
+# todo: toggle doesn't appear to work for mpv, have to pause/play
 $target "$@"

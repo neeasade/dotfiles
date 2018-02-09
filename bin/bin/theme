@@ -10,11 +10,11 @@ die() {
 
 # (meant to be eval'd)
 get() {
-    echo unset bg fg line prefix suffix activebg activefg activeline
-    echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
-    echo . "$HOME/.wm/scripts/theming/defaults"
-    echo PATH=$PATH:$HOME/.wm/panel/tools
-    echo . "$theme_load"
+  echo unset bg fg line prefix suffix activebg activefg activeline
+  echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
+  echo . "$HOME/.wm/scripts/theming/defaults"
+  echo PATH=$PATH:$HOME/.wm/panel/tools
+  echo . "$theme_load"
 }
 
 load() {
@@ -34,26 +34,26 @@ edit() {
 }
 
 new() {
-    name="$*"
-    [ -z "$name" ] && die new needs a name.
-    eval "$(get)"
-    cp "$theme_dir/colors/$THEME_NAME" "$theme_dir/colors/$name"
-    echo "#/bin/sh" > "$theme_dir/$name"
-    load "$name"
-    edit "$name"
+  name="$*"
+  [ -z "$name" ] && die new needs a name.
+  eval "$(get)"
+  cp "$theme_dir/colors/$THEME_NAME" "$theme_dir/colors/$name"
+  echo "#/bin/sh" > "$theme_dir/$name"
+  load "$name"
+  edit "$name"
 }
 
 list() {
-    ls "$theme_dir"
+  ls "$theme_dir"
 }
 
 choose() {
-    target=$(list | fzf) && load "$target"
+  target=$(list | fzf) && load "$target"
 }
 
 refresh() {
-    eval "$(get)"
-    load "$THEME_NAME" "$@"
+  eval "$(get)"
+  load "$THEME_NAME" "$@"
 }
 
 # future self: this is done on purpose, shell arg quoting is dumb.

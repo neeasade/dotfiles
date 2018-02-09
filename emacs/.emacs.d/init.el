@@ -29,13 +29,17 @@
   (neeasade/window-management)
   (neeasade/style)
   (neeasade/emms)
-  (neeasade/dumbjump)
+  (neeasade/jump)
   (neeasade/treemacs)
+  ;(neeasade/dashdocs)
   )
 
 (defun neeasade/communication()
   ;; TODO: irc, email, slack.
   (neeasade/irc)
+  (neeasade/slack)
+  (neeasade/twitter)
+  (neeasade/email)
   )
 
 (defun neeasade/development()

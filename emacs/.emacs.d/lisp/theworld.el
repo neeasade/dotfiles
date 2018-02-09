@@ -473,7 +473,7 @@ current major mode."
     (add-hook 'org-pomodoro-finished-hook
 	      (apply-partially #'neeasade/toggle-music "pause"))
     )
-  
+
 
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
@@ -514,7 +514,7 @@ current major mode."
 	(computed (/ (window-total-size) 2))
 	)
     (setq ivy-height computed)
-    (setq ivy-fixed-height-minibuffer computed)
+    (setq ivy-fixed-height-minibuffer t)
     )
   )
 
@@ -635,15 +635,16 @@ current major mode."
    )
   )
 
-(defun neeasade/dumbjump()
+(defun neeasade/jump()
   ;; TODO: smart jump package
-  (use-package dumb-jump
+  (use-package smart-jump
     :config
     (setq dumb-jump-selector 'ivy)
+    (smart-jump-setup-default-registers)
     (neeasade/bind
      "j" '(:ignore t :which-key "Jump")
-     "jj" 'dumb-jump-go
-     "jb" 'dumb-jump-back
+     "jj" 'smart-jump-go
+     "jb" 'smart-jump-back
      )
     )
   )
@@ -664,6 +665,7 @@ current major mode."
 	     :nick "neeasade"
 	     :host "irc.rizon.net"
 	     :port (6667 . 6697)
+
 	     :tls t
 	     :channels (:after-auth "#rice")
 	     :nickserv-password ,(pass "rizon/pass")
@@ -760,4 +762,12 @@ current major mode."
 
 (defun neeasade/slack()
   ;; TODO: https://github.com/yuya373/emacs-slack
+  )
+
+(defun neeasade/twitter()
+  ;; TODO
+  )
+
+(defun neeasade/email()
+  ;; TODO
   )

@@ -15,6 +15,20 @@ upshot() {
     uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
 }
 
+deskshot() {
+    json="$(bspc query -T -m)"
+    jget() {
+        echo "$json" | jq .rectangle.$1
+    }
+
+    w=$(jget width)
+    h=$(jget height)
+    x=$(jget x)
+    y=$(jget y)
+
+    maim -g ${w}x${h}+${x}+${y} > shot.png
+}
+
 settitle() {
     printf "%b%s" "\033]0;$*\a"
 }
