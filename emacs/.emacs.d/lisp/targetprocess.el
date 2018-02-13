@@ -1,6 +1,8 @@
+(setq tp-subdomain (pass "tp-subdomain"))
+
 (defun tp-get-story-url ()
   (concat
-   "https://civicplus.tpondemand.com/api/v1/userStories/"
+   "https://" tp-subdomain ".tpondemand.com/api/v1/userStories/"
    (tp-get-active-userstory)
    "?format=json"
    ;; "?skip=0&take=999&format=json&include=[id,name,linkedTestPlan[id,entityType[id,name],project[id]]]"
@@ -19,17 +21,15 @@
 	     (lambda (&key data &allow-other-keys)
 	       (let ((result
 		      (concat
-		       "\n\nFeature #"
-		       (number-to-string
-			(assoc-recursive data 'Feature 'Id)) " - "
-			(assoc-recursive data 'Feature 'Name)
-			"\nUser Story #"
-			(number-to-string
-			 (assoc-recursive data 'Id)) " - "
-			 (assoc-recursive data 'Name)
-			 "\nhttps://civicplus.tpondemand.com/entity/"
-			 (number-to-string (assoc-recursive data 'Id))
-			 )))
+		       "\n\nFeature #" (number-to-string
+					(assoc-recursive data 'Feature 'Id)) " - "
+					(assoc-recursive data 'Feature 'Name)
+					"\nUser Story #" (number-to-string
+							  (assoc-recursive data 'Id)) " - "
+							  (assoc-recursive data 'Name)
+							  "\nhttps://" tp-subdomain ".tpondemand.com/entity/"
+							  (number-to-string (assoc-recursive data 'Id))
+							  )))
 		 (write-region result nil "~/.git_template")
 		 )
 	       )))

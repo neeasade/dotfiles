@@ -206,10 +206,11 @@
   ;; TODO here: figure out how I want to sync indent styles across modes
   (use-package editorconfig)
 
-  (use-package aggressive-indent
-    (add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
-    (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
-    :config)
+  ;; (use-package aggressive-indent
+  ;;   :config
+  ;;   (add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
+  ;;   (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+  ;;   )
 
   (use-package smartparens
       :config (smartparens-global-mode)
@@ -308,6 +309,8 @@ current major mode."
     (setq powerline-scale (string-to-number (get-resource "Emacs.powerlinescale")))
     (setq powerline-height (spacemacs/compute-powerline-height))
     (spaceline-spacemacs-theme)
+    ;; TODO: make a binding to show minor modes
+    (spaceline-toggle-minor-modes-off)
     )
 
   (load-theme (intern (get-resource "Emacs.theme")))
@@ -644,7 +647,10 @@ current major mode."
     (evil-define-key evil-magit-state magit-mode-map "?" 'evil-search-backward)
     )
 
-  ;; (use-package git-gutter-fringe)
+  (use-package git-gutter-fringe
+    :config
+    (setq git-gutter-fr:side 'right-fringe)
+    )
 
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
@@ -655,10 +661,10 @@ current major mode."
   )
 
 (defun neeasade/jump()
-  ;; TODO: smart jump package
   (use-package smart-jump
     :config
     (setq dumb-jump-selector 'ivy)
+    (setq dumb-jump-force-searcher 'rg)
     (smart-jump-setup-default-registers)
     (neeasade/bind
      "j" '(:ignore t :which-key "Jump")
@@ -666,6 +672,8 @@ current major mode."
      "jb" 'smart-jump-back
      )
     )
+
+  (use-package rg)
   )
 
 (defun neeasade/irc()
@@ -779,14 +787,21 @@ current major mode."
    )
   )
 
-(defun neeasade/slack()
-  ;; TODO: https://github.com/yuya373/emacs-slack
+(defun neeasade/pdf()
+  (use-package pdf-tools)
   )
 
 (defun neeasade/terraform()
   (use-package terraform-mode)
   )
 
+(defun neeasade/twitter()
+  ;; todo
+  )
+
 (defun neeasade/slack()
-  ;;(use-package emacs-slack)
+  ;;(use-package slack)
+  )
+
+(defun neeasade/email()
   )
