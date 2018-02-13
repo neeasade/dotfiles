@@ -27,10 +27,10 @@
   (neeasade/flycheck)
   (neeasade/ivy-style)
   (neeasade/window-management)
-  (neeasade/style)
   (neeasade/emms)
   (neeasade/jump)
   (neeasade/treemacs)
+  (neeasade/target-process)
   ;(neeasade/dashdocs)
   )
 
@@ -47,11 +47,12 @@
   (neeasade/elisp)
   (neeasade/nix)
   (neeasade/javascript)
+  (neeasade/typescript)
+  (neeasade/terraform)
   )
 
 (defun neeasade/windows()
   ;; TODO: windows-scripts layer from spacemacs
-  (neeasade/targetprocess)
   )
 
 (neeasade/core)
@@ -59,6 +60,7 @@
 (neeasade/communication)
 (neeasade/development)
 
+(neeasade/style)
 (provide 'init)
 
 ;;; init.el ends here

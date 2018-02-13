@@ -8,6 +8,7 @@
 
 (defun tp-update-git-message ()
   (interactive)
+  (use-package request)
   (require 'request)
   (request
    (tp-get-story-url)

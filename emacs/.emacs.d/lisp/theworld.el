@@ -105,7 +105,7 @@
     ;; also doesn't handle when buffer bottom is visible very well.
     (let (
 	  (windowcount (/ (window-total-size) 2))
-	  (scrollcount (/ (window-total-size) 6))
+	  (scrollcount (/ (window-total-size) 7))
 	  (buffercount (count-lines (point-min) (point-max)))
 	  )
       (if (> buffercount windowcount)
@@ -205,6 +205,15 @@
 (defun neeasade/editing()
   ;; TODO here: figure out how I want to sync indent styles across modes
   (use-package editorconfig)
+
+  (use-package aggressive-indent
+    (add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
+    (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+    :config)
+
+  (use-package smartparens
+      :config (smartparens-global-mode)
+      )
 
   ;; from https://github.com/syl20bnr/spacemacs/blob/bd7ef98e4c35fd87538dd2a81356cc83f5fd02f3/layers/%2Bdistributions/spacemacs-bootstrap/config.el
   ;; GPLv3
@@ -376,7 +385,7 @@ current major mode."
        bullets-bullet-list '("@" "%" ">" ">")
        ellipsis "…"
        startup-indented t
-       startup-folded nil
+       startup-folded t
 
        ;; behavior
        ;; todo-keywords '((sequence "TODO" "NEXT" "WAITING" "INACTIVE" "CANCELLED" "MEETING" "DONE"))
@@ -473,16 +482,14 @@ current major mode."
     (add-hook 'org-pomodoro-finished-hook
 	      (apply-partially #'neeasade/toggle-music "pause"))
     )
-
+  
 
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
    "gs" 'magit-status
    "gb" 'magit-blame
    "gl" 'magit-log-current
-   )
-
-  )
+   ))
 
 ;; TODO: experiment with centered placement here
 (defun neeasade/ivy-style()
@@ -492,12 +499,16 @@ current major mode."
 (defun neeasade/clojure()
   (use-package clojure-mode)
   (use-package cider)
-  ;; (evil-leader/set-key-for-mode
-  ;;   '
-  ;;   "er" 'eval-region
-  ;;   "ei" 'le::eval-and-insert-results
-  ;;   "eb" 'le::eval-and-insert-all-sexps
-  ;; )
+
+  ;; TODO: learn lispy
+  (use-package lispy)
+
+  (evil-leader/set-key-for-mode
+      'clojure-mode
+      "er" 'cider-eval-region
+      "ei" 'cider-eval-last-sexp
+      "eb" 'cider-evil-file
+      )
   )
 
 (defun neeasade/nix()
@@ -514,7 +525,7 @@ current major mode."
 	(computed (/ (window-total-size) 2))
 	)
     (setq ivy-height computed)
-    (setq ivy-fixed-height-minibuffer t)
+    (setq ivy-fixed-height-minibuffer computed)
     )
   )
 
@@ -546,7 +557,10 @@ current major mode."
     (setq general-default-keymaps 'evil-normal-state-map)
     )
 
-  (use-package ranger)
+  (use-package ranger
+    :config
+    (setq ranger-show-literal nil)
+    )
 
   (neeasade/bind
    ;; simple command
@@ -612,6 +626,11 @@ current major mode."
 
 (defun neeasade/javascript()
   (use-package rjsx-mode)
+  (use-package web-mode)
+  )
+
+(defun neeasade/typescript()
+  (use-package tide)
   )
 
 (defun neeasade/git()
@@ -764,10 +783,10 @@ current major mode."
   ;; TODO: https://github.com/yuya373/emacs-slack
   )
 
-(defun neeasade/twitter()
-  ;; TODO
+(defun neeasade/terraform()
+  (use-package terraform-mode)
   )
 
-(defun neeasade/email()
-  ;; TODO
+(defun neeasade/slack()
+  ;;(use-package emacs-slack)
   )
