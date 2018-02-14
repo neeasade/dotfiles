@@ -165,3 +165,35 @@ if fonts['tab_bold']:
 
 c.fonts.tabs = tabFont
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
+
+# userscripts
+# this allows some extra control across platforms, like wrapping bash scripts on windows 
+userscripts = {
+    'update_tp': 
+    """
+    toast "$QUTE_URL"
+    echo "$QUTE_URL" > ~/.qute_url
+    emacsclient --eval "(progn (tp-update-git-message))"
+    """
+}
+
+userscript_location="~/.local/share/qutebrowser/userscripts/"
+if os.name == 'nt':
+    userscript_location = os.environ['APPDATA'] + '\\qutebrowser\\data\\userscripts\\';
+
+def write_userscript(location, content):
+    if os.name == 'nt':
+        with open(location + '_wrapped.bat', 'w') as fh:
+            fh.write('"C:\\Program Files\\Git\\bin\\sh" "' + location + '"')
+        with open(location, 'w') as fh:
+            fh.write(content)
+    else:
+        with open(location, 'w') as fh:
+            fh.write(content)
+
+for key in userscripts:
+    script_file = userscript_location + key
+    if not os.path.isfile(script_file):
+        write_userscript(script_file, userscripts[key])
+
+config.bind('su', 'spawn --userscript update_tp_wrapped.bat')
