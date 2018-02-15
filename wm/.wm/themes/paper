@@ -6,8 +6,13 @@ emacs_theme="base16-grayscale-light"
 emacs_powerline_scale="1.4"
 
 # bspwm
-b_border_width=0
+b_border_width=1
 b_window_gap=40
+
+b_bspwmrc_extend="
+xpad
+"
+
 st_borderpx=10
 
 b_normal_border_color=$(colort -20 -t $p_bg_normal)
@@ -16,7 +21,7 @@ b_focused_border_color=$(colort -80 -t $p_bg_normal)
 
 b_normal_border_color=$(colort -20 -t $p_bg_normal)
 b_active_border_color=cecece
-b_focused_border_color=b9b9b9
+b_focused_border_color=7c7c7c
 
 p_bg_normal="#ffe3e3e3"
 p_fg_active="#ff525252"
@@ -32,10 +37,10 @@ p_window_class="noshadow"
 p_line=2
 p_padding=6
 
-p_font_main="Roboto Mono Medium-12"
+p_font_main="Go Mono for Powerline-12:style=Bold"
 p_font_icon="FontAwesome-12" # Panel Icon font.
 p_icon_enable=false
-d_font="Roboto Mono Medium 10"
+d_font="Go Mono for Powerline 10"
 
 p_desktop_occupied_label="$(echo -n -e '\uf111')"
 p_desktop_empty_label="$(echo -n -e '\uf1db')"
@@ -43,14 +48,14 @@ p_desktop_empty_label="$(echo -n -e '\uf1db')"
 p_desktop_tiling_label=''
 p_desktop_monocle_label="$(echo -n -e '\uf00b')"
 
-st_font="Roboto Mono Medium-12:style=Regular"
+st_font="Go Mono for Powerline-12:style=Regular"
 p_title_only_show_active=true
 maxWinNameLen=30
 
 p_title_theme="fg=\"#ff$(colort -t 30 525252)\""
 p_desktop_theme="fg=\"#ff$(colort -t 30 525252)\""
 
-c_shadow="true"
+c_shadow="false"
 c_frame_opacity="1.0"
 c_shadow_opacity="0.5"
 c_shadow_radius="5"
@@ -86,7 +91,7 @@ fg() {
 activebg() {
     bg
 }
-
+ 
 bg() {
     iif $(even_section) "b9b9b9" "f7f7f7"
 }
