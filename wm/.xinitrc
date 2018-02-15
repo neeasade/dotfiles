@@ -9,7 +9,7 @@ $HOME/.screenlayout/display.sh
 xrdb -load $HOME/.Xresources &
 xmodmap $HOME/.Xmodmap &
 compton &
-unclutter &
+unclutter -idle 1 &
 pcmanfm -d &
 mpd $HOME/.config/mpd/mpd.conf &
 mpdcron &
