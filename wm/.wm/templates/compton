@@ -1,11 +1,12 @@
+## -*- mode: conf -*-
 ## Compton Config
 ## based on dkeg 2015 'candy' config, with slight edits.
 
 ## Sometimes a little transparency can soften the edges
 shadow-opacity = {{c_shadow_opacity}};
-shadow-red = 0.0;
-shadow-green = 0.0;
-shadow-blue = 0.0;
+shadow-red = {{c_shadow_red}};
+shadow-green = {{c_shadow_green}};
+shadow-blue = {{c_shadow_blue}};
 
 ## transparent borders are pretty okay
 frame-opacity = {{c_frame_opacity}};

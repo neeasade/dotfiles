@@ -112,6 +112,9 @@ c_shadow="false"
 c_shadow_radius="1"
 c_shadow_offset_x="1"
 c_shadow_offset_y="1"
+c_shadow_red="0.0"
+c_shadow_blue="0.0"
+c_shadow_green="0.0"
 
 c_fading="false";
 c_fade_in_step="0.1"
