@@ -16,7 +16,7 @@ if initial_start:
     c.tabs.position = 'top'
     c.tabs.show = 'multiple'
     c.tabs.favicons.show = False
-    c.tabs.width.indicator = 0
+    c.tabs.indicator.width = 0
     c.tabs.title.format = '{title}'
     c.tabs.title.alignment = 'center'
     c.downloads.position = 'bottom'
@@ -96,6 +96,9 @@ targets = {
         'hints',
         'downloads.bar.bg',
         'completion.category',
+
+        'tabs.even',
+        'tabs.odd',
     ],
 
     'active' : [
@@ -123,8 +126,6 @@ targets = {
         'completion.fg',
         'completion.odd.bg',
         'completion.even.bg',
-        'tabs.even',
-        'tabs.odd',
     ],
 
     'match' : [
@@ -146,10 +147,14 @@ def makePadding(top, bottom, left, right):
     return { 'top': top, 'bottom': bottom, 'left': left , 'right': right }
 
 # TODO improve this logic
+
 # assume height of font is ~10px, pad top by half match panel height
+# txth reference
+# ./txth -f "xft:${font_name}:style=Regular" -s $font_size "asdf"
+
 surround = round((theme['panel']['height'] - 10) / 2)
 c.tabs.padding = makePadding(surround, surround, 8, 8)
-c.tabs.indicator_padding = makePadding(0, 0, 0, 0)
+c.tabs.indicator.padding = makePadding(0, 0, 0, 0)
 
 # fonts
 fonts = theme['fonts']
@@ -168,32 +173,38 @@ c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 
 # userscripts
 # this allows some extra control across platforms, like wrapping bash scripts on windows 
-userscripts = {
-    'update_tp': 
-    """
-    toast "$QUTE_URL"
-    echo "$QUTE_URL" > ~/.qute_url
-    emacsclient --eval "(progn (tp-update-git-message))"
-    """
-}
+userscripts = [
+    {
+        'name': 'update_tp',
+        'bind': 'su',
+        'script':
+        """
+        notify-send "$QUTE_URL"
+        echo "$QUTE_URL" > ~/.qute_url
+        emacsclient --eval "(progn (tp-update-git-message))"
+        """
+    }
+]
 
-userscript_location="~/.local/share/qutebrowser/userscripts/"
+userscript_location = os.environ['HOME'] + "/.local/share/qutebrowser/userscripts/"
 if os.name == 'nt':
     userscript_location = os.environ['APPDATA'] + '\\qutebrowser\\data\\userscripts\\';
 
+def write_file(file, content):
+        with open(file, 'w') as fh:
+            fh.write(content)
+
 def write_userscript(location, content):
+    write_file(location, content)
+
     if os.name == 'nt':
-        with open(location + '_wrapped.bat', 'w') as fh:
-            fh.write('"C:\\Program Files\\Git\\bin\\sh" "' + location + '"')
-        with open(location, 'w') as fh:
-            fh.write(content)
-    else:
-        with open(location, 'w') as fh:
-            fh.write(content)
+        location = location + '_wrapped.bat'
+        write_file(location, '"C:\\Program Files\\Git\\bin\\sh" "' + location + '"')
 
-for key in userscripts:
-    script_file = userscript_location + key
+    return os.path.basename(location)
+
+for userscript in userscripts:
+    script_file = userscript_location + userscript['name']
     if not os.path.isfile(script_file):
-        write_userscript(script_file, userscripts[key])
-
-config.bind('su', 'spawn --userscript update_tp_wrapped.bat')
+        bindname = write_userscript(script_file, userscript['script'])
+        config.bind(userscript['bind'], 'spawn --userscript ' + bindname)
