@@ -87,6 +87,7 @@ let
     mesa_drivers
     mesa_glu
   ]) ++ (with rolling; [
+    qutebrowser
     colort
     dmenu2
     dunst
@@ -97,7 +98,6 @@ let
     lemonbar-xft
     meh
     mpvc
-    qutebrowser
     ranger
     slop
     sxhkd
@@ -115,8 +115,10 @@ let
   ]) ++ ( with expr; [
     bevelbar
     gtkrc-reload
-    wmutils-opt-git
     neeasade-opt
+    txth
+    wmutils-opt-git
+    xdo
   ]);
 
   extra = (with stable; [
@@ -150,16 +152,16 @@ let
     dolphinEmu
     ioquake3
     minecraft
-    steam
     # wineUnstable
     wineStaging
     winetricks
+  ]) ++ (with edge; [
+  steam
   ]);
 
   development = (with stable; [
-    (python36.withPackages(ps: with ps; [
-      virtualenv
-      django
+    (python27.withPackages(ps: with ps; [
+      screenkey
     ]))
 
     autoconf
@@ -187,6 +189,12 @@ let
     sqlite
     zeal
     zlib
+  ]) ++ (with rolling; [
+    (python36.withPackages(ps: with ps; [
+      virtualenv
+      django
+      pyqt5
+    ]))
   ]);
 
   basefonts = (with pkgs; [

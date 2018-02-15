@@ -48,5 +48,7 @@ rec {
   wmutils-opt-git = callPackage ./wmutils-opt {  inherit fetchLatestGit; };
   neeasade-opt = callPackage ./neeasade-opt {  inherit fetchLatestGit; };
   gtkrc-reload = callPackage ./gtkrc-reload {  inherit fetchLatestGit; };
+  txth = callPackage ./txth {  inherit fetchLatestGit; };
   bevelbar = callPackage ./bevelbar { };
+  xdo = callPackage ./xdo { inherit fetchLatestGit; };
 }
