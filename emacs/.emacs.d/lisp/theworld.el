@@ -95,8 +95,15 @@
   )
 
 (defun neeasade/evil()
-  (use-package evil)
-  (evil-mode 1)
+  (use-package evil
+    ;; for evil-collection
+    ;;:init (setq evil-want-integration nil)
+    :config (evil-mode 1)
+    )
+
+  ;; (use-package evil-collection
+  ;;   :config (evil-collection-init)
+  ;;   )
 
   (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
   (defun neeasade/zz-scroll(count)
@@ -118,10 +125,9 @@
 
   (use-package evil-numbers)
 
-  (use-package evil-leader
+  (use-package general
     :config
-    (evil-leader/set-leader ",")
-    (global-evil-leader-mode)
+    (general-evil-setup t)
     )
 
   (use-package evil-surround   :config (global-evil-surround-mode 1))
@@ -213,8 +219,8 @@
   ;;   )
 
   (use-package smartparens
-      :config (smartparens-global-mode)
-      )
+    :config (smartparens-global-mode)
+    )
 
   ;; from https://github.com/syl20bnr/spacemacs/blob/bd7ef98e4c35fd87538dd2a81356cc83f5fd02f3/layers/%2Bdistributions/spacemacs-bootstrap/config.el
   ;; GPLv3
@@ -452,26 +458,22 @@ current major mode."
 
   (add-hook
    'org-mode-hook
-   ;; Configure leader key
    (neeasade/bind-leader-mode
     'org-mode
     "t" 'org-todo
     "T" 'org-show-todo-tree
     "v" 'org-mark-element
     "a" 'org-agenda
-    "c" 'org-archive-subtree
     "l" 'evil-org-open-links
-    "C" 'org-resolve-clocks
+    "p" 'org-pomodoro
     )
-
-   (evil-define-key 'normal evil-org-mode-map
-     "t" 'org-todo
-     )
    )
 
   (use-package org-pomodoro
     :config
     (defun neeasade/toggle-music(action)
+      ;; todo: setup remote mpd and pass and then use that when away
+      ;; implies an initial check to see if we are away
       (let ((command (concat (if sys/windows? "mpc" "player.sh") " " action)))
 	(shell-command command)
 	))
@@ -506,12 +508,12 @@ current major mode."
   ;; TODO: learn lispy
   (use-package lispy)
 
-  (evil-leader/set-key-for-mode
-      'clojure-mode
-      "er" 'cider-eval-region
-      "ei" 'cider-eval-last-sexp
-      "eb" 'cider-evil-file
-      )
+  (neeasade/bind-leader-mode
+   'clojure-mode
+   "er" 'cider-eval-region
+   "ei" 'cider-eval-last-sexp
+   "eb" 'cider-evil-file
+   )
   )
 
 (defun neeasade/nix()
@@ -519,7 +521,7 @@ current major mode."
   )
 
 (defun neeasade/target-process()
-    (load "~/.emacs.d/lisp/targetprocess.el")
+  (load "~/.emacs.d/lisp/targetprocess.el")
   )
 
 (defun dynamic-ivy-height()
@@ -554,22 +556,13 @@ current major mode."
     :bind
     ("C-c k" . counsel-ag))
 
-  (use-package general
-    :config
-    ;; bind a key globally in normal state
-    (setq general-default-keymaps 'evil-normal-state-map)
-    )
-
   (use-package ranger
     :config
     (setq ranger-show-literal nil)
     )
 
   (neeasade/bind
-   ;; simple command
-   "'"   '(iterm-focus :which-key "iterm")
-   "?"   '(iterm-goto-filedir-or-home :which-key "iterm - goto dir")
-   "/"   'counsel-ag
+   "/"   'counsel-rg
    "TAB" '(switch-to-other-buffer :which-key "prev buffer")
    "SPC" 'counsel-M-x
 
@@ -800,7 +793,52 @@ current major mode."
   )
 
 (defun neeasade/slack()
-  ;;(use-package slack)
+  (use-package slack
+    :commands (slack-start)
+    :init
+    (setq slack-buffer-emojify t) 
+    (setq slack-prefer-current-team t)
+    :config
+    ;; https://github.com/yuya373/emacs-slack/issues/161 
+    (setq request-backend 'url-retrieve)
+    (setq slack-request-timeout 50)
+
+    (slack-register-team
+     :name (pass "slackteam")
+     :default t
+     :client-id (pass "slackid")
+     :client-secret (pass "slack")
+     :token (pass "slacktoken")
+     :subscribed-channels '(general random)
+     :full-and-display-names t
+     )
+    )
+
+  (evil-define-key 'normal slack-info-mode-map
+    ",u" 'slack-room-update-messages)
+
+  (evil-define-key 'normal slack-mode-map
+    ",c" 'slack-buffer-kill
+    ",ra" 'slack-message-add-reaction
+    ",rr" 'slack-message-remove-reaction
+    ",rs" 'slack-message-show-reaction-users
+    ",pl" 'slack-room-pins-list
+    ",pa" 'slack-message-pins-add
+    ",pr" 'slack-message-pins-remove
+    ",mm" 'slack-message-write-another-buffer
+    ",me" 'slack-message-edit
+    ",md" 'slack-message-delete
+    ",u" 'slack-room-update-messages
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel
+    "\C-n" 'slack-buffer-goto-next-message
+    "\C-p" 'slack-buffer-goto-prev-message)
+
+  (evil-define-key 'normal slack-edit-message-mode-map
+    ",k" 'slack-message-cancel-edit
+    ",s" 'slack-message-send-from-buffer
+    ",2" 'slack-message-embed-mention
+    ",3" 'slack-message-embed-channel)
   )
 
 (defun neeasade/email()

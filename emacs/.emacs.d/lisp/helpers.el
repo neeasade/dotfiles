@@ -56,9 +56,8 @@
    "\n$" ""
    (shell-command-to-string
     (if sys/windows?
-	;; todo: this should be something that prints, not clip.
-	(concat "p.bat " key)
-    (concat "pass " key " 2>/dev/null"))))
+        (concat "pprint.bat " key)
+      (concat "pass " key " 2>/dev/null"))))
   )
 
 (defun reload-init()
@@ -95,20 +94,37 @@
 
 ;; binding wrappers
 (defun neeasade/bind (&rest binds)
-  (apply 'general-define-key :prefix "SPC" binds)
+  (apply 'general-define-key
+         :states '(normal visual)
+         :prefix "SPC"
+         binds)
   )
 
 ;; makes assumption keymap for mode will be named <modename>-map,
 ;; per https://www.gnu.org/software/emacs/manual/html_node/elisp/Major-Mode-Conventions.html
 (defun neeasade/bind-mode(mode &rest binds)
   (apply 'general-define-key
-	 :keymaps (intern (concat (symbol-name mode) "-mode"))  binds)
-  )
-
-(defun neeasade/bind-leader (mode &rest binds)
-  (apply 'evil-leader/set-key-for-mode mode binds)
+         :prefix "SPC"
+         :states '(visual normal)
+         :keymaps (intern (concat (symbol-name 'emacs-lisp-mode) "-map"))
+         binds)
   )
 
 (defun neeasade/bind-leader-mode(mode &rest binds)
-  (apply 'evil-leader/set-key-for-mode mode binds)
+  ;(message (intern (concat (symbol-name mode) "-mode")))
+
+  (apply 'general-define-key
+         :prefix ","
+         :states '(visual normal)
+         :keymaps (intern (concat (symbol-name mode) "-map"))
+         binds
+         )
   ) 
+
+(defun js-jsx-indent-line-align-closing-bracket ()
+  "Workaround sgml-mode and align closing bracket with opening bracket"
+  (save-excursion
+    (beginning-of-line)
+    (when (looking-at-p "^ +\/?> *$")
+      (delete-char sgml-basic-offset))))
+(advice-add #'js-jsx-indent-line :after #'js-jsx-indent-line-align-closing-bracket)
