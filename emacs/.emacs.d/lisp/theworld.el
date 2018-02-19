@@ -212,11 +212,11 @@
   ;; TODO here: figure out how I want to sync indent styles across modes
   (use-package editorconfig)
 
-  ;; (use-package aggressive-indent
-  ;;   :config
-  ;;   (add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
-  ;;   (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
-  ;;   )
+  (use-package aggressive-indent
+    :config
+    (add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
+    (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+    )
 
   (use-package smartparens
     :config (smartparens-global-mode)

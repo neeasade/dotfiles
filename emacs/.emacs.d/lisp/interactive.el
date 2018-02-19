@@ -11,6 +11,20 @@
   (interactive)
   (message "%s" major-mode))
 
+(defun what-minor-modes ()
+  (interactive)
+  (message
+   (format "%s"
+	   (delq nil
+		 (mapcar
+		  (lambda (x)
+		    (let ((car-x (car x)))
+		      (when (and (symbolp car-x) (symbol-value car-x))
+			x)))
+		  minor-mode-alist))
+	   ))
+  )
+
 (defun sudo-edit (&optional arg)
   "Edit currently visited file as root.
 
@@ -49,6 +63,7 @@ buffer is not visiting a file."
 (neeasade/bind
  "wf" 'what-face
  "wm" 'what-major-mode
+ "wi" 'what-minor-modes
  "fE" 'sudo-edit
  "jc" 'neeasade/jump-config
  )

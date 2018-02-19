@@ -5,7 +5,7 @@
   "MAPCAR for multiple sequences F XS."
   (if (not (memq nil xs))
       (cons (apply f (mapcar 'car xs))
-	    (apply 'mapcar* f (mapcar 'cdr xs)))))
+            (apply 'mapcar* f (mapcar 'cdr xs)))))
 
 ;; a namespace variable setting function
 (defun load-settings(namespace lst)
@@ -74,7 +74,7 @@
 (defun eww-browse-existing-or-new (url)
   (if (get-buffer-window "*eww*" 0)
       (url-retrieve url 'eww-render
-		    (list url nil (get-buffer "*eww*")))
+                    (list url nil (get-buffer "*eww*")))
     (eww url)
     )
   )
@@ -111,8 +111,6 @@
   )
 
 (defun neeasade/bind-leader-mode(mode &rest binds)
-  ;(message (intern (concat (symbol-name mode) "-mode")))
-
   (apply 'general-define-key
          :prefix ","
          :states '(visual normal)
