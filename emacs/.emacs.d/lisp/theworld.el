@@ -1,4 +1,3 @@
-
 (defun init-use-package()
   (require 'package)
   (setq package-enable-at-startup nil)
@@ -121,7 +120,6 @@
 	)
       )
     )
-
 
   (use-package evil-numbers)
 
@@ -315,7 +313,6 @@ current major mode."
     (setq powerline-scale (string-to-number (get-resource "Emacs.powerlinescale")))
     (setq powerline-height (spacemacs/compute-powerline-height))
     (spaceline-spacemacs-theme)
-    ;; TODO: make a binding to show minor modes
     (spaceline-toggle-minor-modes-off)
     )
 
@@ -685,7 +682,6 @@ current major mode."
 	     :nick "neeasade"
 	     :host "irc.rizon.net"
 	     :port (6667 . 6697)
-
 	     :tls t
 	     :channels (:after-auth "#rice")
 	     :nickserv-password ,(pass "rizon/pass")
@@ -842,4 +838,20 @@ current major mode."
   )
 
 (defun neeasade/email()
+  )
+
+(defun neeasade/shell()
+  (if sys/windows?
+      (progn
+	(setq explicit-shell-file-name "C:\\Program Files\\Git\\bin\\bash.exe")
+	(setq shell-file-name explicit-shell-file-name)
+	(setq explicit-bash.exe-args '("--login" "-i"))
+	)
+    )
+  (use-package shx)
+  )
+
+(defun neeasade/eshell()
+  ;; todo: https://www.reddit.com/r/emacs/comments/6y3q4k/yes_eshell_is_my_main_shell/
+
   )

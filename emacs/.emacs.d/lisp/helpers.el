@@ -14,11 +14,11 @@
   (mapcar*
    (lambda (pair)
      (let ((key (car pair))
-	   (value (car (cdr pair))))
+           (value (car (cdr pair))))
        (set
-	(intern (concat namespace "-" (prin1-to-string key)))
-	(eval value)
-	)))
+        (intern (concat namespace "-" (prin1-to-string key)))
+        (eval value)
+        )))
    (seq-partition lst 2)
    ))
 
@@ -37,16 +37,16 @@
   "Get X resource value, with a fallback value NAME."
   (let ((default (eval (cdr (assoc name xrdb-fallback-values)))))
     (if (executable-find "xrq")
-	(let ((result
-	       ;; shell-command-to-string appends newline
-	       (replace-regexp-in-string "\n$" ""
-					 (shell-command-to-string
-					  (concat "xrq '" name "' 2>/dev/null")))))
-	  (if (string= result "")
-	      ;; we didn't find it in xrdb.
-	      default
-	    result
-	    ))
+        (let ((result
+               ;; shell-command-to-string appends newline
+               (replace-regexp-in-string "\n$" ""
+                                         (shell-command-to-string
+                                          (concat "xrq '" name "' 2>/dev/null")))))
+          (if (string= result "")
+              ;; we didn't find it in xrdb.
+              default
+            result
+            ))
       default
       )))
 

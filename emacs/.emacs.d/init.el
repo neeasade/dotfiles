@@ -15,6 +15,8 @@
   (neeasade/interface)
   (neeasade/editing)
   (neeasade/indenting)
+  (neeasade/shell)
+  (neeasade/eshell)
 
   (load "~/.emacs.d/lisp/interactive.el")
   )
