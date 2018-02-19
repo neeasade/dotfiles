@@ -97,13 +97,13 @@
 (defun neeasade/evil()
   (use-package evil
     ;; for evil-collection
-    ;;:init (setq evil-want-integration nil)
+    :init (setq evil-want-integration nil)
     :config (evil-mode 1)
     )
 
-  ;; (use-package evil-collection
-  ;;   :config (evil-collection-init)
-  ;;   )
+  (use-package evil-collection
+    :config (evil-collection-init)
+    )
 
   (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
   (defun neeasade/zz-scroll(count)
