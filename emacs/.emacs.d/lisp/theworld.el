@@ -559,6 +559,7 @@ current major mode."
     )
 
   (neeasade/bind
+   "'"   'shell-pop
    "/"   'counsel-rg
    "TAB" '(switch-to-other-buffer :which-key "prev buffer")
    "SPC" 'counsel-M-x
@@ -848,7 +849,26 @@ current major mode."
 	(setq explicit-bash.exe-args '("--login" "-i"))
 	)
     )
-  (use-package shx)
+
+  (use-package shx
+    :config
+    (shx-global-mode 1)
+    )
+
+  (use-package shell-pop
+    :config
+    (setq shell-pop-window-position "top")
+    (neeasade/bind-mode
+     'shell-mode
+     "f" 'deer
+     )
+
+    ;; todo: figure out nicer integration here
+    ;; (neeasade/bind-mode
+    ;;  'ranger-mode
+    ;;  s" 'switch-to-shell??
+    ;;  )
+    )
   )
 
 (defun neeasade/eshell()
