@@ -60,10 +60,13 @@ buffer is not visiting a file."
      ))
   )
 
+
 (neeasade/bind
- "wf" 'what-face
- "wm" 'what-major-mode
- "wi" 'what-minor-modes
+ ;; reconsider these, moved from w -> q for query
+ "qf" 'what-face
+ "qm" 'what-major-mode
+ "qi" 'what-minor-modes
+
  "fE" 'sudo-edit
  "jc" 'neeasade/jump-config
  )

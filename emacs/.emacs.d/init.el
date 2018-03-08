@@ -33,7 +33,7 @@
   (neeasade/jump)
   (neeasade/treemacs)
   (neeasade/target-process)
-  ;(neeasade/dashdocs)
+  (neeasade/dashdocs)
   )
 
 (defun neeasade/communication()
@@ -46,6 +46,7 @@
 
 (defun neeasade/development()
   (neeasade/clojure)
+  (neeasade/csharp)
   (neeasade/elisp)
   (neeasade/nix)
   (neeasade/javascript)
