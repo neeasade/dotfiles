@@ -16,10 +16,16 @@ super + y
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal
 
+super + {_,shift} + Tab
+    bspc node -f {next,prev}.local.normal
+
 super + t
     bspc desktop -l next
 
 super + {_,shift,alt,ctrl} + {h,j,k,l}
+    {focus,move,resize,presel}.sh {west,south,north,east}
+
+super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
     {focus,move,resize,presel}.sh {west,south,north,east}
 
 super + ctrl + space
@@ -71,6 +77,7 @@ super + {_,shift,alt} + space
     eval "$(theme get | head -n 1)"; \
     export GTK_THEME="$THEME_NAME"; \
     eval dmenu_$action $(dmenu_options $action)
+
 
 XF86Audio{Prev,Next,Play}
      mpc -q {prev,next,toggle}
