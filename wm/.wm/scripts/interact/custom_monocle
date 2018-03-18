@@ -15,13 +15,16 @@ pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
 mon_height=$(bspc query -T -m $target_mon | jq .rectangle.height)
 [ $mon_height -gt $mon_width ] && exit
 
-bspc subscribe node_{add,remove} desktop_{focus,layout} | while read nope; do
+bspc subscribe node_{add,remove,focus} desktop_{focus,layout} | while read nope; do
     ! [ "$(bspc query -M -m)" = "$target_mon" ] && continue
     desk=$(bspc query -D -d $target_mon:focused)
 
     node_count=$(bspc query -N -d $desk -n .leaf.tiled | wc -l)
+    single_window=$(iif "[ $node_count -eq 1 ]")
     monocle_layout=$(iif "bspc query -T -d $desk | jq .layout | grep monocle")
-    if $monocle_layout || [ $node_count -lt 2 ]; then
+    is_emacs=$(iif "xtitle | grep emacs")
+
+    if ($monocle_layout && ! $is_emacs) || ($single_window && ! $is_emacs); then
         bspc config -d $desk left_padding  $pad_width
         bspc config -d $desk right_padding $pad_width
     else
