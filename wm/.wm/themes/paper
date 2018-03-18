@@ -13,13 +13,13 @@ b_bspwmrc_extend="
 xpad
 "
 
-st_borderpx=10
+st_borderpx=20
 
 b_normal_border_color=$(colort -20 -t $p_bg_normal)
 b_active_border_color=$(colort -50 -t $p_bg_normal)
 b_focused_border_color=$(colort -80 -t $p_bg_normal)
 
-b_normal_border_color=$(colort -20 -t $p_bg_normal)
+b_normal_border_color=eeeff0
 b_active_border_color=cecece
 b_focused_border_color=7c7c7c
 
@@ -48,7 +48,7 @@ p_desktop_empty_label="$(echo -n -e '\uf1db')"
 p_desktop_tiling_label=''
 p_desktop_monocle_label="$(echo -n -e '\uf00b')"
 
-st_font="Go Mono for Powerline-12:style=Regular"
+st_font="Go Mono for Powerline-14:style=Regular"
 p_title_only_show_active=true
 maxWinNameLen=30
 

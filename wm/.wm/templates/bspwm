@@ -29,6 +29,9 @@ bspc config ignore_ewmh_focus         false
 bspc config remove_unplugged_monitors true
 bspc config remove_disabled_monitors  true
 
+# prefer super but it's mapped to alt (mod1)
+bspc config pointer_modifier mod1
+
 # external rules
 bspc config external_rules_command "{{`echo -n $(which external_rules.sh)`}}"
 

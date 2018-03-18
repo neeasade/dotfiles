@@ -27,7 +27,6 @@ if [ $mon_width -gt $mon_height ]; then
     [ $node_count -eq 1 ] && vertPref=$horiPref
 fi
 
-
 # get any presels on the current desktop, select one if so.
 presel="$(bspc query -N -d -n .\!automatic | head -n 1)"
 targetNode=${presel:-focused}
