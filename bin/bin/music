@@ -26,10 +26,10 @@ play() {
 }
 
 now() {
-    if song="$(mpc listall | fzf)"; then
-        mpc insert "$song"
-        mpc next
-    fi
+  if song="$(mpc listall | fzf)"; then
+      mpc insert "$song"
+      mpc next
+  fi
 }
 
 op=${1:-play}

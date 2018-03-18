@@ -172,7 +172,7 @@
   )
 
 (defun neeasade/company()
-  ;; asdf config packages
+  ;; todo: disable company in buffers: org, circe
   (use-package company
     :config
     (global-company-mode)
@@ -377,6 +377,7 @@ current major mode."
 (defun neeasade/org()
   (use-package org
     :config
+    ;; todo: look up org-deadline-warn-days variable
     (load-settings
      "org"
      '(
@@ -447,24 +448,26 @@ current major mode."
     )
 
   (use-package evil-org
+    :after org
     :config
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'evil-org-mode-hook
 	      (lambda ()
 		(evil-org-set-key-theme))))
 
-  (add-hook
-   'org-mode-hook
-   (neeasade/bind-leader-mode
-    'org-mode
-    "t" 'org-todo
-    "T" 'org-show-todo-tree
-    "v" 'org-mark-element
-    "a" 'org-agenda
-    "l" 'evil-org-open-links
-    "p" 'org-pomodoro
-    )
-   )
+  ;; (add-hook
+   ;; 'org-mode-hook
+   ;; todo: checking evil-org
+   ;; (neeasade/bind-leader-mode
+   ;;  'org-mode
+   ;;  "t" 'org-todo
+   ;;  "T" 'org-show-todo-tree
+   ;;  "v" 'org-mark-element
+   ;;  "a" 'org-agenda
+   ;;  "l" 'evil-org-open-links
+   ;;  "p" 'org-pomodoro
+   ;;  )
+   ;; )
 
   (use-package org-pomodoro
     :config
@@ -875,3 +878,8 @@ current major mode."
   ;; todo: https://www.reddit.com/r/emacs/comments/6y3q4k/yes_eshell_is_my_main_shell/
 
   )
+
+(defun neeasade/jekyll()
+  (use-package jekyll-modes)
+  )
+

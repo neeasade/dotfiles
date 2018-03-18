@@ -5,7 +5,7 @@
 . ~/.zplug/init.zsh
 
 zplug "plugins/git", from:oh-my-zsh                                  # git aliases
-zplug "zsh-users/zsh-autosuggestions", use:"zsh-autosuggestions.zsh" # fish-like suggestions
+! $ESHELL && zplug "zsh-users/zsh-autosuggestions", use:"zsh-autosuggestions.zsh" # fish-like suggestions
 zplug "djui/alias-tips"                                              # alias reminder
 
 zplug "plugins/pass", from:oh-my-zsh                                 # completions for pass
@@ -47,9 +47,8 @@ setopt autocd
 # Remove '/' and '-' from $WORDCHARS for finer Ctrl-w behaviour
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
 
-# vim bindings (if not eshell)
-[ "$TERM" = "eterm-color" ] && return
-
+# vim bindings 
+$ESHELL && return
 bindkey -v
 
 zle-keymap-select () {

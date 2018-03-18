@@ -1,149 +1,150 @@
 # -*- mode: sh -*-
 
 shot() {
-    mkdir -p $HOME/Screenshots
-    eval $(slop)
-    maim -g ${G} "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+  mkdir -p $HOME/Screenshots
+  eval $(slop)
+  maim -g ${G} "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
 }
 
 fullshot() {
-    mkdir -p $HOME/Screenshots
-    maim "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+  mkdir -p $HOME/Screenshots
+  maim "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
 }
 
 upshot() {
-    uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
+  uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
 }
 
 deskshot() {
-    json="$(bspc query -T -m)"
-    jget() {
-        echo "$json" | jq .rectangle.$1
-    }
+  json="$(bspc query -T -m)"
+  jget() {
+    echo "$json" | jq .rectangle.$1
+  }
 
-    w=$(jget width)
-    h=$(jget height)
-    x=$(jget x)
-    y=$(jget y)
+  w=$(jget width)
+  h=$(jget height)
+  x=$(jget x)
+  y=$(jget y)
 
-    maim -g ${w}x${h}+${x}+${y} > shot.png
+  maim -g ${w}x${h}+${x}+${y} > shot.png
 }
 
 settitle() {
-    printf "%b%s" "\033]0;$*\a"
+  printf "%b%s" "\033]0;$*\a"
 }
 
 defaulttitle() {
-    settitle "$(basename $SHELL) - $(echo $TERM | sed 's/-.*//')"
+  $ESHELL && return
+  settitle "$(basename $SHELL) - $(echo $TERM | sed 's/-.*//')"
 }
 
 linewrap() {
-    ${1:-true} && echo $'\e[?7h' || echo $'\e[?7l'
+  ${1:-true} && echo $'\e[?7h' || echo $'\e[?7l'
 }
 
 cursorStyle() {
-    [ "$TERM" = "linux" ] && return
-    [ "$TERM" = "eterm-color" ] && return
+  [ "$TERM" = "linux" ] && return
+  $ESHELL && return
 
-    case "$1" in
-        bar)       index=6 ;;
-        underline) index=4 ;;
-        block)     index=2 ;;
-    esac
+  case "$1" in
+    bar)       index=6 ;;
+    underline) index=4 ;;
+    block)     index=2 ;;
+  esac
 
-    printf "%b%s" "\e[${index} q"
+  printf "%b%s" "\e[${index} q"
 }
 
 gitupdate() {
-    cur_dir=$(pwd)
+  cur_dir=$(pwd)
 
-    # Find all git repositories and update it to the master latest revision
-    for i in $(find . -name ".git" | cut -c 3-); do
-        echo "$i";
+  # Find all git repositories and update it to the master latest revision
+  for i in $(find . -name ".git" | cut -c 3-); do
+    echo "$i";
 
-        cd "$i";
-        cd ..;
+    cd "$i";
+    cd ..;
 
-        git pull origin master;
-        cd $cur_dir
-    done
+    git pull origin master;
+    cd $cur_dir
+  done
 }
 
 # Change to root of git repo
 groot() {
-    if git status &> /dev/null; then
-        cd $(git rev-parse --show-toplevel)
-    else
-        echo "Error: Not a git repository"
-        return 128
-    fi
+  if git status &> /dev/null; then
+      cd $(git rev-parse --show-toplevel)
+  else
+    echo "Error: Not a git repository"
+    return 128
+  fi
 }
 
 # nix query
 nq() {
-    local CACHE="$HOME/.cache/nq-cache"
-    if ! ( [ -e $CACHE ] && [ $(stat -c %Y $CACHE) -gt $(( $(date +%s) - 3600 )) ] ); then
-        echo "update cache" && nix-env -qa --json > "$CACHE"
-    fi
-    jq -r 'to_entries | .[] | .key + "|" + .value.meta.description' < "$CACHE" |
-        {
-            if [ $# -gt 0 ]; then
-                # double grep because coloring breaks column's char count
-                # $* so that we include spaces (could do .* instead?)
-                grep -i "$*" | column -t -s "|" | grep -i "$*"
-            else
-                column -t -s "|"
-            fi
-        }
+  local CACHE="$HOME/.cache/nq-cache"
+  if ! ( [ -e $CACHE ] && [ $(stat -c %Y $CACHE) -gt $(( $(date +%s) - 3600 )) ] ); then
+      echo "update cache" && nix-env -qa --json > "$CACHE"
+  fi
+  jq -r 'to_entries | .[] | .key + "|" + .value.meta.description' < "$CACHE" |
+      {
+	if [ $# -gt 0 ]; then
+	    # double grep because coloring breaks column's char count
+	    # $* so that we include spaces (could do .* instead?)
+	    grep -i "$*" | column -t -s "|" | grep -i "$*"
+	else
+	  column -t -s "|"
+	fi
+      }
 }
 
 dec2hex() {
-    printf "%X\n" $1
+  printf "%X\n" $1
 }
 
 hex2dec() {
-    printf "%d\n" 0x$1
+  printf "%d\n" 0x$1
 }
 
 extract() {      # Handy Extract Program
-    if [ -f $1 ] ; then
-        case $1 in
-            *.tar.bz2)   tar xvjf $1     ;;
-            *.tar.gz)    tar xvzf $1     ;;
-            *.bz2)       bunzip2 $1      ;;
-            *.rar)       unrar x $1      ;;
-            *.gz)        gunzip $1       ;;
-            *.tar)       tar xvf $1      ;;
-            *.tbz2)      tar xvjf $1     ;;
-            *.tgz)       tar xvzf $1     ;;
-            *.zip)       unzip $1        ;;
-            *.Z)         uncompress $1   ;;
-            *.7z)        7z x $1         ;;
-            *)           echo "'$1' cannot be extracted via >extract<" ;;
-        esac
-    else
-        echo "'$1' is not a valid file!"
-    fi
+  if [ -f $1 ] ; then
+      case $1 in
+	*.tar.bz2)   tar xvjf $1     ;;
+	*.tar.gz)    tar xvzf $1     ;;
+	*.bz2)       bunzip2 $1      ;;
+	*.rar)       unrar x $1      ;;
+	*.gz)        gunzip $1       ;;
+	*.tar)       tar xvf $1      ;;
+	*.tbz2)      tar xvjf $1     ;;
+	*.tgz)       tar xvzf $1     ;;
+	*.zip)       unzip $1        ;;
+	*.Z)         uncompress $1   ;;
+	*.7z)        7z x $1         ;;
+	*)           echo "'$1' cannot be extracted via >extract<" ;;
+      esac
+  else
+    echo "'$1' is not a valid file!"
+  fi
 }
 
 # manpages with colors
 man() {
-    settitle "$* - manual"
-    # removing standout means find highlights stay inverted..
-    #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
+  settitle "$* - manual"
+  # removing standout means find highlights stay inverted..
+  #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
 
-	  env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
-		    LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
-		    LESS_TERMCAP_me=$(printf '\e[0m') \
-		    LESS_TERMCAP_se=$(printf '\e[0m') \
-		    LESS_TERMCAP_ue=$(printf '\e[0m') \
-		    LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
-        man "$@"
-    defaulttitle
+  env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
+      LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
+      LESS_TERMCAP_me=$(printf '\e[0m') \
+      LESS_TERMCAP_se=$(printf '\e[0m') \
+      LESS_TERMCAP_ue=$(printf '\e[0m') \
+      LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
+      man "$@"
+  defaulttitle
 }
 
 page() {
-    settitle "$* - less"
-    less "$@"
-    defaulttitle
+  settitle "$* - less"
+  less "$@"
+  defaulttitle
 }

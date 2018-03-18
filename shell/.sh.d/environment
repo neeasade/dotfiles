@@ -54,4 +54,11 @@ path_add .go/bin
 path_add .wm/scripts/interact
 path_add .wm/scripts/visual
 
+case $TERM in
+  eterm)       ESHELL=true;;
+  eterm-color) ESHELL=true;;
+  dumb)        ESHELL=true;;
+  *)           ESHELL=false;;
+esac
+
 set +a
