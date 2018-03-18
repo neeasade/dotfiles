@@ -290,10 +290,10 @@ current major mode."
   )
 
 (defun neeasade/dashdocs()
-  ;; todo: figure out ivy integration.
-  ;; https://github.com/areina/helm-dash/issues/119
-  (use-package help-dash)
-  (setq helm-dash-browser-func 'eww-browse-existing-or-new)
+  (use-package counsel-dash
+    :config
+    (setq helm-dash-browser-func 'eww-browse-existing-or-new)
+    )
   )
 
 (defun spacemacs/compute-powerline-height ()
@@ -488,7 +488,6 @@ current major mode."
 	      (apply-partially #'neeasade/toggle-music "pause"))
     )
   
-
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
    "gs" 'magit-status
@@ -553,12 +552,15 @@ current major mode."
 
   ;; counsel
   (use-package counsel
-    :bind
-    ("C-c k" . counsel-ag))
+    :config
+    (setq counsel-grep-base-command "rg -i -M 120 --no-heading --line-number --color never '%s' %s")
+    (setq counsel-rg-base-command "rg -i -M 120 --no-heading --line-number --color never %s .")
+    (setq counsel-ag-base-command "ag --vimgrep --nocolor --nogroup %s")
+    )
 
   (use-package ranger
-    :config
-    (setq ranger-show-literal nil)
+    :init (setq ranger-override-dired t)
+    :config (setq ranger-show-literal nil)
     )
 
   (neeasade/bind
@@ -574,6 +576,8 @@ current major mode."
    "wk" 'evil-window-up
    "wl" 'evil-window-right
    "wd" 'evil-window-delete
+   "ww" 'other-window
+   "wo" 'other-frame
 
    ;; Applications
    "a" '(:ignore t :which-key "Applications")
@@ -616,7 +620,7 @@ current major mode."
   (neeasade/bind
 
    "p" '(:ignore t :which-key "projects")
-   "pf" 'project-find-file
+   "pf" 'counsel-git
    ;; "ad" 'dired
    )
   )
@@ -627,7 +631,29 @@ current major mode."
   )
 
 (defun neeasade/typescript()
-  (use-package tide)
+  (use-package tide
+    :config
+    (defun setup-tide-mode ()
+      (interactive)
+      (tide-setup)
+      (flycheck-mode +1)
+      (setq flycheck-check-syntax-automatically '(save mode-enabled))
+      (eldoc-mode +1)
+      (tide-hl-identifier-mode +1))
+
+    ;; aligns annotation to the right hand side
+    (setq company-tooltip-align-annotations t)
+
+    ;; formats the buffer before saving
+					; (add-hook 'before-save-hook 'tide-format-before-save)
+
+    (add-hook 'typescript-mode-hook #'setup-tide-mode)
+    )
+  )
+
+(defun neeasade/csharp()
+  (use-package csharp-mode)
+  (use-package omnisharp)
   )
 
 (defun neeasade/git()
