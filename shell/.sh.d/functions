@@ -2,7 +2,8 @@
 
 shot() {
   mkdir -p $HOME/Screenshots
-  eval $(slop)
+  # eval $(slop)
+  G="$(slop)"
   maim -g ${G} "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
 }
 

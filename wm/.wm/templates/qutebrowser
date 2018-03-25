@@ -166,7 +166,7 @@ def GetSize(fontType):
 tabFont = GetSize('tab') + fonts['tabbar']
 
 if fonts['tab_bold']:
-   tabFont = 'bold {0}'.format(tabFont)
+    tabFont = 'bold {0}'.format(tabFont)
 
 c.fonts.tabs = tabFont
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
@@ -191,8 +191,8 @@ if os.name == 'nt':
     userscript_location = os.environ['APPDATA'] + '\\qutebrowser\\data\\userscripts\\';
 
 def write_file(file, content):
-        with open(file, 'w') as fh:
-            fh.write(content)
+    with open(file, 'w') as fh:
+        fh.write(content)
 
 def write_userscript(location, content):
     write_file(location, content)

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+clear
+tput civis
+
+COLUMNS=$1
+LINES=$2
+
+COLUMNS=$((COLUMNS-1))
+LINES=$((LINES-1))
+
+ROOT_X="$(bspc query -T -m | jq .rectangle.x)"
+ROOT_Y="$(bspc query -T -m | jq .rectangle.y)"
+
+#[ $ROOT_X -eq 0 -o $ROOT_Y -eq 0 ] &&
+    # ROOT_X=1280 ROOT_Y=800
+
+# ROOT_X=1000
+# ROOT_Y=1000
+
+TERM_X="$((COLUMNS * 2))"
+TERM_Y="$((LINES * 4))"
+
+bspc query -N -d -n .leaf | while read WID
+do
+    read X Y W H << EOF
+    $(wattr xywh $WID)
+EOF
+    MAP_X1="$(($TERM_X*$X/$ROOT_X+1))"
+    MAP_X2="$(($TERM_X*($X+$W)/$ROOT_X+1))"
+    MAP_Y1="$(($TERM_Y*$Y/$ROOT_Y+1))"
+    MAP_Y2="$(($TERM_Y*($Y+$H)/$ROOT_Y+1))"
+
+    echo $MAP_X1 $MAP_Y1 to $MAP_X1 $MAP_Y2
+    echo $MAP_X2 $MAP_Y2 to $MAP_X2 $MAP_Y1
+    echo $MAP_X2 $MAP_Y1 to $MAP_X1 $MAP_Y1
+    echo $MAP_X1 $MAP_Y2 to $MAP_X2 $MAP_Y2
+done
+
+tput cnorm

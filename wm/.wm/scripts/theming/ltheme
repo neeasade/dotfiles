@@ -131,8 +131,8 @@ load_xresources() {
 
     xrdb $HOME/.Xresources
 
-    load_emacs
     load_xst
+    load_emacs
 }
 
 load_emacs() {
