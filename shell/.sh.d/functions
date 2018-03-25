@@ -80,6 +80,12 @@ groot() {
   fi
 }
 
+# make a new note for later to reference or publish.
+note() {
+  cd $HOME/git/neeasade.github.io/
+  ./new.sh
+}
+
 # nix query
 nq() {
   local CACHE="$HOME/.cache/nq-cache"

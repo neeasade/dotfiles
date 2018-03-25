@@ -44,6 +44,6 @@ case $iconfont in
     *) exit 1;;
 esac
 
-icon_result="$(env printf "\u$(echo $icon | cut -d ' ' -f$index) ")"
+icon_result="$(uchar $(echo $icon | cut -d ' ' -f$index))"
 
 {{p_icon_handler}}

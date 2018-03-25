@@ -3,7 +3,7 @@
 # theme
 BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
 emacs_theme="base16-grayscale-light"
-emacs_powerline_scale="1.4"
+emacs_powerline_scale="1.2"
 
 # bspwm
 b_border_width=1
@@ -42,11 +42,11 @@ p_font_icon="FontAwesome-12" # Panel Icon font.
 p_icon_enable=false
 d_font="Go Mono for Powerline 10"
 
-p_desktop_occupied_label="$(echo -n -e '\uf111')"
-p_desktop_empty_label="$(echo -n -e '\uf1db')"
+p_desktop_occupied_label="$(uchar f111)"
+p_desktop_empty_label="$(uchar f1db)"
 
 p_desktop_tiling_label=''
-p_desktop_monocle_label="$(echo -n -e '\uf00b')"
+p_desktop_monocle_label="$(uchar f00b)"
 
 st_font="Go Mono for Powerline-14:style=Regular"
 p_title_only_show_active=true
