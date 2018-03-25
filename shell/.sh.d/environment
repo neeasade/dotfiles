@@ -1,8 +1,12 @@
 # -*- mode: sh -*-
 set -a
 
+silent() {
+  "$@" >/dev/null 2>&1
+}
+
 has() {
-    type "$@" >/dev/null 2>&1
+  silent type "$@" 
 }
 
 PAGER="less"
@@ -23,18 +27,24 @@ _JAVA_AWT_WM_NONREPARENTING=1
 LANG="en_US.UTF-8"
 TERMCMD="$TERMINAL"
 
-has emacs && EDITOR='emacsclient' || EDITOR=vim
+# enforce emacs --server preference 
+if has emacs && silent emacsclient --eval "(progn desktop-save-mode)"; then 
+    EDITOR='emacsclient'
+else
+  EDITOR='vim'
+fi
+
 GIT_EDITOR="$EDITOR"
 SVN_EDITOR="$EDITOR"
 
 if has npm; then
     if [ -d "$HOME/.npm-packages" ]; then
-        # assume, faster startup time
-        NODE_PATH="$HOME/.npm-packages/lib/node_modules"
-        PATH="$PATH:$HOME/.npm-packages/bin"
+	# assume, faster startup time
+	NODE_PATH="$HOME/.npm-packages/lib/node_modules"
+	PATH="$PATH:$HOME/.npm-packages/bin"
     else
-        NODE_PATH="$(npm root -g)"
-        PATH="$PATH:$(npm bin -g)"
+      NODE_PATH="$(npm root -g)"
+      PATH="$PATH:$(npm bin -g)"
     fi
 fi
 
@@ -45,7 +55,7 @@ GOPATH="$HOME/.go"
 WINEPREFIX=$HOME/.config/wine/
 
 path_add() {
-    PATH="$PATH:$HOME/$@"
+  PATH="$PATH:$HOME/$@"
 }
 
 path_add bin
