@@ -45,6 +45,7 @@ let
 in
 rec {
   bspwm-git = callPackage ./bspwm { inherit fetchLatestGit; };
+  qutebrowser-git = callPackage ./qutebrowser { inherit fetchLatestGit; };
   wmutils-opt-git = callPackage ./wmutils-opt {  inherit fetchLatestGit; };
   neeasade-opt = callPackage ./neeasade-opt {  inherit fetchLatestGit; };
   gtkrc-reload = callPackage ./gtkrc-reload {  inherit fetchLatestGit; };

@@ -15,6 +15,8 @@ let
   expr = import ./expr { inherit pkgs lib; };
 
   pkgs = stable;
+  # edge = rolling;
+  # rolling = stable;
 
   base = (with stable; [
     arandr
@@ -64,6 +66,7 @@ let
     ponymix
     psmisc
     screen
+    slop
     socat
     stow
     tmux
@@ -87,7 +90,6 @@ let
     mesa_drivers
     mesa_glu
   ]) ++ (with rolling; [
-    qutebrowser
     colort
     dmenu2
     dunst
@@ -98,8 +100,8 @@ let
     lemonbar-xft
     meh
     mpvc
+    qutebrowser
     ranger
-    slop
     sxhkd
     txtw
     wmutils-core
@@ -113,6 +115,7 @@ let
     xtitle
     youtube-dl
   ]) ++ ( with expr; [
+    # qutebrowser-git
     bevelbar
     gtkrc-reload
     neeasade-opt
@@ -162,6 +165,7 @@ let
   development = (with stable; [
     (python27.withPackages(ps: with ps; [
       screenkey
+      libxml2
     ]))
 
     autoconf
@@ -220,6 +224,13 @@ let
 
 in
 {
+  services = {
+    emacs = {
+      enable = true;
+      # defaultEditor = rolling.emacs;
+    };
+  };
+
   environment.systemPackages =
     base ++
     extra ++
