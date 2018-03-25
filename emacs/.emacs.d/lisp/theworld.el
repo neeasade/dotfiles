@@ -331,6 +331,9 @@ current major mode."
   (set-frame-parameter (selected-frame) 'internal-border-width
 		       (string-to-number (get-resource "st.borderpx")))
 
+  ;; todo: reconsider
+  (fringe-mode (string-to-number (get-resource "st.borderpx")))
+
   ;; sync w/ term background
   (set-background-color
    (get-resource "*.background"))
@@ -369,6 +372,7 @@ current major mode."
 (defun neeasade/window-management()
   (use-package zoom
     :config
+    ;; width . height
     (setq zoom-size '(0.58 . 0.618))
     (zoom-mode t)
     )
@@ -395,7 +399,6 @@ current major mode."
        startup-folded t
 
        ;; behavior
-       ;; todo-keywords '((sequence "TODO" "NEXT" "WAITING" "INACTIVE" "CANCELLED" "MEETING" "DONE"))
        todo-keywords
        '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
 	 (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
@@ -495,11 +498,6 @@ current major mode."
    "gl" 'magit-log-current
    ))
 
-;; TODO: experiment with centered placement here
-(defun neeasade/ivy-style()
-  (use-package oneonone)
-  )
-
 (defun neeasade/clojure()
   (use-package clojure-mode)
   (use-package cider)
@@ -560,7 +558,10 @@ current major mode."
 
   (use-package ranger
     :init (setq ranger-override-dired t)
-    :config (setq ranger-show-literal nil)
+    :config (setq
+	     ranger-show-literal nil
+	     ranger-show-hiddent t
+	     )
     )
 
   (neeasade/bind
@@ -590,7 +591,6 @@ current major mode."
    )
 
   (use-package alert
-    ;; todo: switch on windows style
     :config (setq alert-default-style
 		  (if sys/windows?
 		      'toaster
@@ -881,6 +881,7 @@ current major mode."
 
   (use-package shx
     :config
+    ;; todo: aslias clear -> :clear
     (shx-global-mode 1)
     )
 
@@ -909,3 +910,10 @@ current major mode."
   (use-package jekyll-modes)
   )
 
+(defun neeasade/autohotkey()
+  (use-package xahk-mode)
+  )
+
+(defun neeasade/markdown()
+  (use-package markdownmode)
+  )

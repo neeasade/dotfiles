@@ -52,10 +52,12 @@
   (neeasade/javascript)
   (neeasade/typescript)
   (neeasade/terraform)
+  (neeasade/markdown)
   )
 
 (defun neeasade/windows()
   ;; TODO: windows-scripts layer from spacemacs
+  (neeasade/autohotkey)
   )
 
 (neeasade/core)
