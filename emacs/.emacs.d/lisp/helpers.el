@@ -126,3 +126,13 @@
     (when (looking-at-p "^ +\/?> *$")
       (delete-char sgml-basic-offset))))
 (advice-add #'js-jsx-indent-line :after #'js-jsx-indent-line-align-closing-bracket)
+
+(defun neeasade/toggle-notes()
+  ;; todo: if current buffer is notes.org, switch back
+  ;; else go ~/or/notes.org
+  ;; bind to spc n
+  )
+
+;; org reference 
+;; (org-set-property "id" "value")
+;; (org-find-entry-with-id "value")

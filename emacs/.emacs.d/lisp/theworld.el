@@ -873,7 +873,11 @@ current major mode."
 (defun neeasade/shell()
   (if sys/windows?
       (progn
-	(setq explicit-shell-file-name "C:\\Program Files\\Git\\bin\\bash.exe")
+	(setq explicit-shell-file-name
+	      (concat
+	       (getenv "USERPROFILE")
+	       "\\scoop\\apps\\git-with-openssh\\current\\usr\\bin\\bash.exe"
+	       ))
 	(setq shell-file-name explicit-shell-file-name)
 	(setq explicit-bash.exe-args '("--login" "-i"))
 	)
@@ -915,5 +919,20 @@ current major mode."
   )
 
 (defun neeasade/markdown()
-  (use-package markdownmode)
+  ;; (use-package markdownmode)
   )
+
+(defun neeasade/restclient()
+  (use-package restclient
+    :config
+    (neeasade/bind-leader-mode
+     'restclient-mode
+     ;;"er" 'eval-region
+     "ei" 'restclient-http-send-current
+     ;;"eb" 'le::eval-and-insert-all-sexps
+     )
+    )
+  (use-package company-restclient)
+
+  )
+
