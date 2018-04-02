@@ -100,9 +100,9 @@
     :config (evil-mode 1)
     )
 
-  (use-package evil-collection
-    :config (evil-collection-init)
-    )
+  ;(use-package evil-collection
+    ;:config (evil-collection-init)
+    ;)
 
   (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
   (defun neeasade/zz-scroll(count)
@@ -172,14 +172,8 @@
   )
 
 (defun neeasade/company()
-  ;; todo: disable company in buffers: org, circe
   (use-package company
     :config
-    (global-company-mode)
-    (use-package company-flx
-      :config
-      (company-flx-mode +1))
-
     (load-settings
      "company"
      '(
@@ -190,13 +184,22 @@
        dabbrev-ignore-case t
        tooltip-align-annotations t
        tooltip-margin 2
+       global-modes '(not
+		      org-mode
+		      shell-mode
+		      circe-chat-mode
+		      )
        )
      )
-    (setq
-     )
+
+    (use-package company-flx
+      :config
+      (company-flx-mode +1))
 
     ;; TODO: investigate tab handling like VS completely
     (define-key company-active-map [tab] 'company-complete)
+
+    (global-company-mode)
     )
 
   (use-package company-quickhelp
@@ -208,8 +211,7 @@
 
 (defun neeasade/editing()
   ;; TODO here: figure out how I want to sync indent styles across modes
-  (use-package editorconfig)
-
+  (use-package editorconfig :config (editorconfig-mode 1))
   (use-package aggressive-indent
     :config
     (add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
@@ -458,19 +460,21 @@ current major mode."
 	      (lambda ()
 		(evil-org-set-key-theme))))
 
-  ;; (add-hook
-   ;; 'org-mode-hook
+  (add-hook
+   'org-mode-hook
    ;; todo: checking evil-org
-   ;; (neeasade/bind-leader-mode
-   ;;  'org-mode
-   ;;  "t" 'org-todo
-   ;;  "T" 'org-show-todo-tree
-   ;;  "v" 'org-mark-element
-   ;;  "a" 'org-agenda
-   ;;  "l" 'evil-org-open-links
-   ;;  "p" 'org-pomodoro
-   ;;  )
-   ;; )
+   (neeasade/bind-leader-mode
+    'org-mode
+    "t" 'org-todo
+    "T" 'org-show-todo-tree
+    "v" 'org-mark-element
+    "a" 'org-agenda
+    "l" 'evil-org-open-links
+    "p" 'org-pomodoro
+    "q" 'tp-set-org-userstory
+    "f" 'tp-set-org-active
+    )
+   )
 
   (use-package org-pomodoro
     :config
@@ -670,6 +674,7 @@ current major mode."
   (use-package git-gutter-fringe
     :config
     (setq git-gutter-fr:side 'right-fringe)
+    (global-git-gutter-mode t)
     )
 
   (neeasade/bind

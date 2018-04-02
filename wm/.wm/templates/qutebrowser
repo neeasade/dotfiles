@@ -188,7 +188,10 @@ userscripts = [
 
 userscript_location = os.environ['HOME'] + "/.local/share/qutebrowser/userscripts/"
 if os.name == 'nt':
-    userscript_location = os.environ['APPDATA'] + '\\qutebrowser\\data\\userscripts\\';
+    userscript_location = os.environ['APPDATA'] + '\\qutebrowser\\data\\userscripts\\'
+
+if not os.path.exists(userscript_location):
+    os.makedirs(userscript_location)
 
 def write_file(file, content):
     with open(file, 'w') as fh:

@@ -132,7 +132,3 @@
   ;; else go ~/or/notes.org
   ;; bind to spc n
   )
-
-;; org reference 
-;; (org-set-property "id" "value")
-;; (org-find-entry-with-id "value")
