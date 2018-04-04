@@ -23,7 +23,7 @@
    ))
 
 ;; for when we're away from $HOME.
-(defvar xrdb-fallback-values
+(setq xrdb-fallback-values
   '(
     ("Emacs.theme"          . "base16-grayscale-light")
     ("Emacs.powerlinescale" . "1.4")
@@ -127,8 +127,3 @@
       (delete-char sgml-basic-offset))))
 (advice-add #'js-jsx-indent-line :after #'js-jsx-indent-line-align-closing-bracket)
 
-(defun neeasade/toggle-notes()
-  ;; todo: if current buffer is notes.org, switch back
-  ;; else go ~/or/notes.org
-  ;; bind to spc n
-  )

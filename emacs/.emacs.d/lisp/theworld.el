@@ -48,8 +48,11 @@
    symlinked file
    vc-follow-symlinks t ;; auto follow symlinks
    vc-make-backup-files t
-   version-control t ;; todo: consider
+   version-control t
    )
+
+  ;; todo: have a toggle for (whitespace-mode)
+  ;; related: https://stackoverflow.com/questions/15946178/change-the-color-of-the-characters-in-whitespace-mode
 
   ;; trim gui
   (menu-bar-mode -1)
@@ -100,9 +103,9 @@
     :config (evil-mode 1)
     )
 
-  ;(use-package evil-collection
-    ;:config (evil-collection-init)
-    ;)
+  ;;(use-package evil-collection
+  ;;:config (evil-collection-init)
+  ;;)
 
   (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
   (defun neeasade/zz-scroll(count)
@@ -155,7 +158,20 @@
   )
 
 (defun neeasade/flycheck()
-  (use-package flycheck :config (global-flycheck-mode))
+  (use-package flycheck
+    :config
+    ;; todo: this should move to javascript func
+    ;; disable jshint since we prefer eslint checking
+    (setq-default
+     flycheck-disabled-checkers
+     (append flycheck-disabled-checkers
+	     '(javascript-jshint)))
+
+    ;; use eslint with web-mode for jsx files
+    (flycheck-add-mode 'javascript-eslint 'web-mode)
+    ;; (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
+
+	       (global-flycheck-mode))
 
   (neeasade/bind
    ;; Applications
@@ -333,8 +349,9 @@ current major mode."
   (set-frame-parameter (selected-frame) 'internal-border-width
 		       (string-to-number (get-resource "st.borderpx")))
 
-  ;; todo: reconsider
-  (fringe-mode (string-to-number (get-resource "st.borderpx")))
+  ;; this is only viable if can get it on internal window edges only
+  ;; (not right now)
+  ;; (fringe-mode (string-to-number (get-resource "st.borderpx")))
 
   ;; sync w/ term background
   (set-background-color
@@ -460,6 +477,38 @@ current major mode."
 	      (lambda ()
 		(evil-org-set-key-theme))))
 
+  (defun neeasade/org-open-url()
+    (interactive)
+    (browse-url (org-entry-get nil "url"))
+    )
+  (defun neeasade/org-set-active()
+    (interactive)
+    (org-delete-property-globally "focus")
+    (org-set-property "focus" "me")
+
+    ;; assume if on windows want tp
+    (if sys/windows?
+	(progn
+	  (org-set-property "url" (concat "https://" tp-subdomain ".tpondemand.com/entity/" (org-entry-get nil "targetprocess"))) 
+	  (setq tp-active-userstory (org-entry-get nil "targetprocess"))
+	  (tp-update-git-message)
+	  ))
+    )
+  (defun neeasade/org-goto-notes()
+    (interactive)
+    (if (get-buffer "notes.org")
+	(counsel-switch-to-buffer-or-window "notes.org")
+      (find-file "~/org/notes.org")
+      )
+    )
+
+  (defun neeasade/org-goto-focus()
+    (interactive)
+    (neeasade/org-goto-notes)
+    ;; todo: find a way to open tree this is in on goto-char
+    (goto-char (org-find-property "focus"))
+    )
+
   (add-hook
    'org-mode-hook
    ;; todo: checking evil-org
@@ -472,7 +521,8 @@ current major mode."
     "l" 'evil-org-open-links
     "p" 'org-pomodoro
     "q" 'tp-set-org-userstory
-    "f" 'tp-set-org-active
+    "f" 'neeasade/org-set-active
+    "b" 'neeasade/org-open-url
     )
    )
 
@@ -496,11 +546,10 @@ current major mode."
     )
   
   (neeasade/bind
-   "g" '(:ignore t :which-key "git")
-   "gs" 'magit-status
-   "gb" 'magit-blame
-   "gl" 'magit-log-current
-   ))
+   "on" 'neeasade/org-goto-notes
+   "of" 'neeasade/org-goto-focus
+   )
+  )
 
 (defun neeasade/clojure()
   (use-package clojure-mode)
@@ -525,32 +574,32 @@ current major mode."
   (load "~/.emacs.d/lisp/targetprocess.el")
   )
 
-(defun dynamic-ivy-height()
-  "Placeholder."
-  (let (
-	(computed (/ (window-total-size) 2))
-	)
-    (setq ivy-height computed)
-    (setq ivy-fixed-height-minibuffer computed)
-    )
-  )
-
 ;; bindings, ivy, counsel, alerts, which-key
 (defun neeasade/interface()
   ;; ref: http://oremacs.com/2016/01/06/ivy-flx/
-  (use-package flx)
+  ;; (use-package flx)
+
+  (defun dynamic-ivy-height()
+    (let (
+	  (computed (/ (window-total-size) 2))
+	  )
+      (setq ivy-height computed)
+      (setq ivy-fixed-height-minibuffer computed)
+      )
+    )
 
   (dynamic-ivy-height)
   (add-hook 'window-configuration-change-hook 'dynamic-ivy-height)
 
   (use-package ivy
     :config
-    (setq ivy-re-builders-alist
-	  '((ivy-switch-buffer . ivy--regex-plus)
-	    (t . ivy--regex-fuzzy)))
+    ;; (setq ivy-re-builders-alist
+    ;; 	  '((ivy-switch-buffer . ivy--regex-plus)
+    ;; 	    (t . ivy--regex-fuzzy)))
 
-    (setq ivy-initial-inputs-alist nil)
-    (ivy-mode 1))
+    ;; (setq ivy-initial-inputs-alist nil)
+    (ivy-mode 1)
+    )
 
   ;; counsel
   (use-package counsel
@@ -582,6 +631,8 @@ current major mode."
    "wl" 'evil-window-right
    "wd" 'evil-window-delete
    "ww" 'other-window
+   ;; window max
+   "wm" 'delete-other-windows ;; window-max
    "wo" 'other-frame
 
    ;; Applications
@@ -630,6 +681,16 @@ current major mode."
   )
 
 (defun neeasade/javascript()
+  ;; use web-mode for .jsx files
+  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
+
+  (add-hook 'web-mode-hook
+	    (lambda ()
+	      ;; short circuit js mode and just do everything in jsx-mode
+	      (if (equal web-mode-content-type "javascript")
+		  (web-mode-set-content-type "jsx")
+		(message "now set to: %s" web-mode-content-type))))
+
   (use-package rjsx-mode)
   (use-package web-mode)
   )
@@ -649,7 +710,7 @@ current major mode."
     (setq company-tooltip-align-annotations t)
 
     ;; formats the buffer before saving
-					; (add-hook 'before-save-hook 'tide-format-before-save)
+    ;; (add-hook 'before-save-hook 'tide-format-before-save)
 
     (add-hook 'typescript-mode-hook #'setup-tide-mode)
     )
@@ -932,12 +993,10 @@ current major mode."
     :config
     (neeasade/bind-leader-mode
      'restclient-mode
-     ;;"er" 'eval-region
-     "ei" 'restclient-http-send-current
-     ;;"eb" 'le::eval-and-insert-all-sexps
+     "ei" 'restclient-http-send-current-stay-in-window
      )
     )
-  (use-package company-restclient)
 
+  (use-package company-restclient)
   )
 

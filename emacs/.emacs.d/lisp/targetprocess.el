@@ -61,12 +61,3 @@
   (interactive)
   (org-set-property "targetprocess" (tp-get-userstory-from-url))
   )
-
-;; set current org heading as active
-(defun tp-set-org-active()
-  (interactive)
-  (org-delete-property-globally "focus")
-  (org-set-property "focus" "me")
-  (setq tp-active-userstory (org-entry-get nil "targetprocess"))
-  (tp-update-git-message)
-  )
