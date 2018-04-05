@@ -1,5 +1,6 @@
 (setq sys/windows? (eq system-type 'windows-nt))
 (setq sys/linux? (eq system-type 'gnu/linux))
+(setq enable-tp? sys/windows?)
 
 (defun mapcar* (f &rest xs)
   "MAPCAR for multiple sequences F XS."

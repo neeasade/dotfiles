@@ -125,6 +125,9 @@
     )
 
   (use-package evil-numbers)
+  (use-package evil-lion
+    :config
+    (evil-lion-mode))
 
   (use-package general
     :config
@@ -171,7 +174,7 @@
     (flycheck-add-mode 'javascript-eslint 'web-mode)
     ;; (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
 
-	       (global-flycheck-mode))
+    (global-flycheck-mode))
 
   (neeasade/bind
    ;; Applications
@@ -481,19 +484,13 @@ current major mode."
     (interactive)
     (browse-url (org-entry-get nil "url"))
     )
+
   (defun neeasade/org-set-active()
     (interactive)
     (org-delete-property-globally "focus")
     (org-set-property "focus" "me")
-
-    ;; assume if on windows want tp
-    (if sys/windows?
-	(progn
-	  (org-set-property "url" (concat "https://" tp-subdomain ".tpondemand.com/entity/" (org-entry-get nil "targetprocess"))) 
-	  (setq tp-active-userstory (org-entry-get nil "targetprocess"))
-	  (tp-update-git-message)
-	  ))
     )
+
   (defun neeasade/org-goto-notes()
     (interactive)
     (if (get-buffer "notes.org")
@@ -546,8 +543,8 @@ current major mode."
     )
   
   (neeasade/bind
-   "on" 'neeasade/org-goto-notes
-   "of" 'neeasade/org-goto-focus
+   "jo" 'neeasade/org-goto-notes
+   "jf" 'neeasade/org-goto-focus
    )
   )
 
@@ -571,7 +568,9 @@ current major mode."
   )
 
 (defun neeasade/target-process()
-  (load "~/.emacs.d/lisp/targetprocess.el")
+  (if enable-tp?
+      (load "~/.emacs.d/lisp/targetprocess.el")
+    )
   )
 
 ;; bindings, ivy, counsel, alerts, which-key
@@ -693,6 +692,15 @@ current major mode."
 
   (use-package rjsx-mode)
   (use-package web-mode)
+
+  ;; todo: delete? only for eslint
+  (use-package exec-path-from-shell
+    :config (setq exec-path-from-shell-variables
+		  '("PATH" "MANPATH" "SSH_CLIENT" "HOSTNAME"
+		    "GTAGSCONF" "GTAGSLABEL" "RUST_SRC_PATH"
+		    "HISTFILE" "HOME" "GOPATH" "GOROOT" "GOEXEC"))
+       (exec-path-from-shell-initialize)
+       )
   )
 
 (defun neeasade/typescript()
@@ -735,7 +743,8 @@ current major mode."
   (use-package git-gutter-fringe
     :config
     (setq git-gutter-fr:side 'right-fringe)
-    (global-git-gutter-mode t)
+    ;; fails when too many buffers open on windows
+    (if sys/linux? (global-git-gutter-mode t))
     )
 
   (neeasade/bind
