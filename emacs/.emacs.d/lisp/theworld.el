@@ -85,6 +85,8 @@
   )
 
 (defun neeasade/elisp()
+  ;; todo: disable semantic in elisp buffers, really slow
+  ;; (might belong in company mode)
   (load "~/.emacs.d/vendor/le-eval-and-insert-results.el")
 
   (setq lisp-indent-function 'common-lisp-indent-function)
@@ -163,16 +165,6 @@
 (defun neeasade/flycheck()
   (use-package flycheck
     :config
-    ;; todo: this should move to javascript func
-    ;; disable jshint since we prefer eslint checking
-    (setq-default
-     flycheck-disabled-checkers
-     (append flycheck-disabled-checkers
-	     '(javascript-jshint)))
-
-    ;; use eslint with web-mode for jsx files
-    (flycheck-add-mode 'javascript-eslint 'web-mode)
-    ;; (flycheck-add-mode 'javascript-eslint 'js2-jsx-mode)
 
     (global-flycheck-mode))
 
@@ -196,7 +188,7 @@
     (load-settings
      "company"
      '(
-       idle-delay 0
+       idle-delay (if sys/windows? 3 0)
        selection-wrap-around t
        tooltip-align-annotations t
        dabbrev-downcase nil
@@ -213,7 +205,8 @@
 
     (use-package company-flx
       :config
-      (company-flx-mode +1))
+      (company-flx-mode +1)
+      )
 
     ;; TODO: investigate tab handling like VS completely
     (define-key company-active-map [tab] 'company-complete)
@@ -230,6 +223,7 @@
 
 (defun neeasade/editing()
   ;; TODO here: figure out how I want to sync indent styles across modes
+  ;; an option: use editorconfig global file
   (use-package editorconfig :config (editorconfig-mode 1))
   (use-package aggressive-indent
     :config
@@ -609,11 +603,16 @@ current major mode."
     )
 
   (use-package ranger
-    :init (setq ranger-override-dired t)
-    :config (setq
-	     ranger-show-literal nil
-	     ranger-show-hiddent t
-	     )
+    :init
+    (setq ranger-override-dired t)
+    :config
+    (setq ranger-show-literal nil
+	  ranger-show-hidden t
+	  )
+    
+    (neeasade/bind
+     "d" 'deer
+     )
     )
 
   (neeasade/bind
@@ -683,6 +682,15 @@ current major mode."
   ;; use web-mode for .jsx files
   (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
 
+  ;; (flycheck) disable jshint since we prefer eslint checking
+  (setq-default
+   flycheck-disabled-checkers
+   (append flycheck-disabled-checkers
+	   '(javascript-jshint)))
+
+  ;; use eslint with web-mode for jsx files
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+
   (add-hook 'web-mode-hook
 	    (lambda ()
 	      ;; short circuit js mode and just do everything in jsx-mode
@@ -699,8 +707,8 @@ current major mode."
 		  '("PATH" "MANPATH" "SSH_CLIENT" "HOSTNAME"
 		    "GTAGSCONF" "GTAGSLABEL" "RUST_SRC_PATH"
 		    "HISTFILE" "HOME" "GOPATH" "GOROOT" "GOEXEC"))
-       (exec-path-from-shell-initialize)
-       )
+     	 (exec-path-from-shell-initialize)
+	 )
   )
 
 (defun neeasade/typescript()
@@ -737,7 +745,8 @@ current major mode."
 
   (use-package evil-magit
     :config
-    (evil-define-key evil-magit-state magit-mode-map "?" 'evil-search-backward)
+    (evil-define-key
+	evil-magit-state magit-mode-map "?" 'evil-search-backward)
     )
 
   (use-package git-gutter-fringe
@@ -749,10 +758,37 @@ current major mode."
 
   (neeasade/bind
    "g" '(:ignore t :which-key "git")
-   "gs" 'magit-status
+   "jg" 'magit-status
    "gb" 'magit-blame
    "gl" 'magit-log-current
    )
+
+  (defhydra git-smerge-menu ()
+    "
+  movement^^^^               merge action^^           other
+  ---------------------^^^^  -------------------^^    -----------
+  [_n_]^^    next hunk       [_b_] keep base          [_u_] undo
+  [_N_/_p_]  prev hunk       [_m_] keep mine          [_r_] refine
+  [_j_/_k_]  move up/down    [_a_] keep all           [_q_] quit
+  ^^^^                       [_o_] keep other
+  ^^^^                       [_c_] keep current
+  ^^^^                       [_C_] combine with next"
+    ("n" smerge-next)
+    ("p" smerge-prev)
+    ("N" smerge-prev)
+    ("j" evil-next-line)
+    ("k" evil-previous-line)
+    ("a" smerge-keep-all)
+    ("b" smerge-keep-base)
+    ("m" smerge-keep-mine)
+    ("o" smerge-keep-other)
+    ("c" smerge-keep-current)
+    ("C" smerge-combine-with-next)
+    ("r" smerge-refine)
+    ("u" undo-tree-undo)
+    ("q" nil :exit t))
+  (neeasade/bind "gs" 'git-smerge-menu/body)
+
   )
 
 (defun neeasade/jump()
@@ -900,6 +936,7 @@ current major mode."
     (setq slack-buffer-emojify t) 
     (setq slack-prefer-current-team t)
     :config
+    ;; TODO: check this windows only
     ;; https://github.com/yuya373/emacs-slack/issues/161 
     (setq request-backend 'url-retrieve)
     (setq slack-request-timeout 50)
@@ -943,6 +980,7 @@ current major mode."
   )
 
 (defun neeasade/email()
+  ;; TODO
   )
 
 (defun neeasade/shell()
@@ -968,21 +1006,27 @@ current major mode."
     :config
     (setq shell-pop-window-position "top")
     (neeasade/bind-mode
-     'shell-mode
-     "f" 'deer
+     '(shell)
+     "d" 'deer
      )
 
-    ;; todo: figure out nicer integration here
-    ;; (neeasade/bind-mode
-    ;;  'ranger-mode
-    ;;  s" 'switch-to-shell??
-    ;;  )
+    ;; todo: These binds don't work why
+    ;; todo: def advice after quite ranger last history shell-pop/use same shell
+    ;; (progn ranger-history-ring)
+    (neeasade/bind-mode
+     '(ranger)
+     "s" 'shell-pop
+     )
+
+    (general-define-key
+     :states '(visual normal)
+     :keymaps '(ranger)
+     "s" 'shell-pop)
     )
   )
 
 (defun neeasade/eshell()
   ;; todo: https://www.reddit.com/r/emacs/comments/6y3q4k/yes_eshell_is_my_main_shell/
-
   )
 
 (defun neeasade/jekyll()
@@ -1009,3 +1053,11 @@ current major mode."
   (use-package company-restclient)
   )
 
+(defun neeasade/sql()
+  ;; todo 
+  )
+
+(defun neeasade/plantuml()
+  (use-package plantuml)
+  (use-package flycheck-plantuml)
+  )
