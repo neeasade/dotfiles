@@ -1,5 +1,6 @@
 (setq sys/windows? (eq system-type 'windows-nt))
 (setq sys/linux? (eq system-type 'gnu/linux))
+(setq enable-tp? sys/windows?)
 
 (defun mapcar* (f &rest xs)
   "MAPCAR for multiple sequences F XS."
@@ -102,11 +103,11 @@
 
 ;; makes assumption keymap for mode will be named <modename>-map,
 ;; per https://www.gnu.org/software/emacs/manual/html_node/elisp/Major-Mode-Conventions.html
-(defun neeasade/bind-mode(mode &rest binds)
+(defun neeasade/bind-mode(keymaps &rest binds)
   (apply 'general-define-key
-         :prefix "SPC"
-         :states '(visual normal)
-         :keymaps (intern (concat (symbol-name 'emacs-lisp-mode) "-map"))
+	 :prefix "SPC"
+	 :states '(visual normal)
+         :keymaps keymaps
          binds)
   )
 
@@ -117,7 +118,7 @@
          :keymaps (intern (concat (symbol-name mode) "-map"))
          binds
          )
-  ) 
+  )
 
 (defun js-jsx-indent-line-align-closing-bracket ()
   "Workaround sgml-mode and align closing bracket with opening bracket"

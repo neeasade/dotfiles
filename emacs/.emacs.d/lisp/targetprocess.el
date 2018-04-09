@@ -61,3 +61,13 @@
   (interactive)
   (org-set-property "targetprocess" (tp-get-userstory-from-url))
   )
+
+(defun tp-set-active()
+  (org-set-property
+   "url"
+   (concat "https://" tp-subdomain ".tpondemand.com/entity/" (org-entry-get nil "targetprocess")))
+  (setq tp-active-userstory (org-entry-get nil "targetprocess"))
+  (tp-update-git-message)
+  )
+
+(advice-add #'neeasade/org-set-active :after #'tp-set-active)
