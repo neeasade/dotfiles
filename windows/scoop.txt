@@ -1,0 +1,36 @@
+Installed apps: 
+
+  7zip 18.01
+  ag 2.1.0-28-g4aa9f05
+  curl 7.59.0
+  docker 17.05.0-ce
+  docker-machine 0.14.0
+  dos2unix 7.4.0
+  dotnet-sdk 2.1.101
+  emacs 25.3 [extras]
+  ffmpeg 3.4.2
+  fzf 0.17.3
+  git-with-openssh 2.16.3.windows.1
+  gow 0.8.0
+  jetbrains-toolbox 1.8.3678
+  jq 1.5
+  leiningen 2.8.1
+  less 530
+  ln 0.2015.04.25
+  mpv 2017-12-25 [extras]
+  nodejs 9.9.0
+  nuget 4.5.1
+  openjdk 1.8.0.161-1
+  postman 6.0.9 [extras]
+  python 3.6.4
+  qutebrowser 1.2.1 [extras]
+  ripgrep 0.8.1
+  slack 3.1.0 [extras]
+  sqlite 3.22.0
+  sudo 0.2017.03.24
+  tortoisesvn 1.9.7 [extras]
+  touch 2013-07-02
+  vim 8.0.1648
+  vscode 1.21.1 [extras]
+  youtube-dl 2018.03.26.1
+
