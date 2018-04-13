@@ -84,7 +84,7 @@ groot() {
 # make a new note for later to reference or publish.
 note() {
   cd $HOME/git/neeasade.github.io/
-  ./new.sh
+  ./new.sh "$*"
 }
 
 # nix query
