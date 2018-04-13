@@ -10,62 +10,59 @@
 (defun neeasade/core()
   (load "~/.emacs.d/lisp/helpers.el")
 
-  (neeasade/settings-sanity)
-  (neeasade/evil)
-  (neeasade/interface)
-  (neeasade/editing)
-  (neeasade/indenting)
-  (neeasade/shell)
-  (neeasade/eshell)
+  (neeasade/load
+   '(
+     settings-sanity
+     evil
+     interface
+     editing
+     indenting
+     shell
+     eshell
+     ))
 
   (load "~/.emacs.d/lisp/interactive.el")
   )
 
 (defun neeasade/extra()
-  (neeasade/org)
-  (neeasade/git)
-  (neeasade/company)
-  (neeasade/projectile)
-  (neeasade/flycheck)
-  ;; (neeasade/window-management)
-  (neeasade/emms)
-  (neeasade/jump)
-  (neeasade/treemacs)
-  (neeasade/target-process)
-  (neeasade/dashdocs)
-  (neeasade/restclient)
-  )
+  (neeasade/load
+   '(
+     org
+     git
+     company
+     projectile
+     flycheck
+     ;; window-management
+     emms
+     jump
+     ;; treemacs
+     target-process
+     dashdocs
+     restclient
+     )))
 
 (defun neeasade/communication()
-  ;; TODO: irc, email, slack.
-  (neeasade/irc)
-  (neeasade/slack)
-  (neeasade/twitter)
-  (neeasade/email)
-  )
+  (neeasade/load '(irc slack twitter email)))
 
 (defun neeasade/development()
-  (neeasade/clojure)
-  (neeasade/csharp)
-  (neeasade/elisp)
-  (neeasade/nix)
-  (neeasade/javascript)
-  (neeasade/typescript)
-  (neeasade/terraform)
-  (neeasade/markdown)
-  )
+  (neeasade/load
+   '(
+     clojure
+     csharp
+     elisp
+     nix
+     javascript
+     typescript
+     terraform
+     markdown
+     )))
 
 (defun neeasade/windows()
   ;; TODO: windows-scripts layer from spacemacs
-  (neeasade/autohotkey)
-  )
+  (if sys/windows? (neeasade/load '(autohotkey))))
 
-(neeasade/core)
-(neeasade/extra)
-(neeasade/communication)
-(neeasade/development)
+(neeasade/load '(core extra communication development style))
 
-(neeasade/style)
 (provide 'init)
 
 ;;; init.el ends here

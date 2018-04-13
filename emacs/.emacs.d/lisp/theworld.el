@@ -32,6 +32,13 @@
   (setq straight-use-package-by-default t)
   )
 
+(defun neeasade/load(targets)
+  (mapc (lambda(target)
+	  (funcall (intern (concat "neeasade/" (prin1-to-string target))))
+	  )
+	targets)
+  )
+
 (defun neeasade/settings-sanity()
   ;; sanity
   (setq
@@ -127,15 +134,8 @@
     )
 
   (use-package evil-numbers)
-  (use-package evil-lion
-    :config
-    (evil-lion-mode))
-
-  (use-package general
-    :config
-    (general-evil-setup t)
-    )
-
+  (use-package evil-lion :config (evil-lion-mode))
+  (use-package general :config (general-evil-setup t))
   (use-package evil-surround   :config (global-evil-surround-mode 1))
   (use-package evil-commentary :config (evil-commentary-mode))
   (use-package evil-anzu) ;; displays current match and total matches.
@@ -483,6 +483,9 @@ current major mode."
     (interactive)
     (org-delete-property-globally "focus")
     (org-set-property "focus" "me")
+
+    ;; todo: save this to be resumed
+    (setq org-active-story (org-get-heading t t t t))
     )
 
   (defun neeasade/org-goto-notes()
@@ -763,6 +766,7 @@ current major mode."
    "gl" 'magit-log-current
    )
 
+  (use-package hydra)
   (defhydra git-smerge-menu ()
     "
   movement^^^^               merge action^^           other
