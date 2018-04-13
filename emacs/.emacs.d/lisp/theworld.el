@@ -166,6 +166,15 @@
   (use-package flycheck
     :config
 
+    ;; (flycheck) disable jshint since we prefer eslint checking
+    (setq-default
+    flycheck-disabled-checkers
+    (append flycheck-disabled-checkers
+	    '(javascript-jshint)))
+
+    ;; use eslint with web-mode for jsx files
+    (flycheck-add-mode 'javascript-eslint 'web-mode)
+
     (global-flycheck-mode))
 
   (neeasade/bind
@@ -296,7 +305,6 @@ current major mode."
 	(setq-local evil-shift-width shift-width))))
 
   (add-hook 'after-change-major-mode-hook 'spacemacs//set-evil-shift-width 'append)
-
   )
 
 (defun neeasade/indenting()
@@ -679,18 +687,12 @@ current major mode."
   )
 
 (defun neeasade/javascript()
-  ;; use web-mode for .jsx files
+  ;; use web-mode for .js files
   (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
 
-  ;; (flycheck) disable jshint since we prefer eslint checking
-  (setq-default
-   flycheck-disabled-checkers
-   (append flycheck-disabled-checkers
-	   '(javascript-jshint)))
-
-  ;; use eslint with web-mode for jsx files
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-
+  (use-package rjsx-mode)
+  (use-package web-mode
+    :config
   (add-hook 'web-mode-hook
 	    (lambda ()
 	      ;; short circuit js mode and just do everything in jsx-mode
@@ -698,8 +700,7 @@ current major mode."
 		  (web-mode-set-content-type "jsx")
 		(message "now set to: %s" web-mode-content-type))))
 
-  (use-package rjsx-mode)
-  (use-package web-mode)
+    )
 
   ;; todo: delete? only for eslint
   (use-package exec-path-from-shell
@@ -738,6 +739,7 @@ current major mode."
   )
 
 (defun neeasade/git()
+  ;; todo: windows: https://magit.vc/manual/magit/Performance.html
   (use-package magit
     :config
     (setq magit-repository-directories (list "~/git"))
@@ -762,6 +764,9 @@ current major mode."
    "gb" 'magit-blame
    "gl" 'magit-log-current
    )
+
+  ;; todo: move this somewhere else
+  (use-package hydra)
 
   (defhydra git-smerge-menu ()
     "
@@ -788,7 +793,6 @@ current major mode."
     ("u" undo-tree-undo)
     ("q" nil :exit t))
   (neeasade/bind "gs" 'git-smerge-menu/body)
-
   )
 
 (defun neeasade/jump()

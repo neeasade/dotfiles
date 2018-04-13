@@ -101,8 +101,6 @@
          binds)
   )
 
-;; makes assumption keymap for mode will be named <modename>-map,
-;; per https://www.gnu.org/software/emacs/manual/html_node/elisp/Major-Mode-Conventions.html
 (defun neeasade/bind-mode(keymaps &rest binds)
   (apply 'general-define-key
 	 :prefix "SPC"
