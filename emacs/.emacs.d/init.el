@@ -39,6 +39,7 @@
      target-process
      dashdocs
      restclient
+     pdf
      )))
 
 (defun neeasade/communication()
@@ -55,6 +56,9 @@
      typescript
      terraform
      markdown
+     sql
+     ;; jekyll
+     ;; plantuml
      )))
 
 (defun neeasade/windows()
