@@ -21,10 +21,19 @@ del() {
 # reshuffle current selection from all
 play() {
   mpc clear
-  mpc listall | sort -R | head -n 1000 | mpc add
+  if [ -z "$*" ]; then
+      mpc listall | sort -R | head -n 1000 | mpc add
+  else
+    append "$*"
+  fi
   mpc play
 }
 
+append() {
+  mpc listall | grep "$*" | sort -R | mpc add
+}
+
+# fuzzy search for a song, play it now
 now() {
   if song="$(mpc listall | fzf)"; then
       mpc insert "$song"
