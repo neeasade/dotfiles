@@ -1,4 +1,4 @@
-;;; init.el --- neeasade
+;;; init.el --- pull in the world, mold it to my liking.
 ;;; commentary:
 ;;; code:
 
@@ -8,21 +8,17 @@
 (init-straight)
 
 (defun neeasade/core()
-  (load "~/.emacs.d/lisp/helpers.el")
-
   (neeasade/load
    '(
-     settings-sanity
+     helpers
+     sanity
      evil
      interface
      editing
-     indenting
      shell
      eshell
-     ))
-
-  (load "~/.emacs.d/lisp/interactive.el")
-  )
+     interactive
+     )))
 
 (defun neeasade/extra()
   (neeasade/load
@@ -68,5 +64,4 @@
 (neeasade/load '(core extra communication development style))
 
 (provide 'init)
-
 ;;; init.el ends here

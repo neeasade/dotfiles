@@ -1,3 +1,7 @@
+;;; theworld.el --- make the thing
+;;; commentary:
+;;; code:
+
 (defun init-use-package()
   (require 'package)
   (setq package-enable-at-startup nil)
@@ -39,7 +43,15 @@
 	targets)
   )
 
-(defun neeasade/settings-sanity()
+(defun neeasade/helpers()
+  (load "~/.emacs.d/lisp/helpers.el")
+  )
+
+(defun neeasade/interactive()
+  (load "~/.emacs.d/lisp/interactive.el")
+  )
+
+(defun neeasade/sanity()
   ;; sanity
   (setq
    auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
@@ -116,7 +128,6 @@
   ;;:config (evil-collection-init)
   ;;)
 
-  (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
   (defun neeasade/zz-scroll(count)
     ;; window-total-size gets lines count when called with no args
     ;; note: this only works well for buffers that take more than the full screen...
@@ -132,6 +143,7 @@
 	)
       )
     )
+  (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
 
   (use-package evil-numbers)
   (use-package evil-lion :config (evil-lion-mode))
@@ -305,11 +317,10 @@ current major mode."
 	(setq-local evil-shift-width shift-width))))
 
   (add-hook 'after-change-major-mode-hook 'spacemacs//set-evil-shift-width 'append)
-  )
 
-(defun neeasade/indenting()
   ;; some default indent preferences for different modes
   (setq sh-basic-offset 2)
+
   )
 
 (defun neeasade/dashdocs()
@@ -1178,3 +1189,7 @@ current major mode."
   (use-package plantuml)
   (use-package flycheck-plantuml)
   )
+
+(provide 'theworld)
+
+;;; theworld.el ends here

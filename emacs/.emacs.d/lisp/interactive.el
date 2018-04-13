@@ -1,4 +1,6 @@
-;; some interactive functions
+;;; interactive.el --- some interactive functions
+;;; commentary:
+;;; code:
 
 (defun what-face (pos)
   (interactive "d")
@@ -70,3 +72,7 @@ buffer is not visiting a file."
  "fE" 'sudo-edit
  "jc" 'neeasade/jump-config
  )
+
+(provide 'interactive)
+;;; interactive.el ends here
+
