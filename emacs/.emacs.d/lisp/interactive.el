@@ -40,7 +40,6 @@ buffer is not visiting a file."
     (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name))))
 
 (defun neeasade/get-functions()
-  (use-package s)
   (mapcar*
    (lambda(item)
      (s-chomp (s-chop-prefix "defun neeasade/" (car item))))
