@@ -517,15 +517,26 @@ current major mode."
     (org-delete-property-globally "focus")
     (org-set-property "focus" "me")
 
-    ;; todo: save this to be resumed
     (setq org-active-story (org-get-heading t t t t))
+    )
+
+  ;; for externals to call into
+  (defun neeasade/org-get-active()
+    (if (eq org-active-story nil)
+	(progn
+	  (neeasade/org-goto-focus)
+	  (neeasade/org-set-active)
+	  )
+      org-active-story
+      )
     )
 
   (defun neeasade/org-goto-focus()
     (interactive)
     (neeasade/org-goto-notes)
-    ;; todo: find a way to open tree this is in on goto-char
     (goto-char (org-find-property "focus"))
+    (org-show-context)
+    (org-show-subtree)
     )
 
   (add-hook
@@ -1038,7 +1049,7 @@ current major mode."
     ("@"          twittering-other-user-timeline)
     ("T"          twittering-toggle-or-retrieve-replied-statuses)
     ("o"          twittering-click)
-    ("<tab>"        twittering-goto-next-thing :color red)
+    ("<tab>"      twittering-goto-next-thing :color red)
     ("<backtab>"  twittering-goto-previous-thing :color red)
     ("n"          twittering-goto-next-status-of-user :color red)
     ("p"          twittering-goto-previous-status-of-user :color red)
@@ -1118,11 +1129,7 @@ current major mode."
 	)
     )
 
-  (use-package shx
-    :config
-    ;; todo: aslias clear -> :clear
-    (shx-global-mode 1)
-    )
+  (use-package shx :config (shx-global-mode 1))
 
   (use-package shell-pop
     :config
