@@ -215,7 +215,7 @@
     (load-settings
      "company"
      '(
-       idle-delay (if sys/windows? 3 0)
+       idle-delay (if sys/windows? 2 0)
        selection-wrap-around t
        tooltip-align-annotations t
        dabbrev-downcase nil
@@ -333,6 +333,11 @@ current major mode."
     ;; todo: jump func this
     (setq helm-dash-browser-func 'eww-browse-existing-or-new)
     )
+
+  ;; todo: this needs a counsel-dash-at-point/how to get point
+  (neeasade-bind
+   "jd" 'counsel-dash
+   )
   )
 
 (defun spacemacs/compute-powerline-height ()
@@ -613,11 +618,11 @@ current major mode."
 
   (use-package ivy
     :config
-    ;; (setq ivy-re-builders-alist
-    ;; 	  '((ivy-switch-buffer . ivy--regex-plus)
-    ;; 	    (t . ivy--regex-fuzzy)))
+    (setq ivy-re-builders-alist
+    	  '((ivy-switch-buffer . ivy--regex-plus)
+    	    (t . ivy--regex-fuzzy)))
 
-    ;; (setq ivy-initial-inputs-alist nil)
+    (setq ivy-initial-inputs-alist nil)
     (ivy-mode 1)
     )
 
@@ -1191,6 +1196,10 @@ current major mode."
 (defun neeasade/plantuml()
   (use-package plantuml)
   (use-package flycheck-plantuml)
+  )
+
+(defun neeasade/ledger()
+  ;; TODO
   )
 
 (provide 'theworld)

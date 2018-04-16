@@ -118,6 +118,10 @@
          )
   )
 
+(defun nop()
+  nil
+  )
+
 (defun js-jsx-indent-line-align-closing-bracket ()
   "Workaround sgml-mode and align closing bracket with opening bracket"
   (save-excursion
