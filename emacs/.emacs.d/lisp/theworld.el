@@ -44,10 +44,14 @@
   )
 
 (defun neeasade/helpers()
+  (use-package hydra)
+  (use-package general)
+  (use-package rg)
   (load "~/.emacs.d/lisp/helpers.el")
   )
 
 (defun neeasade/interactive()
+  (use-package s)
   (load "~/.emacs.d/lisp/interactive.el")
   )
 
@@ -89,6 +93,7 @@
   (load custom-file)
 
   ;; allow things to load before we reload settings
+  ;; todo: reconsider ^
   (setq desktop-restore-eager 5)
   (setq desktop-path (list "~/.emacs.d"))
 
@@ -145,15 +150,16 @@
     )
   (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
 
-  (use-package evil-numbers)
-  (use-package evil-lion :config (evil-lion-mode))
-  (use-package general :config (general-evil-setup t))
-  (use-package evil-surround   :config (global-evil-surround-mode 1))
-  (use-package evil-commentary :config (evil-commentary-mode))
-  (use-package evil-anzu) ;; displays current match and total matches.
+  (general-evil-setup t)
 
   ;; defaults to fd/spacemacs-like config
   (use-package evil-escape :config (evil-escape-mode))
+  (use-package evil-lion :config (evil-lion-mode))
+  (use-package evil-surround :config (global-evil-surround-mode 1))
+  (use-package evil-commentary :config (evil-commentary-mode))
+  (use-package evil-anzu) ;; displays current match and total matches.
+  (use-package evil-numbers)
+
 
   ;; Overload shifts so that they don't lose the selection
   (define-key evil-visual-state-map (kbd ">") 'djoyner/evil-shift-right-visual)
@@ -180,9 +186,9 @@
 
     ;; (flycheck) disable jshint since we prefer eslint checking
     (setq-default
-    flycheck-disabled-checkers
-    (append flycheck-disabled-checkers
-	    '(javascript-jshint)))
+     flycheck-disabled-checkers
+     (append flycheck-disabled-checkers
+	     '(javascript-jshint)))
 
     ;; use eslint with web-mode for jsx files
     (flycheck-add-mode 'javascript-eslint 'web-mode)
@@ -243,8 +249,6 @@
   )
 
 (defun neeasade/editing()
-  ;; TODO here: figure out how I want to sync indent styles across modes
-  ;; an option: use editorconfig global file
   (use-package editorconfig :config (editorconfig-mode 1))
   (use-package aggressive-indent
     :config
@@ -319,13 +323,14 @@ current major mode."
   (add-hook 'after-change-major-mode-hook 'spacemacs//set-evil-shift-width 'append)
 
   ;; some default indent preferences for different modes
+  ;; note for the future: editorconfig is awesome.
   (setq sh-basic-offset 2)
-
   )
 
 (defun neeasade/dashdocs()
   (use-package counsel-dash
     :config
+    ;; todo: jump func this
     (setq helm-dash-browser-func 'eww-browse-existing-or-new)
     )
 
@@ -712,23 +717,14 @@ current major mode."
   (use-package rjsx-mode)
   (use-package web-mode
     :config
-  (add-hook 'web-mode-hook
-	    (lambda ()
-	      ;; short circuit js mode and just do everything in jsx-mode
-	      (if (equal web-mode-content-type "javascript")
-		  (web-mode-set-content-type "jsx")
-		(message "now set to: %s" web-mode-content-type))))
+    (add-hook 'web-mode-hook
+	      (lambda ()
+		;; short circuit js mode and just do everything in jsx-mode
+		(if (equal web-mode-content-type "javascript")
+		    (web-mode-set-content-type "jsx")
+		  (message "now set to: %s" web-mode-content-type))))
 
     )
-
-  ;; todo: delete? only for eslint
-  (use-package exec-path-from-shell
-    :config (setq exec-path-from-shell-variables
-		  '("PATH" "MANPATH" "SSH_CLIENT" "HOSTNAME"
-		    "GTAGSCONF" "GTAGSLABEL" "RUST_SRC_PATH"
-		    "HISTFILE" "HOME" "GOPATH" "GOROOT" "GOEXEC"))
-     	 (exec-path-from-shell-initialize)
-	 )
   )
 
 (defun neeasade/typescript()
@@ -777,15 +773,6 @@ current major mode."
     (if sys/linux? (global-git-gutter-mode t))
     )
 
-  (neeasade/bind
-   "g" '(:ignore t :which-key "git")
-   "jg" 'magit-status
-   "gb" 'magit-blame
-   "gl" 'magit-log-current
-   )
-
-  ;; todo: move this somewhere else
-  (use-package hydra)
   (defhydra git-smerge-menu ()
     "
   movement^^^^               merge action^^           other
@@ -810,7 +797,14 @@ current major mode."
     ("r" smerge-refine)
     ("u" undo-tree-undo)
     ("q" nil :exit t))
-  (neeasade/bind "gs" 'git-smerge-menu/body)
+
+  (neeasade/bind
+   "g" '(:ignore t :which-key "git")
+   "gs" 'magit-status
+   "gb" 'magit-blame
+   "gl" 'magit-log-current
+   "gm" 'git-smerge-menu/body
+   )
   )
 
 (defun neeasade/jump()
@@ -825,8 +819,6 @@ current major mode."
      "jb" 'smart-jump-back
      )
     )
-
-  (use-package rg)
   )
 
 (defun neeasade/irc()
@@ -1061,16 +1053,16 @@ current major mode."
     ("a"          twittering-toggle-activate-buffer))
   )
 
-
 (defun neeasade/slack()
   (use-package slack
     :commands (slack-start)
     :init
-    (setq slack-buffer-emojify t) 
+    (setq slack-buffer-emojify t)
     (setq slack-prefer-current-team t)
+
     :config
     ;; TODO: check this windows only
-    ;; https://github.com/yuya373/emacs-slack/issues/161 
+    ;; https://github.com/yuya373/emacs-slack/issues/161
     (setq request-backend 'url-retrieve)
     (setq slack-request-timeout 50)
 
@@ -1117,14 +1109,15 @@ current major mode."
   )
 
 (defun neeasade/shell()
+  (setq shell-file-name (getenv "sh"))
+
   (if sys/windows?
       (progn
-	(setq explicit-shell-file-name
-	      (concat
-	       (getenv "USERPROFILE")
-	       "\\scoop\\apps\\git-with-openssh\\current\\usr\\bin\\bash.exe"
-	       ))
-	(setq shell-file-name explicit-shell-file-name)
+	(setq shell-file-name
+	      (concat (getenv "USERPROFILE")
+		      "\\scoop\\apps\\git-with-openssh\\current\\usr\\bin\\bash.exe"
+		      ))
+
 	(setq explicit-bash.exe-args '("--login" "-i"))
 	)
     )
@@ -1138,24 +1131,25 @@ current major mode."
   (use-package shell-pop
     :config
     (setq shell-pop-window-position "top")
-    (neeasade/bind-mode
-     '(shell)
-     "d" 'deer
-     )
-
-    ;; todo: These binds don't work why
-    ;; todo: def advice after quite ranger last history shell-pop/use same shell
-    ;; (progn ranger-history-ring)
-    (neeasade/bind-mode
-     '(ranger)
-     "s" 'shell-pop
-     )
-
-    (general-define-key
-     :states '(visual normal)
-     :keymaps '(ranger)
-     "s" 'shell-pop)
     )
+
+  (neeasade/bind-mode '(shell)
+		      "d" 'deer
+		      )
+
+  ;; todo: These binds don't work why
+  ;; todo: def advice after quite ranger last history shell-pop/use same shell
+  ;; (progn ranger-history-ring)
+  (neeasade/bind-mode
+   '(ranger)
+   "s" 'shell-pop
+   )
+
+  (general-define-key
+   :states '(visual normal)
+   :keymaps '(ranger)
+   "s" 'shell-pop
+   )
   )
 
 (defun neeasade/eshell()
