@@ -122,6 +122,14 @@
   nil
   )
 
+(defun neeasade/find-or-open (filepath)
+  (let
+      ((filename (file-name-nondirectory filepath)))
+    (if (get-buffer filename)
+	(counsel-switch-to-buffer-or-window filename)
+      (find-file filepath)
+      )))
+
 (defun js-jsx-indent-line-align-closing-bracket ()
   "Workaround sgml-mode and align closing bracket with opening bracket"
   (save-excursion

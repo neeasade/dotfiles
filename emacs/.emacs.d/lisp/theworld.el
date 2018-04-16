@@ -68,7 +68,7 @@
    initial-scratch-message ""
    ring-bell-function 'ignore
    sentence-end-double-space nil
-   symlinked file
+   ;; symlinked file
    vc-follow-symlinks t ;; auto follow symlinks
    vc-make-backup-files t
    version-control t
@@ -106,6 +106,10 @@
 	  'browse-url-generic))
 
   (setq browse-url-generic-program (getenv "BROWSER"))
+
+  (neeasade/bind
+   "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
+   )
   )
 
 (defun neeasade/elisp()
@@ -335,7 +339,7 @@ current major mode."
     )
 
   ;; todo: this needs a counsel-dash-at-point/how to get point
-  (neeasade-bind
+  (neeasade/bind
    "jd" 'counsel-dash
    )
   )
@@ -517,14 +521,6 @@ current major mode."
     (setq org-active-story (org-get-heading t t t t))
     )
 
-  (defun neeasade/org-goto-notes()
-    (interactive)
-    (if (get-buffer "notes.org")
-	(counsel-switch-to-buffer-or-window "notes.org")
-      (find-file "~/org/notes.org")
-      )
-    )
-
   (defun neeasade/org-goto-focus()
     (interactive)
     (neeasade/org-goto-notes)
@@ -569,7 +565,7 @@ current major mode."
     )
   
   (neeasade/bind
-   "jo" 'neeasade/org-goto-notes
+   "jo" (lambda() (interactive) (neeasade/find-or-open "~/org/notes.org" ))
    "jf" 'neeasade/org-goto-focus
    )
   )
