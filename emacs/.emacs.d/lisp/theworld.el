@@ -72,10 +72,15 @@
    vc-follow-symlinks t ;; auto follow symlinks
    vc-make-backup-files t
    version-control t
+   ;; ouch
+   gc-cons-threshold 10000000
    )
 
-  ;; todo: have a toggle for (whitespace-mode)
-  ;; related: https://stackoverflow.com/questions/15946178/change-the-color-of-the-characters-in-whitespace-mode
+  (neeasade/bind
+   "tw" 'whitespace-mode
+   "tn" 'linum-mode
+   "tl" 'toggle-truncate-lines
+   )
 
   ;; trim gui
   (menu-bar-mode -1)
@@ -329,6 +334,8 @@ current major mode."
   ;; some default indent preferences for different modes
   ;; note for the future: editorconfig is awesome.
   (setq sh-basic-offset 2)
+
+  ;; todo: find evil package that only removes whitespace on lines you entered in insert mode
   )
 
 (defun neeasade/dashdocs()
@@ -352,6 +359,8 @@ current major mode."
 
 (defun neeasade/style()
   (interactive)
+  ;; look into https://stackoverflow.com/questions/15946178/change-the-color-of-the-characters-in-whitespace-mode
+  ;; nice to have: an xresource theme that doesn't suck
   (use-package base16-theme)
   ;;(use-package ujelly-theme)
 
@@ -362,6 +371,13 @@ current major mode."
     (setq powerline-height (spacemacs/compute-powerline-height))
     (spaceline-spacemacs-theme)
     (spaceline-toggle-minor-modes-off)
+    )
+
+  ;; toggles
+  (use-package hide-mode-line
+    :config
+    ;; todo: query to see if modeline is set/toggle rather than single toggle for off
+    (neeasade/bind "tm" (lambda () (interactive) (hide-mode-line -1)))
     )
 
   (load-theme (intern (get-resource "Emacs.theme")))
@@ -1193,7 +1209,8 @@ current major mode."
   )
 
 (defun neeasade/ledger()
-  ;; TODO
+  (use-package ledger)
+  (use-package flycheck-ledger)
   )
 
 (provide 'theworld)
