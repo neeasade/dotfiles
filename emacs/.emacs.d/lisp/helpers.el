@@ -113,7 +113,7 @@
   (apply 'general-define-key
          :prefix ","
          :states '(visual normal)
-         :keymaps (intern (concat (symbol-name mode) "-map"))
+         :keymaps (intern (concat (symbol-name mode) "-mode-map"))
          binds
          )
   )

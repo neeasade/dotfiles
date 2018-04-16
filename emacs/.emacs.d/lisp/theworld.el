@@ -115,7 +115,7 @@
 
   (setq lisp-indent-function 'common-lisp-indent-function)
   (neeasade/bind-leader-mode
-   'emacs-lisp-mode
+   'emacs-lisp
    "er" 'eval-region
    "ei" 'le::eval-and-insert-results
    "eb" 'le::eval-and-insert-all-sexps
@@ -531,7 +531,7 @@ current major mode."
    'org-mode-hook
    ;; todo: checking evil-org
    (neeasade/bind-leader-mode
-    'org-mode
+    'org
     "t" 'org-todo
     "T" 'org-show-todo-tree
     "v" 'org-mark-element
@@ -577,7 +577,7 @@ current major mode."
   (use-package lispy)
 
   (neeasade/bind-leader-mode
-   'clojure-mode
+   'clojure
    "er" 'cider-eval-region
    "ei" 'cider-eval-last-sexp
    "eb" 'cider-evil-file
@@ -1046,6 +1046,7 @@ current major mode."
     ("y"          twittering-push-uri-onto-kill-ring)
     ("Y"          twittering-push-tweet-onto-kill-ring)
     ("a"          twittering-toggle-activate-buffer))
+  ;; todo here: binding to jump to twittering buffer/launch "at"
   )
 
 (defun neeasade/slack()
@@ -1072,31 +1073,41 @@ current major mode."
      )
     )
 
-  (evil-define-key 'normal slack-info-mode-map
-    ",u" 'slack-room-update-messages)
+  ;; todo: where is slack-info/context for this bind
+  (neeasade/bind-leader-mode
+   'slack-info
+   "u" 'slack-room-update-messages)
 
-  (evil-define-key 'normal slack-mode-map
-    ",c" 'slack-buffer-kill
-    ",ra" 'slack-message-add-reaction
-    ",rr" 'slack-message-remove-reaction
-    ",rs" 'slack-message-show-reaction-users
-    ",pl" 'slack-room-pins-list
-    ",pa" 'slack-message-pins-add
-    ",pr" 'slack-message-pins-remove
-    ",mm" 'slack-message-write-another-buffer
-    ",me" 'slack-message-edit
-    ",md" 'slack-message-delete
-    ",u" 'slack-room-update-messages
-    ",2" 'slack-message-embed-mention
-    ",3" 'slack-message-embed-channel
-    "\C-n" 'slack-buffer-goto-next-message
-    "\C-p" 'slack-buffer-goto-prev-message)
+  (neeasade/bind-leader-mode
+   'slack
+   "c" 'slack-buffer-kill
+   "ra" 'slack-message-add-reaction
+   "rr" 'slack-message-remove-reaction
+   "rs" 'slack-message-show-reaction-users
+   "pl" 'slack-room-pins-list
+   "pa" 'slack-message-pins-add
+   "pr" 'slack-message-pins-remove
+   "mm" 'slack-message-write-another-buffer
+   "me" 'slack-message-edit
+   "md" 'slack-message-delete
+   "u" 'slack-room-update-messages
+   "2" 'slack-message-embed-mention
+   "3" 'slack-message-embed-channel
+   )
+    ;; todo: something for these maybe
+    ;; "\C-n" 'slack-buffer-goto-next-message
+    ;; "\C-p" 'slack-buffer-goto-prev-message)
 
-  (evil-define-key 'normal slack-edit-message-mode-map
-    ",k" 'slack-message-cancel-edit
-    ",s" 'slack-message-send-from-buffer
-    ",2" 'slack-message-embed-mention
-    ",3" 'slack-message-embed-channel)
+  (neeasade/bind-leader-mode
+    'slack-edit-message
+   "k" 'slack-message-cancel-edit
+   "s" 'slack-message-send-from-buffer
+   "2" 'slack-message-embed-mention
+   "3" 'slack-message-embed-channel
+   )
+
+  (neeasade/bind
+   "as" 'start-slack)
   )
 
 (defun neeasade/email()
@@ -1104,8 +1115,6 @@ current major mode."
   )
 
 (defun neeasade/shell()
-  (setq shell-file-name (getenv "sh"))
-
   (if sys/windows?
       (progn
 	(setq shell-file-name
@@ -1167,7 +1176,7 @@ current major mode."
   (use-package restclient
     :config
     (neeasade/bind-leader-mode
-     'restclient-mode
+     'restclient
      "ei" 'restclient-http-send-current-stay-in-window
      )
     )
