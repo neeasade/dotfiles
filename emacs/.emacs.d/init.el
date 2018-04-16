@@ -36,6 +36,7 @@
      dashdocs
      restclient
      pdf
+     ledger
      )))
 
 (defun neeasade/communication()
