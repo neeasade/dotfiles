@@ -1,6 +1,6 @@
 (setq tp-subdomain (pass "tp-subdomain"))
 
-;; debug request
+;; debug request '(warn blather)
 ;; (setq request-log-level 'blather request-message-level 'blather)
 
 (defun tp-get-story-url ()
@@ -20,24 +20,31 @@
    :parser 'json-read
    :success (cl-function
 	     (lambda (&key data &allow-other-keys)
-	       (let ((result
-		      (concat
-		       "\n\nFeature #"
-		       (number-to-string (assoc-recursive data 'Feature 'Id)) " - "
+	       (cl-labels (
+			   (tp-get (&rest path) (apply #'assoc-recursive data path))
+			   (feature-or-project(&rest item)
+			     (if (tp-get 'Feature)
+				 (apply #'tp-get 'Feature item)
+			       (apply #'tp-get 'Project item)
+			       ))
 
-		       (assoc-recursive data 'Feature 'Name)
-		       "\nUser Story #"
-		       (number-to-string
-			(assoc-recursive data 'Id)) " - "
+			   (result ()
+			     (concat
+			      "\n\n" (feature-or-project 'ResourceType) " #"
+			      (number-to-string (feature-or-project 'Id)) " - "
 
-			(assoc-recursive data 'Name)
-			"\nhttps://" tp-subdomain ".tpondemand.com/entity/"
-			(number-to-string (assoc-recursive data 'Id))
-		       )))
-		 (write-region result nil "~/.git_template")
-		 )
-	       )))
-  )
+			      (feature-or-project 'Name)
+			      "\nUser Story #"
+			      (number-to-string
+			       (tp-get 'Id)) " - "
+
+			       (tp-get 'Name)
+			       "\nhttps://" tp-subdomain ".tpondemand.com/entity/"
+			       (number-to-string (tp-get 'Id))
+			       ))
+			   )
+		 (write-region (result) nil "~/.git_template")
+		 )))))
 
 ;; currently active userstory
 (defun tp-get-active-userstory ()
@@ -48,8 +55,8 @@
 ;; get userstory from saved url
 (defun tp-get-userstory-from-url ()
   (let (
-  	(url-read (get-string-from-file "~/.qute_url"))
-  	)
+	(url-read (get-string-from-file "~/.qute_url"))
+	)
     (string-match "userstory\/\\([0-9]\\{5\\}\\)" url-read)
     (match-string 1 url-read)
     )

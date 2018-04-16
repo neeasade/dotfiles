@@ -68,14 +68,19 @@
    initial-scratch-message ""
    ring-bell-function 'ignore
    sentence-end-double-space nil
-   symlinked file
+   ;; symlinked file
    vc-follow-symlinks t ;; auto follow symlinks
    vc-make-backup-files t
    version-control t
+   ;; ouch
+   gc-cons-threshold 10000000
    )
 
-  ;; todo: have a toggle for (whitespace-mode)
-  ;; related: https://stackoverflow.com/questions/15946178/change-the-color-of-the-characters-in-whitespace-mode
+  (neeasade/bind
+   "tw" 'whitespace-mode
+   "tn" 'linum-mode
+   "tl" 'toggle-truncate-lines
+   )
 
   ;; trim gui
   (menu-bar-mode -1)
@@ -106,6 +111,10 @@
 	  'browse-url-generic))
 
   (setq browse-url-generic-program (getenv "BROWSER"))
+
+  (neeasade/bind
+   "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
+   )
   )
 
 (defun neeasade/elisp()
@@ -325,6 +334,8 @@ current major mode."
   ;; some default indent preferences for different modes
   ;; note for the future: editorconfig is awesome.
   (setq sh-basic-offset 2)
+
+  ;; todo: find evil package that only removes whitespace on lines you entered in insert mode
   )
 
 (defun neeasade/dashdocs()
@@ -335,7 +346,7 @@ current major mode."
     )
 
   ;; todo: this needs a counsel-dash-at-point/how to get point
-  (neeasade-bind
+  (neeasade/bind
    "jd" 'counsel-dash
    )
   )
@@ -348,6 +359,8 @@ current major mode."
 
 (defun neeasade/style()
   (interactive)
+  ;; look into https://stackoverflow.com/questions/15946178/change-the-color-of-the-characters-in-whitespace-mode
+  ;; nice to have: an xresource theme that doesn't suck
   (use-package base16-theme)
   ;;(use-package ujelly-theme)
 
@@ -358,6 +371,13 @@ current major mode."
     (setq powerline-height (spacemacs/compute-powerline-height))
     (spaceline-spacemacs-theme)
     (spaceline-toggle-minor-modes-off)
+    )
+
+  ;; toggles
+  (use-package hide-mode-line
+    :config
+    ;; todo: query to see if modeline is set/toggle rather than single toggle for off
+    (neeasade/bind "tm" (lambda () (interactive) (hide-mode-line -1)))
     )
 
   (load-theme (intern (get-resource "Emacs.theme")))
@@ -513,23 +533,26 @@ current major mode."
     (org-delete-property-globally "focus")
     (org-set-property "focus" "me")
 
-    ;; todo: save this to be resumed
     (setq org-active-story (org-get-heading t t t t))
     )
 
-  (defun neeasade/org-goto-notes()
-    (interactive)
-    (if (get-buffer "notes.org")
-	(counsel-switch-to-buffer-or-window "notes.org")
-      (find-file "~/org/notes.org")
+  ;; for externals to call into
+  (defun neeasade/org-get-active()
+    (if (eq org-active-story nil)
+	(progn
+	  (neeasade/org-goto-focus)
+	  (neeasade/org-set-active)
+	  )
+      org-active-story
       )
     )
 
   (defun neeasade/org-goto-focus()
     (interactive)
     (neeasade/org-goto-notes)
-    ;; todo: find a way to open tree this is in on goto-char
     (goto-char (org-find-property "focus"))
+    (org-show-context)
+    (org-show-subtree)
     )
 
   (add-hook
@@ -569,7 +592,7 @@ current major mode."
     )
   
   (neeasade/bind
-   "jo" 'neeasade/org-goto-notes
+   "jo" (lambda() (interactive) (neeasade/find-or-open "~/org/notes.org" ))
    "jf" 'neeasade/org-goto-focus
    )
   )
@@ -1042,7 +1065,7 @@ current major mode."
     ("@"          twittering-other-user-timeline)
     ("T"          twittering-toggle-or-retrieve-replied-statuses)
     ("o"          twittering-click)
-    ("<tab>"        twittering-goto-next-thing :color red)
+    ("<tab>"      twittering-goto-next-thing :color red)
     ("<backtab>"  twittering-goto-previous-thing :color red)
     ("n"          twittering-goto-next-status-of-user :color red)
     ("p"          twittering-goto-previous-status-of-user :color red)
@@ -1131,11 +1154,7 @@ current major mode."
 	)
     )
 
-  (use-package shx
-    :config
-    ;; todo: aslias clear -> :clear
-    (shx-global-mode 1)
-    )
+  (use-package shx :config (shx-global-mode 1))
 
   (use-package shell-pop
     :config
@@ -1199,7 +1218,8 @@ current major mode."
   )
 
 (defun neeasade/ledger()
-  ;; TODO
+  (use-package ledger)
+  (use-package flycheck-ledger)
   )
 
 (provide 'theworld)
