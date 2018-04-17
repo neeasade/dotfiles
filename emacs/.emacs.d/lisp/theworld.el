@@ -92,6 +92,14 @@
   (show-paren-mode 1)
   (blink-cursor-mode 0)
 
+  ;; disable semantic mode, this may bite me lets try it out
+  (with-eval-after-load 'semantic
+    (add-to-list 'semantic-inhibit-functions (lambda () t))
+    )
+
+  ;; set default to be handled by global bloat toggle
+  (global-font-lock-mode 0)
+
   (defconst custom-file "~/.emacs.d/custom.el")
   (unless (file-exists-p custom-file)
     (write-region "" nil custom-file))
@@ -118,8 +126,6 @@
   )
 
 (defun neeasade/elisp()
-  ;; todo: disable semantic in elisp buffers, really slow
-  ;; (might belong in company mode)
   (load "~/.emacs.d/vendor/le-eval-and-insert-results.el")
 
   (setq lisp-indent-function 'common-lisp-indent-function)
@@ -202,7 +208,7 @@
     ;; use eslint with web-mode for jsx files
     (flycheck-add-mode 'javascript-eslint 'web-mode)
 
-    (global-flycheck-mode))
+    )
 
   (neeasade/bind
    ;; Applications
@@ -247,8 +253,6 @@
 
     ;; TODO: investigate tab handling like VS completely
     (define-key company-active-map [tab] 'company-complete)
-
-    (global-company-mode)
     )
 
   (use-package company-quickhelp
@@ -365,6 +369,7 @@ current major mode."
   (use-package base16-theme)
   ;;(use-package ujelly-theme)
 
+  ;; optionally consider https://github.com/tautologyclub/feebleline
   (use-package spaceline
     :config
     (require 'spaceline-config)
@@ -714,7 +719,6 @@ current major mode."
      which-key-idle-delay 0.4
      which-key-side-window-max-width 0.33
      )
-    (which-key-mode)
     )
   )
 
@@ -757,7 +761,7 @@ current major mode."
     (defun setup-tide-mode ()
       (interactive)
       (tide-setup)
-      (flycheck-mode +1)
+      ;; (flycheck-mode +1)
       (setq flycheck-check-syntax-automatically '(save mode-enabled))
       (eldoc-mode +1)
       (tide-hl-identifier-mode +1))
@@ -951,7 +955,10 @@ current major mode."
 
   ;; todo: jump list to buffers prefixed with '#'
   (defun neeasade/jump-irc()
-    nil
+    (interactive)
+    (ivy-read
+    "(): " (buffer-list)
+    :action (lambda (option) (get-buffer option)))
     )
 
   (neeasade/bind

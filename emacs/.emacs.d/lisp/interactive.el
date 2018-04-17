@@ -61,6 +61,38 @@ buffer is not visiting a file."
      ))
   )
 
+(defun neeasade/toggle-bloat()
+  (interactive)
+  (if (not (bound-and-true-p company-mode))
+      (progn
+	(company-mode)
+	(flycheck-mode)
+	(font-lock-mode)
+	)
+    (progn
+      (company-mode -1)
+      (flycheck-mode -1)
+      (font-lock-mode 0)
+      )
+    )
+  )
+
+(defun neeasade/toggle-bloat-global()
+  (interactive)
+  (if (not (bound-and-true-p global-company-mode))
+      (progn
+	(global-company-mode -1)
+	(global-flycheck-mode -1)
+	(global-font-lock-mode 0)
+	)
+    (progn
+	(global-company-mode 1)
+	(global-flycheck-mode 1)
+	(global-font-lock-mode 1)
+      )
+    )
+  )
+
 
 (neeasade/bind
  ;; reconsider these, moved from w -> q for query
@@ -70,7 +102,9 @@ buffer is not visiting a file."
 
  "fE" 'sudo-edit
  "jc" 'neeasade/jump-config
+ "tb" 'neeasade/toggle-bloat
  )
+
 
 (provide 'interactive)
 ;;; interactive.el ends here

@@ -66,12 +66,13 @@
   )
 
 (defun tp-set-active()
-  (let ((userstory (org-entry-get nil "targetprocess")))
-    (if userstory
-	(progn
-	  (org-set-property "url" (concat "https://" tp-subdomain ".tpondemand.com/entity/" userstory))
-	  (setq tp-active-userstory userstory)
-	  (tp-update-git-message)
-	  ))))
+  (setq tp-active-userstory (org-entry-get nil "targetprocess"))
+  (if tp-active-userstory
+      (progn
+	(org-set-property
+	 "url"
+	 (concat "https://" tp-subdomain ".tpondemand.com/entity/" tp-active-userstory))
+	(tp-update-git-message)
+	)))
 
 (advice-add #'neeasade/org-set-active :after #'tp-set-active)
