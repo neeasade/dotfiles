@@ -22,7 +22,7 @@
 	     (lambda (&key data &allow-other-keys)
 	       (cl-labels (
 			   (tp-get (&rest path) (apply #'assoc-recursive data path))
-			   (feature-or-project(&rest item)
+			   (feature-or-project (&rest item)
 			     (if (tp-get 'Feature)
 				 (apply #'tp-get 'Feature item)
 			       (apply #'tp-get 'Project item)
@@ -54,13 +54,10 @@
 
 ;; get userstory from saved url
 (defun tp-get-userstory-from-url ()
-  (let (
-	(url-read (get-string-from-file "~/.qute_url"))
-	)
+  (let ((url-read (get-string-from-file "~/.qute_url")))
     (string-match "userstory\/\\([0-9]\\{5\\}\\)" url-read)
     (match-string 1 url-read)
-    )
-  )
+    ))
 
 ;; set from saved url
 (defun tp-set-org-userstory()
@@ -69,11 +66,12 @@
   )
 
 (defun tp-set-active()
-  (org-set-property
-   "url"
-   (concat "https://" tp-subdomain ".tpondemand.com/entity/" (org-entry-get nil "targetprocess")))
-  (setq tp-active-userstory (org-entry-get nil "targetprocess"))
-  (tp-update-git-message)
-  )
+  (let ((userstory (org-entry-get nil "targetprocess")))
+    (if userstory
+	(progn
+	  (org-set-property "url" (concat "https://" tp-subdomain ".tpondemand.com/entity/" userstory))
+	  (setq tp-active-userstory userstory)
+	  (tp-update-git-message)
+	  ))))
 
 (advice-add #'neeasade/org-set-active :after #'tp-set-active)
