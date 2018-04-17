@@ -235,6 +235,7 @@
 		      org-mode
 		      shell-mode
 		      circe-chat-mode
+		      circe-channel-mode
 		      )
        )
      )
@@ -374,11 +375,11 @@ current major mode."
     )
 
   ;; toggles
-  (use-package hide-mode-line
-    :config
-    ;; todo: query to see if modeline is set/toggle rather than single toggle for off
-    (neeasade/bind "tm" (lambda () (interactive) (hide-mode-line -1)))
-    )
+  ;; (use-package hide-mode-line
+  ;;   :config
+  ;;   ;; todo: query to see if modeline is set/toggle rather than single toggle for off
+  ;;   (neeasade/bind "tm" (lambda () (interactive) (hide-mode-line -1)))
+  ;;   )
 
   (load-theme (intern (get-resource "Emacs.theme")))
   (setq powerline-default-separator (get-resource "Emacs.powerline"))
@@ -948,9 +949,14 @@ current major mode."
     (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
     )
 
-  ;; TODO consider: a binding/function to search open channels
+  ;; todo: jump list to buffers prefixed with '#'
+  (defun neeasade/jump-irc()
+    nil
+    )
+
   (neeasade/bind
    "ai" 'connect-all-irc
+   "ji" 'neeasade/jump-irc
    )
   )
 
@@ -1218,8 +1224,12 @@ current major mode."
   )
 
 (defun neeasade/ledger()
-  (use-package ledger)
+  (use-package ledger-mode)
   (use-package flycheck-ledger)
+  (use-package evil-ledger
+    :config
+    (add-hook 'ledger-mode-hook #'evil-ledger-mode)
+    )
   )
 
 (provide 'theworld)
