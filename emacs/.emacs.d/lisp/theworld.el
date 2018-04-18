@@ -107,8 +107,8 @@
 
   ;; allow things to load before we reload settings
   ;; todo: reconsider ^
-  (setq desktop-restore-eager 5)
-  (setq desktop-path (list "~/.emacs.d"))
+  ;; (setq desktop-restore-eager 5)
+  ;; (setq desktop-path (list "~/.emacs.d"))
 
   ;; retain session
   (desktop-save-mode 1)
@@ -207,7 +207,6 @@
 
     ;; use eslint with web-mode for jsx files
     (flycheck-add-mode 'javascript-eslint 'web-mode)
-
     )
 
   (neeasade/bind
@@ -247,8 +246,7 @@
      )
 
     (use-package company-flx
-      :config
-      (company-flx-mode +1)
+      :config (company-flx-mode +1)
       )
 
     ;; TODO: investigate tab handling like VS completely
@@ -713,12 +711,12 @@ current major mode."
 
   (use-package which-key
     :config
-    (which-key-setup-side-window-right-bottom)
     (setq
      which-key-sort-order 'which-key-key-order-alpha
      which-key-idle-delay 0.4
      which-key-side-window-max-width 0.33
      )
+    ;; (which-key-setup-side-window-right-bottom)
     )
   )
 
@@ -761,7 +759,6 @@ current major mode."
     (defun setup-tide-mode ()
       (interactive)
       (tide-setup)
-      ;; (flycheck-mode +1)
       (setq flycheck-check-syntax-automatically '(save mode-enabled))
       (eldoc-mode +1)
       (tide-hl-identifier-mode +1))
@@ -866,7 +863,7 @@ current major mode."
 	     :host "irc.rizon.net"
 	     :port (6667 . 6697)
 	     :tls t
-	     :channels (:after-auth "#rice")
+	     :channels (:after-auth "#rice" "#code")
 	     :nickserv-password ,(pass "rizon/pass")
 	     :nickserv-mask ,(rx bol "NickServ!service@rizon.net" eol)
 	     :nickserv-identify-challenge ,(rx bol "This nickname is registered and protected.")
@@ -956,9 +953,12 @@ current major mode."
   ;; todo: jump list to buffers prefixed with '#'
   (defun neeasade/jump-irc()
     (interactive)
-    (ivy-read
-    "(): " (buffer-list)
-    :action (lambda (option) (get-buffer option)))
+    (ivy-read "channel: "
+	      (remove-if-not
+	       (lambda (s) (s-match "#.*" s))
+	       (mapcar 'buffer-name (buffer-list))
+	     )
+     :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
     )
 
   (neeasade/bind

@@ -60,9 +60,13 @@
 
 (defun neeasade/windows()
   ;; TODO: windows-scripts layer from spacemacs
-  (if sys/windows? (neeasade/load '(autohotkey))))
+  (neeasade/load '(autohotkey)))
 
 (neeasade/load '(core extra communication development style))
+(if sys/windows? (neeasade/load '(windows)))
+
+;; Emacs is terribly slow on windows
+(neeasade/toggle-bloat-global sys/linux?)
 
 (provide 'init)
 ;;; init.el ends here

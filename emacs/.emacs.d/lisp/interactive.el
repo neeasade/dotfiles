@@ -77,18 +77,17 @@ buffer is not visiting a file."
     )
   )
 
-(defun neeasade/toggle-bloat-global()
-  (interactive)
-  (if (not (bound-and-true-p global-company-mode))
+(defun neeasade/toggle-bloat-global(toggle)
+  (if toggle
       (progn
+	(global-company-mode)
+	(global-flycheck-mode)
+	(global-font-lock-mode)
+	)
+    (progn
 	(global-company-mode -1)
 	(global-flycheck-mode -1)
 	(global-font-lock-mode 0)
-	)
-    (progn
-	(global-company-mode 1)
-	(global-flycheck-mode 1)
-	(global-font-lock-mode 1)
       )
     )
   )
