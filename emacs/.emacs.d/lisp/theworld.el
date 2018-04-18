@@ -542,7 +542,7 @@ current major mode."
 
   ;; for externals to call into
   (defun neeasade/org-get-active()
-    (if (eq org-active-story nil)
+    (if (not (bound-and-true-p org-active-story))
 	(progn
 	  (neeasade/org-goto-focus)
 	  (neeasade/org-set-active)
