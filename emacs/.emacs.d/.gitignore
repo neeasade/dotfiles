@@ -2,12 +2,13 @@ auto-save-list
 %backup%~
 backups
 custom.el
-custom.el
 .cache
 .emacs.desktop
 .emacs.desktop.lock
 tramp
 emms
+
+lisp/scratch.el
 
 straight/*
 !straight/versions

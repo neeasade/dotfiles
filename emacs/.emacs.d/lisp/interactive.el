@@ -52,14 +52,13 @@ buffer is not visiting a file."
 (defun neeasade/jump-config()
   (interactive)
   (ivy-read
-   "(): " (neeasade/get-functions)
+   "config: " (neeasade/get-functions)
    :action
    (lambda (option)
-     (find-file "~/.emacs.d/lisp/theworld.el")
+     (neeasade/find-or-open "~/.emacs.d/lisp/theworld.el")
      (goto-char (point-min))
      (re-search-forward (concat "neeasade/" option))
-     ))
-  )
+     )))
 
 (defun neeasade/toggle-bloat()
   (interactive)
