@@ -107,13 +107,15 @@
   ;; retain session
   (desktop-save-mode 1)
 
-  ;; todo: check for qutebrowser here?
-  (setq browse-url-browser-function
-	(if sys/windows?
-	    'browse-url-default-windows-browser
-	  'browse-url-generic))
+  (setq browse-url-browser-function 'browse-url-generic)
 
-  (setq browse-url-generic-program (getenv "BROWSER"))
+  (if sys/windows?
+	  (let ((qutebrowser (executable-find "qutebrowser")))
+		(if qutebrowser (setq browse-url-generic-program qutebrowser))
+		)
+	(setq browse-url-browser-function 'browse-url-default-windows-browser)
+    )
+
 
   (neeasade/bind
    "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
@@ -265,7 +267,7 @@
   (setq tab-width 4)
   (use-package aggressive-indent
 	  :config
-	(add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
+	(add-hook 'emacs-lisp-mode-hook   #'aggressive-indent-mode)
 	(add-hook 'clojure-mode-hook #'aggressive-indent-mode)
     )
 
