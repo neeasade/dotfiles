@@ -227,7 +227,7 @@
   (use-package company
     :config
     (load-settings
-     "company"
+     'company
      '(
        idle-delay (if sys/windows? 2 0)
        selection-wrap-around t
@@ -246,6 +246,7 @@
      )
 
     (use-package company-flx
+      ;; todo: this turns on company hm
       :config (company-flx-mode +1)
       )
 
@@ -452,7 +453,7 @@ current major mode."
     :config
     ;; todo: look up org-deadline-warn-days variable
     (load-settings
-     "org"
+     'org
      '(
        ;; where
        directory "~/org/projects"
@@ -519,13 +520,15 @@ current major mode."
      )
     )
 
-  (use-package evil-org
-    :after org
-    :config
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'evil-org-mode-hook
-	      (lambda ()
-		(evil-org-set-key-theme))))
+(use-package evil-org
+  :after org
+  :hook ((org-mode . evil-org-mode)
+         (evil-org-mode . evil-org-set-key-theme))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+    
 
   (defun neeasade/org-open-url()
     (interactive)
@@ -537,7 +540,7 @@ current major mode."
     (org-delete-property-globally "focus")
     (org-set-property "focus" "me")
 
-    (setq org-active-story (org-get-heading t t t t))
+    (setq org-active-story (substring-no-properties (org-get-heading t t t t)))
     )
 
   ;; for externals to call into
@@ -553,7 +556,7 @@ current major mode."
 
   (defun neeasade/org-goto-focus()
     (interactive)
-    (neeasade/org-goto-notes)
+    (neeasade/find-or-open "~/org/notes.org")
     (goto-char (org-find-property "focus"))
     (org-show-context)
     (org-show-subtree)
@@ -950,15 +953,19 @@ current major mode."
     (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
     )
 
-  ;; todo: jump list to buffers prefixed with '#'
   (defun neeasade/jump-irc()
     (interactive)
-    (ivy-read "channel: "
-	      (remove-if-not
+    (let ((irc-channels
+	   (remove-if-not
 	       (lambda (s) (s-match "#.*" s))
 	       (mapcar 'buffer-name (buffer-list))
-	     )
-     :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
+	     )))
+      (if (eq (length irc-channels) 0)
+	  (message "connect to irc first!")
+	(ivy-read "channel: " irc-channels
+		  :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
+	)
+      )
     )
 
   (neeasade/bind
@@ -981,18 +988,20 @@ current major mode."
     :init
     (add-hook 'twittering-edit-mode-hook (lambda () (flyspell-mode)))
     :config
-    (setq twittering-use-master-password t
-	  twittering-icon-mode t
-	  twittering-use-icon-storage t
-	  ;; twittering-icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
-	  twittering-convert-fix-size 52
-	  twittering-initial-timeline-spec-string '(":home")
-	  twittering-edit-skeleton 'inherit-any
-	  twittering-display-remaining t
-	  twittering-timeline-header  ""
-	  twittering-timeline-footer  ""
-	  twittering-status-format
-	  "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n")
+    (load-settings
+     'twittering
+     use-master-password t
+     icon-mode t
+     use-icon-storage t
+     icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
+     convert-fix-size 52
+     initial-timeline-spec-string '(":home")
+     edit-skeleton 'inherit-any
+     display-remaining t
+     timeline-header  ""
+     timeline-footer  ""
+     status-format "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n"
+     )
 
     ;; set the new bindings
     (bind-keys :map twittering-mode-map

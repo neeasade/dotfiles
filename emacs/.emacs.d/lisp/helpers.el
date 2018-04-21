@@ -17,7 +17,7 @@
      (let ((key (car pair))
            (value (car (cdr pair))))
        (set
-        (intern (concat namespace "-" (prin1-to-string key)))
+        (intern (concat (prin1-to-string namespace) "-" (prin1-to-string key)))
         (eval value)
         )))
    (seq-partition lst 2)
