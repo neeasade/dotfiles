@@ -76,12 +76,6 @@
    gc-cons-threshold 10000000
    )
 
-  (neeasade/bind
-   "tw" 'whitespace-mode
-   "tn" 'linum-mode
-   "tl" 'toggle-truncate-lines
-   )
-
   ;; trim gui
   (menu-bar-mode -1)
   (tool-bar-mode -1)
@@ -113,6 +107,7 @@
   ;; retain session
   (desktop-save-mode 1)
 
+  ;; todo: check for qutebrowser here?
   (setq browse-url-browser-function
 	(if sys/windows?
 	    'browse-url-default-windows-browser
@@ -122,6 +117,11 @@
 
   (neeasade/bind
    "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
+   "jm" (lambda() (interactive) (counsel-switch-to-buffer-or-window  "*Messages*"))
+
+   "tw" 'whitespace-mode
+   "tn" 'linum-mode
+   "tl" 'toggle-truncate-lines
    )
   )
 
@@ -148,7 +148,7 @@
   ;;:config (evil-collection-init)
   ;;)
 
-  (defun neeasade/zz-scroll(count)
+  (defun neeasade/zz-scroll (count)
     ;; window-total-size gets lines count when called with no args
     ;; note: this only works well for buffers that take more than the full screen...
     ;; also doesn't handle when buffer bottom is visible very well.
@@ -263,10 +263,11 @@
 
 (defun neeasade/editing()
   (use-package editorconfig :config (editorconfig-mode 1))
+  (setq tab-width 4)
   (use-package aggressive-indent
-    :config
-    (add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
-    (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+	  :config
+	(add-hook 'elisp-mode-hook   #'aggressive-indent-mode)
+	(add-hook 'clojure-mode-hook #'aggressive-indent-mode)
     )
 
   (use-package smartparens
@@ -343,6 +344,16 @@ current major mode."
   )
 
 (defun neeasade/dashdocs()
+    ;; if eww is displayed, use that, else open here.
+    ;; todo: this isn't working with anchors in other frames
+    (defun eww-browse-existing-or-new (url)
+    (if (get-buffer-window "*eww*" 0)
+	(url-retrieve url 'eww-render
+			(list url nil (get-buffer "*eww*")))
+	(eww url)
+	)
+    )
+
   (use-package counsel-dash
     :config
     ;; todo: jump func this
@@ -363,7 +374,6 @@ current major mode."
 
 (defun neeasade/style()
   (interactive)
-  ;; look into https://stackoverflow.com/questions/15946178/change-the-color-of-the-characters-in-whitespace-mode
   ;; nice to have: an xresource theme that doesn't suck
   (use-package base16-theme)
   ;;(use-package ujelly-theme)
@@ -434,6 +444,21 @@ current major mode."
 					;:inherit nil
 			      ))
 	(face-list))
+
+  ;; make whitespace-mode use just basic coloring
+  ;;(setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
+
+  ;; todo: fix this
+  (eval-after-load 'whitespace-mode
+    (set-face-attribute 'whitespace-space nil :background nil)
+    (setq whitespace-display-mappings
+	  ;; all numbers are Unicode codepoint in decimal. ⁖ (insert-char 182 1)
+	  '(
+	    (space-mark 32 [183] [46]) ; 32 SPACE 「 」, 183 MIDDLE DOT 「·」, 46 FULL STOP 「.」
+	    (newline-mark 10 [182 10]) ; 10 LINE FEED
+	    (tab-mark 9 [9655 9] [92 9]) ; 9 TAB, 9655 WHITE RIGHT-POINTING TRIANGLE 「▷」
+	    ))
+    )
 
   ;; done at end so it has correct font reference
   (spaceline-compile)
@@ -538,7 +563,7 @@ current major mode."
   (defun neeasade/org-set-active()
     (interactive)
     (org-delete-property-globally "focus")
-    (org-set-property "focus" "me")
+    (org-set-property "focus" "t")
 
     (setq org-active-story (substring-no-properties (org-get-heading t t t t)))
     )
@@ -560,6 +585,7 @@ current major mode."
     (goto-char (org-find-property "focus"))
     (org-show-context)
     (org-show-subtree)
+    (evil-scroll-line-to-center nil)
     )
 
   (add-hook
@@ -740,6 +766,14 @@ current major mode."
   )
 
 (defun neeasade/javascript()
+  (defun js-jsx-indent-line-align-closing-bracket ()
+    "Workaround sgml-mode and align closing bracket with opening bracket"
+    (save-excursion
+      (beginning-of-line)
+      (when (looking-at-p "^ +\/?> *$")
+	(delete-char sgml-basic-offset))))
+  (advice-add #'js-jsx-indent-line :after #'js-jsx-indent-line-align-closing-bracket)
+
   ;; use web-mode for .js files
   (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
 
@@ -764,7 +798,8 @@ current major mode."
       (tide-setup)
       (setq flycheck-check-syntax-automatically '(save mode-enabled))
       (eldoc-mode +1)
-      (tide-hl-identifier-mode +1))
+      (tide-hl-identifier-mode +1)
+	  )
 
     ;; aligns annotation to the right hand side
     (setq company-tooltip-align-annotations t)
@@ -782,11 +817,38 @@ current major mode."
   )
 
 (defun neeasade/git()
-  ;; todo: windows: https://magit.vc/manual/magit/Performance.html
   (use-package magit
     :config
     (setq magit-repository-directories (list "~/git"))
-    )
+	;; https://magit.vc/manual/magit/Performance.html
+	(if sys/windows?
+		(load-settings
+		 "magit"
+		 '(
+		 ;; diff perf
+		 diff-highlight-indentation nil
+		 diff-highlight-trailing nil
+		 diff-paint-whitespace nil
+		 diff-highlight-hunk-body nil
+		 diff-refine-hunk nil
+
+		 ;; 
+		 refresh-status-buffer nil
+		   )
+		 )
+
+	  ;; don't show diff when committing --
+	  ;; means reviewing will have to be purposeful before  
+	  (remove-hook 'server-switch-hook 'magit-commit-diff)
+
+	  ;; disable emacs VC 
+	  (setq vc-handled-backends nil)
+
+	  ;; todo: consider
+	  ;; (setq auto-revert-buffer-list-filter
+	  ;; 'magit-auto-revert-repository-buffers-p)
+	  )
+	)
 
   (use-package evil-magit
     :config
