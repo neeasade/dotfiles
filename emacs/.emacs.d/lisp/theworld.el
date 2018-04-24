@@ -344,32 +344,26 @@ current major mode."
   )
 
 (defun neeasade/dashdocs()
-    ;; if eww is displayed, use that, else open here.
-    ;; todo: this isn't working with anchors in other frames
-    (defun eww-browse-existing-or-new (url)
-    (if (get-buffer-window "*eww*" 0)
-	(url-retrieve url 'eww-render
-			(list url nil (get-buffer "*eww*")))
-	(eww url)
-	)
-    )
+  (setq neeasade-dashdocs t)
 
   (use-package counsel-dash
-    :config
-    ;; todo: jump func this
-    (setq helm-dash-browser-func 'eww-browse-existing-or-new)
+	:config
+    (setq helm-dash-docsets-path (concat user-emacs-directory "docsets"))
+    (setq helm-dash-browser-func 'neeasade/eww-browse-existing-or-new)
     )
 
   ;; todo: this needs a counsel-dash-at-point/how to get point
   (neeasade/bind
    "jd" 'counsel-dash
    )
+
+  ;; todo: neeasade/install-dashdoc call hook in right places 
   )
 
 (defun spacemacs/compute-powerline-height ()
   "Return an adjusted powerline height."
   (let ((scale (if (and (boundp 'powerline-scale) powerline-scale)
-		   powerline-scale 1)))
+				   powerline-scale 1)))
     (truncate (* scale (frame-char-height)))))
 
 (defun neeasade/style()
@@ -632,7 +626,7 @@ current major mode."
   (use-package clojure-mode)
   (use-package cider)
 
-  ;; TODO: learn lispy
+  ;; TODO: learn lispyville
   (use-package lispy)
 
   (neeasade/bind-leader-mode

@@ -109,7 +109,24 @@
   nil
   )
 
+;; ref https://github.com/energos/dotfiles/blob/master/emacs/init.el#L162
+(defun neeasade/install-dashdoc (docset)
+  "Install dash DOCSET."
+  (if (boundp 'neeasade-dashdocs)
+      (if (helm-dash-docset-installed-p docset)
+	  (message (format "%s docset is already installed!" docset))
+	(progn (message (format "Installing %s docset..." docset))
+	       (helm-dash-install-docset (subst-char-in-string ?\s ?_ docset)))
+	)
+    )
+  )
+;; todo: have the above do something like this
+;; (defun energos/dash-elisp ()
+;; 	(setq-local helm-dash-docsets '("Emacs Lisp")))
+;; (add-hook 'emacs-lisp-mode-hook 'energos/dash-elisp)
+
 (defun neeasade/find-or-open (filepath)
+  "Find or open FILEPATH."
   (let
       ((filename (file-name-nondirectory filepath)))
     (if (get-buffer filename)
@@ -117,3 +134,12 @@
       (find-file filepath)
       )))
 
+;; todo: this isn't working with anchors in other frames
+(defun neeasade/eww-browse-existing-or-new (url)
+  "If eww is displayed, use that for URL, else open here."
+  (if (get-buffer-window "*eww*" 0)
+      (url-retrieve url 'eww-render
+		    (list url nil (get-buffer "*eww*")))
+    (eww url)
+    )
+  )
