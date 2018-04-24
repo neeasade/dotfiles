@@ -372,45 +372,21 @@ current major mode."
   (use-package base16-theme)
   ;;(use-package ujelly-theme)
 
-  ;; optionally consider https://github.com/tautologyclub/feebleline
-  (use-package spaceline
-    :config
-    (require 'spaceline-config)
-    (setq powerline-scale (string-to-number (get-resource "Emacs.powerlinescale")))
-    (setq powerline-height (spacemacs/compute-powerline-height))
-    (spaceline-spacemacs-theme)
-    (spaceline-toggle-minor-modes-off)
-    )
-
-  ;; toggles
-  ;; (use-package hide-mode-line
-  ;;   :config
-  ;;   ;; todo: query to see if modeline is set/toggle rather than single toggle for off
-  ;;   (neeasade/bind "tm" (lambda () (interactive) (hide-mode-line -1)))
-  ;;   )
-
   (load-theme (intern (get-resource "Emacs.theme")))
-  (setq powerline-default-separator (get-resource "Emacs.powerline"))
+
   (set-face-attribute 'fringe nil :background nil)
-
-  (setq powerline-default-separator (get-resource "emacs.powerline"))
-
-  ;; sync modeline background color?
-  ;;(set-face-attribute 'spacemacs-normal-face nil :inherit 'mode-line)
-
   (set-face-background 'font-lock-comment-face nil)
 
   ;; todo: make this on all frames, not just current
   (set-frame-parameter (selected-frame) 'internal-border-width
 		       (string-to-number (get-resource "st.borderpx")))
 
-  ;; this is only viable if can get it on internal window edges only
-  ;; (not right now)
+  ;; this is only viable if can get it on internal window edges only (not right now)
+  ;; http://emacsredux.com/blog/2015/01/18/customizing-the-fringes/
   ;; (fringe-mode (string-to-number (get-resource "st.borderpx")))
 
   ;; sync w/ term background
-  (set-background-color
-   (get-resource "*.background"))
+  (set-background-color (get-resource "*.background"))
 
   ;; assume softer vertical border by matching comment face
   (set-face-attribute 'vertical-border
@@ -429,13 +405,15 @@ current major mode."
   (set-face-attribute 'default nil :font (get-resource "st.font"))
   (set-frame-font (get-resource "st.font") nil t)
 
-  ;; NO BOLD (set-face-bold-p doesn't cover everything, some fonts use slant and underline as bold...)
+  ;; NO BOLD
+  ;; (set-face-bold-p doesn't cover everything, some fonts use slant and underline as bold...)
+
   (mapc (lambda (face)
 	  (set-face-attribute face nil
 			      :weight 'normal
 			      :slant 'normal
 			      :underline nil
-					;:inherit nil
+			      ;;:inherit nil
 			      ))
 	(face-list))
 
@@ -447,8 +425,30 @@ current major mode."
   ;; (set-face-attribute 'whitespace-space nil :background nil)
   ;; )
 
-  ;; done at end so it has correct font reference
-  (spaceline-compile)
+  ;; optionally consider https://github.com/tautologyclub/feebleline
+  ;; (use-package feebleline)
+
+  (use-package spaceline
+    :config
+    (require 'spaceline-config)
+    (load-settings
+     "powerline"
+     '(
+       scale (string-to-number (get-resource "Emacs.powerlinescale"))
+       height (spacemacs/compute-powerline-height)
+       default-separator (get-resource "emacs.powerline")
+       default-separator (get-resource "Emacs.powerline")
+       ))
+
+    ;; todo sync modeline background color?
+    ;; other option is remove off color section/pick explicitly
+    ;; (set-face-attribute 'spacemacs-normal-face nil :inherit 'mode-line)
+
+    (spaceline-spacemacs-theme)
+    (spaceline-toggle-minor-modes-off)
+    (spaceline-compile)
+    )
+
   )
 
 (defun neeasade/window-management()
@@ -730,10 +730,10 @@ current major mode."
     :config
     (setq
      which-key-sort-order 'which-key-key-order-alpha
-     which-key-idle-delay 0.4
+     which-key-idle-delay 3.0
      which-key-side-window-max-width 0.33
      )
-    ;; (which-key-setup-side-window-right-bottom)
+    (which-key-setup-side-window-right-bottom)
     )
   )
 
