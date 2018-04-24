@@ -26,18 +26,18 @@
 (defun get-resource (name)
   "Get X resource value, with a fallback value NAME."
   (let* (
-	(xrdb-fallback-values
-	 ;; for when we're away from $HOME.
-	 '(
-	   ("Emacs.theme"          . "base16-grayscale-light")
-	   ("Emacs.powerlinescale" . "1.2")
-	   ("st.font"              . "Go Mono-12")
-	   ("st.borderpx"          . "15")
-	   ("emacs.powerline"      . "bar")
-	   ("*.background"         . (face-attribute 'default :background))
-	   ))
-	(default (eval (cdr (assoc name xrdb-fallback-values))))
-	)
+	 (xrdb-fallback-values
+	  ;; for when we're away from $HOME.
+	  '(
+	    ("Emacs.theme"          . "base16-grayscale-light")
+	    ("Emacs.powerlinescale" . "1.2")
+	    ("st.font"              . "Go Mono-10")
+	    ("st.borderpx"          . "15")
+	    ("emacs.powerline"      . "bar")
+	    ("*.background"         . (face-attribute 'default :background))
+	    ))
+	 (default (eval (cdr (assoc name xrdb-fallback-values))))
+	 )
     (if (executable-find "xrq")
 	(let ((result
 	       ;; shell-command-to-string appends newline

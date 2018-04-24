@@ -265,9 +265,9 @@
   (use-package editorconfig :config (editorconfig-mode 1))
   (setq tab-width 4)
   (use-package aggressive-indent
-	  :config
-	(add-hook 'emacs-lisp-mode-hook   #'aggressive-indent-mode)
-	(add-hook 'clojure-mode-hook #'aggressive-indent-mode)
+    :config
+    (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+    (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
     )
 
   (use-package smartparens
@@ -347,7 +347,7 @@ current major mode."
   (setq neeasade-dashdocs t)
 
   (use-package counsel-dash
-	:config
+    :config
     (setq helm-dash-docsets-path (concat user-emacs-directory "docsets"))
     (setq helm-dash-browser-func 'neeasade/eww-browse-existing-or-new)
     )
@@ -363,7 +363,7 @@ current major mode."
 (defun spacemacs/compute-powerline-height ()
   "Return an adjusted powerline height."
   (let ((scale (if (and (boundp 'powerline-scale) powerline-scale)
-				   powerline-scale 1)))
+		   powerline-scale 1)))
     (truncate (* scale (frame-char-height)))))
 
 (defun neeasade/style()
@@ -443,9 +443,9 @@ current major mode."
   ;;(setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 
   ;; todo: fix this
-  (eval-after-load 'whitespace-mode
-    ;; (set-face-attribute 'whitespace-space nil :background nil)
-	)
+  ;; (eval-after-load 'whitespace-mode
+  ;; (set-face-attribute 'whitespace-space nil :background nil)
+  ;; )
 
   ;; done at end so it has correct font reference
   (spaceline-compile)
@@ -462,6 +462,10 @@ current major mode."
 
 (defun neeasade/org()
   (use-package org
+    :straight (:host github
+		     :repo "emacsmirror/org"
+		     :files ("lisp/*.el" "contrib/lisp/*.el"))
+
     :config
     ;; todo: look up org-deadline-warn-days variable
     (load-settings
@@ -475,7 +479,6 @@ current major mode."
        default-habits-file  "~/org/habits.org"
 
        ;; style
-       bullets-bullet-list '("@" "%" ">" ">")
        ellipsis "…"
        startup-indented t
        startup-folded t
@@ -493,7 +496,7 @@ current major mode."
 
        ;; clock
        clock-x11idle-program-name "x11idle"
-       clock-idle-time 10
+       clock-idle-time 5
        clock-sound nil
        pomodoro-play-sounds nil
        pomodoro-keep-killed-pomodoro-time t
@@ -557,14 +560,14 @@ current major mode."
   (defun neeasade/org-get-active()
     (if (not (bound-and-true-p org-active-story))
 	(progn
-	  (neeasade/org-goto-focus)
+	  (neeasade/org-goto-active)
 	  (neeasade/org-set-active)
 	  )
       org-active-story
       )
     )
 
-  (defun neeasade/org-goto-focus()
+  (defun neeasade/org-goto-active()
     (interactive)
     (neeasade/find-or-open "~/org/notes.org")
     (goto-char (org-find-property "focus"))
@@ -611,7 +614,7 @@ current major mode."
   
   (neeasade/bind
    "jo" (lambda() (interactive) (neeasade/find-or-open "~/org/notes.org" ))
-   "jf" 'neeasade/org-goto-focus
+   "jf" 'neeasade/org-goto-active
    )
   )
 
@@ -660,8 +663,8 @@ current major mode."
   (use-package ivy
     :config
     (setq ivy-re-builders-alist
-    	  '((ivy-switch-buffer . ivy--regex-plus)
-    	    (t . ivy--regex-fuzzy)))
+	  '((ivy-switch-buffer . ivy--regex-plus)
+	    (t . ivy--regex-fuzzy)))
 
     (setq ivy-initial-inputs-alist nil)
     (ivy-mode 1)
@@ -775,11 +778,11 @@ current major mode."
     )
 
   (use-package nodejs-repl
-      ;; todo: check for babel-repl existing and use that
-      ;; (doesn't appear to work)
-      ;; :init (setq nodejs-repl-command "babel-repl")
+    ;; todo: check for babel-repl existing and use that
+    ;; (doesn't appear to work)
+    ;; :init (setq nodejs-repl-command "babel-repl")
 
-      :config
+    :config
     (neeasade/bind-leader-mode
      'nodejs-repl
      "er "'nodejs-repl-send-region
@@ -799,7 +802,7 @@ current major mode."
       (setq flycheck-check-syntax-automatically '(save mode-enabled))
       (eldoc-mode +1)
       (tide-hl-identifier-mode +1)
-	  )
+      )
 
     ;; aligns annotation to the right hand side
     (setq company-tooltip-align-annotations t)
@@ -820,35 +823,35 @@ current major mode."
   (use-package magit
     :config
     (setq magit-repository-directories (list "~/git"))
-	;; https://magit.vc/manual/magit/Performance.html
-	(if sys/windows?
-		(load-settings
-		 "magit"
-		 '(
-		 ;; diff perf
-		 diff-highlight-indentation nil
-		 diff-highlight-trailing nil
-		 diff-paint-whitespace nil
-		 diff-highlight-hunk-body nil
-		 diff-refine-hunk nil
+    ;; https://magit.vc/manual/magit/Performance.html
+    (if sys/windows?
+	(load-settings
+	 "magit"
+	 '(
+	   ;; diff perf
+	   diff-highlight-indentation nil
+	   diff-highlight-trailing nil
+	   diff-paint-whitespace nil
+	   diff-highlight-hunk-body nil
+	   diff-refine-hunk nil
 
-		 ;; 
-		 refresh-status-buffer nil
-		   )
-		 )
+	   ;; 
+	   refresh-status-buffer nil
+	   )
+	 )
 
-	  ;; don't show diff when committing --
-	  ;; means reviewing will have to be purposeful before  
-	  (remove-hook 'server-switch-hook 'magit-commit-diff)
+      ;; don't show diff when committing --
+      ;; means reviewing will have to be purposeful before  
+      (remove-hook 'server-switch-hook 'magit-commit-diff)
 
-	  ;; disable emacs VC 
-	  (setq vc-handled-backends nil)
+      ;; disable emacs VC 
+      (setq vc-handled-backends nil)
 
-	  ;; todo: consider
-	  ;; (setq auto-revert-buffer-list-filter
-	  ;; 'magit-auto-revert-repository-buffers-p)
-	  )
-	)
+      ;; todo: consider
+      ;; (setq auto-revert-buffer-list-filter
+      ;; 'magit-auto-revert-repository-buffers-p)
+      )
+    )
 
   (use-package evil-magit
     :config
@@ -1022,8 +1025,8 @@ current major mode."
 	      (remove-if-not
 	       (lambda (s) (s-match "#.*" s))
 	       (mapcar 'buffer-name (buffer-list))
-	     )
-     :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
+	       )
+	      :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
     )
 
   (neeasade/bind
@@ -1042,62 +1045,62 @@ current major mode."
 
 (defun neeasade/twitter()
   (use-package twittering-mode
-      :commands twit
-      :init
-      (add-hook 'twittering-edit-mode-hook (lambda () (flyspell-mode)))
-      :config
-      (load-settings
-       'twittering
-       use-master-password t
-       icon-mode t
-       use-icon-storage t
-       ;; icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
-       convert-fix-size 52
-       initial-timeline-spec-string '(":home")
-       edit-skeleton 'inherit-any
-       display-remaining t
-       timeline-header  ""
-       timeline-footer  ""
-       status-format "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n"
-       )
+    :commands twit
+    :init
+    (add-hook 'twittering-edit-mode-hook (lambda () (flyspell-mode)))
+    :config
+    (load-settings
+     "twittering"
+     use-master-password t
+     icon-mode t
+     use-icon-storage t
+     ;; icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
+     convert-fix-size 52
+     initial-timeline-spec-string '(":home")
+     edit-skeleton 'inherit-any
+     display-remaining t
+     timeline-header  ""
+     timeline-footer  ""
+     status-format "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n"
+     )
 
-      ;; set the new bindings
-      (bind-keys :map twittering-mode-map
-		 ("\\" . hydra-twittering/body)
-		 ("q" . twittering-kill-buffer)
-		 ("Q" . twittering-edit-mode)
-		 ("j" . twittering-goto-next-status)
-		 ("k" . twittering-goto-previous-status)
-		 ("h" . twittering-switch-to-next-timeline)
-		 ("l" . twittering-switch-to-previous-timeline)
-		 ("g" . beginning-of-buffer)
-		 ("G" . end-of-buffer)
-		 ("t" . twittering-update-status-interactive)
-		 ("X" . twittering-delete-status)
-		 ("RET" . twittering-reply-to-user)
-		 ("r" . twittering-native-retweet)
-		 ("R" . twittering-organic-retweet)
-		 ("d" . twittering-direct-message)
-		 ("u" . twittering-current-timeline)
-		 ("b" . twittering-favorite)
-		 ("B" . twittering-unfavorite)
-		 ("f" . twittering-follow)
-		 ("F" . twittering-unfollow)
-		 ("i" . twittering-view-user-page)
-		 ("/" . twittering-search)
-		 ("." . twittering-visit-timeline)
-		 ("@" . twittering-other-user-timeline)
-		 ("T" . twittering-toggle-or-retrieve-replied-statuses)
-		 ("o" . twittering-click)
-		 ("TAB" . twittering-goto-next-thing)
-		 ("<backtab>" . twittering-goto-previous-thing)
-		 ("n" . twittering-goto-next-status-of-user)
-		 ("p" . twittering-goto-previous-status-of-user)
-		 ("SPC" . twittering-scroll-up)
-		 ("S-SPC" . twittering-scroll-down)
-		 ("y" . twittering-push-uri-onto-kill-ring)
-		 ("Y" . twittering-push-tweet-onto-kill-ring)
-		 ("a" . twittering-toggle-activate-buffer)))
+    ;; set the new bindings
+    (bind-keys :map twittering-mode-map
+	       ("\\" . hydra-twittering/body)
+	       ("q" . twittering-kill-buffer)
+	       ("Q" . twittering-edit-mode)
+	       ("j" . twittering-goto-next-status)
+	       ("k" . twittering-goto-previous-status)
+	       ("h" . twittering-switch-to-next-timeline)
+	       ("l" . twittering-switch-to-previous-timeline)
+	       ("g" . beginning-of-buffer)
+	       ("G" . end-of-buffer)
+	       ("t" . twittering-update-status-interactive)
+	       ("X" . twittering-delete-status)
+	       ("RET" . twittering-reply-to-user)
+	       ("r" . twittering-native-retweet)
+	       ("R" . twittering-organic-retweet)
+	       ("d" . twittering-direct-message)
+	       ("u" . twittering-current-timeline)
+	       ("b" . twittering-favorite)
+	       ("B" . twittering-unfavorite)
+	       ("f" . twittering-follow)
+	       ("F" . twittering-unfollow)
+	       ("i" . twittering-view-user-page)
+	       ("/" . twittering-search)
+	       ("." . twittering-visit-timeline)
+	       ("@" . twittering-other-user-timeline)
+	       ("T" . twittering-toggle-or-retrieve-replied-statuses)
+	       ("o" . twittering-click)
+	       ("TAB" . twittering-goto-next-thing)
+	       ("<backtab>" . twittering-goto-previous-thing)
+	       ("n" . twittering-goto-next-status-of-user)
+	       ("p" . twittering-goto-previous-status-of-user)
+	       ("SPC" . twittering-scroll-up)
+	       ("S-SPC" . twittering-scroll-down)
+	       ("y" . twittering-push-uri-onto-kill-ring)
+	       ("Y" . twittering-push-tweet-onto-kill-ring)
+	       ("a" . twittering-toggle-activate-buffer)))
 
   (defhydra hydra-twittering (:color blue :hint nil)
     "
@@ -1160,27 +1163,27 @@ current major mode."
 
 (defun neeasade/slack()
   (use-package slack
-      :commands (slack-start)
-      :init
-      (setq slack-buffer-emojify t)
-      (setq slack-prefer-current-team t)
+    :commands (slack-start)
+    :init
+    (setq slack-buffer-emojify t)
+    (setq slack-prefer-current-team t)
 
-      :config
-      ;; TODO: check this windows only
-      ;; https://github.com/yuya373/emacs-slack/issues/161
-      (setq request-backend 'url-retrieve)
-      (setq slack-request-timeout 50)
+    :config
+    ;; TODO: check this windows only
+    ;; https://github.com/yuya373/emacs-slack/issues/161
+    (setq request-backend 'url-retrieve)
+    (setq slack-request-timeout 50)
 
-      (slack-register-team
-       :name (pass "slackteam")
-       :default t
-       :client-id (pass "slackid")
-       :client-secret (pass "slack")
-       :token (pass "slacktoken")
-       :subscribed-channels '(general random)
-       :full-and-display-names t
-       )
-      )
+    (slack-register-team
+     :name (pass "slackteam")
+     :default t
+     :client-id (pass "slackid")
+     :client-secret (pass "slack")
+     :token (pass "slacktoken")
+     :subscribed-channels '(general random)
+     :full-and-display-names t
+     )
+    )
 
   ;; todo: where is slack-info/context for this bind
   (neeasade/bind-leader-mode
