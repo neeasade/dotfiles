@@ -110,12 +110,11 @@
   (setq browse-url-browser-function 'browse-url-generic)
 
   (if sys/windows?
-	  (let ((qutebrowser (executable-find "qutebrowser")))
-		(if qutebrowser (setq browse-url-generic-program qutebrowser))
-		)
+      (if (executable-find "qutebrowser")
+	  (setq browse-url-generic-program "qutebrowser")
 	(setq browse-url-browser-function 'browse-url-default-windows-browser)
+	)
     )
-
 
   (neeasade/bind
    "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
@@ -451,7 +450,7 @@ current major mode."
 
   ;; todo: fix this
   (eval-after-load 'whitespace-mode
-    (set-face-attribute 'whitespace-space nil :background nil)
+    ;; (set-face-attribute 'whitespace-space nil :background nil)
     (setq whitespace-display-mappings
 	  ;; all numbers are Unicode codepoint in decimal. ⁖ (insert-char 182 1)
 	  '(
@@ -787,6 +786,21 @@ current major mode."
 		  (message "now set to: %s" web-mode-content-type))))
 
     )
+
+  (use-package nodejs-repl
+      ;; todo: check for babel-repl existing and use that
+      ;; (doesn't appear to work)
+      ;; :init (setq nodejs-repl-command "babel-repl")
+
+      :config
+    (neeasade/bind-leader-mode
+     'nodejs-repl
+     "er "'nodejs-repl-send-region
+     "eb" 'nodejs-repl-load-file
+     "ee" 'nodejs-repl-send-line
+     "ei" 'nodejs-repl-send-last-expression
+     )
+    )
   )
 
 (defun neeasade/typescript()
@@ -1041,60 +1055,62 @@ current major mode."
 
 (defun neeasade/twitter()
   (use-package twittering-mode
-    :commands twit
-    :init
-    (add-hook 'twittering-edit-mode-hook (lambda () (flyspell-mode)))
-    :config
-    (setq twittering-use-master-password t
-	  twittering-icon-mode t
-	  twittering-use-icon-storage t
-	  ;; twittering-icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
-	  twittering-convert-fix-size 52
-	  twittering-initial-timeline-spec-string '(":home")
-	  twittering-edit-skeleton 'inherit-any
-	  twittering-display-remaining t
-	  twittering-timeline-header  ""
-	  twittering-timeline-footer  ""
-	  twittering-status-format
-	  "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n")
+      :commands twit
+      :init
+      (add-hook 'twittering-edit-mode-hook (lambda () (flyspell-mode)))
+      :config
+      (load-settings
+       'twittering
+       use-master-password t
+       icon-mode t
+       use-icon-storage t
+       ;; icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
+       convert-fix-size 52
+       initial-timeline-spec-string '(":home")
+       edit-skeleton 'inherit-any
+       display-remaining t
+       timeline-header  ""
+       timeline-footer  ""
+       status-format "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n"
+       )
 
-    ;; set the new bindings
-    (bind-keys :map twittering-mode-map
-	       ("\\" . hydra-twittering/body)
-	       ("q" . twittering-kill-buffer)
-	       ("Q" . twittering-edit-mode)
-	       ("j" . twittering-goto-next-status)
-	       ("k" . twittering-goto-previous-status)
-	       ("h" . twittering-switch-to-next-timeline)
-	       ("l" . twittering-switch-to-previous-timeline)
-	       ("g" . beginning-of-buffer)
-	       ("G" . end-of-buffer)
-	       ("t" . twittering-update-status-interactive)
-	       ("X" . twittering-delete-status)
-	       ("RET" . twittering-reply-to-user)
-	       ("r" . twittering-native-retweet)
-	       ("R" . twittering-organic-retweet)
-	       ("d" . twittering-direct-message)
-	       ("u" . twittering-current-timeline)
-	       ("b" . twittering-favorite)
-	       ("B" . twittering-unfavorite)
-	       ("f" . twittering-follow)
-	       ("F" . twittering-unfollow)
-	       ("i" . twittering-view-user-page)
-	       ("/" . twittering-search)
-	       ("." . twittering-visit-timeline)
-	       ("@" . twittering-other-user-timeline)
-	       ("T" . twittering-toggle-or-retrieve-replied-statuses)
-	       ("o" . twittering-click)
-	       ("TAB" . twittering-goto-next-thing)
-	       ("<backtab>" . twittering-goto-previous-thing)
-	       ("n" . twittering-goto-next-status-of-user)
-	       ("p" . twittering-goto-previous-status-of-user)
-	       ("SPC" . twittering-scroll-up)
-	       ("S-SPC" . twittering-scroll-down)
-	       ("y" . twittering-push-uri-onto-kill-ring)
-	       ("Y" . twittering-push-tweet-onto-kill-ring)
-	       ("a" . twittering-toggle-activate-buffer)))
+      ;; set the new bindings
+      (bind-keys :map twittering-mode-map
+		 ("\\" . hydra-twittering/body)
+		 ("q" . twittering-kill-buffer)
+		 ("Q" . twittering-edit-mode)
+		 ("j" . twittering-goto-next-status)
+		 ("k" . twittering-goto-previous-status)
+		 ("h" . twittering-switch-to-next-timeline)
+		 ("l" . twittering-switch-to-previous-timeline)
+		 ("g" . beginning-of-buffer)
+		 ("G" . end-of-buffer)
+		 ("t" . twittering-update-status-interactive)
+		 ("X" . twittering-delete-status)
+		 ("RET" . twittering-reply-to-user)
+		 ("r" . twittering-native-retweet)
+		 ("R" . twittering-organic-retweet)
+		 ("d" . twittering-direct-message)
+		 ("u" . twittering-current-timeline)
+		 ("b" . twittering-favorite)
+		 ("B" . twittering-unfavorite)
+		 ("f" . twittering-follow)
+		 ("F" . twittering-unfollow)
+		 ("i" . twittering-view-user-page)
+		 ("/" . twittering-search)
+		 ("." . twittering-visit-timeline)
+		 ("@" . twittering-other-user-timeline)
+		 ("T" . twittering-toggle-or-retrieve-replied-statuses)
+		 ("o" . twittering-click)
+		 ("TAB" . twittering-goto-next-thing)
+		 ("<backtab>" . twittering-goto-previous-thing)
+		 ("n" . twittering-goto-next-status-of-user)
+		 ("p" . twittering-goto-previous-status-of-user)
+		 ("SPC" . twittering-scroll-up)
+		 ("S-SPC" . twittering-scroll-down)
+		 ("y" . twittering-push-uri-onto-kill-ring)
+		 ("Y" . twittering-push-tweet-onto-kill-ring)
+		 ("a" . twittering-toggle-activate-buffer)))
 
   (defhydra hydra-twittering (:color blue :hint nil)
     "
@@ -1151,32 +1167,33 @@ current major mode."
     ("y"          twittering-push-uri-onto-kill-ring)
     ("Y"          twittering-push-tweet-onto-kill-ring)
     ("a"          twittering-toggle-activate-buffer))
+
   ;; todo here: binding to jump to twittering buffer/launch "at"
   )
 
 (defun neeasade/slack()
   (use-package slack
-    :commands (slack-start)
-    :init
-    (setq slack-buffer-emojify t)
-    (setq slack-prefer-current-team t)
+      :commands (slack-start)
+      :init
+      (setq slack-buffer-emojify t)
+      (setq slack-prefer-current-team t)
 
-    :config
-    ;; TODO: check this windows only
-    ;; https://github.com/yuya373/emacs-slack/issues/161
-    (setq request-backend 'url-retrieve)
-    (setq slack-request-timeout 50)
+      :config
+      ;; TODO: check this windows only
+      ;; https://github.com/yuya373/emacs-slack/issues/161
+      (setq request-backend 'url-retrieve)
+      (setq slack-request-timeout 50)
 
-    (slack-register-team
-     :name (pass "slackteam")
-     :default t
-     :client-id (pass "slackid")
-     :client-secret (pass "slack")
-     :token (pass "slacktoken")
-     :subscribed-channels '(general random)
-     :full-and-display-names t
-     )
-    )
+      (slack-register-team
+       :name (pass "slackteam")
+       :default t
+       :client-id (pass "slackid")
+       :client-secret (pass "slack")
+       :token (pass "slacktoken")
+       :subscribed-channels '(general random)
+       :full-and-display-names t
+       )
+      )
 
   ;; todo: where is slack-info/context for this bind
   (neeasade/bind-leader-mode
@@ -1199,12 +1216,12 @@ current major mode."
    "2" 'slack-message-embed-mention
    "3" 'slack-message-embed-channel
    )
-    ;; todo: something for these maybe
-    ;; "\C-n" 'slack-buffer-goto-next-message
-    ;; "\C-p" 'slack-buffer-goto-prev-message)
+  ;; todo: something for these maybe
+  ;; "\C-n" 'slack-buffer-goto-next-message
+  ;; "\C-p" 'slack-buffer-goto-prev-message)
 
   (neeasade/bind-leader-mode
-    'slack-edit-message
+   'slack-edit-message
    "k" 'slack-message-cancel-edit
    "s" 'slack-message-send-from-buffer
    "2" 'slack-message-embed-mention
@@ -1212,7 +1229,7 @@ current major mode."
    )
 
   (neeasade/bind
-   "as" 'start-slack)
+   "as" 'slack-start)
   )
 
 (defun neeasade/email()
