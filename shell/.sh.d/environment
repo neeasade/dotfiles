@@ -38,10 +38,10 @@ GIT_EDITOR="$EDITOR"
 SVN_EDITOR="$EDITOR"
 
 if has npm; then
-    if [ -d "$HOME/.npm-packages" ]; then
-	# assume, faster startup time
-	NODE_PATH="$HOME/.npm-packages/lib/node_modules"
-	PATH="$PATH:$HOME/.npm-packages/bin"
+    if has cache_output; then
+	week="$(expr 60 \* 60 \* 24 \* 7)"
+	NODE_PATH="$(cache_output $week npm root -g)"
+	PATH="$PATH:$(cache_output $week npm bin -g)"
     else
       NODE_PATH="$(npm root -g)"
       PATH="$PATH:$(npm bin -g)"
