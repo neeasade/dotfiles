@@ -36,7 +36,7 @@
   (setq straight-use-package-by-default t)
   )
 
-(defun neeasade/load(targets)
+(defun neeasade/load (targets)
   (mapc (lambda(target)
           (funcall (intern (concat "neeasade/" (prin1-to-string target))))
           )
@@ -47,6 +47,7 @@
   (use-package hydra)
   (use-package general)
   (use-package rg)
+  (use-package dash)
   (load "~/.emacs.d/lisp/helpers.el")
   )
 
@@ -207,6 +208,28 @@
     (evil-shift-right (region-beginning) (region-end))
     (evil-normal-state)
     (evil-visual-restore))
+
+  ;; (defun neeasade/evil-org-toggle() (evil-org-mode) (evil-org-set-key-theme))
+  ;; (use-package evil-org :config (add-hook 'org-mode-hook 'neeasade/evil-org-toggle))
+
+  ;; todo: figure out if can work this in neeasade/evil after (org)
+  (use-package evil-org
+    :commands evil-org-mode
+    :after org
+    :init (add-hook 'org-mode-hook 'evil-org-mode)
+    :config
+    (add-hook 'evil-org-mode-hook
+      (lambda ()
+        (evil-org-set-key-theme
+          '(
+             textobjects
+             insert
+             navigation
+             additional
+             shift
+             todo
+             heading
+             )))))
   )
 
 (defun neeasade/flycheck()
@@ -443,9 +466,10 @@ current major mode."
       )
     )
 
-  ;; optionally consider https://github.com/tautologyclub/feebleline
-  ;; (use-package feebleline)
+  (neeasade/spaceline)
+  )
 
+(defun neeasade/spaceline()
   (use-package spaceline
     :config
     (require 'spaceline-config)
@@ -464,6 +488,11 @@ current major mode."
     (spaceline-toggle-minor-modes-off)
     (spaceline-compile)
     )
+  )
+
+(defun neeasade/feebleline()
+  ;; todo
+  (load "~/.emacs.d/lisp/ref/feebleline.el")
   )
 
 (defun neeasade/window-management()
@@ -547,15 +576,8 @@ current major mode."
                            )
          )
       )
-    )
 
-  (use-package evil-org
-    :after org
-    :config
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'evil-org-mode-hook
-      (lambda ()
-        (evil-org-set-key-theme))))
+    )
 
   (defun neeasade/org-open-url()
     (interactive)
@@ -654,13 +676,12 @@ current major mode."
 
 (defun neeasade/target-process()
   (if enable-tp?
-    (load "~/.emacs.d/lisp/targetprocess.el")
+    (load "~/.emacs.d/lisp/ref/targetprocess.el")
     )
   )
 
 ;; bindings, ivy, counsel, alerts, which-key
 (defun neeasade/interface()
-
   (defun dynamic-ivy-height()
     (let (
            (computed (/ (window-total-size) 2))
@@ -752,15 +773,16 @@ current major mode."
   )
 
 (defun neeasade/emms()
-  (use-package emms
-    :commands (emms-start)
-    :config
+  (use-package emms)
+
+  (defun emms-start()
     (require 'emms-player-mpd)
     (load-settings 'emms-player-mpd
-      '(server-name "localhost"
+      '(
+         server-name "localhost"
          server-port "6600"
+         music-directory "~/Music"
          ;; server-password "mypassword"
-         music-directory "~Music"
          )
       )
 
@@ -824,6 +846,9 @@ current major mode."
       "ei" 'nodejs-repl-send-last-expression
       )
     )
+
+  ;; todo: enable this sometimes
+  (use-package prettier-js)
   )
 
 (defun neeasade/typescript()

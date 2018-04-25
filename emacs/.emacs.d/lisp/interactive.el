@@ -41,25 +41,26 @@ buffer is not visiting a file."
 
 (defun neeasade/get-functions()
   (mapcar*
-   (lambda(item)
-     (s-chomp (s-chop-prefix "defun neeasade/" (car item))))
-   (s-match-strings-all
-    "defun neeasade/[^ \(\)]+"
-    (get-string-from-file "~/.emacs.d/lisp/theworld.el"))
-   )
+    (lambda(item)
+      (s-chomp (s-chop-prefix "defun neeasade/" (car item))))
+    (s-match-strings-all
+      "defun neeasade/[^ \(\)]+"
+      (get-string-from-file "~/.emacs.d/lisp/theworld.el"))
+    )
   )
 
+;; todo: not working when already in file -- goto-char call not moving
 (defun neeasade/jump-config()
   (interactive)
-  (ivy-read
-   "config: " (neeasade/get-functions)
-   :action
-   (lambda (option)
-     (neeasade/find-or-open "~/.emacs.d/lisp/theworld.el")
-     (goto-char (point-min))
-     (re-search-forward (concat "neeasade/" option))
-     (neeasade/zz-scroll 0)
-     )))
+  (ivy-read "config: " (neeasade/get-functions)
+    :action
+    (lambda (option)
+      (interactive)
+      (neeasade/find-or-open "~/.emacs.d/lisp/theworld.el")
+      (goto-char (point-min))
+      (re-search-forward (concat "neeasade/" option))
+      (neeasade/zz-scroll 0)
+      )))
 
 (defun neeasade/toggle-bloat()
   (interactive)
