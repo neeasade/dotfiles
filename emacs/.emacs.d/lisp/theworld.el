@@ -450,11 +450,12 @@ current major mode."
             ))
     (face-list))
 
-  ;; todo: match end of line foreground to whitespace-{tab,space} foreground
   (eval-after-load "whitespace-mode"
     (progn
       (set-face-attribute 'whitespace-space nil :background nil)
       (set-face-attribute 'whitespace-tab nil :background nil)
+      (set-face-attribute 'whitespace-newline nil
+        :foreground (face-attribute 'whitespace-space :foreground))
       )
     )
 
