@@ -17,7 +17,7 @@
      (let ((key (car pair))
 	   (value (car (cdr pair))))
        (set
-	(intern (concat namespace "-" (prin1-to-string key)))
+	(intern (concat (prin1-to-string namespace) "-" (prin1-to-string key)))
 	(eval value)
 	)))
    (seq-partition lst 2)
@@ -111,15 +111,18 @@
 
 ;; ref https://github.com/energos/dotfiles/blob/master/emacs/init.el#L162
 (defun neeasade/install-dashdoc (docset)
-  "Install dash DOCSET."
-  (if (boundp 'neeasade-dashdocs)
-      (if (helm-dash-docset-installed-p docset)
-	  (message (format "%s docset is already installed!" docset))
-	(progn (message (format "Installing %s docset..." docset))
-	       (helm-dash-install-docset (subst-char-in-string ?\s ?_ docset)))
+  "Install dash DOCSET if dashdocs enabled."
+  (if (not sys/windows?)
+      (if (boundp 'neeasade-dashdocs)
+	  (if (helm-dash-docset-installed-p docset)
+	      (message (format "%s docset is already installed!" docset))
+	    (progn (message (format "Installing %s docset..." docset))
+		   (helm-dash-install-docset (subst-char-in-string ?\s ?_ docset)))
+	    )
 	)
     )
   )
+
 ;; todo: have the above do something like this
 ;; (defun energos/dash-elisp ()
 ;; 	(setq-local helm-dash-docsets '("Emacs Lisp")))

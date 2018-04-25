@@ -58,6 +58,7 @@ buffer is not visiting a file."
      (neeasade/find-or-open "~/.emacs.d/lisp/theworld.el")
      (goto-char (point-min))
      (re-search-forward (concat "neeasade/" option))
+     (neeasade/zz-scroll 0)
      )))
 
 (defun neeasade/toggle-bloat()

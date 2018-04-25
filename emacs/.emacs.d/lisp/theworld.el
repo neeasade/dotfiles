@@ -6,7 +6,7 @@
   (require 'package)
   (setq package-enable-at-startup nil)
   (add-to-list 'package-archives
-	       '("melpa" . "https://melpa.org/packages/"))
+    '("melpa" . "https://melpa.org/packages/"))
 
   (package-initialize)
 
@@ -22,14 +22,14 @@
 
 (defun init-straight()
   (let ((bootstrap-file (concat user-emacs-directory "straight/bootstrap.el"))
-	(bootstrap-version 2))
+         (bootstrap-version 2))
     (unless (file-exists-p bootstrap-file)
       (with-current-buffer
-	  (url-retrieve-synchronously
-	   "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-	   'silent 'inhibit-cookies)
-	(goto-char (point-max))
-	(eval-print-last-sexp)))
+        (url-retrieve-synchronously
+          "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+          'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
     (load bootstrap-file nil 'nomessage))
 
   (straight-use-package 'use-package)
@@ -38,9 +38,9 @@
 
 (defun neeasade/load(targets)
   (mapc (lambda(target)
-	  (funcall (intern (concat "neeasade/" (prin1-to-string target))))
-	  )
-	targets)
+          (funcall (intern (concat "neeasade/" (prin1-to-string target))))
+          )
+    targets)
   )
 
 (defun neeasade/helpers()
@@ -58,23 +58,23 @@
 (defun neeasade/sanity()
   ;; sanity
   (setq
-   auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
-   backup-directory-alist `(("." . "~/.emacs.d/backups"))
-   coding-system-for-read 'utf-8
-   coding-system-for-write 'utf-8
-   delete-old-versions -1
-   global-auto-revert-mode t
-   inhibit-startup-screen t
-   initial-scratch-message ""
-   ring-bell-function 'ignore
-   sentence-end-double-space nil
-   ;; symlinked file
-   vc-follow-symlinks t ;; auto follow symlinks
-   vc-make-backup-files t
-   version-control t
-   ;; ouch
-   gc-cons-threshold 10000000
-   )
+    auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
+    backup-directory-alist `(("." . "~/.emacs.d/backups"))
+    coding-system-for-read 'utf-8
+    coding-system-for-write 'utf-8
+    delete-old-versions -1
+    global-auto-revert-mode t
+    inhibit-startup-screen t
+    initial-scratch-message ""
+    ring-bell-function 'ignore
+    sentence-end-double-space nil
+    ;; symlinked file
+    vc-follow-symlinks t ;; auto follow symlinks
+    vc-make-backup-files t
+    version-control t
+    ;; ouch
+    gc-cons-threshold 10000000
+    )
 
   ;; trim gui
   (menu-bar-mode -1)
@@ -103,39 +103,45 @@
   ;; todo: reconsider ^
   ;; (setq desktop-restore-eager 5)
   ;; (setq desktop-path (list "~/.emacs.d"))
-
   ;; retain session
-  (desktop-save-mode 1)
+  ;; (desktop-save-mode 1)
+
+  (fset 'yes-or-no-p 'y-or-n-p)
 
   (setq browse-url-browser-function 'browse-url-generic)
 
   (if sys/windows?
-      (if (executable-find "qutebrowser")
-	  (setq browse-url-generic-program "qutebrowser")
-	(setq browse-url-browser-function 'browse-url-default-windows-browser)
-	)
+    (if (executable-find "qutebrowser")
+      (setq browse-url-generic-program "qutebrowser")
+      (setq browse-url-browser-function 'browse-url-default-windows-browser)
+      )
     )
 
-  (neeasade/bind
-   "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
-   "jm" (lambda() (interactive) (counsel-switch-to-buffer-or-window  "*Messages*"))
+  ;; Removes *scratch* from buffer after the mode has been set.
+  (add-hook 'after-change-major-mode-hook
+    (lambda() (if (get-buffer "*scratch*") (kill-buffer "*scratch*"))))
 
-   "tw" 'whitespace-mode
-   "tn" 'linum-mode
-   "tl" 'toggle-truncate-lines
-   )
+  (neeasade/bind
+    "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
+    "jm" (lambda() (interactive) (counsel-switch-to-buffer-or-window  "*Messages*"))
+
+    "tw" 'whitespace-mode
+    "tn" 'linum-mode
+    "tl" 'toggle-truncate-lines
+    )
   )
 
 (defun neeasade/elisp()
   (load "~/.emacs.d/vendor/le-eval-and-insert-results.el")
 
+  (neeasade/install-dashdoc "Emacs Lisp")
   (setq lisp-indent-function 'common-lisp-indent-function)
   (neeasade/bind-leader-mode
-   'emacs-lisp
-   "er" 'eval-region
-   "ei" 'le::eval-and-insert-results
-   "eb" 'le::eval-and-insert-all-sexps
-   )
+    'emacs-lisp
+    "er" 'eval-region
+    "ei" 'le::eval-and-insert-results
+    "eb" 'le::eval-and-insert-all-sexps
+    )
   )
 
 (defun neeasade/evil()
@@ -153,15 +159,16 @@
     ;; window-total-size gets lines count when called with no args
     ;; note: this only works well for buffers that take more than the full screen...
     ;; also doesn't handle when buffer bottom is visible very well.
+    ;; todo: fix^
     (let (
-	  (windowcount (/ (window-total-size) 2))
-	  (scrollcount (/ (window-total-size) 7))
-	  (buffercount (count-lines (point-min) (point-max)))
-	  )
+           (windowcount (/ (window-total-size) 2))
+           (scrollcount (/ (window-total-size) 7))
+           (buffercount (count-lines (point-min) (point-max)))
+           )
       (if (> buffercount windowcount)
-	  (evil-scroll-line-down scrollcount)
-	nil
-	)
+        (evil-scroll-line-down scrollcount)
+        nil
+        )
       )
     )
   (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
@@ -202,20 +209,20 @@
 
     ;; (flycheck) disable jshint since we prefer eslint checking
     (setq-default
-     flycheck-disabled-checkers
-     (append flycheck-disabled-checkers
-	     '(javascript-jshint)))
+      flycheck-disabled-checkers
+      (append flycheck-disabled-checkers
+        '(javascript-jshint)))
 
     ;; use eslint with web-mode for jsx files
     (flycheck-add-mode 'javascript-eslint 'web-mode)
     )
 
   (neeasade/bind
-   ;; Applications
-   "e" '(:ignore t :which-key "Errors")
-   "en" 'flycheck-next-error
-   "ep" 'flycheck-previous-error
-   )
+    ;; Applications
+    "e" '(:ignore t :which-key "Errors")
+    "en" 'flycheck-next-error
+    "ep" 'flycheck-previous-error
+    )
   )
 
 (defun neeasade/treemacs()
@@ -228,26 +235,26 @@
   (use-package company
     :config
     (load-settings
-     "company"
-     '(
-       idle-delay (if sys/windows? 2 0)
-       selection-wrap-around t
-       tooltip-align-annotations t
-       dabbrev-downcase nil
-       dabbrev-ignore-case t
-       tooltip-align-annotations t
-       tooltip-margin 2
-       global-modes '(not
-		      org-mode
-		      shell-mode
-		      circe-chat-mode
-		      circe-channel-mode
-		      )
-       )
-     )
+      'company
+      '(
+         idle-delay (if sys/windows? 2 0)
+         selection-wrap-around t
+         tooltip-align-annotations t
+         dabbrev-downcase nil
+         dabbrev-ignore-case t
+         tooltip-align-annotations t
+         tooltip-margin 2
+         global-modes '(not
+                         org-mode
+                         shell-mode
+                         circe-chat-mode
+                         circe-channel-mode
+                         )
+         )
+      )
 
     (use-package company-flx
-      :config (company-flx-mode +1)
+      ;; :config (company-flx-mode +1)
       )
 
     ;; TODO: investigate tab handling like VS completely
@@ -264,9 +271,10 @@
 (defun neeasade/editing()
   (use-package editorconfig :config (editorconfig-mode 1))
   (setq tab-width 4)
+
   (use-package aggressive-indent
     :config
-    (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+    ;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
     (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
     )
 
@@ -279,60 +287,60 @@
   (defvar spacemacs--indent-variable-alist
     ;; Note that derived modes must come before their sources
     '(((awk-mode c-mode c++-mode java-mode groovy-mode
-	idl-mode java-mode objc-mode pike-mode) . c-basic-offset)
-      (python-mode . python-indent-offset)
-      (cmake-mode . cmake-tab-width)
-      (coffee-mode . coffee-tab-width)
-      (cperl-mode . cperl-indent-level)
-      (css-mode . css-indent-offset)
-      (elixir-mode . elixir-smie-indent-basic)
-      ((emacs-lisp-mode lisp-mode) . lisp-indent-offset)
-      (enh-ruby-mode . enh-ruby-indent-level)
-      (erlang-mode . erlang-indent-level)
-      (js2-mode . js2-basic-offset)
-      (js3-mode . js3-indent-level)
-      ((js-mode json-mode) . js-indent-level)
-      (latex-mode . (LaTeX-indent-level tex-indent-basic))
-      (livescript-mode . livescript-tab-width)
-      (mustache-mode . mustache-basic-offset)
-      (nxml-mode . nxml-child-indent)
-      (perl-mode . perl-indent-level)
-      (puppet-mode . puppet-indent-level)
-      (ruby-mode . ruby-indent-level)
-      (rust-mode . rust-indent-offset)
-      (scala-mode . scala-indent:step)
-      (sgml-mode . sgml-basic-offset)
-      (sh-mode . sh-basic-offset)
-      (typescript-mode . typescript-indent-level)
-      (web-mode . web-mode-markup-indent-offset)
-      (yaml-mode . yaml-indent-offset))
+         idl-mode java-mode objc-mode pike-mode) . c-basic-offset)
+       (python-mode . python-indent-offset)
+       (cmake-mode . cmake-tab-width)
+       (coffee-mode . coffee-tab-width)
+       (cperl-mode . cperl-indent-level)
+       (css-mode . css-indent-offset)
+       (elixir-mode . elixir-smie-indent-basic)
+       ((emacs-lisp-mode lisp-mode) . lisp-indent-offset)
+       (enh-ruby-mode . enh-ruby-indent-level)
+       (erlang-mode . erlang-indent-level)
+       (js2-mode . js2-basic-offset)
+       (js3-mode . js3-indent-level)
+       ((js-mode json-mode) . js-indent-level)
+       (latex-mode . (LaTeX-indent-level tex-indent-basic))
+       (livescript-mode . livescript-tab-width)
+       (mustache-mode . mustache-basic-offset)
+       (nxml-mode . nxml-child-indent)
+       (perl-mode . perl-indent-level)
+       (puppet-mode . puppet-indent-level)
+       (ruby-mode . ruby-indent-level)
+       (rust-mode . rust-indent-offset)
+       (scala-mode . scala-indent:step)
+       (sgml-mode . sgml-basic-offset)
+       (sh-mode . sh-basic-offset)
+       (typescript-mode . typescript-indent-level)
+       (web-mode . web-mode-markup-indent-offset)
+       (yaml-mode . yaml-indent-offset))
     "An alist where each key is either a symbol corresponding
-    to a major mode, a list of such symbols, or the symbol t,
-    acting as default. The values are either integers, symbols
-    or lists of these.")
+  to a major mode, a list of such symbols, or the symbol t,
+  acting as default. The values are either integers, symbols
+  or lists of these.")
 
   (defun spacemacs//set-evil-shift-width ()
     "Set the value of `evil-shift-width' based on the indentation settings of the
 current major mode."
     (let ((shift-width
-	   (catch 'break
-	     (dolist (test spacemacs--indent-variable-alist)
-	       (let ((mode (car test))
-		     (val (cdr test)))
-		 (when (or (and (symbolp mode) (derived-mode-p mode))
-			   (and (listp mode) (apply 'derived-mode-p mode))
-			   (eq 't mode))
-		   (when (not (listp val))
-		     (setq val (list val)))
-		   (dolist (v val)
-		     (cond
-		       ((integerp v) (throw 'break v))
-		       ((and (symbolp v) (boundp v))
-			(throw 'break (symbol-value v))))))))
-	     (throw 'break (default-value 'evil-shift-width)))))
+            (catch 'break
+              (dolist (test spacemacs--indent-variable-alist)
+                (let ((mode (car test))
+                       (val (cdr test)))
+                  (when (or (and (symbolp mode) (derived-mode-p mode))
+                          (and (listp mode) (apply 'derived-mode-p mode))
+                          (eq 't mode))
+                    (when (not (listp val))
+                      (setq val (list val)))
+                    (dolist (v val)
+                      (cond
+                        ((integerp v) (throw 'break v))
+                        ((and (symbolp v) (boundp v))
+                          (throw 'break (symbol-value v))))))))
+              (throw 'break (default-value 'evil-shift-width)))))
       (when (and (integerp shift-width)
-		 (< 0 shift-width))
-	(setq-local evil-shift-width shift-width))))
+              (< 0 shift-width))
+        (setq-local evil-shift-width shift-width))))
 
   (add-hook 'after-change-major-mode-hook 'spacemacs//set-evil-shift-width 'append)
 
@@ -340,7 +348,11 @@ current major mode."
   ;; note for the future: editorconfig is awesome.
   (setq sh-basic-offset 2)
 
-  ;; todo: find evil package that only removes whitespace on lines you entered in insert mode
+  ;; only trim whitespace on lines you edit
+  (use-package ws-butler :config (ws-butler-global-mode))
+
+  ;; to always trim it all
+  ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
   )
 
 (defun neeasade/dashdocs()
@@ -354,16 +366,14 @@ current major mode."
 
   ;; todo: this needs a counsel-dash-at-point/how to get point
   (neeasade/bind
-   "jd" 'counsel-dash
-   )
-
-  ;; todo: neeasade/install-dashdoc call hook in right places 
+    "jd" 'counsel-dash
+    )
   )
 
 (defun spacemacs/compute-powerline-height ()
   "Return an adjusted powerline height."
   (let ((scale (if (and (boundp 'powerline-scale) powerline-scale)
-		   powerline-scale 1)))
+                 powerline-scale 1)))
     (truncate (* scale (frame-char-height)))))
 
 (defun neeasade/style()
@@ -379,7 +389,7 @@ current major mode."
 
   ;; todo: make this on all frames, not just current
   (set-frame-parameter (selected-frame) 'internal-border-width
-		       (string-to-number (get-resource "st.borderpx")))
+    (string-to-number (get-resource "st.borderpx")))
 
   ;; this is only viable if can get it on internal window edges only (not right now)
   ;; http://emacsredux.com/blog/2015/01/18/customizing-the-fringes/
@@ -390,16 +400,16 @@ current major mode."
 
   ;; assume softer vertical border by matching comment face
   (set-face-attribute 'vertical-border
-		      nil
-		      :foreground (face-attribute 'font-lock-comment-face :foreground))
+    nil
+    :foreground (face-attribute 'font-lock-comment-face :foreground))
 
   ;; this doesn't persist across new frames even though the docs say it should
   (set-face-attribute 'fringe nil :background nil)
   (add-hook 'after-make-frame-functions
-	    (lambda (frame)
-	      (set-face-attribute 'fringe nil :background nil)
-	      )
-	    )
+    (lambda (frame)
+      (set-face-attribute 'fringe nil :background nil)
+      )
+    )
 
   ;; set font on current and future
   (set-face-attribute 'default nil :font (get-resource "st.font"))
@@ -409,21 +419,23 @@ current major mode."
   ;; (set-face-bold-p doesn't cover everything, some fonts use slant and underline as bold...)
 
   (mapc (lambda (face)
-	  (set-face-attribute face nil
-			      :weight 'normal
-			      :slant 'normal
-			      :underline nil
-			      ;;:inherit nil
-			      ))
-	(face-list))
+          (set-face-attribute face nil
+            :weight 'normal
+            :slant 'normal
+            :underline nil
+            ;;:inherit nil
+            ))
+    (face-list))
 
   ;; make whitespace-mode use just basic coloring
-  ;;(setq whitespace-style (quote (spaces tabs newline space-mark tab-mark newline-mark)))
 
-  ;; todo: fix this
-  ;; (eval-after-load 'whitespace-mode
-  ;; (set-face-attribute 'whitespace-space nil :background nil)
-  ;; )
+  (eval-after-load "whitespace"
+    (progn
+      (set-face-attribute 'whitespace-space nil :background nil)
+      (set-face-attribute 'whitespace-tab nil :background nil)
+      ;; todo: match end of line foreground to whitespace-{tab,space} foreground
+      )
+    )
 
   ;; optionally consider https://github.com/tautologyclub/feebleline
   ;; (use-package feebleline)
@@ -432,13 +444,12 @@ current major mode."
     :config
     (require 'spaceline-config)
     (load-settings
-     "powerline"
-     '(
-       scale (string-to-number (get-resource "Emacs.powerlinescale"))
-       height (spacemacs/compute-powerline-height)
-       default-separator (get-resource "emacs.powerline")
-       default-separator (get-resource "Emacs.powerline")
-       ))
+      'powerline
+      '(
+         scale (string-to-number (get-resource "Emacs.powerlinescale"))
+         height (spacemacs/compute-powerline-height)
+         default-separator (get-resource "Emacs.powerline")
+         ))
 
     ;; todo sync modeline background color?
     ;; other option is remove off color section/pick explicitly
@@ -448,7 +459,6 @@ current major mode."
     (spaceline-toggle-minor-modes-off)
     (spaceline-compile)
     )
-
   )
 
 (defun neeasade/window-management()
@@ -463,76 +473,76 @@ current major mode."
 (defun neeasade/org()
   (use-package org
     :straight (:host github
-		     :repo "emacsmirror/org"
-		     :files ("lisp/*.el" "contrib/lisp/*.el"))
+                :repo "emacsmirror/org"
+                :files ("lisp/*.el" "contrib/lisp/*.el"))
 
     :config
     ;; todo: look up org-deadline-warn-days variable
     (load-settings
-     "org"
-     '(
-       ;; where
-       directory "~/org/projects"
-       agenda-files (list org-directory)
-       default-notes-file  "~/org/inbox.org"
-       default-diary-file  "~/org/diary.org"
-       default-habits-file  "~/org/habits.org"
+      'org
+      '(
+         ;; where
+         directory "~/org/projects"
+         agenda-files (list org-directory)
+         default-notes-file  "~/org/inbox.org"
+         default-diary-file  "~/org/diary.org"
+         default-habits-file  "~/org/habits.org"
 
-       ;; style
-       ellipsis "…"
-       startup-indented t
-       startup-folded t
+         ;; style
+         ellipsis "…"
+         startup-indented t
+         startup-folded t
 
-       ;; behavior
-       todo-keywords
-       '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-	 (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
+         ;; behavior
+         todo-keywords
+         '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
+            (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
 
-       blank-before-new-entry '((heading . t) (plainlist-item . nil))
-       tag-alist '(
-		   ("test" . ?t)
-		   ("endtest" . ?e)
-		   )
+         blank-before-new-entry '((heading . t) (plainlist-item . nil))
+         tag-alist '(
+                      ("test" . ?t)
+                      ("endtest" . ?e)
+                      )
 
-       ;; clock
-       clock-x11idle-program-name "x11idle"
-       clock-idle-time 5
-       clock-sound nil
-       pomodoro-play-sounds nil
-       pomodoro-keep-killed-pomodoro-time t
-       pomodoro-ask-upon-killing nil
+         ;; clock
+         clock-x11idle-program-name "x11idle"
+         clock-idle-time 5
+         clock-sound nil
+         pomodoro-play-sounds nil
+         pomodoro-keep-killed-pomodoro-time t
+         pomodoro-ask-upon-killing nil
 
-       ;; capture
-       capture-templates
-       '(("t" "todo" entry (file org-default-notes-file)
-	  "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
+         ;; capture
+         capture-templates
+         '(("t" "todo" entry (file org-default-notes-file)
+             "* TODO %?\n%u\n%a\n" :clock-in t :clock-resume t)
 
-	 ("b" "Blank" entry (file org-default-notes-file)
-	  "* %?\n%u")
+            ("b" "Blank" entry (file org-default-notes-file)
+              "* %?\n%u")
 
-	 ("m" "Meeting" entry (file org-default-notes-file)
-	  "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
+            ("m" "Meeting" entry (file org-default-notes-file)
+              "* MEETING with %? :MEETING:\n%t" :clock-in t :clock-resume t)
 
-	 ("d" "Diary" entry (file+datetree org-default-diary-file)
-	  "* %?\n%U\n" :clock-in t :clock-resume t)
+            ("d" "Diary" entry (file+datetree org-default-diary-file)
+              "* %?\n%U\n" :clock-in t :clock-resume t)
 
-	 ("D" "Daily Log" entry (file "~/org/daily-log.org")
-	  "* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
+            ("D" "Daily Log" entry (file "~/org/daily-log.org")
+              "* %u %?\n*Summary*: \n\n*Problem*: \n\n*Insight*: \n\n*Tomorrow*: " :clock-in t :clock-resume t)
 
-	 ("i" "Idea" entry (file org-default-notes-file)
-	  "* %? :IDEA: \n%u" :clock-in t :clock-resume t)
+            ("i" "Idea" entry (file org-default-notes-file)
+              "* %? :IDEA: \n%u" :clock-in t :clock-resume t)
 
-	 ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
-	  "** NEXT %? \nDEADLINE: %t")
-	 )
+            ("n" "Next Task" entry (file+headline org-default-notes-file "Tasks")
+              "** NEXT %? \nDEADLINE: %t")
+            )
 
-       ;; current file or any of the agenda-files, max 9 levels deep
-       refile-targets '(
-			(nil :maxlevel . 9)
-			(org-agenda-files :maxlevel . 9)
-			)
-       )
-     )
+         ;; current file or any of the agenda-files, max 9 levels deep
+         refile-targets '(
+                           (nil :maxlevel . 9)
+                           (org-agenda-files :maxlevel . 9)
+                           )
+         )
+      )
     )
 
   (use-package evil-org
@@ -540,8 +550,8 @@ current major mode."
     :config
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'evil-org-mode-hook
-	      (lambda ()
-		(evil-org-set-key-theme))))
+      (lambda ()
+        (evil-org-set-key-theme))))
 
   (defun neeasade/org-open-url()
     (interactive)
@@ -559,10 +569,10 @@ current major mode."
   ;; for externals to call into
   (defun neeasade/org-get-active()
     (if (not (bound-and-true-p org-active-story))
-	(progn
-	  (neeasade/org-goto-active)
-	  (neeasade/org-set-active)
-	  )
+      (progn
+        (neeasade/org-goto-active)
+        (neeasade/org-set-active)
+        )
       org-active-story
       )
     )
@@ -577,21 +587,21 @@ current major mode."
     )
 
   (add-hook
-   'org-mode-hook
-   ;; todo: checking evil-org
-   (neeasade/bind-leader-mode
-    'org
-    "t" 'org-todo
-    "T" 'org-show-todo-tree
-    "v" 'org-mark-element
-    "a" 'org-agenda
-    "l" 'evil-org-open-links
-    "p" 'org-pomodoro
-    "q" 'tp-set-org-userstory
-    "f" 'neeasade/org-set-active
-    "b" 'neeasade/org-open-url
+    'org-mode-hook
+    ;; todo: checking evil-org
+    (neeasade/bind-leader-mode
+      'org
+      "t" 'org-todo
+      "T" 'org-show-todo-tree
+      "v" 'org-mark-element
+      "a" 'org-agenda
+      "l" 'evil-org-open-links
+      "p" 'org-pomodoro
+      "q" 'tp-set-org-userstory
+      "f" 'neeasade/org-set-active
+      "b" 'neeasade/org-open-url
+      )
     )
-   )
 
   (use-package org-pomodoro
     :config
@@ -599,38 +609,39 @@ current major mode."
       ;; todo: setup remote mpd and pass and then use that when away
       ;; implies an initial check to see if we are away
       (let ((command (concat (if sys/windows? "mpc" "player.sh") " " action)))
-	(shell-command command)
-	))
+        (shell-command command)
+        ))
 
     (add-hook 'org-pomodoro-started-hook
-	      (apply-partially #'neeasade/toggle-music "play"))
+      (apply-partially #'neeasade/toggle-music "play"))
 
     (add-hook 'org-pomodoro-break-finished-hook
-	      (apply-partially #'neeasade/toggle-music "play"))
+      (apply-partially #'neeasade/toggle-music "play"))
 
     (add-hook 'org-pomodoro-finished-hook
-	      (apply-partially #'neeasade/toggle-music "pause"))
+      (apply-partially #'neeasade/toggle-music "pause"))
     )
   
   (neeasade/bind
-   "jo" (lambda() (interactive) (neeasade/find-or-open "~/org/notes.org" ))
-   "jf" 'neeasade/org-goto-active
-   )
+    "jo" (lambda() (interactive) (neeasade/find-or-open "~/org/notes.org" ))
+    "jf" 'neeasade/org-goto-active
+    )
   )
 
 (defun neeasade/clojure()
   (use-package clojure-mode)
   (use-package cider)
+  (neeasade/install-dashdoc "Clojure")
 
   ;; TODO: learn lispyville
-  (use-package lispy)
+  ;; (use-package lispy)
 
   (neeasade/bind-leader-mode
-   'clojure
-   "er" 'cider-eval-region
-   "ei" 'cider-eval-last-sexp
-   "eb" 'cider-evil-file
-   )
+    'clojure
+    "er" 'cider-eval-region
+    "ei" 'cider-eval-last-sexp
+    "eb" 'cider-evil-file
+    )
   )
 
 (defun neeasade/nix()
@@ -639,32 +650,32 @@ current major mode."
 
 (defun neeasade/target-process()
   (if enable-tp?
-      (load "~/.emacs.d/lisp/targetprocess.el")
+    (load "~/.emacs.d/lisp/targetprocess.el")
     )
   )
 
 ;; bindings, ivy, counsel, alerts, which-key
 (defun neeasade/interface()
-  ;; ref: http://oremacs.com/2016/01/06/ivy-flx/
-  ;; (use-package flx)
 
   (defun dynamic-ivy-height()
     (let (
-	  (computed (/ (window-total-size) 2))
-	  )
+           (computed (/ (window-total-size) 2))
+           )
       (setq ivy-height computed)
       (setq ivy-fixed-height-minibuffer computed)
       )
     )
 
+  ;; ref: http://oremacs.com/2016/01/06/ivy-flx/
+  ;; (use-package flx)
   (dynamic-ivy-height)
   (add-hook 'window-configuration-change-hook 'dynamic-ivy-height)
 
   (use-package ivy
     :config
     (setq ivy-re-builders-alist
-	  '((ivy-switch-buffer . ivy--regex-plus)
-	    (t . ivy--regex-fuzzy)))
+      '((ivy-switch-buffer . ivy--regex-plus)
+         (t . ivy--regex-fuzzy)))
 
     (setq ivy-initial-inputs-alist nil)
     (ivy-mode 1)
@@ -683,57 +694,56 @@ current major mode."
     (setq ranger-override-dired t)
     :config
     (setq ranger-show-literal nil
-	  ranger-show-hidden t
-	  )
-    
-    (neeasade/bind
-     "d" 'deer
-     )
+      ranger-show-hidden t
+      )
+
+    (neeasade/bind "d" 'deer)
     )
 
   (neeasade/bind
-   "'"   'shell-pop
-   "/"   'counsel-rg
-   "TAB" '(switch-to-other-buffer :which-key "prev buffer")
-   "SPC" 'counsel-M-x
+    "'"   'shell-pop
+    "/"   'counsel-rg
+    "TAB" '(switch-to-other-buffer :which-key "prev buffer")
+    "SPC" 'counsel-M-x
 
-   ;; windows
-   "w" '(:ignore t :which-key "Windows")
-   "wh" 'evil-window-left
-   "wj" 'evil-window-down
-   "wk" 'evil-window-up
-   "wl" 'evil-window-right
-   "wd" 'evil-window-delete
-   "ww" 'other-window
-   ;; window max
-   "wm" 'delete-other-windows ;; window-max
-   "wo" 'other-frame
+    ;; windows
+    "w" '(:ignore t :which-key "Windows")
+    "wh" 'evil-window-left
+    "wj" 'evil-window-down
+    "wk" 'evil-window-up
+    "wl" 'evil-window-right
+    "wd" 'evil-window-delete
+    "ww" 'other-window
 
-   ;; Applications
-   "a" '(:ignore t :which-key "Applications")
-   "ar" 'ranger
-   "ad" 'dired
+    "wm" 'delete-other-windows ;; window-max
+    "wo" 'other-frame
 
-   "b" '(:ignore t :which-key "Buffers")
-   "bd" '(kill-buffer nil)
-   "bs" '(switch-to-buffer (get-buffer-create "*scratch*"))
-   )
+    ;; Applications
+    "a" '(:ignore t :which-key "Applications")
+    "ar" 'ranger
+    "ad" 'dired
+
+    "b" '(:ignore t :which-key "Buffers")
+    "bd" '(kill-buffer nil)
+    "bs" '(switch-to-buffer (get-buffer-create "*scratch*"))
+    )
 
   (use-package alert
     :config (setq alert-default-style
-		  (if sys/windows?
-		      'toaster
-		    'libnotify
-		    )))
+              (if sys/windows?
+                'toaster
+                'libnotify
+                )))
 
   (use-package which-key
     :config
     (setq
-     which-key-sort-order 'which-key-key-order-alpha
-     which-key-idle-delay 3.0
-     which-key-side-window-max-width 0.33
-     )
+      which-key-sort-order 'which-key-key-order-alpha
+      which-key-idle-delay 3.0
+      which-key-side-window-max-width 0.33
+      )
     (which-key-setup-side-window-right-bottom)
+    (which-key-mode)
     )
   )
 
@@ -746,20 +756,20 @@ current major mode."
   (use-package projectile)
   ;; (project-find-file-in)
   (neeasade/bind
-
-   "p" '(:ignore t :which-key "projects")
-   "pf" 'counsel-git
-   ;; "ad" 'dired
-   )
+    "p" '(:ignore t :which-key "projects")
+    "pf" 'counsel-git
+    )
   )
 
 (defun neeasade/javascript()
+  (neeasade/install-dashdoc "Javascript")
+
   (defun js-jsx-indent-line-align-closing-bracket ()
     "Workaround sgml-mode and align closing bracket with opening bracket"
     (save-excursion
       (beginning-of-line)
       (when (looking-at-p "^ +\/?> *$")
-	(delete-char sgml-basic-offset))))
+        (delete-char sgml-basic-offset))))
   (advice-add #'js-jsx-indent-line :after #'js-jsx-indent-line-align-closing-bracket)
 
   ;; use web-mode for .js files
@@ -769,11 +779,11 @@ current major mode."
   (use-package web-mode
     :config
     (add-hook 'web-mode-hook
-	      (lambda ()
-		;; short circuit js mode and just do everything in jsx-mode
-		(if (equal web-mode-content-type "javascript")
-		    (web-mode-set-content-type "jsx")
-		  (message "now set to: %s" web-mode-content-type))))
+      (lambda ()
+        ;; short circuit js mode and just do everything in jsx-mode
+        (if (equal web-mode-content-type "javascript")
+          (web-mode-set-content-type "jsx")
+          (message "now set to: %s" web-mode-content-type))))
 
     )
 
@@ -784,16 +794,17 @@ current major mode."
 
     :config
     (neeasade/bind-leader-mode
-     'nodejs-repl
-     "er "'nodejs-repl-send-region
-     "eb" 'nodejs-repl-load-file
-     "ee" 'nodejs-repl-send-line
-     "ei" 'nodejs-repl-send-last-expression
-     )
+      'nodejs-repl
+      "er "'nodejs-repl-send-region
+      "eb" 'nodejs-repl-load-file
+      "ee" 'nodejs-repl-send-line
+      "ei" 'nodejs-repl-send-last-expression
+      )
     )
   )
 
 (defun neeasade/typescript()
+  (neeasade/install-dashdoc "Typescript")
   (use-package tide
     :config
     (defun setup-tide-mode ()
@@ -825,26 +836,26 @@ current major mode."
     (setq magit-repository-directories (list "~/git"))
     ;; https://magit.vc/manual/magit/Performance.html
     (if sys/windows?
-	(load-settings
-	 "magit"
-	 '(
-	   ;; diff perf
-	   diff-highlight-indentation nil
-	   diff-highlight-trailing nil
-	   diff-paint-whitespace nil
-	   diff-highlight-hunk-body nil
-	   diff-refine-hunk nil
+      (load-settings
+        'magit
+        '(
+           ;; diff perf
+           diff-highlight-indentation nil
+           diff-highlight-trailing nil
+           diff-paint-whitespace nil
+           diff-highlight-hunk-body nil
+           diff-refine-hunk nil
 
-	   ;; 
-	   refresh-status-buffer nil
-	   )
-	 )
+           ;;
+           refresh-status-buffer nil
+           )
+        )
 
       ;; don't show diff when committing --
-      ;; means reviewing will have to be purposeful before  
+      ;; means reviewing will have to be purposeful before
       (remove-hook 'server-switch-hook 'magit-commit-diff)
 
-      ;; disable emacs VC 
+      ;; disable emacs VC
       (setq vc-handled-backends nil)
 
       ;; todo: consider
@@ -856,7 +867,7 @@ current major mode."
   (use-package evil-magit
     :config
     (evil-define-key
-	evil-magit-state magit-mode-map "?" 'evil-search-backward)
+      evil-magit-state magit-mode-map "?" 'evil-search-backward)
     )
 
   (use-package git-gutter-fringe
@@ -892,12 +903,12 @@ current major mode."
     ("q" nil :exit t))
 
   (neeasade/bind
-   "g" '(:ignore t :which-key "git")
-   "gs" 'magit-status
-   "gb" 'magit-blame
-   "gl" 'magit-log-current
-   "gm" 'git-smerge-menu/body
-   )
+    "g" '(:ignore t :which-key "git")
+    "gs" 'magit-status
+    "gb" 'magit-blame
+    "gl" 'magit-log-current
+    "gm" 'git-smerge-menu/body
+    )
   )
 
 (defun neeasade/jump()
@@ -907,10 +918,10 @@ current major mode."
     (setq dumb-jump-force-searcher 'rg)
     (smart-jump-setup-default-registers)
     (neeasade/bind
-     "j" '(:ignore t :which-key "Jump")
-     "jj" 'smart-jump-go
-     "jb" 'smart-jump-back
-     )
+      "j" '(:ignore t :which-key "Jump")
+      "jj" 'smart-jump-go
+      "jb" 'smart-jump-back
+      )
     )
   )
 
@@ -918,43 +929,43 @@ current major mode."
   (use-package circe
     :config
     (setq circe-network-options
-	  `(
-	    ("Freenode"
-	     :nick "neeasade"
-	     :host "irc.freenode.net"
-	     :tls t
-	     :nickserv-password ,(pass "freenode")
-	     :channels (:after-auth "#bspwm")
-	     )
-	    ("Rizon"
-	     :nick "neeasade"
-	     :host "irc.rizon.net"
-	     :port (6667 . 6697)
-	     :tls t
-	     :channels (:after-auth "#rice" "#code")
-	     :nickserv-password ,(pass "rizon/pass")
-	     :nickserv-mask ,(rx bol "NickServ!service@rizon.net" eol)
-	     :nickserv-identify-challenge ,(rx bol "This nickname is registered and protected.")
-	     :nickserv-identify-command "PRIVMSG NickServ :IDENTIFY {password}"
-	     :nickserv-identify-confirmation ,(rx bol "Password accepted - you are now recognized." eol)
-	     )
-	    ))
+      `(
+         ("Freenode"
+           :nick "neeasade"
+           :host "irc.freenode.net"
+           :tls t
+           :nickserv-password ,(pass "freenode")
+           :channels (:after-auth "#bspwm")
+           )
+         ("Rizon"
+           :nick "neeasade"
+           :host "irc.rizon.net"
+           :port (6667 . 6697)
+           :tls t
+           :channels (:after-auth "#rice" "#code")
+           :nickserv-password ,(pass "rizon/pass")
+           :nickserv-mask ,(rx bol "NickServ!service@rizon.net" eol)
+           :nickserv-identify-challenge ,(rx bol "This nickname is registered and protected.")
+           :nickserv-identify-command "PRIVMSG NickServ :IDENTIFY {password}"
+           :nickserv-identify-confirmation ,(rx bol "Password accepted - you are now recognized." eol)
+           )
+         ))
     )
 
   (defun circe-network-connected-p (network)
     "Return non-nil if there's any Circe server-buffer whose `circe-server-netwok' is NETWORK."
     (catch 'return
       (dolist (buffer (circe-server-buffers))
-	(with-current-buffer buffer
-	  (if (string= network circe-server-network)
-	      (throw 'return t))))))
+        (with-current-buffer buffer
+          (if (string= network circe-server-network)
+            (throw 'return t))))))
 
   (defun circe-maybe-connect (network)
     "Connect to NETWORK, but ask user for confirmation if it's already been connected to."
     (interactive "sNetwork: ")
     (if (or (not (circe-network-connected-p network))
-	    (y-or-n-p (format "Already connected to %s, reconnect?" network)))
-	(circe network)))
+          (y-or-n-p (format "Already connected to %s, reconnect?" network)))
+      (circe network)))
 
   (defun connect-all-irc()
     (interactive)
@@ -966,7 +977,7 @@ current major mode."
   (add-hook 'circe-chat-mode-hook 'my-circe-prompt)
   (defun my-circe-prompt ()
     (lui-set-prompt
-     (concat (propertize (concat (buffer-name) ">") 'face 'circe-prompt-face) " ")))
+      (concat (propertize (concat (buffer-name) ">") 'face 'circe-prompt-face) " ")))
 
   ;; prevent too long pastes/prompt on it:
   (require 'lui-autopaste)
@@ -982,8 +993,8 @@ current major mode."
   (enable-lui-logging-globally)
 
   (setq
-   lui-time-stamp-position 'right-margin
-   lui-time-stamp-format "%H:%M")
+    lui-time-stamp-position 'right-margin
+    lui-time-stamp-format "%H:%M")
 
   (add-hook 'lui-mode-hook 'my-circe-set-margin)
   (defun my-circe-set-margin ()
@@ -991,16 +1002,16 @@ current major mode."
 
   ;; fluid width windows
   (setq
-   lui-time-stamp-position 'right-margin
-   lui-fill-type nil)
+    lui-time-stamp-position 'right-margin
+    lui-fill-type nil)
 
   (add-hook 'lui-mode-hook 'my-lui-setup)
   (defun my-lui-setup ()
     (setq
-     fringes-outside-margins t
-     right-margin-width 5
-     word-wrap t
-     wrap-prefix "    ")
+      fringes-outside-margins t
+      right-margin-width 5
+      word-wrap t
+      wrap-prefix "    ")
     (setf (cdr (assoc 'continuation fringe-indicator-alist)) nil)
     )
 
@@ -1012,8 +1023,8 @@ current major mode."
 
     (eval-after-load "circe-notifications"
       '(setq circe-notifications-watch-strings
-	;; example: '("people" "you" "like" "to" "hear" "from")))
-	'("neeasade")))
+         ;; example: '("people" "you" "like" "to" "hear" "from")))
+         '("neeasade")))
 
     (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
     )
@@ -1022,17 +1033,17 @@ current major mode."
   (defun neeasade/jump-irc()
     (interactive)
     (ivy-read "channel: "
-	      (remove-if-not
-	       (lambda (s) (s-match "#.*" s))
-	       (mapcar 'buffer-name (buffer-list))
-	       )
-	      :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
+      (remove-if-not
+        (lambda (s) (s-match "#.*" s))
+        (mapcar 'buffer-name (buffer-list))
+        )
+      :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
     )
 
   (neeasade/bind
-   "ai" 'connect-all-irc
-   "ji" 'neeasade/jump-irc
-   )
+    "ai" 'connect-all-irc
+    "ji" 'neeasade/jump-irc
+    )
   )
 
 (defun neeasade/pdf()
@@ -1045,82 +1056,82 @@ current major mode."
 
 (defun neeasade/twitter()
   (use-package twittering-mode
-    :commands twit
+    :commands (twitter-start)
     :init
     (add-hook 'twittering-edit-mode-hook (lambda () (flyspell-mode)))
     :config
     (load-settings
-     "twittering"
-     use-master-password t
-     icon-mode t
-     use-icon-storage t
-     ;; icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
-     convert-fix-size 52
-     initial-timeline-spec-string '(":home")
-     edit-skeleton 'inherit-any
-     display-remaining t
-     timeline-header  ""
-     timeline-footer  ""
-     status-format "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n"
-     )
+      'twittering
+      use-master-password t
+      icon-mode t
+      use-icon-storage t
+      ;; icon-storage-file (concat joe-emacs-temporal-directory "twittering-mode-icons.gz")
+      convert-fix-size 52
+      initial-timeline-spec-string '(":home")
+      edit-skeleton 'inherit-any
+      display-remaining t
+      timeline-header  ""
+      timeline-footer  ""
+      status-format "%i  %S, %RT{%FACE[bold]{%S}} %@  %FACE[shadow]{%p%f%L%r}\n%FOLD[        ]{%T}\n"
+      )
 
     ;; set the new bindings
     (bind-keys :map twittering-mode-map
-	       ("\\" . hydra-twittering/body)
-	       ("q" . twittering-kill-buffer)
-	       ("Q" . twittering-edit-mode)
-	       ("j" . twittering-goto-next-status)
-	       ("k" . twittering-goto-previous-status)
-	       ("h" . twittering-switch-to-next-timeline)
-	       ("l" . twittering-switch-to-previous-timeline)
-	       ("g" . beginning-of-buffer)
-	       ("G" . end-of-buffer)
-	       ("t" . twittering-update-status-interactive)
-	       ("X" . twittering-delete-status)
-	       ("RET" . twittering-reply-to-user)
-	       ("r" . twittering-native-retweet)
-	       ("R" . twittering-organic-retweet)
-	       ("d" . twittering-direct-message)
-	       ("u" . twittering-current-timeline)
-	       ("b" . twittering-favorite)
-	       ("B" . twittering-unfavorite)
-	       ("f" . twittering-follow)
-	       ("F" . twittering-unfollow)
-	       ("i" . twittering-view-user-page)
-	       ("/" . twittering-search)
-	       ("." . twittering-visit-timeline)
-	       ("@" . twittering-other-user-timeline)
-	       ("T" . twittering-toggle-or-retrieve-replied-statuses)
-	       ("o" . twittering-click)
-	       ("TAB" . twittering-goto-next-thing)
-	       ("<backtab>" . twittering-goto-previous-thing)
-	       ("n" . twittering-goto-next-status-of-user)
-	       ("p" . twittering-goto-previous-status-of-user)
-	       ("SPC" . twittering-scroll-up)
-	       ("S-SPC" . twittering-scroll-down)
-	       ("y" . twittering-push-uri-onto-kill-ring)
-	       ("Y" . twittering-push-tweet-onto-kill-ring)
-	       ("a" . twittering-toggle-activate-buffer)))
+      ("\\" . hydra-twittering/body)
+      ("q" . twittering-kill-buffer)
+      ("Q" . twittering-edit-mode)
+      ("j" . twittering-goto-next-status)
+      ("k" . twittering-goto-previous-status)
+      ("h" . twittering-switch-to-next-timeline)
+      ("l" . twittering-switch-to-previous-timeline)
+      ("g" . beginning-of-buffer)
+      ("G" . end-of-buffer)
+      ("t" . twittering-update-status-interactive)
+      ("X" . twittering-delete-status)
+      ("RET" . twittering-reply-to-user)
+      ("r" . twittering-native-retweet)
+      ("R" . twittering-organic-retweet)
+      ("d" . twittering-direct-message)
+      ("u" . twittering-current-timeline)
+      ("b" . twittering-favorite)
+      ("B" . twittering-unfavorite)
+      ("f" . twittering-follow)
+      ("F" . twittering-unfollow)
+      ("i" . twittering-view-user-page)
+      ("/" . twittering-search)
+      ("." . twittering-visit-timeline)
+      ("@" . twittering-other-user-timeline)
+      ("T" . twittering-toggle-or-retrieve-replied-statuses)
+      ("o" . twittering-click)
+      ("TAB" . twittering-goto-next-thing)
+      ("<backtab>" . twittering-goto-previous-thing)
+      ("n" . twittering-goto-next-status-of-user)
+      ("p" . twittering-goto-previous-status-of-user)
+      ("SPC" . twittering-scroll-up)
+      ("S-SPC" . twittering-scroll-down)
+      ("y" . twittering-push-uri-onto-kill-ring)
+      ("Y" . twittering-push-tweet-onto-kill-ring)
+      ("a" . twittering-toggle-activate-buffer)))
 
   (defhydra hydra-twittering (:color blue :hint nil)
     "
-								    ╭────────────┐
-     Tweets                User                        Timeline     │ Twittering │
+                  ╭────────────┐
+   Tweets                User                        Timeline     │ Twittering │
   ╭─────────────────────────────────────────────────────────────────┴────────────╯
-    _k_  [_t_] post tweet      _p_  [_f_] follow                  ^_g_^      [_u_] update
-    ^↑^  [_X_] delete tweet    ^↑^  [_F_] unfollow              ^_S-SPC_^    [_._] new
-    ^ ^  [_r_] retweet         ^ ^  [_d_] direct message          ^^↑^^      [^@^] current user
-    ^↓^  [_R_] retweet & edit  ^↓^  [_i_] profile (browser)   _h_ ←   → _l_  [_a_] toggle
-    _j_  [_b_] favorite        _n_   ^ ^                          ^^↓^^
-    ^ ^  [_B_] unfavorite      ^ ^   ^ ^                         ^_SPC_^
-    ^ ^  [_RET_] reply         ^ ^   ^ ^                          ^_G_^
-    ^ ^  [_T_] show Thread
-    ^ ^  [_y_] yank url          Items                     Do
-    ^ ^  [_Y_] yank tweet     ╭───────────────────────────────────────────────────────
-    ^ ^  [_e_] edit mode        _<backtab>_ ← _o_pen → _<tab>_    [_q_] exit
-    ^ ^   ^ ^                   ^         ^   ^ ^      ^     ^    [_/_] search
+  _k_  [_t_] post tweet      _p_  [_f_] follow                  ^_g_^      [_u_] update
+  ^↑^  [_X_] delete tweet    ^↑^  [_F_] unfollow              ^_S-SPC_^    [_._] new
+  ^ ^  [_r_] retweet         ^ ^  [_d_] direct message          ^^↑^^      [^@^] current user
+  ^↓^  [_R_] retweet & edit  ^↓^  [_i_] profile (browser)   _h_ ←   → _l_  [_a_] toggle
+  _j_  [_b_] favorite        _n_   ^ ^                          ^^↓^^
+  ^ ^  [_B_] unfavorite      ^ ^   ^ ^                         ^_SPC_^
+  ^ ^  [_RET_] reply         ^ ^   ^ ^                          ^_G_^
+  ^ ^  [_T_] show Thread
+  ^ ^  [_y_] yank url          Items                     Do
+  ^ ^  [_Y_] yank tweet     ╭───────────────────────────────────────────────────────
+  ^ ^  [_e_] edit mode        _<backtab>_ ← _o_pen → _<tab>_    [_q_] exit
+  ^ ^   ^ ^                   ^         ^   ^ ^      ^     ^    [_/_] search
   --------------------------------------------------------------------------------
-       "
+     "
     ("\\" hydra-master/body "back")
     ("<ESC>" nil "quit")
     ("q"          twittering-kill-buffer)
@@ -1158,7 +1169,7 @@ current major mode."
     ("Y"          twittering-push-tweet-onto-kill-ring)
     ("a"          twittering-toggle-activate-buffer))
 
-  ;; todo here: binding to jump to twittering buffer/launch "at"
+  (neeasade/bind "at" 'twitter-start)
   )
 
 (defun neeasade/slack()
@@ -1175,51 +1186,51 @@ current major mode."
     (setq slack-request-timeout 50)
 
     (slack-register-team
-     :name (pass "slackteam")
-     :default t
-     :client-id (pass "slackid")
-     :client-secret (pass "slack")
-     :token (pass "slacktoken")
-     :subscribed-channels '(general random)
-     :full-and-display-names t
-     )
+      :name (pass "slackteam")
+      :default t
+      :client-id (pass "slackid")
+      :client-secret (pass "slack")
+      :token (pass "slacktoken")
+      :subscribed-channels '(general random)
+      :full-and-display-names t
+      )
     )
 
   ;; todo: where is slack-info/context for this bind
   (neeasade/bind-leader-mode
-   'slack-info
-   "u" 'slack-room-update-messages)
+    'slack-info
+    "u" 'slack-room-update-messages)
 
   (neeasade/bind-leader-mode
-   'slack
-   "c" 'slack-buffer-kill
-   "ra" 'slack-message-add-reaction
-   "rr" 'slack-message-remove-reaction
-   "rs" 'slack-message-show-reaction-users
-   "pl" 'slack-room-pins-list
-   "pa" 'slack-message-pins-add
-   "pr" 'slack-message-pins-remove
-   "mm" 'slack-message-write-another-buffer
-   "me" 'slack-message-edit
-   "md" 'slack-message-delete
-   "u" 'slack-room-update-messages
-   "2" 'slack-message-embed-mention
-   "3" 'slack-message-embed-channel
-   )
+    'slack
+    "c" 'slack-buffer-kill
+    "ra" 'slack-message-add-reaction
+    "rr" 'slack-message-remove-reaction
+    "rs" 'slack-message-show-reaction-users
+    "pl" 'slack-room-pins-list
+    "pa" 'slack-message-pins-add
+    "pr" 'slack-message-pins-remove
+    "mm" 'slack-message-write-another-buffer
+    "me" 'slack-message-edit
+    "md" 'slack-message-delete
+    "u" 'slack-room-update-messages
+    "2" 'slack-message-embed-mention
+    "3" 'slack-message-embed-channel
+    )
   ;; todo: something for these maybe
   ;; "\C-n" 'slack-buffer-goto-next-message
   ;; "\C-p" 'slack-buffer-goto-prev-message)
 
   (neeasade/bind-leader-mode
-   'slack-edit-message
-   "k" 'slack-message-cancel-edit
-   "s" 'slack-message-send-from-buffer
-   "2" 'slack-message-embed-mention
-   "3" 'slack-message-embed-channel
-   )
+    'slack-edit-message
+    "k" 'slack-message-cancel-edit
+    "s" 'slack-message-send-from-buffer
+    "2" 'slack-message-embed-mention
+    "3" 'slack-message-embed-channel
+    )
 
   (neeasade/bind
-   "as" 'slack-start)
+    "as" 'slack-start)
   )
 
 (defun neeasade/email()
@@ -1228,14 +1239,14 @@ current major mode."
 
 (defun neeasade/shell()
   (if sys/windows?
-      (progn
-	(setq shell-file-name
-	      (concat (getenv "USERPROFILE")
-		      "\\scoop\\apps\\git-with-openssh\\current\\usr\\bin\\bash.exe"
-		      ))
+	  (progn
+      (setq shell-file-name
+			  (concat (getenv "USERPROFILE")
+          "\\scoop\\apps\\git-with-openssh\\current\\usr\\bin\\bash.exe"
+          ))
 
-	(setq explicit-bash.exe-args '("--login" "-i"))
-	)
+      (setq explicit-bash.exe-args '("--login" "-i"))
+      )
     )
 
   (use-package shx :config (shx-global-mode 1))
@@ -1246,22 +1257,22 @@ current major mode."
     )
 
   (neeasade/bind-mode '(shell)
-		      "d" 'deer
-		      )
+    "d" 'deer
+    )
 
   ;; todo: These binds don't work why
   ;; todo: def advice after quite ranger last history shell-pop/use same shell
   ;; (progn ranger-history-ring)
   (neeasade/bind-mode
-   '(ranger)
-   "s" 'shell-pop
-   )
+    '(ranger)
+    "s" 'shell-pop
+    )
 
   (general-define-key
-   :states '(visual normal)
-   :keymaps '(ranger)
-   "s" 'shell-pop
-   )
+    :states '(visual normal)
+    :keymaps '(ranger)
+    "s" 'shell-pop
+    )
   )
 
 (defun neeasade/eshell()
@@ -1284,17 +1295,24 @@ current major mode."
   (use-package restclient
     :config
     (neeasade/bind-leader-mode
-     'restclient
-     "ei" 'restclient-http-send-current-stay-in-window
-     )
+      'restclient
+      "ei" 'restclient-http-send-current-stay-in-window
+      )
     )
 
   (use-package company-restclient)
   )
 
 (defun neeasade/sql()
-  ;; todo 
+  ;; todo
+  (neeasade/install-dashdoc "SQLite")
   )
+
+(defun neeasade/latex()
+  ;; todo - steal spacemacs
+  (neeasade/install-dashdoc "LaTeX")
+  )
+
 
 (defun neeasade/plantuml()
   (use-package plantuml)
