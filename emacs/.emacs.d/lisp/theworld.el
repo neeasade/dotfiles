@@ -97,6 +97,7 @@
   (defconst custom-file "~/.emacs.d/custom.el")
   (unless (file-exists-p custom-file)
     (write-region "" nil custom-file))
+
   (load custom-file)
 
   ;; allow things to load before we reload settings
@@ -181,7 +182,12 @@
   (use-package evil-surround :config (global-evil-surround-mode 1))
   (use-package evil-commentary :config (evil-commentary-mode))
   (use-package evil-anzu) ;; displays current match and total matches.
-  (use-package evil-numbers)
+  (use-package evil-matchit :config (global-evil-matchit-mode 1))
+  (use-package evil-numbers
+    :config
+    (define-key evil-normal-state-map (kbd "C-c +") 'evil-numbers/inc-at-pt)
+    (define-key evil-normal-state-map (kbd "C-c -") 'evil-numbers/dec-at-pt)
+    )
 
 
   ;; Overload shifts so that they don't lose the selection
@@ -234,8 +240,7 @@
 (defun neeasade/company()
   (use-package company
     :config
-    (load-settings
-      'company
+    (load-settings 'company
       '(
          idle-delay (if sys/windows? 2 0)
          selection-wrap-around t
@@ -274,7 +279,7 @@
 
   (use-package aggressive-indent
     :config
-    ;; (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+    (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
     (add-hook 'clojure-mode-hook #'aggressive-indent-mode)
     )
 
@@ -353,6 +358,9 @@ current major mode."
 
   ;; to always trim it all
   ;; (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+  ;; todo: into yasnippet
+  (use-package yasnippet)
   )
 
 (defun neeasade/dashdocs()
@@ -427,8 +435,6 @@ current major mode."
             ))
     (face-list))
 
-  ;; make whitespace-mode use just basic coloring
-
   (eval-after-load "whitespace"
     (progn
       (set-face-attribute 'whitespace-space nil :background nil)
@@ -443,8 +449,7 @@ current major mode."
   (use-package spaceline
     :config
     (require 'spaceline-config)
-    (load-settings
-      'powerline
+    (load-settings 'powerline
       '(
          scale (string-to-number (get-resource "Emacs.powerlinescale"))
          height (spacemacs/compute-powerline-height)
@@ -478,8 +483,7 @@ current major mode."
 
     :config
     ;; todo: look up org-deadline-warn-days variable
-    (load-settings
-      'org
+    (load-settings 'org
       '(
          ;; where
          directory "~/org/projects"
@@ -747,9 +751,28 @@ current major mode."
     )
   )
 
-;; TODO: figure out mpd integration here
 (defun neeasade/emms()
-  (use-package emms)
+  (use-package emms
+    :commands (emms-start)
+    :config
+    (require 'emms-player-mpd)
+    (load-settings 'emms-player-mpd
+      '(server-name "localhost"
+         server-port "6600"
+         ;; server-password "mypassword"
+         music-directory "~Music"
+         )
+      )
+
+    (add-to-list 'emms-info-functions 'emms-info-mpd)
+    (add-to-list 'emms-player-list 'emms-player-mpd)
+
+    ;; sync with mpd db, connect
+    (emms-cache-set-from-mpd-all)
+    (emms-player-mpd-connect)
+    )
+
+  (neeasade/bind "am" 'emms-start)
   )
 
 (defun neeasade/projectile()
@@ -836,8 +859,7 @@ current major mode."
     (setq magit-repository-directories (list "~/git"))
     ;; https://magit.vc/manual/magit/Performance.html
     (if sys/windows?
-      (load-settings
-        'magit
+      (load-settings 'magit
         '(
            ;; diff perf
            diff-highlight-indentation nil
@@ -1029,7 +1051,6 @@ current major mode."
     (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
     )
 
-  ;; todo: jump list to buffers prefixed with '#'
   (defun neeasade/jump-irc()
     (interactive)
     (ivy-read "channel: "
@@ -1060,8 +1081,7 @@ current major mode."
     :init
     (add-hook 'twittering-edit-mode-hook (lambda () (flyspell-mode)))
     :config
-    (load-settings
-      'twittering
+    (load-settings 'twittering
       use-master-password t
       icon-mode t
       use-icon-storage t

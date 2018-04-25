@@ -124,6 +124,7 @@
   )
 
 ;; todo: have the above do something like this
+;; implies change to  have mode passed/arg diff
 ;; (defun energos/dash-elisp ()
 ;; 	(setq-local helm-dash-docsets '("Emacs Lisp")))
 ;; (add-hook 'emacs-lisp-mode-hook 'energos/dash-elisp)
