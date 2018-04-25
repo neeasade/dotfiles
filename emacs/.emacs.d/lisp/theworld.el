@@ -209,10 +209,7 @@
     (evil-normal-state)
     (evil-visual-restore))
 
-  ;; (defun neeasade/evil-org-toggle() (evil-org-mode) (evil-org-set-key-theme))
-  ;; (use-package evil-org :config (add-hook 'org-mode-hook 'neeasade/evil-org-toggle))
-
-  ;; todo: figure out if can work this in neeasade/evil after (org)
+  ;; todo: get this to hook
   (use-package evil-org
     :commands evil-org-mode
     :after org
@@ -614,7 +611,6 @@ current major mode."
 
   (add-hook
     'org-mode-hook
-    ;; todo: checking evil-org
     (neeasade/bind-leader-mode
       'org
       "t" 'org-todo
@@ -632,8 +628,7 @@ current major mode."
   (use-package org-pomodoro
     :config
     (defun neeasade/toggle-music(action)
-      ;; todo: setup remote mpd and pass and then use that when away
-      ;; implies an initial check to see if we are away
+      ;; todo: see if this can turn into emms command
       (let ((command (concat (if sys/windows? "mpc" "player.sh") " " action)))
         (shell-command command)
         ))
@@ -647,7 +642,7 @@ current major mode."
     (add-hook 'org-pomodoro-finished-hook
       (apply-partially #'neeasade/toggle-music "pause"))
     )
-  
+
   (neeasade/bind
     "jo" (lambda() (interactive) (neeasade/find-or-open "~/org/notes.org" ))
     "jf" 'neeasade/org-goto-active
@@ -832,11 +827,14 @@ current major mode."
 
     )
 
-  (use-package nodejs-repl
-    ;; todo: check for babel-repl existing and use that
-    ;; (doesn't appear to work)
-    ;; :init (setq nodejs-repl-command "babel-repl")
+  ;; todo: enable this sometimes
+  (use-package prettier-js)
 
+  ;; notes for using this
+  ;; kill shx-mode
+  ;; doesn't work with multiline input, or import command/multiple files
+  ;; doesn't work with import
+  (use-package nodejs-repl
     :config
     (neeasade/bind-leader-mode
       'nodejs-repl
@@ -844,11 +842,7 @@ current major mode."
       "eb" 'nodejs-repl-load-file
       "ee" 'nodejs-repl-send-line
       "ei" 'nodejs-repl-send-last-expression
-      )
-    )
-
-  ;; todo: enable this sometimes
-  (use-package prettier-js)
+      ))
   )
 
 (defun neeasade/typescript()
@@ -1225,10 +1219,13 @@ current major mode."
     (setq slack-prefer-current-team t)
 
     :config
-    ;; TODO: check this windows only
-    ;; https://github.com/yuya373/emacs-slack/issues/161
-    (setq request-backend 'url-retrieve)
-    (setq slack-request-timeout 50)
+    (if sys/windows?
+      ;; https://github.com/yuya373/emacs-slack/issues/161
+      (progn
+        (setq request-backend 'url-retrieve)
+        (setq slack-request-timeout 50)
+        )
+      )
 
     (slack-register-team
       :name (pass "slackteam")
@@ -1354,8 +1351,24 @@ current major mode."
   )
 
 (defun neeasade/latex()
-  ;; todo - steal spacemacs
+  (neeasade/bind-leader-mode 'latex
+    "\\"  'TeX-insert-macro                            ;; C-c C-m
+    "-"   'TeX-recenter-output-buffer                  ;; C-c C-l
+    "%"   'TeX-comment-or-uncomment-paragraph          ;; C-c %
+    ";"   'TeX-comment-or-uncomment-region             ;; C-c ; or C-c :
+    ;; TeX-command-run-all runs compile and open the viewer
+    "a"   'TeX-command-run-all                         ;; C-c C-a
+    "b"   'latex/build
+    "k"   'TeX-kill-job                                ;; C-c C-k
+    "l"   'TeX-recenter-output-buffer                  ;; C-c C-l
+    "m"   'TeX-insert-macro                            ;; C-c C-m
+    "v"   'TeX-view                                    ;; C-c C-v
+    )
+
   (neeasade/install-dashdoc "LaTeX")
+
+  ;; todo: this doesn't build?
+  ;; (use-package company-auctex)
   )
 
 
