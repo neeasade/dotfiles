@@ -504,22 +504,21 @@ current major mode."
                 :files ("lisp/*.el" "contrib/lisp/*.el"))
 
     :config
-    ;; todo: look up org-deadline-warn-days variable
     (load-settings 'org
       '(
-         ;; where
          directory "~/org/projects"
          agenda-files (list org-directory)
-         default-notes-file  "~/org/inbox.org"
+         default-notes-file  "~/org/notes.org"
          default-diary-file  "~/org/diary.org"
          default-habits-file  "~/org/habits.org"
 
-         ;; style
          ellipsis "…"
          startup-indented t
          startup-folded t
 
-         ;; behavior
+
+         ;; days before expiration where a deadline becomes active
+         deadline-warn-days 14
          todo-keywords
          '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
             (sequence "WAITING(w@/!)" "INACTIVE(i@/!)" "|" "CANCELLED(c@/!)" "MEETING"))
@@ -567,9 +566,7 @@ current major mode."
                            (nil :maxlevel . 9)
                            (org-agenda-files :maxlevel . 9)
                            )
-         )
-      )
-
+         ))
     )
 
   (defun neeasade/org-open-url()
@@ -894,10 +891,6 @@ current major mode."
 
       ;; disable emacs VC
       (setq vc-handled-backends nil)
-
-      ;; todo: consider
-      ;; (setq auto-revert-buffer-list-filter
-      ;; 'magit-auto-revert-repository-buffers-p)
       )
     )
 
