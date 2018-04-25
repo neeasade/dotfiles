@@ -158,21 +158,16 @@
   ;;)
 
   (defun neeasade/zz-scroll (count)
-    ;; window-total-size gets lines count when called with no args
-    ;; note: this only works well for buffers that take more than the full screen...
-    ;; also doesn't handle when buffer bottom is visible very well.
-    ;; todo: fix^
-    (let (
-           (windowcount (/ (window-total-size) 2))
-           (scrollcount (/ (window-total-size) 7))
-           (buffercount (count-lines (point-min) (point-max)))
-           )
-      (if (> buffercount windowcount)
+    (let* ((scrollcount (/ (window-total-size) 7))
+            (halfheight (/ (window-total-size) 2))
+            (scrollcheck (- halfheight scrollcount)))
+
+      (if (> (line-number-at-pos) scrollcheck)
         (evil-scroll-line-down scrollcount)
-        nil
         )
       )
     )
+
   (add-function :after (symbol-function 'evil-scroll-line-to-center) #'neeasade/zz-scroll)
 
   (general-evil-setup t)
@@ -455,11 +450,11 @@ current major mode."
             ))
     (face-list))
 
-  (eval-after-load "whitespace"
+  ;; todo: match end of line foreground to whitespace-{tab,space} foreground
+  (eval-after-load "whitespace-mode"
     (progn
       (set-face-attribute 'whitespace-space nil :background nil)
       (set-face-attribute 'whitespace-tab nil :background nil)
-      ;; todo: match end of line foreground to whitespace-{tab,space} foreground
       )
     )
 
