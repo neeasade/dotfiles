@@ -388,6 +388,7 @@ current major mode."
     )
 
   ;; todo: this needs a counsel-dash-at-point/how to get point
+  ;; ref: https://github.com/areina/helm-dash/blob/master/helm-dash.el#L584
   (neeasade/bind
     "jd" 'counsel-dash
     )
@@ -401,7 +402,7 @@ current major mode."
 
 (defun neeasade/style()
   (interactive)
-  ;; nice to have: an xresource theme that doesn't suck
+  ;; todo: an xresources theme that doesn't suck/covers extensions that base16 covers
   (use-package base16-theme)
   ;;(use-package ujelly-theme)
 
@@ -423,8 +424,7 @@ current major mode."
 
   ;; assume softer vertical border by matching comment face
   (set-face-attribute 'vertical-border
-    nil
-    :foreground (face-attribute 'font-lock-comment-face :foreground))
+    nil :foreground (face-attribute 'font-lock-comment-face :foreground))
 
   ;; this doesn't persist across new frames even though the docs say it should
   (set-face-attribute 'fringe nil :background nil)
