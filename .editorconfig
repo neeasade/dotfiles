@@ -1,0 +1,14 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Code files
+[{emacs/.emacs.d/lisp/*.el, emacs/.emacs.d/init.el}]
+indent_size = 2
+indent_style = space
+
+[*.sh]
+indent_size = 2
+indent_style = space
