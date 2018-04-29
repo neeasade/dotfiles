@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 musicdir="$HOME/Music"
 
@@ -16,10 +16,16 @@ del() {
   location="$(mpc -f "%file%" | head -n 1)"
   rm "$musicdir/$location"
   mpc next
+  mpc update
+}
+
+# resume
+play() {
+  mpc play
 }
 
 # reshuffle current selection from all
-play() {
+shuffle() {
   mpc clear
   if [ -z "$*" ]; then
       mpc listall | sort -R | head -n 1000 | mpc add
@@ -30,7 +36,7 @@ play() {
 }
 
 append() {
-  mpc listall | grep "$*" | sort -R | mpc add
+  mpc listall | grep -i "$*" | mpc add
 }
 
 # fuzzy search for a song, play it now
@@ -38,6 +44,20 @@ now() {
   if song="$(mpc listall | fzf)"; then
       mpc insert "$song"
       mpc next
+  fi
+}
+
+# compose playlists by search results
+playlist() {
+  if target="$(ls $musicdir/playlist | fzf)"; then
+      mpc clear
+      while read -r append ; do
+	if [[ ${append:0:1} != '#' ]] && [[ ! -z "$append" ]]; then
+	  append "$append"
+	fi
+      done < "$musicdir/playlist/$target"
+      mpc shuffle
+      mpc play
   fi
 }
 
