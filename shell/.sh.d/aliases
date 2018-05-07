@@ -14,5 +14,7 @@ alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files/Steam/Steam
 alias tmux='tmux -2' #Make tmux assume 256 colors.
 alias ref='theme refresh '
 alias e='$EDITOR '
+alias syncu='git push origin $(current_branch)'
+alias syncd='git pull origin $(current_branch)'
 
 alias xl='xrdb "$HOME/.Xresources"'
