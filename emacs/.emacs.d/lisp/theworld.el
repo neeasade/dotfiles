@@ -473,9 +473,9 @@ current major mode."
          default-separator (get-resource "Emacs.powerline")
          ))
 
-    ;; todo sync modeline background color?
-    ;; other option is remove off color section/pick explicitly
-    ;; (set-face-attribute 'spacemacs-normal-face nil :inherit 'mode-line)
+
+    (set-face-attribute 'spaceline-highlight-face nil
+      :background (face-attribute 'spaceline-evil-normal :background))
 
     (spaceline-spacemacs-theme)
     (spaceline-toggle-minor-modes-off)
@@ -1378,6 +1378,20 @@ current major mode."
     :config
     (add-hook 'ledger-mode-hook #'evil-ledger-mode)
     )
+  )
+
+(defun neeasade/prose()
+  
+  )
+
+;; nice to have -- a way to browse multiple forums in emacs/conform and plug into
+(defun neeasade/4chan()
+  (use-package q4
+    :straight (:host github
+                :repo "desvox/q4"
+                :files ("q4.el"))
+    )
+	;;; ⇒ t
   )
 
 (provide 'theworld)
