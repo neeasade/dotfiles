@@ -59,51 +59,57 @@ buffer is not visiting a file."
       (neeasade/find-or-open "~/.emacs.d/lisp/theworld.el")
       (goto-char (point-min))
       (re-search-forward (concat "neeasade/" option))
-      (neeasade/zz-scroll 0)
+      (neeasade/zz-scroll)
       )))
 
 (defun neeasade/toggle-bloat()
+  "toggle bloat in the current buffer"
   (interactive)
   (if (not (bound-and-true-p company-mode))
-      (progn
-	(company-mode)
-	(flycheck-mode)
-	(font-lock-mode)
-	)
+    (progn
+      (company-mode)
+      (flycheck-mode)
+      (font-lock-mode)
+      (git-gutter-mode)
+      )
     (progn
       (company-mode -1)
       (flycheck-mode -1)
       (font-lock-mode 0)
+      (git-gutter-mode 0)
       )
     )
   )
 
 (defun neeasade/toggle-bloat-global(toggle)
+  "toggle global bloat - must be called on it's own"
   (if toggle
-      (progn
-	(global-company-mode)
-	(global-flycheck-mode)
-	(global-font-lock-mode)
-	)
     (progn
-	(global-company-mode -1)
-	(global-flycheck-mode -1)
-	(global-font-lock-mode 0)
+      (global-company-mode)
+      (global-flycheck-mode)
+      (global-font-lock-mode)
+      ;; (global-git-gutter-mode t)
+      )
+    (progn
+      (global-company-mode -1)
+      (global-flycheck-mode -1)
+      (global-font-lock-mode 0)
+      ;; (global-git-gutter-mode nil)
       )
     )
   )
 
 
 (neeasade/bind
- ;; reconsider these, moved from w -> q for query
- "qf" 'what-face
- "qm" 'what-major-mode
- "qi" 'what-minor-modes
+  ;; reconsider these, moved from w -> q for query
+  "qf" 'what-face
+  "qm" 'what-major-mode
+  "qi" 'what-minor-modes
 
- "fE" 'sudo-edit
- "jc" 'neeasade/jump-config
- "tb" 'neeasade/toggle-bloat
- )
+  "fE" 'sudo-edit
+  "jc" 'neeasade/jump-config
+  "tb" 'neeasade/toggle-bloat
+  )
 
 
 (provide 'interactive)

@@ -57,7 +57,7 @@
   )
 
 (defun neeasade/sanity()
-  ;; sanity
+
   (setq
     auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t))
     backup-directory-alist `(("." . "~/.emacs.d/backups"))
@@ -69,11 +69,10 @@
     initial-scratch-message ""
     ring-bell-function 'ignore
     sentence-end-double-space nil
-    ;; symlinked file
     vc-follow-symlinks t ;; auto follow symlinks
     vc-make-backup-files t
     version-control t
-    ;; ouch
+    ;; ouch - todo: revisit this
     gc-cons-threshold 10000000
     )
 
@@ -83,9 +82,40 @@
   (when (boundp 'scroll-bar-mode)
     (scroll-bar-mode -1))
 
-  ;; other
+  ;; cursor
   (show-paren-mode 1)
   (blink-cursor-mode 0)
+
+  ;; custom
+  (defconst custom-file "~/.emacs.d/custom.el")
+  (unless (file-exists-p custom-file)
+    (write-region "" nil custom-file))
+
+  (load custom-file)
+
+  ;; persistent session:
+  ;; note: (desktop-clear) to clean/kill everything.
+  (load-settings 'desktop
+    restore-eager 5
+    auto-save-timeout 30
+    path (list "~/.emacs.d")
+    )
+
+  (desktop-save-mode 1)
+
+  (setq browse-url-browser-function 'browse-url-generic)
+
+  (if sys/windows?
+    (if (executable-find "qutebrowser")
+      (setq browse-url-generic-program "qutebrowser")
+      (setq browse-url-browser-function 'browse-url-default-windows-browser)
+      )
+    (setq browse-url-generic-program (getenv "BROWSER"))
+    )
+
+  ;; Removes *scratch* from buffer after the mode has been set.
+  (add-hook 'after-change-major-mode-hook
+    (lambda() (if (get-buffer "*scratch*") (kill-buffer "*scratch*"))))
 
   ;; disable semantic mode, this may bite me lets try it out
   (with-eval-after-load 'semantic
@@ -95,33 +125,7 @@
   ;; set default to be handled by global bloat toggle
   (global-font-lock-mode 0)
 
-  (defconst custom-file "~/.emacs.d/custom.el")
-  (unless (file-exists-p custom-file)
-    (write-region "" nil custom-file))
-
-  (load custom-file)
-
-  ;; allow things to load before we reload settings
-  ;; todo: reconsider ^
-  ;; (setq desktop-restore-eager 5)
-  ;; (setq desktop-path (list "~/.emacs.d"))
-  ;; retain session
-  ;; (desktop-save-mode 1)
-
   (fset 'yes-or-no-p 'y-or-n-p)
-
-  (setq browse-url-browser-function 'browse-url-generic)
-
-  (if sys/windows?
-    (if (executable-find "qutebrowser")
-      (setq browse-url-generic-program "qutebrowser")
-      (setq browse-url-browser-function 'browse-url-default-windows-browser)
-      )
-    )
-
-  ;; Removes *scratch* from buffer after the mode has been set.
-  (add-hook 'after-change-major-mode-hook
-    (lambda() (if (get-buffer "*scratch*") (kill-buffer "*scratch*"))))
 
   (neeasade/bind
     "js" (lambda() (interactive) (neeasade/find-or-open "~/.emacs.d/lisp/scratch.el"))
@@ -157,7 +161,7 @@
   ;;:config (evil-collection-init)
   ;;)
 
-  (defun neeasade/zz-scroll (count)
+  (defun neeasade/zz-scroll (&rest optional)
     (let* ((scrollcount (/ (window-total-size) 7))
             (halfheight (/ (window-total-size) 2))
             (scrollcheck (- halfheight scrollcount)))
@@ -185,6 +189,19 @@
     (define-key evil-normal-state-map (kbd "C-c -") 'evil-numbers/dec-at-pt)
     )
 
+  ;; todo: checkout https://github.com/cute-jumper/evil-embrace.el
+  ;; also https://github.com/cute-jumper/evil-embrace.el/issues/6
+  ;; also: https://github.com/casouri/lunarymacs/blob/79f8eb90ce06371e87d9979de8d3607a52a648c6/star/basic/evil/config.el#L147
+
+  (use-package evil-snipe
+    :config
+    ;; todo: revisit these settings/evaluate https://github.com/hlissner/evil-snipe#search-scope
+    (setq evil-snipe-repeat-scope 'whole-buffer)
+    (setq evil-snipe-spillover-scope 'whole-buffer)
+    (evil-snipe-mode +1)
+    (evil-snipe-override-mode +1)
+    (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+    )
 
   ;; Overload shifts so that they don't lose the selection
   (define-key evil-visual-state-map (kbd ">") 'djoyner/evil-shift-right-visual)
@@ -205,6 +222,7 @@
     (evil-visual-restore))
 
   ;; todo: get this to hook
+  ;; think it depends on gnu archive updating correctly.
   (use-package evil-org
     :commands evil-org-mode
     :after org
@@ -257,7 +275,7 @@
     :config
     (load-settings 'company
       '(
-         idle-delay (if sys/windows? 2 0)
+         idle-delay (if sys/windows? 1 0)
          selection-wrap-around t
          tooltip-align-annotations t
          dabbrev-downcase nil
@@ -379,18 +397,20 @@ current major mode."
   )
 
 (defun neeasade/dashdocs()
-  (setq neeasade-dashdocs t)
+  ;; doesn't work on windows - bind here for neeasade/install-dashdoc to ref
+  (setq neeasade-dashdocs sys/linux?)
 
-  (use-package counsel-dash
-    :config
-    (setq helm-dash-docsets-path (concat user-emacs-directory "docsets"))
-    (setq helm-dash-browser-func 'neeasade/eww-browse-existing-or-new)
-    )
+  (when neeasade-dashdocs
+    (use-package counsel-dash :config
+      (setq helm-dash-docsets-path (concat user-emacs-directory "docsets"))
+      (setq helm-dash-browser-func 'neeasade/eww-browse-existing-or-new)
+      )
 
-  ;; todo: this needs a counsel-dash-at-point/how to get point
-  ;; ref: https://github.com/areina/helm-dash/blob/master/helm-dash.el#L584
-  (neeasade/bind
-    "jd" 'counsel-dash
+    ;; todo: this needs a counsel-dash-at-point/how to get point
+    ;; ref: https://github.com/areina/helm-dash/blob/master/helm-dash.el#L584
+    (neeasade/bind
+      "jd" 'counsel-dash
+      )
     )
   )
 
@@ -450,14 +470,17 @@ current major mode."
             ))
     (face-list))
 
-  (eval-after-load "whitespace-mode"
-    (progn
-      (set-face-attribute 'whitespace-space nil :background nil)
-      (set-face-attribute 'whitespace-tab nil :background nil)
-      (set-face-attribute 'whitespace-newline nil
-        :foreground (face-attribute 'whitespace-space :foreground))
-      )
+  ;; (eval-after-load "whitespace-mode"
+  ;; (defadvice org-add-props (ac check-faces activate)
+
+  (defun color-whitespace-mode()
+    (set-face-attribute 'whitespace-space nil :background nil)
+    (set-face-attribute 'whitespace-tab nil :background nil)
+    (set-face-attribute 'whitespace-newline nil
+      :foreground (face-attribute 'whitespace-space :foreground))
     )
+
+  (advice-add #'color-whitespace-mode :after #'whitespace-mode)
 
   (neeasade/spaceline)
   )
@@ -606,6 +629,7 @@ current major mode."
     'org-mode-hook
     (neeasade/bind-leader-mode
       'org
+      "," 'org-ctrl-c-ctrl-c
       "t" 'org-todo
       "T" 'org-show-todo-tree
       "v" 'org-mark-element
@@ -752,11 +776,31 @@ current major mode."
     :config
     (setq
       which-key-sort-order 'which-key-key-order-alpha
-      which-key-idle-delay 3.0
+      which-key-idle-delay 2.5
       which-key-side-window-max-width 0.33
       )
     (which-key-setup-side-window-right-bottom)
     (which-key-mode)
+    )
+
+  ;; jump to buffer with avy
+  ;; todo: checkout avy-goto-char-timer
+  (use-package ace-jump-buffer
+    :config
+    (defun dynamic-ajb-height()
+      (setq ajb-max-window-height (/ (window-total-size) 2))
+      )
+
+    (dynamic-ajb-height)
+    (add-hook 'window-configuration-change-hook 'dynamic-ajb-height)
+
+    (setq ajb-sort-function 'bs--sort-by-recentf)
+
+    (neeasade/bind
+      "bs" 'counsel-ibuffer
+      "bb" 'ace-jump-buffer
+      "bm" 'ace-jump-same-mode-buffers
+      )
     )
   )
 
@@ -820,13 +864,12 @@ current major mode."
 
     )
 
-  ;; todo: enable this sometimes
+  ;; todo: enable this sometimes if conf file found
   (use-package prettier-js)
 
   ;; notes for using this
   ;; kill shx-mode
   ;; doesn't work with multiline input, or import command/multiple files
-  ;; doesn't work with import
   (use-package nodejs-repl
     :config
     (neeasade/bind-leader-mode
@@ -894,6 +937,9 @@ current major mode."
       )
     )
 
+  (use-package magit-svn)
+  (add-hook 'magit-mode-hook 'magit-svn-mode)
+
   (use-package evil-magit
     :config
     (evil-define-key
@@ -934,10 +980,30 @@ current major mode."
 
   (neeasade/bind
     "g" '(:ignore t :which-key "git")
-    "gs" 'magit-status
     "gb" 'magit-blame
     "gl" 'magit-log-current
     "gm" 'git-smerge-menu/body
+    )
+
+  ;; define a minimal staging mode for when we're on windows.
+  (when sys/windows?
+    ;; WORKAROUND https://github.com/magit/magit/issues/2395
+    (define-derived-mode magit-staging-mode magit-status-mode "Magit staging"
+      "Mode for showing staged and unstaged changes."
+      :group 'magit-status)
+    (defun magit-staging-refresh-buffer ()
+      (magit-insert-section (status)
+        (magit-insert-untracked-files)
+        (magit-insert-unstaged-changes)
+        (magit-insert-staged-changes)))
+    (defun magit-staging ()
+      (interactive)
+      (magit-mode-setup #'magit-staging-mode))
+    )
+
+  (if sys/windows?
+    (neeasade/bind "gs" 'magit-staging)
+    (neeasade/bind "gs" 'magit-status)
     )
   )
 
@@ -1062,15 +1128,15 @@ current major mode."
   (defun neeasade/jump-irc()
     (interactive)
     (let ((irc-channels
-	   (remove-if-not
-	       (lambda (s) (s-match "#.*" s))
-	       (mapcar 'buffer-name (buffer-list))
-	     )))
+            (remove-if-not
+              (lambda (s) (s-match "#.*" s))
+              (mapcar 'buffer-name (buffer-list))
+              )))
       (if (eq (length irc-channels) 0)
-	  (message "connect to irc first!")
-	(ivy-read "channel: " irc-channels
-		  :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
-	)
+        (message "connect to irc first!")
+        (ivy-read "channel: " irc-channels
+          :action (lambda (option) (counsel-switch-to-buffer-or-window option)))
+        )
       )
     )
 
@@ -1213,12 +1279,10 @@ current major mode."
     (setq slack-prefer-current-team t)
 
     :config
-    (if sys/windows?
+    (when sys/windows?
       ;; https://github.com/yuya373/emacs-slack/issues/161
-      (progn
-        (setq request-backend 'url-retrieve)
-        (setq slack-request-timeout 50)
-        )
+      (setq request-backend 'url-retrieve)
+      (setq slack-request-timeout 50)
       )
 
     (slack-register-team
@@ -1275,9 +1339,9 @@ current major mode."
 
 (defun neeasade/shell()
   (if sys/windows?
-	  (progn
+    (progn
       (setq shell-file-name
-			  (concat (getenv "USERPROFILE")
+        (concat (getenv "USERPROFILE")
           "\\scoop\\apps\\git-with-openssh\\current\\usr\\bin\\bash.exe"
           ))
 
@@ -1393,6 +1457,12 @@ current major mode."
     )
 	;;; ⇒ t
   )
+(defun neeasade/lsp()
+  (use-package lsp-ui)
+  (use-package lsp-javascript-flow)
+  )
+
+;; todo: consider https://www.reddit.com/r/emacs/comments/8hpyp5/tip_how_to_execute_a_bash_function_when_saving_a/
 
 (provide 'theworld)
 
