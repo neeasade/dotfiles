@@ -93,4 +93,7 @@ let &t_SI = "\<Esc>[6 q"
 let &t_SR = "\<Esc>[4 q"
 let &t_EI = "\<Esc>[2 q"
 
+set ignorecase
+set clipboard=unnamedplus
+
 " vim:set ft=vim et sw=2:

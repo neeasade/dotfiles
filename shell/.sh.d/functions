@@ -1,21 +1,25 @@
 # -*- mode: sh -*-
 
-shot() {
+shot_location() {
   mkdir -p $HOME/Screenshots
+  echo "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+}
+
+shot() {
   # eval $(slop)
   G="$(slop)"
-  maim -g ${G} "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+  maim -g ${G} "$(shot_location)"
 }
 
 fullshot() {
-  mkdir -p $HOME/Screenshots
-  maim "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+  maim "$(shot_location)"
 }
 
 upshot() {
   uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
 }
 
+# current monitor only - bspwm specific
 deskshot() {
   json="$(bspc query -T -m)"
   jget() {
@@ -27,7 +31,7 @@ deskshot() {
   x=$(jget x)
   y=$(jget y)
 
-  maim -g ${w}x${h}+${x}+${y} > shot.png
+  maim -g ${w}x${h}+${x}+${y} "$(shot_location)"
 }
 
 settitle() {

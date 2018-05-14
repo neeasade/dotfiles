@@ -5,6 +5,7 @@ musicdir="$HOME/Music"
 # add a url to library, fallback on clipboard content
 add() {
   url="$*"
+  echo "$url" >> "$musicdir/import_history.log"
   [ -z "$url" ] && url="$(xclip -o -selection clipboard)"
   mkdir -p "$musicdir/import"
   youtube-dl -x -i -o "$musicdir/import/%(uploader)s/%(title)s.%(ext)s" "$url"
