@@ -1,0 +1,61 @@
+#!/bin/sh
+# depends on git, sh.
+
+for dir in bin git notes .config; do
+  mkdir -p "~/$dir"
+done
+
+git clone "https://github.com/neeasade/dotfiles" "~/.dotfiles"
+cd "~/.dotfiles"
+
+stoww() {
+  if [ ! -d "~/git/stowsh" ]; then
+      git clone "https://github.com/neeasade/stowsh" "~/git/stowsh"
+  fi
+
+  if type stow >/dev/null 2>&1; then
+      (
+	cd ~/.dotfiles
+	stow "$@"
+      )
+  else
+    # todo:
+    # https://github.com/neeasade/stowsh
+    # (the args are a little different)
+    echo you need to get stow.
+  fi
+}
+
+core() {
+  stoww bin shell vim tools
+}
+
+emacs() {
+  git clone "https://github.com/neeasade/emacs.d" "~/.emacs.d"
+
+  # initial launch/install packages
+  type emacs >/dev/null 2>&1 && emacs
+}
+
+rice() {
+  core
+  stoww sxhkd wm
+}
+
+windows() {
+  # prereq: windows/bootstrap.cmd
+  core
+
+  for item in "$(cat ~/.dotfiles/windows/scoop.txt)"; do
+    scoop install $item
+  done
+
+  # windows bin
+  stoww windows
+}
+
+# core, emacs, rice, windows
+op=${1:-core}
+echo bootstrapping $op...
+$op
+echo done.

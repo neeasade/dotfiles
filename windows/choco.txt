@@ -1,22 +1,10 @@
-Chocolatey v0.10.9
-chocolatey 0.10.9
-chocolatey-core.extension 1.3.3
-chocolatey-visualstudio.extension 1.6.0
-chocolatey-windowsupdate.extension 1.0.2
-DotNet4.6.1 4.6.01055.20170308
-dotnetcore-sdk 2.0.3
-elasticsearch 6.2.2
-KB2533623 1.0.2
-KB2919355 1.0.20160915
-KB2919442 1.0.20160915
-KB2999226 1.0.20170509
-KB3033929 1.0.3
-KB3035131 1.0.1
-nssm 2.24.101.20180116
-server-jre8 8.0.161
-vcredist140 14.12.25810
-vcredist2015 14.0.24215.20170201
-visualstudio2017-installer 1.0.1
-visualstudio2017enterprise 15.2.26430.20170605
+DotNet4.6.1
+dotnetcore-sdk
+elasticsearch
+nssm
+server-jre8
+vcredist140
+vcredist2015
+visualstudio2017-installer
+visualstudio2017enterprise
 docker-for-windows
-19 packages installed.
