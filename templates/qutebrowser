@@ -15,12 +15,11 @@ if initial_start:
     c.completion.scrollbar.width = 10
     c.tabs.position = 'top'
     c.tabs.show = 'multiple'
-    c.tabs.favicons.show = False
     c.tabs.indicator.width = 0
     c.tabs.title.format = '{title}'
     c.tabs.title.alignment = 'center'
     c.downloads.position = 'bottom'
-    c.tabs.favicons.show = False
+    c.tabs.favicons.show = 'never'
 
     # behavior
     c.downloads.location.prompt = False
