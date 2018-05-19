@@ -147,8 +147,8 @@ mpd_dir="$HOME/.config/mpd"
 
 # default template targets
 # this allows themes to replace template files with different targets, by defining ${target}_template
-for template in $(ls $HOME/.wm/templates); do
-    eval ${template}_template="$HOME/.wm/templates/${template}"
+for template in $(ls $HOME/.dotfiles/templates); do
+    eval ${template}_template="$HOME/.dotfiles/templates/${template}"
 done
 
 # options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch

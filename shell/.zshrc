@@ -12,6 +12,7 @@ zplug "plugins/pass", from:oh-my-zsh                                 # completio
 zplug "spwhitt/nix-zsh-completions"                                  # completions for nix
 zplug "plugins/lein", from:oh-my-zsh                                 # completions for lein
 zplug "zsh-users/zsh-completions"                                    # completions for everything else
+zplug "hlissner/zsh-autopair", defer:2
 
 if has fzf; then
     zplug "junegunn/fzf", use:"shell/completion.zsh"                 # fzf
@@ -47,8 +48,14 @@ setopt autocd
 # Remove '/' and '-' from $WORDCHARS for finer Ctrl-w behaviour
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
 
-# vim bindings 
-$ESHELL && return
+# vim bindings
+
+if $ESHELL; then
+  unsetopt PROMPT_SP
+  unsetopt zle
+  return
+fi
+
 bindkey -v
 
 zle-keymap-select () {

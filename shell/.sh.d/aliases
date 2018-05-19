@@ -18,3 +18,6 @@ alias syncu='git push origin $(current_branch)'
 alias syncd='git pull origin $(current_branch)'
 
 alias xl='xrdb "$HOME/.Xresources"'
+
+alias syncd='git pull origin $(current_branch)'
+alias syncu='git push origin $(current_branch)'

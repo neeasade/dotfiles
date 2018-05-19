@@ -271,9 +271,11 @@ imap fd <ESC>
 vmap fd <ESC>
 
 " changing cursor
-let &t_SI = "\<Esc>[6 q"
-let &t_SR = "\<Esc>[4 q"
-let &t_EI = "\<Esc>[2 q"
+if $TERM !~# '^linux\|^Eterm'
+  let &t_SI = "\<Esc>[6 q"
+  let &t_SR = "\<Esc>[4 q"
+  let &t_EI = "\<Esc>[2 q"
+endif
 
 set ignorecase
 set clipboard=unnamedplus

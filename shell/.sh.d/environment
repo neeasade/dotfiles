@@ -64,10 +64,10 @@ path_add .go/bin
 path_add .wm/scripts/interact
 path_add .wm/scripts/visual
 
-if [ -z "$EMACS" ]; then
-    ESHELL=false
+if [ -n "$INSIDE_EMACS" ]; then
+    ESHELL=true
 else
-  ESHELL=true
-fi 
+  ESHELL=false
+fi
 
 set +a
