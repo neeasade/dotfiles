@@ -13,17 +13,7 @@ stoww() {
       git clone "https://github.com/neeasade/stowsh" "~/git/stowsh"
   fi
 
-  if type stow >/dev/null 2>&1; then
-      (
-	cd ~/.dotfiles
-	stow "$@"
-      )
-  else
-    # todo:
-    # https://github.com/neeasade/stowsh
-    # (the args are a little different)
-    echo you need to get stow.
-  fi
+  "~/git/stowsh/stowsh" -t .. "$@"
 }
 
 core() {
