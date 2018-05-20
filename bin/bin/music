@@ -58,7 +58,7 @@ now() {
 bl() {
   playlist="$(cat "$musicdir/playlist/current")"
   songname="$(basename "$(mpc -f '%file%' | head -n 1)")"
-  echo "-$songname" >> "$musicdir/playlist/$playlist"
+  printf "\n-$songname" >> "$musicdir/playlist/$playlist"
 }
 
 # compose playlists by search results
