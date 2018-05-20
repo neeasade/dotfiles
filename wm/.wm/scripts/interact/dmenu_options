@@ -18,4 +18,4 @@ y="$(( ($(dim height) - height) / 2))"
 
 y=$((y-(height*lines)))
 
-echo "-dim 0.8 -y $y -x $x -h $height -w $width -l $lines -i -p \"${1}:\""
+echo "-dim 0.8 -y $y -x $x -h $height -w $width -l $lines -i -p ${1}:"

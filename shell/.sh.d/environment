@@ -18,6 +18,7 @@ LESSCHARSET='utf-8'
 BROWSER=qutebrowser
 TERMINAL=st
 FILEBROWSER=thunar
+VIEW_PDF=zathura
 
 # default
 GTK_THEME=${GTK_THEME:-adwaita}

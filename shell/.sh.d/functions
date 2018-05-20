@@ -159,3 +159,10 @@ page() {
   less "$@"
   defaulttitle
 }
+
+dotadd() {
+  file="$@"
+  mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
+  cd "$HOME/.dotfiles"
+  stow bin
+}

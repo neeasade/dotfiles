@@ -1,0 +1,294 @@
+# arrows
+rightto rightarrow -> →
+uparrow nand ↑
+downarrow ↓
+leftrightarrow <-> ↔
+doubleleftarrow <= ⇐
+doublerightarrow => ⇒
+doubleuparrow ⇑
+doubledownarrow ⇓
+leftto leftarrow <- ←
+mapsto ⟼
+blackrightarrow |> ►
+blackleftarrow <| ◄
+blackuparrow ^_ ▲
+blackdownarrow _v ▼
+
+# equal
+neq not equal != ≠
+le lower equal <= ≤
+ge greater equal >= ≥
+ungefähr about approx ~= ≈
+
+# logic
+and conjunktion konjunktion ∧
+not negation ¬
+or disjuction disjunktion ∨
+equivalent equiv <=> ⇔
+
+# special sets
+setZ setz integers ganzzahlen ℤ
+setQ setq rational ℚ
+setR setr real ℝ
+setN setn natural ℕ
+setD setd definition domain 𝔻
+setW setw werte 𝕎
+inf infinity ∞
+
+# units / constants
+ohm Ω
+tm ™
+
+# sets
+in element ∈
+not in not element ∉
+setminus without ohne ∖
+schnittmenge geschnitten vereinigungsmenge vereint intersection cap UND AND ∩
+vereinigungsmenge vereint OR ODER cup union ∪
+subset ⊂
+empty set ∅
+
+# greek alphabet
+alpha α
+Alpha Α
+beta β
+betavar ϐ
+Beta Β
+gamma γ
+Gamma Γ
+delta δ
+Delta Δ
+epsilon ε
+epsilonvar ϵ
+Epsilon Ε
+zeta ζ
+Zeta Ζ
+eta η
+Eta Η
+theta θ
+thetavar ϑ
+Theta Θ
+iota ι
+Iota Ι
+kappa κ
+kappavar ϰ
+Kappa Κ
+lambda λ
+Lambda Λ
+micro mu my μ
+Mu My Μ
+nu ny ν
+Nu Ny Ν
+xi ξ
+Xi Ξ
+omicron omikron ο
+Omicron Omikron Ο
+pi π
+pivar ϖ
+Pi Π
+rho ρ
+rhovar ϱ
+Rho Ρ
+sigma σ
+sigmavar1 ς
+sigmavar2 Ϲ
+Sigma Σ
+tau τ
+Tau Τ
+upsilon ypsilon υ
+Upsilon Ypsilon Υ
+phi φ
+phivar ϕ
+Phi Φ
+chi χ
+Chi Χ
+psi ψ
+Psi Ψ
+chi χ
+Chi Χ
+omega ω
+Omega Ω
+
+# superscript
+^i ⁱ
+^0 ⁰
+^1 ¹
+^2 ²
+^3 ³
+^4 ⁴
+^5 ⁵
+^6 ⁶
+^7 ⁷
+^8 ⁸
+^9 ⁹
+^+ ⁺
+^- ⁻
+^= ⁼
+^( ⁽
+^) ⁾
+^n ⁿ
+
+# negative numbers superscript
+^-1 -1 ⁻¹
+^-2 ⁻²
+^-3 ⁻³
+^-4 ⁻⁴
+^-5 ⁻⁵
+^-6 ⁻⁶
+^-7 ⁻⁷
+^-8 ⁻⁸
+^-9 ⁻⁹
+
+# subscript
+_i ᵢ
+_0 ₀
+_1 ₁
+_2 ₂
+_3 ₃
+_4 ₄
+_5 ₅
+_6 ₆
+_7 ₇
+_8 ₈
+_9 ₉
+_+ ₊
+_- ₋
+_= ₌
+_( ₍
+_) ₎
+_a ₐ
+_e ₑ
+_o ₒ
+_x ₓ
+_h ₕ
+_k ₖ
+_l ₗ
+_m ₘ
+_n ₙ
+_p ₚ
+_s ₛ
+_t ₜ
+
+# fractions
+1/4 ¼
+1/2 ½
+3/4 ¾
+1/3 ⅓
+2/3 ⅔
+1/5 ⅕
+2/5 ⅖
+3/5 ⅗
+4/5 ⅘
+1/6 ⅙
+5/6 ⅚
+1/8 ⅛
+3/8 ⅜
+5/8 ⅝
+7/8 ⅞
+
+# E
+E0 ⋅10⁰
+E1 ⋅10¹
+E2 ⋅10²
+E3 ⋅10³
+E4 ⋅10⁴
+E5 ⋅10⁵
+E6 ⋅10⁶
+E7 ⋅10⁷
+E8 ⋅10⁸
+E9 ⋅10⁹
+E-1 ⋅10⁻¹
+E-2 ⋅10⁻²
+E-3 ⋅10⁻³
+E-4 ⋅10⁻⁴
+E-5 ⋅10⁻⁵
+E-6 ⋅10⁻⁶
+E-7 ⋅10⁻⁷
+E-8 ⋅10⁻⁸
+E-9 ⋅10⁻⁹
+
+# useful sub/superscript combinations
+cm2 cm^2 cm²
+mm2 mm^2 mm²
+m3 kubikmeter m^3 m³
+cm3 cm^3 cm³
+mm3 mm^3 mm³
+mu0 my0 μ₀
+sin-1 sin^-1 sinh sin⁻¹(
+cos-1 cos^-1 cosh cos⁻¹(
+tan-1 tan^-1 tanh tan⁻¹(
+degC degc °C
+degF degf °F
+degK degk °K
+lg log10 log₁₀(
+ln loge logₑ(
+log2 log₂(
+_min ₘᵢₙ
+_max ₘₐₓ
+_pp ₚₚ
+
+# vectors
+a> a⃗
+b> b⃗
+c> c⃗
+l> l⃗
+x> x⃗
+
+# geometry
+# http://symbolcodes.tlt.psu.edu/bylanguage/mathchart.html
+angle ∢
+rightangle 90 ⊾
+parallel ∥
+notparallel ∦
+rechtwinklig perpendicular ⊥
+
+# over/under
+vector vektor overrightarrow ⃗
+overline not negated overstrike ̅
+dotted overdot ̇
+overbrace ⏞
+grave hat peak  ̂
+caron underhat negpeak  ̬
+peak_peak  ̬̂
+
+
+# misc math
+proportional ∝
+asterisk star stern mal ∗
+pm plusminus +- ±
+sqrt √
+cuberoot ³√
+fourthroot ∜
+cdot ⋅
+m2 squaremeter quadratmeter m^2 m²
+
+# misc
+skull totenkopf ☠
+vdots ⋮
+(C) ©
+(R) ®
+degree °
+fliptable (╯°□°）╯︵┻━┻
+shrug ¯\_(ツ)_/¯
+
+# unsorted
+function ƒ
+prime ′
+doubleprime ″
+tripleprime ‴
+integral ∫
+sum ∑
+
+# matrices
+topleftmargin lefttopmargin ┌
+verticalmargin | │
+buttomleftmargin leftbottommargin └
+toprightmargin righttopmargin ┐
+bottomrightmargin rightbottommargin ┘
+
+
+# misc
+cross ⨯
+all ∀
+exists ∃
+congruent ≡

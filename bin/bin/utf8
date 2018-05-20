@@ -1,0 +1,12 @@
+#!/bin/sh
+# handy utf8 search script
+
+utf8db="$HOME/bin/utf8db"
+if line=$(grep -v '^#' "$utf8db"| grep -v '^$'| eval dmenu $(dmenu_options utf8)); then
+    char=${line##* }
+    echo -n "$char" |xclip -selection clipboard -i
+    echo -n "$char" |xclip -selection primary -i
+
+    # paste it
+    xdotool key shift+Insert
+fi
