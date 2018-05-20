@@ -77,8 +77,13 @@ p_clock_mouse_left="dzen.sh cal"
 p_volume_scroll_down="ponymix decrease 5"
 p_volume_scroll_up="ponymix increase 5"
 
+p_mpd_scroll_up="mpc seek +00:00:02"
+p_mpd_scroll_down="mpc seek -00:00:02"
 p_mpd_mouse_left="player.sh toggle"
 p_mpd_mouse_right="player.sh next"
+
+p_dynamicmpd_scroll_up="mpc seek +00:00:02"
+p_dynamicmpd_scroll_down="mpc seek -00:00:02"
 p_dynamicmpd_mouse_left="player.sh toggle"
 p_dynamicmpd_mouse_right="player.sh next"
 
