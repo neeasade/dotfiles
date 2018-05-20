@@ -14,7 +14,21 @@ for wid in $wids; do
 done
 
 # emacs buffers
-buffers="$(elisp '(buffer-list)' | sed 's/#<buffer /\n/g;s/> //g;s/>)//g' | grep -vE 'magit|\*.*' | sed -n '1!p')"
+buffers="$(
+elisp '(-remove (lambda (buffer)
+           (or
+             (s-match "magit" buffer)
+             (s-match "\*.*" buffer)
+             )
+           )
+  (mapcar
+    (function buffer-name)
+    (buffer-list)
+    )
+  )
+' | sed 's/" "/\n/g;s/("//;s/")//'
+)"
+
 for buffer in $buffers; do
   option="buffer: $buffer"
   options="${options}"$'\n'"${option}"
