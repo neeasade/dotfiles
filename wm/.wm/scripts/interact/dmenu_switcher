@@ -5,12 +5,15 @@
 switch=""
 options=""
 
+add_switch() {
+  options="${options}"$'\n'"${1}"
+  switch="$switch '$(echo "${1}" | sed "s#'#\'\\\'\'#g")') ${2};;"
+}
+
 # windows
 wids="$(bspc query -N -n .leaf.\!hidden)"
 for wid in $wids; do
-  title="window: $(xtitle $wid)"
-  options="${options}"$'\n'"${title}"
-  switch="$switch '$(echo "${title}" | sed "s#'#\'\\\'\'#g")') bspc node -f $wid;;"
+  add_switch "window: $(xtitle $wid)" "bspc node -f $wid"
 done
 
 # emacs buffers
@@ -30,23 +33,18 @@ elisp '(-remove (lambda (buffer)
 )"
 
 for buffer in $buffers; do
-  option="buffer: $buffer"
-  options="${options}"$'\n'"${option}"
-  switch="$switch '$(echo "${option}" | sed "s#'#\'\\\'\'#g")') select_action 'window: emacs' && elisp '(counsel-switch-to-buffer-or-window \"${buffer}\")';;"
+  add_switch "buffer: $buffer" "select_action 'window: emacs' && elisp '(counsel-switch-to-buffer-or-window \"${buffer}\")'"
 done
 
 # qutebrowser tab titles
 open_urls() {
   qb_command ':session-save'
-  tab_count="$(ps -f -g $(pgrep qutebrowser) 2>/dev/null | tail +5 | wc -l)"
   grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
 }
 
 # for url in "$(open_urls)"; do
 while read -r url; do
-  option="tab: $url"
-  options="${options}"$'\n'"${option}"
-  switch="$switch '$(echo "${option}" | sed "s#'#\'\\\'\'#g")') select_action '\- qutebrowser' && qb_command ':buffer $(echo "$url" | sed "s/'//g")';;"
+  add_switch "tab: $url" "select_action '\- qutebrowser' && qb_command ':buffer $(echo "$url" | sed "s/'//g")'"
 done <<< "$(open_urls)"
 
 select_action() {
