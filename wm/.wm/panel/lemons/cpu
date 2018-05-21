@@ -1,4 +1,5 @@
 #!/bin/sh
+# MIT Copyright (c) 2018 Luiz de Milon (kori)
 # get current overall CPU usage
 
 total=$(ps -eo pcpu | grep -vE '^\s*(0.0|%CPU)' |tr '\n' '+'|sed 's/+$//')

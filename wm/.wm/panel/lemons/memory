@@ -1,4 +1,5 @@
 #!/bin/sh
+# MIT Copyright (c) 2018 Luiz de Milon (kori)
 # get current memory usage
 
 t=$(grep MemTotal /proc/meminfo | awk '{print $2}')

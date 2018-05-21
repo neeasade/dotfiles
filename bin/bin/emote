@@ -1,4 +1,5 @@
 #!/bin/sh
+# MIT Copyright (c) 2018 Luiz de Milon (kori)
 # prints emotes based on keywords
 
 if [ -n "$1" ]; then
