@@ -46,10 +46,8 @@ open_urls() {
 while read -r url; do
   option="tab: $url"
   options="${options}"$'\n'"${option}"
-  switch="$switch '$(echo "${option}" | sed "s#'#\'\\\'\'#g")') select_action '\- qutebrowser' && qb_command ':buffer ${url}';;"
+  switch="$switch '$(echo "${option}" | sed "s#'#\'\\\'\'#g")') select_action '\- qutebrowser' && qb_command ':buffer $(echo "$url" | sed "s/'//g")';;"
 done <<< "$(open_urls)"
-
-echo "$switch"
 
 select_action() {
   # allow partial match for emacs switch match call

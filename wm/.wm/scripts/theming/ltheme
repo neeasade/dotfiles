@@ -248,12 +248,8 @@ load_qutebrowser() {
 
     margs qutebrowser .config/qutebrowser/config.py
 
-    # calling this focuses qutebrowser
-    wid=$(bspc query -N -n)
-    qutebrowser :config-source
-    qutebrowser :reload # reload current page w/ css
-
-    bspc node -f $wid
+    qb_command ':config-source'
+    qb_command ':reload' # reload current page w/ css
 }
 
 # dunst
