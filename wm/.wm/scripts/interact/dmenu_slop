@@ -22,7 +22,7 @@ if [ -z "$program" ]; then
     )
 fi
 
-eval `slop`
+read -r X Y W H G ID < <(slop -f "%x %y %w %h %g %i")
 bspc rule -a \* -o state=floating
 
 $program &
@@ -33,4 +33,4 @@ while read -r event monId deskId nodeId ipId; do
 
 	bspc config external_rules_command "$external_rules"
 	break
-done < <(bspc subscribe node_manage)
+done < <(bspc subscribe node_add)

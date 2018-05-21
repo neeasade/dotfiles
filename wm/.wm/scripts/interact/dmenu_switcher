@@ -35,28 +35,21 @@ for buffer in $buffers; do
   switch="$switch '$(echo "${option}" | sed "s#'#\'\\\'\'#g")') select_action 'window: emacs' && elisp '(counsel-switch-to-buffer-or-window \"${buffer}\")';;"
 done
 
-# qutebrowser tabs
-# so, after navigation, tabs are stored in history
-# we can peek at the current number of open tabs via subprocess count
-# and grab the last n history navs
-# and send the buffer command with a url match to force navigation
-# update: this didn't work because you can't associate back button
-# and navigations within a tab, better approach would be to patch qute with autocommands,
-# which would allow subscription on tabswitch so you could do this.
-# open_urls() {
-#   tab_count="$(ps -f -g $(pgrep qutebrowser) 2>/dev/null | tail +5 | wc -l)"
-#   sqlite3 "$HOME/.local/share/qutebrowser/history.sqlite" \
-# 	  "select * from history order by atime DESC limit ${tab_count}" | \
-#       cut -d '|' -f2
-#       # sed 's/^/"/g;s/$/"/g'
-# }
+# qutebrowser tab titles
+open_urls() {
+  qb_command ':session-save'
+  tab_count="$(ps -f -g $(pgrep qutebrowser) 2>/dev/null | tail +5 | wc -l)"
+  grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
+}
 
-# # for url in "$(open_urls)"; do
-# while read -r url; do
-#   option="tab: $url"
-#   options="${options}"$'\n'"${option}"
-#   switch="$switch '$(echo "${option}" | sed "s#'#\'\\\'\'#g")') qb_command :buffer \"${url}\"';;"
-# done <<< "$(open_urls)"
+# for url in "$(open_urls)"; do
+while read -r url; do
+  option="tab: $url"
+  options="${options}"$'\n'"${option}"
+  switch="$switch '$(echo "${option}" | sed "s#'#\'\\\'\'#g")') select_action '\- qutebrowser' && qb_command ':buffer ${url}';;"
+done <<< "$(open_urls)"
+
+echo "$switch"
 
 select_action() {
   # allow partial match for emacs switch match call

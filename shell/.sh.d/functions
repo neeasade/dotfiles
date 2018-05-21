@@ -166,3 +166,7 @@ dotadd() {
   cd "$HOME/.dotfiles"
   stow bin
 }
+
+book() {
+  google-chrome-stable "$(cat ~/.book_url)"
+}

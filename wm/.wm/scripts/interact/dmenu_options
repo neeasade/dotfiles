@@ -2,8 +2,9 @@
 # print dmenu dimensions for current monitor, and set prompt.
 # colors are set by Xresources.
 
-# TODO: more dynamic width
-width=500
+# TODO: more dynamic width with percent of screen based on line height
+
+width=700
 height=15
 
 lines=15
