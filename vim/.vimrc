@@ -280,4 +280,10 @@ endif
 set ignorecase
 set clipboard=unnamedplus
 
+" no visual bell
+set t_vb=
+
+" allow unsaved buffers to not show
+set hidden
+
 " vim:set ft=vim et sw=2:
