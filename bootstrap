@@ -5,7 +5,7 @@ for dir in bin git notes .config; do
   mkdir -p "~/$dir"
 done
 
-git clone "https://github.com/neeasade/dotfiles" "~/.dotfiles"
+[ ! -d "~/.dotfiles" ] && git clone "https://github.com/neeasade/dotfiles" "~/.dotfiles"
 cd "~/.dotfiles"
 
 stoww() {
@@ -43,6 +43,15 @@ windows() {
   # windows bin
   stoww windows
 }
+
+docker() {
+  sudo apt-get update
+  sudo apt-get install curl
+
+  curl https://nixos.org/nix/install | sh
+}
+
+[ "$USER" = "emacser" ] && docker
 
 # core, emacs, rice, windows
 op=${1:-core}
