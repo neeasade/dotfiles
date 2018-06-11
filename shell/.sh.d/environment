@@ -55,6 +55,11 @@ GOPATH="$HOME/.go"
 
 WINEPREFIX=$HOME/.config/wine/
 
+
+if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then 
+  . $HOME/.nix-profile/etc/profile.d/nix.sh; 
+fi 
+
 path_add() {
   PATH="$PATH:$HOME/$@"
 }
