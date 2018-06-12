@@ -12,7 +12,7 @@ add() {
   mpc update
 }
 
-# remove the currently playing song, permanently
+# delete the currently playing song
 del() {
   location="$(mpc -f "%file%" | head -n 1)"
   rm "$musicdir/$location"
@@ -21,8 +21,8 @@ del() {
 }
 
 # resume
-play() {
-  mpc play
+toggle() {
+  mpc toggle
 }
 
 # reshuffle current selection from all
@@ -33,17 +33,24 @@ shuffle() {
   else
     append "$*"
   fi
+  echo "none" > "$musicdir/playlist/current"
   mpc play
 }
 
 append() {
+  echo append "$*"
   mpc listall | grep -i "$*" | mpc add
 }
 
 # remove some search match from the playlist
 remove() {
-  position="$(mpc playlist -f '%position% %file%' | grep "$@" | sed 's/ .*//')"
-  mpc del $position
+  echo remove "$*"
+  positions="$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')"
+  delta=0
+  for position in $positions; do
+    mpc del $((position - delta))
+    delta=$((delta + 1))
+  done
 }
 
 # fuzzy search for a song, play it now
@@ -59,6 +66,7 @@ bl() {
   playlist="$(cat "$musicdir/playlist/current")"
   songname="$(basename "$(mpc -f '%file%' | head -n 1)")"
   printf "\n-$songname" >> "$musicdir/playlist/$playlist"
+  mpc next
 }
 
 # compose playlists by search results
@@ -73,11 +81,35 @@ playlist() {
 	  *) ;;
 	esac
       done < "$musicdir/playlist/$target"
+
+      # clear duplicates
+      # cf https://github.com/ajjahn/puppet-mpd/blob/master/files/mpd-remove-duplicates.sh
+      while read -r song; do
+	count=$(echo "$song" | sed -e "s/^[ \t]*//" | cut -d" " -f1);
+	song=$(echo "$song" | sed -e "s/^[ \t]*//" | cut -d" " -f2-);
+	for (( i = 2 ; i <= $count; i++ )); do
+	  mpc playlist | grep -n "$song" | tail -n 1 | cut -d: -f1 | mpc del;
+	done;
+      done < <(mpc playlist | sort | uniq -d -c )
+
       mpc shuffle
       mpc play
   fi
 }
 
-op=${1:-play}
+info() {
+  name="$(mpc -f '%title% - %artist%' | head -n 1)"
+  [ "$name" = ' - ' ] && name="$(basename "$(mpc -f '%file%' | head -n 1)")"
+
+  length="$(wc -c <<< "$name")"
+  percent="$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')"
+
+  echo "$name"
+  "$HOME/.wm/panel/tools/mkb" $percent $length ◼ ◻ ◼
+  echo playlist: $(cat ~/Music/playlist/current)
+  echo playlist length: $(playlist_length)
+}
+
+op=${1:-toggle}
 shift
 $op "$*"
