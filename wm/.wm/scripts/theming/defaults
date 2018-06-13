@@ -121,7 +121,7 @@ c_shadow_red="0.0"
 c_shadow_blue="0.0"
 c_shadow_green="0.0"
 
-c_fading="false";
+c_fading="false"
 c_fade_in_step="0.1"
 c_fade_out_step="0.1"
 
@@ -160,6 +160,8 @@ done
 # If empty, all are used.
 # it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"
 p_format="dropdown:desktop:github|title|mpd:volume:weather:clock" # Default options/items to include in info section of panel.
+
+p_format="dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock" # Default options/items to include in info section of panel.
 
 # Customize options on different computers by hostname.
 # for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.

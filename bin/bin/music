@@ -99,15 +99,21 @@ playlist() {
 
 info() {
   name="$(mpc -f '%title% - %artist%' | head -n 1)"
-  [ "$name" = ' - ' ] && name="$(basename "$(mpc -f '%file%' | head -n 1)")"
+  if [ "$name" = ' - ' ]; then
+    name="$(basename "$(mpc -f '%file%' | head -n 1)")"
+    name="${name%.*}"
+  fi
+  playlist_info="$(echo playlist: $(cat ~/Music/playlist/current) ┃ $(playlist_length))"
 
-  length="$(wc -c <<< "$name")"
+  length="$(wc -L <<< "$name")"
   percent="$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')"
+  progress="$("$HOME/.wm/panel/tools/mkb" $percent $length ◼ ◻ ◼)"
 
-  echo "$name"
-  "$HOME/.wm/panel/tools/mkb" $percent $length ◼ ◻ ◼
-  echo playlist: $(cat ~/Music/playlist/current)
-  echo playlist length: $(playlist_length)
+  cat<<EOF
+$name
+$progress
+$playlist_info
+EOF
 }
 
 op=${1:-toggle}

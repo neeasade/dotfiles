@@ -27,7 +27,7 @@ p_bg_normal="#ffe3e3e3"
 p_fg_active="#ff525252"
 p_bg_active="#ffb9b9b9"
 
-p_format_2="desktop:github:themeSwitch:title|org_task|dynamicmpd:volume:clock"
+# p_format_2="desktop:github:themeSwitch:title|org_task|dynamicmpd:volume:clock"
 p_title_show_mode=active         # used by title.
 
 p_height=25
@@ -37,8 +37,8 @@ p_window_class="noshadow"
 p_line=2
 p_padding=6
 
-p_font_main="Go Mono for Powerline-12:style=Bold"
-p_font_icon="FontAwesome-12" # Panel Icon font.
+p_font_main="Go Mono for Powerline-10:style=Bold"
+p_font_icon="FontAwesome-10" # Panel Icon font.
 p_icon_enable=false
 d_font="Go Mono for Powerline 10"
 
@@ -48,9 +48,9 @@ p_desktop_empty_label="$(uchar f1db)"
 p_desktop_tiling_label=''
 p_desktop_monocle_label="$(uchar f00b)"
 
-st_font="Go Mono for Powerline-14:style=Regular"
+st_font="Go Mono for Powerline-12:style=Regular"
 p_title_only_show_active=true
-maxWinNameLen=30
+maxWinNameLen=40
 
 p_title_theme="fg=\"#ff$(colort -t 30 525252)\""
 p_desktop_theme="fg=\"#ff$(colort -t 30 525252)\""

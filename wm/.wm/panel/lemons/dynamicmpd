@@ -2,10 +2,10 @@
 # scrolling mpd text
 # limitation of this is it only works with monospace fonts.
 
-max_length=20
+max_length=30
 
 title="$($HOME/.wm/panel/lemons/mpd)"
-max_length=$(echo "$title" | cut -c 1-$max_length | wc -m)
+max_length=$(echo "$title" | cut -c 1-$max_length | wc -L)
 if [  "$title" = "Stopped" ]; then
     icon music
     echo Stopped

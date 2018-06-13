@@ -2,9 +2,9 @@
 # MIT Copyright (c) 2018 Luiz de Milon (kori)
 # get current memory usage
 
-t=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-f=$(grep MemFree  /proc/meminfo | awk '{print $2}')
-b=$(grep ^Buffers /proc/meminfo | awk '{print $2}')
-c=$(grep ^Cached  /proc/meminfo | awk '{print $2}')
+t=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+f=$(awk '/MemFree/{print $2}'  /proc/meminfo)
+b=$(awk '/^Buffers/{print $2}' /proc/meminfo)
+c=$(awk '/^Cached/{print $2}'  /proc/meminfo)
 
-echo -n $(echo "($t - $f - $c - $b) / 1000" | bc)
+echo $(echo "($t - $f - $c - $b) / 1000" | bc)

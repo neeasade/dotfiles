@@ -32,7 +32,8 @@ if initial_start:
     c.auto_save.session = True
 
     # binds
-    config.bind('<Shift-i>', 'config-source')
+    # todo: make this insert mode + utf8 script
+    # config.bind('<Shift-I>', 'config-source')
 
 
 # mustache templated from current theme

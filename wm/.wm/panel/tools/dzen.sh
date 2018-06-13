@@ -65,7 +65,6 @@ dzen_mpd() {
 # Common folders and recent files, as well as some actions.
 dzen_menu() {
     set +e
-    notify-send asdf
 
     align=l
     icon_dzen() {

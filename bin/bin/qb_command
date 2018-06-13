@@ -1,13 +1,17 @@
-  #!/bin/sh
-  # ($_url is any command)
+#!/bin/sh
+# ($_url is any command)
 
-  _qb_version='1.0.4'
-  _proto_version=1
-  _ipc_socket="${XDG_RUNTIME_DIR}/qutebrowser/ipc-$(echo -n "$USER" | md5sum | cut -d' ' -f1)"
-  _url="$@"
+_qb_version='1.0.4'
+_proto_version=1
+_ipc_socket="${XDG_RUNTIME_DIR}/qutebrowser/ipc-$(echo -n "$USER" | md5sum | cut -d' ' -f1)"
+_url="$@"
 
-  printf '{"args": ["%s"], "target_arg": null, "version": "%s", "protocol_version": %d, "cwd": "%s"}\n' \
-	 "${_url}" \
-	 "${_qb_version}" \
-	 "${_proto_version}" \
-	 "${PWD}" | socat - UNIX-CONNECT:"${_ipc_socket}"
+
+bspc config ignore_ewmh_focus         true
+printf '{"args": ["%s"], "target_arg": null, "version": "%s", "protocol_version": %d, "cwd": "%s"}\n' \
+    "${_url}" \
+    "${_qb_version}" \
+    "${_proto_version}" \
+    "${PWD}" | socat - UNIX-CONNECT:"${_ipc_socket}"
+
+bspc config ignore_ewmh_focus         false

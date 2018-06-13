@@ -1,5 +1,13 @@
 # -*- mode: sh -*-
 
+sysinfo() {
+  clear
+  ufetch
+  music info
+  pcs() { for i in {0..7}; do echo -en "\e[${1}$((30+$i))m \u2588\u2588 \e[0m"; done; }
+  printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
+}
+
 shot_location() {
   mkdir -p $HOME/Screenshots
   echo "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
@@ -15,8 +23,12 @@ fullshot() {
   maim "$(shot_location)"
 }
 
+lastshot() {
+  echo "$HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1)"
+}
+
 upshot() {
-  uguush -o 0x0 -u "$(echo $HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1))"
+  uguush -o 0x0 -u "$(lastshot)"
 }
 
 # current monitor only - bspwm specific
@@ -168,5 +180,5 @@ dotadd() {
 }
 
 book() {
-  google-chrome-stable "$(cat ~/.book_url)"
+  google-chrome-stable "$(cat ~/.book_url)" &
 }

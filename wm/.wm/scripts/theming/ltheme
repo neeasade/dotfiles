@@ -209,7 +209,7 @@ load_gtk() {
 
     if ! margs gtkrc .gtkrc-2.0; then
         target="$HOME/.themes/${THEME_NAME}_template"
-        mustache < $HOME/.wm/templates/oomox > $target
+        mustache < $HOME/.dotfiles/templates/oomox > $target
 
         git_ensure oomox
         cd "$gitdest"
@@ -265,6 +265,7 @@ load_dunst() {
 }
 
 load_mpd() {
+    mkdir "$HOME/.config/mpd/playlists"
     margs mpd .config/mpd/mpd.conf
     margs mpdcron .config/mpd/mpdcron.conf
 }
