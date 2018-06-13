@@ -1,0 +1,40 @@
+#!/bin/bash
+
+ip="$(ipconfig | grep IPv4 | tail -n 1 | sed 's/.*: //' | tr -d $'\n\r')"
+export DISPLAY="${ip}:0.0"
+
+# host 
+export USER=""
+export HHOME="//c/users/$USER/"
+
+# docker (escaping is because of git bash)
+export HOME="\/\/home\/emacs\/"
+
+mapdir() {
+  echo "${HHOME}${1}:${HOME}${2:-$1}"
+}
+
+init_image() {
+  winpty docker run --name emacs \
+    -e DISPLAY="$DISPLAY" \
+    -e UNAME="emacser" \
+    -e GNAME="emacsers" \
+    -e USER="emacser" \
+    -e UID="1000" \
+    -e GID="1000" \
+    -v "$(mapdir .emacs.docker .emacs.d)" \
+    -v "$(mapdir .ssh)" \
+    -v "$(mapdir bin)" \
+    -v "$(mapdir git)" \
+    -v "$(mapdir notes)" \
+    jare/emacs emacs
+}
+
+# to reset:
+# docker rm "$(docker ps -a | grep 'jare/emacs' | sed 's/ .*//')"
+
+if docker ps -a | grep 'jare/emacs'; then
+  docker start "$(docker ps -a | grep 'jare/emacs' | sed 's/ .*//')"
+else
+  init_image
+fi
