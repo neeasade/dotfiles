@@ -47,12 +47,12 @@ deskshot() {
 }
 
 settitle() {
+  $ESHELL && return
   printf "%b%s" "\033]0;$*\a"
 }
 
 defaulttitle() {
-  $ESHELL && return
-  settitle "$(basename $SHELL) - $(echo $TERM | sed 's/-.*//')"
+  settitle "$(basename $PWD) - $(basename $SHELL)"
 }
 
 linewrap() {

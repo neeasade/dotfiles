@@ -32,6 +32,10 @@ zplug load
 
 setopt PROMPT_SUBST
 
+chpwd() {
+    defaulttitle
+}
+
 # completion like emacs, use cache
 zstyle ':completion:*:default' menu select=1
 zstyle ':completion:*' use-cache true
