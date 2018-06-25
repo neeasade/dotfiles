@@ -52,13 +52,14 @@ setopt autocd
 # Remove '/' and '-' from $WORDCHARS for finer Ctrl-w behaviour
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
 
-# vim bindings
-
 if $ESHELL; then
+  cd "$HOME"
   unsetopt PROMPT_SP
   unsetopt zle
   return
 fi
+
+# vim bindings
 
 bindkey -v
 
