@@ -20,11 +20,11 @@ else
   title="Stopped"
 fi
 
+icon music
+
 if [  "$title" = "Stopped" ]; then
-    icon music
     echo Stopped
 else
-    icon music
     $playing && icon pause
     $paused && icon play
     echo "$title" | cut -c 1-$maxWinNameLen
