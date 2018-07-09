@@ -68,8 +68,11 @@ super + {_,shift} + slash
 #super + p
 #    ~/.wm/scripts/i3blur.sh
 
-super + {o,e,Return}
-    ${BROWSER,FILEBROWSER,TERMINAL}
+super + Return
+   elisp t && elisp '(neeasade/spawn-terminal)' || $TERMINAL
+
+super + {o,e}
+    ${BROWSER,FILEBROWSER}
 
 # launch a program, ensure GTK3 theme.
 super + {_,shift,alt} + space
@@ -88,4 +91,29 @@ XF86Audio{LowerVolume,RaiseVolume,Mute}
 super + Escape
     pkill -USR1 -x sxhkd
 
+# from here down are keys that I'm treating like macro keys
+Print
+    music bl
+
+Scroll_Lock
+    mpc toggle
+
+Pause
+    ponymix toggle
+
+Insert
+    ponymix increase 5
+
+Delete
+    ponymix decrease 5
+
+Home
+    mpc next
+
+End
+    utf8
+
+# you also have F1 - F12
+F6
+    utf8
 # }}}

@@ -181,12 +181,15 @@ page() {
 }
 
 dotadd() {
-  file="$@"
+  file="$(find ~/bin | fzf)" || return
+  file="$(basename "$file")"
+  echo mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
   mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
   cd "$HOME/.dotfiles"
   stow bin
 }
 
 book() {
+  player.sh pause
   google-chrome-stable "$(cat ~/.book_url)" &
 }

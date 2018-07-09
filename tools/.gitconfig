@@ -1,7 +1,5 @@
 [user]
 	email = nathanisom27@gmail.com
 	name = neeasade
-[core]
-	pager = less -+F
 [url "git@github.com:"]
 	pushInsteadOf = "https://github.com/"

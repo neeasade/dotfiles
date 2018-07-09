@@ -1,0 +1,13 @@
+#!/bin/sh
+
+target="$(mktemp)"
+
+(
+    while IFS= read -r line; do
+    printf '%s\n' "$line"
+    done <&0
+) > "$target"
+
+mode="${1:-text-mode}"
+elisp "(neeasade/find-or-open \"${target}\") (${mode})"
+rm "$target"

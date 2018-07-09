@@ -1,0 +1,20 @@
+#!/bin/sh
+
+ESHELL=${ESHELL:-false}
+
+if $ESHELL; then
+    candidates=""
+    while read -u 0 -r line; do
+	candidates="$candidates \"$(echo $line | sed 's/\"/\\\"/g')\""
+    done
+
+    if result="$(elisp "(ivy-read \"\" (list ${candidates}) :action (lambda(option) option))")"
+    then
+	echo "$result" | sed -e 's/^"//' -e 's/"$//'
+    else
+	exit 1
+    fi
+else
+    fzf="$(type -a fzf | awk 'END{print $3}')"
+    $fzf
+fi

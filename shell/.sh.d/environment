@@ -9,8 +9,6 @@ has() {
   silent type "$@" 
 }
 
-PAGER="less"
-
 # less status line
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 LESSCHARSET='utf-8'
@@ -49,14 +47,14 @@ if has npm; then
     fi
 fi
 
+NODE_PATH="$HOME/.npm-packages/lib/node_modules"
+PATH="$PATH:$HOME/.npm-packages/bin"
+
 GEM_HOME="$HOME/.gem"
 BUNDLE_PATH="$HOME/.gem"
 GOPATH="$HOME/.go"
 
-WINEPREFIX=$HOME/.config/wine/
-
-
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then 
+if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
   . $HOME/.nix-profile/etc/profile.d/nix.sh; 
 fi 
 
@@ -75,5 +73,7 @@ if [ -n "$INSIDE_EMACS" ]; then
 else
   ESHELL=false
 fi
+
+$ESHELL && PAGER="epager" || PAGER="less"
 
 set +a
