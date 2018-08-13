@@ -69,7 +69,7 @@ super + {_,shift} + slash
 #    ~/.wm/scripts/i3blur.sh
 
 super + Return
-   elisp t && elisp '(neeasade/spawn-terminal)' || $TERMINAL
+   elisp t && elisp '(ns/spawn-terminal)' || $TERMINAL
 
 super + {o,e}
     ${BROWSER,FILEBROWSER}

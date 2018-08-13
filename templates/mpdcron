@@ -2,7 +2,7 @@
 
 [main]
 loglevel = 0
-modules = notification;scrobbler
+modules = notification
 
 [mpd]
 events = player;mixer
@@ -25,15 +25,3 @@ urgency = normal
 # Notification hints in format TYPE:NAME:VALUE, specifies basic extra data
 # to pass. Valid types are int, double, string and byte
 hints =
-
-[scrobbler]
-# Http proxy to use, the module also respects http_proxy environment
-# variable.
-# proxy = http://127.0.0.1:8080
-# Journal interval in seconds
-journal_interval = 60
-
-[libre.fm]
-url = turtle.libre.fm
-username={{`pass librefm/user`}}
-password={{`pass librefm/pass`}}
