@@ -6,37 +6,27 @@
 # args
 progress="$1"
 size="$2"
-char1="$3"
-char2="$4"
-sep="$5"
-start="$6"
-end="$7"
+
+eval "$(theme get)"
 
 # defaults
 progress=${progress:-30}
 size=${size:-32}
-char1="${char1:-━}"
-char2="${char2:-━}"
-sep="${sep:-╋}"
-start="${start:-}"
-end="${end:-}"
 
 # some ideas
-#char1="◼" sep="◼" char2="◻"
-#char1="▰" sep="▰" char2="▱"
 
 passed=false
-content="${start}"
+content="${l_start}"
 
 content="${content}${start}"
 for i in $(seq 1 $size); do
     if [ "$(echo "$i < $progress / 100 * $size" | bc -l)" = 1 ]; then
-        current="$char1"
+        current="$l_complete"
     else
-        $passed && current="$char2" || current="$sep"
+        $passed && current="$l_empty" || current="$l_sep"
         passed=true
     fi
     content="${content}${current}"
 done
-content="${content}${end}"
+content="${content}${l_end}"
 echo "$content"

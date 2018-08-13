@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 # always run mpv w/ socket
 
-mpv="$(type -a mpv | awk 'END{print $3}')"
+# sort here is a hack for emacs. /run/ comes after /home/.
+mpv="$(type -a mpv | sort | awk 'END{print $3}')"
 
 # todo: account for multiple instances here
 mpc pause >/dev/null

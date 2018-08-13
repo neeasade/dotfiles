@@ -65,8 +65,10 @@ path_add() {
 path_add bin
 path_add .gem/bin
 path_add .go/bin
+path_add .cargo/bin
 path_add .wm/scripts/interact
 path_add .wm/scripts/visual
+path_add .config/guix/current/bin
 
 if [ -n "$INSIDE_EMACS" ]; then
     ESHELL=true
@@ -75,5 +77,7 @@ else
 fi
 
 $ESHELL && PAGER="epager" || PAGER="less"
+
+GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
 
 set +a

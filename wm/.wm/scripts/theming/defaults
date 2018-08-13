@@ -16,6 +16,13 @@ b_desktop_names="00 01 10 11"
 # meant to be used for effects, like pulse or 2bspwm
 b_bspwmrc_extend=""
 
+# mkb script, l for loader
+l_complete="+"
+l_empty="-"
+l_sep="-"
+l_start=""
+l_end=""
+
 # Panel variables
 p_height=16                  # Panel height.
 p_font_main="Droid Sans-8"   # Panel main font.
@@ -89,6 +96,9 @@ p_dynamicmpd_mouse_right="player.sh next"
 
 emacs_theme="spacemacs-dark"
 emacs_powerline_scale="1.6"
+
+# options
+# alternate, arrow, arrow-fade, bar, box, brace, butt, chamfer, contour, curve, rounded, roundstub, wave, zigzag, utf-8.
 emacs_powerline="bar"
 
 weechat_prefix_join="▶"

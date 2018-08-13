@@ -107,7 +107,7 @@ info() {
 
   length="$(wc -L <<< "$name")"
   percent="$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')"
-  progress="$("$HOME/.wm/panel/tools/mkb" $percent $length ◼ ◻ ◼)"
+  progress="$("$HOME/.wm/panel/tools/mkb" $percent $length )"
 
   cat<<EOF
 $name

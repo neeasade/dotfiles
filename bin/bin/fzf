@@ -5,10 +5,13 @@ ESHELL=${ESHELL:-false}
 if $ESHELL; then
     candidates=""
     while read -u 0 -r line; do
-	candidates="$candidates \"$(echo $line | sed 's/\"/\\\"/g')\""
+	candidates="${candidates}"$'\n'"${line}"
     done
 
-    if result="$(elisp "(ivy-read \"\" (list ${candidates}) :action (lambda(option) option))")"
+    candidates="'${candidates}'"
+    lisp='(ivy-read "" (s-split "\n" (ns/shell-exec "printf '"${candidates}"'")) :action (lambda(option) option))'
+
+    if result="$(elisp "${lisp}")"
     then
 	echo "$result" | sed -e 's/^"//' -e 's/"$//'
     else
