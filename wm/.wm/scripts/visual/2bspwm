@@ -4,19 +4,30 @@
 # makes dual borders based on your bspwm colors
 
 focusedTint=80
+
 normalTint=20
 
 # set border widths, if odd outer is 1px larger
 borderWidth=`bspc config border_width`
-inWidth=$(( $borderWidth/2 ))
-outWidth=$(( ($borderWidth/2) + ($borderWidth%2) ))
+
+# optionally vary width based on focused or not
+
+# half if even, 1px to outer if odd
+inWidthNormal=$(( $borderWidth/2 ))
+outWidthNormal=$(( ($borderWidth/2) + ($borderWidth%2) ))
+
+inWidthFocused=$(( $inWidthNormal + 0 ))
+outWidthFocused=$((  $outWidthNormal - 0 ))
 
 # _chwb2 [Focused|Normal] [nodeId]
 _chwb2() {
     colorType=$1
     shift
-    eval chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null &
-    eval echo chwb2 -I \$inner$colorType -O \$outer$colorType -i $inWidth -o $outWidth $@ 2>/dev/null &
+    _getVal() {
+	eval echo \$$1$colorType
+    }
+
+    chwb2 -I $(_getVal inner) -O $(_getVal outer) -i $(_getVal inWidth) -o $(_getVal outWidth) $@ 2>/dev/null &
 }
 
 # define border colors based on bspwm border settings
