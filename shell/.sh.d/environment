@@ -69,6 +69,7 @@ path_add .cargo/bin
 path_add .wm/scripts/interact
 path_add .wm/scripts/visual
 path_add .config/guix/current/bin
+path_add .guix-profile/bin
 
 if [ -n "$INSIDE_EMACS" ]; then
     ESHELL=true

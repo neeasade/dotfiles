@@ -19,7 +19,7 @@ time_offset_percent() {
 }
 
 progress() {
-    mkb "$(time_offset_percent "$1")" 10 ◼ ◻ ◻
+    mkb "$(time_offset_percent "$1")" 10
 }
 
 get_length() {
@@ -43,7 +43,7 @@ case ${pomodoro_state} in
         ;;
 
     :none)
-        echo "Pick a task!"
+        echo "current focus: $(elisp '(ns/org-get-active)' | awk '{print substr($0,2,length($0)-2)}')"
         ;;
 
     *)
