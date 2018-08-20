@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 
 bspc config pointer_follows_focus true
 dir=$1
@@ -31,45 +31,29 @@ tiled_move() {
       south) dim=width;;
     esac
 
-    # failed, assume edge of monitor, get
-    # parent until we are bigger than ourself, then go
-
     # compare height or width to parent
     self_measure="$(bspc query -T -n "$node" | jq .rectangle.$dim)"
     parent_measure="$(bspc query -T -n "${node}#@parent" | jq .rectangle.$dim)"
-    parent_measure="${parent_measure:-$self_measure}" # if there is no parent, this is blank
+    parent_measure="${parent_measure:-$self_measure}"
 
     if [ "$parent_measure" -gt "$self_measure" ]; then
-      # get our sibling
-      node_sibling="$(bspc query -N -n "${node}#@brother")"
+      parent="$(bspc query -N -n "${node}#@parent")"
+      bspc node $parent -p $dir
+      bspc node $parent -i
 
-      compare() {
-        us="$(bspc query -T -n "$node" | jq .rectangle.$2)"
-        sibling="$(bspc query -T -n "$node_sibling" | jq .rectangle.$2)"
-        iif "[ $us -$1 $sibling ]"
-      }
+      # the .leaf.!window query didn't work
+      receptacle_id="$(bspc query -T -n "${node}#@parent#@parent" | jq '.. | .?, .root?, .firstChild?, .secondChild? | select (.client == null and .firstChild == null and .secondChild == null) | .id' | grep -v null | head -n 1)"
 
-      is_top="$(compare lt y)"
-      is_left="$(compare lt x)"
-
-      [ "$dim" = "height" ] &&
-        bspc node "${node}#@parent" -R "$(iif $is_top $(iif "[ "$dir" = "west" ]" '-90 90' '90 -90'))"
-
-      [ "$dim" = "width" ] &&
-        bspc node "${node}#@parent" -R "$(iif $is_left $(iif "[ "$dir" = "north" ]" '90 -90' '-90 90'))"
+      bspc node $node -n $receptacle_id
     else
-      # climb the tree, but only allow it to happen once:
-      if ! $has_climbed; then
-        has_climbed=true
-        node="$(bspc query -N -n "${node}#@parent")"
+      parent="$(bspc query -N -n "${node}#@parent")"
+      if [ ! -z "$parent" ]; then
+        node="$parent"
         tiled_move
       fi
     fi
   fi
 }
-
-
-has_climbed=false
 
 if bspc query -N -n $node.floating > /dev/null; then
   floating_move
