@@ -20,38 +20,32 @@ floating_move() {
 }
 
 tiled_move() {
-  if bspc node -f $dir.local; then
-    bspc node -s $node
-    bspc node -f $node
+  (bspc node -n "$dir".!automatic || bspc node -s "$dir") && exit
+
+  case $dir in
+    west)  dim=height;;
+    east)  dim=height;;
+    north) dim=width;;
+    south) dim=width;;
+  esac
+
+  # compare height or width to parent
+  self_measure="$(bspc query -T -n "$node" | jq .rectangle.$dim)"
+  parent_measure="$(bspc query -T -n "${node}#@parent" | jq .rectangle.$dim)"
+  parent_measure="${parent_measure:-$self_measure}"
+
+  if [ "$parent_measure" -gt "$self_measure" ]; then
+    parent="$(bspc query -N -n "${node}#@parent")"
+    bspc node $parent -p $dir
+    bspc node $parent -i
+
+    # the .leaf.!window query didn't work
+    receptacle_id="$(bspc query -T -n "${node}#@parent#@parent" | jq '.. | .?, .root?, .firstChild?, .secondChild? | select (.client == null and .firstChild == null and .secondChild == null) | .id' | grep -v null | head -n 1)"
+
+    bspc node $node -n $receptacle_id
   else
-    case $dir in
-      west)  dim=height;;
-      east)  dim=height;;
-      north) dim=width;;
-      south) dim=width;;
-    esac
-
-    # compare height or width to parent
-    self_measure="$(bspc query -T -n "$node" | jq .rectangle.$dim)"
-    parent_measure="$(bspc query -T -n "${node}#@parent" | jq .rectangle.$dim)"
-    parent_measure="${parent_measure:-$self_measure}"
-
-    if [ "$parent_measure" -gt "$self_measure" ]; then
-      parent="$(bspc query -N -n "${node}#@parent")"
-      bspc node $parent -p $dir
-      bspc node $parent -i
-
-      # the .leaf.!window query didn't work
-      receptacle_id="$(bspc query -T -n "${node}#@parent#@parent" | jq '.. | .?, .root?, .firstChild?, .secondChild? | select (.client == null and .firstChild == null and .secondChild == null) | .id' | grep -v null | head -n 1)"
-
-      bspc node $node -n $receptacle_id
-    else
-      parent="$(bspc query -N -n "${node}#@parent")"
-      if [ ! -z "$parent" ]; then
-        node="$parent"
-        tiled_move
-      fi
-    fi
+    node="$(bspc query -N -n "${node}#@parent")"
+    [ ! -z "$node" ] && tiled_mode
   fi
 }
 
