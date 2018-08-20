@@ -39,10 +39,9 @@ tiled_move() {
     bspc node $parent -p $dir
     bspc node $parent -i
 
-    # the .leaf.!window query didn't work
-    receptacle_id="$(bspc query -T -n "${node}#@parent#@parent" | jq '.. | .?, .root?, .firstChild?, .secondChild? | select (.client == null and .firstChild == null and .secondChild == null) | .id' | grep -v null | head -n 1)"
-
+    receptacle_id="$(bspc query -N "${parent}#@parent" -n '.descendant_of.leaf.!window')"
     bspc node $node -n $receptacle_id
+    bspc node "${node}#@parent" -B
   else
     node="$(bspc query -N -n "${node}#@parent")"
     [ ! -z "$node" ] && tiled_move
