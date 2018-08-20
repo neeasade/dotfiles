@@ -20,7 +20,7 @@ floating_move() {
 }
 
 tiled_move() {
-  (bspc node -n "$dir".!automatic || bspc node -s "$dir") && exit
+  (bspc node -n $dir.\!automatic || bspc node -s "$dir") && exit
 
   case $dir in
     west)  dim=height;;
@@ -45,7 +45,7 @@ tiled_move() {
     bspc node $node -n $receptacle_id
   else
     node="$(bspc query -N -n "${node}#@parent")"
-    [ ! -z "$node" ] && tiled_mode
+    [ ! -z "$node" ] && tiled_move
   fi
 }
 
