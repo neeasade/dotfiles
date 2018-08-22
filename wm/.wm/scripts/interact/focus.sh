@@ -18,26 +18,26 @@ floating_windows=$(bspc query -N -d -n .window.local.floating)
 declare -A winmap=();
 while read wid x y w h; do
   wid="${wid^^}"
-  # capture window corners, 1234 clockwise from top left
-  winmap["${wid}_1_x"]=$x
-  winmap["${wid}_1_y"]=$y
-  winmap["${wid}_2_x"]=$((x+w))
-  winmap["${wid}_2_y"]=$y
-  winmap["${wid}_3_x"]=$((x+w))
-  winmap["${wid}_3_y"]=$((y + h))
-  winmap["${wid}_4_x"]=$x
-  winmap["${wid}_4_y"]=$((y+h))
+  # capture window corners, abcd clockwise from top left
+  winmap["${wid}_a_x"]=$x
+  winmap["${wid}_a_y"]=$y
+  winmap["${wid}_b_x"]=$((x+w))
+  winmap["${wid}_b_y"]=$y
+  winmap["${wid}_c_x"]=$((x+w))
+  winmap["${wid}_c_y"]=$((y + h))
+  winmap["${wid}_d_x"]=$x
+  winmap["${wid}_d_y"]=$((y+h))
 done < <(wattr ixywh $floating_windows $node $og_target)
 
 inside_node() {
   x=$1
   y=$2
-  ax="${winmap["${node}_1_x"]}"
-  ay="${winmap["${node}_1_y"]}"
-  bx="${winmap["${node}_2_x"]}"
-  by="${winmap["${node}_2_y"]}"
-  dx="${winmap["${node}_4_x"]}"
-  dy="${winmap["${node}_4_y"]}"
+  ax="${winmap["${node}_a_x"]}"
+  ay="${winmap["${node}_a_y"]}"
+  bx="${winmap["${node}_b_x"]}"
+  by="${winmap["${node}_b_y"]}"
+  dx="${winmap["${node}_d_x"]}"
+  dy="${winmap["${node}_d_y"]}"
 
   bax=$((bx - ax))
   bay=$((by - ay))
@@ -68,39 +68,46 @@ check_corners() {
   wid="$1"
   # if they are all inside node, we don't care
   # turns out this meant we couldn't grab floaters in certain situations
-  # if check_corner 1 2 3 4; then
+  # if check_corner a b c d; then
   #   return 0;
   # fi
 
   case $node_dir in
-    east) corners="1 4";;
-    west) corners="2 3";;
-    north) corners="3 4";;
-    south) corners="1 2";;
+    east) corners="a d";;
+    west) corners="b c";;
+    north) corners="c d";;
+    south) corners="a b";;
   esac
 
-  # if ! check_corner $corners; then
-  #   return
-  # fi
+  if check_corner $corners; then
+    target_corners $corners
+  fi
 
-  for corner in $corners; do
-    x=${winmap["${wid}_${corner}_x"]}
-    y=${winmap["${wid}_${corner}_y"]}
+  if check_corner a b c d; then
+    target_corners $corners
+  fi
 
-    if inside_node $x $y; then
-      if [ -z "$target_x" ]; then
-        target_x=$x
-        target_y=$y
-        target="$wid"
-      fi
+  # make a check-corner for the left or right half of node, allow matching one
 
-      # bias towards close corners
-      val=${winmap["${wid}_${corner}_${dir}"]}
-      if [ "$val" "$sign" "$(eval echo \$target_$dir)" ]; then
-        target=$wid
-        target_x=$x
-        target_y=$y
-      fi
+}
+
+target_corners() {
+  for c in $*; do
+    x=${winmap["${wid}_${c}_x"]}
+    y=${winmap["${wid}_${c}_y"]}
+
+    if [ -z "$target_x" ]; then
+      target_x=$x
+      target_y=$y
+      target="$wid"
+    fi
+
+    # bias towards close corners
+    val=${winmap["${wid}_${c}_${dir}"]}
+    if [ "$val" "$sign" "$(eval echo \$target_$dir)" ]; then
+      target=$wid
+      target_x=$x
+      target_y=$y
     fi
   done
 }
