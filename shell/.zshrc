@@ -4,7 +4,6 @@
 
 . ~/.zplug/init.zsh
 
-zplug "plugins/git", from:oh-my-zsh                                  # git aliases
 ! $ESHELL && zplug "zsh-users/zsh-autosuggestions", use:"zsh-autosuggestions.zsh" # fish-like suggestions
 zplug "djui/alias-tips"                                              # alias reminder
 

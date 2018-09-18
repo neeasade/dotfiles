@@ -1,10 +1,26 @@
 #!/bin/sh
+# todo: grep for '*ERROR*: Quit' for exit status as well?
 
-result="$(emacsclient --eval "(progn $@)")"
+trim=false
+[ "$1" = "-r" ] && trim=true && shift
+
+eclient="emacsclient"
+
+# windows
+if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
+    eclient="${eclient}w --server-file $HOME/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
+fi
+
+result="$($eclient --eval "(progn $@)")"
 
 if [ "$result" = "nil" ] || [ -z "$result" ]; then
   exit 1
 else
-  echo "$result"
-  exit 0
+    if $trim; then
+	# trim a list, or quotes (surrounding characters).
+	echo "$result" | sed -e 's/^.//' -e 's/.$//'
+    else
+	echo "$result"
+    fi
+    exit 0
 fi
