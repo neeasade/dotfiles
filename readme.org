@@ -4,7 +4,7 @@
 | OS          | Nixos                  |
 | WM          | BSPWM                  |
 | Panel       | lemonbar               |
-| Terminal    | [[https://github.com/neeasade/xst][xst]]                    |
+| Terminal    | Emacs shell, fallback [[https://github.com/neeasade/xst][xst]]                    |
 | Editor      | Emacs                  |
 | GTK         | [[https://github.com/actionless/oomox][oomox]] with [[http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910][ACYL]] icons. |
 
