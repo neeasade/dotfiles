@@ -80,5 +80,9 @@ fi
 $ESHELL && PAGER="epager" || PAGER="less"
 
 GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
+CPATH="/home/neeasade/.guix-profile/include${CPATH:+:}$CPATH"
+LIBRARY_PATH="/home/neeasade/.guix-profile/lib${LIBRARY_PATH:+:}$LIBRARY_PATH"
+PYTHONPATH="/home/neeasade/.guix-profile/lib/python3.6/site-packages${PYTHONPATH:+:}$PYTHONPATH"
+
 
 set +a
