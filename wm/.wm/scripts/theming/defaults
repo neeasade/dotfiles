@@ -17,6 +17,7 @@ b_desktop_names="00 01 10 11"
 b_bspwmrc_extend=""
 
 # mkb script, l for loader
+# ◼ ◻ ◻
 l_complete="+"
 l_empty="-"
 l_sep="-"
@@ -76,8 +77,8 @@ p_github_reload=120
 
 # default click actions for panel sections
 p_themeSwitch_mouse_left="dzen.sh theme"
-p_org_task_mouse_left="elisp '(org-clock-goto)'; bspc node -f $(xdotool search --onlyvisible --class Emacs)"
-p_org_task_mouse_right="elisp org-clock-current-task || bspc node -f $(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
+# p_org_task_mouse_left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
+# p_org_task_mouse_right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
 p_dropdown_mouse_left="dzen.sh menu"
 p_github_mouse_left="dzen.sh github"
 p_clock_mouse_left="dzen.sh cal"

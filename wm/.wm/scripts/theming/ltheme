@@ -136,7 +136,7 @@ load_xresources() {
 }
 
 load_emacs() {
-    elisp "(neeasade/style)"
+    elisp "(ns/style)"
 }
 
 load_xst() {

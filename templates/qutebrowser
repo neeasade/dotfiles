@@ -8,6 +8,10 @@ from enum import Enum
 config = config  # type: ConfigAPI # noqa: F821
 c = c  # type: ConfigContainer # noqa: F821
 
+# https://github.com/noctuid/dotfiles/blob/master/browsing/.config/qutebrowser/config.py
+def nmap(key, command):
+    """Bind key to command in normal mode."""
+    config.bind(key, command, mode='normal')
 initial_start = c.tabs.background == False
 
 if initial_start:
@@ -31,9 +35,15 @@ if initial_start:
     c.editor.command = [ os.environ['EDITOR'] + ' "{}"' ]
     c.auto_save.session = True
 
-    # binds
-    # todo: make this insert mode + utf8 script
-    # config.bind('<Shift-I>', 'config-source')
+    nmap('b', 'set-cmd-text --space :buffer')
+
+    # colemak
+    nmap('n', 'scroll-page 0 0.2')
+    nmap('e', 'scroll-page 0 -0.2')
+    nmap('N', 'tab-next')
+    nmap('E', 'tab-prev')
+    nmap('k', 'search-next')
+    nmap('K', 'search-prev')
 
 
 # mustache templated from current theme
@@ -69,6 +79,7 @@ theme = {
 
 # colors
 colors = theme['colors']
+config.set('colors.webpage.bg', "#{{background}}");
 
 def setToBG(colortype, target):
     config.set('colors.' + target, colors['bg'][colortype])
@@ -179,9 +190,10 @@ userscripts = [
         'bind': 'su',
         'script':
         """
-        notify-send "$QUTE_URL"
-        echo "$QUTE_URL" > ~/.qute_url
-        emacsclient --eval "(progn (tp-update-git-message))"
+#!/bin/sh
+notify-send "$QUTE_URL"
+echo "$QUTE_URL" > ~/.qute_url
+emacsclient --eval "(progn (tp-update-git-message))"
         """
     }
 ]

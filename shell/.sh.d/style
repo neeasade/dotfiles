@@ -18,7 +18,13 @@ esac
 prompt() {
     _ERR=$?
     [ $(jobs | wc -l) -ne 0 ] && _prompt="$_prompt$_prompt"
-    [ $_ERR -ne 0 ] && _prompt="\e[7m$_prompt\e[0m" # invert
+
+    if [ $_ERR -ne 0 ]; then
+      ${ESHELL:-false} &&
+        _prompt="$_prompt!" ||
+        _prompt="\e[7m$_prompt\e[0m" # invert
+    fi
+
     printf "%b%s" "$_prompt "
 }
 

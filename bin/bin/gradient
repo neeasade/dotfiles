@@ -1,0 +1,8 @@
+#!/bin/sh
+# no front #
+
+eval printf $(elisp "(ns/make-lines (ns/gradient \"#$1\" \"#$2\" $3))")
+
+# elisp "(ns/make-lines (ns/gradient \"#$1\" \"#$2\" $3))"
+
+# elisp "(ns/gradient \"#$1\" \"#$2\" $3)"

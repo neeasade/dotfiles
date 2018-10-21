@@ -22,7 +22,7 @@ super + {_,shift} + Tab
 super + t
     bspc desktop -l next
 
-super + {_,shift,alt,ctrl} + {h,j,k,l}
+super + {_,shift,alt,ctrl} + {h,n,e,l}
     {focus,move,resize,presel}.sh {west,south,north,east}
 
 super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
@@ -71,8 +71,8 @@ super + {_,shift} + slash
 super + Return
    elisp t && elisp '(ns/spawn-terminal)' || $TERMINAL
 
-super + {o,e}
-    ${BROWSER,FILEBROWSER}
+super + o
+    $BROWSER
 
 # launch a program, ensure GTK3 theme.
 super + {_,shift,alt} + space
