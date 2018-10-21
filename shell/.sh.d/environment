@@ -6,17 +6,32 @@ silent() {
 }
 
 has() {
-  silent type "$@" 
+  silent type "$@"
 }
+
+if ! has iif; then
+   iif() {
+     eval $1 >/dev/null && echo -n "${2-true}" || echo -n "${3-false}"
+   }
+fi
+
+set_editor() {
+  export EDITOR="$@"
+  export GIT_EDITOR="$@"
+  export SVN_EDITOR="$@"
+}
+set_editor vim
+
+WINDOWS=$(iif "uname | awk '\$1 ~ /MINGW|MSYS/ {print \$1}'")
 
 # less status line
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 LESSCHARSET='utf-8'
 
 BROWSER=qutebrowser
-TERMINAL=st
 FILEBROWSER=thunar
 VIEW_PDF=zathura
+TERMINAL=$(iif $WINDOWS git-bash st)
 
 # default
 GTK_THEME=${GTK_THEME:-adwaita}
@@ -25,27 +40,18 @@ MPDCRON_DIR="$HOME/.config/mpd"
 _JAVA_AWT_WM_NONREPARENTING=1
 LANG="en_US.UTF-8"
 TERMCMD="$TERMINAL"
+PAGER="less"
 
-# enforce emacs --server preference 
-if has emacs && silent emacsclient --eval "(progn desktop-save-mode)"; then 
-    EDITOR='emacsclient'
-else
-  EDITOR='vim'
-fi
-
-GIT_EDITOR="$EDITOR"
-SVN_EDITOR="$EDITOR"
-
-if has npm; then
-    if has cache_output; then
-	week="$(expr 60 \* 60 \* 24 \* 7)"
-	NODE_PATH="$(cache_output $week npm root -g)"
-	PATH="$PATH:$(cache_output $week npm bin -g)"
-    else
-      NODE_PATH="$(npm root -g)"
-      PATH="$PATH:$(npm bin -g)"
-    fi
-fi
+# if has npm; then
+#   if has cache_output; then
+#     day="$(expr 60 \* 60 \* 24)"
+#     NODE_PATH="$(cache_output $day npm root -g)"
+#     PATH="$PATH:$(cache_output $day npm bin -g)"
+#   else
+#     NODE_PATH="$(npm root -g)"
+#     PATH="$PATH:$(npm bin -g)"
+#   fi
+# fi
 
 NODE_PATH="$HOME/.npm-packages/lib/node_modules"
 PATH="$PATH:$HOME/.npm-packages/bin"
@@ -58,26 +64,18 @@ if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
   . $HOME/.nix-profile/etc/profile.d/nix.sh; 
 fi 
 
-path_add() {
-  PATH="$PATH:$HOME/$@"
+succ() {
+  PATH="$HOME/$@:$PATH"
 }
 
-path_add bin
-path_add .gem/bin
-path_add .go/bin
-path_add .cargo/bin
-path_add .wm/scripts/interact
-path_add .wm/scripts/visual
-path_add .config/guix/current/bin
-path_add .guix-profile/bin
-
-if [ -n "$INSIDE_EMACS" ]; then
-    ESHELL=true
-else
-  ESHELL=false
-fi
-
-$ESHELL && PAGER="epager" || PAGER="less"
+succ bin
+succ .gem/bin
+succ .go/bin
+succ .cargo/bin
+succ .wm/scripts/interact
+succ .wm/scripts/visual
+succ .config/guix/current/bin
+succ .guix-profile/bin
 
 GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
 CPATH="/home/neeasade/.guix-profile/include${CPATH:+:}$CPATH"

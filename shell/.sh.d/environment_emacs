@@ -1,0 +1,35 @@
+# -*- mode: sh -*-
+
+export ESHELL=$(iif '[ -n "$INSIDE_EMACS" ]')
+
+if $ESHELL; then
+  succ .emacs.d/scripts
+  PAGER="epager"
+fi
+
+# enforce emacs --server preference
+if has emacs && silent emacsclient --eval "(progn t)"; then
+  eclient="emacsclient"
+
+  if $WINDOWS; then
+    eclient="${eclient}w --server-file $HOME/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
+  fi
+
+  set_editor "$eclient"
+fi
+
+# rn this is recursive, todo: revaluate
+# redir() {
+#   eval "$(cat <<EOF
+# $1() {
+#   $TERMINAL -c $1
+# }
+# )"
+# }
+
+# if $ESHELL; then
+#   redir ranger
+#   redir htop
+#   redir ncurses
+#   redir nethack
+# fi
