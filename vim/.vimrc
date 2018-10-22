@@ -267,8 +267,6 @@ augroup END
 command! -bar -bang Sleuth call s:detect()
 
 " my changes:
-imap fd <ESC>
-vmap fd <ESC>
 
 " changing cursor
 if $TERM !~# '^linux\|^Eterm'
@@ -285,5 +283,19 @@ set t_vb=
 
 " allow unsaved buffers to not show
 set hidden
+set hlsearch
+
+" qwerty
+" imap fj <ESC>
+" vmap fj <ESC>
+
+" colemak
+imap tn <ESC>
+vmap tn <ESC>
+noremap e k
+noremap n j
+noremap k n
+noremap K N
+noremap N J
 
 " vim:set ft=vim et sw=2:
