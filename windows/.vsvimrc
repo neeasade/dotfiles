@@ -1,0 +1,7 @@
+
+source ~/.vimrc
+
+nmap <C-O> :vsc View.NavigateBackward<CR>
+nmap <C-I> :vsc View.NavigateForward<CR>
+vmap <C-O> :vsc View.NavigateBackward<CR>
+vmap <C-I> :vsc View.NavigateForward<CR>
