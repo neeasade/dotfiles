@@ -285,6 +285,8 @@ set t_vb=
 set hidden
 set hlsearch
 
+set clipboard=unnamed
+
 " qwerty
 " imap fj <ESC>
 " vmap fj <ESC>
