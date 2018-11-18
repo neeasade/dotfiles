@@ -15,7 +15,6 @@ border_color_out_normal=eeeeee
 border_color_in_focused=666666
 border_color_out_focused=dddddd
 
-# (colort wrapper, optional)
 if type greaten > /dev/null; then
     border_color_out_focused=$(bspc config focused_border_color | tr -d \#)
     border_color_in_focused=$(greaten $border_color_out_focused 30)
@@ -24,7 +23,6 @@ if type greaten > /dev/null; then
     border_color_in_normal=$(greaten $border_color_out_normal 30)
 fi
 
-# _chwb2 [Focused|Normal] [nodeId]
 _chwb2() {
     colorType=$1
     shift
@@ -40,12 +38,12 @@ _chwb2() {
 
 width_normal=$((border_width_in_normal+border_width_out_normal))
 width_focused=$((border_width_in_focused+border_width_out_focused))
-[ "$width_normal" = "$width_focused" ] && bspc config border_width "$width_normal"
+bspc config border_width "$width_normal"
 
-_chwb2 focused $(bspc query -N -n .descendant_of.window.!fullscreen)
-_chwb2 normal $(bspc query -N -n .!descendant_of.window.!fullscreen)
+_chwb2 focused $(bspc query -N -n .active.descendant_of.window.!fullscreen)
+_chwb2 normal $(bspc query -N -n .active.!descendant_of.window.!fullscreen)
 
 bspc subscribe node_state node_geometry node_focus | while read msg; do
-    _chwb2 focused $(bspc query -N -n .descendant_of.window.!fullscreen) &
-    _chwb2 normal $(bspc query -N -n .!descendant_of.window.!fullscreen) &
+    _chwb2 focused $(bspc query -N -n .active.descendant_of.window.!fullscreen) &
+    _chwb2 normal $(bspc query -N -n .active.!descendant_of.window.!fullscreen) &
 done
