@@ -1,52 +1,51 @@
-#!/usr/bin/env dash
+#!/bin/sh
 # neeasade
-# depends on: colort, wmutils opt/chwb2
+# depends on: wmutils opt/chwb2
 # makes dual borders based on your bspwm colors
 
-focusedTint=80
-
-normalTint=20
-
-# set border widths, if odd outer is 1px larger
-borderWidth=`bspc config border_width`
-
-# optionally vary width based on focused or not
+border_width_current=$(bspc config border_width)
 
 # half if even, 1px to outer if odd
-inWidthNormal=$(( $borderWidth/2 ))
-outWidthNormal=$(( ($borderWidth/2) + ($borderWidth%2) ))
+border_width_in_normal=$(( border_width_current/2 ))
+border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
+border_width_in_focused=$border_width_in_normal
+border_width_out_focused=$border_width_out_normal
+border_color_in_normal=444444
+border_color_out_normal=eeeeee
+border_color_in_focused=666666
+border_color_out_focused=dddddd
 
-inWidthFocused=$(( $inWidthNormal + 0 ))
-outWidthFocused=$((  $outWidthNormal - 0 ))
+# (colort wrapper, optional)
+if type greaten > /dev/null; then
+    border_color_out_focused=$(bspc config focused_border_color | tr -d \#)
+    border_color_in_focused=$(greaten $border_color_out_focused 30)
+
+    border_color_out_normal=$(bspc config normal_border_color | tr -d \#)
+    border_color_in_normal=$(greaten $border_color_out_normal 30)
+fi
 
 # _chwb2 [Focused|Normal] [nodeId]
 _chwb2() {
     colorType=$1
     shift
     _getVal() {
-	eval echo \$$1$colorType
+	eval echo \$${1}_${colorType}
     }
 
-    chwb2 -I $(_getVal inner) -O $(_getVal outer) -i $(_getVal inWidth) -o $(_getVal outWidth) $@ 2>/dev/null &
+    [ "$width_normal" = "width_focused" ] || \
+	echo "$@" | sed 's/ /\n/g' | xargs -I{} bspc config -n {} border_width $(_getVal width)
+
+    chwb2 -I $(_getVal border_color_in) -O $(_getVal border_color_out) -i $(_getVal border_width_in) -o $(_getVal border_width_out) $@ 2>/dev/null &
 }
 
-# define border colors based on bspwm border settings
-outerFocused=`bspc config focused_border_color | tr -d \#`
-colort -c "$outerFocused" && sign=+ || sign=-
-innerFocused=`colort -l $sign$focusedTint "$outerFocused"`
-echo $innerFocused
-echo $outerFocused
+width_normal=$((border_width_in_normal+border_width_out_normal))
+width_focused=$((border_width_in_focused+border_width_out_focused))
+[ "$width_normal" = "$width_focused" ] && bspc config border_width "$width_normal"
 
-outerNormal=`bspc config normal_border_color | tr -d \#`
-colort -c "$outerNormal" && sign=+ || sign=-
-innerNormal=`colort -l $sign$normalTint "$outerNormal"`
+_chwb2 focused $(bspc query -N -n .descendant_of.window.!fullscreen)
+_chwb2 normal $(bspc query -N -n .!descendant_of.window.!fullscreen)
 
-# initial draw
-_chwb2 Normal  `bspc query -N -n .!descendant_of.window.!fullscreen`
-_chwb2 Focused `bspc query -N -n .descendant_of.window.!fullscreen`
-
-# reactive draw
 bspc subscribe node_state node_geometry node_focus | while read msg; do
-    _chwb2 Normal  `bspc query -N -n .!descendant_of.window.!fullscreen`
-    _chwb2 Focused `bspc query -N -n .descendant_of.window.!fullscreen`
+    _chwb2 focused $(bspc query -N -n .descendant_of.window.!fullscreen) &
+    _chwb2 normal $(bspc query -N -n .!descendant_of.window.!fullscreen) &
 done
