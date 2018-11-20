@@ -44,8 +44,9 @@ super + {_,shift} + semicolon
     bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
 
 # hide current node, or restore a queried hidden node
-super + {_,shift} + minus
-    bspc node {,$(bspc query -N -d -n .hidden | head -n 1)} -g hidden
+# todo: revisit this
+# super + {_,shift} + minus
+    # bspc node {,$(bspc query -N -d -n .hidden | head -n 1)} -g hidden
 
 # focus the node for the given path jump
 super + {p,b,comma,period}
@@ -69,18 +70,17 @@ super + {_,shift} + slash
 #    ~/.wm/scripts/i3blur.sh
 
 super + Return
-   elisp t && elisp '(ns/spawn-terminal)' || $TERMINAL
+   elisp t >/dev/null 2>&1 && elisp '(ns/spawn-terminal)' || $TERMINAL
 
 super + o
     $BROWSER
 
-# launch a program, ensure GTK3 theme.
+# dmenu
 super + {_,shift,alt} + space
     action={run,pass,switcher}; \
     eval "$(theme get | head -n 1)"; \
     export GTK_THEME="$THEME_NAME"; \
     dmenu_$action $(dmenu_options $action)
-
 
 XF86Audio{Prev,Next,Play}
      mpc -q {prev,next,toggle}
@@ -92,28 +92,25 @@ super + Escape
     pkill -USR1 -x sxhkd
 
 # from here down are keys that I'm treating like macro keys
-Print
-    music bl
 
-Scroll_Lock
-    mpc toggle
-
+# mute toggle
 Pause
     ponymix toggle
 
-Insert
-    ponymix increase 5
+# pretend +
+super + {minus,equal}
+    ponymix {decrease,increase} 5; notify-send "Volume: $(ponymix get-volume)"
 
-Delete
-    ponymix decrease 5
+# < > `
+super + {comma,period,grave}
+    player.sh {prev,next,toggle}
 
-Home
-    mpc next
+F10
+    music bl
 
-End
-    utf8
+F9
+    $(. ~/.profile; shot)
 
-# you also have F1 - F12
-F6
+F8
     utf8
 # }}}

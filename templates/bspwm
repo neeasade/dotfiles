@@ -29,8 +29,8 @@ bspc config ignore_ewmh_focus         false
 bspc config remove_unplugged_monitors true
 bspc config remove_disabled_monitors  true
 
-# prefer super but it's mapped to alt (mod1)
-bspc config pointer_modifier mod1
+bspc config pointer_modifier mod4
+bspc config removal_adjustment none
 
 # external rules
 bspc config external_rules_command "{{`echo -n $(which external_rules.sh)`}}"
@@ -48,14 +48,20 @@ for side in right {{`iif "[ \"$p_position\" = \"top\" ]" bottom top`}} left; do
 done
 
 bspc config borderless_monocle $(iif "! $gapped")
-bspc config single_monocle     $(iif "! $gapped")
+bspc config single_monocle true
 
-pkill custom_monocle
+# multihead option is the custom_monocle script
+if [ $(bspc config left_monocle_padding) -eq 0 ]; then
+    mon_width=$(bspc query -T -m | jq .rectangle.width)
+    window_width=$(echo $b_monocle_window_percent \* $mon_width | bc -l)
+    monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
+    bspc config left_monocle_padding $monocle_pad_width
+    bspc config right_monocle_padding $monocle_pad_width
+fi
+
 # declare desktops per monitor
 for monitor in $(bspc query -M); do
     bspc monitor $monitor -d {{b_desktop_names}}
-
-    $HOME/.wm/scripts/interact/custom_monocle $monitor &
 done
 
 if $relaunch_panel && ! ps -p $(cat /tmp/panel-pid); then

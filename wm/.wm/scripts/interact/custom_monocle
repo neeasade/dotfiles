@@ -1,5 +1,8 @@
 #!/bin/sh
+# neeasade
 # custom monocle mode
+# no longer used: https://github.com/baskerville/bspwm/commit/bc3649fc372e043f5e64ee76bc633d0ab13ea775
+# this is still useful in a multihead situation where the monitors are not the same.
 
 # mon id
 target_mon="$1"

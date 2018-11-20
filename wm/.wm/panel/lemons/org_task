@@ -38,12 +38,12 @@ case ${pomodoro_state} in
         ;;
 
     :pomodoro)
-        task="$(elisp org-clock-current-task | tr -d '"')"
+        task="$(elisp -r org-clock-current-task)"
         echo "${task} $(progress $(get_length))"
         ;;
 
     :none)
-        echo "current focus: $(elisp '(ns/org-get-active)' | awk '{print substr($0,2,length($0)-2)}')"
+        echo "current focus: $(elisp -r '(ns/org-get-active)')"
         ;;
 
     *)

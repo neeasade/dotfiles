@@ -22,7 +22,7 @@ set_editor() {
 }
 set_editor vim
 
-WINDOWS=$(iif "uname | awk '\$1 ~ /MINGW|MSYS/ {print \$1}'")
+WINDOWS=$(iif "[ ! -n $(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}') ]")
 
 # less status line
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
@@ -78,9 +78,9 @@ succ .config/guix/current/bin
 succ .guix-profile/bin
 
 GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
-CPATH="/home/neeasade/.guix-profile/include${CPATH:+:}$CPATH"
-LIBRARY_PATH="/home/neeasade/.guix-profile/lib${LIBRARY_PATH:+:}$LIBRARY_PATH"
-PYTHONPATH="/home/neeasade/.guix-profile/lib/python3.6/site-packages${PYTHONPATH:+:}$PYTHONPATH"
+CPATH="$HOME/.guix-profile/include${CPATH:+:}$CPATH"
+LIBRARY_PATH="$HOME/.guix-profile/lib${LIBRARY_PATH:+:}$LIBRARY_PATH"
+PYTHONPATH="$HOME/.guix-profile/lib/python3.6/site-packages${PYTHONPATH:+:}$PYTHONPATH"
 
 
 set +a

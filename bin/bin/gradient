@@ -1,8 +1,4 @@
 #!/bin/sh
-# no front #
+# args eg 000000 ffffff 3
 
 eval printf $(elisp "(ns/make-lines (ns/gradient \"#$1\" \"#$2\" $3))")
-
-# elisp "(ns/make-lines (ns/gradient \"#$1\" \"#$2\" $3))"
-
-# elisp "(ns/gradient \"#$1\" \"#$2\" $3)"

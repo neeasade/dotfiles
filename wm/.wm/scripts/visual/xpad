@@ -11,15 +11,10 @@ background_color=$(colort -t $background_color)
 border_color_normal=$(colort -t $border_color_normal)
 border_color_active=$(colort -t $border_color_active)
 
-dec2hex() {
-    printf "%X\n" $1
-}
-
 pad_window() {
     bspc config -n $2 border_width $((padding + border_width))
-    chwb2 -I "$background_color" -i "$padding" \
-          -O "$1" -o "$border_width" \
-          $2 &
+
+    chwbn -b $border_width -b $padding -c $1 -c $background_color $2
 }
 
 declare -A term_map

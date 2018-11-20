@@ -89,9 +89,9 @@ for m in visual viopp; do
 done
 
 # match escape to evil
-bindkey fd vi-cmd-mode
-bindkey -M visual fd vi-cmd-mode
-bindkey -M viopp fd vi-cmd-mode
+bindkey tn vi-cmd-mode
+bindkey -M visual tn vi-cmd-mode
+bindkey -M viopp tn vi-cmd-mode
 
 # match some standard readline binds in insert mode
 bindkey '^P' up-history

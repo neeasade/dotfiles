@@ -38,6 +38,7 @@ if initial_start:
     nmap('b', 'set-cmd-text --space :buffer')
 
     # colemak
+    c.hints.chars = 'arstgkneio'
     nmap('n', 'scroll-page 0 0.2')
     nmap('e', 'scroll-page 0 -0.2')
     nmap('N', 'tab-next')

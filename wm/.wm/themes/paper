@@ -7,7 +7,7 @@ emacs_powerline_scale="1.0"
 
 # bspwm
 b_border_width=1
-b_window_gap=40
+b_window_gap=30
 
 b_bspwmrc_extend="
 xpad &

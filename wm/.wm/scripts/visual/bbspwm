@@ -6,7 +6,7 @@
 # set border widths, if odd outer is 1px larger
 border_width=`bspc config border_width`
 
-border_add=$((border_width%2))
+border_add=$((border_width%4))
 border_width=$(( border_width - border_add ))
 border_part=$((border_width/4))
 border_middle=$((border_part * 2 + border_add))

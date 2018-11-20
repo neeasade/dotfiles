@@ -7,7 +7,7 @@
 $HOME/.screenlayout/display.sh
 
 xrdb -load $HOME/.Xresources &
-xmodmap $HOME/.Xmodmap &
+# xmodmap $HOME/.Xmodmap &
 compton &
 unclutter -idle 1 &
 pcmanfm -d &
