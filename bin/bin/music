@@ -33,13 +33,13 @@ shuffle() {
   else
     append "$*"
   fi
-  echo "none" > "$musicdir/playlist/current"
+  echo "shuffle" > "$musicdir/playlist/current"
   mpc play
 }
 
 append() {
   echo append "$*"
-  echo "none" > "$musicdir/playlist/current"
+  echo "custom" > "$musicdir/playlist/current"
   mpc listall | grep -i "$*" | mpc add
 }
 
