@@ -34,10 +34,10 @@ width_normal=$((border_width_in_normal+border_width_out_normal))
 width_focused=$((border_width_in_focused+border_width_out_focused))
 bspc config border_width "$width_normal"
 
-_chwb2 focused $(bspc query -N -n .active.descendant_of.window.!fullscreen)
-_chwb2 normal $(bspc query -N -n .active.!descendant_of.window.!fullscreen)
+_chwb2 focused $(bspwindows)
+_chwb2 normal $(bspwindows inactive)
 
 bspc subscribe node_state node_geometry node_focus | while read msg; do
-    _chwb2 focused $(bspc query -N -n .active.descendant_of.window.!fullscreen) &
-    _chwb2 normal $(bspc query -N -n .active.!descendant_of.window.!fullscreen) &
+    _chwb2 focused $(bspwindows) &
+    _chwb2 normal $(bspwindows inactive) &
 done

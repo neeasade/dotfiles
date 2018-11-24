@@ -4,25 +4,30 @@
 # needs even borders, 4 parts, middle is 2 parts
 
 # set border widths, if odd outer is 1px larger
-border_width=`bspc config border_width`
+border_width=$(bspc config border_width)
+
+if [ $border_width -lt 4 ]; then
+    border_width=4
+    bspc config border_width 4
+fi
 
 border_add=$((border_width%4))
 border_width=$(( border_width - border_add ))
 border_part=$((border_width/4))
 border_middle=$((border_part * 2 + border_add))
 
-focused=`bspc config focused_border_color | tr -d \#`
-normal=`bspc config normal_border_color | tr -d \#`
+focused=$(bspc config focused_border_color | tr -d \#)
+normal=$(bspc config normal_border_color | tr -d \#)
 
 draw() {
-    chwbb -i $border_part -o $border_part -m $border_middle -c $normal  `bspc query -N -n .!descendant_of.window`
-    chwbb -i $border_part -o $border_part -m $border_middle -c $focused `bspc query -N -n .descendant_of.window`
+    chwbb -i $border_part -o $border_part -m $border_middle -c $normal $(bspwindows inactive)
+    chwbb -i $border_part -o $border_part -m $border_middle -c $focused $(bspwindows)
 }
 
 # initial draw
 draw
 
 # reactive draw
-bspc subscribe node_{geometry,focus} | while read msg; do
+bspc subscribe node_geometry node_focus | while read msg; do
     draw
 done

@@ -70,7 +70,7 @@ super + {_,shift} + slash
 #    ~/.wm/scripts/i3blur.sh
 
 super + Return
-   elisp t >/dev/null 2>&1 && elisp '(ns/spawn-terminal)' || $TERMINAL
+   elisp '(ns/spawn-terminal)' || $TERMINAL
 
 super + o
     $BROWSER

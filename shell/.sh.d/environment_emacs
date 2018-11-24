@@ -1,6 +1,6 @@
 # -*- mode: sh -*-
 
-export ESHELL=$(iif '[ -n "$INSIDE_EMACS" ]')
+ESHELL=$(iif '[ -n "$INSIDE_EMACS" ] && [ "$TERM" = "dumb" ]')
 
 if $ESHELL; then
   succ .emacs.d/scripts
@@ -33,3 +33,14 @@ fi
 #   redir ncurses
 #   redir nethack
 # fi
+
+path_remove() {
+  PATH=${PATH//":$1:"/":"} # middle
+  PATH=${PATH/#"$1:"/}     # beginning
+  PATH=${PATH/%":$1"/}     # end
+}
+
+sxhkd() {
+  path_remove "$HOME/.emacs.d/scripts"
+  $(type -a sxhkd | sort | awk 'END{print $3}')
+}

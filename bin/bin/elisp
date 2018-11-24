@@ -1,5 +1,4 @@
 #!/bin/sh
-# todo: grep for '*ERROR*: Quit' for exit status as well?
 
 trim=false
 [ "$1" = "-r" ] && trim=true && shift

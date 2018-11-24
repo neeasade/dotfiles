@@ -52,16 +52,12 @@ non_terminals() {
 }
 
 draw() {
-    non_terminals $border_color_active $(bspc query -N -n .active.descendant_of.window.leaf.!fullscreen)
-    non_terminals $border_color_normal $(bspc query -N -n .active.!descendant_of.window.leaf.!fullscreen)
+    non_terminals $border_color_active $(bspwindows)
+    non_terminals $border_color_normal $(bspwindows inactive)
 }
-
 
 draw
 
-# bspc subscribe node_{geometry,focus} | while read msg; do
-
 bspc subscribe node_state node_geometry node_focus | while read msg; do
-    echo $msg
     draw
 done
