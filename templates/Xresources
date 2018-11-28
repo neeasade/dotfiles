@@ -1,4 +1,5 @@
 st.font: {{st_font}}
+st.font_variable: {{st_font_variable}}
 st.borderpx: {{st_borderpx}}
 st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}

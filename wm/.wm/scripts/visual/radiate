@@ -1,22 +1,18 @@
 #!/bin/sh
-# neeasade
-# depends on: wmutils opt/chwb2
-# needs even borders, 4 parts, middle is 2 parts
 
-bspc config border_width 8
-stripe_width=3
-# for tinting
-accent=3
+stripe_width=4
+accent=4
 
-# set border widths, if odd outer is 1px larger
 border_width=$(bspc config border_width)
+stripe_width=$((border_width / 2))
 
-if [ $border_width -lt 4 ]; then
-    border_width=4
+if [ $border_width -lt 8 ]; then
+    border_width=8
+    stripe_width=4
+    bspc config border_width 8
 fi
 
 focused=$(bspc config focused_border_color | tr -d \#)
-focused=cccccc
 normal=$(bspc config normal_border_color | tr -d \#)
 focused=$normal
 
@@ -30,19 +26,20 @@ draw() {
     if $reverse; then
 	step=$((step-1))
 	# [ $stripe_width -gt 0 ] && stripe_width=$((stripe_width-1))
-	focused=$(greaten $focused 3)
+	focused=$(greaten $focused $accent)
     else
 	step=$((step+1))
 	# stripe_width=$((stripe_width+1))
-	focused=$(lessen $focused 3)
+	focused=$(lessen $focused $accent)
     fi
 
-    $reverse && \
-	reverse=$(iif "[ $outside -ge 1 ]") || \
-	    reverse=$(iif "[ $inside -le 1 ]")
+    if $reverse; then
+	[ $outside -ge 1 ] && reverse=true || reverse=false
+    else
+	[ $inside -le 1 ] && reverse=true || reverse=false
+    fi
 }
 
-step=$border_width
 step=$((border_width-stripe_width))
 
 while true; do

@@ -38,7 +38,7 @@ new() {
   [ -z "$name" ] && die new needs a name.
   eval "$(get)"
   cp "$theme_dir/colors/$THEME_NAME" "$theme_dir/colors/$name"
-  echo "#/bin/sh" > "$theme_dir/$name"
+  echo "#!/bin/sh" > "$theme_dir/$name"
   load "$name"
   edit "$name"
 }
