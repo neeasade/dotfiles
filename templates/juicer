@@ -11,7 +11,6 @@ fonts = "{{p_font_main}}"
         "font-linux-10"
 class = "{{p_window_class}}"
 offset = {{p_offset}}
-delimiter= "{{p_delimiter}}"
 
 ; guesstimate 3 clickables per section
 clickables = {{`echo "3 * $(echo $lemons | wc -w)" | bc`}}

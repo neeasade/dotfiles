@@ -180,6 +180,7 @@ juicedLemons="$(sed 's/:/ /g;s/|/ /g;' <<< $bar_format)"
         [bg]="${bar_bg}"
         [overline]=false
         [underline]=false
+	[delimiter]=""
         [line]=\#ff999999
         [activeline]=\#ffffffff
         [reload]=5)
@@ -187,7 +188,7 @@ juicedLemons="$(sed 's/:/ /g;s/|/ /g;' <<< $bar_format)"
         for section in "${!choices[@]}"; do
             if [[ $(get_conf \#${name}_${section}) -eq 0 ]]; then
                 #echo "No value for '${name}-$section' -> using ${choices[${section}]}"
-                eval "${name}_${section}=${choices[${section}]}"
+                eval "${name}_${section}=\"${choices[${section}]}\""
             fi
         done
     done
@@ -205,10 +206,10 @@ if [ ! -z "$pos_start" ]; then
     # todo: make this a bar property
     pos_start="%{${pos_start}U#ffffffff}"
     pos_end="%{-o}%{-uU-}"
-    bar_delimiter="${pos_start}${bar_delimiter}${pos_end}"
+    bar_delimiter="${pos_start}${pos_end}"
     position="%{l}$(echo $bar_format | sed "s/|/${pos_start}%{c}${pos_end}/; s/|/${pos_start}%{r}${pos_end}/; s/:/$bar_delimiter/g;")"
 else
-    position="%{l}$(echo $bar_format | sed "s/|/%{c}/;s/|/%{r}/;s/:/$bar_delimiter/g;")"
+    position="%{l}$(echo $bar_format | sed "s/|/%{c}/;s/|/%{r}/;s/://g;")"
 fi
 
 # build the panel switch
@@ -286,7 +287,11 @@ process_line() {
                                     "$(get_conf area[${name}_s])" \
                                   "%{F-}%{B-}" \
                                   "%{-o}%{-uU-}")"
-        fi
+
+	    if $hold; then
+		bar_message="${bar_message}$(printf "%s" "$(get_conf ${name}_delimiter)")"
+	    fi
+	fi
     fi
 
     if ! $hold; then
@@ -343,8 +348,7 @@ get_geometry() {
     gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
     p_gap=$(iif $gapped $p_gap 0)
     top=$(iif "[ "$p_position" = "top" ]")
-
-	  echo "$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
+    echo "$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
 }
 
 # Start lemonade

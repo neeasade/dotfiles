@@ -39,7 +39,6 @@ shuffle() {
 
 append() {
   echo append "$*"
-  echo "custom" > "$musicdir/playlist/current"
   mpc listall | grep -i "$*" | mpc add
 }
 

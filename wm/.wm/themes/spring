@@ -14,7 +14,7 @@ b_window_gap=16
 p_height=24
 p_gap=0
 p_line="5"
-p_padding=2
+p_padding=8
 p_font_main="Droid Sans-10:style=Bold"
 p_window_class="noshadow"
 p_delimiter="   "
@@ -35,6 +35,8 @@ GTK_FONT="Droid Sans 10"
 
 # Make the workspaces be in the middle.
 p_format="dropdown:title|desktop|mpd:clock"
+c_frame_opacity="0.4"
+p_icon_handler="env printf \"\$icon_result  \""
 
 p_desktop_theme=$(cat<<EOF
 bg="#00000000"
@@ -43,5 +45,6 @@ overline=true
 activeoverline=true
 line=$p_bg_inactive
 activeline=$p_bg_active
+delimiter="   "
 EOF
 )

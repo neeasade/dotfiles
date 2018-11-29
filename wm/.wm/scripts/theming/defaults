@@ -48,7 +48,6 @@ p_desktop_show_free=true          # option to show nothing for free desktops.
 p_desktop_mode_toggle=false       # monocle/tiling toggle.
 p_desktop_only_active=false       # only show the active desktop name
 p_title_show_mode=monocle         # used by title.
-p_delimiter=""                    # delimiter between lemons
 
 # Panel colors
 p_bg_normal="#ff$background"

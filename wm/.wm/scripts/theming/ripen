@@ -133,5 +133,7 @@ default_function activefg '
 default_function bg 'vanilla bg'
 default_function activebg 'vanilla activebg'
 default_function stepSetup 'separateStep'
+default_function suffix 'vanilla suffix'
+default_function prefix 'vanilla prefix'
 
 stepSetup
