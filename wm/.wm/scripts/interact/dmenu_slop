@@ -27,7 +27,7 @@ bspc rule -a \* -o state=floating
 
 $program &
 
-while read -r event monId deskId nodeId ipId; do
+while read -r event monId deskId ipId nodeId; do
 	xdotool windowmove $nodeId $X $Y &
 	xdotool windowsize $nodeId $W $H &
 
