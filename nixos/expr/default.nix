@@ -1,55 +1,49 @@
 { pkgs ? import <nixpkgs> {}, ... }: with pkgs;
 
 let
-  # ref: http://chriswarbo.net/projects/nixos/useful_hacks.html
-
-  sanitiseName = lib.stringAsChars (c: if lib.elem c (lib.lowerChars ++ lib.upperChars)
-                                      then c
-                                      else "");
-
-  fetchGitHashless = args: stdenv.lib.overrideDerivation
-    # Use a dummy hash, to appease fetchgit's assertions
-    (fetchgit (args // { sha256 = hashString "sha256" args.url; }))
-
-    # Remove the hash-checking
-    (old: {
-      outputHash     = null;
-      outputHashAlgo = null;
-      outputHashMode = null;
-      sha256         = null;
-    });
-
-  # Get the commit ID for the given ref in the given repo
-  latestGitCommit = { url, ref ? "HEAD" }:
-    runCommand "repo-${sanitiseName ref}-${sanitiseName url}"
-      {
-        # Avoids caching. This is a cheap operation and needs to be up-to-date
-        version = toString builtins.currentTime;
-
-        # Required for SSL
-        GIT_SSL_CAINFO = "${cacert}/etc/ssl/certs/ca-bundle.crt";
-
-        buildInputs = [ git gnused ];
-      }
-      ''
-        REV=$(git ls-remote "${url}" "${ref}") || exit 1
-
-        printf '"%s"' $(echo "$REV"        |
-                        head -n1           |
-                        sed -e 's/\s.*//g' ) > "$out"
-      '';
-
-  fetchLatestGit = { url, ref ? "HEAD" }@args:
-    with { rev = import (latestGitCommit { inherit url ref; }); };
-    fetchGitHashless (removeAttrs (args // { inherit rev; }) [ "ref" ]);
+  # I'm not sure of the correct form here rn
+  placeholder = "temp";
 in
-rec {
-  bspwm-git = callPackage ./bspwm { inherit fetchLatestGit; };
-  qutebrowser-git = callPackage ./qutebrowser { inherit fetchLatestGit; };
-  wmutils-opt-git = callPackage ./wmutils-opt {  inherit fetchLatestGit; };
-  neeasade-opt = callPackage ./neeasade-opt {  inherit fetchLatestGit; };
-  gtkrc-reload = callPackage ./gtkrc-reload {  inherit fetchLatestGit; };
-  txth = callPackage ./txth {  inherit fetchLatestGit; };
-  bevelbar = callPackage ./bevelbar { };
-  xdo = callPackage ./xdo { inherit fetchLatestGit; };
+  rec {
+    gtkrc-reload = callPackage ./gtkrc-reload {};
+
+    bevelbar = (pkgs.bevelbar.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://www.uninformativ.de/git/bevelbar.git"; ref = "master"; };
+        }));
+
+    xst-git = (pkgs.xst.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
+        }));
+
+    txth = (pkgs.txtw.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/neeasade/txth"; ref = "master"; };
+        }));
+
+    bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/baskerville/bspwm"; ref = "master"; };
+        }));
+
+    qutebrowser-git = (pkgs.qutebrowser.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "master"; };
+        }));
+
+    wmutils-opt-git = (pkgs.wmutils-opt.overrideAttrs(old: {
+        buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
+        src = builtins.fetchGit {url = "https://github.com/wmutils/opt"; ref = "master"; };
+        }));
+
+    wmutils-core-git = (pkgs.wmutils-opt.overrideAttrs(old: {
+        buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
+        src = builtins.fetchGit {url = "https://github.com/wmutils/core"; ref = "master"; };
+        }));
+
+    neeasade-opt = (pkgs.wmutils-opt.overrideAttrs(old: {
+        buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
+        src = builtins.fetchGit {url = "https://github.com/neeasade/opt"; ref = "master"; };
+        }));
+
+    xdo-git = (
+        pkgs.xdo.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/baskerville/xdo"; ref = "master"; };
+        }));
 }

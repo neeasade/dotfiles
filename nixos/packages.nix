@@ -9,7 +9,7 @@ let
     ];
   };
 
-  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-17.09.tar.gz) { config = nixcfg; };
+  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-18.09.tar.gz) { config = nixcfg; };
   rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   expr = import ./expr { inherit pkgs lib; };
@@ -18,13 +18,16 @@ let
   # edge = rolling;
   # rolling = stable;
 
-  base = (with stable; [
+  core = (with stable; [
+    gnupg
     arandr
     aspell
     aspellDicts.en
     bash-completion
     bc
-    binutils
+    # covered by gcc(?)
+    # there were a few collisions between the two
+    # binutils
     cron
     curl
     dash
@@ -33,7 +36,8 @@ let
     file
     filezilla
     gitAndTools.gitFull
-    gnome2.zenity
+    # todo: find this
+    # gnome2.zenity
     go-mtpfs
     gparted
     hfsprogs
@@ -54,7 +58,8 @@ let
     mumble
     neofetch
     nix-prefetch-scripts
-    nix-repl
+
+    # nix-repl
     ntfs3g
     openssl
     p7zip
@@ -86,15 +91,15 @@ let
     zathura
     zsh
 
+    emacs
     # needed?
-    mesa_drivers
-    mesa_glu
+    # mesa_drivers
+    # mesa_glu
   ]) ++ (with rolling; [
     colort
     dmenu2
-    dunst
+    # dunst
     dzen2
-    emacs
     ffmpeg
     i3lock
     lemonbar-xft
@@ -104,24 +109,30 @@ let
     ranger
     sxhkd
     txtw
-    wmutils-core
     x11idle
     xdotool
     xfce.thunar
     xorg.xprop
     xorg.xwininfo
     xrq
-    xst
+    # xst
     xtitle
     youtube-dl
   ]) ++ ( with expr; [
     # qutebrowser-git
+    xst-git
     bevelbar
     gtkrc-reload
     neeasade-opt
     txth
+    wmutils-core-git
     wmutils-opt-git
-    xdo
+    xdo-git
+    # wmgroup
+  ]) ++ (with edge; [
+    # emacs
+    # allow images to display
+    # (emacs.override { imagemagick = pkgs.imagemagickBig; } )
   ]);
 
   extra = (with stable; [
@@ -132,7 +143,7 @@ let
     gtk3
     sassc
 
-    (chromium.override {enablePepperFlash = true;})
+    # (chromium.override {enablePepperFlash = true;})
     audacity
     bfg-repo-cleaner
     compton
@@ -148,30 +159,46 @@ let
     neovim
     pcmanfm
     rxvt_unicode
-    texlive.combined.scheme-full
+    # texlive.combined.scheme-full
   ]);
 
   games = (with stable; [
-    dolphinEmu
-    ioquake3
-    minecraft
+    # dolphinEmu
+    # ioquake3
+    # minecraft
     # wineUnstable
-    wineStaging
-    winetricks
-  ]) ++ (with edge; [
-  steam
+    mesa_drivers
+    mesa_glu
+    # samba
+    wine
+    # winetricks
+    # wineStaging
+    # (wineStaging.override { wineBuild = "wineWow"; })
+    # winetricks
+    # (wine.override { wineBuild = "wineWow"; })
+    # (wineStaging.override { wineBuild = "wineWow"; })
+    # (wineStaging.override {wineBuild = "wineWow"; pulseaudioSupport = true; pcapSupport = true; gstreamerSupport = true;})
+    # configureFlags = "--enable-win64 --with-alsa --with-pulse";
+  ]) ++ (with stable; [
+    steam
   ]);
 
   development = (with stable; [
-    (python27.withPackages(ps: with ps; [
-      screenkey
-      libxml2
-    ]))
+    # (python35.withPackages(ps: with ps; [
+    #   # screenkey
+    #   # libxml2
+    #   # selenium
+    #   # praw
+    # ]))
 
+    # clang
+    lua
+    luarocks
     autoconf
     automake
     boot
-    bundler
+    # comes with ruby already? (collision)
+    # bundler
     clojure
     cmake
     docker
@@ -187,17 +214,18 @@ let
     mono
     nodejs
     ruby
-    rustc
-    rustfmt
-    rustracer
+    # rustc
+    # rustfmt
+    # rustracer
     sqlite
     zeal
     zlib
-  ]) ++ (with rolling; [
+  ]) ++ (with stable; [
     (python36.withPackages(ps: with ps; [
       virtualenv
       django
       pyqt5
+      praw
     ]))
   ]);
 
@@ -208,7 +236,8 @@ let
   ]);
 
   extrafonts = (with pkgs; [
-    corefonts
+  gohufont
+  corefonts
     dejavu_fonts
     fantasque-sans-mono
     fira
@@ -224,22 +253,12 @@ let
 
 in
 {
-  services = {
-    emacs = {
-      enable = true;
-      # defaultEditor = rolling.emacs;
-    };
-  };
-
   environment.systemPackages =
-    base ++
+    core ++
     extra ++
     development ++
     games ++
     [];
 
-  fonts.fonts =
-    basefonts ++
-    extrafonts ++
-    [];
+  fonts.fonts = basefonts ++ extrafonts ++ [];
 }

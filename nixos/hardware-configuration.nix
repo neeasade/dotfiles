@@ -8,23 +8,19 @@
     [ <nixpkgs/nixos/modules/installer/scan/not-detected.nix>
     ];
 
-  boot.initrd.availableKernelModules = [ "ahci" "ohci_pci" "ehci_pci" "pata_atiixp" "xhci_pci" "usb_storage" "usbhid" "sd_mod" "sr_mod" ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+  boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/d51b5579-ccc6-4e7b-b5d5-8a06898ca409";
+    { device = "/dev/disk/by-uuid/af237de7-fdd4-4cc2-8db3-f8fc33b9a5c6";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/A20A-267C";
+    { device = "/dev/disk/by-uuid/8CC6-209C";
       fsType = "vfat";
     };
-
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/f20e85be-ce18-474b-8b10-37d70b8f2a3d"; }
-    ];
 
   fileSystems."/media/LIVEWIRE" =
     { device = "/dev/disk/by-uuid/2cf891b0-4adf-4fa0-bd80-e335303a1b13";
@@ -36,15 +32,19 @@
       fsType = "ext4";
     };
 
-  fileSystems."/media/VOLTAGE" =
-    { device = "/dev/disk/by-uuid/00ebaffa-6c52-4422-8168-4a84622bad0c";
-      fsType = "btrfs";
-    };
+  # fileSystems."/media/VOLTAGE" =
+  #   { device = "/dev/disk/by-uuid/00ebaffa-6c52-4422-8168-4a84622bad0c";
+  #     fsType = "btrfs";
+  #   };
 
   fileSystems."/media/KICKSTART" =
     { device = "/dev/disk/by-uuid/84894ed7-8e80-49a5-8951-ac61c23a6564";
       fsType = "btrfs";
     };
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/8d5ee437-0eed-4723-8692-8c85305058f0"; }
+    ];
 
-  nix.maxJobs = lib.mkDefault 8;
+  nix.maxJobs = lib.mkDefault 6;
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
 }

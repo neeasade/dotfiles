@@ -31,7 +31,7 @@ LESSCHARSET='utf-8'
 BROWSER=qutebrowser
 FILEBROWSER=thunar
 VIEW_PDF=zathura
-TERMINAL=$(iif $WINDOWS git-bash st)
+TERMINAL=$(iif $WINDOWS git-bash xst)
 
 # default
 GTK_THEME=${GTK_THEME:-adwaita}
@@ -68,19 +68,21 @@ succ() {
   PATH="$HOME/$@:$PATH"
 }
 
+XDG_CONFIG_HOME=$HOME/.config
+
 succ bin
 succ .gem/bin
 succ .go/bin
 succ .cargo/bin
 succ .wm/scripts/interact
 succ .wm/scripts/visual
-succ .config/guix/current/bin
-succ .guix-profile/bin
 
-GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
-CPATH="$HOME/.guix-profile/include${CPATH:+:}$CPATH"
-LIBRARY_PATH="$HOME/.guix-profile/lib${LIBRARY_PATH:+:}$LIBRARY_PATH"
-PYTHONPATH="$HOME/.guix-profile/lib/python3.6/site-packages${PYTHONPATH:+:}$PYTHONPATH"
-
+# guix
+# succ .config/guix/current/bin
+# succ .guix-profile/bin
+# GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
+# CPATH="$HOME/.guix-profile/include${CPATH:+:}$CPATH"
+# LIBRARY_PATH="$HOME/.guix-profile/lib${LIBRARY_PATH:+:}$LIBRARY_PATH"
+# PYTHONPATH="$HOME/.guix-profile/lib/python3.6/site-packages${PYTHONPATH:+:}$PYTHONPATH"
 
 set +a

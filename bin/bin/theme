@@ -9,6 +9,13 @@ die() {
 }
 
 # (meant to be eval'd)
+getval() {
+    (
+	eval "$(get)"
+	eval printf \%s \$$1
+    )
+}
+
 get() {
   echo unset bg fg line prefix suffix activebg activefg activeline
   echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"

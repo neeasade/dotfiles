@@ -1,10 +1,10 @@
-{ stdenv, fetchLatestGit, pkgconfig, gtk2 }:
+{ stdenv, pkgconfig, gtk2 }:
 
 stdenv.mkDerivation rec {
   name = "gtkrc-reload-v${version}";
   version = "1.0";
 
-  src = fetchLatestGit { url = "https://github.com/neeasade/gtkrc-reload"; };
+  src = builtins.fetchGit {url = "https://github.com/neeasade/gtkrc-reload"; ref = "master"; };
 
   buildInputs = [ pkgconfig gtk2 ];
 
