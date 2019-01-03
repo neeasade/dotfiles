@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # neeasade
-# depends: dmenu slop xdo bspc
-
-# mark external rules for reset
-external_rules="$(bspc config external_rules_command)"
-bspc config external_rules_command ""
+# depends: dmenu slop bspc
 
 # get program name to launch using dmenu cache:
 cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
@@ -22,15 +18,5 @@ if [ -z "$program" ]; then
     )
 fi
 
-read -r X Y W H G ID < <(slop -f "%x %y %w %h %g %i")
-bspc rule -a \* -o state=floating
-
+bspc rule -a \* -o state=floating rectangle=$(slop -f "%g")
 $program &
-
-while read -r event monId deskId ipId nodeId; do
-	xdotool windowmove $nodeId $X $Y &
-	xdotool windowsize $nodeId $W $H &
-
-	bspc config external_rules_command "$external_rules"
-	break
-done < <(bspc subscribe node_add)

@@ -140,7 +140,7 @@ load_emacs() {
 }
 
 load_xst() {
-    pkill -x --signal USR1 st
+    pkill -x --signal USR1 xst
 }
 
 load_bspwm() {
@@ -248,8 +248,11 @@ load_qutebrowser() {
 
     margs qutebrowser .config/qutebrowser/config.py
 
+    bspc config ignore_ewmh_focus true
     qb_command ':config-source'
     qb_command ':reload' # reload current page w/ css
+    sleep 1
+    bspc config ignore_ewmh_focus false
 }
 
 # dunst

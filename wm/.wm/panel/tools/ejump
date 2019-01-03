@@ -1,0 +1,2 @@
+#!/bin/sh
+elisp "(counsel-switch-to-buffer-or-window \"${1}\")"

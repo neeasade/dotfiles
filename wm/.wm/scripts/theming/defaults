@@ -19,9 +19,9 @@ b_bspwmrc_extend=""
 
 # mkb script, l for loader
 # ◼ ◻ ◻
-l_complete="+"
-l_empty="-"
-l_sep="-"
+l_complete="◼"
+l_empty="◻"
+l_sep="◻"
 l_start=""
 l_end=""
 
@@ -81,6 +81,7 @@ p_themeSwitch_mouse_left="dzen.sh theme"
 # p_org_task_mouse_right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
 p_dropdown_mouse_left="dzen.sh menu"
 p_github_mouse_left="dzen.sh github"
+p_circe_dms_mouse_left="dzen.sh circe"
 p_clock_mouse_left="dzen.sh cal"
 p_volume_scroll_down="ponymix decrease 5"
 p_volume_scroll_up="ponymix increase 5"
@@ -110,7 +111,8 @@ weechat_prefix_suffix="▌"
 weechat_input_items="[input_search],[input_paste],         ▙,input_text"
 
 # xst
-st_font="Droid Sans Mono-8"
+st_font="Droid Sans Mono-10"
+st_font_variable="Droid Sans-10"
 st_borderpx=10
 st_cursorshape=2
 st_cursorthickness=2

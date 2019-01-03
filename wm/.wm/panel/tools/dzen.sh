@@ -134,6 +134,13 @@ dzen_theme() {
     done
 }
 
+dzen_circe() {
+    content+=("Circe DMs")
+    for bufname in $(eval printf $(elisp '(ns/make-lines (ns/circe-unread-query-buffers))')); do
+        content+=("^ca(1, nohup ejump $bufname & pkill dzen) $bufname ^ca()")
+    done
+}
+
 dzen_github() {
     content+=("Github Notifications")
     IFS=$'\n'

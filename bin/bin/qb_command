@@ -7,11 +7,9 @@ _ipc_socket="${XDG_RUNTIME_DIR}/qutebrowser/ipc-$(echo -n "$USER" | md5sum | cut
 _url="$@"
 
 
-bspc config ignore_ewmh_focus         true
 printf '{"args": ["%s"], "target_arg": null, "version": "%s", "protocol_version": %d, "cwd": "%s"}\n' \
     "${_url}" \
     "${_qb_version}" \
     "${_proto_version}" \
     "${PWD}" | socat - UNIX-CONNECT:"${_ipc_socket}"
 
-bspc config ignore_ewmh_focus         false

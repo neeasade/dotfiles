@@ -97,12 +97,17 @@ playlist() {
   fi
 }
 
-info() {
+infoname() {
   name="$(mpc -f '%title% - %artist%' | head -n 1)"
   if [ "$name" = ' - ' ]; then
     name="$(basename "$(mpc -f '%file%' | head -n 1)")"
     name="${name%.*}"
   fi
+  echo "$name"
+}
+
+info() {
+  name="$(infoname)"
   playlist_info="$(echo playlist: $(cat ~/Music/playlist/current) ┃ $(playlist_length))"
 
   length="$(wc -L <<< "$name")"

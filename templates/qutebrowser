@@ -80,7 +80,8 @@ theme = {
 
 # colors
 colors = theme['colors']
-config.set('colors.webpage.bg', "#{{background}}");
+# this is only worth it if it's a light color, todo: use css instead
+# config.set('colors.webpage.bg', "#{{background}}");
 
 def setToBG(colortype, target):
     config.set('colors.' + target, colors['bg'][colortype])

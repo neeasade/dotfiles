@@ -1,0 +1,3 @@
+#!/bin/sh
+
+elisp '(length (ns/circe-unread-query-buffers))'
