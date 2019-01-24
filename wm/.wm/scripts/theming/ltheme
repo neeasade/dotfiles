@@ -85,28 +85,6 @@ load_tmux() {
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
-load_weechat() {
-    # weechat opens a fifo in this location that is on/enabled by default.
-    wee_cmd() {
-        echo "*$*" > "$HOME/.weechat/weechat_fifo"
-        sleep 0.5
-    }
-
-    margs weechat .weechat/weechat.conf
-
-    # check for buffers.pl, assume we need to install plugins if it's not present.
-    [ ! -f "$HOME/.weechat/perl/buffers.pl" ] && \
-        wee_cmd '/script install autoconnect.py buffers.pl highmon.pl autosort.py notify.py'
-
-    wee_cmd '/reload'
-    sleep 2
-
-    # buffers.pl dies on reload
-    wee_cmd '/perl unload buffers'
-
-    wee_cmd '/perl load buffers.pl'
-}
-
 load_compton() {
     pkill compton
     margs compton .config/compton.conf
@@ -271,6 +249,7 @@ load_mpd() {
     mkdir "$HOME/.config/mpd/playlists"
     margs mpd .config/mpd/mpd.conf
     margs mpdcron .config/mpd/mpdcron.conf
+    # todo: you should restart mpd, mpdcron, no?
 }
 
 load_mpd_windows() {
