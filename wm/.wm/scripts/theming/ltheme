@@ -226,11 +226,10 @@ load_qutebrowser() {
 
     margs qutebrowser .config/qutebrowser/config.py
 
-    bspc config ignore_ewmh_focus true
+    # bspc config ignore_ewmh_focus true
     qb_command ':config-source'
     qb_command ':reload' # reload current page w/ css
-    sleep 1
-    bspc config ignore_ewmh_focus false
+    # bspc config ignore_ewmh_focus false
 }
 
 # dunst

@@ -1,7 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # shut off mpc when other things start to play
 
-while sleep 1; do
+while sleep 0.5; do
     chrome_open_before=${chrome_open:-false}
     mpv_playing_before=${mpv_playing:-false}
     mpc_playing_before=${mpc_playing:-false}
@@ -22,6 +22,15 @@ while sleep 1; do
     # echo chrome_before: $chrome_open_before
     # echo mpv_before: $mpv_playing_before
     # echo qutebrowser_before: $qutebrowser_open_before
+
+    # check that qb is viewing a yt page
+    # (twitter likes to autograb all the fucking time)
+    if $qutebrowser_open; then
+	qb_command ':session-save'
+	# bspc config ignore_ewmh_focus true
+	rg -q youtube "$HOME/.local/share/qutebrowser/sessions/default.yml" || qutebrowser_open=false
+	# bspc config ignore_ewmh_focus false
+    fi
 
     if $chrome_open || $mpv_playing || $qutebrowser_open; then
 	# I generally turn the volume up for mpv things? idk
