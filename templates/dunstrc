@@ -1,35 +1,24 @@
 [global]
     font = {{d_font}}
-    allow_markup = yes
-    format = "<b>%s</b>\n%b"
+    markup = full
+    format = "%s\n%b"
     sort = yes
-    indicate_hidden = yes
-    alignment = left
-    bounce_freq = 0
+    alignment = center
     show_age_threshold = 60
-    word_wrap = yes
-    ignore_newline = no
-    geometry = "200x200-10-10"
-    shrink = no
-    transparency = 0
-    idle_threshold = 120
-    monitor = 0
+    geometry = "{{p_geometry}}"
+    idle_threshold = 60
     follow = mouse
-    sticky_history = yes
+    word_wrap = yes
     history_length = 20
-    show_indicators = yes
-    line_height = 0
-    separator_height = 2
-    padding = 8
-    horizontal_padding = 8
-    separator_color = auto
-    startup_notification = false
-    dmenu = /usr/bin/dmenu -p dunst:
-    browser = /usr/bin/{{BROWSER}}
+    separator_height = {{b_border_width}}
+    padding = {{st_borderpx}}
+    horizontal_padding = {{st_borderpx}}
+    separator_color = frame
+    browser = {{BROWSER}}
     icon_position = off
-    icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+    # icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
     frame_width = {{b_border_width}}
-    frame_color = "{{d_border_color}}"
+    frame_color = "{{b_focused_border_color}}"
 
 [shortcuts]
     close = ctrl+space
@@ -40,12 +29,12 @@
 [urgency_low]
     background = "#{{p_bg_normal}}"
     foreground = "#{{p_fg_normal}}"
-    timeout = 10
+    timeout = 0
 
 [urgency_normal]
     background = "#{{p_bg_normal}}"
     foreground = "#{{p_fg_normal}}"
-    timeout = 10
+    timeout = 0
 
 [urgency_critical]
     background = "#{{p_bg_active}}"
