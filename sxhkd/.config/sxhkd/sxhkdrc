@@ -4,7 +4,10 @@ super + {_,shift} + w
     bspc node -{c,k}
 
 super + s
-    bspc node -t $(bspc query -N -n -n .tiled >/dev/null && echo floating || echo tiled)
+    bspc config pointer_follows_focus true; \
+    bspc node -t $(bspc query -N -n -n .tiled >/dev/null && echo floating || echo tiled); \
+    bspc node -f; \
+    bspc config pointer_follows_focus false
 
 super + f
     bspc node -t ~fullscreen

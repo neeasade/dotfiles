@@ -1,6 +1,5 @@
 #!/bin/sh
 
-bspc config pointer_follows_focus true
 dir=$1
 node=$(bspc query -N -n)
 
@@ -38,6 +37,7 @@ tiled_move() {
   fi
 }
 
+bspc config pointer_follows_focus true
 $(bspc query -T -n | jq -r .client.state)_move
-
+bspc node -f
 bspc config pointer_follows_focus false

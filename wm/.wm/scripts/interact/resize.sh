@@ -28,12 +28,20 @@ targetNode=${targetNode:-focused}
 moveArgs="$sign$(echo "$percent/100*$(bspc query -T -m | jq .rectangle.$targetProp)" | bc -l)"
 [ $targetProp = "height" ] && moveArgs="0 $moveArgs" || moveArgs="$moveArgs 0"
 
+
+bspc config pointer_follows_focus true
+
 # note current state, initial move attempt.
 beforeVal=$(dim $targetProp)
 bspc node $targetNode -z $dir $moveArgs
 
+
 # if we're floating, this is all that is needed.
-bspc query -N -n focused.floating && exit 0
+if bspc query -N -n focused.floating; then
+  bspc node -f
+  bspc config pointer_follows_focus false
+  exit 0
+fi
 
 # if we weren't successful, try resizing the other way
 [ "$beforeVal" = "$(dim $targetProp)" ] && bspc node $targetNode -z $fallDir $moveArgs
@@ -51,3 +59,6 @@ if [ "$beforeVal" = "$(dim $targetProp)" ]; then
 	esac
 	bspc node $targetNode -z $dir $moveArgs &
 fi
+
+bspc node -f
+bspc config pointer_follows_focus false

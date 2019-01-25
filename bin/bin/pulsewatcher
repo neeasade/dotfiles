@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# shut off mpc when other things start to play
+
+while sleep 1; do
+    chrome_open_before=${chrome_open:-false}
+    mpv_playing_before=${mpv_playing:-false}
+    mpc_playing_before=${mpc_playing:-false}
+    qutebrowser_open_before=${qutebrowser_open:-false}
+
+    export clients="$(pactl list short clients)"
+    # always on when grabbed, eg youtube
+    # one for chrome, one per tab with handle
+    chrome_open=$(iif  "[ $(echo "$clients" | rg -c chrome || echo 0) -gt 1 ]")
+    qutebrowser_open=$(iif 'echo "$clients" | rg python')
+    mpv_playing=$(iif 'mpvc | rg playing')
+    mpc_playing=$(iif 'mpc | rg playing')
+
+    # debug
+    # echo chrome: $chrome_open
+    # echo mpv: $mpv_playing
+    # echo qutebrowser: $qutebrowser_open
+    # echo chrome_before: $chrome_open_before
+    # echo mpv_before: $mpv_playing_before
+    # echo qutebrowser_before: $qutebrowser_open_before
+
+    if $chrome_open || $mpv_playing || $qutebrowser_open; then
+	# I generally turn the volume up for mpv things? idk
+	$mpv_playing && $mpc_playing_before && ponymix increase 45
+	$mpc_playing && mpc pause
+    else
+	if $chrome_open_before || $mpv_playing_before || $qutebrowser_open_before; then
+	    $mpv_playing_before && ! $mpv_playing && ponymix decrease 45
+	    $mpc_playing || mpc play
+	fi
+    fi
+done

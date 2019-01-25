@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# neeasade
 # all switcher dmenu
 
 switch=""
@@ -19,16 +18,10 @@ done
 # emacs buffers
 buffers="$(
 elisp '(-remove (lambda (buffer)
-           (or
-             (s-match "magit" buffer)
-             (s-match "\*.*" buffer)
-             )
-           )
-  (mapcar
-    (function buffer-name)
-    (buffer-list)
-    )
-  )
+           (or (s-match "magit" buffer)
+             (s-match "\*.*" buffer)))
+  (mapcar (function buffer-name)
+    (buffer-list)))
 ' | sed 's/" "/\n/g;s/("//;s/")//'
 )"
 

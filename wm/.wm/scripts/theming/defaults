@@ -90,13 +90,14 @@ p_mpd_scroll_up="mpc seek +00:00:02"
 p_mpd_scroll_down="mpc seek -00:00:02"
 p_mpd_mouse_left="player.sh toggle"
 p_mpd_mouse_right="player.sh next"
+p_mpd_mouse_middle="mpc clear"
 
 p_dynamicmpd_scroll_up="mpc seek +00:00:02"
 p_dynamicmpd_scroll_down="mpc seek -00:00:02"
 p_dynamicmpd_mouse_left="player.sh toggle"
 p_dynamicmpd_mouse_right="player.sh next"
 
-emacs_theme="spacemacs-dark"
+emacs_theme="xresources"
 emacs_powerline_scale="1.6"
 
 # options
@@ -162,6 +163,16 @@ EOF
 # mpd
 music_dir="$HOME/Music"
 mpd_dir="$HOME/.config/mpd"
+
+# 2bspwm script overrides
+border_width_in_normal=$(( border_width_current/2 ))
+border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
+border_width_in_focused=$border_width_in_normal
+border_width_out_focused=$border_width_out_normal
+border_color_out_normal=$(bspc config normal_border_color | tr -d \#)
+border_color_in_normal=$(greaten $border_color_out_normal 30)
+border_color_out_focused=$(bspc config focused_border_color | tr -d \#)
+border_color_in_focused=$(greaten $border_color_out_focused 30)
 
 # default template targets
 # this allows themes to replace template files with different targets, by defining ${target}_template
