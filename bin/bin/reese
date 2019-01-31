@@ -1,0 +1,41 @@
+#!/bin/sh
+# clone/inspo: https://github.com/enjuus/chandler
+# I have stepbrother named chandler, who goes by reese.
+# depends on: xclip, awk, https://github.com/ericchiang/pup
+
+url=""
+target="$HOME/4ch/{BOARD}/{THREAD}"
+
+while getopts "s:d:h" opt; do
+    case ${opt} in
+	d) target="$OPTARG" ;;
+	s) url="$OPTARG" ;;
+	h) echo "read it"; exit ;;
+    esac
+done
+
+# fallback to clipboard if -s not specified
+[ -z "$url" ] && url="$(xclip -o -selection clipboard)"
+echo "url: $url"
+
+# eg http://boards.4chan.org/wg/thread/7354127
+board=$(echo "$url" | awk '{split($0,a,"/"); print a[4]}')
+thread_id=$(echo "$url" | awk '{split($0,a,"/"); print a[6]}' | sed 's/#.*//')
+page="$(curl -s $url)"
+[ $? -ne 0 ] && echo "invalid url" && exit
+
+thread="$(echo "$page" | pup '.board .subject:first-of-type text{}')"
+[ -z "$thread" ] && thread="$thread_id"
+
+target="$(echo "$target" | sed -e "s/{THREAD}/${thread}/" -e "s/{THREADID}/${thread_id}/" -e "s/{BOARD}/${board}/")"
+mkdir -p "$target"
+
+echo "$page" | pup '.board a.fileThumb attr{href}' | \
+    while read file; do
+	filename="$(basename $file)"
+	# don't duplicate downloads, but fork off every call.
+	[ -f "$target/$filename" ] || echo getting "https:$file to $target/$filename"
+	[ -f "$target/$filename" ] || curl -s "https:$file" > "$target/$filename" &
+    done
+
+wait
