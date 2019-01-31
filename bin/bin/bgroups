@@ -1,0 +1,133 @@
+#!/usr/bin/env inlein
+
+'{:dependencies [[org.clojure/clojure "1.8.0"]]
+  :jvm-opts ["-XX:+TieredCompilation" "-XX:TieredStopAtLevel=1" "-Xverify:none"]}
+
+(require '[clojure.core :as core])
+(require '[clojure.java.shell :as shell])
+(require '[clojure.string :as str])
+(require '[clojure.set :as set])
+(require '[clojure.edn :as edn])
+(require '[clojure.java.io :as io])
+
+(defn sh [command]
+  (:out (apply shell/sh (str/split command #" "))))
+
+(def state
+  {:groups
+   ;; sets of wids
+   {:00 #{}
+    :01 #{}
+    :10 #{}
+    :11 #{}}
+   :active #{:1}
+   :focus ""
+   :fifo "/tmp/bspgroups"
+   :monitor (str/trim-newline (sh "bspc query -M -m --names"))
+   })
+
+(defn toggle-wid [wid show]
+  (sh (core/format "bspc node %s -g hidden=%s" wid (if show "off" "on")))
+  ;; (println (core/format "bspc node %s -g hidden=%s" wid (if show "off" "on")))
+  )
+
+(defn render-state []
+  (let [show-wids
+        (apply set/union
+               (map #(% (:groups state))
+                    (filter #((:active state) %)
+                            (keys (:groups state)))))
+        ]
+
+    (doall (map #(toggle-wid % true) show-wids))
+    (doall (map #(toggle-wid % false)
+                (filter
+                 #(not (show-wids %))
+                 (apply set/union
+                        (map #(% (:groups state))
+                             (filter #(not ((:active state) %))
+                                     (keys (:groups state)))))))))
+  (when (not (= (:focus state) ""))
+    (sh "bspc config pointer_follows_focus true")
+    (sh (core/format "bspc node %s -f" (:focus state)))
+    (sh "bspc config pointer_follows_focus false")
+    )
+  )
+
+(defn set-focus [lgroup]
+  (when (and
+         ((:active state) lgroup)
+         (not (empty? (lgroup (:groups state)))))
+    (def state (update state :focus (fn [_] (last (lgroup (:groups state))))))))
+
+(defn toggle-group [group]
+  (let [lgroup (keyword (str group))]
+    (def state
+      (update
+       state :active
+       #(if ((:active state) lgroup)
+          (disj % lgroup)
+          (conj % lgroup))))
+    (set-focus lgroup)))
+
+(defn toggle-wid-group [wid group]
+  (def state
+    (update state
+            :groups
+            (fn [groups]
+              (update groups
+                      (keyword (str group))
+                      #(if (% wid)
+                         (disj % wid)
+                         (conj % wid))))))
+  (set-focus (keyword (str group))))
+
+;; return a version of state similar to bspc subscribe so that this can be used
+;; in existing status bars
+;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
+(defn format-state []
+  (str "WM"
+       (:monitor state)
+       ":"
+       (str/join
+        ":"
+        (doall
+         (map (fn [key]
+                (let [char (if (empty? (key (:groups state))) "f" "o")]
+                  (str (if ((:active state) key) (str/upper-case char) char) (name key))))
+              (keys (:groups state)))))
+       ":LT:TT:G"))
+
+;; (prn (:groups state))
+;; (prn (:active state))
+
+(when (not (.exists (io/as-file (:fifo state))))
+  (shell/sh "mkfifo" (:fifo state)))
+
+(println (format-state))
+
+(while true
+  (doseq [command (str/split (slurp (:fifo state)) #"\n")]
+    (let [args (str/split command #" ")]
+      (case (first args)
+        "tgroup" (apply toggle-group (rest args))
+        "twid" (apply toggle-wid-group (rest args))
+        "show" (prn state)
+        (println (core/format "unrecognized command: %s" command)))
+
+
+
+      ;; (prn command)
+      ;; (prn (:groups state))
+      ;; (prn (:active state))
+      ;; (prn (:focus state))
+      (println (format-state))
+      (render-state)
+      (when (= command "quit")
+        ;; show everyone again
+        (doseq [wid (str/split (sh "bspc query -N -n .hidden" ) #"\n")]
+          (sh (core/format "bspc node %s -g hidden=off" wid)))
+
+        (System/exit 0)))))
+
+# -*- mode: clojure -*-
