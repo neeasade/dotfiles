@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# ensure
+gittarget="https://github.com/neeasade/BigBagKbdTrixXKB"
+gitdir="$HOME/git"
+[ ! -d "$gitdir" ] && mkdir -p "$gitdir"
+gitdest="$gitdir/$(basename "$gittarget")"
+[ ! -d "$gitdest" ] && git clone "$gittarget" "$gitdest"
+
+# setup
+xkbdir="$HOME/.xkb"
+mkdir "$xkbdir"
+
+cd "$gitdest"
+
+echo "$gitdest/install-dreymar-xmod.sh" -i "$xkbdir" -x 4c us us
+"$gitdest/install-dreymar-xmod.sh" -i "$xkbdir" -n -x 4c us us
