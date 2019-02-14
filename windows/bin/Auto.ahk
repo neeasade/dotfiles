@@ -1,11 +1,6 @@
 #SingleInstance force
 
 Capslock::Ctrl
-; todo: consider
-; CapsLock & h:: Send, {Left}
-; CapsLock & j:: Send, {Down}
-; CapsLock & k:: Send, {Up}
-; CapsLock & l:: Send, {Right}
 
 ; swap these around to match hhkb layout.
 \::Backspace
