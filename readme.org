@@ -1,11 +1,12 @@
 * Neeasade's dotfiles
 
-| [[http://notes.neeasade.net/desktop/][screenshots]] |                        |
-| OS          | Nixos                  |
-| WM          | BSPWM                  |
-| Panel       | lemonbar               |
-| Terminal    | Emacs shell, fallback [[https://github.com/neeasade/xst][xst]]                    |
-| Editor      | Emacs                  |
-| GTK         | [[https://github.com/actionless/oomox][oomox]] with [[http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910][ACYL]] icons. |
+| [[http://notes.neeasade.net/desktop/][screenshots]]     |                           |
+| OS              | Nixos                     |
+| WM              | BSPWM                     |
+| Panel           | lemonbar                  |
+| Terminal        | Emacs shell, fallback [[https://github.com/neeasade/xst][xst]] |
+| Editor          | Emacs                     |
+| Keyboard layout | Colemak-DH           |
+| GTK             | [[https://github.com/actionless/oomox][oomox]] with [[http://pobtott.deviantart.com/art/Any-Color-You-Like-175624910][ACYL]] icons.    |
 
 Many of my dotfiles are tied to a centralized themefile using [[https://github.com/neeasade/dotfiles/tree/master/templates][templates]]. The default theme values are [[https://github.com/neeasade/dotfiles/tree/master/wm/.wm/scripts/theming/defaults][here]], the theme files can be seen [[https://github.com/neeasade/dotfiles/tree/master/wm/.wm/themes][here]], and the [[https://github.com/neeasade/dotfiles/blob/master/wm/.wm/scripts/theming/ltheme][ltheme]] script ties it all together.
