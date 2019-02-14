@@ -11,7 +11,9 @@ alias lsblk=" clear; lsblk"
 alias pacman="pacman --color=always"
 alias paste="curl -F 'sprunge=<-' http://sprunge.us"
 alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files/Steam/Steam.exe >/dev/null 2>&1 &'
-alias tmux='tmux -2' #Make tmux assume 256 colors.
+
+# Make tmux assume 256 colors
+alias tmux='tmux -2'
 alias ref='theme refresh '
 alias e='$EDITOR '
 alias syncu='git push origin $(current_branch)'

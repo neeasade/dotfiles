@@ -12,9 +12,19 @@ sysinfo() {
   printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
 }
 
+clean_shot() {
+  if [ -f "$HOME/Last_Shot/shot.png" ]; then
+    mv "$HOME/Last_Shot/shot.png" "$(cat "$HOME/Last_Shot/.shot.txt")"
+    rm "$HOME/Last_Shot/shot.png"
+    rm "$HOME/Last_Shot/.shot.txt"
+  fi
+}
+
 shot_location() {
   mkdir -p $HOME/Screenshots
-  echo "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png"
+  mkdir -p $HOME/Last_Shot
+  echo "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png" > "$HOME/Last_Shot/.shot.txt"
+  echo "$HOME/Last_Shot/shot.png"
 }
 
 shot() {
@@ -28,15 +38,20 @@ fullshot() {
 }
 
 lastshot() {
-  echo "$HOME/Screenshots/$(ls $HOME/Screenshots | tail -n 1)"
+ "$HOME/Last_Shot/shot.png"
+}
+
+viewshot() {
+  meh "$(lastshot)"
 }
 
 upshot() {
+  # todo: trim this, use xeros pb, import it, then paste and alert on your own
   uguush -o 0x0 -u "$(lastshot)"
 }
 
 # current monitor only - bspwm specific
-deskshot() {
+monshot() {
   json="$(bspc query -T -m)"
   jget() {
     echo "$json" | jq .rectangle.$1
