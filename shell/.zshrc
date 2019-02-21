@@ -52,10 +52,9 @@ setopt autocd
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
 
 if $ESHELL; then
-  cd "$HOME"
-  unsetopt PROMPT_SP
-  unsetopt zle
-  return
+    unsetopt PROMPT_SP
+    unsetopt zle
+    return
 fi
 
 # vim bindings

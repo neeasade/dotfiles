@@ -31,7 +31,16 @@ LESSCHARSET='utf-8'
 BROWSER=qutebrowser
 FILEBROWSER=thunar
 VIEW_PDF=zathura
-[ -z "$TERMINAL" ] && TERMINAL=$(iif $WINDOWS git-bash xst)
+
+if [ -z "$TERMINAL" ]; then
+  if $WINDOWS; then
+    TERMINAL=git-bash
+  elif has xst; then
+    TERMINAL=xst
+  elif has urxvt; then
+    TERMINAL=urxvt
+  fi
+fi
 
 # default
 GTK_THEME=${GTK_THEME:-adwaita}

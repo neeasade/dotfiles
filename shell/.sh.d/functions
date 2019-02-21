@@ -116,12 +116,6 @@ groot() {
   fi
 }
 
-# make a new note for later to reference or publish.
-note() {
-  cd $HOME/git/neeasade.github.io/
-  ./new.sh "$*"
-}
-
 # nix query
 nq() {
   local CACHE="$HOME/.cache/nq-cache"
@@ -207,4 +201,24 @@ dotadd() {
 book() {
   player.sh pause
   google-chrome-stable "$(cat ~/.book_url)" &
+}
+
+passadd() {
+  (echo "$2"; echo "$2") | pass add "$1"
+}
+
+gset() {
+  case $1 in
+    work)
+      git config user.name "$(pass name)"
+      git config user.email "$(pass email)"
+      ;;
+    home)
+      git config user.name "neeasade"
+      git config user.email "neeasade@gmail.com"
+      ;;
+    *)
+      echo unknown option
+      ;;
+  esac
 }
