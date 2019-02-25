@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 # This script will be sourced by themes and then have options overridden
 
 . "$HOME/.wm/themes/colors/${THEME_NAME}"
@@ -169,9 +169,9 @@ border_width_in_normal=$(( border_width_current/2 ))
 border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
 border_width_in_focused=$border_width_in_normal
 border_width_out_focused=$border_width_out_normal
-border_color_out_normal=$(bspc config normal_border_color | tr -d \#)
+border_color_out_normal=$b_normal_border_color
 border_color_in_normal=$(greaten $border_color_out_normal 30)
-border_color_out_focused=$(bspc config focused_border_color | tr -d \#)
+border_color_out_focused=$b_focused_border_color
 border_color_in_focused=$(greaten $border_color_out_focused 30)
 
 # default template targets

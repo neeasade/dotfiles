@@ -6,6 +6,7 @@ BG_COMMAND="/run/current-system/sw/bin/feh --bg-tile '/media/LIVEWIRE/Archive/ot
 
 emacs_theme="base16-grayscale-light"
 emacs_powerline_scale="1.0"
+PROMPT_CHAR='%'
 
 # bspwm
 b_border_width=1
