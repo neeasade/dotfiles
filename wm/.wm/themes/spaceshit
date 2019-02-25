@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # theme
-BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
+
+BG_COMMAND="feh --bg-scale $HOME/.wm/walls/fill/space.jpg"
 emacs_theme="base16-grayscale-dark"
 emacs_powerline_scale="1.0"
 
@@ -25,14 +26,14 @@ p_window_class="noshadow"
 p_line=2
 p_padding=6
 
-p_font_main="GohuFont-11"
+p_font_main="GohuFont-14"
 p_offset=-3
 p_font_icon="Siji-10" # Panel Icon font.
 p_icon_enable=false
 d_font="Go Mono for Powerline 10"
 
-st_font="GohuFont-11"
-st_font_variable="GohuFont-11"
+st_font="GohuFont-14"
+st_font_variable="GohuFont-14"
 
 l_complete="-"
 l_sep="|"

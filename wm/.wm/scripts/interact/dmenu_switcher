@@ -10,9 +10,8 @@ add_switch() {
 }
 
 # windows
-wids="$(bspc query -N -n .leaf.\!hidden)"
 for wid in $wids; do
-  add_switch "window: $(xtitle $wid)" "bspc node -f $wid"
+  add_switch "window: $(xtitle $wid)" "bspc node $wid -g hidden=off; bspc node -f $wid"
 done
 
 # emacs buffers

@@ -1,5 +1,10 @@
 #!/usr/bin/env dash
 
+bspc node -p \~$*
+
+# single is buggy rn
+exit
+
 # if we only have one, use our border thing
 if bspc query -N -n focused.leaf && which chbpresel 2>/dev/null 1>&2; then
     (

@@ -267,8 +267,7 @@ load_dunst() {
 load_mpd() {
     mkdir "$HOME/.config/mpd/playlists"
     margs mpd .config/mpd/mpd.conf
-    margs mpdcron .config/mpd/mpdcron.conf
-    # todo: you should restart mpd, mpdcron, no?
+    # todo: you should restart mpd, no?
 }
 
 load_mpd_windows() {

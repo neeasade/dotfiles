@@ -29,7 +29,7 @@
 [urgency_low]
     background = "#{{p_bg_normal}}"
     foreground = "#{{p_fg_normal}}"
-    timeout = 0
+    timeout = 3
 
 [urgency_normal]
     background = "#{{p_bg_normal}}"

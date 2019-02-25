@@ -2,6 +2,8 @@
 
 # theme
 BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
+BG_COMMAND="/run/current-system/sw/bin/feh --bg-tile '/media/LIVEWIRE/Archive/other/squidd/pattern_125.gif'"
+
 emacs_theme="base16-grayscale-light"
 emacs_powerline_scale="1.0"
 
@@ -27,7 +29,7 @@ p_bg_normal="#ffe3e3e3"
 p_fg_active="#ff525252"
 p_bg_active="#ffb9b9b9"
 
-# p_format_2="desktop:github:themeSwitch:title|org_task|dynamicmpd:volume:clock"
+p_format="dropdown:desktop:circe_dms:title|org_task|mpd:volume:weather:clock"
 p_title_show_mode=active         # used by title.
 
 p_height=25
@@ -38,9 +40,11 @@ p_line=2
 p_padding=6
 
 p_font_main="Go Mono for Powerline-10:style=Bold"
+p_font_main="Charter-10:style=Bold"
 p_font_icon="FontAwesome-10" # Panel Icon font.
 p_icon_enable=false
-d_font="Go Mono for Powerline 10"
+# d_font="Go Mono for Powerline 10"
+d_font="Go Mono for Powerline 14"
 
 p_desktop_occupied_label="$(uchar f111)"
 p_desktop_empty_label="$(uchar f1db)"
@@ -49,6 +53,7 @@ p_desktop_tiling_label=''
 p_desktop_monocle_label="$(uchar f00b)"
 
 st_font="Go Mono for Powerline-12:style=Regular"
+st_font_variable="Charter-13"
 p_title_only_show_active=true
 maxWinNameLen=40
 

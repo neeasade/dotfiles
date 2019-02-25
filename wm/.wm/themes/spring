@@ -5,16 +5,23 @@
 # theme
 VIM_COLORS=chameleon
 BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/spring.jpg"
+BG_COMMAND="feh --bg-fill $HOME/Downloads/allan-nygren-293261-unsplash.jpg"
+BG_COMMAND="feh --bg-fill $HOME/Downloads/wallhaven-717589.jpg"
+
+emacs_theme="base16-atelier-forest"
+st_font="Roboto Mono Medium for Powerline-10"
+st_font="Roboto Mono Medium for Powerline-10"
 
 # bspwm
 b_border_width=7
-b_window_gap=16
+b_window_gap=45
+b_normal_border_color=$(colort -t +50 $p_bg_inactive)
+b_active_border_color=$(colort -tl +60 $p_bg_active)
 
 # panel
 p_height=24
 p_gap=0
 p_line="5"
-p_padding=8
 p_font_main="Droid Sans-10:style=Bold"
 p_window_class="noshadow"
 p_delimiter="   "
@@ -25,7 +32,7 @@ p_desktop_empty_label="        "
 maxWinNameLen=50
 
 # colors
-p_bg_inactive="#bb$(colort -t $p_bg_normal)"
+p_bg_inactive="#66$(colort -t $p_bg_normal)"
 p_bg_normal="#00$(colort -t $p_bg_normal)"
 
 d_font="Droid Sans 10"
@@ -35,9 +42,20 @@ GTK_FONT="Droid Sans 10"
 
 # Make the workspaces be in the middle.
 p_format="dropdown:title|desktop|mpd:clock"
-c_frame_opacity="0.4"
+c_frame_opacity="0.6"
 p_icon_handler="env printf \"\$icon_result  \""
 
+activebg() {
+    bg
+}
+
+activefg() {
+    fg
+}
+
+p_title_show_mode=active
+
+p_bg_active="$(colort -30 $p_bg_active)"
 p_desktop_theme=$(cat<<EOF
 bg="#00000000"
 activeBG="#00000000"
@@ -45,6 +63,7 @@ overline=true
 activeoverline=true
 line=$p_bg_inactive
 activeline=$p_bg_active
+line=#99$(colort -t +50 $p_bg_inactive)
 delimiter="   "
 EOF
 )

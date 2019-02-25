@@ -15,12 +15,12 @@ sysinfo() {
 clean_shot() {
   if [ -f "$HOME/Last_Shot/shot.png" ]; then
     mv "$HOME/Last_Shot/shot.png" "$(cat "$HOME/Last_Shot/.shot.txt")"
-    rm "$HOME/Last_Shot/shot.png"
     rm "$HOME/Last_Shot/.shot.txt"
   fi
 }
 
 shot_location() {
+  clean_shot
   mkdir -p $HOME/Screenshots
   mkdir -p $HOME/Last_Shot
   echo "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png" > "$HOME/Last_Shot/.shot.txt"
@@ -38,7 +38,7 @@ fullshot() {
 }
 
 lastshot() {
- "$HOME/Last_Shot/shot.png"
+ echo "$HOME/Last_Shot/shot.png"
 }
 
 viewshot() {

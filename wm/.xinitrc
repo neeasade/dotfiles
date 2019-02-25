@@ -12,10 +12,10 @@ compton &
 unclutter -idle 1 &
 pcmanfm -d &
 mpd $HOME/.config/mpd/mpd.conf &
-mpdcron &
 dunst &
 wmname LG3D &
 xsetroot -cursor_name left_ptr &
+nm-applet &
 (. $HOME/.wm_theme; $BG_COMMAND) &
 
 export xstart=`date +%s`

@@ -45,7 +45,7 @@ get_images() {
 get_images
 
 while $watch_mode; do
-    sleep 60
+    sleep 600
     page="$(curl -s $url)"
     page_title="$(echo "$page" | pup 'head title text{}')"
     [ "$page_title" = "302 Found" ] && echo "Thread died." && exit 1

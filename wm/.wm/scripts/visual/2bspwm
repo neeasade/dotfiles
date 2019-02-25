@@ -24,7 +24,7 @@ _chwb2() {
 	eval echo \$${1}_${colorType}
     }
 
-    [ "$width_normal" = "width_focused" ] || \
+    [ "$width_normal" = "$width_focused" ] || \
 	echo "$@" | sed 's/ /\n/g' | xargs -I{} bspc config -n {} border_width $(_getVal width)
 
     chwb2 -I $(_getVal border_color_in) -O $(_getVal border_color_out) -i $(_getVal border_width_in) -o $(_getVal border_width_out) $@ 2>/dev/null &
