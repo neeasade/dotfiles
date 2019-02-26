@@ -300,4 +300,14 @@ noremap k n
 noremap K N
 noremap N J
 
+" tell vim to keep a backup file
+set backup
+silent !mkdir ~/.vim_backup > /dev/null 2>&1
+
+" tell vim where to put its backup files
+set backupdir=~/.vim_backup
+
+" tell vim where to put swap files
+set dir=~/.vim_backup
+
 " vim:set ft=vim et sw=2:

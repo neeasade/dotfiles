@@ -85,6 +85,8 @@ succ .go/bin
 succ .cargo/bin
 succ .wm/scripts/interact
 succ .wm/scripts/visual
+# pip --user location
+succ .local/bin
 
 # guix
 # succ .config/guix/current/bin
