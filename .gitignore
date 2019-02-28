@@ -1,6 +1,8 @@
 nohup.out
 *.*~
 
+shell/.sh.d/extend
+
 wm/.wm/panel/juicers/
 wm/.wm/panel/logs
 wm/.wm/panel/tools/icon
@@ -19,14 +21,6 @@ ncmpcpp/.config/ncmpcpp/error.log
 vim/.vim/*
 vim/.config/nvim/*
 !vim/.config/nvim/init.vim
-
-weechat/.weechat/irc.conf
-weechat/.weechat/logs
-weechat/.weechat/*fifo
-weechat/.weechat/weechat.log
-weechat/.weechat/script/plugins.xml.gz
-weechat/.weechat/perl
-weechat/.weechat/python
 
 qutebrowser/.config/qutebrowser/bookmarks
 qutebrowser/.config/qutebrowser/quickmarks
