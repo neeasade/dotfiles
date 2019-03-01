@@ -18,7 +18,11 @@ prompt() {
         _prompt="\e[7m${_prompt}\e[0m" # invert
     fi
 
-    if $ESHELL; then
+    if ${REMOTE:-false}; then
+      _prompt="$(hostname) $_prompt"
+    fi
+
+    if ${ESHELL:-false}; then
       _prompt="|Pr0mPT|%~|$_prompt"
     fi
 
