@@ -4,13 +4,17 @@ type theme > /dev/null 2>&1 &&
     _prompt="$(theme getval PROMPT_CHAR)" ||
     _prompt='%'
 
-# zsh bb
-[ "$(basename $SHELL)" = "zsh" ] && [ $_prompt = "%" ] && _prompt="%%"
+
+if [ -z "$cur_shell" ]; then
+  cur_shell=$(ps | grep $$ |  sed 's/^.* //')
+  cur_shell="${cur_shell##*/}"
+fi
+
+[ "$cur_shell" = "zsh" ] && [ $_prompt = "%" ] && _prompt="%%"
 
 prompt() {
     _ERR=$?
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
-
 
     if [ $_ERR -ne 0 ]; then
       ${ESHELL:-false} &&
@@ -23,7 +27,15 @@ prompt() {
     fi
 
     if ${ESHELL:-false}; then
-      _prompt="|Pr0mPT|%~|$_prompt"
+      _shell_location="$(pwd)"
+
+      if $REMOTE; then
+        # idk how stable this is
+        ssh_ip="$(echo $SSH_CONNECTION | awk '{print $3}')"
+        _shell_location="/ssh:${USER}@${ssh_ip}:${_shell_location}"
+      fi
+
+      _prompt="|Pr0mPT|${_shell_location}|$_prompt"
     fi
 
     printf "%b%s" "$_prompt "

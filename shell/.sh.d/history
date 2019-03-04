@@ -7,7 +7,7 @@ history_length=10000
 history_file="$HOME/.${cur_shell}_history"
 
 case "$cur_shell" in
-bash)
+  bash)
     HISTFILE="$history_file"
     HISTFILESIZE="$history_length"
     HISTSIZE="$history_length"
@@ -15,7 +15,7 @@ bash)
     shopt -s histappend
     HISTCONTROL=ignoredups:erasedups
     ;;
-zsh)
+  zsh)
     HISTFILE="$history_file"
     SAVEHIST="$history_length"
     HISTSIZE="$history_length"
@@ -24,7 +24,7 @@ zsh)
     setopt hist_ignore_all_dups
     setopt hist_ignore_space
     ;;
-mksh)
+  mksh)
     HISTFILE="$history_file"
     ;;
 esac

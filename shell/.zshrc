@@ -2,32 +2,34 @@
 
 [ ! -d ~/.zplug ] && curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 
-. ~/.zplug/init.zsh
+if [ -d ~/.zplug ]; then
+    . ~/.zplug/init.zsh
 
-! $ESHELL && zplug "zsh-users/zsh-autosuggestions", use:"zsh-autosuggestions.zsh" # fish-like suggestions
-zplug "djui/alias-tips"                                              # alias reminder
+    ! $ESHELL && zplug "zsh-users/zsh-autosuggestions", use:"zsh-autosuggestions.zsh" # fish-like suggestions
+    zplug "djui/alias-tips"                                              # alias reminder
 
-zplug "plugins/pass", from:oh-my-zsh                                 # completions for pass
-zplug "spwhitt/nix-zsh-completions"                                  # completions for nix
-zplug "plugins/lein", from:oh-my-zsh                                 # completions for lein
-zplug "zsh-users/zsh-completions"                                    # completions for everything else
-zplug "hlissner/zsh-autopair", defer:2
+    zplug "plugins/pass", from:oh-my-zsh                                 # completions for pass
+    zplug "spwhitt/nix-zsh-completions"                                  # completions for nix
+    zplug "plugins/lein", from:oh-my-zsh                                 # completions for lein
+    zplug "zsh-users/zsh-completions"                                    # completions for everything else
+    zplug "hlissner/zsh-autopair", defer:2
 
-if has fzf; then
-    zplug "junegunn/fzf", use:"shell/completion.zsh"                 # fzf
-    zplug "junegunn/fzf", use:"shell/key-bindings.zsh"               # fzf
+    if has fzf; then
+	zplug "junegunn/fzf", use:"shell/completion.zsh"                 # fzf
+	zplug "junegunn/fzf", use:"shell/key-bindings.zsh"               # fzf
+    fi
+
+    # considering
+    zplug "plugins/catimg", from:oh-my-zsh                               # term image rendering
+    zplug "plugins/gitignore", from:oh-my-zsh                            # access default gitignores, from gitignore.io api. (gi)
+
+    # maybe:
+    # https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/per-directory-history
+    # https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/wd
+
+    zplug check || zplug install
+    zplug load
 fi
-
-# considering
-zplug "plugins/catimg", from:oh-my-zsh                               # term image rendering
-zplug "plugins/gitignore", from:oh-my-zsh                            # access default gitignores, from gitignore.io api. (gi)
-
-# maybe:
-# https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/per-directory-history
-# https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/wd
-
-zplug check || zplug install
-zplug load
 
 setopt PROMPT_SUBST
 
