@@ -1,6 +1,6 @@
 * Neeasade's dotfiles
 
-| [[http://notes.neeasade.net/desktop/][screenshots]]     |                           |
+| [[http://notes.neeasade.net/rice.html][screenshots]]     |                           |
 | OS              | Nixos                     |
 | WM              | BSPWM                     |
 | Panel           | lemonbar                  |
