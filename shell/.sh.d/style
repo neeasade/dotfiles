@@ -27,7 +27,7 @@ prompt() {
     fi
 
     if ${ESHELL:-false}; then
-      _shell_location="$(pwd)"
+      _shell_location="$PWD"
 
       if $REMOTE; then
         # idk how stable this is

@@ -104,13 +104,6 @@ emacs_powerline_scale="1.6"
 # alternate, arrow, arrow-fade, bar, box, brace, butt, chamfer, contour, curve, rounded, roundstub, wave, zigzag, utf-8.
 emacs_powerline="bar"
 
-weechat_prefix_join="▶"
-weechat_prefix_quit="◀"
-weechat_separator_horizontal="━"
-weechat_separator_vertical="┃"
-weechat_prefix_suffix="▌"
-weechat_input_items="[input_search],[input_paste],         ▙,input_text"
-
 # xst
 st_font="Droid Sans Mono-10"
 st_font_variable="Droid Sans-10"

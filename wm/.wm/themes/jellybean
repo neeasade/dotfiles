@@ -48,14 +48,6 @@ st_cursorshape=3
 st_cursorthickness=1
 PROMPT_CHAR=\>
 
-weechat_prefix_join=">"
-weechat_prefix_quit="<"
-weechat_separator_horizontal="-"
-weechat_separator_vertical="|"
-weechat_prefix_suffix="|"
-weechat_input_items="[input_search],[input_paste],       >>>,input_text"
-
-
 tmux_statusbar="$(cat <<EOF
 setw -g window-status-current-fg colour170
 setw -g window-status-current-bg colour239
@@ -72,7 +64,6 @@ set -g status-justify centre
 set-option -g status-position top
 EOF
 )"
-
 
 p_format="dropdown:desktop|title|dynamicmpd:volume:updates:weather:clock" # Default options/items to include in info section of panel.
 
