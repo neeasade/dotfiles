@@ -3,19 +3,18 @@
 # example: dmesg >$(dup out.txt)
 
 target="$1"
-while [ -f "$target" ]; do
+while [[ -f "$target" ]]; do
     file="$(basename -- "$target")"
 
     if [[ $file == *.* ]]; then
-    	ext=".${filename##*.}"
-	file="${filename%.*}"
+    	ext=".${file##*.}"
+	file="${file%.*}"
     else
 	ext=""
     fi
 
     if [[ $file == *\) ]]; then
-	# todo: this better
-	cur_num="$(echo "$file" | grep -Eo "([0-9])" )"
+	cur_num="$(grep -Eo "([0-9])" <<< "$file")"
 	cur_num=${cur_num/(}
 	cur_num=${cur_num/)}
 	next_num="$(($cur_num + 1))"
