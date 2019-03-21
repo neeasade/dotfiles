@@ -6,7 +6,7 @@ target="$1"
 while [[ -f "$target" ]]; do
     file="$(basename -- "$target")"
 
-    if [[ $file == *.* ]]; then
+    if [[ "$file" == *.* ]]; then
     	ext=".${file##*.}"
 	file="${file%.*}"
     else
@@ -19,9 +19,9 @@ while [[ -f "$target" ]]; do
 	cur_num=${cur_num/)}
 	next_num="$(($cur_num + 1))"
 
-	target="${file/$cur_num/$next_num}${ext}"
+	target="${file/(${cur_num})/(${next_num})}${ext}"
     else
-	target="$file (1)$ext"
+	target="${file}_(1)${ext}"
     fi
 done
 
