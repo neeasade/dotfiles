@@ -83,9 +83,9 @@ dzen_menu() {
 
     content+=(" Recently edited ")
     # Get recent files from .viminfo by vim marks.
-    for file in $(cat ~/.viminfo | grep -A 10 "File marks" | grep -oE "~.+" | uniq | head -n 5); do
-        fullfile="$(echo $file | sed "s/~/\/home\/$USER/" )"
-        content+=(" ^ca(1, termite -e 'vim $fullfile' $sdw) `icon_dzen file` $file ^ca()")
+
+    for file in $(eval printf $(elisp '(ns/make-lines (mapcar (fn (concat "\"" (s-replace (~ "") "~/" <>) "\"")) (seq-take recentf-list 5)))')); do
+        content+=(" ^ca(1, elisp 'find-file "$file"' $sdw) `icon_dzen file` $file ^ca()")
     done
 
     content+=(" Actions")

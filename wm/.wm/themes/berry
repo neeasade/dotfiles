@@ -1,38 +1,62 @@
 #!/usr/bin/env bash
 # berry theme
 
-BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/berry.jpg"
-emacs_theme=base16-atelier-forest
+colors() {
+    background=151a15
+    foreground=dfdedf
+    color0=262c35
+    color1=794765
+    color2=497724
+    color3=d48237
+    color4=4d7dad
+    color5=4c5771
+    color6=457676
+    color7=b1c2c3
+    color8=3d4a58
+    color9=be9a96
+    color10=84a250
+    color11=d79e4c
+    color12=8cb1c3
+    color13=85a5a6
+    color14=8eb0ad
+    color15=f1f3f1
+}
 
-# bspwm
-b_border_width=4
-b_window_gap=16
+settings() {
+    BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/berry.jpg"
+    emacs_theme=base16-atelier-forest
 
-# panel
-p_gap=7
-p_height=22
-p_underline="5"
-p_font_main="Droid Sans-10:style=Bold"
-d_font="Droid Sans 10"
+    # bspwm
+    b_border_width=4
+    b_window_gap=16
 
-p_padding=2
+    # panel
+    p_gap=7
+    p_height=22
+    p_underline="5"
+    p_font_main="Droid Sans-10:style=Bold"
+    d_font="Droid Sans 10"
 
-p_window_class="noshadow"
-p_offset=-1
+    p_padding=2
 
-p_title_only_show_active=true
+    p_window_class="noshadow"
+    p_offset=-1
 
-p_desktop_display_format=separate
-p_desktop_occupied_label="$(echo -n -e '\uf004')"
-p_desktop_empty_label="$(echo -n -e '\uf08a')"
+    p_title_only_show_active=true
 
-p_delimiter="   "
+    p_desktop_display_format=separate
+    p_desktop_occupied_label="$(echo -n -e '\uf004')"
+    p_desktop_empty_label="$(echo -n -e '\uf08a')"
 
-p_format="dropdown:mpd:title|desktop|themeSwitch:volume:updates:weather:clock"
+    p_delimiter="   "
 
-# colors
-#pBGInactiveTab="#99`echo "$pBG" | cut -c4-`"
-p_bg_normal="#00$(colort -t $p_bg_normal)"
+    p_format="dropdown:mpd:title|desktop|themeSwitch:volume:updates:weather:clock"
 
-# other
-GTK_FONT="Droid Sans 10"
+    # colors
+    #pBGInactiveTab="#99`echo "$pBG" | cut -c4-`"
+    p_bg_normal="#00$(colort -t $p_bg_normal)"
+
+    # other
+    GTK_FONT="Droid Sans 10"
+
+}

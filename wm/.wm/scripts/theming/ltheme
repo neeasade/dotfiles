@@ -171,16 +171,6 @@ load_lemonade() {
     done
 }
 
-load_vim() {
-
-    # for use with a wrapper to use --remote
-    # works with neovim using https://github.com/mhinz/neovim-remote
-    VIMS=`vim --serverlist`
-    for vim in $VIMS; do
-        vim --servername $vim --remote-send '<Esc>:so $MYVIMRC<CR>' &
-    done
-}
-
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
     trim_alphas
@@ -215,7 +205,7 @@ load_qutebrowser() {
         margs css "git/solarized-everything-css/styl/my.styl"
 
         cd "${gitdest}"
-        stylus --include styl --import styl/my.styl -p sites/all-sites.styl > css/all.css
+        # stylus --include styl --import styl/my.styl -p sites/all-sites.styl > css/all.css
     )
 
     q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
@@ -240,10 +230,10 @@ load_dunst() {
     pgrep lemonbar || p_height=0
 
     # still want it a _little_ in if we are not gapped
-    [ $(bspc config window_gap) -le 0 ] && b_window_gap=$st_borderpx
+    [ $(bspc config window_gap) -le 0 ] && b_window_gap=$x_padding
 
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
-    [ $st_borderpx -gt 12 ] && st_borderpx=$(( $st_borderpx/2 ))
+    [ $x_padding -gt 12 ] && x_padding=$(( $x_padding/2 ))
 
     # WIDTHxHEIGHT+XOFF+YOFF
     # height is the number of notifications that can be open
@@ -307,6 +297,8 @@ if uname | grep -q MINGW; then
 else
     targets="${*:-compton tmux xresources bspwm bg gtk dunst qutebrowser zathura}"
 fi
+
+# targets="${*:-compton tmux xresources bspwm bg dunst qutebrowser}"
 
 IFS=" "
 for conf in $targets; do

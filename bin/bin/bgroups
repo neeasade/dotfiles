@@ -135,5 +135,3 @@
           (sh (core/format "bspc node %s -g hidden=off" wid)))
 
         (System/exit 0)))))
-
-# -*- mode: clojure -*-

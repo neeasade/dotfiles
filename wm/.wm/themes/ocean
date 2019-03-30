@@ -1,91 +1,123 @@
 #!/usr/bin/env bash
 # base16 ocean theme
 
-# theme
-VIM_COLORS=chameleon
-BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/ocean.jpg"
-
-emacs_theme="base16-ocean"
-
-# bspwm
-b_border_width=6
-b_window_gap=30
-b_bspwmrc_extend="2bspwm &"
-
-# panel
-p_padding=3
-p_window_class=noshadow
-p_height=32
-p_gap=0
-p_underline=0
-p_font_main="Droid Sans-10"
-p_font_icon="FontAwesome-10"
-p_desktop_display_name=name
-p_desktop_show_free=false
-p_desktop_only_active=true
-p_title_only_show_active=true
-p_bg_inactive=$p_bg_normal
-
-st_font="Droid Sans Mono-10"
-
-stepSetup()  {
-  #togetherStep
-  #reverseSteps
-  separateStep
-  # align is only set on sep step
-  #separateStep
+colors() {
+    color0=2b303b
+    color1=bf616a
+    color2=a3be8c
+    color3=ebcb8b
+    color4=8fa1b3
+    color5=b48ead
+    color6=96b5b4
+    color7=c0c5ce
+    color8=65737e
+    color9=bf616a
+    color10=a3be8c
+    color11=ebcb8b
+    color12=8fa1b3
+    color13=b48ead
+    color14=96b5b4
+    color15=eff1f5
+    color16=d08770
+    color17=ab7967
+    color18=343d46
+    color19=4f5b66
+    color20=a7adba
+    color21=dfe1e8
+    foreground=c0c5ce
+    background=2b303b
 }
 
-bg() {
-    #step=$((step-1))
-    #input="$(eval "echo \#\${color$step}")"
-    input="$(gradientGet)"
-    #input="$(maxchroma "$(colort -t $input)")"
-    #echo "#ff$(colort -t -l -30 $input)"
-    echo "$input"
-}
+settings() {
+    # theme
+    VIM_COLORS=chameleon
+    BG_COMMAND="feh --bg-fill $HOME/.wm/walls/fill/ocean.jpg"
 
-activebg() {
-    colort -l 20 "$(bg)"
-}
+    emacs_theme="base16-ocean"
 
-# gradient
-suffix() {
-    $(iif "[ \"$lemon_target_align\" = \"right\" ]") && return
+    # bspwm
+    b_border_width=6
+    b_window_gap=30
+    b_bspwmrc_extend="2bspwm &"
 
-    if echo "$lemon_target" | grep -E "mpd|title" >/dev/null; then
-        [ -z "$nextbg" ] && nextbg="$p_bg_normal"
-    fi
+    # panel
+    p_padding=3
+    p_window_class=noshadow
+    p_height=32
+    p_gap=0
+    p_underline=0
+    p_font_main="Droid Sans-10"
+    p_font_icon="FontAwesome-10"
+    p_desktop_display_name=name
+    p_desktop_show_free=false
+    p_desktop_only_active=true
+    p_title_only_show_active=true
+    p_bg_inactive=$p_bg_normal
 
-    [ -z "$prevbg" ] && prevbg="$(bg)"
+    st_font="Droid Sans Mono-10"
 
-    if [ "${lemon_target_align}" = "left" ]; then
-        step=$((step-1))
-    else
-        step=$((step+1));
-    fi
+    stepSetup()  {
+	#togetherStep
+	#reverseSteps
+	separateStep
+	# align is only set on sep step
+	#separateStep
+    }
 
-    [ -z "$nextbg" ] && nextbg="$(bg)"
+    bg() {
+	#step=$((step-1))
+	#input="$(eval "echo \#\${color$step}")"
+	input="$(gradientGet)"
+	#input="$(maxchroma "$(colort -t $input)")"
+	#echo "#ff$(colort -t -l -30 $input)"
+	echo "$input"
+    }
 
-    nextbg="$(colort -t $nextbg)"
-    prevbg="$(colort -t $prevbg)"
+    activebg() {
+	colort -l 20 "$(bg)"
+    }
 
-    content=""
-    size=3
-    IFS=$'\n'
-    for color in $(gradient "$prevbg" "$nextbg" $size); do
-        content="${content}%%{B#ff$(colort -t $color)} %%{B-}"
-        #content="%%{B#ff$(colort -t $color)} %%{B-}${content}"
-    done
-    IFS=
+    # gradient
+    suffix() {
+	$(iif "[ \"$lemon_target_align\" = \"right\" ]") && return
 
-    echo "${content}"
-}
+	if echo "$lemon_target" | grep -E "mpd|title" >/dev/null; then
+	    [ -z "$nextbg" ] && nextbg="$p_bg_normal"
+	fi
 
-prefix() {
-    $lemon_target_end && $(iif "[ \"$lemon_target_align\" = \"left\" ]") && return
+	[ -z "$prevbg" ] && prevbg="$(bg)"
 
-    prevbg="$p_bg_normal"
-    nextbg="$(bg)"
-    suffix
+	# if [ "${lemon_target_align}" = "left" ]; then
+	#     step=$((step-1))
+	# else
+	#     step=$((step+1));
+	# fi
+
+	[ -z "$nextbg" ] && nextbg="$(bg)"
+
+	nextbg="$(colort -t $nextbg)"
+	prevbg="$(colort -t $prevbg)"
+
+	content=""
+	size=3
+	IFS=$'\n'
+	for color in $(gradient "$prevbg" "$nextbg" $size); do
+	    # content="${content}%%{B#ff$(colort -t $color)} %%{B-}"
+	    # content="%%{B#ff$(colort -t $color)} %%{B-}${content}"
+	    content=""
+	done
+	IFS=
+
+	# echo "${content}"
+	echo ""
+    }
+
+    prefix() {
+	$lemon_target_end && $(iif "[ \"$lemon_target_align\" = \"left\" ]") && return
+
+	prevbg="$p_bg_normal"
+	nextbg="$(bg)"
+	echo ""
+	# suffix
+    }
 }

@@ -1,8 +1,6 @@
 #!/bin/sh
 # This script will be sourced by themes and then have options overridden
 
-. "$HOME/.wm/themes/colors/${THEME_NAME}"
-
 # bspwm settings. Naming convention is b_<config_option>
 b_border_width=3
 b_window_gap=10
@@ -26,6 +24,7 @@ l_start=""
 l_end=""
 
 # Panel variables
+p_format="dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
 p_height=16                  # Panel height.
 p_font_main="Droid Sans-8"   # Panel main font.
 p_font_icon="FontAwesome-10" # Panel Icon font.
@@ -107,9 +106,11 @@ emacs_powerline="bar"
 # xst
 st_font="Droid Sans Mono-10"
 st_font_variable="Droid Sans-10"
-st_borderpx=10
 st_cursorshape=2
 st_cursorthickness=2
+
+# padding
+x_padding=10
 
 GTK_FONT="Droid Sans 10" # GTK font to be used.
 
@@ -163,6 +164,8 @@ border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) 
 border_width_in_focused=$border_width_in_normal
 border_width_out_focused=$border_width_out_normal
 border_color_out_normal=$b_normal_border_color
+
+# need to not call greaten here, defaults should not rely on external tools like this
 border_color_in_normal=$(greaten $border_color_out_normal 30)
 border_color_out_focused=$b_focused_border_color
 border_color_in_focused=$(greaten $border_color_out_focused 30)
@@ -172,22 +175,3 @@ border_color_in_focused=$(greaten $border_color_out_focused 30)
 for template in $(ls $HOME/.dotfiles/templates); do
     eval ${template}_template="$HOME/.dotfiles/templates/${template}"
 done
-
-# options: mail yaourtUpdates mpd battery network volume weather clock themeSwitch
-# If empty, all are used.
-# it is possible to specify different information per monitor with variable barInfo<mon #> --> "options"
-p_format="dropdown:desktop:github|title|mpd:volume:weather:clock" # Default options/items to include in info section of panel.
-
-p_format="dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock" # Default options/items to include in info section of panel.
-
-# Customize options on different computers by hostname.
-# for example, here littleapple is my desktop (3 monitors) and home2 is my netbook.
-if [ "$(hostname)" = "littleapple" ]; then
-    p_format="dropdown:desktop|title|clock"
-    p_format_2="desktop:github:themeSwitch|title|mpd:volume:clock"
-    p_format_3="desktop|title|weather"
-fi
-
-if [ "$(hostname)" = "home2" ]; then
-    p_format="dropdown:desktop|title|clock"
-fi

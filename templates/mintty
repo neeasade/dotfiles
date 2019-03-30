@@ -1,5 +1,5 @@
 BoldAsFont=no
-Padding={{st_borderpx}}
+Padding={{x_padding}}
 Font={{st_font}}
 FontHeight={{st_font_size}}
 Locale=en_US

@@ -1,11 +1,9 @@
 st.font: {{st_font}}
 st.font_variable: {{st_font_variable}}
-st.borderpx: {{st_borderpx}}
+st.borderpx: 0
 st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
 st.prompt_char: {{PROMPT_CHAR}}
-
-Emacs.internalBorder: {{st_borderpx}}
 
 ! note: these aren't official, I'm referencing them in config.
 Emacs.theme: {{emacs_theme}}

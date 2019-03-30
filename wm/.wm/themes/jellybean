@@ -1,54 +1,76 @@
 #!/usr/bin/env bash
 # jellybean theme
 
-# theme
-VIM_COLORS=chameleon
-BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/random_grey_variations.png"
-emacs_theme=ujelly
+colors() {
+    background=080808
+    foreground=808080
+    color0=1a1a1a
+    color10=c7f09f
+    color11=ffcc9a
+    color12=a5caef
+    color13=a6a6de
+    color14=69b2b2
+    color15=d7d7d7
+    color1=d75f5f
+    color2=87af5f
+    color3=ffaf5f
+    color4=87afd7
+    color5=8787af
+    color6=5f8787
+    color7=808080
+    color8=404040
+    color9=ea8484
+}
 
-# bspwm
-b_border_width=1
-b_window_gap=8
+settings() {
+    # theme
+    VIM_COLORS=chameleon
+    BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/random_grey_variations.png"
+    emacs_theme=ujelly
 
-b_bspwmrc_extend="pulse.sh &"
+    # bspwm
+    b_border_width=1
+    b_window_gap=8
 
-# panel
-p_height=20
-p_font_main="tewi-8"
-p_font_icon="Siji-8"
-p_gap=4
-p_underline=0
+    b_bspwmrc_extend="pulse.sh &"
 
-noModeToggle=true
-p_padding=1
-p_window_class=noshadow
-p_offset=-2
+    # panel
+    p_height=20
+    p_font_main="tewi-8"
+    p_font_icon="Siji-8"
+    p_gap=4
+    p_underline=0
 
-p_desktop_display_name=name
-p_desktop_show_free=false
-p_desktop_only_active=true
-p_title_only_show_active=false
-p_position=bottom
+    noModeToggle=true
+    p_padding=1
+    p_window_class=noshadow
+    p_offset=-2
+
+    p_desktop_display_name=name
+    p_desktop_show_free=false
+    p_desktop_only_active=true
+    p_title_only_show_active=false
+    p_position=bottom
 
 
-# colors
-p_fg_normal="#ffcccccc"
-p_bg_active="$(colort 30 "$p_bg_normal")"
-p_fg_active="$p_fg_normal"
-p_fg_inactive="$p_fg_normal"
-p_icon="$p_fg_normal"
+    # colors
+    p_fg_normal="#ffcccccc"
+    p_bg_active="$(colort 30 "$p_bg_normal")"
+    p_fg_active="$p_fg_normal"
+    p_fg_inactive="$p_fg_normal"
+    p_icon="$p_fg_normal"
 
-# other
-d_font="xos4 Terminus 8"
+    # other
+    d_font="xos4 Terminus 8"
 
-GTK_FONT="tewi 8"
-st_font="tewi-8"
-st_borderpx=4
-st_cursorshape=3
-st_cursorthickness=1
-PROMPT_CHAR=\>
+    GTK_FONT="tewi 8"
+    st_font="tewi-8"
+    st_borderpx=4
+    st_cursorshape=3
+    st_cursorthickness=1
+    PROMPT_CHAR=\>
 
-tmux_statusbar="$(cat <<EOF
+    tmux_statusbar="$(cat <<EOF
 setw -g window-status-current-fg colour170
 setw -g window-status-current-bg colour239
 setw -g window-status-current-attr bold
@@ -65,16 +87,17 @@ set-option -g status-position top
 EOF
 )"
 
-p_format="dropdown:desktop|title|dynamicmpd:volume:updates:weather:clock" # Default options/items to include in info section of panel.
+    p_format="dropdown:desktop|title|dynamicmpd:volume:updates:weather:clock" # Default options/items to include in info section of panel.
 
-stepSetup() {
-    separateStep
-}
+    stepSetup() {
+	separateStep
+    }
 
-bg() {
-    gradientGet
-}
+    bg() {
+	gradientGet
+    }
 
-activebg() {
-    colort 20 "$(bg)"
+    activebg() {
+	colort 20 "$(bg)"
+    }
 }

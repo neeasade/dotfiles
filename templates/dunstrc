@@ -11,8 +11,8 @@
     word_wrap = yes
     history_length = 20
     separator_height = {{b_border_width}}
-    padding = {{st_borderpx}}
-    horizontal_padding = {{st_borderpx}}
+    padding = {{x_padding}}
+    horizontal_padding = {{x_padding}}
     separator_color = frame
     browser = {{BROWSER}}
     icon_position = off
