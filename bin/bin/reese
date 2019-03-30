@@ -1,18 +1,19 @@
 #!/bin/sh
 # clone/inspo: https://github.com/enjuus/chandler
 # I have stepbrother named chandler, who goes by reese.
-# depends on: curl, sed, awk, https://github.com/ericchiang/pup, xclip(optional)
+# depends on: iif, curl, https://github.com/ericchiang/pup, xclip(optional)
 
 url=""
-# valid templates: BOARD, THREADID, THREAD (which falls back to THREADID)
-target="$HOME/4ch/{BOARD}/{THREADID}"
+# valid templates: SITE, BOARD, THREADID
+target="$HOME/{SITE}/{BOARD}/{THREADID}"
 watch_mode=false
+save=true
 
-while getopts "s:d:wh" opt; do
+while getopts "s:d:xh" opt; do
     case ${opt} in
 	d) target="$OPTARG" ;;
 	s) url="$OPTARG" ;;
-	w) watch_mode=true ;;
+	x) save=false ;;
 	h) echo "read it"; exit ;;
     esac
 done
@@ -22,32 +23,35 @@ done
 page="$(curl -s $url)"
 [ $? -ne 0 ] && echo "invalid url" && exit 1
 
-# eg http://boards.4chan.org/wg/thread/7354127
-board=$(echo "$url" | awk '{split($0,a,"/"); print a[4]}')
-thread_id=$(echo "$url" | awk '{split($0,a,"/"); print a[6]}' | sed 's/#.*//')
-thread="$(echo "$page" | pup '.board .subject:first-of-type text{}')"
-[ -z "$thread" ] && thread="$thread_id"
+$save && echo "$url" >> ~/.reese.txt
 
-target="$(echo "$target" | sed -e "s/{THREAD}/${thread}/;" -e "s/{THREADID}/${thread_id}/" -e "s/{BOARD}/${board}/")"
+if echo "$url" | grep -q "8ch.net"; then
+    four=false
+else
+    four=true
+fi
+
+# eg http://boards.4chan.org/wg/thread/7354127
+# eg https://8ch.net/wg/res/3399.html
+board=$(echo "$url" | awk '{split($0,a,"/"); print a[4]}')
+thread_id=$(echo "$url" | awk '{split($0,a,"/"); print a[6]}' | sed -e 's/#.*//' -e "s/\..*//")
+site="$(iif $four 4chan 8chan)"
+
+target="$(echo "$target" | sed -e "s/{SITE}/${site}/" -e "s/{THREADID}/${thread_id}/" -e "s/{BOARD}/${board}/")"
 mkdir -p "$target"
 
-get_images() {
-    echo "$page" | pup '.board a.fileThumb attr{href}' | \
-	while read file; do
-	    filename="$(basename $file)"
-	    # don't duplicate downloads, but fork off every call.
-	    [ -f "$target/$filename" ] || echo getting "https:$file to $target/$filename"
-	    [ -f "$target/$filename" ] || curl -s "https:$file" > "$target/$filename" &
-	done
+locate="$(iif $four ".board a.fileThumb" ".file a")"
 
-    wait
-}
-get_images
+echo "$page" | pup "$locate attr{href}" | \
+    while read file; do
+	filename="$(basename $file)"
+	if $four; then
+	    file="https:$file"
+	fi
 
-while $watch_mode; do
-    sleep 600
-    page="$(curl -s $url)"
-    page_title="$(echo "$page" | pup 'head title text{}')"
-    [ "$page_title" = "302 Found" ] && echo "Thread died." && exit 1
-    get_images
-done
+	# don't duplicate downloads, but fork off every call.
+	[ -f "$target/$filename" ] || echo getting "$file to $target/$filename"
+	# [ -f "$target/$filename" ] || curl -s "$file" > "$target/$filename" &
+    done
+
+wait

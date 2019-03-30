@@ -34,6 +34,7 @@ shot() {
 }
 
 fullshot() {
+  [ ! -z "$1" ] && sleep $1
   maim "$(shot_location)"
 }
 
