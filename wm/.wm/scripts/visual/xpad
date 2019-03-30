@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# fake padding for gui windows (terrible)
+# fake padding for windows (terrible)
 
 padding="$(xrq st.borderpx)"
 border_width="$(bspc config border_width)"
@@ -21,40 +21,24 @@ cleanup() {
 trap cleanup SIGINT SIGTERM
 
 pad_window() {
-    bspc config -n $2 border_width $((padding + border_width))
-
+    # bspc config -n $2 border_width $((padding + border_width))
     chwbn -b $border_width -b $padding -c $1 -c $background_color $2
 }
 
-declare -A term_map
-cached_is_terminal() {
-    if [[ -z "${term_map[$1]}" ]]; then
-        xprop="$(xprop -id $1)"
-        grep -q st-256color <<< "$xprop" && term_map[$1]=true && return
-        grep -q Emacs <<< "$xprop" && term_map[$1]=true && return
-
-        term_map[$1]=false
-    fi
-
-    return $(iif "${term_map[$1]}" 0 1)
-}
-
-non_terminals() {
+pad() {
     color=$1
     shift
     for wid in "$@"; do
-        if cached_is_terminal $wid; then
-	    chwb -c $color -s $border_width $wid
-	else
-            pad_window "$color" "$wid"
-        fi
+	pad_window "$color" "$wid"
     done
 }
 
 draw() {
-    non_terminals $border_color_active $(bspwindows)
-    non_terminals $border_color_normal $(bspwindows inactive)
+    pad $border_color_active $(bspwindows)
+    pad $border_color_normal $(bspwindows inactive)
 }
+
+bspc config border_width $((padding + border_width))
 
 draw
 
