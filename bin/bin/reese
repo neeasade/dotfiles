@@ -45,13 +45,8 @@ locate="$(iif $four ".board a.fileThumb" ".file a")"
 echo "$page" | pup "$locate attr{href}" | \
     while read file; do
 	filename="$(basename $file)"
-	if $four; then
-	    file="https:$file"
-	fi
+	$four && file="https:$file"
 
-	# don't duplicate downloads, but fork off every call.
 	[ -f "$target/$filename" ] || echo getting "$file to $target/$filename"
-	# [ -f "$target/$filename" ] || curl -s "$file" > "$target/$filename" &
+	[ -f "$target/$filename" ] || curl -s "$file" > "$target/$filename"
     done
-
-wait
