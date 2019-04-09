@@ -35,7 +35,7 @@ case $1 in
     *)        icon="$*";;
 esac
 
-iconfont={{`echo -n $p_font_icon | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic'`}}
+iconfont={{{echo -n $p_font_icon | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic'}}}
 
 case $iconfont in
     awesome) index=1;;

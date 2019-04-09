@@ -43,7 +43,7 @@ margs() {
         cachefile="/tmp/template/$THEME_NAME/$2"
         if [ ! -f "$cachefile" ]; then
             mkdir -p "${cachefile%/*}"
-            mustache < "$template" > "$cachefile"
+            templum -o "$cachefile" "$template"
             cp "$cachefile" "$target"
             return 1
         fi
@@ -51,7 +51,7 @@ margs() {
         return 0
     fi
 
-    mustache < "$template" > "$target"
+    templum -o "$target" "$template"
     return 1
 }
 

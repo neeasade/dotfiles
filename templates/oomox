@@ -18,7 +18,7 @@ ROUNDNESS=0
 SPACING=3
 GRADIENT=0.0
 
-GTK3_GENERATE_DARK={{`colort -c $background && echo true || echo false`}}
+GTK3_GENERATE_DARK={{{colort -c $background && echo true || echo false}}}
 ICONS_LIGHT_FOLDER={{p_icon}}
 ICONS_LIGHT={{p_icon}}
 ICONS_MEDIUM={{p_icon}}

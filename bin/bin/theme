@@ -19,11 +19,13 @@ getval() {
 get() {
   echo unset bg fg line prefix suffix activebg activefg activeline
   echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
+  echo set -a
   echo . "$theme_load"
   echo colors
   echo . "$HOME/.wm/scripts/theming/defaults"
   echo settings
   echo PATH=$PATH:$HOME/.wm/panel/tools
+  echo set +a
 }
 
 load() {
