@@ -163,12 +163,17 @@ border_width_in_normal=$(( border_width_current/2 ))
 border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
 border_width_in_focused=$border_width_in_normal
 border_width_out_focused=$border_width_out_normal
-border_color_out_normal=$b_normal_border_color
 
-# need to not call greaten here, defaults should not rely on external tools like this
-border_color_in_normal=$(greaten $border_color_out_normal 30)
+border_color_out_normal=$b_normal_border_color
 border_color_out_focused=$b_focused_border_color
-border_color_in_focused=$(greaten $border_color_out_focused 30)
+
+border_color_in_normal=$color2
+border_color_in_focused=$color3
+
+if type greaten>/dev/null; then
+    border_color_in_normal=$(greaten $border_color_out_normal 30)
+    border_color_in_focused=$(greaten $border_color_out_focused 30)
+fi
 
 # default template targets
 # this allows themes to replace template files with different targets, by defining ${target}_template
