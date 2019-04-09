@@ -1,14 +1,11 @@
 # -*- mode: sh -*-
-
 ESHELL=$(iif '[ -n "$INSIDE_EMACS" ] && [ "$TERM" = "dumb" ]')
 
-if $ESHELL; then
-  succ .emacs.d/scripts
-  PAGER="epager"
+if ! "$ESHELL"; then
+  ESHELL=$(iif '$REMOTE && [ "$TERM" = "dumb" ]')
 fi
 
-# enforce emacs --server preference
-if has emacs && silent emacsclient --eval "(progn t)"; then
+if has emacs && ! $REMOTE && silent emacsclient --eval "(progn t)"; then
   eclient="emacsclient"
 
   if $WINDOWS; then
@@ -18,35 +15,37 @@ if has emacs && silent emacsclient --eval "(progn t)"; then
   set_editor "$eclient"
 fi
 
-# rn this is recursive, todo: revaluate
-# redir() {
-#   eval "$(cat <<EOF
-# $1() {
-#   $TERMINAL -c $1
-# }
-# )"
-# }
-
-# if $ESHELL; then
-#   redir ranger
-#   redir htop
-#   redir ncurses
-#   redir nethack
-# fi
-
 path_remove() {
   PATH=${PATH//":$1:"/":"} # middle
   PATH=${PATH/#"$1:"/}     # beginning
   PATH=${PATH/%":$1"/}     # end
 }
 
+to_term() {
+  cat <<EOF
+ $1() {
+   $TERMINAL -e $1
+ }
+EOF
+}
+
 if $ESHELL; then
+  succ .emacs.d/scripts
+  PAGER="epager"
+
+  eval "$(to_term htop)"
+  eval "$(to_term nethack)"
+
   sxhkd() {
     path_remove "$HOME/.emacs.d/scripts"
     $(type -a sxhkd | sort | awk 'END{print $3}')
   }
 
   clear() {
-    elisp "(comint-clear-buffer)"
+    elisp "(run-at-time 0 nil 'comint-clear-buffer)" >/dev/null
+  }
+
+  ranger() {
+    elisp '(deer)'
   }
 fi

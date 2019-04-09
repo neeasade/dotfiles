@@ -1,9 +1,5 @@
 # -*- mode: sh -*-
 
-ranger() {
-  $ESHELL && elisp '(deer)' || env ranger
-}
-
 sysinfo() {
   clear
   ufetch
@@ -29,7 +25,7 @@ shot_location() {
 
 shot() {
   # eval $(slop)
-  G="$(slop)"
+  G="$(slop -p ${1:-0})"
   maim -g ${G} "$(shot_location)"
 }
 
