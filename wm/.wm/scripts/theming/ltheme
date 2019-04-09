@@ -7,11 +7,8 @@
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
 PATH="$PATH:."
 
-set -a
-
 eval "$(theme get)"
-
-. "./mustache.sh"
+set -a
 
 # adjust pIcon to theme (rel for panel, acyl, qutebrowser.)
 if [ "$p_icon" = "unset" ]; then
