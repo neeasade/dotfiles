@@ -22,8 +22,8 @@ export -f error
 # todo: reconsider this, is the different between juicer
 # being main config point and themes passing into lemons..
 # note: some scripts may rely on variables from here, eg icon
-set -a
 eval "$(theme get)"
+set -a
 
 
 # only need this for p_gap and b_border_width values.
