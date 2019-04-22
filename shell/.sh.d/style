@@ -14,12 +14,11 @@ fi
 
 prompt() {
     _ERR=$?
+    [ "$(id -u)" = "0" ] && _prompt=\#
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
 
     if [ $_ERR -ne 0 ]; then
-      ${ESHELL:-false} &&
-        _prompt="${_prompt}!" ||
-        _prompt="\e[7m${_prompt}\e[0m" # invert
+      _prompt="${_prompt}!"
     fi
 
     if ${REMOTE:-false}; then
