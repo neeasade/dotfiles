@@ -11,6 +11,10 @@ if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
 fi
 
 result="$($eclient --eval "(progn $@)")"
+if [ $? -eq 1 ]; then
+    # we could not reach emacs.
+    exit 1
+fi
 
 if [ "$result" = "nil" ] || [ -z "$result" ]; then
   exit 1

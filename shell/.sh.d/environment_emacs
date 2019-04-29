@@ -23,22 +23,32 @@ path_remove() {
 
 to_term() {
   cat <<EOF
- $1() {
-   $TERMINAL -e $1
- }
+  $1() {
+    setsid sh -c "( $TERMINAL -e '$1 \$@'; elisp '(ns/spawn-terminal)')" &
+    sleep 0.2
+    elisp "(run-at-time 0 nil 'delete-frame)" >/dev/null
+  }
 EOF
 }
 
-if $ESHELL; then
+# the elisp t is that we can reach emacs
+if $ESHELL && silent elisp t; then
   succ .emacs.d/scripts
   PAGER="epager"
 
-  eval "$(to_term htop)"
-  eval "$(to_term nethack)"
+  for yeet in htop nethack cava; do
+    if has $yeet; then
+      eval "$(to_term $yeet)"
+    fi
+  done
 
   sxhkd() {
     path_remove "$HOME/.emacs.d/scripts"
     $(type -a sxhkd | sort | awk 'END{print $3}')
+  }
+
+  man() {
+    elisp "(woman \"$*\") (Man-cleanup-manpage)"
   }
 
   clear() {
@@ -48,4 +58,10 @@ if $ESHELL; then
   ranger() {
     elisp '(deer)'
   }
+
+  # todo: if we are emacs and no background processes or anything
+  # alias exit --> kill buffer
+
+  # todo: sudo alias that can pass along PAGER var
+  # maybe something else if we think of it too
 fi

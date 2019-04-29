@@ -33,7 +33,7 @@ bspc config pointer_modifier mod4
 bspc config removal_adjustment false
 
 # external rules
-bspc config external_rules_command "{{{echo -n $(which external_rules.sh)}}}"
+bspc config external_rules_command "$(which external_rules.sh)"
 
 # to gap or not to gap
 bspc config window_gap $(iif $gapped {{b_window_gap}} -{{b_border_width}})
