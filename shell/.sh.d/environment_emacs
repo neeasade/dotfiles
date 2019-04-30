@@ -55,13 +55,20 @@ if $ESHELL && silent elisp t; then
     elisp "(run-at-time 0 nil 'comint-clear-buffer)" >/dev/null
   }
 
+  # won't work in sh, but is fine in bash/zsh
+  exit() {
+    if [ $(jobs | wc -l) -ne 0 ]; then
+      echo "There are jobs present."
+    else
+      elisp "(run-at-time 0 nil 'delete-frame)"
+    fi
+  }
+
   ranger() {
     elisp '(deer)'
   }
 
-  # todo: if we are emacs and no background processes or anything
-  # alias exit --> kill buffer
-
+  # alias sudo='sudo PS1=$PS1 PAGER=$PAGER'
   # todo: sudo alias that can pass along PAGER var
   # maybe something else if we think of it too
 fi
