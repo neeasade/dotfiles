@@ -8,6 +8,10 @@ sysinfo() {
   printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
 }
 
+sleepm() {
+  sleep $(($1 * 60))
+}
+
 clean_shot() {
   if [ -f "$HOME/Last_Shot/shot.png" ]; then
     mv "$HOME/Last_Shot/shot.png" "$(cat "$HOME/Last_Shot/.shot.txt")"
