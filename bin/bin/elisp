@@ -21,7 +21,11 @@ if [ "$result" = "nil" ] || [ -z "$result" ]; then
 else
     if $trim; then
 	# trim a list, or quotes (surrounding characters).
-	echo "$result" | sed -e 's/^.//' -e 's/.$//'
+	echo "$result" | \
+	    sed -e 's/^(//' \
+		-e 's/^"//' \
+		-e 's/"$//' \
+		-e 's/)$//'
     else
 	echo "$result"
     fi

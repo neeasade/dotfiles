@@ -5,7 +5,9 @@ if ! "$ESHELL"; then
   ESHELL=$(iif '$REMOTE && [ "$TERM" = "dumb" ]')
 fi
 
-if has emacs && ! $REMOTE && silent emacsclient --eval "(progn t)"; then
+# if emacs is non-responsive, blow past it.
+emacs_timeout=$(iif 'has timeout' 'timout 1' '')
+if has emacs && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)"; then
   eclient="emacsclient"
 
   if $WINDOWS; then

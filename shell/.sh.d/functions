@@ -34,6 +34,11 @@ shot() {
   maim -g ${G} "$(shot_location)"
 }
 
+shellshot() {
+  # amazing
+  printf "$(elisp -r '(with-current-buffer (window-buffer) (s-clean (buffer-substring (window-start) (window-end))))' | sed 's/%/%%/g')" | pb 0x0
+}
+
 fullshot() {
   [ ! -z "$1" ] && sleep $1
   maim "$(shot_location)"
