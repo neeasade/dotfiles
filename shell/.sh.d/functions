@@ -35,8 +35,7 @@ shot() {
 }
 
 shellshot() {
-  # amazing
-  printf "$(elisp -r '(with-current-buffer (window-buffer) (s-clean (buffer-substring (window-start) (window-end))))' | sed 's/%/%%/g')" | pb 0x0
+  eval echo "$(elisp '(ns/windowshot)')" | pb 0x0
 }
 
 fullshot() {
