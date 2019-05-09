@@ -9,11 +9,11 @@ has() {
   silent type "$@"
 }
 
-if ! has iif; then
-   iif() {
-     eval $1 >/dev/null && echo -n "${2-true}" || echo -n "${3-false}"
-   }
-fi
+# duplication with ~/bin/iif is intentional
+# function call vs script means can use shell functions in condition
+iif() {
+  eval $1 >/dev/null && echo -n "${2-true}" || echo -n "${3-false}"
+}
 
 set_editor() {
   export EDITOR="$@"
