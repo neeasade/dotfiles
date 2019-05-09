@@ -53,6 +53,8 @@ setopt autocd
 # Remove '/' and '-' from $WORDCHARS for finer Ctrl-w behaviour
 export WORDCHARS='*?_.[]~=&;!#$%^(){}<>'
 
+setopt autopushd
+
 if $ESHELL; then
     unsetopt PROMPT_SP
     unsetopt zle
