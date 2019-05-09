@@ -8,6 +8,10 @@ sysinfo() {
   printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
 }
 
+sleepm() {
+  sleep $(($1 * 60))
+}
+
 clean_shot() {
   if [ -f "$HOME/Last_Shot/shot.png" ]; then
     mv "$HOME/Last_Shot/shot.png" "$(cat "$HOME/Last_Shot/.shot.txt")"
@@ -19,6 +23,7 @@ shot_location() {
   clean_shot
   mkdir -p $HOME/Screenshots
   mkdir -p $HOME/Last_Shot
+
   echo "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png" > "$HOME/Last_Shot/.shot.txt"
   echo "$HOME/Last_Shot/shot.png"
 }
@@ -27,6 +32,10 @@ shot() {
   # eval $(slop)
   G="$(slop -p ${1:-0})"
   maim -g ${G} "$(shot_location)"
+}
+
+shellshot() {
+  eval echo "$(elisp '(ns/windowshot)')" | pb 0x0
 }
 
 fullshot() {
@@ -162,22 +171,19 @@ extract() {      # Handy Extract Program
 
 # manpages with colors
 man() {
-  if $ESHELL; then
-    elisp "(woman \"$*\")"
-  else
-    settitle "$* - manual"
-    # removing standout means find highlights stay inverted..
-    #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
+  settitle "$* - manual"
+  # removing standout means find highlights stay inverted..
+  #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
 
-    env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
-        LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
-        LESS_TERMCAP_me=$(printf '\e[0m') \
-        LESS_TERMCAP_se=$(printf '\e[0m') \
-        LESS_TERMCAP_ue=$(printf '\e[0m') \
-        LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
-        man "$@"
-    defaulttitle
-  fi
+  env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
+      LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
+      LESS_TERMCAP_me=$(printf '\e[0m') \
+      LESS_TERMCAP_se=$(printf '\e[0m') \
+      LESS_TERMCAP_ue=$(printf '\e[0m') \
+      LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
+      man "$@"
+
+  defaulttitle
 }
 
 page() {

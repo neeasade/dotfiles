@@ -12,14 +12,51 @@ fi
 
 [ "$cur_shell" = "zsh" ] && [ $_prompt = "%" ] && _prompt="%%"
 
+git_prompt() {
+  if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+    return
+  fi
+
+  if ! git rev-parse --is-inside-git-dir &>/dev/null; then
+    return
+  fi
+
+  # I don't understand this check
+  test -O "$(git rev-parse --show-toplevel)/.git/index" && \
+    git update-index --really-refresh -q &>/dev/null
+
+  g_status=
+  g_append() {
+    g_status="${g_status}${1}"
+  }
+
+  git diff --quiet --ignore-submodules --cached || g_append '+' # Check for uncommitted changes in the index.
+  git diff-files --quiet --ignore-submodules    || g_append '*' # Check for unstaged changes.
+  test -n "$(git ls-files --others --exclude-standard)" && g_append '?' # Check for untracked files.
+
+  g_branch="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
+      git rev-parse --short HEAD 2> /dev/null || \
+      echo 'unknown')"
+
+  if [ "$g_branch" = "master" ]; then
+    if [ ! -z "${g_status}" ]; then
+      echo "${g_status} "
+    fi
+  else
+    if [ ! -z "${g_status}" ]; then
+      g_status=" $g_status"
+    fi
+    echo "(${g_branch}${g_status}) "
+  fi
+}
+
 prompt() {
     _ERR=$?
     [ "$(id -u)" = "0" ] && _prompt=\#
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
+    [ $_ERR -ne 0 ] && _prompt="${_prompt}!"
 
-    if [ $_ERR -ne 0 ]; then
-      _prompt="${_prompt}!"
-    fi
+    _prompt="$(git_prompt)$_prompt"
 
     if ${REMOTE:-false}; then
       _prompt="$(hostname) $_prompt"

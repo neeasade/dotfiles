@@ -5,7 +5,19 @@ if ! "$ESHELL"; then
   ESHELL=$(iif '$REMOTE && [ "$TERM" = "dumb" ]')
 fi
 
-if has emacs && ! $REMOTE && silent emacsclient --eval "(progn t)"; then
+if [ -z "$cur_shell" ]; then
+  cur_shell=$(ps | grep $$ |  sed 's/^.* //')
+  cur_shell="${cur_shell##*/}"
+fi
+
+[ "$cur_shell" = "zsh" ] && setopt SH_WORD_SPLIT
+
+# if emacs is non-responsive, blow past it.
+emacs_timeout=$(iif 'has timeout' 'timeout 1' '')
+
+if has emacs && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)"; then
+  [ "$cur_shell" = "zsh" ] && unsetopt SH_WORD_SPLIT
+
   eclient="emacsclient"
 
   if $WINDOWS; then
@@ -23,29 +35,52 @@ path_remove() {
 
 to_term() {
   cat <<EOF
- $1() {
-   $TERMINAL -e $1
- }
+  $1() {
+    setsid sh -c "( $TERMINAL -e '$1 \$@'; elisp '(ns/spawn-terminal)')" &
+    sleep 0.2
+    elisp "(run-at-time 0 nil 'delete-frame)" >/dev/null
+  }
 EOF
 }
 
-if $ESHELL; then
+# the elisp t is that we can reach emacs
+if $ESHELL && silent elisp t; then
   succ .emacs.d/scripts
   PAGER="epager"
 
-  eval "$(to_term htop)"
-  eval "$(to_term nethack)"
+  for yeet in htop nethack cava; do
+    if has $yeet; then
+      eval "$(to_term $yeet)"
+    fi
+  done
 
   sxhkd() {
     path_remove "$HOME/.emacs.d/scripts"
     $(type -a sxhkd | sort | awk 'END{print $3}')
   }
 
+  man() {
+    elisp "(woman \"$*\") (Man-cleanup-manpage)"
+  }
+
   clear() {
     elisp "(run-at-time 0 nil 'comint-clear-buffer)" >/dev/null
+  }
+
+  # won't work in sh, but is fine in bash/zsh
+  exit() {
+    if [ $(jobs | wc -l) -ne 0 ]; then
+      echo "There are jobs present."
+    else
+      elisp "(run-at-time 0 nil 'delete-frame)"
+    fi
   }
 
   ranger() {
     elisp '(deer)'
   }
+
+  # alias sudo='sudo PS1=$PS1 PAGER=$PAGER'
+  # todo: sudo alias that can pass along PAGER var
+  # maybe something else if we think of it too
 fi

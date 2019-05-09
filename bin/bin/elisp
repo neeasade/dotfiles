@@ -11,13 +11,21 @@ if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
 fi
 
 result="$($eclient --eval "(progn $@)")"
+if [ $? -eq 1 ]; then
+    # we could not reach emacs.
+    exit 1
+fi
 
 if [ "$result" = "nil" ] || [ -z "$result" ]; then
   exit 1
 else
     if $trim; then
 	# trim a list, or quotes (surrounding characters).
-	echo "$result" | sed -e 's/^.//' -e 's/.$//'
+	echo "$result" | \
+	    sed -e 's/^(//' \
+		-e 's/^"//' \
+		-e 's/"$//' \
+		-e 's/)$//'
     else
 	echo "$result"
     fi
