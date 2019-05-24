@@ -1,5 +1,7 @@
 #!/bin/sh
 
+pgrep emacs >/dev/null || exit 1
+
 trim=false
 [ "$1" = "-r" ] && trim=true && shift
 
@@ -10,7 +12,12 @@ if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
     eclient="${eclient}w --server-file $HOME/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
 fi
 
-result="$($eclient --eval "(progn $@)")"
+emacs_timeout=
+if type timeout >/dev/null; then
+    emacs_timeout="timeout 1"
+fi
+
+result="$($emacs_timeout $eclient --eval "(progn $@)")"
 if [ $? -eq 1 ]; then
     # we could not reach emacs.
     exit 1

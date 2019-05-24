@@ -1,6 +1,6 @@
 # -*- mode: sh -*-
 
-cur_shell=$(ps | grep $$ |  sed 's/^.* //')
+cur_shell=$(ps | grep $$ | sed 's/^.* //')
 cur_shell="${cur_shell##*/}"
 
 history_length=10000
