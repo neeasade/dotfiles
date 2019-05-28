@@ -59,7 +59,29 @@ alias gfo='git fetch origin'
 alias gg='git gui citool'
 alias gga='git gui citool --amend'
 alias ggpur='ggu'
+
+# flow:
+
+# you have unstaged changes in files that were changed remote
+# offer to stash, pull rebase (if rebase conflicts, exit), pop
+# if no, pull rebase -- ask if there are conflicts in merge
+
+gtest() {
+  git fetch --all
+
+  merge_base="$(git merge-base HEAD origin/$(git_current_branch))"
+
+  unstaged_diff="$(git diff --name-only)"
+  committed_and_unstaged_diff="$(git diff --name-only $merge_base)"
+  origin_committed_diff="$(git diff --name-only $merge_base origin/$(git_current_branch))"
+
+  overlapping() {
+    return test -z "$(echo "${1}\n${2}" | sort | uniq -d)"
+  }
+}
+
 alias ggpull='git pull origin $(git_current_branch)'
+
 alias ggpush='git push origin $(git_current_branch)'
 alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
 alias gpsup='git push --set-upstream origin $(git_current_branch)'
