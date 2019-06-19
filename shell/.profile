@@ -5,7 +5,7 @@ case "$-" in
 esac
 
 # source everything
-for file in ./.sh.d/*; do
+for file in $HOME/.sh.d/*; do
     . $file
 done
 
