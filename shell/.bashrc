@@ -1,1 +1,1 @@
-. $HOME/.profile
+. ./.profile

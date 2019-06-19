@@ -58,7 +58,6 @@ alias gfa='git fetch --all --prune'
 alias gfo='git fetch origin'
 alias gg='git gui citool'
 alias gga='git gui citool --amend'
-alias ggpur='ggu'
 
 # flow:
 
@@ -69,7 +68,8 @@ alias ggpur='ggu'
 gtest() {
   git fetch --all
 
-  merge_base="$(git merge-base HEAD origin/$(git_current_branch))"
+  branch=$(git_current_branch)
+  merge_base="$(git merge-base HEAD origin/${branch})"
 
   unstaged_diff="$(git diff --name-only)"
   committed_and_unstaged_diff="$(git diff --name-only $merge_base)"
@@ -78,6 +78,27 @@ gtest() {
   overlapping() {
     return test -z "$(echo "${1}\n${2}" | sort | uniq -d)"
   }
+
+  # verbose
+  vgit() {
+    echo git "$@"
+    git "$@"
+  }
+
+  if overlapping "$origin_committed_diff" "$unstaged_diff"; then
+    echo -n "local changes - stash and rebase? [Y/n]"
+    read r
+    if [ -z "$r" ]; then
+      vgit stash
+      vgit rebase "origin/${branch}"
+      vgit stash pop
+      return
+    fi
+  fi
+
+  if overlapping "$committed_and_unstaged_diff" "$origin_committed_diff"; then
+    echo -n "remote conflict - rebase? [Y/n]"
+  fi
 }
 
 alias ggpull='git pull origin $(git_current_branch)'
