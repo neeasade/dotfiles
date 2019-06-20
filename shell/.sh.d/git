@@ -178,3 +178,12 @@ alias gup='git pull --rebase'
 alias gupv='git pull --rebase -v'
 alias glum='git pull upstream master'
 alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
+
+# todo: better name
+# git tag replace with current head
+gtr() {
+  git tag -d $1
+  git push origin :refs/tags/$1
+  git tag $1
+  git push origin $1
+}
