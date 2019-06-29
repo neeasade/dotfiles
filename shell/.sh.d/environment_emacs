@@ -10,7 +10,6 @@ if [ -z "$cur_shell" ]; then
   cur_shell="${cur_shell##*/}"
 fi
 
-
 path_remove() {
   PATH=${PATH//":$1:"/":"} # middle
   PATH=${PATH/#"$1:"/}     # beginning
@@ -32,7 +31,7 @@ emacs_timeout=$(iif 'has timeout' 'timeout 1' '')
 
 # todo: tramp emacsclient?
 [ "$cur_shell" = "zsh" ] && setopt SH_WORD_SPLIT
-if has emacs && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)"; then
+if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)"; then
   [ "$cur_shell" = "zsh" ] && unsetopt SH_WORD_SPLIT
 
   eclient="emacsclient"
@@ -58,7 +57,7 @@ if has emacs && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)
   }
 
   man() {
-    elisp "(woman \"$*\") (Man-cleanup-manpage)"
+    elisp "(woman \"$*\") (require 'man) (Man-cleanup-manpage)"
   }
 
   clear() {

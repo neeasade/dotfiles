@@ -58,8 +58,51 @@ alias gfa='git fetch --all --prune'
 alias gfo='git fetch origin'
 alias gg='git gui citool'
 alias gga='git gui citool --amend'
-alias ggpur='ggu'
+
+# flow:
+
+# you have unstaged changes in files that were changed remote
+# offer to stash, pull rebase (if rebase conflicts, exit), pop
+# if no, pull rebase -- ask if there are conflicts in merge
+
+gtest() {
+  git fetch --all
+
+  branch=$(git_current_branch)
+  merge_base="$(git merge-base HEAD origin/${branch})"
+
+  unstaged_diff="$(git diff --name-only)"
+  committed_and_unstaged_diff="$(git diff --name-only $merge_base)"
+  origin_committed_diff="$(git diff --name-only $merge_base origin/$(git_current_branch))"
+
+  overlapping() {
+    return test -z "$(echo "${1}\n${2}" | sort | uniq -d)"
+  }
+
+  # verbose
+  vgit() {
+    echo git "$@"
+    git "$@"
+  }
+
+  if overlapping "$origin_committed_diff" "$unstaged_diff"; then
+    echo -n "local changes - stash and rebase? [Y/n]"
+    read r
+    if [ -z "$r" ]; then
+      vgit stash
+      vgit rebase "origin/${branch}"
+      vgit stash pop
+      return
+    fi
+  fi
+
+  if overlapping "$committed_and_unstaged_diff" "$origin_committed_diff"; then
+    echo -n "remote conflict - rebase? [Y/n]"
+  fi
+}
+
 alias ggpull='git pull origin $(git_current_branch)'
+
 alias ggpush='git push origin $(git_current_branch)'
 alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
 alias gpsup='git push --set-upstream origin $(git_current_branch)'
@@ -135,3 +178,12 @@ alias gup='git pull --rebase'
 alias gupv='git pull --rebase -v'
 alias glum='git pull upstream master'
 alias gwch='git whatchanged -p --abbrev-commit --pretty=medium'
+
+# todo: better name
+# git tag replace with current head
+gtr() {
+  git tag -d $1
+  git push origin :refs/tags/$1
+  git tag $1
+  git push origin $1
+}

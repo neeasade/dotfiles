@@ -44,7 +44,7 @@ git_prompt() {
     fi
   else
     if [ ! -z "${g_status}" ]; then
-      g_status=" $g_status"
+      g_status="|$g_status"
     fi
     echo "(${g_branch}${g_status}) "
   fi

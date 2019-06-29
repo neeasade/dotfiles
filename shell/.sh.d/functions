@@ -212,16 +212,25 @@ passadd() {
 
 gset() {
   case $1 in
-    work)
-      git config user.name "$(pass name)"
-      git config user.email "$(pass email)"
+    pass)
+      git config user.name "$(pass git/name)"
+      git config user.email "$(pass git/email)"
       ;;
-    home)
-      git config user.name "neeasade"
-      git config user.email "neeasade@gmail.com"
+    manual)
+      echo name:; read _name
+      git config user.name "$_name"
+
+      echo email:; read _email
+      git config user.email "$_email"
+      ;;
+    adhoc)
+      _name="$(getent passwd "$USER" | cut -d ':' -f 5 | sed 's/,//g')"
+      _name="${name:-$USER}"
+      git config user.name "$_name"
+      git config user.email "${USER}@$(hostname).machine"
       ;;
     *)
-      echo unknown option
+      echo options: pass home adhoc
       ;;
   esac
 }
