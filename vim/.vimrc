@@ -63,6 +63,10 @@ set tabpagemax=50
 set viminfo^=!
 set sessionoptions-=options
 
+" Disable modeline as security precaution
+set modelines=0
+set nomodeline
+
 " Allow color schemes to do bright colors without forcing bold.
 if &t_Co == 8 && $TERM !~# '^linux\|^Eterm'
   set t_Co=16
