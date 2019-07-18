@@ -101,7 +101,8 @@
          (map (fn [key]
                 (let [char (if (empty? (key (:groups state))) "f" "o")]
                   (str (if ((:active state) key) (str/upper-case char) char) (name key))))
-              (keys (:groups state)))))
+              (sort (keys (:groups state)))
+              )))
        ":LT:TT:G"))
 
 ;; (prn (:groups state))
@@ -120,8 +121,6 @@
         "twid" (apply toggle-wid-group (rest args))
         "show" (prn state)
         (println (core/format "unrecognized command: %s" command)))
-
-
 
       ;; (prn command)
       ;; (prn (:groups state))

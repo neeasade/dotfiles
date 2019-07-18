@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# -*- eval: (setq-local sh-basic-offset 2) -*-
 
 musicdir="$HOME/Music"
 
@@ -37,6 +38,40 @@ shuffle() {
   mpc play
 }
 
+shuffle_mixes() {
+
+  # probably cache this later
+  is_mix() {
+    milli="$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')"
+
+    if [ -z "$milli" ]; then
+      # ¯\_(ツ)_/¯
+      return 1
+    fi
+
+    seconds=$(( $milli / 1000))
+    if [ $seconds -gt $((60 * 25)) ]; then
+      return 0
+    else
+      return 1
+    fi
+  }
+
+  # mpc clear
+  # this is gonna take forever
+  list_mixes() {
+    while read -r song; do
+      if is_mix "${musicdir}/$song"; then
+	echo "$song"
+      fi
+    done < <(mpc listall)
+  }
+
+  mpc clear
+  list_mixes | grep -v ASOT | grep -v "Dream Dance" | grep -v "Tiësto" | sort -R | head -n 1000 | mpc add
+  mpc play
+}
+
 append() {
   echo append "$*"
   mpc listall | grep -i "$*" | mpc add
@@ -58,6 +93,7 @@ now() {
   if song="$(mpc listall | fzf)"; then
       mpc insert "$song"
       mpc next
+      mpc play
   fi
 }
 

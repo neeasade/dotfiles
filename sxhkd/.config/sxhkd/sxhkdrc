@@ -35,8 +35,21 @@ super + ctrl + space
     bspc node -p cancel
 
 # send node to desktop on current monitor index
-super + {_,shift} + {1-9}
-    bspc {desktop -f,node -d} focused:^{1-9}
+# super + {_,shift} + {1-9}
+    # bspc {desktop -f,node -d} focused:^{1-9}
+
+# super + {_,shift} + {1-9}
+#      echo {tgroup,twid $(bspc query -N -n)} {1-9} >/tmp/bspgroups
+
+super + {1-9}
+    num={1-9}; cgrep bgroups && \
+    echo tgroup $num >/tmp/bspgroups || \
+    bspc desktop -f focused:^$num
+
+super + shift + {1-9}
+    num={1-9}; cgrep bgroups && \
+    echo twid $(bspc query -N -n) $num >/tmp/bspgroups || \
+    bspc node -d focused:^$num
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
@@ -73,7 +86,7 @@ super + {_,shift} + slash
 #    ~/.wm/scripts/i3blur.sh
 
 super + Return
-   elisp '(ns/spawn-terminal)' || $TERMINAL
+    elisp '(ns/spawn-terminal)' || $TERMINAL
 
 super + o
     $BROWSER
@@ -81,8 +94,7 @@ super + o
 # dmenu
 super + {_,shift,alt} + space
     action={run,pass,switcher}; \
-    eval "$(theme get | head -n 1)"; \
-    export GTK_THEME="$THEME_NAME"; \
+    export GTK_THEME="$(theme getval GTK_THEME)"; \
     dmenu_$action $(dmenu_options $action)
 
 XF86Audio{Prev,Next,Play}
@@ -102,7 +114,7 @@ Pause
 
 # pretend +
 super + {minus,equal}
-    ponymix {decrease,increase} 5; notify-send "Volume: $(ponymix get-volume)"
+    ponymix {decrease,increase} 5; notify-send --urgency=low "Volume: $(ponymix get-volume)"
 
 # < > `
 super + {comma,period,grave}
@@ -112,7 +124,7 @@ F10
     music bl
 
 F9
-    $(. ~/.profile; shot)
+    sh -c "$(. $HOME/.profile && shot)"
 
 F8
     utf8
