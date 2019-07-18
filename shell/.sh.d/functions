@@ -234,3 +234,15 @@ gset() {
       ;;
   esac
 }
+
+ttemp() {
+  working_dir="$HOME/temps"
+  current=date +%F_%T
+
+  mkdir -p "${working_dir}/${current}"
+  cd "${working_dir}/${current}"
+
+  if [ -z "$*" ]; then
+    echo "$*" > ./context.txt
+  fi
+}
