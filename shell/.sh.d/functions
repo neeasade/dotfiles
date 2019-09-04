@@ -8,6 +8,10 @@ sysinfo() {
   printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
 }
 
+bicc() {
+  du -Sa "${1:-$HOME}" | sort -n -r | head -n 20 | awk '{"numfmt --to=si "$1"000" | getline size; $1=""; print size $0}'
+}
+
 sleepm() {
   sleep $(($1 * 60))
 }
@@ -211,26 +215,32 @@ passadd() {
 }
 
 gset() {
-  case $1 in
-    pass)
-      git config user.name "$(pass git/name)"
-      git config user.email "$(pass git/email)"
-      ;;
-    manual)
-      echo name:; read _name
-      git config user.name "$_name"
+  g_conf() {
+    echo git config user.name "$1"
+    git config user.name "$1"
+    echo git config user.email "$2"
+    git config user.email "$2"
+  }
 
-      echo email:; read _email
-      git config user.email "$_email"
+  if [ ! -z "$2" ]; then
+    g_conf "$1" "$2"
+    return
+  fi
+
+  case $1 in
+    pass) g_conf "$(pass git/name)" "$(pass git/email)" ;;
+    manual)
+      echo name:; read name
+      echo email:; read email
+      g_conf "$name" "$email"
       ;;
     adhoc)
-      _name="$(getent passwd "$USER" | cut -d ':' -f 5 | sed 's/,//g')"
-      _name="${name:-$USER}"
-      git config user.name "$_name"
-      git config user.email "${USER}@$(hostname).machine"
+      name="$(getent passwd "$USER" | cut -d ':' -f 5 | sed 's/,//g')"
+      g_conf "${name:-$USER}" "${USER}@$(hostname).machine"
       ;;
     *)
-      echo options: pass home adhoc
+      echo "gset <name> <email>"
+      echo "or: gset manual|adhoc|pass"
       ;;
   esac
 }
@@ -241,6 +251,7 @@ ttemp() {
 
   mkdir -p "${working_dir}/${current}"
   cd "${working_dir}/${current}"
+  pwd
 
   if [ ! -z "$*" ]; then
     echo "$*" > ./context.txt
