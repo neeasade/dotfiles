@@ -41,15 +41,6 @@ windows() {
   stoww windows
 }
 
-docker() {
-  sudo apt-get update
-  sudo apt-get install curl
-
-  curl https://nixos.org/nix/install | sh
-}
-
-[ "$USER" = "emacser" ] && docker
-
 if [ -z "$*" ]; then
     echo "options: core, rice, emacs"
     exit 1
