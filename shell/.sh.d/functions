@@ -246,3 +246,20 @@ ttemp() {
     echo "$*" > ./context.txt
   fi
 }
+
+# dump the structure of some json to find paths
+jqpeek() {
+  # paths:
+  # cat - | jq '[path(..)|map(if type=="number" then "[]" else tostring end)|join(".")|split(".[]")|join("[]")]|unique|map("."+.)|.[]'
+
+  # paths with values:
+  # note: numbers in path are array indices
+  # may get in the way of searching for like a number
+  cat - | jq -r '
+paths(scalars) as $p
+  | [ ( [ $p[] | tostring ] | join(".") )
+    , ( getpath($p) | tojson )
+    ]
+  | join(" = ")
+'
+}
