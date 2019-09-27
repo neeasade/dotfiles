@@ -1,0 +1,39 @@
+#!/bin/sh
+# narrow symlinker
+
+while [ ! -z "$1" ]; do
+    echo "$1"
+    cd "$HOME/.dotfiles/$1"
+    find . -type f | while read -r path; do
+	target="${HOME}/${path}"
+	target=$(echo "$target" | sed 's#/\./#/#')
+
+	path="$(pwd)/${path}"
+	path=$(echo "$path" | sed 's#/\./#/#')
+
+	mkdir -p "$(dirname "$target")"
+
+	if readlink "$target" >/dev/null; then
+	    if [ "$(readlink "$target")" = "$path" ]; then
+		continue
+	    fi
+
+	    rm "$target"
+	fi
+
+	if [ -f "$target" ]; then
+	    if [ -z "$BS" ]; then
+		echo "skipping conflict: $target (set BS=t to override)" 1>&2
+		continue
+	    fi
+
+	    rm "$target"
+	fi
+
+	echo ln -s "$path" "$target"
+	ln -s "$path" "$target"
+    done
+
+    shift
+    echo
+done

@@ -2,18 +2,15 @@
 # depends on git, sh.
 
 for dir in bin git notes .config; do
-  mkdir -p "~/$dir"
+  mkdir -p "$HOME/$dir"
 done
 
-[ ! -d "~/.dotfiles" ] && git clone "https://github.com/neeasade/dotfiles" "~/.dotfiles"
-cd "~/.dotfiles"
+[ ! -d "$HOME/.dotfiles" ] && git clone "https://github.com/neeasade/dotfiles" "$HOME/.dotfiles"
+cd "$HOME/.dotfiles"
 
+echo >/tmp/stow_conflicts
 stoww() {
-  if [ ! -d "~/git/stowsh" ]; then
-      git clone "https://github.com/neeasade/stowsh" "~/git/stowsh"
-  fi
-
-  "~/git/stowsh/stowsh" -t .. "$@"
+    "${HOME}/.dotfiles/bin/bin/stoww" "$@" 2>/tmp/stow_conflicts
 }
 
 core() {
@@ -21,7 +18,7 @@ core() {
 }
 
 emacs() {
-  git clone "https://github.com/neeasade/emacs.d" "~/.emacs.d"
+  git clone "https://github.com/neeasade/emacs.d" "$HOME/.emacs.d"
 
   # initial launch/install packages
   type emacs >/dev/null 2>&1 && emacs
@@ -36,7 +33,7 @@ windows() {
   # prereq: windows/bootstrap.cmd
   core
 
-  for item in "$(cat ~/.dotfiles/windows/scoop.txt)"; do
+  for item in "$(cat $HOME/.dotfiles/windows/scoop.txt)"; do
     scoop install $item
   done
 
@@ -44,17 +41,13 @@ windows() {
   stoww windows
 }
 
-docker() {
-  sudo apt-get update
-  sudo apt-get install curl
-
-  curl https://nixos.org/nix/install | sh
-}
-
-[ "$USER" = "emacser" ] && docker
+if [ -z "$*" ]; then
+    echo "options: core, rice, emacs"
+    exit 1
+fi
 
 # core, emacs, rice, windows
-op=${1:-core}
-echo bootstrapping $op...
-$op
-echo done.
+echo bootstrapping ${1}...
+$1
+cat /tmp/stow_conflicts | grep conflict
+echo bootstrapped ${1}...
