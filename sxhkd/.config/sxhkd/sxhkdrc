@@ -3,6 +3,10 @@
 super + {_,shift} + w
     bspc node -{c,k}
 
+# take a tiled window, make it floating, but in the same position of the tile
+super + S
+    nfloat
+
 super + s
     bspc config pointer_follows_focus true; \
     bspc node -t $(bspc query -N -n -n .tiled >/dev/null && echo floating || echo tiled); \

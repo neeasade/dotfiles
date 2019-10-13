@@ -78,3 +78,5 @@ prompt() {
 }
 
 PS1='$(prompt)'
+
+$ESHELL || cursorStyle bar

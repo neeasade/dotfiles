@@ -1,7 +1,10 @@
 #!/usr/bin/env dash
 # Toggle the panel on/off
 
-# todo: consider refreshing dunst when you kill the panel
-# to adjust offset from top of screen
-
 kill -s TERM $(cat /tmp/panel-pid) || (nohup "{{p_launch_cmd}}" &)
+
+
+# dunst pgrep's for panel
+sleep 0.3
+
+theme refresh dunst

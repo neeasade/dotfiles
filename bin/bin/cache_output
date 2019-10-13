@@ -11,12 +11,11 @@ EXPIRY=600 # default to 10 minutes
 [ "$1" -eq "$1" ] 2>/dev/null && EXPIRY=$1 && shift
 [ "$VERBOSE" = true ] && echo "Using expiration $EXPIRY seconds"
 
-CMD="$@"
-HASH=$(echo "$CMD" | md5sum | awk '{print $1}')
+HASH=$(echo "$*" | md5sum | awk '{print $1}')
 CACHE="$DIR/$HASH"
 
 test -f "${CACHE}" && \
     [ $(expr $(date +%s) - $(date -r "$CACHE" +%s)) -le $EXPIRY ] || \
-    eval "$CMD" > "${CACHE}"
+    "$@" > "${CACHE}"
 
 cat "${CACHE}"

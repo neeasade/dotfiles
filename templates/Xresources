@@ -10,13 +10,6 @@ Emacs.theme: {{emacs_theme}}
 Emacs.powerlinescale: {{emacs_powerline_scale}}
 Emacs.powerline: {{emacs_powerline}}
 
-! dmenu2 can read from Xresources.
-dmenu.font: {{p_font_main}}
-dmenu.foreground: #{{p_fg_normal}}
-dmenu.background: #{{p_bg_normal}}
-dmenu.selforeground: #{{p_fg_active}}
-dmenu.selbackground: #{{p_bg_active}}
-dmenu.dimcolor: #{{p_bg_normal}}
 
 ! colors (appended in ltheme script)
 *.background: #{{background}}

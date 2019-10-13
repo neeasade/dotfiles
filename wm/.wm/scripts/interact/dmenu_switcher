@@ -10,7 +10,7 @@ add_switch() {
 }
 
 # windows
-for wid in $wids; do
+for wid in $(bspc query -N -n .leaf); do
   add_switch "window: $(xtitle $wid)" "bspc node $wid -g hidden=off; bspc node -f $wid"
 done
 
@@ -36,7 +36,7 @@ open_urls() {
 
 # for url in "$(open_urls)"; do
 while read -r url; do
-  add_switch "tab: $url" "select_action '\- qutebrowser' && qb_command ':buffer $(echo "$url" | sed "s/'//g")'"
+  add_switch "tab: $url" "select_action '\- qutebrowser' && qb_command ':buffer $(echo "$url" | sed "s/'//g;s/\"// ")'"
 done <<< "$(open_urls)"
 
 select_action() {

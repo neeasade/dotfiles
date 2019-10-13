@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 . $HOME/.sh.d/environment
 
 # xrandr script(generated with arandr)

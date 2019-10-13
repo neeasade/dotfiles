@@ -1,4 +1,4 @@
 #!/usr/bin/env dash
 
 icon rotate
-echo $THEME_NAME
+theme getval THEME_NAME

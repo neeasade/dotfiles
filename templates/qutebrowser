@@ -3,7 +3,6 @@
 import os
 from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
 from qutebrowser.config.config import ConfigContainer  # noqa: F401
-from enum import Enum
 
 config = config  # type: ConfigAPI # noqa: F821
 c = c  # type: ConfigContainer # noqa: F821
@@ -12,6 +11,7 @@ c = c  # type: ConfigContainer # noqa: F821
 def nmap(key, command):
     """Bind key to command in normal mode."""
     config.bind(key, command, mode='normal')
+
 initial_start = c.tabs.background == False
 
 if initial_start:
@@ -20,7 +20,7 @@ if initial_start:
     c.tabs.position = 'top'
     c.tabs.show = 'multiple'
     c.tabs.indicator.width = 0
-    c.tabs.title.format = '{title}'
+    c.tabs.title.format = '{current_title}'
     c.tabs.title.alignment = 'center'
     c.downloads.position = 'bottom'
     c.tabs.favicons.show = 'never'
@@ -32,7 +32,10 @@ if initial_start:
     c.input.insert_mode.auto_load = True
     c.input.insert_mode.auto_leave = False
     c.tabs.background = True
-    c.editor.command = [ os.environ['EDITOR'] + ' "{}"' ]
+
+    if 'EDITOR' in os.environ:
+        c.editor.command = [os.environ['EDITOR'] + ' "{}"']
+
     c.auto_save.session = True
 
     nmap('b', 'set-cmd-text --space :buffer')
@@ -132,7 +135,7 @@ targets = {
         'completion.item.selected.border.bottom',
     ],
 
-    'inactive' : [
+    'inactive': [
         'completion.scrollbar',
         'downloads.start',
         'messages.info',
@@ -141,7 +144,7 @@ targets = {
         'completion.even.bg',
     ],
 
-    'match' : [
+    'match': [
         'completion.match.fg',
         'hints.match.fg',
     ]

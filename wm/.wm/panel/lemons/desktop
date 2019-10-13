@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/usr/bin/env bash
 # take input from bspc subscribe, emit desktop stuff information.
 # todo: consider reimplementing click handling.
 

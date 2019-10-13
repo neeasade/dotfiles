@@ -6,4 +6,4 @@ mpv="$(type -a mpv | sort | awk 'END{print $3}')"
 
 mpc pause >/dev/null
 
-$mpv --input-ipc-server=/tmp/mpvsocket "$@"
+$mpv --screenshot-directory="$HOME/Screenshots_mpv" --input-ipc-server=/tmp/mpvsocket "$@"
