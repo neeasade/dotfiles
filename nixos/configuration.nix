@@ -8,16 +8,24 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      (import ./packages.nix {inherit config pkgs lib; })
-      (import ./services.nix {inherit config pkgs; })
+      ./packages.nix
+      ./services.nix
+      # (import ./packages.nix {inherit config pkgs lib; })
+      # (import ./services.nix {inherit config pkgs; })
     ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
+  # boot.initrd.kernelModules = [ "wl" ];
+  # boot.kernelModules = [ "kvm-intel" "wl" ];
+  # boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
+
   networking.hostName = "erasmus";
   # networking.wireless.enable = true;  # wpa_supplicant.
+  networking.networkmanager.enable = true;  # wpa_supplicant.
 
   # todo
   virtualisation = {
@@ -51,7 +59,7 @@
     export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
     '';
 
-  time.timeZone = "America/Chicago";
+  time.timeZone = "America/New_York";
 
   users.extraUsers.neeasade = {
     isNormalUser = true;
@@ -61,7 +69,7 @@
     ];
     createHome=true;
     home="/home/neeasade";
-    shell="/run/current-system/sw/bin/zsh";
+    shell="/run/current-system/sw/bin/bash";
     initialPassword="password";
   };
 

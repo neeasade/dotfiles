@@ -3,13 +3,14 @@
 let
   nixcfg = {
     allowUnfree = true;
+    oraclejdk.accept_license = true;
 
     permittedInsecurePackages = [
      "samba-3.6.25"
     ];
   };
 
-  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-18.09.tar.gz) { config = nixcfg; };
+  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.03.tar.gz) { config = nixcfg; };
   rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   expr = import ./expr { inherit pkgs lib; };
@@ -18,10 +19,27 @@ let
   # edge = rolling;
   # rolling = stable;
 
-  core = (with stable; [
+core = (with stable; [
+# networkmanager
+haskellPackages.xmobar
+kdeFrameworks.networkmanager-qt
+networkmanager_dmenu
+xorg.xkbcomp
+tldr
+  toilet
+  cowsay
+  fortune
+  cmatrix
+  cava
+  irssi
+  glxinfo
+  xorg.xdpyinfo
     gnupg
     arandr
     aspell
+    stalonetray
+    # network-manager
+networkmanagerapplet
     aspellDicts.en
     bash-completion
     bc
@@ -59,9 +77,14 @@ let
     neofetch
     nix-prefetch-scripts
 
+    wayland
+    wlroots
+    wayland-protocols
+
     # nix-repl
     ntfs3g
     openssl
+    telnet
     p7zip
     parallel
     pass
@@ -79,6 +102,7 @@ let
     unclutter
     unrar
     unzip
+    zip
     usbutils
     vim
     vlc
@@ -86,26 +110,28 @@ let
     wmname
     xclip
     xorg.xev
+    xorg.xkbcomp
     xorg.xmodmap
     xurls
     zathura
     zsh
 
     emacs
-    # needed?
-    # mesa_drivers
+    mesa_drivers
+    libGL
+
+
     # mesa_glu
   ]) ++ (with rolling; [
     colort
-    dmenu2
-    # dunst
+    # dmenu2
+    # dmenu
+    dunst
     dzen2
     ffmpeg
     i3lock
     lemonbar-xft
     meh
-    mpvc
-    qutebrowser
     ranger
     sxhkd
     txtw
@@ -118,9 +144,12 @@ let
     # xst
     xtitle
     youtube-dl
+    qutebrowser
   ]) ++ ( with expr; [
     # qutebrowser-git
+    mpvc-git
     xst-git
+    dmenu
     bevelbar
     gtkrc-reload
     neeasade-opt
@@ -135,6 +164,7 @@ let
     # (emacs.override { imagemagick = pkgs.imagemagickBig; } )
   ]);
 
+    inherit (pkgs) eggDerivation fetchegg;
   extra = (with stable; [
     # oomox
     gdk_pixbuf
@@ -143,6 +173,11 @@ let
     gtk3
     sassc
 
+    ripgrep
+    pandoc
+    imagemagick
+    graphviz
+    google-chrome
     # (chromium.override {enablePepperFlash = true;})
     audacity
     bfg-repo-cleaner
@@ -163,7 +198,9 @@ let
   ]);
 
   games = (with stable; [
-    # dolphinEmu
+  minecraft
+    wesnoth
+    dolphinEmu
     # ioquake3
     # minecraft
     # wineUnstable
@@ -179,8 +216,13 @@ let
     # (wineStaging.override { wineBuild = "wineWow"; })
     # (wineStaging.override {wineBuild = "wineWow"; pulseaudioSupport = true; pcapSupport = true; gstreamerSupport = true;})
     # configureFlags = "--enable-win64 --with-alsa --with-pulse";
-  ]) ++ (with stable; [
+    # crispy-doom
+  ]) ++ (with rolling; [
+    openmw
     steam
+    # openmw-tes3mp
+  ]) ++ (with rolling; [
+    drawpile
   ]);
 
   development = (with stable; [
@@ -191,15 +233,46 @@ let
     #   # praw
     # ]))
 
+    meson
+
+    # chicken
+    # egg2nix
+
+    # chickenPackages_5.chicken
+    # chickenPackages_5.egg2nix
+    # chicken-install apropos chicken-doc
+
+    # (egg-chicken-doc =
+    # eggDerivation {
+    # name = "chicken-doc-4.6.3";
+
+    # src = fetchegg {
+    #   name = "numbers";
+    #   version = "4.6.3";
+    #   sha256 = "0aczzpq6f31lk1919aiywknaci69m1apyx905m2ln2qw8zwmwibq";
+    # };
+
+    # buildInputs = [];
+    # })
+
+    # (egg-apropos =
+    # eggDerivation {
+
+    # })
+
+    sbcl
+    lispPackages.quicklisp
+
     # clang
     lua
     luarocks
     autoconf
     automake
-    boot
     # comes with ruby already? (collision)
     # bundler
+
     clojure
+
     cmake
     docker
     gcc
@@ -207,13 +280,18 @@ let
     gnumake
     go
     gradle
+
+
+
     guile
     jdk8
     leiningen
     maven
-    mono
+    # csi, conflicts with chicken
+    # mono
     nodejs
     ruby
+    cargo
     # rustc
     # rustfmt
     # rustracer
@@ -224,10 +302,17 @@ let
     (python36.withPackages(ps: with ps; [
       virtualenv
       django
-      pyqt5
+      selenium
+      # pyqt5
       praw
     ]))
-  ]);
+    ]) ++ (with expr; [
+    # boot-new
+    ]) ++ (with edge; [
+        # boot
+        # chickenPackages_5.chicken
+        # chickenPackages_5.egg2nix
+    ]);
 
   basefonts = (with pkgs; [
     roboto-mono
@@ -243,7 +328,6 @@ let
     fira
     fira-code
     font-awesome-ttf
-    font-droid
     noto-fonts
     powerline-fonts
     roboto

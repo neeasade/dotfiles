@@ -60,6 +60,7 @@ in
          default = "bspwm";
          bspwm = {
            package = expr.bspwm-git;
+           #package = pkgs.bspwm;
            enable = true;
          };
        };
@@ -72,6 +73,8 @@ in
       displayManager.lightdm = {
         enable = true;
       };
+    
+displayManager.xserverArgs = [ "-logfile" "/var/log/X.log" ];
     };
 
     printing = {

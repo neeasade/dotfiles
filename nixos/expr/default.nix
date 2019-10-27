@@ -15,8 +15,17 @@ in
         src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
         }));
 
+    mpvc-git = (pkgs.mpvc.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/lwilletts/mpvc"; ref = "master"; };
+        }));
+
     txth = (pkgs.txtw.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/txth"; ref = "master"; };
+        }));
+
+    dmenu = (pkgs.dmenu.overrideAttrs(old: {
+        patches = [];
+        src = builtins.fetchGit {url = "https://github.com/neeasade/dmenu"; ref = "master"; };
         }));
 
     bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
@@ -33,7 +42,7 @@ in
         }));
 
     wmutils-core-git = (pkgs.wmutils-opt.overrideAttrs(old: {
-        buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
+    buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil pkgs.xcb-util-cursor ];
         src = builtins.fetchGit {url = "https://github.com/wmutils/core"; ref = "master"; };
         }));
 
