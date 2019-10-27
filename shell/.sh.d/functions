@@ -39,7 +39,7 @@ shot() {
 }
 
 shellshot() {
-  eval echo "$(elisp '(ns/windowshot)')" | pb 0x0
+  eval printf "$(elisp '(ns/windowshot)' | sed 's/%/%%/g')" | pb 0x0
 }
 
 fullshot() {

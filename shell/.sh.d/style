@@ -55,13 +55,10 @@ env_prompt() {
     return
   fi
 
-  standard_env=$(bash -i -c 'compgen -v')
   changed_vars=$(diff \
-                   <(grep -vE '^BASH_' <<< "$standard_env") \
-                   <(compgen -v | grep -vE '^(BASH_|standard_env|changed_vars|FUNCNAME)') \
-                   | grep '^> ' | sed 's/> //')
-
-  changed_vars=$(echo "$changed_vars" | grep -E '^[A-Z]+$')
+                   <(bash -ic '(set -o posix; set | grep -vE "^BASH_")') \
+                   <((set -o posix; set) | grep -vE '^(BASH_|changed_vars|FUNCNAME|PPID|SHLVL)') \
+                   | grep '^> ' | sed 's/> //' | grep -oE '^[A-Z]+\=')
 
   if [ ! -z "$changed_vars" ]; then
     echo "E "
@@ -73,7 +70,7 @@ envv() {
   env_prompt >/dev/null
 
   for v in $changed_vars; do
-    printf '%s=%q\n' $v "$(eval "echo \"\${${v}}\"")"
+    printf '%s%q\n' $v "$(eval "echo \"\${${v}}\"")"
   done
 }
 
