@@ -9,7 +9,7 @@ sysinfo() {
 }
 
 bicc() {
-  du -Sa "${1:-$HOME}" | sort -n -r | head -n 20 | awk '{"numfmt --to=si "$1"000" | getline size; $1=""; print size $0}'
+  du -Sa "${1:-$HOME}" | sort -n -r | head -n "${2:-20}" | awk '{"numfmt --to=si "$1"000" | getline size; $1=""; print size $0}'
 }
 
 sleepm() {
