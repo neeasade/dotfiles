@@ -50,24 +50,51 @@ git_prompt() {
   fi
 }
 
+env_prompt() {
+  if [ "$cur_shell" != "bash" ]; then
+    return
+  fi
+
+  standard_env=$(bash -i -c 'compgen -v')
+  changed_vars=$(diff \
+                   <(grep -vE '^BASH_' <<< "$standard_env") \
+                   <(compgen -v | grep -vE '^(BASH_|standard_env|changed_vars|FUNCNAME)') \
+                   | grep '^> ' | sed 's/> //')
+
+  changed_vars=$(echo "$changed_vars" | grep -E '^[A-Z]+$')
+
+  if [ ! -z "$changed_vars" ]; then
+    echo "E "
+  fi
+}
+
+envv() {
+  # prompt function runs in subshell so we have to get it again
+  env_prompt >/dev/null
+
+  for v in $changed_vars; do
+    printf '%s=%q\n' $v "$(eval "echo \"\${${v}}\"")"
+  done
+}
+
 prompt() {
     _ERR=$?
     [ "$(id -u)" = "0" ] && _prompt=\#
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
     [ $_ERR -ne 0 ] && _prompt="${_prompt}!"
 
-    _prompt="$(git_prompt)$_prompt"
+    _prompt="$(git_prompt)$(env_prompt)$_prompt"
 
     if ${REMOTE:-false}; then
       _prompt="$(hostname) $_prompt"
     fi
 
     if ${ESHELL:-false}; then
-      _shell_location="$PWD"
+      _shell_location=$PWD
 
       if $REMOTE; then
         # idk how stable this is
-        ssh_ip="$(echo $SSH_CONNECTION | awk '{print $3}')"
+        ssh_ip=$(echo $SSH_CONNECTION | awk '{print $3}')
         _shell_location="/ssh:${USER}@${ssh_ip}:${_shell_location}"
       fi
 
