@@ -17,7 +17,7 @@ iif() {
 
 pathmunge () {
   if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
-    PATH=$PATH:$1
+    PATH=$1:$PATH
   fi
 }
 
