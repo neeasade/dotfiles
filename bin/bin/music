@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # -*- eval: (setq-local sh-basic-offset 2) -*-
 
+
 musicdir="$HOME/Music"
+current_playlist="${musicdir}/playlist/current"
 
 # add a url to library, fallback on clipboard content
 add() {
@@ -21,7 +23,6 @@ del() {
   mpc update
 }
 
-# resume
 toggle() {
   mpc toggle
 }
@@ -34,53 +35,55 @@ shuffle() {
   else
     append "$*"
   fi
-  echo "shuffle" > "$musicdir/playlist/current"
+  echo "shuffle" > "$current_playlist"
   mpc play
 }
 
-shuffle_mixes() {
+# is a file longer than 25 min
+is_long() {
+  milli="$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')"
+  if [ -z "$milli" ]; then
+    return 1
+  fi
 
-  # probably cache this later
-  is_mix() {
-    milli="$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')"
-
-    if [ -z "$milli" ]; then
-      # ¯\_(ツ)_/¯
-      return 1
-    fi
-
-    seconds=$(( $milli / 1000))
-    if [ $seconds -gt $((60 * 25)) ]; then
-      return 0
-    else
-      return 1
-    fi
-  }
-
-  # mpc clear
-  # this is gonna take forever
-  list_mixes() {
-    while read -r song; do
-      if is_mix "${musicdir}/$song"; then
-	echo "$song"
-      fi
-    done < <(mpc listall)
-  }
-
-  mpc clear
-  list_mixes | grep -v ASOT | grep -v "Dream Dance" | grep -v "Tiësto" | sort -R | head -n 1000 | mpc add
-  mpc play
+  seconds=$(( $milli / 1000))
+  if [ $seconds -gt $((60 * 25)) ]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 append() {
   echo append "$*"
-  mpc listall | grep -i "$*" | mpc add
+
+  if [ "$*" = "long_songs" ]; then
+    cat "${musicdir}/long_songs"
+    mpc listall | a_is_long_filter | mpc add
+  else
+    mpc listall | grep -i "$*" | mpc add
+  fi
 }
 
 # remove some search match from the playlist
 remove() {
   echo remove "$*"
-  positions="$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')"
+
+  if [ "$*" = "long_songs" ]; then
+    is_long_filter() {
+      while read -r pos_song; do
+	song="$(echo "$pos_song" | sed -E 's/[0-9]+ //')"
+	if is_long "${musicdir}/$song"; then
+	  echo "$pos_song"
+	fi
+      done
+    }
+    positions="$(mpc playlist -f '%position% %file%' | is_long_filter | sed 's/ .*//')"
+  else
+    positions="$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')"
+  fi
+
+  # positions="$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')"
   delta=0
   for position in $positions; do
     mpc del $((position - delta))
@@ -99,7 +102,7 @@ now() {
 
 # blacklist the currently playing song from the current playlist.
 bl() {
-  playlist="$(cat "$musicdir/playlist/current")"
+  playlist="$(cat "$current_playlist")"
   songname="$(basename "$(mpc -f '%file%' | head -n 1)")"
   printf "\n-$songname" >> "$musicdir/playlist/$playlist"
   mpc next
@@ -107,29 +110,24 @@ bl() {
 
 # compose playlists by search results
 playlist() {
-  if target="$(ls $musicdir/playlist | fzf)"; then
-      echo "$target" > "$musicdir/playlist/current"
-      mpc clear
-      while read -r line ; do
-	case "${line:0:1}" in
-	  +) append "${line#?}";;
-	  -) remove "${line#?}";;
-	  *) ;;
-	esac
-      done < "$musicdir/playlist/$target"
+  if target="$(ls ${musicdir}/playlist | fzf)"; then
+    echo "$target" > "$current_playlist"
+    mpc clear
+    while read -r line ; do
+      case "${line:0:1}" in
+	+) append "${line#?}";;
+	-) remove "${line#?}";;
+	*) ;;
+      esac
+      # the cat is so a newline is appended
+    done < <(cat "$musicdir/playlist/$target")
 
-      # clear duplicates
-      # cf https://github.com/ajjahn/puppet-mpd/blob/master/files/mpd-remove-duplicates.sh
-      while read -r song; do
-	count=$(echo "$song" | sed -e "s/^[ \t]*//" | cut -d" " -f1);
-	song=$(echo "$song" | sed -e "s/^[ \t]*//" | cut -d" " -f2-);
-	for (( i = 2 ; i <= $count; i++ )); do
-	  mpc playlist | grep -n "$song" | tail -n 1 | cut -d: -f1 | mpc del;
-	done;
-      done < <(mpc playlist | sort | uniq -d -c )
+    # clear duplicates
+    # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
+    mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
 
-      mpc shuffle
-      mpc play
+    mpc shuffle
+    mpc play
   fi
 }
 
@@ -143,18 +141,12 @@ infoname() {
 }
 
 info() {
-  name="$(infoname)"
-  playlist_info="$(echo playlist: $(cat ~/Music/playlist/current) ┃ $(playlist_length))"
+  infoname
 
   length="$(wc -L <<< "$name")"
   percent="$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')"
-  progress="$("$HOME/.wm/panel/tools/mkb" $percent $length)"
-
-  cat<<EOF
-$name
-$progress
-$playlist_info
-EOF
+  "$HOME/.wm/panel/tools/mkb" $percent $length
+  echo "playlist: $(cat $current_playlist) | $(playlist_length)"
 }
 
 op=${1:-toggle}
