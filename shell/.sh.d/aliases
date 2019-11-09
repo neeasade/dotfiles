@@ -10,8 +10,8 @@ alias pg=' pgrep'
 alias make=" clear; make"
 alias lsblk=" clear; lsblk"
 alias pacman="pacman --color=always"
-alias paste="curl -F 'file=-' http://0x0.st"
 alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files/Steam/Steam.exe >/dev/null 2>&1 &'
+alias paint="pinta"
 
 # Make tmux assume 256 colors
 alias tmux='tmux -2'

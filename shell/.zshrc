@@ -8,11 +8,9 @@ if [ -d ~/.zplug ]; then
     ! $ESHELL && zplug "zsh-users/zsh-autosuggestions", use:"zsh-autosuggestions.zsh" # fish-like suggestions
     zplug "djui/alias-tips"                                              # alias reminder
 
-    zplug "plugins/pass", from:oh-my-zsh                                 # completions for pass
-    zplug "spwhitt/nix-zsh-completions"                                  # completions for nix
-    zplug "plugins/lein", from:oh-my-zsh                                 # completions for lein
+    # zplug "spwhitt/nix-zsh-completions"                                  # completions for nix
+    # zplug "plugins/lein", from:oh-my-zsh                                 # completions for lein
     zplug "zsh-users/zsh-completions"                                    # completions for everything else
-    zplug "hlissner/zsh-autopair", defer:2
 
     if has fzf; then
 	zplug "junegunn/fzf", use:"shell/completion.zsh"                 # fzf
@@ -32,10 +30,6 @@ if [ -d ~/.zplug ]; then
 fi
 
 setopt PROMPT_SUBST
-
-chpwd() {
-    defaulttitle
-}
 
 # completion like emacs, use cache
 zstyle ':completion:*:default' menu select=1

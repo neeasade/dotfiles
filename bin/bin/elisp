@@ -14,7 +14,7 @@ fi
 
 emacs_timeout=
 if type timeout >/dev/null; then
-    emacs_timeout="timeout 1"
+    emacs_timeout="timeout ${elisp_timeout:-1}"
 fi
 
 result="$($emacs_timeout $eclient --eval "(progn $@)")"
