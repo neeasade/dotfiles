@@ -4,10 +4,9 @@ type theme > /dev/null 2>&1 &&
     _prompt="$(theme getval PROMPT_CHAR)" ||
     _prompt='%'
 
-
 if [ -z "$cur_shell" ]; then
   cur_shell=$(ps | grep $$ |  sed 's/^.* //')
-  cur_shell="${cur_shell##*/}"
+  cur_shell=${cur_shell##*/}
 fi
 
 [ "$cur_shell" = "zsh" ] && [ $_prompt = "%" ] && _prompt="%%"
@@ -78,7 +77,7 @@ prompt() {
     _ERR=$?
     [ "$(id -u)" = "0" ] && _prompt=\#
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
-    [ $_ERR -ne 0 ] && _prompt="${_prompt}!"
+    [ $_ERR -ne 0 ] && _prompt=${_prompt%?}!
 
     _prompt="$(git_prompt)$(env_prompt)$_prompt"
 
