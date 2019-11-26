@@ -16,12 +16,12 @@ b_monocle_window_percent=.55
 b_bspwmrc_extend=""
 
 # mkb script, l for loader
-# ◼ ◻ ◻
-l_complete="◼"
-l_empty="◻"
-l_sep="◻"
+l_complete="■"
+l_empty="□"
+l_sep="□"
 l_start=""
 l_end=""
+
 
 # Panel variables
 p_format="dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
@@ -65,7 +65,9 @@ p_desktop_monocle_label='M'
 
 # default reload times for panel sections
 p_mail_reload=30
-p_desktop_reload="bspc subscribe"
+# p_desktop_reload="bspc subscribe"
+p_desktop_reload="cgrep bgroups && cat /tmp/bspgroups_out || bspc subscribe"
+
 p_title_reload="(xtitle -s & bspc subscribe desktop_layout)"
 p_weather_reload=600
 p_updates_reload=600

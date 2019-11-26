@@ -57,6 +57,8 @@ settings() {
     emacs_powerline_scale="1.0"
     PROMPT_CHAR='%'
 
+
+
     # bspwm
     b_border_width=1
     b_window_gap=30
@@ -65,7 +67,7 @@ settings() {
 xpad &
 "
 
-    x_padding=20
+    x_padding=10
 
     b_normal_border_color=eeeff0
     b_active_border_color=cecece

@@ -1,8 +1,23 @@
 # -*- mode: sh -*-
 
+pfetch() {
+  export PF_SEP=""
+  export PF_ASCII="linux"
+  export PF_ASCII="GNU"
+  # title os kernel host uptime pkgs memory wm de shell editor palette
+  export PF_SYNC=t
+
+  export PF_INFO="ascii n n title theme editor shell wm playlist"
+  # todo: use github.com/neeasade/pfetch neeasade branch
+  # this function is just for reference
+  EDITOR='𝓮𝓶𝓪𝓬𝓼' SHELL='M-x shell' ~/git/og/pfetch
+
+  # rm -rf "$path_ext"
+}
+
 sysinfo() {
   clear
-  ufetch
+  pfetch
   music info
   pcs() { for i in {0..7}; do echo -en "\e[${1}$((30+$i))m \u2588\u2588 \e[0m"; done; }
   printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
@@ -25,7 +40,12 @@ clean_shot() {
 
 shot_location() {
   clean_shot
-  mkdir -p $HOME/Screenshots
+
+  # the check is because it might be a symlink
+  if [ ! -d $HOME/Screenshots ]; then
+    mkdir $HOME/Screenshots
+  fi
+
   mkdir -p $HOME/Last_Shot
 
   echo "$HOME/Screenshots/$(date +%y-%m-%d-%H:%M:%S).png" > "$HOME/Last_Shot/.shot.txt"
@@ -34,8 +54,8 @@ shot_location() {
 
 shot() {
   # eval $(slop)
-  G="$(slop -p ${1:-0})"
-  maim -g ${G} "$(shot_location)"
+  g=$(slop -p ${1:-0})
+  maim -g ${g} "$(shot_location)"
 }
 
 shellshot() {
@@ -62,7 +82,7 @@ upshot() {
 
 # current monitor only - bspwm specific
 monshot() {
-  json="$(bspc query -T -m)"
+  json=$(bspc query -T -m)
   jget() {
     echo "$json" | jq .rectangle.$1
   }
@@ -81,7 +101,7 @@ settitle() {
 }
 
 defaulttitle() {
-  settitle "$(basename $PWD) - $(basename $SHELL)"
+  settitle "$(basename "$PWD") - $(basename "$SHELL")"
 }
 
 linewrap() {
@@ -197,8 +217,8 @@ page() {
 }
 
 dotadd() {
-  file="$(find ~/bin | fzf)" || return
-  file="$(basename "$file")"
+  file=$(find ~/bin | fzf) || return
+  file=$(basename "$file")
   echo mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
   mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
   cd "$HOME/.dotfiles"

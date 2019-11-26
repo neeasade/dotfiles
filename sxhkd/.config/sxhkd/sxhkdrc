@@ -104,6 +104,7 @@ super + {_,shift,alt} + space
 XF86Audio{Prev,Next,Play}
      mpc -q {prev,next,toggle}
 
+# todo: shouldn't this be a ponymix call like below??
 XF86Audio{LowerVolume,RaiseVolume,Mute}
     amixer -q set Master {3%-,3%+,toggle}
 
@@ -120,12 +121,10 @@ Pause
 super + {minus,equal}
     ponymix {decrease,increase} 5; notify-send --urgency=low "Volume: $(ponymix get-volume)"
 
+# you are already using comma and period for window children lol
 # < > `
 super + {comma,period,grave}
     player.sh {prev,next,toggle}
-
-F10
-    music bl
 
 F9
     sh -c "$(. $HOME/.profile && shot)"

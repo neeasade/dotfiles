@@ -237,6 +237,8 @@ load_dunst() {
 
     d_width=400
 
+    # todo: make this a theme option: make dunst width dynamic
+
     # top center
     # mon_width=$(bspc query -T -m | jq -r .rectangle.width)
     # d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
@@ -264,6 +266,10 @@ load_mpd_windows() {
 load_zathura() {
     trim_alphas
     margs zathura .config/zathura/zathurarc
+}
+
+load_zeal() {
+    margs zeal .config/Zeal/Zeal.conf
 }
 
 load_mintty() {

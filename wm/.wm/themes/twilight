@@ -38,7 +38,7 @@ settings() {
     c_frame_opacity="0.0"
 
     # bspwm
-    b_border_width=8
+    b_border_width=2
     b_window_gap=30
     b_normal_border_color="2e2e2e"
 
