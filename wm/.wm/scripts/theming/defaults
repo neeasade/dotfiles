@@ -10,7 +10,7 @@ b_active_border_color="$color8"
 b_focused_border_color="$foreground"
 b_presel_feedback_color="$color8"
 b_desktop_names="00 01 10 11"
-b_monocle_window_percent=.55
+b_monocle_window_percent=.65
 
 # meant to be used for effects, like pulse or 2bspwm
 b_bspwmrc_extend=""

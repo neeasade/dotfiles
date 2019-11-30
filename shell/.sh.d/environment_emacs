@@ -52,14 +52,14 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   done
 
   sxhkd() {
-    pgrep sxhkd && pkill sxhkd
+    pgrep sxhkd >/dev/null && pkill sxhkd
     path_remove "$HOME/.emacs.d/scripts"
-    $(type -a sxhkd | sort | awk 'END{print $3}')
+    $(type -a sxhkd | awk 'END{print $3}')
   }
 
   man() {
-    # elisp "(woman \"$*\") (require 'man) (Man-cleanup-manpage)"
-    elisp "(woman \"$*\")"
+    elisp "(woman \"$*\") (require 'man) (Man-cleanup-manpage)"
+    # elisp "(woman \"$*\")"
   }
 
   clear() {

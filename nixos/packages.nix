@@ -6,40 +6,46 @@ let
     oraclejdk.accept_license = true;
 
     permittedInsecurePackages = [
-     "samba-3.6.25"
+      "samba-3.6.25"
     ];
   };
 
-  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.03.tar.gz) { config = nixcfg; };
+  # todo: use channels for this roll
+  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
   rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
+
+  #stable = pkgs;
+  #rolling = pkgs;
+  #edge = pkgs;
+
   expr = import ./expr { inherit pkgs lib; };
 
   pkgs = stable;
   # edge = rolling;
   # rolling = stable;
 
-core = (with stable; [
-# networkmanager
-haskellPackages.xmobar
-kdeFrameworks.networkmanager-qt
-networkmanager_dmenu
-xorg.xkbcomp
-tldr
-  toilet
-  cowsay
-  fortune
-  cmatrix
-  cava
-  irssi
-  glxinfo
-  xorg.xdpyinfo
+  core = (with stable; [
+    # networkmanager
+    haskellPackages.xmobar
+    kdeFrameworks.networkmanager-qt
+    networkmanager_dmenu
+    xorg.xkbcomp
+    tldr
+    toilet
+    cowsay
+    fortune
+    cmatrix
+    cava
+    irssi
+    glxinfo
+    xorg.xdpyinfo
     gnupg
     arandr
     aspell
     stalonetray
     # network-manager
-networkmanagerapplet
+    networkmanagerapplet
     aspellDicts.en
     bash-completion
     bc
@@ -122,6 +128,15 @@ networkmanagerapplet
 
 
     # mesa_glu
+
+    (python36.withPackages(ps: with ps; [
+      virtualenv
+      django
+      selenium
+      # pyqt5
+      praw
+    ]))
+
   ]) ++ (with rolling; [
     colort
     # dmenu2
@@ -164,14 +179,19 @@ networkmanagerapplet
     # (emacs.override { imagemagick = pkgs.imagemagickBig; } )
   ]);
 
-    inherit (pkgs) eggDerivation fetchegg;
+  inherit (pkgs) eggDerivation fetchegg;
   extra = (with stable; [
     # oomox
+
+
     gdk_pixbuf
     glib.dev
     gtk-engine-murrine
     gtk3
     sassc
+
+    # circe
+    gnutls
 
     ripgrep
     pandoc
@@ -198,16 +218,16 @@ networkmanagerapplet
   ]);
 
   games = (with stable; [
-  minecraft
-    wesnoth
-    dolphinEmu
+    #minecraft
+    #wesnoth
+    #dolphinEmu
     # ioquake3
     # minecraft
     # wineUnstable
     mesa_drivers
     mesa_glu
     # samba
-    wine
+    #wine
     # winetricks
     # wineStaging
     # (wineStaging.override { wineBuild = "wineWow"; })
@@ -218,11 +238,11 @@ networkmanagerapplet
     # configureFlags = "--enable-win64 --with-alsa --with-pulse";
     # crispy-doom
   ]) ++ (with rolling; [
-    openmw
+    #openmw
     steam
     # openmw-tes3mp
   ]) ++ (with rolling; [
-    drawpile
+    #drawpile
   ]);
 
   development = (with stable; [
@@ -306,13 +326,13 @@ networkmanagerapplet
       # pyqt5
       praw
     ]))
-    ]) ++ (with expr; [
+  ]) ++ (with expr; [
     # boot-new
-    ]) ++ (with edge; [
-        # boot
-        # chickenPackages_5.chicken
-        # chickenPackages_5.egg2nix
-    ]);
+  ]) ++ (with edge; [
+    # boot
+    # chickenPackages_5.chicken
+    # chickenPackages_5.egg2nix
+  ]);
 
   basefonts = (with pkgs; [
     roboto-mono
@@ -321,8 +341,8 @@ networkmanagerapplet
   ]);
 
   extrafonts = (with pkgs; [
-  gohufont
-  corefonts
+    gohufont
+    corefonts
     dejavu_fonts
     fantasque-sans-mono
     fira
@@ -340,9 +360,12 @@ in
   environment.systemPackages =
     core ++
     extra ++
-    development ++
+    # development ++
     games ++
     [];
 
-  fonts.fonts = basefonts ++ extrafonts ++ [];
+  fonts.fonts =
+    basefonts ++
+    extrafonts ++
+    [];
 }
