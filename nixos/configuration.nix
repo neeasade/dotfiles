@@ -13,7 +13,7 @@
     ];
 
 
-  boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
+  # boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
 
   networking.hostName = "bridge";
   # networking.wireless.enable = true;  # wpa_supplicant.

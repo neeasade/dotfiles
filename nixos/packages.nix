@@ -26,7 +26,6 @@ let
   # rolling = stable;
 
   core = (with stable; [
-    # networkmanager
     haskellPackages.xmobar
     kdeFrameworks.networkmanager-qt
     networkmanager_dmenu
@@ -44,14 +43,15 @@ let
     arandr
     aspell
     stalonetray
-    # network-manager
     networkmanagerapplet
     aspellDicts.en
     bash-completion
     bc
+
     # covered by gcc(?)
     # there were a few collisions between the two
     # binutils
+
     cron
     curl
     dash
@@ -60,8 +60,10 @@ let
     file
     filezilla
     gitAndTools.gitFull
+
     # todo: find this
-    # gnome2.zenity
+    gnome3.zenity
+
     go-mtpfs
     gparted
     hfsprogs
@@ -80,7 +82,6 @@ let
     mpv
     mu
     mumble
-    neofetch
     nix-prefetch-scripts
 
     wayland
@@ -126,21 +127,9 @@ let
     mesa_drivers
     libGL
 
-
-    # mesa_glu
-
-    (python36.withPackages(ps: with ps; [
-      virtualenv
-      django
-      selenium
-      # pyqt5
-      praw
-    ]))
-
+    gnutls # for circe
   ]) ++ (with rolling; [
     colort
-    # dmenu2
-    # dmenu
     dunst
     dzen2
     ffmpeg
@@ -156,7 +145,6 @@ let
     xorg.xprop
     xorg.xwininfo
     xrq
-    # xst
     xtitle
     youtube-dl
     qutebrowser
@@ -172,7 +160,6 @@ let
     wmutils-core-git
     wmutils-opt-git
     xdo-git
-    # wmgroup
   ]) ++ (with edge; [
     # emacs
     # allow images to display
@@ -182,23 +169,17 @@ let
   inherit (pkgs) eggDerivation fetchegg;
   extra = (with stable; [
     # oomox
-
-
     gdk_pixbuf
     glib.dev
     gtk-engine-murrine
     gtk3
     sassc
 
-    # circe
-    gnutls
-
     ripgrep
     pandoc
     imagemagick
     graphviz
     google-chrome
-    # (chromium.override {enablePepperFlash = true;})
     audacity
     bfg-repo-cleaner
     compton
@@ -218,116 +199,81 @@ let
   ]);
 
   games = (with stable; [
-    #minecraft
-    #wesnoth
-    #dolphinEmu
-    # ioquake3
     # minecraft
-    # wineUnstable
+    # wesnoth
+    # dolphinEmu
+
     mesa_drivers
     mesa_glu
-    # samba
-    #wine
-    # winetricks
+
+    # wine
     # wineStaging
-    # (wineStaging.override { wineBuild = "wineWow"; })
-    # winetricks
+    # wineUnstable
     # (wine.override { wineBuild = "wineWow"; })
-    # (wineStaging.override { wineBuild = "wineWow"; })
-    # (wineStaging.override {wineBuild = "wineWow"; pulseaudioSupport = true; pcapSupport = true; gstreamerSupport = true;})
-    # configureFlags = "--enable-win64 --with-alsa --with-pulse";
-    # crispy-doom
   ]) ++ (with rolling; [
-    #openmw
+    openmw
     steam
     # openmw-tes3mp
-  ]) ++ (with rolling; [
-    #drawpile
+    drawpile
   ]);
 
   development = (with stable; [
-    # (python35.withPackages(ps: with ps; [
-    #   # screenkey
-    #   # libxml2
-    #   # selenium
-    #   # praw
-    # ]))
-
+    # build tools
     meson
-
-    # chicken
-    # egg2nix
-
-    # chickenPackages_5.chicken
-    # chickenPackages_5.egg2nix
-    # chicken-install apropos chicken-doc
-
-    # (egg-chicken-doc =
-    # eggDerivation {
-    # name = "chicken-doc-4.6.3";
-
-    # src = fetchegg {
-    #   name = "numbers";
-    #   version = "4.6.3";
-    #   sha256 = "0aczzpq6f31lk1919aiywknaci69m1apyx905m2ln2qw8zwmwibq";
-    # };
-
-    # buildInputs = [];
-    # })
-
-    # (egg-apropos =
-    # eggDerivation {
-
-    # })
-
-    sbcl
-    lispPackages.quicklisp
-
-    # clang
-    lua
-    luarocks
+    cmake
+    ninja
     autoconf
     automake
-    # comes with ruby already? (collision)
-    # bundler
-
-    clojure
-
-    cmake
-    docker
-    gcc
-    ghc
     gnumake
-    go
-    gradle
 
-
-
+    # lisps
+    sbcl
+    lispPackages.quicklisp
     guile
+
+    lua
+    luarocks
+
+    clang
+    gcc
+
+    # ghc
+    go
+
+    # JVM
+    gradle
+    maven
     jdk8
     leiningen
-    maven
-    # csi, conflicts with chicken
-    # mono
-    nodejs
-    ruby
+    clojure
+    boot
+
+    # rust
     cargo
-    # rustc
-    # rustfmt
-    # rustracer
+    rustc
+    rustfmt
+    rustracer
+
+    # python
+    (python35.withPackages(ps: with ps; [
+      virtualenv
+      django
+      screenkey
+      libxml2
+      selenium
+      # praw
+      # pyqt5
+    ]))
+
+    # other
+    docker
     sqlite
     zeal
     zlib
-  ]) ++ (with stable; [
-    (python36.withPackages(ps: with ps; [
-      virtualenv
-      django
-      selenium
-      # pyqt5
-      praw
-    ]))
-  ]) ++ (with expr; [
-    # boot-new
+
+    mono
+    nodejs
+    ruby
   ]) ++ (with edge; [
     # boot
     # chickenPackages_5.chicken
@@ -360,7 +306,7 @@ in
   environment.systemPackages =
     core ++
     extra ++
-    # development ++
+    development ++
     games ++
     [];
 
