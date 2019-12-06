@@ -1,0 +1,67 @@
+#!/bin/sh
+# switch to an external hdmi display if it is connected
+# else only display locally
+# won't do anything if the desired state is already set, so can be called periodically
+
+turn_on() {
+    display=$1
+    res=$2
+
+    echo xrandr --output $display --primary \
+	 --mode $res \
+	 --pos 0x0 \
+	 --rotate normal
+
+    xrandr --output $display --primary \
+	   --mode $res \
+	   --pos 0x0 \
+	   --rotate normal
+}
+
+xrandr=$(xrandr)
+
+if echo "$xrandr" | grep -q 'HDMI-1 connected'; then
+    on_monitor=HDMI-1
+    off_monitor=LVDS-1
+else
+    on_monitor=LVDS-1
+    off_monitor=HDMI-1
+fi
+
+# example turned on:
+#     HDMI-1 connected primary 1360x768+0+0
+#     HDMI-1 connected 1360x768+0+0
+# example turned off:
+#     HDMI-1 connected
+#     HDMI-1 disconnected
+on_monitor_status=$(echo "$xrandr" | grep -E "^${on_monitor}" | sed -E 's/\(.*//')
+off_monitor_status=$(echo "$xrandr" | grep -E "^${off_monitor}" | sed -E 's/\(.*//')
+
+on_field_count=$(echo "$on_monitor_status" | awk '{print NF}')
+off_field_count=$(echo "$off_monitor_status" | awk '{print NF}' )
+
+# order matters -- don't leave yourself without any display
+did_something=false
+if [ $on_field_count -eq 2 ]; then
+    max_res=$(echo "$xrandr" | grep -A 1 $on_monitor | tail -n 1 | awk '{print $1}')
+    target_res=${1:-$max_res}
+    turn_on $on_monitor $target_res
+    did_something=true
+fi
+
+if [ $off_field_count -ne 2 ]; then
+    # disconnect it
+    echo xrandr --output $off_monitor --off
+    xrandr --output $off_monitor --off
+    did_something=true
+fi
+
+if $did_something; then
+    # remove any bspwm defaults that may have been created with the new monitor
+    for did in $(bspc query -T -m | jq '.desktops[] | select(.name == "Desktop") | .id'); do
+	bspc desktop -r $did
+    done
+
+    # reset our monocle setting
+    "$HOME/.config/bspwm/bspwmrc"
+fi

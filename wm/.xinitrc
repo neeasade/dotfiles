@@ -2,11 +2,7 @@
 
 . $HOME/.sh.d/environment
 
-# xrandr script(generated with arandr)
-$HOME/.screenlayout/display.sh
-
 xrdb -load $HOME/.Xresources &
-# xmodmap $HOME/.Xmodmap &
 compton &
 unclutter -idle 1 &
 pcmanfm -d &
@@ -21,4 +17,5 @@ export xstart=`date +%s`
 
 # launched by display manager bspwm desktop entry.
 # sxhkd -c $HOME/.config/sxhkd/sxhkdrc &
+
 exec $HOME/.wm/wm
