@@ -121,6 +121,9 @@ Pause
 super + {minus,equal}
     ponymix {decrease,increase} 5; notify-send --urgency=low "Volume: $(ponymix get-volume)"
 
+super + shift + {minus,equal}
+    xbright {down,up}; notify-send --urgency=low "Brightness: $(cat /tmp/xbrightness)"
+
 # you are already using comma and period for window children lol
 # < > `
 super + {comma,period,grave}

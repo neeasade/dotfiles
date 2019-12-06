@@ -92,6 +92,7 @@ succ .cargo/bin
 succ .wm/scripts/interact
 succ .wm/scripts/visual
 succ .wm/panel/lemons
+succ .wm/panel/tools
 # pip --user location
 succ .local/bin
 
