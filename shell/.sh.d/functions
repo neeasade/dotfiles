@@ -15,6 +15,27 @@ pfetch() {
   # rm -rf "$path_ext"
 }
 
+blog_add_dtop() {
+  if [ -z "$*" ]; then
+    echo "blog_add_dtop <url> <date>"
+    return
+  fi
+
+  url=$1
+  date=$2
+
+  git_dir="${HOME}/git/neeasade.github.io/"
+  if [ ! -d "$git_dir" ]; then
+    git clone https://github.com/neeasade/neeasade.github.io "$git_dir"
+  fi
+
+  wget -O "${git_dir}/site/assets/img/desktops/full/${date}.png" "$url"
+
+  "${git_dir}/site/assets/img/desktops/make_thumbs.sh"
+  echo "don't forget to commit and push!"
+  echo "jump: ${git_dir}/readme.org"
+}
+
 sysinfo() {
   clear
   pfetch
