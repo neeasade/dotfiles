@@ -40,11 +40,19 @@ off_monitor_status=$(echo "$xrandr" | grep -E "^${off_monitor}" | sed -E 's/\(.*
 on_field_count=$(echo "$on_monitor_status" | awk '{print NF}')
 off_field_count=$(echo "$off_monitor_status" | awk '{print NF}' )
 
+
+max_res=$(echo "$xrandr" | grep -A 1 $on_monitor | tail -n 1 | awk '{print $1}')
+target_res=${1:-$max_res}
+
 # order matters -- don't leave yourself without any display
 did_something=false
+
 if [ $on_field_count -eq 2 ]; then
-    max_res=$(echo "$xrandr" | grep -A 1 $on_monitor | tail -n 1 | awk '{print $1}')
-    target_res=${1:-$max_res}
+    turn_on $on_monitor $target_res
+    did_something=true
+fi
+
+if [ ! "$target_res" = "$max_res" ]; then
     turn_on $on_monitor $target_res
     did_something=true
 fi

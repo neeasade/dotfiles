@@ -38,7 +38,7 @@ case ${pomodoro_state} in
         ;;
 
     :pomodoro)
-        task="$(elisp -r org-clock-current-task)"
+        task="$(elisp -r '(s-clean org-clock-current-task)')"
         echo "${task} $(progress $(get_length))"
         ;;
 

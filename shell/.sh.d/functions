@@ -15,6 +15,15 @@ pfetch() {
   # rm -rf "$path_ext"
 }
 
+blog_add_post() {
+  title=$(echo "$*" | sed 's/ /-/g')
+
+  date=$(date +%Y-%m-%d)
+  file="${HOME}/git/neeasade.github.io/posts/${date}-${title}.org"
+  echo "#+title: $*" >"$file"
+  $EDITOR "$file"
+}
+
 blog_add_dtop() {
   if [ -z "$*" ]; then
     echo "blog_add_dtop <url> <date>"

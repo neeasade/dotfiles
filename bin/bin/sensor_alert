@@ -1,0 +1,36 @@
+#!/bin/sh
+# monitor things, maybe alert
+
+maybe_alert() {
+    echo $*
+    if $1; then
+	notify-send -u low "$2" "$3"
+    fi
+}
+
+battery() {
+    BATC=/sys/class/power_supply/BAT0/capacity
+    BATS=/sys/class/power_supply/BAT0/status
+
+    if [ ! "$(cat $BATS)" = "Charging" ]; then
+	c=$(cat $BATC)
+	maybe_alert "[ $c -lt 20 ]" "battery" "low battery! %$c"
+    fi
+}
+
+cpu_temp() {
+    sensors | grep Core | while read -r line; do
+	# Core 1:        +52.0°C  (high = +87.0°C, crit = +105.0°C)
+	current=$(echo "$line" | awk '{print $3}' | grep -m 1 -oE '[0-9][0-9]+')
+	# high=$(echo "$line" | awk '{print $6}' | grep -m 1 -oE '[0-9][0-9]+')
+	# thinking -- under 80 is OK, under 100 is safe
+	high=95
+	core=$(echo "$line" | awk '{print $1$2}')
+
+	maybe_alert "[ $current -gt $high ]" "high CPU temp!"  "$core ${current}C"
+    done
+}
+
+# battery
+cpu_temp
+echo

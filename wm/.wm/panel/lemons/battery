@@ -6,7 +6,7 @@ BATC=/sys/class/power_supply/BAT0/capacity
 BATS=/sys/class/power_supply/BAT0/status
 
 if [ -f $BATC ]; then
-	[ "`cat $BATS`" = "Charging" ] && echo -n '+' || echo -n '-'
+	[ "$(cat $BATS)" = "Charging" ] && echo -n '+' || echo -n '-'
 	cat $BATC
 else
 	# no battery information found.
