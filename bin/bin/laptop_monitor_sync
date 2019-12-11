@@ -1,31 +1,34 @@
 #!/bin/sh
-# switch to an external hdmi display if it is connected
-# else only display locally
+# switch between a laptop or connected display
 # won't do anything if the desired state is already set, so can be called periodically
+# call with resolution if you wish to change it (see xrandr for available resolutions and display names)
+
+external_monitor=HDMI-1
+laptop_monitor=LVDS-1
 
 turn_on() {
     display=$1
     res=$2
 
-    echo xrandr --output $display --primary \
-	 --mode $res \
-	 --pos 0x0 \
-	 --rotate normal
+    echo setting $display to $res
 
     xrandr --output $display --primary \
 	   --mode $res \
 	   --pos 0x0 \
 	   --rotate normal
+
+    did_something=true
 }
 
+# calling this takes a whole 200ms!
 xrandr=$(xrandr)
 
-if echo "$xrandr" | grep -q 'HDMI-1 connected'; then
-    on_monitor=HDMI-1
-    off_monitor=LVDS-1
+if echo "$xrandr" | grep -q "${external_monitor} connected"; then
+    on_monitor=$external_monitor
+    off_monitor=$laptop_monitor
 else
-    on_monitor=LVDS-1
-    off_monitor=HDMI-1
+    on_monitor=$laptop_monitor
+    off_monitor=$external_monitor
 fi
 
 # example turned on:
@@ -36,10 +39,8 @@ fi
 #     HDMI-1 disconnected
 on_monitor_status=$(echo "$xrandr" | grep -E "^${on_monitor}" | sed -E 's/\(.*//')
 off_monitor_status=$(echo "$xrandr" | grep -E "^${off_monitor}" | sed -E 's/\(.*//')
-
 on_field_count=$(echo "$on_monitor_status" | awk '{print NF}')
 off_field_count=$(echo "$off_monitor_status" | awk '{print NF}' )
-
 
 max_res=$(echo "$xrandr" | grep -A 1 $on_monitor | tail -n 1 | awk '{print $1}')
 target_res=${1:-$max_res}
@@ -48,18 +49,19 @@ target_res=${1:-$max_res}
 did_something=false
 
 if [ $on_field_count -eq 2 ]; then
+    # it's turned off
     turn_on $on_monitor $target_res
-    did_something=true
-fi
-
-if [ ! "$target_res" = "$max_res" ]; then
-    turn_on $on_monitor $target_res
-    did_something=true
+else
+    # check that the resolution matches up
+    current_resolution=$(echo "$on_monitor_status" | awk '{print $NF}')
+    if [ ! "$target_res" = "$current_resolution" ]; then
+	turn_on $on_monitor $target_res
+    fi
 fi
 
 if [ $off_field_count -ne 2 ]; then
     # disconnect it
-    echo xrandr --output $off_monitor --off
+    echo "turning $off_monitor off"
     xrandr --output $off_monitor --off
     did_something=true
 fi
