@@ -56,7 +56,7 @@ env_prompt() {
 
   changed_vars=$(diff \
                    <(bash -ic '(set -o posix; set | grep -vE "^BASH_")') \
-                   <((set -o posix; set) | grep -vE '^(BASH_|changed_vars|FUNCNAME|PPID|SHLVL)') \
+                   <((set -o posix; set) | grep -vE '^(BASH|changed_vars|FUNCNAME|PPID|SHLVL)') \
                    | grep '^> ' | sed 's/> //' | grep -oE '^[A-Z]+\=')
 
   if [ ! -z "$changed_vars" ]; then
