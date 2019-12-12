@@ -16,6 +16,7 @@ if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
     eclient="${eclient}w --server-file $HOME/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
 fi
 
+# todo: if a script make timeout bigger than one
 emacs_timeout=
 if type timeout >/dev/null; then
     emacs_timeout="timeout ${elisp_timeout:-1}"
@@ -29,6 +30,8 @@ if [ -f "$1" ]; then
 	args="${args} \"${a}\""
     done
 
+    # echo "(ns/eval-file \"${filename}\" ${args})"
+    trim=true
     result=$($emacs_timeout $eclient --eval "(ns/eval-file \"${filename}\" ${args})")
 else
     result=$($emacs_timeout $eclient --eval "(progn $@)")

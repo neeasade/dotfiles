@@ -1,7 +1,9 @@
 #!/usr/bin/env elisp
+;; eg: gradient #000000 #ffffff 3
 
-(s-join " "
-	(ns/gradient
-	 (nth 0 ns-args)
-	 (nth 1 ns-args)
-	 (string-to-number (nth 2 ns-args))))
+(s-join
+ " "
+ (ns/gradient
+  (nth 0 ns-args)
+  (nth 1 ns-args)
+  (string-to-number (nth 2 ns-args))))
