@@ -1,9 +1,7 @@
-#!/bin/sh
+#!/usr/bin/env elisp
 
-intensity="$2"
-
-if colort -c $1; then
-  colort -l -$intensity "$1"
-else
-  colort -l $intensity "$1"
-fi
+(let ((color (concat "#" (first ns-args)))
+      (percent (string-to-number (second ns-args))))
+  (if (ns/color-is-light-p color)
+      (color-darken-name color percent)
+    (color-lighten-name color percent)))
