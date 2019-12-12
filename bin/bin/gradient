@@ -1,4 +1,7 @@
-#!/bin/sh
-# args eg 000000 ffffff 3
+#!/usr/bin/env elisp
 
-eval printf $(elisp "(ns/make-lines (ns/gradient \"#$1\" \"#$2\" $3))")
+(s-join " "
+	(ns/gradient
+	 (nth 0 ns-args)
+	 (nth 1 ns-args)
+	 (string-to-number (nth 2 ns-args))))

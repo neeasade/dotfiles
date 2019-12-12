@@ -3,7 +3,11 @@
 pgrep emacs >/dev/null || exit 1
 
 trim=false
-[ "$1" = "-r" ] && trim=true && shift
+
+if [ "$1" = "-r" ]; then
+   trim=true
+   shift
+fi
 
 eclient="emacsclient"
 
@@ -17,7 +21,19 @@ if type timeout >/dev/null; then
     emacs_timeout="timeout ${elisp_timeout:-1}"
 fi
 
-result="$($emacs_timeout $eclient --eval "(progn $@)")"
+if [ -f "$1" ]; then
+    filename=$1
+    shift
+    args=
+    for a in "$@"; do
+	args="${args} \"${a}\""
+    done
+
+    result=$($emacs_timeout $eclient --eval "(ns/eval-file \"${filename}\" ${args})")
+else
+    result=$($emacs_timeout $eclient --eval "(progn $@)")
+fi
+
 if [ $? -eq 1 ]; then
     # we could not reach emacs.
     exit 1
