@@ -1,7 +1,7 @@
 # if not running interactively, bail
 case "$-" in
-*i*) ;;
-*) return;;
+    *i*) ;;
+    *) return;;
 esac
 
 # source everything

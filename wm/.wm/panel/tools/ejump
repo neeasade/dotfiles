@@ -1,2 +1,3 @@
-#!/bin/sh
-elisp "(counsel-switch-to-buffer-or-window \"${1}\")"
+#!/usr/bin/env elisp
+
+(apply 'counsel-switch-to-buffer-or-window ns-args)

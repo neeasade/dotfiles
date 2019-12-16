@@ -40,3 +40,13 @@
     background = "#{{p_bg_active}}"
     foreground = "#{{p_fg_active}}"
     timeout = 0
+
+# delay notifications when something is fullscreen
+# todo: only do this if the fullscreen is a game or netflix/mpv or something
+# optionally also consider rolling your own lemonbar things and just move the windows around
+# [fullscreen_delay_everything]
+#    fullscreen = delay
+
+# [fullscreen_show_critical]
+#    msg_urgency = critical
+#    fullscreen = show

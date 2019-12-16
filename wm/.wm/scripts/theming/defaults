@@ -172,7 +172,7 @@ border_color_out_focused=$b_focused_border_color
 border_color_in_normal=$color2
 border_color_in_focused=$color3
 
-if type greaten>/dev/null; then
+if type greaten >/dev/null; then
     border_color_in_normal=$(greaten $border_color_out_normal 30)
     border_color_in_focused=$(greaten $border_color_out_focused 30)
 fi

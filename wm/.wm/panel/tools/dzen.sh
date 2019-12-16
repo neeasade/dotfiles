@@ -4,15 +4,15 @@
 # This function echos dzen dimensions at the panel centered to click
 # along with options from current theme(font)
 dzen_options() {
-    p_bg_normal="$(colort -t $p_bg_normal)"
-    p_fg_normal="$(colort -t $p_fg_normal)"
-    p_bg_active="$(colort -t $p_bg_active)"
+    p_bg_normal=$(colort -t $p_bg_normal)
+    p_fg_normal=$(colort -t $p_fg_normal)
+    p_bg_active=$(colort -t $p_bg_active)
 
     longestLine=$(printf '%s\n' "${content[@]}" | sed 's/\^ca([^)]*)//;s/\^ca()//' | wc -L)
-    font_name="$(echo $p_font_main | sed 's/-.*//')"
-    font_size="$(echo $p_font_main | sed 's/.*-//')"
-    width="$(txtw -f "$font_name" -s $font_size a)"
-    width="$(echo $width \* $longestLine | bc)"
+    font_name=$(echo $p_font_main | sed 's/-.*//')
+    font_size=$(echo $p_font_main | sed 's/.*-//')
+    width=$(txtw -f "$font_name" -s $font_size a)
+    width=$(echo $width \* $longestLine | bc)
     width=$((width + 20))
 
     gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
@@ -68,7 +68,7 @@ dzen_menu() {
 
     align=l
     icon_dzen() {
-        if  ! grep -q "Siji" <<< "$p_font_icon"; then echo -n "   "; fi
+        if ! grep -q "Siji" <<< "$p_font_icon"; then echo -n "   "; fi
         echo -n "^fn($p_font_icon)$(icon $1)^fn()"
     }
 
@@ -82,9 +82,9 @@ dzen_menu() {
     done
 
     content+=(" Recently edited ")
-    # Get recent files from .viminfo by vim marks.
 
-    for file in $(eval printf $(elisp '(ns/make-lines (mapcar (fn (concat "\"" (s-replace (~ "") "~/" <>) "\"")) (seq-take recentf-list 5)))')); do
+    IFS=$'\n'
+    for file in $(elisp -r '(ns/make-lines (mapcar (fn (s-replace (~ "") "~/" <>)) (seq-take recentf-list 5)))'); do
         content+=(" ^ca(1, elisp 'find-file "$file"' $sdw) `icon_dzen file` $file ^ca()")
     done
 
@@ -136,7 +136,7 @@ dzen_theme() {
 
 dzen_circe() {
     content+=("Circe DMs")
-    for bufname in $(eval printf $(elisp '(ns/make-lines (ns/circe-unread-query-buffers))')); do
+    for bufname in $(elisp -r '(ns/make-lines (ns/circe-unread-query-buffers))'); do
         content+=("^ca(1, nohup ejump $bufname & pkill dzen) $bufname ^ca()")
     done
 }
