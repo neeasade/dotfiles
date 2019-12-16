@@ -1,8 +1,9 @@
 #!/usr/bin/env elisp
 
-(s-join
- " "
- (ns/gradient
-  (nth 0 (concat "#" ns-args))
-  (nth 1 (concat "#" ns-args))
-  (string-to-number (nth 2 ns-args))))
+(ns/let-script-args
+ (start end step)
+ (mapcar (fn (eval `(color-rgb-to-hex ,@<> 2)))
+	 (color-gradient
+	  (color-name-to-rgb (format "#%s" start))
+	  (color-name-to-rgb (format "#%s" end))
+	  (string-to-number step))))

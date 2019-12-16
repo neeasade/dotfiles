@@ -1,59 +1,73 @@
 #!/bin/sh
-
-pgrep emacs >/dev/null || exit 1
+# provide a way to run elisp in a running emacs-server
+# can act as a shebang (ie #!/usr/bin/env elisp) or
+# adhoc code (ie elisp '(message "uwu")')
 
 trim=false
-
 if [ "$1" = "-r" ]; then
    trim=true
    shift
 fi
 
-eclient="emacsclient"
-
-# windows
-if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
-    eclient="${eclient}w --server-file $HOME/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
-fi
-
-# todo: if a script make timeout bigger than one
-emacs_timeout=
-if type timeout >/dev/null; then
-    emacs_timeout="timeout ${elisp_timeout:-1}"
-fi
-
+running_script=false
 if [ -f "$1" ]; then
-    filename=$1
+    running_script=true
+    script_name=$1
     shift
+fi
+
+eclient="emacsclient"
+if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
+    # windows
+    eclient="${eclient}w --server-file ${HOME}/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
+fi
+
+if [ -z "$script_name" ]; then
+    elisp_timeout=1
+    lisp="(progn $@)"
+else
+    trim=true
+    elisp_timeout=15 # arbitrary
+
     args=
     for a in "$@"; do
 	args="${args} \"${a}\""
     done
 
-    # echo "(ns/eval-file \"${filename}\" ${args})"
-    trim=true
-    result=$($emacs_timeout $eclient --eval "(ns/eval-file \"${filename}\" ${args})")
-else
-    result=$($emacs_timeout $eclient --eval "(progn $@)")
+    # todo: consider passing stdin
+    lisp="(ns/eval-file \"${script_name}\" ${args})"
 fi
 
+emacs_timeout=
+if type timeout >/dev/null; then
+    emacs_timeout="timeout ${elisp_timeout}"
+fi
+
+# echo "$lisp"
+result=$($emacs_timeout $eclient --eval "$lisp")
+
 if [ $? -eq 1 ]; then
-    # we could not reach emacs.
+    # we could not reach emacs, or we timed out.
     exit 1
 fi
 
 if [ "$result" = "nil" ] || [ -z "$result" ]; then
   exit 1
-else
-    if $trim; then
-	# trim a list, or quotes (surrounding characters).
-	echo "$result" | \
-	    sed -e 's/^(//' \
-		-e 's/^"//' \
-		-e 's/"$//' \
-		-e 's/)$//'
-    else
-	echo "$result"
-    fi
-    exit 0
 fi
+
+if $trim; then
+    case "$result" in
+	# (1 2 3) -> # 1 2 3
+	"("*) echo "$result" | sed -e 's/^(//' -e 's/)$//' ;;
+	# "\"~/.dotfiles/bin/bin/elisp\n~/.emacs.d/recentf\""
+	# -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
+	'"'*) result=$(printf "$result")
+	      echo "${result:1:${#result}-2}" ;;
+	# just print it
+	*) echo "$result" ;;
+    esac
+else
+    echo "$result"
+fi
+
+exit 0
