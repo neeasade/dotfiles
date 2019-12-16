@@ -1,0 +1,3 @@
+#!/bin/sh
+
+printf '%s' '-nf #546E7A -nb #FAFAFA -sf #FAFAFA -sb #546E7A -fn "Charter-10:style=Bold" -y 156 -x 476 -h 15 -w 408 -l 20 -i -p :'

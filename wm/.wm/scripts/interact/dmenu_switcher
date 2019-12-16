@@ -1,50 +1,49 @@
 #!/usr/bin/env bash
 # all switcher dmenu
 
-switch=""
-options=""
+options=
+declare -A matches_to_actions
 
 add_switch() {
   options="${options}"$'\n'"${1}"
-  switch="$switch '$(echo "${1}" | sed "s#'#\'\\\'\'#g")') ${2};;"
+  matches_to_actions["$1"]=$2
 }
 
-# windows
-for wid in $(bspc query -N -n .leaf); do
-  add_switch "window: $(xtitle $wid)" "bspc node $wid -g hidden=off; bspc node -f $wid"
-done
-
-# emacs buffers
-buffers="$(
-elisp '(-remove (lambda (buffer)
-           (or (s-match "magit" buffer)
-             (s-match "\*.*" buffer)))
-  (mapcar (function buffer-name)
-    (buffer-list)))
-' | sed 's/" "/\n/g;s/("//;s/")//'
-)"
-
-for buffer in $buffers; do
-  add_switch "buffer: $buffer" "select_action 'window: emacs' && elisp '(counsel-switch-to-buffer-or-window \"${buffer}\")'"
-done
-
-# qutebrowser tab titles
-open_urls() {
-  qb_command ':session-save'
-  grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
+add_windows() {
+    for wid in $(bspc query -N -n .leaf); do
+	add_switch "window: $(xtitle $wid)" "bspc node $wid -g hidden=off; bspc node -f $wid"
+    done
 }
 
-# for url in "$(open_urls)"; do
-while read -r url; do
-  add_switch "tab: $url" "select_action '\- qutebrowser' && qb_command ':buffer $(echo "$url" | sed "s/'//g;s/\"// ")'"
-done <<< "$(open_urls)"
+add_emacs_buffers() {
+    buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
+
+    for buffer in $buffers; do
+	# todo: the window select action does not work here to switch to emacs
+	add_switch "buffer: $buffer" "select_action 'window: emacs'; elisp '(find-file \"${buffer}\")'"
+    done
+}
+
+add_qutebrowser_tabs() {
+    open_urls() {
+	qb_command ':session-save'
+	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
+    }
+
+    while read -r url; do
+	add_switch "tab: $url" "select_action '\- qutebrowser'; qb_command ':buffer $(echo "$url" | sed "s/'//g;s/\"// ")'"
+    done <<< "$(open_urls)"
+}
 
 select_action() {
-  # allow partial match for emacs switch match call
-  # pause to rethink your life
-  target="$(echo "$options" | grep "$@")"
-  eval "case \"${target}\" in $switch esac"
+  # allow partial match
+  target=$(echo "$options" | grep "$*" | head -n 1)
+  echo "${matches_to_actions[${target}]}"
+  eval "${matches_to_actions[${target}]}"
 }
 
-switch="$switch *) ;;"
+add_windows
+add_emacs_buffers
+add_qutebrowser_tabs
+
 select_action "$(echo "$options" | dmenu "$@")"
