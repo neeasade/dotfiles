@@ -2,8 +2,9 @@
 
 (ns/let-script-args
  (start end step)
- (mapcar (fn (eval `(color-rgb-to-hex ,@<> 2)))
-	 (color-gradient
-	  (color-name-to-rgb (format "#%s" start))
-	  (color-name-to-rgb (format "#%s" end))
-	  (string-to-number step))))
+ (ns/make-lines
+  (mapcar (fn (eval `(color-rgb-to-hex ,@<> 2)))
+	  (color-gradient
+	   (color-name-to-rgb (format "#%s" start))
+	   (color-name-to-rgb (format "#%s" end))
+	   (string-to-number step)))))
