@@ -23,11 +23,11 @@ if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
 fi
 
 if [ -z "$script_name" ]; then
-    elisp_timeout=1
+    elisp_timeout=${elisp_timeout:-1}
     lisp="(progn $@)"
 else
     trim=true
-    elisp_timeout=15 # arbitrary
+    elisp_timeout=${elisp_timeout:-15} # arbitrary
 
     args=
     for a in "$@"; do
@@ -44,7 +44,7 @@ if type timeout >/dev/null; then
 fi
 
 # echo "$lisp"
-result=$($emacs_timeout $eclient --eval "$lisp")
+result=$($emacs_timeout $eclient --eval "$lisp" 2>/dev/null)
 
 if [ $? -eq 1 ]; then
     # we could not reach emacs, or we timed out.
