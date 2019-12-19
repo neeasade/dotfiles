@@ -2,18 +2,12 @@
 
 . $HOME/.sh.d/environment
 
-xrdb -load $HOME/.Xresources &
-compton &
-unclutter -idle 1 &
-pcmanfm -d &
-mpd $HOME/.config/mpd/mpd.conf &
-dunst &
-wmname LG3D &
-xsetroot -cursor_name left_ptr &
-nm-applet &
-(. $HOME/.wm_theme; $BG_COMMAND) &
+xrdb -load $HOME/.Xresources
+wmname LG3D
+xsetroot -cursor_name left_ptr
+$(theme getval BG_COMMAND)
 
-export xstart=`date +%s`
+export xstart=$(date +%s)
 
 # launched by display manager bspwm desktop entry.
 # sxhkd -c $HOME/.config/sxhkd/sxhkdrc &

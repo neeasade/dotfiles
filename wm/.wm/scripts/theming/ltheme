@@ -243,10 +243,10 @@ load_dunst() {
     # WIDTHxHEIGHT+XOFF+YOFF
     # height is the number of notifications that can be open
 
-    d_width=400
+    mon_width=$(bspc query -T -m | jq .rectangle.width)
+    d_width=$(echo .24 \* $mon_width | bc | sed 's/\..*//')
 
-    # todo: make this a theme option: make dunst width dynamic
-
+    # todo: make this a theme option
     # top center
     # mon_width=$(bspc query -T -m | jq -r .rectangle.width)
     # d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
@@ -257,8 +257,9 @@ load_dunst() {
 
     margs dunstrc .config/dunst/dunstrc
 
-    pkill dunst
+    # pkill dunst
     # dunst will auto-launch on notify-send call
+    systemctl --user restart dunst
 }
 
 load_mpd() {
@@ -345,8 +346,8 @@ load_services() {
     # note: PATH is set to whatever PATH is when you call this script
     make_service() {
 	export service_name=$1
-	export ExecStart=$2
-	export Description=$3
+	export ExecStart=${2:-$1}
+	export Description=${3:-$1}
 
 	margs systemd_service .config/systemd/user/${service_name}.service
 
@@ -367,6 +368,14 @@ load_services() {
     make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
     make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
+
+    make_service compton
+    make_service dunst
+    make_service unclutter 'unclutter -idle 1'
+    make_service nm-applet
+
+    # todo: correct lemon mpd naming conflict
+    make_service mpd "/run/current-system/sw/bin/mpd $HOME/.config/mpd/mpd.conf"
 }
 
 if uname | grep -q MINGW; then
