@@ -5,10 +5,10 @@
 b_border_width=3
 b_window_gap=10
 b_split_ratio=0.5
-b_normal_border_color="$color0"
-b_active_border_color="$color8"
-b_focused_border_color="$foreground"
-b_presel_feedback_color="$color8"
+b_normal_border_color=$color0
+b_active_border_color=$color8
+b_focused_border_color=$foreground
+b_presel_feedback_color=$color8
 b_desktop_names="00 01 10 11"
 b_monocle_window_percent=.65
 
@@ -51,10 +51,10 @@ p_title_show_mode=monocle         # used by title.
 # Panel colors
 p_bg_normal="#ff$background"
 p_fg_normal="#ff$foreground"
-p_bg_active="$p_fg_normal"
-p_fg_active="$p_bg_normal"
-p_bg_inactive="$p_bg_normal"
-p_fg_inactive="$p_fg_normal"
+p_bg_active=$p_fg_normal
+p_fg_active=$p_bg_normal
+p_bg_inactive=$p_bg_normal
+p_fg_inactive=$p_fg_normal
 
 # panel icon colors - also used to color acyl icons, and qutebrowser match color.
 # Workspace variables
@@ -101,7 +101,7 @@ p_dynamicmpd_mouse_right="player.sh next"
 emacs_theme="xresources"
 emacs_powerline_scale="1.6"
 
-# options
+# options (spaceline)
 # alternate, arrow, arrow-fade, bar, box, brace, butt, chamfer, contour, curve, rounded, roundstub, wave, zigzag, utf-8.
 emacs_powerline="bar"
 
@@ -118,7 +118,7 @@ GTK_FONT="Droid Sans 10" # GTK font to be used.
 
 # dunst
 d_font="Droid Sans 10" # Font used by dunst on startup
-d_border_color="$b_normal_border_color"
+d_border_color=$b_normal_border_color
 
 # compton
 c_frame_opacity="1.0"
@@ -138,7 +138,7 @@ c_fade_out_step="0.1"
 # promptchar to be set for st and dmenu
 PROMPT_CHAR='$'
 
-tmux_statusbar="$(cat <<EOF
+tmux_statusbar=$(cat <<EOF
 setw -g window-status-current-format '▄▄'
 setw -g window-status-format '▄▄'
 setw -g window-status-bg default
@@ -154,7 +154,7 @@ set -g status-justify right
 set -g status-left ''
 set -g status-right ''
 EOF
-)"
+)
 
 # mpd
 music_dir="$HOME/Music"
@@ -173,12 +173,6 @@ border_color_in_normal=$color2
 border_color_in_focused=$color3
 
 if type greaten >/dev/null; then
-    border_color_in_normal=$(greaten $border_color_out_normal 30)
-    border_color_in_focused=$(greaten $border_color_out_focused 30)
+    border_color_in_normal=$(greaten 30 $border_color_out_normal)
+    border_color_in_focused=$(greaten 30 $border_color_out_focused)
 fi
-
-# default template targets
-# this allows themes to replace template files with different targets, by defining ${target}_template
-for template in $(ls $HOME/.dotfiles/templates); do
-    eval ${template}_template="$HOME/.dotfiles/templates/${template}"
-done

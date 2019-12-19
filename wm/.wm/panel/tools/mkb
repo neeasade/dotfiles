@@ -1,11 +1,10 @@
 #!/bin/sh
-# usage: mkb ${percent}
+# usage: mkb <percent> <size>
 # port of http://git.z3bra.org/mkb/file/mkb.c.html
-# TODO: consider tying in the options here into themes.
 
 # args
-progress="$1"
-size="$2"
+progress=$1
+size=$2
 
 eval "$(theme get)"
 
@@ -26,6 +25,7 @@ for i in $(seq 1 $size); do
         $passed && current="$l_empty" || current="$l_sep"
         passed=true
     fi
+
     content="${content}${current}"
 done
 content="${content}${l_end}"

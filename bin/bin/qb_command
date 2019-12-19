@@ -1,11 +1,14 @@
 #!/bin/sh
 # ($_url is any command)
 
+if ! pgrep qutebrowser >/dev/null; then
+    exit 1
+fi
+
 _qb_version='1.0.4'
 _proto_version=1
 _ipc_socket="${XDG_RUNTIME_DIR}/qutebrowser/ipc-$(echo -n "$USER" | md5sum | cut -d' ' -f1)"
 _url="$@"
-
 
 printf '{"args": ["%s"], "target_arg": null, "version": "%s", "protocol_version": %d, "cwd": "%s"}\n' \
     "${_url}" \

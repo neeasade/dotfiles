@@ -12,9 +12,11 @@ battery() {
     BATC=/sys/class/power_supply/BAT0/capacity
     BATS=/sys/class/power_supply/BAT0/status
 
-    if [ ! "$(cat $BATS)" = "Charging" ]; then
-	c=$(cat $BATC)
-	maybe_alert "[ $c -lt 20 ]" "battery" "low battery! %$c"
+    if [ -f "$BATS" ]; then
+	if [ ! "$(cat $BATS)" = "Charging" ]; then
+	    c=$(cat $BATC)
+	    maybe_alert "[ $c -lt 20 ]" "battery" "low battery! %$c"
+	fi
     fi
 }
 
@@ -24,7 +26,7 @@ cpu_temp() {
 	current=$(echo "$line" | awk '{print $3}' | grep -m 1 -oE '[0-9][0-9]+')
 	# high=$(echo "$line" | awk '{print $6}' | grep -m 1 -oE '[0-9][0-9]+')
 	# thinking -- under 80 is OK, under 100 is safe
-	high=95
+	high=$(iif 'pgrep dota2' 95 80)
 	core=$(echo "$line" | awk '{print $1$2}')
 
 	maybe_alert "[ $current -gt $high ]" "high CPU temp!"  "$core ${current}C"
@@ -32,5 +34,7 @@ cpu_temp() {
 }
 
 # battery
-cpu_temp
+# cpu_temp
+
+$1
 echo

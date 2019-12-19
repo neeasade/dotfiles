@@ -1,0 +1,15 @@
+#!/bin/sh
+# 2lazy
+
+interval=$1
+shift
+
+while true; do
+    echo "[$(date)] calling $*"
+    if ! "$@"; then
+	notify-send "script failed! $target"
+	# todo: consider stopping in this case -- then the systemd user service would fail
+    fi
+
+    sleep $interval
+done

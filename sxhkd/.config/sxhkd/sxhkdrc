@@ -98,7 +98,7 @@ super + o
 # dmenu
 super + {_,shift,alt} + space
     action={run,pass,switcher}; \
-    export GTK_THEME="$(theme getval GTK_THEME)"; \
+    export GTK_THEME=$(theme getval GTK_THEME); \
     dmenu_$action $(dmenu_options $action)
 
 XF86Audio{Prev,Next,Play}

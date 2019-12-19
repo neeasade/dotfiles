@@ -26,11 +26,11 @@ draw() {
     if $reverse; then
 	step=$((step-1))
 	# [ $stripe_width -gt 0 ] && stripe_width=$((stripe_width-1))
-	focused=$(greaten $focused $accent)
+	focused=$(greaten $accent $focused)
     else
 	step=$((step+1))
 	# stripe_width=$((stripe_width+1))
-	focused=$(lessen $focused $accent)
+	focused=$(lessen $accent $focused)
     fi
 
     if $reverse; then

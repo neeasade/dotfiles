@@ -7,7 +7,13 @@
 
 # relative calling
 cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
-PATH="$PATH:."
+export PATH="$PATH:$(pwd)"
+
+# default template targets
+# this allows themes to replace template files with different targets, by defining ${target}_template
+for template in $(ls $HOME/.dotfiles/templates); do
+    eval ${template}_template="$HOME/.dotfiles/templates/${template}"
+done
 
 eval "$(theme get)"
 set -a
@@ -34,7 +40,7 @@ fi
 # <destination> is relative to $HOME
 margs() {
     cache=false
-    template="$(eval echo \$${1}_template)"
+    template=$(eval echo \$${1}_template)
     target="$HOME/$2"
     mkdir -p "${target%/*}"
 
@@ -320,6 +326,47 @@ load_mintty() {
     fi
 
     margs mintty .minttyrc
+}
+
+load_services() {
+    # clean
+    find ${HOME}/.config/systemd/user/ -type f -delete
+
+    running_services=$(systemctl --user list-units | awk '{print $1}' | grep '\.service' | sort)
+    installed_services=$(systemctl --user list-unit-files | awk '{print $1}' | grep '\.service' | sort)
+
+    # kill the in memory services that have no service files associated
+    for s in $running_services; do
+	if ! grep -q $s <<< "$installed_services"; then
+	    systemctl --user stop $s
+	fi
+    done
+
+    # note: PATH is set to whatever PATH is when you call this script
+    make_service() {
+	export service_name=$1
+	export ExecStart=$2
+	export Description=$3
+
+	margs systemd_service .config/systemd/user/${service_name}.service
+
+	# note: there might need to be a delay between unit file creation and start
+	# todo: see how to do that/maybe a systemd --refresh or something
+	systemctl --user start ${service_name}
+	systemctl --user enable ${service_name}
+    }
+
+    make_periodic_service() {
+	# todo: time this or something
+	interval=$1
+	shift
+	make_service "$1" "$(which daemonify) $interval $2" "$3"
+    }
+
+    # checkers
+    make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
+    make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
+    make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
 }
 
 if uname | grep -q MINGW; then
