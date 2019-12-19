@@ -48,6 +48,16 @@ result=$($emacs_timeout $eclient --eval "$lisp" 2>/dev/null)
 
 if [ $? -eq 1 ]; then
     # we could not reach emacs, or we timed out.
+
+    # if we were running a script, try to save by defaulting to last arg
+    if [ ! -z "$script_name" ]; then
+	while [ ! -z "$*" ]; do
+	    last=$1
+	    shift
+	done
+	echo "$last"
+    fi
+
     exit 1
 fi
 

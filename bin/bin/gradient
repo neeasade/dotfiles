@@ -1,4 +1,5 @@
 #!/usr/bin/env elisp
+;; note: not inclusive -- just the steps inbetween the colors
 
 (ns/let-script-args
  (start end step)

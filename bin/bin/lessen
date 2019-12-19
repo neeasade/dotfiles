@@ -1,7 +1,12 @@
 #!/usr/bin/env elisp
+;; make dark colors lighter
+;; make light colors darker
 
-(let ((color (concat "#" (first ns-args)))
-      (percent (string-to-number (second ns-args))))
-  (if (ns/color-is-light-p color)
-      (color-darken-name color percent)
-    (color-lighten-name color percent)))
+(ns/let-script-args
+ (percent color)
+ (let ((color (concat "#" color))
+       (percent (string-to-number percent)))
+   (ns/shorten-color
+    (if (ns/color-is-light-p color)
+	(color-darken-name color percent)
+      (color-lighten-name color percent)))))
