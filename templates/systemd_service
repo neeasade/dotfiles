@@ -1,0 +1,9 @@
+[Unit]
+Description={{Description}}
+
+[Service]
+ExecStart={{ExecStart}}
+Environment=PATH={{PATH}}
+
+[Install]
+WantedBy=default.target

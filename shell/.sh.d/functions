@@ -16,6 +16,11 @@ pfetch() {
 }
 
 blog_add_post() {
+  if [ -z "$*" ]; then
+    echo "provide a title"
+    return
+  fi
+
   title=$(echo "$*" | sed 's/ /-/g')
 
   date=$(date +%Y-%m-%d)

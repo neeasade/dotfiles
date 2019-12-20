@@ -1,6 +1,5 @@
 #!/bin/sh
 
 while true; do
-	export xstart=`date +%s`
-	bspwm > .xinit-${xstart}.log 2>&1 || break
+    bspwm >${HOME}/.xinit-$(date +%s).log 2>&1 || break
 done

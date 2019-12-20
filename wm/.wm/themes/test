@@ -24,8 +24,7 @@ colors() {
 
 settings() {
     # theme
-    BG_COMMAND="feh --bg-tile $HOME/.wm/walls/tiled/seigaiha.png"
-    # BG_COMMAND="/run/current-system/sw/bin/feh --bg-tile '/media/LIVEWIRE/Archive/other/squidd/pattern_125.gif'"
+    BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
 
     emacs_theme="apropospriate-light"
     emacs_powerline_scale="1.0"

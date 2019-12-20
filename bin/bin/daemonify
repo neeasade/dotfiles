@@ -8,7 +8,9 @@ while true; do
     echo "[$(date)] calling $*"
     if ! "$@"; then
 	notify-send "script failed! $target"
-	# todo: consider stopping in this case -- then the systemd user service would fail
+	echo "failed! $*">&2
+	# fail the service
+	exit 1
     fi
 
     sleep $interval

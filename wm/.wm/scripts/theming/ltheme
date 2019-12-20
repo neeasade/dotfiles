@@ -6,7 +6,7 @@
 # setup:
 
 # relative calling
-cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
+cd $(dirname $([ -L $0 ] && readlink -f $0 || echo $0))
 export PATH="$PATH:$(pwd)"
 
 # default template targets
@@ -91,9 +91,8 @@ load_tmux() {
 }
 
 load_compton() {
-    pkill compton
     margs compton .config/compton.conf
-    compton &
+    systemctl --user restart compton
 }
 
 load_bg() {
@@ -175,7 +174,6 @@ load_lemonade() {
         ) &
     done
 }
-
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
     trim_alphas
@@ -400,4 +398,5 @@ for conf in $targets; do
 done
 IFS=
 
+# leave our children to fate.
 disown

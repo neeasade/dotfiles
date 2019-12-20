@@ -11,7 +11,7 @@ die() {
 getval() {
     (
 	eval "$(get)"
-	eval printf \%s \$$1
+	eval printf \%s \"\$$1\"
     )
 }
 
