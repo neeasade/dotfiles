@@ -72,6 +72,11 @@ if $did_something; then
 	bspc desktop -r $did
     done
 
-    # reset our monocle setting
+    # reset our monocle measurement
     "$HOME/.config/bspwm/bspwmrc"
+
+    # todo: this appears to always trigger on external display
+    echo "did something"
+    theme refresh dmenu_options
+    # theme refresh dunst
 fi

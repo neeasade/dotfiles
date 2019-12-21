@@ -263,7 +263,7 @@ load_dunst() {
 load_mpd() {
     mkdir "$HOME/.config/mpd/playlists"
     margs mpd .config/mpd/mpd.conf
-    # todo: you should restart mpd, no?
+    systemctl --user restart mpd
 }
 
 load_mpd_windows() {
@@ -331,6 +331,18 @@ load_services() {
     # clean
     find ${HOME}/.config/systemd/user/ -type f -delete
 
+    # running_services=$(systemctl --user list-units | awk '{print $1}' | grep '\.service' | sort)
+    running_services=$(systemctl --user list-units  | grep -oE '[a-zA-Z_]+.service')
+    installed_services=$(systemctl --user list-unit-files | awk '{print $1}' | grep '\.service' | sort)
+
+    # stop the in memory services that have no service files associated
+    for s in $running_services; do
+	if ! grep -q $s <<< "$installed_services"; then
+	    echo systemctl --user stop $s
+	    systemctl --user stop $s
+	fi
+    done
+
     made_services=
     # note: service PATH is set to whatever PATH is when you call this script
     make_service() {
@@ -352,7 +364,7 @@ load_services() {
 	# todo: time this or something
 	interval=$1
 	shift
-	make_service "$1" "$(which daemonify) $interval $2" "$3"
+	make_service "$1" "daemonify $interval $2" "$3"
     }
 
     # checkers
@@ -361,14 +373,14 @@ load_services() {
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
 
     make_service compton
-    make_service dunst
     make_service unclutter 'unclutter -idle 1'
     make_service nm-applet
+    make_service dunst
 
     # todo: correct lemon mpd naming conflict
-    make_service mpd "/run/current-system/sw/bin/mpd $HOME/.config/mpd/mpd.conf"
+    make_service mpd "/run/current-system/sw/bin/mpd --no-daemon $HOME/.config/mpd/mpd.conf"
 
-    # reload units (will also stop any services that don't have unit files):
+    # reload units
     systemctl --user daemon-reload
 
     # start and enable our units
@@ -380,9 +392,9 @@ load_services() {
 
 if uname | grep -q MINGW; then
     # windows
-    targets="${*:-mintty mpd_windows tmux}"
+    targets=${*:-mintty mpd_windows tmux}
 else
-    targets="${*:-compton tmux xresources bspwm bg gtk dunst qutebrowser zathura}"
+    targets=${*:-compton tmux xresources bspwm bg gtk dunst qutebrowser zathura}
 fi
 
 # targets="${*:-compton tmux xresources bspwm bg dunst qutebrowser}"

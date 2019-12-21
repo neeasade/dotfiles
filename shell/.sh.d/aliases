@@ -1,5 +1,6 @@
 # -*- mode: sh -*-
 
+
 alias qq=colemak
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
 alias grep="grep --color=auto"

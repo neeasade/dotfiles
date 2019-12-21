@@ -3,7 +3,11 @@ Description={{Description}}
 
 [Service]
 ExecStart={{ExecStart}}
+ExecStop={{{which kill}}} -int $MAINPID
+
 Environment=PATH={{PATH}}
+Environment=DISPLAY="{{DISPLAY}}"
+Environment=XAUTHORITY="{{XAUTHORITY}}"
 
 [Install]
 WantedBy=default.target

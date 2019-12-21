@@ -109,7 +109,7 @@ XF86Audio{LowerVolume,RaiseVolume,Mute}
     amixer -q set Master {3%-,3%+,toggle}
 
 super + Escape
-    pkill -USR1 -x sxhkd
+    notify-send "reloading sxhkd!"; pkill -USR1 -x sxhkd
 
 # from here down are keys that I'm treating like macro keys
 

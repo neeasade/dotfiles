@@ -63,8 +63,7 @@ choose() {
 }
 
 refresh() {
-  eval "$(get)"
-  load "$THEME_NAME" "$@"
+  load "$(theme getval THEME_NAME)" "$@"
 }
 
 # future self: this is done on purpose, shell arg quoting is dumb.

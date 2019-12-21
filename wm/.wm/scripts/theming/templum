@@ -41,7 +41,8 @@ while IFS= read -r line; do
         code+=${code_line%%"${delim[1]}"*}
         line=${code_line#*"${delim[1]}"}
         if [[ $type == block ]]; then
-            eval "$code"
+            result=$(eval "$code")
+            printf '%s' "$result"
         else
             eval "printf '%s' \"\$$code\""
         fi

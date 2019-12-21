@@ -5,7 +5,7 @@ interval=$1
 shift
 
 while true; do
-    echo "[$(date)] calling $*"
+    echo "calling $*"
     if ! "$@"; then
 	notify-send "script failed! $target"
 	echo "failed! $*">&2
