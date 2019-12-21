@@ -4,7 +4,8 @@
 maybe_alert() {
     echo $*
     if $1; then
-	notify-send -u low "$2" "$3"
+	# notify-send -u low "$2" "$3"
+	notify-send "$2" "$3"
     fi
 }
 

@@ -3,6 +3,7 @@
 # won't do anything if the desired state is already set, so can be called periodically
 # call with resolution if you wish to change it (see xrandr for available resolutions and display names)
 
+# get these from xrandr
 external_monitor=HDMI-1
 laptop_monitor=LVDS-1
 

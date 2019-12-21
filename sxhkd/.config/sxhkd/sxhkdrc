@@ -4,6 +4,7 @@ super + {_,shift} + w
     bspc node -{c,k}
 
 # take a tiled window, make it floating, but in the same position of the tile
+# todo: get this script from backup
 super + S
     nfloat
 
