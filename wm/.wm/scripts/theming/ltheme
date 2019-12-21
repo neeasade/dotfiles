@@ -332,15 +332,15 @@ load_services() {
     find ${HOME}/.config/systemd/user/ -type f -delete
 
     # running_services=$(systemctl --user list-units | awk '{print $1}' | grep '\.service' | sort)
-    running_services=$(systemctl --user list-units  | grep -oE '[a-zA-Z_]+.service')
+    running_services=$(systemctl --user list-units  | grep -oE '[a-zA-Z_]+.service' | tr '\n' ' ')
     installed_services=$(systemctl --user list-unit-files | awk '{print $1}' | grep '\.service' | sort)
 
     # stop the in memory services that have no service files associated
     for s in $running_services; do
-	if ! grep -q $s <<< "$installed_services"; then
-	    echo systemctl --user stop $s
-	    systemctl --user stop $s
-	fi
+    	if ! grep -q $s <<< "$installed_services"; then
+    	    echo systemctl --user stop $s
+    	    systemctl --user stop $s
+    	fi
     done
 
     made_services=
@@ -361,7 +361,7 @@ load_services() {
     }
 
     make_periodic_service() {
-	# todo: time this or something
+	# todo: consider making this a systemd timer
 	interval=$1
 	shift
 	make_service "$1" "daemonify $interval $2" "$3"

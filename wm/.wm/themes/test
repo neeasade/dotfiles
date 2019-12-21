@@ -27,6 +27,7 @@ settings() {
     BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
 
     emacs_theme="apropospriate-light"
+    emacs_theme="base16-grayscale-light"
     emacs_powerline_scale="1.0"
     PROMPT_CHAR='>>'
 
