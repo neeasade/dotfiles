@@ -57,7 +57,7 @@ super + shift + {1-9}
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
-    {bspc node -i,for win in `bspc query -N -d -n .leaf.!window`; do bspc node $win -k; done}
+    {bspc node -i,for win in $(bspc query -N -d -n .leaf.!window); do bspc node $win -k; done}
 
 # rotate, balance
 super + {_,shift} + semicolon
@@ -129,8 +129,8 @@ XF86MonBrightness{Down,Up}
 
 # you are already using comma and period for window children lol
 # < > `
-super + {comma,period,grave}
-    player.sh {prev,next,toggle}
+# super + {comma,period,grave}
+#     player.sh {prev,next,toggle}
 
 F9
     sh -c "$(. $HOME/.profile && shot)"
