@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # -*- eval: (setq-local sh-basic-offset 2) -*-
+# wrap the importing of music from the internet
+# define music playlists by search terms
 
 
 musicdir="$HOME/Music"

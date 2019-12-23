@@ -34,8 +34,9 @@ cpu_temp() {
     done
 }
 
-# battery
-# cpu_temp
-
-$1
-echo
+if [ -z "$*" ]; then
+    echo "options: battery cpu_temp "
+    echo
+else
+    $1
+fi

@@ -54,7 +54,7 @@ SXHKD_SHELL=sh
 MPDCRON_DIR="$HOME/.config/mpd"
 _JAVA_AWT_WM_NONREPARENTING=1
 LANG="en_US.UTF-8"
-TERMCMD="$TERMINAL"
+TERMCMD=$TERMINAL
 PAGER="less"
 
 # if has npm; then
@@ -103,7 +103,6 @@ succ .local/bin
 # CPATH="$HOME/.guix-profile/include${CPATH:+:}$CPATH"
 # LIBRARY_PATH="$HOME/.guix-profile/lib${LIBRARY_PATH:+:}$LIBRARY_PATH"
 # PYTHONPATH="$HOME/.guix-profile/lib/python3.6/site-packages${PYTHONPATH:+:}$PYTHONPATH"
-
 
 REMOTE=false
 

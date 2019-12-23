@@ -27,7 +27,7 @@ l_end=""
 p_format="dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
 p_height=16                  # Panel height.
 p_font_main="Droid Sans-8"   # Panel main font.
-p_font_icon="FontAwesome-10" # Panel Icon font.
+p_font_icon="Font Awesome 5 Free-10" # Panel Icon font.
 p_icon_enable=true           # toggle icon script output
 p_gap=4                      # Gaps of panel off screen.
 p_padding=4                  # number of pixels to pad panel information (sections/blocks) with
@@ -64,6 +64,7 @@ p_desktop_tiling_label=''
 p_desktop_monocle_label='M'
 
 # default reload times for panel sections
+p_network_reload=30
 p_mail_reload=30
 # p_desktop_reload="bspc subscribe"
 p_desktop_reload="cgrep bgroups && cat /tmp/bspgroups_out || bspc subscribe"

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 . $HOME/.sh.d/environment
 

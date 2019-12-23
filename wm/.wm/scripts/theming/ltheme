@@ -286,8 +286,7 @@ load_dmenu_options() {
 	bspc query -T -m | jq .rectangle.$1
     }
 
-    width=$(bspc query -T -m | jq .rectangle.width)
-    width=$(echo .30 \* $width | bc | sed 's/\..*//')
+    width=$(echo .30 \* $(dim width) | bc | sed 's/\..*//')
 
     # need a dmenu with xft font handling
     # todo: txth -f "xft:${p_font_main}:style=Regular" -s $font_size "asdf"

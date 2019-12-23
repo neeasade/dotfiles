@@ -9,9 +9,7 @@ if [ "$1" = "-r" ]; then
    shift
 fi
 
-running_script=false
 if [ -f "$1" ]; then
-    running_script=true
     script_name=$1
     shift
 fi
@@ -35,6 +33,7 @@ else
     done
 
     # todo: consider passing stdin
+    # todo: if the script_name contains a '(provide)' consider just loading rather than eval-file
     lisp="(ns/eval-file \"${script_name}\" ${args})"
 fi
 

@@ -18,7 +18,7 @@ colors() {
     color14=41A4F4
     color15=536D79
     foreground=546E7A
-    background=FAFAFA
+    background=F7F7F7
     cursorColor=8B94C6
 }
 
@@ -50,7 +50,10 @@ xpad &
     # p_fg_active="#ff525252"
     # p_bg_active="#ffb9b9b9"
 
-    p_format="dropdown:desktop:circe_dms:title|org_task|mpd:volume:weather:clock"
+    # p_format="dropdown:desktop:circe_dms:title|org_task|mpd:volume:weather:clock"
+    p_format="battery|desktop|network"
+    p_offset="-3"
+
     p_title_show_mode=active         # used by title.
 
     p_height=25
@@ -61,14 +64,16 @@ xpad &
     p_padding=6
 
     # p_font_main="Charter-10:style=Bold"
-    p_font_main="Charter-10:style=Bold"
+    p_font_main="Equity Text B-13"
+    # p_font_main="Charter-10:style=Bold"
     p_font_icon="FontAwesome-10" # Panel Icon font.
     p_icon_enable=false
+    p_desktop_display_name=name
     # d_font="Go Mono for Powerline 14"
     d_font="Equity Text A 12"
 
-    p_desktop_occupied_label=$(uchar f111)
-    p_desktop_empty_label=$(uchar f1db)
+    # p_desktop_occupied_label=$(uchar f111)
+    # p_desktop_empty_label=$(uchar f1db)
 
     p_desktop_tiling_label=''
     p_desktop_monocle_label=$(uchar f00b)
@@ -110,25 +115,24 @@ stepSetup() {
     separateStep
 }
 
-fg() {
-    iif $(even_section) "525252" "a4a4a4"
-}
+# fg() {
+#     iif $(even_section) "525252" "a4a4a4"
+# }
 
+# activebg() {
+#     bg
+# }
 
-activebg() {
-    bg
-}
+# bg() {
+#     iif $(even_section) "b9b9b9" "f7f7f7"
+# }
 
-bg() {
-    iif $(even_section) "b9b9b9" "f7f7f7"
-}
+# suffix() {
+#     border="%%{B#FFcecece}%%{O2}%%{B-}"
+#     iif $(even_section) "$border" ""
+# }
 
-suffix() {
-    border="%%{B#FFcecece}%%{O2}%%{B-}"
-    iif $(even_section) "$border" ""
-}
-
-prefix() {
-    border="%%{B#FFcecece}%%{O2}%%{B-}"
-    iif $(even_section) "$border" ""
-}
+# prefix() {
+#     border="%%{B#FFcecece}%%{O2}%%{B-}"
+#     iif $(even_section) "$border" ""
+# }
