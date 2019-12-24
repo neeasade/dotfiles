@@ -100,14 +100,13 @@ super + o
 super + {_,shift,alt} + space
     action={run,pass,switcher}; \
     export GTK_THEME=$(theme getval GTK_THEME); \
-    dmenu_$action $(dmenu_options $action)
+    eval dmenu_$action $(dmenu_options $action)
 
 XF86Audio{Prev,Next,Play}
      mpc -q {prev,next,toggle}
 
-# todo: shouldn't this be a ponymix call like below??
-XF86Audio{LowerVolume,RaiseVolume,Mute}
-    amixer -q set Master {3%-,3%+,toggle}
+XF86Audio{LowerVolume,RaiseVolume}
+    ponymix {decrease,increase} 5; notify-send --urgency=low "Volume: $(ponymix get-volume)"
 
 super + Escape
     notify-send "reloading sxhkd!"; pkill -USR1 -x sxhkd
@@ -115,6 +114,9 @@ super + Escape
 # from here down are keys that I'm treating like macro keys
 
 # mute toggle
+XF86AudioMute
+    ponymix toggle
+
 Pause
     ponymix toggle
 
