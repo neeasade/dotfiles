@@ -62,23 +62,33 @@
     ;; (sh "bspc config pointer_follows_focus false")
     ))
 
-(defn group-focus [group]
-  "focus the last known window in the group - also note it as the focused pid"
+(defn action-focus "focus <group names>"
+  [& groups]
   )
 
-(defn group-toggle [& groups]
-  "toggle visibility of the group"
-  (->> (:groups state)
-       (filter :active)
-       ;; (contains?) is weird -- is index on seqs, no value
-       ;; and on sets can be value since they are the same thing
-       (filter #(contains? (set groups) (:name %)))
-       (map (update))
-       (map :wids)
-       (apply set/union))
-  )
+(defn action-toggle
+  "toggle <group names>"
+  [& groups]
+  (def state
+    ;; (contains?) is weird -- is index on seqs, no value
+    ;; and on sets can be value since they are the same thing
+    ;; (filter #(contains? (set groups) (:name %)))
+    (update
+     state
+     :groups
+     (fn [old-groups]
+       (concat
+        ;; unchanged (filter and just keep)
+        (filter #(not (contains? (set groups) (:name %))) (:groups state))
 
-(defn action-group-names
+        ;; changing (filter and change)
+        (->> (:groups state)
+             (filter #(contains? (set groups) (:name %)))
+             (map #(update % :active (fn [old-active] (not old-active)))))
+
+        )))))
+
+(defn action-names
   "get all the group names"
   [] (->> state :groups (map :name) (map println) doall))
 
@@ -92,38 +102,29 @@
        (map :wids)
        (apply set/union)))
 
-(defn toggle-group [group]
-  (let [lgroup (keyword (str group))]
-    (def state
-      (update
-       state :active
-       #(if ((:active state) lgroup)
-          (disj % lgroup)
-          (conj % lgroup))))
-    (group-focus lgroup)))
+;; need to update this
+;; (defn toggle-wid-group [wid group]
+;;   (def state
+;;     (update state
+;;             :groups
+;;             (fn [groups]
+;;               (update groups
+;;                       (keyword (str group))
+;;                       #(if (% wid)
+;;                          (disj % wid)
+;;                          (conj % wid))))))
 
-(defn toggle-wid-group [wid group]
-  (def state
-    (update state
-            :groups
-            (fn [groups]
-              (update groups
-                      (keyword (str group))
-                      #(if (% wid)
-                         (disj % wid)
-                         (conj % wid))))))
-
-  (group-focus (keyword (str group))))
+;;   (group-focus (keyword (str group))))
 
 ;; return a version of state similar to bspc subscribe
 ;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
 (defn group-to-print-section [group]
-  (let [char (-> (:wids group) empty? (if "f" "o"))]
-    (format "%s%s"
-            (if (:active group) (str/upper-case char) char)
-            (:name group))))
+(let [char (-> (:wids group) empty? (if "f" "o"))]
+  (format "%s%s"
+          (if (:active group) (str/upper-case char) char)
+          (:name group))))
 
-(defn action-print-state
+(defn action-state
   "print the state matching bspc subscribe format"
   []
   (println
@@ -139,6 +140,7 @@
        keys
        (map str)
        (filter #(str/starts-with? % "action-"))
+       (sort)
        (map #(format "%s: %s"
                      (subs % (count "action-"))
                      ;; so hot
@@ -151,8 +153,14 @@
 (defn action--h "usage" []
   (usage))
 
-(if *command-line-args*
-  (apply
-   (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-   (rest *command-line-args*))
-  (action--h))
+(action-state)
+(action-toggle "01")
+(action-state)
+(action-toggle "01")
+(action-state)
+
+;; (if *command-line-args*
+;;   (apply
+;;    (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+;;    (rest *command-line-args*))
+;;   (action--h))
