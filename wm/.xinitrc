@@ -5,7 +5,7 @@
 xrdb -load $HOME/.Xresources
 wmname LG3D
 xsetroot -cursor_name left_ptr
-eval "$(theme getval BG_COMMAND)"
+theme refresh bg
 xbright
 
 export xstart=$(date +%s)

@@ -102,6 +102,9 @@ super + {_,shift,alt} + space
     export GTK_THEME=$(theme getval GTK_THEME); \
     eval dmenu_$action $(dmenu_options $action)
 
+super + grave
+     player.sh toggle
+
 XF86Audio{Prev,Next,Play}
      mpc -q {prev,next,toggle}
 

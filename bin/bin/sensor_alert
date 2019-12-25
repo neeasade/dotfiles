@@ -25,9 +25,9 @@ cpu_temp() {
     sensors | grep Core | while read -r line; do
 	# Core 1:        +52.0°C  (high = +87.0°C, crit = +105.0°C)
 	current=$(echo "$line" | awk '{print $3}' | grep -m 1 -oE '[0-9][0-9]+')
-	# high=$(echo "$line" | awk '{print $6}' | grep -m 1 -oE '[0-9][0-9]+')
+	high_sensor=$(echo "$line" | awk '{print $6}' | grep -m 1 -oE '[0-9][0-9]+')
 	# thinking -- under 80 is OK, under 100 is safe
-	high=$(iif 'pgrep dota2' 95 80)
+	high=$(iif 'pgrep dota2' 95 $high_sensor)
 	core=$(echo "$line" | awk '{print $1$2}')
 
 	maybe_alert "[ $current -gt $high ]" "high CPU temp!"  "$core ${current}C"

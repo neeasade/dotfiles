@@ -1,70 +1,96 @@
-#!/usr/bin/env inlein
+#!/usr/bin/env joker
 ;; -*- mode: clojure -*-
-'{:dependencies [[org.clojure/clojure "1.8.0"]]}
+;; want: a cider for joker
 
-(require '[clojure.core :as core])
-(require '[clojure.java.shell :as shell])
-(require '[clojure.string :as str])
-(require '[clojure.set :as set])
-(require '[clojure.edn :as edn])
-(require '[clojure.java.io :as io])
+(require '[joker.os :as os])
+(require '[joker.core :as core])
+(require '[joker.string :as str])
+(require '[joker.set :as set])
+(require '[joker.io :as io])
 
 (defn sh [command]
-  (:out (apply shell/sh (str/split command #" "))))
+  (:out (apply os/sh (str/split command #" "))))
 
-(def state
-  {:groups
-   ;; sets of wids
-   {
-    :1 #{}
-    :2 #{}
-    :3 #{}
-    :4 #{}
-    :5 #{}
-    :6 #{}
-    :7 #{}
-    :8 #{}
-    :9 #{}
-    }
-   :active #{:1}
-   :focus ""
-   :fifo "/tmp/bspgroups"
-   :monitor (str/trim-newline (sh "bspc query -M -m --names"))
-   })
+;; (require '[clojure.java.shell :as shell])
+;; (defn sh [command]
+;;   (:out (apply shell/sh (str/split command #" "))))
 
-(defn toggle-wid [wid show]
-  (sh (core/format "bspc node %s -g hidden=%s" wid (if show "off" "on")))
-  ;; (println (core/format "bspc node %s -g hidden=%s" wid (if show "off" "on")))
+;; todo: make load and save state locking/defaults
+(defn load-state []
+  (def state
+    {:groups
+     [{:name "01" :wids #{1} :active true}
+      {:name "02" :wids #{} :active true}
+      {:name "03" :wids #{} :active true}
+      {:name "04" :wids #{} :active true}]
+     :focus-wid ""
+     :fifo "/tmp/bspgroups"
+     :monitor (-> "bspc query -M -m --names" sh str/trim-newline)
+     }))
+
+(load-state)
+
+(defn save-state []
+  ;; nope
   )
 
+(defn render-wid [wid show]
+  (sh (core/format "bspc node %s -g hidden=%s" wid (if show "off" "on"))))
+
+;; (println (core/format "bspc node %s -g hidden=%s" wid (if show "off" "on")))
 (defn render-state []
+  ;; show/hide status
   (let [show-wids
-        (apply set/union
-               (map #(% (:groups state))
-                    (filter #((:active state) %)
-                            (keys (:groups state)))))
+        (->> (:groups state)
+             (filter :active)
+             (map :wids)
+             (apply set/union))
+        hide-wids
+        (->>(:groups state)
+            (map :wids)
+            (apply set/union) ;; all group wids
+            (set/difference show-wids)) ;;
         ]
 
-    (doall (map #(toggle-wid % true) show-wids))
-    (doall (map #(toggle-wid % false)
-                (filter
-                 #(not (show-wids %))
-                 (apply set/union
-                        (map #(% (:groups state))
-                             (filter #(not ((:active state) %))
-                                     (keys (:groups state)))))))))
+    (doall (map #(render-wid % true) show-wids))
+    (doall (map #(render-wid % false) hide-wids)))
+
+  ;; refocus who we had if they exist
   (when (not (= (:focus state) ""))
-    (sh "bspc config pointer_follows_focus true")
+    ;; (sh "bspc config pointer_follows_focus true")
     (sh (core/format "bspc node %s -f" (:focus state)))
-    (sh "bspc config pointer_follows_focus false")
-    )
+    ;; (sh "bspc config pointer_follows_focus false")
+    ))
+
+(defn group-focus [group]
+  "focus the last known window in the group - also note it as the focused pid"
   )
 
-(defn set-focus [lgroup]
-  (when (and
-         ((:active state) lgroup)
-         (not (empty? (lgroup (:groups state)))))
-    (def state (update state :focus (fn [_] (last (lgroup (:groups state))))))))
+(defn group-toggle [& groups]
+  "toggle visibility of the group"
+  (->> (:groups state)
+       (filter :active)
+       ;; (contains?) is weird -- is index on seqs, no value
+       ;; and on sets can be value since they are the same thing
+       (filter #(contains? (set groups) (:name %)))
+       (map (update))
+       (map :wids)
+       (apply set/union))
+  )
+
+(defn action-group-names
+  "get all the group names"
+  [] (->> state :groups (map :name) (map println) doall))
+
+(defn get-group-wids [& groups]
+  "get all wids in a group or groups"
+  (->> (:groups state)
+       (filter :active)
+       ;; (contains?) is weird -- is index on seqs, no value
+       ;; and on sets can be value since they are the same thing
+       (filter #(contains? (set groups) (:name %)))
+       (map :wids)
+       (apply set/union)))
 
 (defn toggle-group [group]
   (let [lgroup (keyword (str group))]
@@ -74,7 +100,7 @@
        #(if ((:active state) lgroup)
           (disj % lgroup)
           (conj % lgroup))))
-    (set-focus lgroup)))
+    (group-focus lgroup)))
 
 (defn toggle-wid-group [wid group]
   (def state
@@ -86,51 +112,47 @@
                       #(if (% wid)
                          (disj % wid)
                          (conj % wid))))))
-  (set-focus (keyword (str group))))
 
-;; return a version of state similar to bspc subscribe so that this can be used
-;; in existing status bars
+  (group-focus (keyword (str group))))
+
+;; return a version of state similar to bspc subscribe
 ;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
-(defn format-state []
-  (str "WM"
-       (:monitor state)
-       ":"
-       (str/join
-        ":"
-        (doall
-         (map (fn [key]
-                (let [char (if (empty? (key (:groups state))) "f" "o")]
-                  (str (if ((:active state) key) (str/upper-case char) char) (name key))))
-              (sort (keys (:groups state)))
-              )))
-       ":LT:TT:G"))
+(defn group-to-print-section [group]
+  (let [char (-> (:wids group) empty? (if "f" "o"))]
+    (format "%s%s"
+            (if (:active group) (str/upper-case char) char)
+            (:name group))))
 
-;; (prn (:groups state))
-;; (prn (:active state))
+(defn action-print-state
+  "print the state matching bspc subscribe format"
+  []
+  (println
+   (str/join ":" (concat
+                  (list "WM" (:monitor state))
+                  (map #'group-to-print-section (:groups state))
+                  '("LT" "TT" "G")))))
 
-(when (not (.exists (io/as-file (:fifo state))))
-  (shell/sh "mkfifo" (:fifo state)))
+(defn usage
+  "generate usage from docstring of action-* functions"
+  []
+  (->> (ns-map *ns*)
+       keys
+       (map str)
+       (filter #(str/starts-with? % "action-"))
+       (map #(format "%s: %s"
+                     (subs % (count "action-"))
+                     ;; so hot
+                     (-> % symbol resolve meta :doc)))
+       (cons "commands: ")
+       (map println)
+       doall
+       ))
 
-(println (format-state))
+(defn action--h "usage" []
+  (usage))
 
-(while true
-  (doseq [command (str/split (slurp (:fifo state)) #"\n")]
-    (let [args (str/split command #" ")]
-      (case (first args)
-        "tgroup" (apply toggle-group (rest args))
-        "twid" (apply toggle-wid-group (rest args))
-        "show" (prn state)
-        (println (core/format "unrecognized command: %s" command)))
-
-      ;; (prn command)
-      ;; (prn (:groups state))
-      ;; (prn (:active state))
-      ;; (prn (:focus state))
-      (println (format-state))
-      (render-state)
-      (when (= command "quit")
-        ;; show everyone again
-        (doseq [wid (str/split (sh "bspc query -N -n .hidden" ) #"\n")]
-          (sh (core/format "bspc node %s -g hidden=off" wid)))
-
-        (System/exit 0)))))
+(if *command-line-args*
+  (apply
+   (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+   (rest *command-line-args*))
+  (action--h))
