@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 
 type theme > /dev/null 2>&1 &&
-    _prompt="$(theme getval PROMPT_CHAR)" ||
+    _prompt=$(theme getval PROMPT_CHAR) ||
     _prompt='%'
 
 if [ -z "$cur_shell" ]; then
