@@ -10,9 +10,16 @@ _proto_version=1
 _ipc_socket="${XDG_RUNTIME_DIR}/qutebrowser/ipc-$(echo -n "$USER" | md5sum | cut -d' ' -f1)"
 _url="$@"
 
-printf '{"args": ["%s"], "target_arg": null, "version": "%s", "protocol_version": %d, "cwd": "%s"}\n' \
-    "${_url}" \
-    "${_qb_version}" \
-    "${_proto_version}" \
-    "${PWD}" | socat - UNIX-CONNECT:"${_ipc_socket}"
+send_cmd() {
+    wew="$*"
+    printf '{"args": ["%s"], "target_arg": null, "version": "%s", "protocol_version": %d, "cwd": "%s"}\n' \
+	    "${wew}" \
+	    "${_qb_version}" \
+	    "${_proto_version}" \
+	    "${PWD}" | socat - UNIX-CONNECT:"${_ipc_socket}"
+}
 
+# suppress messages when called from here
+send_cmd ':set messages.timeout 1'
+send_cmd "$_url"
+send_cmd ':set messages.timeout 2000'

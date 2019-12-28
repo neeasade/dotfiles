@@ -370,6 +370,7 @@ load_services() {
     make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
     make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
+    make_periodic_service 30 qb_session_dump "qb_command ':session-save'" "Dump the qutebrowser session from time to time"
 
     make_service compton
     make_service unclutter 'unclutter -idle 1'
