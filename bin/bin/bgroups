@@ -11,12 +11,10 @@
      (require '[clojure.java.shell :as shell])
 
      (defn sh [command]
-       (:out (apply shell/sh (str/split command #" "))))
-     )
+       (:out (apply shell/sh (str/split command #" ")))))
 
  )
 
-;; the read stuff
 (require '[joker.os :as os])
 (require '[joker.core :as core])
 (require '[joker.string :as str])
@@ -29,19 +27,19 @@
 ;; todo: make load and save state locking/defaults
 (defn load-state []
   (def state
-    {:groups
+    {:tags
      [{:name "01" :wids #{1} :active true}
-      {:name "02" :wids #{} :active true}
+      {:name "02" :wids #{2} :active true}
       ;; {:name "03" :wids #{} :active true}
       ;; {:name "04" :wids #{} :active true}
       ]
 
      ;; track the focused wid before an action
      :focus-wid ""
-     ;; allow focusing a group to toggle it
-     ;; :focus-group ""
+     ;; allow focusing a tag to toggle it
+     ;; :focus-tag ""
 
-     :fifo "/tmp/bspgroups"
+     :fifo "/tmp/bsptags"
      :monitor (-> "bspc query -M -m --names" sh str/trim-newline)
      }))
 
@@ -57,15 +55,15 @@
 (defn render-state []
   ;; show/hide status
   (let [show-wids
-        (->> (:groups state)
+        (->> (:tags state)
              (filter #(or (:active %)
-                          (= (:name %) (:focus-group state))))
+                          (= (:name %) (:focus-tag state))))
              (map :wids)
              (apply set/union))
         hide-wids
-        (->>(:groups state)
+        (->>(:tags state)
             (map :wids)
-            (apply set/union) ;; all group wids
+            (apply set/union) ;; all tag wids
             (set/difference show-wids)) ;;
         ]
 
@@ -79,62 +77,62 @@
     ;; (sh "bspc config pointer_follows_focus false")
     ))
 
-(defn action-focus "focus <group name>"
-  [group]
-  ;; focus the last window in the group
-  (println (format "calling with %s" group))
+(defn action-focus "focus <tag name>"
+  [tag]
+  ;; focus the last window in the tag
+  (println (format "calling with %s" tag))
   (def state
     (update state :focus-wid
             (fn [_]
-              (->> (:groups state)
-                   (filter #(= (:name %) group))
+              (->> (:tags state)
+                   (filter #(= (:name %) tag))
                    first :wids last)
               ))))
 
-(defn update-groups [transform-func]
+(defn update-tags [transform-func]
   (def state
-    (update state :groups
-            (fn [old-groups]
+    (update state :tags
+            (fn [old-tags]
               (doall
-               (map transform-func old-groups))))
+               (map transform-func old-tags))))
     )
   )
 
 (defn action-toggle
-  "toggle <group names>"
-  [& groups]
+  "toggle <tag names>"
+  [& tags]
 
-  (defn update-active [old-group]
+  (defn update-active [old-tag]
     ;; note: (contains?) is weird -- is index on seqs, no value
     ;; and on sets can be value since they are the same thing
-    (update old-group :active
-            (fn [_] (if (contains? (set groups) (:name old-group))
+    (update old-tag :active
+            (fn [_] (if (contains? (set tags) (:name old-tag))
                       (not _) _))))
 
-  (update-groups update-active))
+  (update-tags update-active))
 
 (defn action-names
-  "get all the group names"
-  [] (->> state :groups (map :name) (map println) doall))
+  "get all the tag names"
+  [] (->> state :tags (map :name) (map println) doall))
 
 (defn action-wids
-  "wids <group names> - get all wids in a group or groups"
-  [& groups]
-  (->> (:groups state)
+  "wids <tag names> - get all wids in a tag or tags"
+  [& tags]
+  (->> (:tags state)
        (filter :active)
        ;; (contains?) is weird -- is index on seqs, no value
        ;; and on sets can be value since they are the same thing
-       (filter #(contains? (set groups) (:name %)))
+       (filter #(contains? (set tags) (:name %)))
        (map :wids)
        (apply set/union)
        (map println) doall
        ))
 
 (defn action-toggle-wids
-  "toggle <group> <wids> -- toggle wids being in a group"
-  [group & wids]
-  (defn update-wids [old-group]
-    (update old-group :wids
+  "toggle <tag> <wids> -- toggle wids being in a tag"
+  [tag & wids]
+  (defn update-wids [old-tag]
+    (update old-tag :wids
             (fn [old-wids]
               (set/union
                ;; existing minus toggles
@@ -143,15 +141,15 @@
                (set (filter #(not (contains? old-wids %)) wids))
                ))))
 
-  (update-groups update-wids))
+  (update-tags update-wids))
 
 ;; return a version of state similar to bspc subscribe
 ;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
-(defn group-to-print-section [group]
-  (let [char (-> (:wids group) empty? (if "f" "o"))]
+(defn tag-to-print-section [tag]
+  (let [char (-> (:wids tag) empty? (if "f" "o"))]
     (format "%s%s"
-            (if (:active group) (str/upper-case char) char)
-            (:name group))))
+            (if (:active tag) (str/upper-case char) char)
+            (:name tag))))
 
 (defn action-state
   "print the state matching bspc subscribe format"
@@ -159,7 +157,7 @@
   (println
    (str/join ":" (concat
                   (list "WM" (:monitor state))
-                  (map #'group-to-print-section (:groups state))
+                  (map #'tag-to-print-section (:tags state))
                   '("LT" "TT" "G")))))
 
 (defn usage
