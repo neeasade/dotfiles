@@ -79,5 +79,5 @@ if $did_something; then
     # todo: this appears to always trigger on external display
     echo "did something"
     theme refresh dmenu_options
-    # theme refresh dunst
+    theme refresh dunst
 fi

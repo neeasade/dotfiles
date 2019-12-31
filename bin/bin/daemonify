@@ -7,7 +7,7 @@ shift
 while true; do
     echo "calling $*"
     if ! "$@"; then
-	notify-send "script failed! $target"
+	notify-send "script failed! $*"
 	echo "failed! $*">&2
 	# fail the service
 	exit 1

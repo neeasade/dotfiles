@@ -2,7 +2,7 @@
 # ($_url is any command)
 
 if ! pgrep qutebrowser >/dev/null; then
-    exit 1
+    exit 0
 fi
 
 _qb_version='1.0.4'

@@ -26,7 +26,6 @@ add_emacs_buffers() {
 
 add_qutebrowser_tabs() {
     open_urls() {
-	qb_command ':session-save'
 	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
     }
 
