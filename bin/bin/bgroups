@@ -30,11 +30,8 @@
 (def state-lockfile "/tmp/bgroups-state-lock")
 
 (defn wait-for-lock []
-  (loop [locked (os/exists? state-lockfile)]
-    (if locked
-      (do (time/sleep 10000000) ; ns
-          (recur (os/exists? state-lockfile)))
-      locked)))
+  (while (os/exists? state-lockfile)
+    (time/sleep 10000000)))
 
 (defn update-state-focus-wid [wid]
   (when wid
@@ -201,6 +198,13 @@
                   (map #'tag-to-print-section (:tags state))
                   '("LT" "TT" "G")))))
 
+(defn action-subscribe "analogous to bspc subscribe, but depends on `inotifywait`" []
+  (action-state)
+  (while true
+    (sh (format "inotifywait -e close_write %s" state-file))
+    (load-state)
+    (action-state)))
+
 (defn usage
   "generate usage from docstring of action-* functions"
   []
@@ -225,7 +229,7 @@
   (usage))
 
 (when *command-line-args*
-  ;; we don't care about rendering+saving on state get
+  ;; we don't care about rendering+saving on state get (or subscribe)
   (if (= "state" (first *command-line-args*))
     (do (load-state)
         (cleanup-state)
@@ -237,6 +241,9 @@
         (apply
          (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
          (rest *command-line-args*))
-        (render-state)
-        (save-state)
-        )))
+
+        ;; ugh
+        (when (not (= "subscribe" (first *command-line-args*)))
+          (render-state)
+          (save-state)
+          ))))
