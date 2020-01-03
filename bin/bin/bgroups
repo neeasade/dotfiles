@@ -92,13 +92,6 @@
          show-wids)
         ]
 
-    (->> (:groups state)
-
-         (map :wids)
-         (apply set/union) ;; all tag wids
-         )
-
-
     (doall (map #(render-wid % true) show-wids))
     (doall (map #(render-wid % false) hide-wids)))
 
@@ -128,15 +121,15 @@
               (doall
                (map transform-func old-tags))))))
 
-  (defn cleanup-state
+(defn cleanup-state
   "remove any nonexistent wids from state"
   []
   (let [all-wids (-> "bspc query -N -n .leaf" sh (str/trim-newline) (str/split #"\n") set)]
-  (update-tags
-   (fn [old-tag]
-     (update old-tag :wids (fn [old-wids]
-                             (set (filter #(contains? all-wids %) old-wids))))))
-  ))
+    (update-tags
+     (fn [old-tag]
+       (update old-tag :wids (fn [old-wids]
+                               (set (filter #(contains? all-wids %) old-wids))))))
+    ))
 
 (defn action-toggle
   "toggle <tag names>"
@@ -144,13 +137,7 @@
 
   (defn update-active [old-tag]
     (update old-tag :active
-            (fn [_]
-              ;; note: (contains?) is weird -- is index on seqs, no value
-              ;; and on sets can be value since they are the same thing
-              (let [new-active-val (if (contains? (set tags) (:name old-tag)) (not _) _)]
-                ;; return our new active val
-                new-active-val
-                ))))
+            (fn [_] (if (contains? (set tags) (:name old-tag)) (not _) _))))
 
   (update-tags update-active)
 
@@ -160,9 +147,7 @@
        (filter #(:active %))
        (map #(update-state-focus-wid (last (:wids %))))
        doall
-       )
-
-  )
+       ))
 
 (defn action-names
   "get all the tag names"
@@ -200,20 +185,19 @@
 
   (update-tags update-wids))
 
-  ;; return a version of state similar to bspc subscribe
-  ;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
-  (defn tag-to-print-section [tag]
-  (let [char (-> (:wids tag) empty? (if "f" "o"))]
-    (format "%s%s"
-            (if (:active tag) (str/upper-case char) char)
-            (:name tag))))
-
+;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
 (defn action-state
   "print the state matching bspc subscribe format"
   []
+  (defn tag-to-print-section [tag]
+    (let [char (-> (:wids tag) empty? (if "f" "o"))]
+      (format "%s%s"
+              (if (:active tag) (str/upper-case char) char)
+              (:name tag))))
+
   (println
    (str/join ":" (concat
-                  (list "WM" (-> "bspc query -M -m --names" sh str/trim-newline))
+                  (list (apply str (concat "WM" (-> "bspc query -M -m --names" sh str/trim-newline))))
                   (map #'tag-to-print-section (:tags state))
                   '("LT" "TT" "G")))))
 
@@ -237,7 +221,7 @@
 (defn action--h "usage" []
   (usage))
 
-  (when (not *command-line-args*)
+(when (not *command-line-args*)
   (usage))
 
 (when *command-line-args*
