@@ -154,7 +154,6 @@
   "wids <tag names> - get all wids in a tag or tags"
   [& tags]
   (->> (:tags state)
-       (filter :active)
        ;; (contains?) is weird -- is index on seqs, no value
        ;; and on sets can be value since they are the same thing
        (filter #(contains? (set tags) (:name %)))
