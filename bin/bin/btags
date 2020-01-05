@@ -11,9 +11,7 @@
      (require '[clojure.java.shell :as shell])
 
      (defn sh [command]
-       (:out (apply shell/sh (str/split command #" ")))))
-
- )
+       (:out (apply shell/sh (str/split command #" "))))))
 
 (require '[joker.os :as os])
 (require '[joker.core :as core])
@@ -54,8 +52,7 @@
         ]
        :focus-wid ""
        }
-      )
-    )
+      ))
 
   ;; note the currently focused node
   (update-state-focus-wid (-> "bspc query -N -n" sh str/trim-newline))
@@ -64,8 +61,6 @@
 (defn save-state []
   (->> state pr-str (spit state-file))
   (sh (format "rm %s" state-lockfile)))
-
-;; (sh "bspc query -N -n 0x01A0F997.hidden")
 
 (defn render-wid [wid show]
   (when (empty? (sh (format "bspc query -N -n %s.%shidden" wid (if show "\\!" ""))))
@@ -129,7 +124,7 @@
     ))
 
 (defn action-toggle
-  "toggle <tag names>"
+  "toggle <tag names> -- toggle visibility of a tag"
   [& tags]
 
   (defn update-active [old-tag]
@@ -151,7 +146,7 @@
   [] (->> state :tags (map :name) (map println) doall))
 
 (defn action-wids
-  "wids <tag names> - get all wids in a tag or tags"
+  "wids <tag names> -- get all wids in a tag or tags"
   [& tags]
   (->> (:tags state)
        ;; (contains?) is weird -- is index on seqs, no value
@@ -246,3 +241,7 @@
           (render-state)
           (save-state)
           ))))
+
+;; consider: smart toggle
+;; if looking at a wid in a group, hide the group
+;; else, show the group it it's not shown, then focus it
