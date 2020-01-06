@@ -11,7 +11,9 @@
      (require '[clojure.java.shell :as shell])
 
      (defn sh [command]
-       (:out (apply shell/sh (str/split command #" "))))))
+       (:out (apply shell/sh (str/split command #" "))))
+
+     (def state (-> state-file slurp read-string))))
 
 (require '[joker.os :as os])
 (require '[joker.core :as core])
@@ -144,6 +146,18 @@
 (defn action-names
   "get all the tag names"
   [] (->> state :tags (map :name) (map println) doall))
+
+(defn get-state-untagged []
+  (let [all-wids (-> "bspc query -N -n .leaf" sh (str/trim-newline) (str/split #"\n") set)]
+    all-wids
+    (set/difference
+     (set all-wids)
+     ;; all tagged
+     (->> state :tags (map :wids) (apply set/union))
+     )))
+
+(defn action-untagged []
+  (->> (get-state-untagged) (map println) doall))
 
 (defn action-wids
   "wids <tag names> -- get all wids in a tag or tags"
