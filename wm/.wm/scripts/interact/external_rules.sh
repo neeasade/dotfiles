@@ -9,7 +9,7 @@
 # if any one shot rule exists, defer to potentially that.
 # have to check a file/set outside of this script because bspc calls here make external rule take priority
 wid=$1
-class_name="$2"
+class_name=$2
 
 # preferred split directions:
 horiPref=east

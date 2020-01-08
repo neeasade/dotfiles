@@ -6,5 +6,5 @@ launch() {
 }
 
 launch emacs-26.3
-launch $TERMINAL
-colemak
+# launch $TERMINAL
+# colemak

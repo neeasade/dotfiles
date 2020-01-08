@@ -286,7 +286,7 @@ load_dmenu_options() {
 	bspc query -T -m | jq .rectangle.$1
     }
 
-    width=$(echo .30 \* $(dim width) | bc | sed 's/\..*//')
+    width=$(echo .60 \* $(dim width) | bc | sed 's/\..*//')
 
     # need a dmenu with xft font handling
     # todo: txth -f "xft:${p_font_main}:style=Regular" -s $font_size "asdf"
@@ -297,7 +297,7 @@ load_dmenu_options() {
     height=$((lines * line_height))
 
     x=$(( ($(dim width) - width) / 2 ))
-    y=$(( ($(dim height) - height) / 3))
+    y=$(( ($(dim height) - height) / 4))
 
     export dmenu_options="-nf #$p_fg_normal -nb #$p_bg_normal -sf #$p_fg_active -sb #$p_bg_active -fn \"${p_font_main}\" -y $y -x $x -h $line_height -w $width -l $lines -i"
     margs dmenu_options .wm/scripts/interact/dmenu_options

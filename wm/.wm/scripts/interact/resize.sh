@@ -8,16 +8,16 @@ dir=$1
 # get rectangle property of origin node, floating or tiling (x,y,width,height)
 originalNode=$(bspc query -N -n)
 dim() {
-	bspc query -T -n $originalNode | jq ".rectangle.$1"
+  bspc query -T -n $originalNode | jq ".rectangle.$1"
 }
 
 # set fall back, and target window property.
 case $dir in
-	west)   dir=left;   fallDir=right;  targetProp=width;  queryDir=x; op="min"; sign=-;;
-	east)  dir=right;  fallDir=left;   targetProp=width;  queryDir=x; op="max"; sign=+;;
-	north)    dir=top;    fallDir=bottom; targetProp=height; queryDir=y; op="min"; sign=-;;
-	south) dir=bottom; fallDir=top;    targetProp=height; queryDir=y; op="max"; sign=+;;
-	*) exit 1;;
+  west)  dir=left;   fallDir=right;  targetProp=width;  queryDir=x; op="min"; sign=-;;
+  east)  dir=right;  fallDir=left;   targetProp=width;  queryDir=x; op="max"; sign=+;;
+  north) dir=top;    fallDir=bottom; targetProp=height; queryDir=y; op="min"; sign=-;;
+  south) dir=bottom; fallDir=top;    targetProp=height; queryDir=y; op="max"; sign=+;;
+  *) exit 1;;
 esac
 
 # if we're focused on a group of nodes, select a window within, leaning towards our desired direction.
@@ -47,17 +47,17 @@ fi
 [ "$beforeVal" = "$(dim $targetProp)" ] && bspc node $targetNode -z $fallDir $moveArgs
 
 if [ "$beforeVal" = "$(dim $targetProp)" ]; then
-	# undo our wrong resize
-	bspc node $targetNode -z $fallDir $(echo $moveArgs | tr +- -+) &
+  # undo our wrong resize
+  bspc node $targetNode -z $fallDir $(echo $moveArgs | tr +- -+) &
 
-	# attempt to jump the other direction and push into the node
-	case $dir in
-		left)   targetNode=east;;
-		right)  targetNode=west;;
-		top)    targetNode=south;;
-		bottom) targetNode=north;;
-	esac
-	bspc node $targetNode -z $dir $moveArgs &
+  # attempt to jump the other direction and push into the node
+  case $dir in
+    left)   targetNode=east;;
+    right)  targetNode=west;;
+    top)    targetNode=south;;
+    bottom) targetNode=north;;
+  esac
+  bspc node $targetNode -z $dir $moveArgs &
 fi
 
 bspc node -f

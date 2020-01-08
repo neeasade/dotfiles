@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 # all switcher dmenu
+# idea: qutebrowser history
+# idea: org headings
 
 options=
 declare -A matches_to_actions
@@ -18,20 +20,34 @@ add_windows() {
 add_emacs_buffers() {
     buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
 
+    emacs_switch_to() {
+	filepath=$*
+	# todo: find the most recent emacs window and use that
+	elisp "(find-file \"${filepath}\")"
+    }
+
     for buffer in $buffers; do
-	# todo: the window select action does not work here to switch to emacs
-	add_switch "buffer: $buffer" "select_action 'window: emacs'; elisp '(find-file \"${buffer}\")'"
+	# add_switch "buffer: $buffer" "select_action 'window: emacs'; elisp '(find-file \"${buffer}\")'"
+
+	# note: this will break if ever switching to a file with a ' in the name
+	add_switch "buffer: $buffer" "emacs_switch_to '$buffer'"
     done
 }
 
 add_qutebrowser_tabs() {
-    open_urls() {
+    open_titles() {
 	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
     }
 
-    while read -r url; do
-	add_switch "tab: $url" "select_action '\- qutebrowser'; qb_command ':buffer $(echo "$url" | sed "s/'//g;s/\"// ")'"
-    done <<< "$(open_urls)"
+    qute_switch_to() {
+	title=$*
+	select_action '\- qutebrowser'
+	qb_command ":buffer $title"
+    }
+
+    while read -r title; do
+	add_switch "tab: $title" "qute_switch_to '$(echo "$title" | sed "s/'//g;s/\"// ")'"
+    done <<< "$(open_titles)"
 }
 
 select_action() {
@@ -42,7 +58,7 @@ select_action() {
 }
 
 add_windows
-add_emacs_buffers
 add_qutebrowser_tabs
+add_emacs_buffers
 
 select_action "$(echo "$options" | dmenu "$@")"

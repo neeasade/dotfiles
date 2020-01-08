@@ -122,7 +122,7 @@ playlist() {
 	*) ;;
       esac
       # the cat is so a newline is appended
-    done < <(cat "$musicdir/playlist/$target")
+    done < <(cat "$musicdir/playlist/$target"; echo)
 
     # clear duplicates
     # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
