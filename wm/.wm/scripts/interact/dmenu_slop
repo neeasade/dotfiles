@@ -2,21 +2,10 @@
 # neeasade
 # depends: dmenu slop bspc
 
-# get program name to launch using dmenu cache:
-cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
-[ -d "$cachedir" ] && cache=$cachedir/dmenu_run || cache=$HOME/.dmenu_cache
-
-program="$*"
-if [ -z "$program" ]; then
-    program=$(
-    IFS=:
-    if stest -dqr -n "$cache" $PATH; then
-        stest -flx $PATH | sort -u | tee "$cache" | eval dmenu "$@"
-    else
-        eval dmenu "$@" < "$cache"
-    fi
-    )
+target=$*
+if [ -z "$target" ]; then
+    target=$(dmenu_path | eval dmenu "$@")
 fi
 
 bspc rule -a \* -o state=floating rectangle=$(slop -f "%g")
-$program &
+$target &
