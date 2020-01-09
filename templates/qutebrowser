@@ -1,6 +1,7 @@
 # -*- mode: python -*-
 
 import os
+import socket
 from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
 from qutebrowser.config.config import ConfigContainer  # noqa: F401
 
@@ -35,6 +36,9 @@ if initial_start:
 
     if 'EDITOR' in os.environ:
         c.editor.command = [os.environ['EDITOR'] + ' "{}"']
+
+    if 'bridge' in socket.gethostname():
+        c.editor.command = ['/run/current-system/sw/bin/emacsclient', '-c', '+{line}:{column}', '{file}']
 
     c.auto_save.session = True
 
@@ -191,22 +195,29 @@ c.fonts.statusbar = GetSize('completion') + fonts['completion']
 # userscripts
 # this allows some extra control across platforms, like wrapping bash scripts on windows 
 userscripts = [
-    {
-        'name': 'update_tp',
-        'bind': 'su',
+{
+        'name': 'goto_url_note',
+        'bind': 'gn',
         'script':
+        """#!/bin/sh
+popup_window.sh -r
+emacsclient -c --no-wait
+elisp "(ns/urlnote-jump \\"${QUTE_URL}\\")"
         """
-#!/bin/sh
+    },
+    {
+        'name': 'show_url',
+        'bind': 'su',
+        'script': """#!/bin/sh
 notify-send "$QUTE_URL"
-echo "$QUTE_URL" > ~/.qute_url
-emacsclient --eval "(progn (tp-update-git-message))"
         """
     }
 ]
 
-userscript_location = os.environ['HOME'] + "/.local/share/qutebrowser/userscripts/"
 if os.name == 'nt':
     userscript_location = os.environ['APPDATA'] + '\\qutebrowser\\data\\userscripts\\'
+else:
+    userscript_location = os.environ['HOME'] + "/.local/share/qutebrowser/userscripts/"
 
 if not os.path.exists(userscript_location):
     os.makedirs(userscript_location)
@@ -218,14 +229,7 @@ def write_file(file, content):
 def write_userscript(location, content):
     write_file(location, content)
 
-    if os.name == 'nt':
-        location = location + '_wrapped.bat'
-        write_file(location, '"C:\\Program Files\\Git\\bin\\sh" "' + location + '"')
-
-    return os.path.basename(location)
-
 for userscript in userscripts:
     script_file = userscript_location + userscript['name']
-    if not os.path.isfile(script_file):
-        bindname = write_userscript(script_file, userscript['script'])
-        config.bind(userscript['bind'], 'spawn --userscript ' + bindname)
+    write_file(script_file, userscript['script'])
+    nmap(userscript['bind'], 'spawn --userscript ' + userscript['name'])
