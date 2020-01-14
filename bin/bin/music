@@ -30,19 +30,19 @@ del() { # delete the currently playing song
 }
 
 usage() {
-    echo "music options:"
-    grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
-	action=$(echo "$line" | sed 's/ #.*//')
-	desc=$(echo "$line" | sed 's/.*# //')
-	printf "%-10s : %s\n" "$action" "$desc"
-    done
-    exit 1
+  echo "music options:"
+  grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
+    action=$(echo "$line" | sed 's/ #.*//')
+    desc=$(echo "$line" | sed 's/.*# //')
+    printf "%-10s : %s\n" "$action" "$desc"
+  done
+  exit 1
 }
 
 shuffle() { # reshuffle current selection from all
   mpc clear
   if [ -z "$*" ]; then
-      mpc listall | sort -R | head -n 1000 | mpc add
+    mpc listall | sort -R | head -n 1000 | mpc add
   else
     append "$*"
   fi
@@ -102,10 +102,10 @@ remove() { # remove some search match from the playlist
 }
 
 now() { # fuzzy search for a song, play it now
-  if song="$(mpc listall | fzf)"; then
-      mpc insert "$song"
-      mpc next
-      mpc play
+  if song=$(mpc listall | fzf); then
+    mpc insert "$song"
+    mpc next
+    mpc play
   fi
 }
 
@@ -117,25 +117,31 @@ bl() { # blacklist the currently playing song from the current playlist.
 }
 
 playlist() { # select a search term based playlist to play
-  if target="$(ls ${musicdir}/playlist | fzf)"; then
-    echo "$target" > "$current_playlist"
-    mpc clear
-    while read -r line ; do
-      case "${line:0:1}" in
-	+) append "${line#?}";;
-	-) remove "${line#?}";;
-	*) ;;
-      esac
-      # the cat is so a newline is appended
-    done < <(cat "$musicdir/playlist/$target"; echo)
-
-    # clear duplicates
-    # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
-    mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
-
-    mpc shuffle
-    mpc play
+  if [ -z "$1" ]; then
+    if ! target=$(ls "${musicdir}/playlist" | fzf); then
+      return
+    fi
+  else
+    target=$*
   fi
+
+  echo "$target" >"$current_playlist"
+  mpc clear
+  while read -r line ; do
+    case "${line:0:1}" in
+      +) append "${line#?}";;
+      -) remove "${line#?}";;
+      *) ;;
+    esac
+    # the cat is so a newline is appended
+  done < <(cat "$musicdir/playlist/$target"; echo)
+
+  # clear duplicates
+  # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
+  mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
+
+  mpc shuffle
+  mpc play
 }
 
 infoname() {
