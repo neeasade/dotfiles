@@ -60,16 +60,17 @@ else
     fi
 fi
 
-if [ $off_field_count -ne 2 ]; then
-    # disconnect it
+# does the field end in a resolution
+if echo "$off_monitor_status" | grep -qE '[0-9]+x[0-9]+'; then
     echo "turning $off_monitor off"
     xrandr --output $off_monitor --off
     did_something=true
 fi
 
-# hack
+# hack -- set both displays to the laptops max res
 if [ "$*" = "mirror" ]; then
     max_res=$(echo "$xrandr" | grep -A 1 $laptop_monitor | tail -n 1 | awk '{print $1}')
+
     turn_on $laptop_monitor $max_res
     # sometimes you can't find the same res on the external display, so this might fail lmao
     # it will be OK, just that laptop view will be trimmed/not show the whole story
@@ -86,8 +87,7 @@ if $did_something; then
     # reset our monocle measurement
     "$HOME/.config/bspwm/bspwmrc"
 
-    # todo: this appears to always trigger on external display
-    echo "did something"
+    echo "did something, updating dmenu/dunst"
     theme refresh dmenu_options
     theme refresh dunst
 fi
