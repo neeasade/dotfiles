@@ -3,34 +3,43 @@
 # wrap the importing of music from the internet
 # define music playlists by search terms
 
-
 musicdir="$HOME/Music"
 current_playlist="${musicdir}/playlist/current"
 
-# add a url to library, fallback on clipboard content
-add() {
-  url="$*"
-  [ -z "$url" ] && url="$(xclip -o -selection clipboard)"
+add() { # add a url to library, fallback on clipboard content
+  url=$*
+  [ -z "$url" ] && url=$(xclip -o -selection clipboard)
   echo "$url" >> "$musicdir/import_history.log"
   mkdir -p "$musicdir/import"
-  youtube-dl -x -i -o "$musicdir/import/%(uploader)s/%(title)s.%(ext)s" "$url"
-  mpc update
+
+  if echo "$url" | grep -q 'bandcamp.com'; then
+    # bandcamp music is organized by album:
+    youtube-dl -x -i -o "$musicdir/import/%(uploader)s/%(album)s/%(title)s.%(ext)s" "$url"
+  else
+    youtube-dl -x -i -o "$musicdir/import/%(artist)s/%(title)s.%(ext)s" "$url"
+  fi
+
+  mpc update # re-index
 }
 
-# delete the currently playing song
-del() {
-  location="$(mpc -f "%file%" | head -n 1)"
+del() { # delete the currently playing song
+  location=$(mpc -f "%file%" | head -n 1)
   rm "$musicdir/$location"
   mpc next
   mpc update
 }
 
-toggle() {
-  mpc toggle
+usage() {
+    echo "music options:"
+    grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
+	action=$(echo "$line" | sed 's/ #.*//')
+	desc=$(echo "$line" | sed 's/.*# //')
+	printf "%-10s : %s\n" "$action" "$desc"
+    done
+    exit 1
 }
 
-# reshuffle current selection from all
-shuffle() {
+shuffle() { # reshuffle current selection from all
   mpc clear
   if [ -z "$*" ]; then
       mpc listall | sort -R | head -n 1000 | mpc add
@@ -43,7 +52,7 @@ shuffle() {
 
 # is a file longer than 25 min
 is_long() {
-  milli="$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')"
+  milli=$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')
   if [ -z "$milli" ]; then
     return 1
   fi
@@ -56,25 +65,24 @@ is_long() {
   fi
 }
 
-append() {
+append() { # append some search term to the current playlist
   echo append "$*"
 
   if [ "$*" = "long_songs" ]; then
     cat "${musicdir}/long_songs"
-    mpc listall | a_is_long_filter | mpc add
+    mpc listall | _is_long_filter | mpc add
   else
     mpc listall | grep -i "$*" | mpc add
   fi
 }
 
-# remove some search match from the playlist
-remove() {
+remove() { # remove some search match from the playlist
   echo remove "$*"
 
   if [ "$*" = "long_songs" ]; then
     is_long_filter() {
       while read -r pos_song; do
-	song="$(echo "$pos_song" | sed -E 's/[0-9]+ //')"
+	song=$(echo "$pos_song" | sed -E 's/[0-9]+ //')
 	if is_long "${musicdir}/$song"; then
 	  echo "$pos_song"
 	fi
@@ -93,8 +101,7 @@ remove() {
   done
 }
 
-# fuzzy search for a song, play it now
-now() {
+now() { # fuzzy search for a song, play it now
   if song="$(mpc listall | fzf)"; then
       mpc insert "$song"
       mpc next
@@ -102,16 +109,14 @@ now() {
   fi
 }
 
-# blacklist the currently playing song from the current playlist.
-bl() {
+bl() { # blacklist the currently playing song from the current playlist.
   playlist="$(cat "$current_playlist")"
   songname="$(basename "$(mpc -f '%file%' | head -n 1)")"
   printf "\n-$songname" >> "$musicdir/playlist/$playlist"
   mpc next
 }
 
-# compose playlists by search results
-playlist() {
+playlist() { # select a search term based playlist to play
   if target="$(ls ${musicdir}/playlist | fzf)"; then
     echo "$target" > "$current_playlist"
     mpc clear
@@ -134,23 +139,23 @@ playlist() {
 }
 
 infoname() {
-  name="$(mpc -f '%title% - %artist%' | head -n 1)"
+  name=$(mpc -f '%title% - %artist%' | head -n 1)
   if [ "$name" = ' - ' ]; then
-    name="$(basename "$(mpc -f '%file%' | head -n 1)")"
-    name="${name%.*}"
+    name=$(basename "$(mpc -f '%file%' | head -n 1)")
+    name=${name%.*}
   fi
   echo "$name"
 }
 
-info() {
+info() { # display the current song progress bar and playlist length
   infoname
 
-  length="$(wc -L <<< "$name")"
-  percent="$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')"
+  length=$(wc -L <<< "$name")
+  percent=$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')
   "$HOME/.wm/panel/tools/mkb" $percent $length
   echo "playlist: $(cat $current_playlist) | $(playlist_length)"
 }
 
-op=${1:-toggle}
+op=${1:-usage}
 shift
 $op "$*"
