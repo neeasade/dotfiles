@@ -12,7 +12,7 @@ cleanup() {
 
 launch() {
     xdo id -N $key ||
-        setsid st -c $key &
+        setsid xst -c $key &
 
     sleep 0.5
 

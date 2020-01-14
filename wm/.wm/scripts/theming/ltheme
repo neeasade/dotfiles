@@ -105,10 +105,16 @@ load_xresources() {
 
     if ! margs Xresources .Xresources; then
         # handle any color definitions through 255
-        for i in `seq 0 255`; do
-            eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources"
-        done
-        [ ! -z "$cachefile" ] && cp "$HOME/.Xresources" "$cachefile"
+	(
+	    IFS=$'\n'
+	    for i in $(seq 0 255); do
+		eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources"
+	    done
+	)
+
+	if [ ! -z "$cachefile" ]; then
+	    cp "$HOME/.Xresources" "$cachefile"
+	fi
     fi
 
     xrdb $HOME/.Xresources
@@ -307,8 +313,8 @@ load_dmenu_options() {
 load_mintty() {
     trim_alphas
 
-    st_font="$(echo $st_font | sed 's/-.*//')"
-    st_font_size="$(echo $st_font | tr -dc '0-9')"
+    st_font=$(echo $st_font | sed 's/-.*//')
+    st_font_size=$(echo $st_font | tr -dc '0-9')
 
     # limitation: ttf fonts
     list_windows_fonts() {
