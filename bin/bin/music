@@ -14,7 +14,7 @@ add() { # add a url to library, fallback on clipboard content
 
   if echo "$url" | grep -q 'bandcamp.com'; then
     # bandcamp music is organized by album:
-    youtube-dl -x -i -o "$musicdir/import/%(uploader)s/%(album)s/%(title)s.%(ext)s" "$url"
+    youtube-dl -x -i -o "$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(title)s.%(ext)s" "$url"
   else
     youtube-dl -x -i -o "$musicdir/import/%(artist)s/%(title)s.%(ext)s" "$url"
   fi
