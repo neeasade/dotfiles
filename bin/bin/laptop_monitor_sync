@@ -46,7 +46,7 @@ off_field_count=$(echo "$off_monitor_status" | awk '{print NF}' )
 max_res=$(echo "$xrandr" | grep -A 1 $on_monitor | tail -n 1 | awk '{print $1}')
 target_res=${1:-$max_res}
 
-# order matters -- don't leave yourself without any display
+# order matters -- don't leave yourself without any display or the display-manager service will kick
 did_something=false
 
 if [ $on_field_count -eq 2 ]; then
@@ -64,6 +64,16 @@ if [ $off_field_count -ne 2 ]; then
     # disconnect it
     echo "turning $off_monitor off"
     xrandr --output $off_monitor --off
+    did_something=true
+fi
+
+# hack
+if [ "$*" = "mirror" ]; then
+    max_res=$(echo "$xrandr" | grep -A 1 $laptop_monitor | tail -n 1 | awk '{print $1}')
+    turn_on $laptop_monitor $max_res
+    # sometimes you can't find the same res on the external display, so this might fail lmao
+    # it will be OK, just that laptop view will be trimmed/not show the whole story
+    turn_on $external_monitor $max_res
     did_something=true
 fi
 
