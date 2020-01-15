@@ -1,20 +1,23 @@
 #!/bin/sh
-# narrow symlinker
+# narrow symlinker to match stow, but only from ~/.dotfiles
 
 while [ ! -z "$1" ]; do
-    echo "$1"
+    echo "stowwing $1"
     cd "$HOME/.dotfiles/$1"
     find . -type f | while read -r path; do
 	target="${HOME}/${path}"
 	target=$(echo "$target" | sed 's#/\./#/#')
 
+	# match symlink style of stoww
 	path="$(pwd)/${path}"
 	path=$(echo "$path" | sed 's#/\./#/#')
+	path=$(echo "$path" | sed "s#$HOME#..#")
 
 	mkdir -p "$(dirname "$target")"
 
 	if readlink "$target" >/dev/null; then
 	    if [ "$(readlink "$target")" = "$path" ]; then
+		echo "link already in place, skipping $path"
 		continue
 	    fi
 
