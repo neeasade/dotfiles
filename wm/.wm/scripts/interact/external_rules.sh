@@ -33,11 +33,8 @@ vertPref=south
 percent=.33
 
 # if 1 node is open, switch directions (related to custom_monocle)
-# mon_width=$(bspc query -T -m | jq .rectangle.width)
-# mon_height=$(bspc query -T -m | jq .rectangle.height)
-
-mon_width=$(jget width "$(bspc query -T -m)")
-mon_height=$(jget height "$(bspc query -T -m)")
+mon_width=$(jget width "$(bspc query -T -m)") # .rectangle.width
+mon_height=$(jget height "$(bspc query -T -m)") # .rectangle.height
 if [ $mon_width -gt $mon_height ]; then
     node_count=$(bspc query -N -d $desk -n .leaf.normal | wc -l)
     [ $node_count -eq 1 ] && vertPref=$horiPref
@@ -49,11 +46,8 @@ targetNode=${presel:-focused}
 
 # we get these values early because you can't use bspc commands
 # in an external rule after you start echoing.
-width=$(jget width "$(bspc query -T -n $targetNode)")
-height=$(jget height "$(bspc query -T -n $targetNode)")
-
-# width=$(bspc query -T -n $targetNode | jq '.rectangle.width')
-# height=$(bspc query -T -n $targetNode | jq '.rectangle.height')
+width=$(jget width "$(bspc query -T -n $targetNode)") # .rectangle.width
+height=$(jget height "$(bspc query -T -n $targetNode)") # .rectangle.height
 
 # see support_window
 [ "$class_name" = "below" ] && echo layer=below
