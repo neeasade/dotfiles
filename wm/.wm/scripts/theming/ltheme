@@ -124,7 +124,7 @@ load_xresources() {
 }
 
 load_emacs() {
-    elisp "(ns/style)"
+    elisp '(ns/style)'
 }
 
 load_xst() {
@@ -369,7 +369,7 @@ load_services() {
 	# todo: consider making this a systemd timer
 	interval=$1
 	shift
-	make_service "$1" "daemonify $interval $2" "$3"
+	make_service "$1" "periodically $interval $2" "$3"
     }
 
     # checkers
