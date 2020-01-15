@@ -11,6 +11,19 @@
 wid=$1
 class_name=$2
 
+# cf https://github.com/turquoise-hexagon/dots/blob/76c50dc7eaf578371f8d900efa2231f2b59ce8a0/wm/.local/bin/move#L5
+# match on the first key match, then cut off the rest
+# only valid if the first key you get happens to match
+jget() {
+    arg=$1; shift
+
+    # filthy json parsing
+    var=${*#*\"$arg\":}
+    var=${var%%[,\}]*}
+
+    echo "$var"
+}
+
 # preferred split directions:
 horiPref=east
 vertPref=south
@@ -20,21 +33,27 @@ vertPref=south
 percent=.33
 
 # if 1 node is open, switch directions (related to custom_monocle)
-mon_width=$(bspc query -T -m | jq .rectangle.width)
-mon_height=$(bspc query -T -m | jq .rectangle.height)
+# mon_width=$(bspc query -T -m | jq .rectangle.width)
+# mon_height=$(bspc query -T -m | jq .rectangle.height)
+
+mon_width=$(jget width "$(bspc query -T -m)")
+mon_height=$(jget height "$(bspc query -T -m)")
 if [ $mon_width -gt $mon_height ]; then
     node_count=$(bspc query -N -d $desk -n .leaf.normal | wc -l)
     [ $node_count -eq 1 ] && vertPref=$horiPref
 fi
 
 # get any presels on the current desktop, select one if so.
-presel="$(bspc query -N -d -n .\!automatic | head -n 1)"
+presel=$(bspc query -N -d -n .\!automatic | head -n 1)
 targetNode=${presel:-focused}
 
 # we get these values early because you can't use bspc commands
 # in an external rule after you start echoing.
-width=$(bspc query -T -n $targetNode | jq '.rectangle.width')
-height=$(bspc query -T -n $targetNode | jq '.rectangle.height')
+width=$(jget width "$(bspc query -T -n $targetNode)")
+height=$(jget height "$(bspc query -T -n $targetNode)")
+
+# width=$(bspc query -T -n $targetNode | jq '.rectangle.width')
+# height=$(bspc query -T -n $targetNode | jq '.rectangle.height')
 
 # see support_window
 [ "$class_name" = "below" ] && echo layer=below
