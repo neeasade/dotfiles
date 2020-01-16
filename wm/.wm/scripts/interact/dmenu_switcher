@@ -16,9 +16,7 @@ add_windows() {
 }
 
 add_emacs_buffers() {
-    emacs_switch_to() {
-	filepath=$*
-
+    find_emacs_window() {
 	emacs_wid=
 	check_id() {
 	    wid=$1
@@ -44,15 +42,29 @@ add_emacs_buffers() {
 	fi
 
 	bspc node -f $emacs_wid
-	elisp "(find-file \"${filepath}\")"
     }
 
+    emacs_find_file() {
+	find_emacs_window
+	elisp "(find-file \"${*}\")"
+    }
+
+    emacs_find_buffer() {
+	find_emacs_window
+	elisp "(-> \"${*}\" get-buffer switch-to-buffer)"
+    }
+
+    IFS=$'\n'
     buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
     for buffer in $buffers; do
-	# add_switch "buffer: $buffer" "select_action 'window: emacs'; elisp '(find-file \"${buffer}\")'"
-
 	# note: this will break if ever switching to a file with a ' in the name
-	add_switch "buffer: $buffer" "emacs_switch_to '$buffer'"
+	add_switch "file: $buffer" "emacs_find_file '$buffer'"
+    done
+
+    buffers=$(elisp -r "(->> (buffer-list) (-filter (fn (not (buffer-file-name <>)))) (mapcar 'buffer-name) (ns/make-lines))")
+    for buffer in $buffers; do
+	# note: this will break if ever switching to a file with a ' in the name
+	add_switch "buffer: $buffer" "emacs_find_buffer '$buffer'"
     done
 }
 
@@ -86,8 +98,7 @@ add_windows
 add_qutebrowser_tabs
 add_emacs_buffers
 
-choice=$((
-	    for key in "${!matches_to_actions[@]}"; do
+choice=$((for key in "${!matches_to_actions[@]}"; do
 		echo "$key"
 	    done
 ) | dmenu "$@")
