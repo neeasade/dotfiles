@@ -1,30 +1,49 @@
 #!/bin/sh
-# make some wid floating, center, focused
-# or, que up the next wid to be the above, via a rule.
+# get dimensions for a floating dialog, maybe act on it.
 
-wid=$1
-
-if [ -z "$wid" ]; then
-    wid=$(bspc query -N -n)
-fi
-
-# note: maybe consolidate the dmenu_options logic and this together
-dim() {
+print_env() {
+  # note: maybe consolidate the dmenu_options logic and this together
+  dim() {
+    # jget "$1" "$(bspc query -T -m)"
     bspc query -T -m | jq .rectangle.$1
+  }
+
+  W=$(echo .66 \* $(dim width) | bc | sed 's/\..*//')
+  H=$(echo .33 \* $(dim width) | bc | sed 's/\..*//')
+  X=$(( ($(dim width) - W) / 2 ))
+  Y=$(( ($(dim height) - H) / 4 ))
+
+  echo "W=$W"
+  echo "H=$H"
+  echo "X=$X"
+  echo "Y=$Y"
 }
 
-width=$(echo .66 \* $(dim width) | bc | sed 's/\..*//')
-height=$(echo .33 \* $(dim width) | bc | sed 's/\..*//')
-x=$(( ($(dim width) - width) / 2 ))
-y=$(( ($(dim height) - height) / 4 ))
+set_rule() {
+  print_env >/dev/null
+  bspc rule -a \* -o state=floating rectangle=${W}x${H}+${X}+${Y}
+}
 
-if [ "$wid" = "-r" ]; then
-  bspc rule -a \* -o state=floating rectangle=${width}x${height}+${x}+${y}
-  exit 0
-fi
+act_now() {
+  print_env >/dev/null
 
-bspc node $wid -t floating
-xdotool windowmove $wid $x $y
-xdotool windowsize $wid $width $height
-bspc node $wid -f
+  if [ -z "$wid" ]; then
+    wid=$(bspc query -N -n)
+  fi
+
+  bspc node $wid -t floating
+  xdotool windowmove $wid $X $Y
+  xdotool windowsize $wid $W $H
+  bspc node $wid -f
+}
+
+while getopts w:ren flag; do
+  case $flag in
+    w) wid=$OPTARG;;
+    r) set_rule;;
+    e) print_env;;
+    n) act_now;;
+    *) echo "options: -r -w <wid> -e -n (rule wid env now) -- wid defaults to the focused node for now" >&2; exit 1;;
+  esac
+done
 
