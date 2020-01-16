@@ -3,11 +3,9 @@
 # idea: qutebrowser history
 # idea: org headings
 
-options=
 declare -A matches_to_actions
 
 add_switch() {
-  options="${options}"$'\n'"${1}"
   matches_to_actions["$1"]=$2
 }
 
@@ -18,14 +16,36 @@ add_windows() {
 }
 
 add_emacs_buffers() {
-    buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
-
     emacs_switch_to() {
 	filepath=$*
-	# todo: find the most recent emacs window and use that
+	# first -- try only on the current desktop:
+
+	check_id() {
+	    if xprop -id $wid | grep WM_CLASS | grep Emacs; then
+		emacs_wid=$wid
+		return 0
+	    fi
+	    return 1
+	}
+
+	emacs_wid=
+	for wid in $(bspc query -N -d focused -n .leaf); do
+	    check_id && break
+	done
+
+	# there's gotta be one somewhere
+	if [ -z "$emacs_wid" ]; then
+	    for wid in $(bspc query -N -d focused -n .leaf); do
+		check_id && break
+	    done
+	fi
+
+	echo "emacs wid is $emacs_wid"
+	bspc node -f $emacs_wid
 	elisp "(find-file \"${filepath}\")"
     }
 
+    buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
     for buffer in $buffers; do
 	# add_switch "buffer: $buffer" "select_action 'window: emacs'; elisp '(find-file \"${buffer}\")'"
 
@@ -41,7 +61,8 @@ add_qutebrowser_tabs() {
 
     qute_switch_to() {
 	title=$*
-	select_action '\- qutebrowser'
+	qb_title=$(bspc query -N -n .leaf | xargs xtitle | grep  '\- qutebrowser' | head -n 1)
+	select_action "$qb_title"
 	qb_command ":buffer $title"
     }
 
@@ -52,13 +73,21 @@ add_qutebrowser_tabs() {
 
 select_action() {
   # allow partial match
-  target=$(echo "$options" | grep "$*" | head -n 1)
-  echo "${matches_to_actions[${target}]}"
-  eval "${matches_to_actions[${target}]}"
+  # target=$(echo "$options" | grep "$*" | head -n 1)
+    target=$*
+    echo "$target"
+    echo "${matches_to_actions[${target}]}"
+    eval "${matches_to_actions[${target}]}"
 }
 
 add_windows
 add_qutebrowser_tabs
 add_emacs_buffers
 
-select_action "$(echo "$options" | dmenu "$@")"
+choice=$((
+	    for key in "${!matches_to_actions[@]}"; do
+		echo "$key"
+	    done
+) | dmenu "$@")
+
+select_action "$choice"
