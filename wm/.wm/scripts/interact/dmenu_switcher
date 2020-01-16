@@ -18,9 +18,14 @@ add_windows() {
 add_emacs_buffers() {
     emacs_switch_to() {
 	filepath=$*
-	# first -- try only on the current desktop:
 
+	emacs_wid=
 	check_id() {
+	    wid=$1
+	    if [ ! -z "$emacs_wid" ]; then
+		return 0
+	    fi
+
 	    if xprop -id $wid | grep WM_CLASS | grep Emacs; then
 		emacs_wid=$wid
 		return 0
@@ -28,19 +33,16 @@ add_emacs_buffers() {
 	    return 1
 	}
 
-	emacs_wid=
+	check_id $(bspc query -N -n)
 	for wid in $(bspc query -N -d focused -n .leaf); do
-	    check_id && break
+	    check_id $wid && break
 	done
 
-	# there's gotta be one somewhere
 	if [ -z "$emacs_wid" ]; then
-	    for wid in $(bspc query -N -d focused -n .leaf); do
-		check_id && break
-	    done
+	    elisp '(ns/spawn-terminal)'
+	    check_id $(bspc query -N -n)
 	fi
 
-	echo "emacs wid is $emacs_wid"
 	bspc node -f $emacs_wid
 	elisp "(find-file \"${filepath}\")"
     }
@@ -62,7 +64,7 @@ add_qutebrowser_tabs() {
     qute_switch_to() {
 	title=$*
 	qb_title=$(bspc query -N -n .leaf | xargs xtitle | grep  '\- qutebrowser' | head -n 1)
-	select_action "$qb_title"
+	select_action "window: $qb_title"
 	qb_command ":buffer $title"
     }
 
