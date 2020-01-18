@@ -115,3 +115,10 @@ else
 fi
 
 set +a
+
+cur_shell=$(ps | grep $$ | sed 's/^.* //')
+cur_shell=${cur_shell##*/}
+
+if has direnv; then
+  eval "$(direnv hook $cur_shell)"
+fi

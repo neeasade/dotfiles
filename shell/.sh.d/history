@@ -1,11 +1,9 @@
 # -*- mode: sh -*-
 
-cur_shell=$(ps | grep $$ | sed 's/^.* //')
-cur_shell="${cur_shell##*/}"
-
 history_length=10000
 history_file="$HOME/.${cur_shell}_history"
 
+# cur_shell is from environment.
 case "$cur_shell" in
   bash)
     HISTFILE="$history_file"
