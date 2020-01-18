@@ -59,7 +59,6 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
 
   man() {
     elisp "(woman \"$*\") (require 'man) (Man-cleanup-manpage)"
-    # elisp "(woman \"$*\")"
   }
 
   clear() {

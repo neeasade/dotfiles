@@ -5,12 +5,12 @@
 
 trim=false
 if [ "$1" = "-r" ]; then
-   trim=true
-   shift
+    trim=true
+    shift
 fi
 
 if [ -f "$1" ]; then
-    script_name=$1
+    script_name=$(realpath "$1")
     shift
 fi
 
@@ -32,9 +32,21 @@ else
 	args="${args} \"${a}\""
     done
 
-    # todo: consider passing stdin
     # todo: if the script_name contains a '(provide)' consider just loading rather than eval-file
     lisp="(ns/eval-file \"${script_name}\" ${args})"
+fi
+
+# save stdin to a file and give a var
+# todo: this is blocking, and if we continue down this path it may be worth looking into input streams
+if [ -p /dev/stdin ]; then
+    if [ -d /dev/shm/ ]; then
+	stdin_file=/dev/shm/elisp-${RANDOM}
+    else
+	stdin_file=$(elisp -r '(~ "elisp-temp")')
+    fi
+
+    cat - > "$stdin_file"
+    lisp="(let ((*stdin-file* \"${stdin_file}\")) ${lisp} )"
 fi
 
 emacs_timeout=
@@ -43,7 +55,15 @@ if type timeout >/dev/null; then
 fi
 
 # echo "$lisp"
-result=$($emacs_timeout $eclient --eval "$lisp" 2>/dev/null)
+result=$($emacs_timeout $eclient --eval "$lisp")
+
+quit() {
+    if [ ! -z "$stdin_file" ]; then
+	rm "$stdin_file"
+    fi
+
+    exit ${*:-1}
+}
 
 if [ $? -eq 1 ]; then
     # we could not reach emacs, or we timed out.
@@ -57,11 +77,11 @@ if [ $? -eq 1 ]; then
 	echo "$last"
     fi
 
-    exit 1
+    quit 1
 fi
 
 if [ "$result" = "nil" ] || [ -z "$result" ]; then
-  exit 1
+    quit 1
 fi
 
 if $trim; then
@@ -79,4 +99,4 @@ else
     echo "$result"
 fi
 
-exit 0
+quit 0
