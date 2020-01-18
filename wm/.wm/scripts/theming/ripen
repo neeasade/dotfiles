@@ -103,7 +103,7 @@ reverseSteps() {
 # get gradient by step, use total as step.
 gradientGet() {
   step=$((step+1))
-  gradient $color0 $color7 $total | sed -n ${step}p
+  gradient $total $color0 $color7 | sed -n ${step}p
 }
 
 # default declare function if not defined

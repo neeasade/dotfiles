@@ -38,7 +38,8 @@ if initial_start:
         c.editor.command = [os.environ['EDITOR'] + ' "{}"']
 
     if 'bridge' in socket.gethostname():
-        c.editor.command = ['/run/current-system/sw/bin/emacsclient', '-c', '+{line}:{column}', '{file}']
+        # c.editor.command = ['/run/current-system/sw/bin/emacsclient', '-c', '+{line}:{column}', '{file}']
+        c.editor.command = ['{{{which qutebrowser-edit}}}', '-l{line}', '-c{column}', '-f{file}']
 
     c.auto_save.session = True
 
@@ -229,6 +230,7 @@ def write_file(file, content):
 def write_userscript(location, content):
     write_file(location, content)
 
+# todo: make it executable
 for userscript in userscripts:
     script_file = userscript_location + userscript['name']
     write_file(script_file, userscript['script'])

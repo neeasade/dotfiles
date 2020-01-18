@@ -10,7 +10,8 @@ cd "$HOME/.dotfiles"
 
 echo >/tmp/stow_conflicts
 stoww() {
-    "${HOME}/.dotfiles/bin/bin/stoww" "$@" 2>/tmp/stow_conflicts
+    # this is only for situations where you don't have stow
+    "${HOME}/.dotfiles/bin/bin/stowo" "$@" 2>/tmp/stow_conflicts
 }
 
 core() {

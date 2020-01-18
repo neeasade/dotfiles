@@ -1,0 +1,14 @@
+#!/bin/sh
+# popup a window to edit the current field
+
+while getopts c:l:f: flag; do
+    case $flag in
+	c) column=$OPTARG;;
+	l) line=$OPTARG;;
+	f) file=$OPTARG;;
+	*) usage;;
+    esac
+done
+
+popup_window.sh -r
+emacsclient -c "+${line}:${column}" "${file}"

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# -*- eval: (setq-local sh-basic-offset 2) -*-
 # wrap the importing of music from the internet
 # define music playlists by search terms
 
@@ -70,7 +69,7 @@ append() { # append some search term to the current playlist
 
   if [ "$*" = "long_songs" ]; then
     cat "${musicdir}/long_songs"
-    mpc listall | _is_long_filter | mpc add
+    mpc listall | is_long_filter | mpc add
   else
     mpc listall | grep -i "$*" | mpc add
   fi
@@ -93,7 +92,6 @@ remove() { # remove some search match from the playlist
     positions="$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')"
   fi
 
-  # positions="$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')"
   delta=0
   for position in $positions; do
     mpc del $((position - delta))

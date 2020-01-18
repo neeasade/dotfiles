@@ -101,7 +101,7 @@ settings() {
 	content=""
 	size=3
 	IFS=$'\n'
-	for color in $(gradient "$prevbg" "$nextbg" $size); do
+	for color in $(gradient $size "$prevbg" "$nextbg"); do
 	    # content="${content}%%{B#ff$(colort -t $color)} %%{B-}"
 	    # content="%%{B#ff$(colort -t $color)} %%{B-}${content}"
 	    content=""

@@ -2,7 +2,7 @@
 ;; note: not inclusive -- just the steps inbetween the colors
 
 (ns/let-script-args
- (start end step)
+ (step start end)
  (ns/make-lines
   (mapcar (fn (eval `(color-rgb-to-hex ,@<> 2)))
 	  (color-gradient

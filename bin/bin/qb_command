@@ -1,5 +1,8 @@
 #!/bin/sh
 # ($_url is any command)
+# note: qute will request focus when you use this
+# disable in bspwm with:
+# bspc config ignore_ewmh_focus false
 
 if ! pgrep qutebrowser >/dev/null; then
     exit 0
@@ -11,7 +14,7 @@ _ipc_socket="${XDG_RUNTIME_DIR}/qutebrowser/ipc-$(echo -n "$USER" | md5sum | cut
 _url="$@"
 
 send_cmd() {
-    wew="$*"
+    wew=$*
     printf '{"args": ["%s"], "target_arg": null, "version": "%s", "protocol_version": %d, "cwd": "%s"}\n' \
 	    "${wew}" \
 	    "${_qb_version}" \

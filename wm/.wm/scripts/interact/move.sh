@@ -21,14 +21,14 @@ tiled_move() {
   (bspc node -n $dir.\!automatic || bspc node -s "$dir") && return
 
   # compare height or width to parent
-  self_measure="$(bspc query -T -n "$node" | jq .rectangle.$tdim)"
-  parent_measure="$(bspc query -T -n "${node}#@parent" | jq .rectangle.$tdim)"
+  self_measure=$(bspc query -T -n "$node" | jq .rectangle.$tdim)
+  parent_measure=$(bspc query -T -n "${node}#@parent" | jq .rectangle.$tdim)
 
   if [ "$parent_measure" -gt "$self_measure" ]; then
     bspc node "${node}#@parent" -p $dir
     bspc node "${node}#@parent" -i
 
-    receptacle_id="$(bspc query -N "${node}#@parent#@parent" -n '.descendant_of.leaf.!window')"
+    receptacle_id=$(bspc query -N "${node}#@parent#@parent" -n '.descendant_of.leaf.!window')
     bspc node $node -n $receptacle_id
     bspc node "${node}#@parent" -B
   else

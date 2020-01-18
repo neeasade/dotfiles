@@ -47,7 +47,7 @@ blog_add_dtop() {
 
   "${git_dir}/site/assets/img/desktops/make_thumbs.sh"
   echo "don't forget to commit and push!"
-  echo "jump: ${git_dir}/readme.org"
+  echo "${git_dir}/publish.sh"
 }
 
 sysinfo() {
@@ -103,7 +103,7 @@ fullshot() {
 }
 
 lastshot() {
- echo "$HOME/Last_Shot/shot.png"
+  echo "$HOME/Last_Shot/shot.png"
 }
 
 viewshot() {
@@ -162,11 +162,10 @@ gitupdate() {
   # Find all git repositories and update it to the master latest revision
   for i in $(find . -name ".git" | cut -c 3-); do
     echo "$i";
-
     cd "$i";
     cd ..;
 
-    git pull origin master;
+    git pull origin $(git rev-parse --abbrev-ref HEAD);
     cd $cur_dir
   done
 }
@@ -229,27 +228,29 @@ extract() {      # Handy Extract Program
 }
 
 # manpages with colors
-man() {
-  settitle "$* - manual"
-  # removing standout means find highlights stay inverted..
-  #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
+if [ ! $ESHELL ]; then
+  man() {
+    settitle "$* - manual"
+    # removing standout means find highlights stay inverted..
+    #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
 
-  env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
-      LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
-      LESS_TERMCAP_me=$(printf '\e[0m') \
-      LESS_TERMCAP_se=$(printf '\e[0m') \
-      LESS_TERMCAP_ue=$(printf '\e[0m') \
-      LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
-      man "$@"
+    env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
+        LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
+        LESS_TERMCAP_me=$(printf '\e[0m') \
+        LESS_TERMCAP_se=$(printf '\e[0m') \
+        LESS_TERMCAP_ue=$(printf '\e[0m') \
+        LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
+        man "$@"
 
-  defaulttitle
-}
+    defaulttitle
+  }
+fi
 
-page() {
-  settitle "$* - less"
-  less "$@"
-  defaulttitle
-}
+# page() {
+#   settitle "$* - less"
+#   less "$@"
+#   defaulttitle
+# }
 
 dotadd() {
   file=$(find ~/bin | fzf) || return
@@ -300,6 +301,20 @@ gset() {
   esac
 }
 
+jtemp() {
+  # jump to some temp dir
+  working_dir="$HOME/temps"
+
+  selected=$(
+    for context in ${working_dir}/*/context.txt; do
+      desc=$(cat $context)
+      echo "$desc | $context"
+    done | fzf
+          )
+
+  cd "$(dirname "$(echo "$selected" | awk -F\| '{print $2}')")"
+}
+
 ttemp() {
   working_dir="$HOME/temps"
   current=$(date +%F_%T)
@@ -308,9 +323,7 @@ ttemp() {
   cd "${working_dir}/${current}"
   pwd
 
-  if [ ! -z "$*" ]; then
-    echo "$*" > ./context.txt
-  fi
+  echo "${*:-None}" > ./context.txt
 }
 
 # dump the structure of some json to find paths

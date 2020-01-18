@@ -90,4 +90,8 @@ if $did_something; then
     echo "did something, updating dmenu/dunst"
     theme refresh dmenu_options
     theme refresh dunst
+
+    # todo: if it's only the laptop now, switch sxhkd
+    # or vice versa
+    xbright
 fi

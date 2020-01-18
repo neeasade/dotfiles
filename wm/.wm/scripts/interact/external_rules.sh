@@ -1,6 +1,5 @@
 #!/usr/bin/env dash
 # neeasade
-# depends on: jq
 # goal: natural feeling window spawning
 # behavior:
 # if there are any presel's on current desktop, spawn there.
@@ -10,19 +9,6 @@
 # have to check a file/set outside of this script because bspc calls here make external rule take priority
 wid=$1
 class_name=$2
-
-# cf https://github.com/turquoise-hexagon/dots/blob/76c50dc7eaf578371f8d900efa2231f2b59ce8a0/wm/.local/bin/move#L5
-# match on the first key match, then cut off the rest
-# only valid if the first key you get happens to match
-jget() {
-    arg=$1; shift
-
-    # filthy json parsing
-    var=${*#*\"$arg\":}
-    var=${var%%[,\}]*}
-
-    echo "$var"
-}
 
 # preferred split directions:
 horiPref=east
@@ -58,10 +44,9 @@ echo node=$targetNode
 # not specifying split dir if targetting presel
 [ ! -z $presel ] && exit 0
 
-
-bcInput="$(iif "[ $width -gt $height ]" \
+bcInput=$(iif "[ $width -gt $height ]" \
     "($width-$height)/$width" \
-    "($height-$width)/$height" )"
+    "($height-$width)/$height")
 
 result=$(echo "$bcInput < $percent" | bc -l)
 

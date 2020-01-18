@@ -6,7 +6,7 @@
 declare -A matches_to_actions
 
 add_switch() {
-  matches_to_actions["$1"]=$2
+    matches_to_actions["$1"]=$2
 }
 
 add_windows() {
@@ -68,6 +68,23 @@ add_emacs_buffers() {
     done
 }
 
+add_qutebrowser_history() {
+
+    start_day=$(date --date="7 days ago" +%F)
+    end_day=$(date +%F)
+    start=$(date -d "$start_day 00:00:00" +%s)
+    end=$(date -d "$end_day 23:59:59" +%s)
+    query="select * from history where atime > ${start} and atime < ${end}"
+    qutedb="$HOME/.local/share/qutebrowser/history.sqlite"
+
+    IFS=$'\n'
+    for result in "$(sqlite3 "$qutedb" "$query")"; do
+	url=$(awk -F\| '{print $1}' <<<"$result")
+	title=$(awk -F\| '{print $2}' <<<"$result")
+	# add_switch "history: $title" "notify-send wtf"
+    done
+}
+
 add_qutebrowser_tabs() {
     open_titles() {
 	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
@@ -86,21 +103,28 @@ add_qutebrowser_tabs() {
 }
 
 select_action() {
-  # allow partial match
-  # target=$(echo "$options" | grep "$*" | head -n 1)
+    # maybe consider allow partial match later (turned out accumulating options was really slow/maybe revisit this in keys)
+
+    if [ -z "$*" ]; then
+	return
+    fi
+
+    # target=$(echo "$options" | grep "$*" | head -n 1)
     target=$*
     echo "$target"
     echo "${matches_to_actions[${target}]}"
     eval "${matches_to_actions[${target}]}"
+    # bspc desktop -l monocle
 }
 
 add_windows
 add_qutebrowser_tabs
 add_emacs_buffers
+# add_qutebrowser_history
 
 choice=$((for key in "${!matches_to_actions[@]}"; do
-		echo "$key"
-	    done
-) | dmenu "$@")
+	      echo "$key"
+	  done
+	 ) | dmenu "$@")
 
 select_action "$choice"

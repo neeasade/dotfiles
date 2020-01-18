@@ -4,8 +4,7 @@
 print_env() {
   # note: maybe consolidate the dmenu_options logic and this together
   dim() {
-    # jget "$1" "$(bspc query -T -m)"
-    bspc query -T -m | jq .rectangle.$1
+    jget "$1" "$(bspc query -T -m)"
   }
 
   W=$(echo .66 \* $(dim width) | bc | sed 's/\..*//')
