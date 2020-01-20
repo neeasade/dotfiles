@@ -2,8 +2,8 @@
 
 prompt=${*:-select: }
 
-if elisp t >/dev/null; then
+if elisp nil >/dev/null; then
     cat - | emacs_dmenu "$prompt"
 else
-    cat - | eval dmenu $(dmenu_options "$prompt")
+    cat - | dmenu -p "$prompt"
 fi

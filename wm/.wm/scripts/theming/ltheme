@@ -286,31 +286,6 @@ load_zeal() {
     margs zeal .config/Zeal/Zeal.conf
 }
 
-load_dmenu_options() {
-    trim_alphas
-
-    dim() {
-	bspc query -T -m | jq .rectangle.$1
-    }
-
-    width=$(echo .60 \* $(dim width) | bc | sed 's/\..*//')
-
-    # need a dmenu with xft font handling
-    # todo: txth -f "xft:${p_font_main}:style=Regular" -s $font_size "asdf"
-    # guestimation
-    line_height=15
-
-    lines=20
-    height=$((lines * line_height))
-
-    x=$(( ($(dim width) - width) / 2 ))
-    y=$(( ($(dim height) - height) / 4))
-
-    export dmenu_options="-nf #$p_fg_normal -nb #$p_bg_normal -sf #$p_fg_active -sb #$p_bg_active -fn \"${p_font_main}\" -y $y -x $x -h $line_height -w $width -l $lines -i"
-    margs dmenu_options .wm/scripts/interact/dmenu_options
-    chmod +x "${HOME}/.wm/scripts/interact/dmenu_options"
-}
-
 load_mintty() {
     trim_alphas
 
