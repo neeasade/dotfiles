@@ -7,15 +7,20 @@
 (let* ((prompt (ns/let-script-args (prompt-string) prompt-string))
        (preamble (progn (ns/shell-exec-dontcare "popup_window.sh -r")
 			(select-frame (make-frame '((minibuffer . only))))))
+
        ;; set the stuff
        (ivy-fixed-height-minibuffer nil)
        (ivy-add-newline-after-prompt nil)
        (ivy-height-alist '((t lambda (_caller) (frame-height))))
+
+       ;; trying
        ;; do the thing
-       (option (ivy-read prompt
-			 (->> *stdin-file* f-read (s-split "\n"))
-			 :action (fn <>))))
-  ;; cleanup
+       (option (condition-case ()
+		   (ivy-read prompt
+			     (->> *stdin-file* f-read (s-split "\n"))
+			     :action (fn <>))
+		 (quit nil) ;; if we quit out of the ivy-read just return nothing
+		 )))
   (delete-frame)
   (select-window (next-window))
   option)

@@ -34,19 +34,20 @@ else
 
     # todo: if the script_name contains a '(provide)' consider just loading rather than eval-file
     lisp="(ns/eval-file \"${script_name}\" ${args})"
-fi
 
-# save stdin to a file and give a var
-# todo: this is blocking, and if we continue down this path it may be worth looking into input streams
-if [ -p /dev/stdin ]; then
-    if [ -d /dev/shm/ ]; then
-	stdin_file=/dev/shm/elisp-${RANDOM}
-    else
-	stdin_file=$(elisp -r '(~ "elisp-temp")')
+    # save stdin to a file and give a var
+    # todo: this is blocking, and if we continue down this path it may be worth looking into input streams
+    # note: it's important to only do this in script mode, else any elisp call will slurp up stdin
+    if [ -p /dev/stdin ]; then
+	if [ -d /dev/shm/ ]; then
+	    stdin_file=/dev/shm/elisp-${RANDOM}
+	else
+	    stdin_file=$(elisp -r '(~ "elisp-temp")')
+	fi
+
+	cat - > "$stdin_file"
+	lisp="(let ((*stdin-file* \"${stdin_file}\")) ${lisp} )"
     fi
-
-    cat - > "$stdin_file"
-    lisp="(let ((*stdin-file* \"${stdin_file}\")) ${lisp} )"
 fi
 
 emacs_timeout=

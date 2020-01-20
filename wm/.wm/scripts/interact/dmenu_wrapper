@@ -1,0 +1,9 @@
+#!/bin/sh
+
+prompt=${*:-select: }
+
+if elisp t >/dev/null; then
+    cat - | emacs_dmenu "$prompt"
+else
+    cat - | eval dmenu $(dmenu_options "$prompt")
+fi

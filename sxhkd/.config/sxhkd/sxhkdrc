@@ -96,11 +96,11 @@ super + Return
 super + o
     $BROWSER
 
-# dmenu
+# selecterino
 super + {_,shift,alt} + space
-    action={run,pass,switcher}; \
+    action={switcher,run,pass}; \
     export GTK_THEME=$(theme getval GTK_THEME); \
-    eval dmenu_$action $(dmenu_options $action)
+    dmenu_$action $action
 
 super + grave
      player.sh toggle
