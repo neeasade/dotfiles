@@ -10,18 +10,17 @@ let
     ];
   };
 
-  # todo: use channels for this roll
-  stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
+  # stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
+  stable = pkgs; # controlled by root nix-channel entry
   rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
 
-  #stable = pkgs;
   #rolling = pkgs;
   #edge = pkgs;
 
   expr = import ./expr { inherit pkgs lib; };
 
-  pkgs = stable;
+  # pkgs = stable;
   # edge = rolling;
   # rolling = stable;
 
@@ -123,12 +122,14 @@ let
     zathura
     zsh
 
-    emacs
+    # emacs
     mesa_drivers
     libGL
 
     gnutls # for circe
   ]) ++ (with rolling; [
+
+    emacs
     colort
     dunst
     dzen2
@@ -148,8 +149,12 @@ let
     xtitle
     youtube-dl
     qutebrowser
+    pinta
+
+    polybar
   ]) ++ ( with expr; [
     # qutebrowser-git
+    pb-git
     mpvc-git
     xst-git
     dmenu
@@ -174,6 +179,8 @@ let
     gtk-engine-murrine
     gtk3
     sassc
+
+    cloc
 
     ripgrep
     pandoc
@@ -235,7 +242,7 @@ let
     luarocks
 
     clang
-    gcc
+    # gcc
 
     # ghc
     go
@@ -254,16 +261,16 @@ let
     rustfmt
     rustracer
 
-    # python
-    (python35.withPackages(ps: with ps; [
-      virtualenv
-      django
-      screenkey
-      libxml2
-      selenium
-      # praw
-      # pyqt5
-    ]))
+    python35
+    # (python35.withPackages(ps: with ps; [
+    #   virtualenv
+    #   django
+    #   screenkey
+    #   libxml2
+    #   selenium
+    #   # praw
+    #   # pyqt5
+    # ]))
 
     # other
     docker
@@ -275,6 +282,7 @@ let
     nodejs
     ruby
   ]) ++ (with edge; [
+    # joker
     # boot
     # chickenPackages_5.chicken
     # chickenPackages_5.egg2nix
@@ -303,6 +311,10 @@ let
 
 in
 {
+  # "just give me something pls"
+  # environment.systemPackages = core
+  # fonts.fonts = basefonts
+
   environment.systemPackages =
     core ++
     extra ++

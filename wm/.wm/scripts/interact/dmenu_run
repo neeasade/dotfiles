@@ -1,2 +1,2 @@
 #!/bin/sh
-eval "$(dmenu_path | dmenu)"
+eval "$(dmenu_path | dmenu "$@")"

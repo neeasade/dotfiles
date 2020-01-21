@@ -6,6 +6,12 @@ in
 {
 
   services = {
+    # lorri = {enable = true;};
+
+    tlp = {
+      enable = true;
+    };
+
     xserver = {
       dpi = 117;
       enable = true;
