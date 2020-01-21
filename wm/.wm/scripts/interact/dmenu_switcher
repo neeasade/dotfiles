@@ -125,6 +125,6 @@ add_emacs_buffers
 choice=$((for key in "${!matches_to_actions[@]}"; do
 	      echo "$key"
 	  done
-	 ) | dmenu_wrapper "$*")
+	 ) | dmenu "$@")
 
 select_action "$choice"

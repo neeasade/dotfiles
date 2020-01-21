@@ -88,11 +88,15 @@ fi
 if $trim; then
     case "$result" in
 	# (1 2 3) -> # 1 2 3
-	"("*) echo "$result" | sed -e 's/^(//' -e 's/)$//' ;;
+	"("*) result=${result:1:${#result}-2}; echo "$result";;
 	# "\"~/.dotfiles/bin/bin/elisp\n~/.emacs.d/recentf\""
-	# -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
-	'"'*) result=$(printf "$result")
-	      echo "${result:1:${#result}-2}" ;;
+	#     -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
+	'"'*) result=${result:1:${#result}-2}
+	      result=$(echo "$result" | sed 's/%/%%/g')
+	      # replace
+	      printf "$result"
+	      echo
+	      ;;
 	# just print it
 	*) echo "$result" ;;
     esac

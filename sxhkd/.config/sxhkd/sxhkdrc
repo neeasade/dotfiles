@@ -4,7 +4,6 @@ super + {_,shift} + w
     bspc node -{c,k}
 
 # take a tiled window, make it floating, but in the same position of the tile
-# todo: get this script from backup
 super + S
     nfloat
 
@@ -39,22 +38,13 @@ super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
 super + ctrl + space
     bspc node -p cancel
 
-# send node to desktop on current monitor index
-# super + {_,shift} + {1-9}
-    # bspc {desktop -f,node -d} focused:^{1-9}
-
-# super + {_,shift} + {1-9}
-#      echo {tgroup,twid $(bspc query -N -n)} {1-9} >/tmp/bspgroups
-
 super + {1-9}
-    num={1-9}; cgrep bgroups && \
-    echo tgroup $num >/tmp/bspgroups || \
-    bspc desktop -f focused:^$num
+    bspc desktop -f focused:^{1-9}
+    # btags focus ^{1-9}
 
 super + shift + {1-9}
-    num={1-9}; cgrep bgroups && \
-    echo twid $(bspc query -N -n) $num >/tmp/bspgroups || \
-    bspc node -d focused:^$num
+    bspc node -d focused:^{1-9}
+    # btags toggle-wids ^{1-9} $(bspc query -N -n)
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
@@ -98,9 +88,9 @@ super + o
 
 # selecterino
 super + {_,shift,alt} + space
-    action={switcher,run,pass}; \
+    action='{switcher,run,pass} '; \
     export GTK_THEME=$(theme getval GTK_THEME); \
-    dmenu_$action $action
+    dmenu_$action "$action"
 
 super + grave
      player.sh toggle
@@ -138,8 +128,8 @@ XF86MonBrightness{Down,Up}
 # super + {comma,period,grave}
 #     player.sh {prev,next,toggle}
 
-F9
-    sh -c "$(. $HOME/.profile && shot)"
+# F9
+#     sh -c "$(. $HOME/.profile && shot)"
 
 F8
     utf8

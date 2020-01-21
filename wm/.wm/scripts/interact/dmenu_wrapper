@@ -1,9 +1,0 @@
-#!/bin/sh
-
-prompt=${*:-select: }
-
-if elisp nil >/dev/null; then
-    cat - | emacs_dmenu "$prompt"
-else
-    cat - | dmenu -p "$prompt"
-fi

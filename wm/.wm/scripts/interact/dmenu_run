@@ -1,3 +1,2 @@
 #!/bin/sh
-# shim so we can use dmenu_wrapper
-eval "$(dmenu_path | dmenu_wrapper "$*")"
+eval "$(dmenu_path | dmenu)"

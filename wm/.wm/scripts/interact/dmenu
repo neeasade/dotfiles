@@ -1,0 +1,23 @@
+#!/bin/sh
+
+prompt=${*:-select: }
+
+# cheat a little: if called like regular dmenu ignore everything except -p
+while :; do
+    while getopts 'p:' flag 2>/dev/null; do
+	case $flag in
+	    p) echo "I was hit!!!"
+	       prompt=$OPTARG;;
+	    *) ;; # nop
+	esac
+    done
+    ((OPTIND++))
+    [ $OPTIND -gt $# ] && break
+done
+
+if elisp t >/dev/null; then
+    cat - | emacs_dmenu "$prompt"
+else
+    real_dmenu=$(type -a dmenu | tail -n 1 | awk '{print $3}')
+    cat - | "$real_dmenu" -p "$prompt"
+fi

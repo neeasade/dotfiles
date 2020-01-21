@@ -4,6 +4,7 @@
 print_env() {
   # note: maybe consolidate the dmenu_options logic and this together
   dim() {
+    # bspc query -T -m | jq .rectangle.$1
     jget "$1" "$(bspc query -T -m)"
   }
 
