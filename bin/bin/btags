@@ -13,7 +13,9 @@
      (defn sh [command]
        (:out (apply shell/sh (str/split command #" "))))
 
-     (def state (-> state-file slurp read-string))))
+     (def state (-> state-file slurp read-string)))
+
+ )
 
 (require '[joker.os :as os])
 (require '[joker.core :as core])
@@ -26,8 +28,8 @@
   (:out (apply os/sh (str/split command #" "))))
 
 ;; todo: better than this
-(def state-file "/tmp/bgroups-state")
-(def state-lockfile "/tmp/bgroups-state-lock")
+(def state-file "/tmp/btags-state")
+(def state-lockfile "/tmp/btags-state-lock")
 
 (defn wait-for-lock []
   (while (os/exists? state-lockfile)
@@ -47,11 +49,10 @@
       (-> state-file slurp read-string)
       ;; default
       {:tags
-       [{:name "1" :wids #{1} :active true}
-        {:name "2" :wids #{2} :active true}
-        {:name "3" :wids #{} :active true}
-        {:name "4" :wids #{} :active true}
-        ]
+       [{:name "00" :wids #{1} :active true}
+        {:name "01" :wids #{2} :active true}
+        {:name "10" :wids #{} :active true}
+        {:name "11" :wids #{} :active true}]
        :focus-wid ""
        }
       ))
@@ -63,6 +64,16 @@
 (defn save-state []
   (->> state pr-str (spit state-file))
   (sh (format "rm %s" state-lockfile)))
+
+(defn tag-ident-to-name [ident]
+  (if (str/starts-with? ident "^")
+    (:name (nth (:tags state)
+                ;; bad (read-string vs parse int)
+                ;; am inferring not a thing in joker
+                ;; cf https://github.com/candid82/joker/blob/9dcaacdeb4d80e37ec2273a299c562dc97e6fdbc/tests/eval/tools_cli.joke#L114
+                (- (read-string (apply str (rest ident)))
+                   1)))
+    ident))
 
 (defn render-wid [wid show]
   (when (empty? (sh (format "bspc query -N -n %s.%shidden" wid (if show "\\!" ""))))
@@ -99,11 +110,11 @@
     )
   )
 
-(defn action-focus "focus <tag name>"
+(defn action-focus "<tag> - focus the last wid in the tag"
   [tag]
   (update-state-focus-wid
    (->> (:tags state)
-        (filter #(= (:name %) tag))
+        (filter #(= (:name %) (tag-ident-to-name tag)))
         first :wids last)))
 
 (defn update-tags
@@ -126,12 +137,12 @@
     ))
 
 (defn action-toggle
-  "toggle <tag names> -- toggle visibility of a tag"
+  "<tags> -- toggle visibility of tags"
   [& tags]
 
   (defn update-active [old-tag]
     (update old-tag :active
-            (fn [_] (if (contains? (set tags) (:name old-tag)) (not _) _))))
+            (fn [_] (if (contains? (set (map tag-ident-to-name tags)) (:name old-tag)) (not _) _))))
 
   (update-tags update-active)
 
@@ -152,32 +163,32 @@
     all-wids
     (set/difference
      (set all-wids)
-     ;; all tagged
-     (->> state :tags (map :wids) (apply set/union))
-     )))
+     (->> state :tags (map :wids) (apply set/union)))))
 
-(defn action-untagged []
+(defn action-untagged
+  "list untagged wids"
+  []
   (->> (get-state-untagged) (map println) doall))
 
 (defn action-wids
-  "wids <tag names> -- get all wids in a tag or tags"
+  "<tags> -- get all wids in a tag or tags"
   [& tags]
   (->> (:tags state)
        ;; (contains?) is weird -- is index on seqs, no value
        ;; and on sets can be value since they are the same thing
-       (filter #(contains? (set tags) (:name %)))
+       (filter #(contains? (set (map tag-ident-to-name tags)) (:name %)))
        (map :wids)
        (apply set/union)
        (map println) doall
        ))
 
 (defn action-toggle-wids
-  "toggle <tag> <wids> -- toggle wids being in a tag"
+  "<tag> <wids> -- toggle wids being in a tag"
   [tag & wids]
   (defn update-wids [old-tag]
     (update old-tag :wids
             (fn [old-wids]
-              (if (= tag (:name old-tag))
+              (if (= (tag-ident-to-name tag) (:name old-tag))
                 (set/union
                  ;; existing minus toggles
                  (set/difference old-wids wids)
@@ -185,8 +196,7 @@
                  (set (filter #(not (contains? old-wids %)) wids))
                  )
                 old-wids
-                )))
-    )
+                ))))
 
   (update-tags update-wids))
 
@@ -221,11 +231,24 @@
        (map str)
        (filter #(str/starts-with? % "action-"))
        (sort)
-       (map #(format "%s: %s"
+       (map #(format "%12s: %s"
                      (subs % (count "action-"))
                      ;; so hot
                      (-> % symbol resolve meta :doc)))
        (cons "commands: ")
+       (map println)
+       doall
+       )
+  (println)
+  (println "NB: <tag> in the above may be an index EG ^1 or the name of the tag")
+  )
+
+(defn action-get-tags
+  "<wid> - get the tags a wid is in"
+  [wid]
+  (->> state :tags
+       (filter #(contains? (set (:wids %)) wid))
+       (map :name)
        (map println)
        doall
        ))
@@ -256,6 +279,11 @@
           (save-state)
           ))))
 
-;; consider: smart toggle
-;; if looking at a wid in a group, hide the group
-;; else, show the group it it's not shown, then focus it
+;; notes
+;; > consider: smart toggle if looking at a wid in a group, hide the group else, show the group it
+;; it's not shown, then focus it
+
+;; > tags doesn't feel right -- the 'unsolved' part is maybe managing untagged windows, maybe
+;; default adding them to a tag or something maybe add to the current tag you are focused on
+
+;; all the above may now be done via a script/at a higher level.
