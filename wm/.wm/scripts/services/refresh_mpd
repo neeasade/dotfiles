@@ -1,0 +1,10 @@
+#!/bin/sh
+# detect the mount for mpd music and switch it if so
+
+is_mounted_configured=$(iif 'grep -q "${HOME}/usb/Music" "$HOME/.config/mpd/mpd.conf"')
+is_mounted=$(iif 'mount | grep "${HOME}/usb"')
+
+if [ ! "$is_mounted" = "$is_mounted_configured" ]; then
+    echo "states don't match! reloading mpd"
+    theme refresh mpd
+fi

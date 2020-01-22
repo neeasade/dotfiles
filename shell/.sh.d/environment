@@ -91,6 +91,7 @@ succ .go/bin
 succ .cargo/bin
 succ .wm/scripts/interact
 succ .wm/scripts/visual
+succ .wm/scripts/services
 succ .wm/panel/lemons
 succ .wm/panel/tools
 # pip --user location

@@ -2,7 +2,9 @@
 # wrap the importing of music from the internet
 # define music playlists by search terms
 
-musicdir="$HOME/Music"
+# musicdir="$HOME/Music"
+musicdir=$(cat "$HOME/.config/mpd/mpd.conf" | awk -F\" '/music_directory/{print $2}')
+
 current_playlist="${musicdir}/playlist/current"
 
 add() { # add a url to library, fallback on clipboard content
@@ -100,7 +102,7 @@ remove() { # remove some search match from the playlist
 }
 
 now() { # fuzzy search for a song, play it now
-  if song=$(mpc listall | fzf); then
+  if song=$(mpc listall | dmenu); then
     mpc insert "$song"
     mpc next
     mpc play
@@ -116,7 +118,7 @@ bl() { # blacklist the currently playing song from the current playlist.
 
 playlist() { # select a search term based playlist to play
   if [ -z "$1" ]; then
-    if ! target=$(ls "${musicdir}/playlist" | fzf); then
+    if ! target=$(ls "${musicdir}/playlist" | dmenu); then
       return
     fi
   else
