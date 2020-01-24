@@ -6,6 +6,7 @@
   in
     rec {
       gtkrc-reload = callPackage ./gtkrc-reload {};
+      oomox = callPackage ./oomox {};
 
       bevelbar = (pkgs.bevelbar.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://www.uninformativ.de/git/bevelbar.git"; ref = "master"; };

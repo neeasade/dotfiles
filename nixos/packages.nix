@@ -12,10 +12,10 @@ let
 
   # stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
   stable = pkgs; # controlled by root nix-channel entry
-  rolling = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
+  unstable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
 
-  #rolling = pkgs;
+  #unstable = pkgs; # force everyone to be on the same level
   #edge = pkgs;
 
   expr = import ./expr { inherit pkgs lib; };
@@ -25,7 +25,7 @@ let
   # rolling = stable;
 
   core = (with stable; [
-    haskellPackages.xmobar
+    direnv
     kdeFrameworks.networkmanager-qt
     networkmanager_dmenu
     xorg.xkbcomp
@@ -127,7 +127,7 @@ let
     libGL
 
     gnutls # for circe
-  ]) ++ (with rolling; [
+  ]) ++ (with unstable; [
 
     emacs
     colort
@@ -154,6 +154,9 @@ let
     polybar
   ]) ++ ( with expr; [
     # qutebrowser-git
+
+    # oomox
+
     pb-git
     mpvc-git
     xst-git
@@ -217,7 +220,7 @@ let
     # wineStaging
     # wineUnstable
     # (wine.override { wineBuild = "wineWow"; })
-  ]) ++ (with rolling; [
+  ]) ++ (with unstable; [
     openmw
     steam
     # openmw-tes3mp
@@ -282,6 +285,8 @@ let
     nodejs
     ruby
   ]) ++ (with edge; [
+    # lorri
+
     # joker
     # boot
     # chickenPackages_5.chicken
