@@ -41,14 +41,13 @@ if [ "$target" = "playerctl" ]; then
     artist=$(echo "$metadata" | awk '/xesam:artist/{$1=$2=""; print $0}')
     title=$(echo "$metadata" | awk '/xesam:title/{$1=$2=""; print $0}')
 
-    # if title has only 1 - or :, assume it's a delimiter EG yt title
-    if [ $(echo "$title" | awk -F- '{print NF-1}') -eq 1 ]; then
-      artist=$(echo "$title" | awk -F- '{print $1}')
-      title=$(echo "$title" | awk -F- '{print $2}')
-    elif [ $(echo "$title" | awk -F: '{print NF-1}') -eq 1 ]; then
-      artist=$(echo "$title" | awk -F: '{print $1}')
-      title=$(echo "$title" | awk -F: '{print $2}')
-    fi
+    for char in \| \- \:; do
+      if [ $(echo "$title" | awk -F${char} '{print NF-1}') -eq 1 ]; then
+        artist=$(echo "$title" | awk -F${char} '{print $1}')
+        title=$(echo "$title" | awk -F${char} '{print $2}')
+        break
+      fi
+    done
 
     title=$(echo "$title" | awk '{$1=$1;print}')
     artist=$(echo "$artist" | awk '{$1=$1;print}')
