@@ -1,0 +1,16 @@
+#!/bin/sh
+
+wid="$(bspc query -N -n)"
+json="$(bspc query -T -n)"
+jget() {
+    echo "$json" | jq -r ".client.$1"
+}
+
+x=$(jget tiledRectangle.x)
+y=$(jget tiledRectangle.y)
+w=$(jget tiledRectangle.width)
+h=$(jget tiledRectangle.height)
+
+bspc node -t floating
+xdo move -x $x -y $y $wid
+xdo resize -w $w -h $h $wid

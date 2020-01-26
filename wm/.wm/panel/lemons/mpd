@@ -4,17 +4,17 @@
 
 maxWinNameLen=30
 
-player.sh | grep -q playing && playing=true || playing=false
-player.sh | grep -q paused && paused=true || paused=false
+player.sh | grep -qi playing && playing=true || playing=false
+player.sh | grep -qi paused && paused=true || paused=false
 
 if $playing || $paused; then
-    title="$(player.sh -f "%title% - %artist%" | head -n 1)"
+    title=$(player.sh -f "%title% - %artist%" | head -n 1)
     # if title is empty, try file and trim from last / if exists.
     if [ "$title" = " - " ]; then
-        title="$(player.sh -f "%file%" | head -n 1 | sed 's/.*\///')"
+        title=$(player.sh -f "%file%" | head -n 1 | sed 's/.*\///')
 
         # peel some stuff
-        title="$(echo "$title" | sed 's/【.*】//')"
+        title=$(echo "$title" | sed 's/【.*】//')
     fi
 else
   title="Stopped"

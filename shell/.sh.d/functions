@@ -26,12 +26,13 @@ blog_add_post() {
   date=$(date +%Y-%m-%d)
   file="${HOME}/git/neeasade.github.io/posts/${date}-${title}.org"
   echo "#+title: $*" >"$file"
+  echo "#+draft: t" >>"$file"
   $EDITOR "$file"
 }
 
 blog_add_dtop() {
   if [ -z "$*" ]; then
-    echo "blog_add_dtop <url> <date>"
+    echo "blog_add_dtop <url> <date> (date format should be: YYYY-MM-DD)"
     return
   fi
 

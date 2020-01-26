@@ -268,7 +268,14 @@ load_dunst() {
 }
 
 load_mpd() {
-    mkdir "$HOME/.config/mpd/playlists"
+    mkdir -p "$HOME/.config/mpd/playlists"
+
+    if mount | grep "${HOME}/usb"; then
+	music_dir="${HOME}/usb/Music"
+	mpd_dir="$HOME/.config/mpd_portable"
+	mkdir -p "$mpd_dir"
+    fi
+
     margs mpd .config/mpd/mpd.conf
     systemctl --user restart mpd
 }
@@ -334,7 +341,7 @@ load_services() {
 	# fully qualify executable:
 	args=$(awk '{$1=""; print $0}' <<< "$ExecStart")
 	target=$(awk '{print $1}' <<< "$ExecStart")
-	export ExecStart="$(which $target)${args}"
+	export ExecStart="$(which $target) ${args}"
 
 	margs systemd_service .config/systemd/user/${service_name}.service
 
@@ -348,11 +355,14 @@ load_services() {
 	make_service "$1" "periodically $interval $2" "$3"
     }
 
-    # checkers
+    # intervals
     make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
+
     make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
+
     make_periodic_service 30 qb_session_dump "qb_command ':session-save'" "Dump the qutebrowser session from time to time"
+    make_periodic_service 10 refresh_mpd "refresh_mpd"
 
     make_service compton
     make_service unclutter 'unclutter -idle 1'
