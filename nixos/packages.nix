@@ -145,7 +145,6 @@ let
     xfce.thunar
     xorg.xprop
     xorg.xwininfo
-    xrq
     xtitle
     youtube-dl
     qutebrowser
