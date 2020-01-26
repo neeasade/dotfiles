@@ -4,9 +4,11 @@ resolve() {
     xrdb -query | sort | awk -F: /${*}:/'{$1=""; print $0}' | head -n 1 | awk '{$1=$1;print}'
 }
 
-ret=$(resolve "$*")
-if [ -z "$ret" ]; then
-    resolve "\*.$(echo "$*" | sed 's/.*\.//')"
-fi
+for key in "$@"; do
+    ret=$(resolve "$key")
+    if [ -z "$ret" ]; then
+	resolve "\*.$(echo "$key" | sed 's/.*\.//')"
+    fi
 
-printf '%s' "$ret"
+    printf '%s\n' "$ret"
+done
