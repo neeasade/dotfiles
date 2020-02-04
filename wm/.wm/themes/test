@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# test theme
 
 colors() {
     color0=F9F9F9
@@ -29,29 +30,33 @@ settings() {
     emacs_theme="apropospriate-light"
     emacs_theme="base16-grayscale-light"
     emacs_powerline_scale="1.0"
-    PROMPT_CHAR='>>'
+    PROMPT_CHAR='%'
 
     # bspwm
-    b_border_width=2
-    b_border_width=2
-    b_window_gap=10
+    b_border_width=1
+    b_normal_border_color=B0A8A6
+    b_window_gap=6
 
     b_bspwmrc_extend="
 xpad &
 "
 
-    x_padding=10
+    x_padding=6
 
     # b_normal_border_color=eeeff0
     # b_active_border_color=cecece
     # b_focused_border_color=7c7c7c
 
-    # p_bg_normal="#ffe3e3e3"
+    p_bg_middle=$(elisp -r "(face-attribute 'ns/mode-line-middle :background)")
+    # p_bg_middle=$(elisp -r "(face-attribute 'ns/mode-line-inactive :background)")
+
     # p_fg_active="#ff525252"
     # p_bg_active="#ffb9b9b9"
+    # p_format="desktop:circe_dms:title|org_task|mpd:volume:clock"
 
-    # p_format="dropdown:desktop:circe_dms:title|org_task|mpd:volume:weather:clock"
-    p_format="battery|desktop|network"
+    p_format="desktop:circe_dms:title|battery|mpd:volume:clock"
+
+    # p_format="battery|desktop|clock"
     p_offset="-3"
 
     p_title_show_mode=active         # used by title.
@@ -61,10 +66,10 @@ xpad &
     p_line=3
     p_window_class="noshadow"
     p_line=2
-    p_padding=6
+    # p_padding=6
 
     # p_font_main="Charter-10:style=Bold"
-    p_font_main="Equity Text B-13"
+    p_font_main="Equity Text B-11"
     # p_font_main="Charter-10:style=Bold"
     p_font_icon="FontAwesome-10" # Panel Icon font.
     p_icon_enable=false
@@ -79,8 +84,8 @@ xpad &
     p_desktop_monocle_label=$(uchar f00b)
 
     # st_font="Go Mono for Powerline-12:style=Regular"
-    st_font="Triplicate T4c-13"
-    st_font_variable="Equity Text B-13"
+    st_font="Triplicate T4c-12"
+    st_font_variable="Equity Text B-12"
     p_title_only_show_active=true
     maxWinNameLen=40
 
@@ -107,32 +112,55 @@ line() {
     bg
 }
 
-even_section() {
-    iif "[ $((step%2)) -eq 0 ]"
-}
-
 stepSetup() {
     separateStep
 }
 
 # fg() {
-#     iif $(even_section) "525252" "a4a4a4"
+#     elisp
 # }
 
-# activebg() {
-#     bg
-# }
+activebg() {
+    bg
+}
 
-# bg() {
-#     iif $(even_section) "b9b9b9" "f7f7f7"
-# }
+# experiment: getting colors from the emacs moedline
+bg() {
+    elisp -r "(face-attribute 'mode-line :background)"
+}
 
-# suffix() {
-#     border="%%{B#FFcecece}%%{O2}%%{B-}"
-#     iif $(even_section) "$border" ""
-# }
+suffix() {
+    if [ "$lemon_target_align" = left ]; then
+	color=$(elisp -r "(face-attribute 'ns/mode-line-sep :background)")
+	if $lemon_target_end; then
+	    color=$(elisp -r "(face-attribute 'ns/mode-line-sep-edge :background)")
+	fi
+	color=$(colort -t "$color")
+	# todo: derive width from thin space pixel width in emacs mode line
+	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+    fi
 
-# prefix() {
-#     border="%%{B#FFcecece}%%{O2}%%{B-}"
-#     iif $(even_section) "$border" ""
-# }
+    if [ "$lemon_target_align" = center ]; then
+	color=$(elisp -r "(face-attribute 'ns/mode-line-sep :background)")
+	color=$(colort -t "$color")
+	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+    fi
+}
+
+prefix() {
+    if [ "$lemon_target_align" = right ]; then
+	color=$(elisp -r "(face-attribute 'ns/mode-line-sep :background)")
+	if $lemon_target_end; then
+	    color=$(elisp -r "(face-attribute 'ns/mode-line-sep-edge :background)")
+	fi
+
+	color=$(colort -t "$color")
+	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+    fi
+
+    if [ "$lemon_target_align" = center ]; then
+	color=$(elisp -r "(face-attribute 'ns/mode-line-sep :background)")
+	color=$(colort -t "$color")
+	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+    fi
+}
