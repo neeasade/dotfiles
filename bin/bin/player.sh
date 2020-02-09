@@ -41,7 +41,7 @@ if [ "$target" = "playerctl" ]; then
     artist=$(echo "$metadata" | awk '/xesam:artist/{$1=$2=""; print $0}')
     title=$(echo "$metadata" | awk '/xesam:title/{$1=$2=""; print $0}')
 
-    for char in \| \- \:; do
+    for char in \| \- \: \— ; do
       if [ $(echo "$title" | awk -F${char} '{print NF-1}') -eq 1 ]; then
         artist=$(echo "$title" | awk -F${char} '{print $1}')
         title=$(echo "$title" | awk -F${char} '{print $2}')
@@ -60,5 +60,10 @@ if [ -z "$*" ]; then
   set -- status
 fi
 
+# terrible
+if [ -z "$GET" ]; then
 # echo $target "$@"
-$target "$@"
+  $target "$@"
+else
+  echo $target
+fi
