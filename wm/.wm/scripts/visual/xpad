@@ -1,21 +1,28 @@
 #!/usr/bin/env bash
 # fake padding for windows (terrible)
+# it would be nice if we could somehow make this work for fullscreen windows as well
+# would that mean that fullscreen windows would have to be floating, so a border
+# could be applied? ....
+# you can achieve the above with monocle mode and some choice settings, + a solid color background
+# the transition between the two modes is not currently fluid though.
 
 eval "$(theme get)"
-border_width="$(bspc config border_width)"
-border_color_normal="$(bspc config normal_border_color)"
-border_color_active="$(bspc config focused_border_color)"
-background_color="$(xrq background)"
+border_width=$(bspc config border_width)
+border_color_normal=$(bspc config normal_border_color)
+border_color_active=$(bspc config focused_border_color)
+background_color=$background
 
 background_color=${background_color//\#}
 border_color_normal=${border_color_normal//\#}
 border_color_active=${border_color_active//\#}
 
 bspc config focused_border_color "#$background_color"
+bspc config normal_border_color "#$background_color"
 
 cleanup() {
     bspc config border_width $border_width
     bspc config focused_border_color \#$border_color_active
+    bspc config normal_border_color \#$border_color_normal
 }
 
 trap cleanup SIGINT SIGTERM
