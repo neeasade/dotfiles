@@ -9,6 +9,7 @@ st.prompt_char: {{PROMPT_CHAR}}
 Emacs.theme: {{emacs_theme}}
 Emacs.powerlinescale: {{emacs_powerline_scale}}
 Emacs.powerline: {{emacs_powerline}}
+Emacs.doomlineheight: {{p_height}}
 
 
 ! colors (appended in ltheme script)

@@ -10,7 +10,7 @@ b_active_border_color=$color8
 b_focused_border_color=$foreground
 b_presel_feedback_color=$color8
 b_desktop_names="00 01 10 11"
-b_monocle_window_percent=.65
+b_monocle_window_percent=.66
 
 # meant to be used for effects, like pulse or 2bspwm
 b_bspwmrc_extend=""
@@ -50,6 +50,7 @@ p_title_show_mode=monocle         # used by title.
 
 # Panel colors
 p_bg_normal="#ff$background"
+p_bg_middle="#ff$background"
 p_fg_normal="#ff$foreground"
 p_bg_active=$p_fg_normal
 p_fg_active=$p_bg_normal
@@ -64,10 +65,10 @@ p_desktop_tiling_label=''
 p_desktop_monocle_label='M'
 
 # default reload times for panel sections
-p_network_reload=30
+p_network_reload=20
 p_mail_reload=30
 # p_desktop_reload="bspc subscribe"
-p_desktop_reload="cgrep bgroups && cat /tmp/bspgroups_out || bspc subscribe"
+p_desktop_reload="bspc subscribe"
 
 p_title_reload="(xtitle -s & bspc subscribe desktop_layout)"
 p_weather_reload=600
@@ -109,11 +110,15 @@ emacs_powerline="bar"
 # xst
 st_font="Droid Sans Mono-10"
 st_font_variable="Droid Sans-10"
+
+st_font="Droid Sans Mono for Powerline-10"
+st_font_variable="Droid Sans-10"
+
 st_cursorshape=2
 st_cursorthickness=2
 
 # padding
-x_padding=10
+x_padding=4
 
 GTK_FONT="Droid Sans 10" # GTK font to be used.
 
@@ -174,6 +179,6 @@ border_color_in_normal=$color2
 border_color_in_focused=$color3
 
 if type greaten >/dev/null; then
-    border_color_in_normal=$(greaten 30 $border_color_out_normal)
-    border_color_in_focused=$(greaten 30 $border_color_out_focused)
+    border_color_in_normal=$(elisp_timeout=1 greaten 5 $border_color_out_normal)
+    border_color_in_focused=$(elisp_timeout=1 greaten 5 $border_color_out_focused)
 fi

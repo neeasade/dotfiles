@@ -3,7 +3,7 @@
 [bar]
 line={{p_line}}
 padding={{p_padding}}
-bg = "{{p_bg_normal}}"
+bg = "{{p_bg_middle}}"
 fg = "{{p_fg_normal}}"
 format = "{{p_format}}"
 fonts = "{{p_font_main}}"

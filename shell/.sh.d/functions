@@ -1,4 +1,27 @@
 # -*- mode: sh -*-
+# todo: consider moving the shot functions into a script
+
+windowshot() {
+  j=$(bspc query -T -n)
+  w=$(jget width "$j")
+  h=$(jget height "$j")
+
+  x=$(jget x "$j")
+  y=$(jget y "$j")
+
+  border=$(bspc config border_width)
+  x=$((x - (border/2)))
+  y=$((y - (border/2)))
+
+  maim -g "${w}x${h}+${x}+${y}" "$(shot_location)"
+}
+
+bspwm_kill_visual() {
+  for visual in $HOME/.wm/scripts/visual/*; do
+    pkill -f $visual 2>/dev/null
+  done
+}
+
 
 pfetch() {
   export PF_SEP=""
@@ -113,7 +136,7 @@ viewshot() {
 
 upshot() {
   # todo: trim this, use xeros pb, import it, then paste and alert on your own
-  uguush -o 0x0 -u "$(lastshot)"
+  pb 0x0 "$(lastshot)"
 }
 
 # current monitor only - bspwm specific
