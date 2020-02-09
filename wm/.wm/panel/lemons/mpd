@@ -1,5 +1,5 @@
 #!/usr/bin/env dash
-# mpd, or mpv.
+# player by player.sh
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
 
 maxWinNameLen=30

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # wrap the importing of music from the internet
 # define music playlists by search terms
+# add a nice display func
 
 # musicdir="$HOME/Music"
 musicdir=$(cat "$HOME/.config/mpd/mpd.conf" | awk -F\" '/music_directory/{print $2}')
@@ -12,6 +13,10 @@ add() { # add a url to library, fallback on clipboard content
   [ -z "$url" ] && url=$(xclip -o -selection clipboard)
   echo "$url" >> "$musicdir/import_history.log"
   mkdir -p "$musicdir/import"
+
+  # note: get all of an artists album links example:
+  # url='https://sewerslvt.bandcamp.com/'
+  # curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '${url}#" -e "s/$/'/"
 
   if echo "$url" | grep -q 'bandcamp.com'; then
     # bandcamp music is organized by album:
@@ -145,7 +150,7 @@ playlist() { # select a search term based playlist to play
 }
 
 infoname() {
-  name=$(mpc -f '%title% - %artist%' | head -n 1)
+  name=$(player.sh -f '%title% - %artist%' | head -n 1)
   if [ "$name" = ' - ' ]; then
     name=$(basename "$(mpc -f '%file%' | head -n 1)")
     name=${name%.*}
@@ -157,9 +162,26 @@ info() { # display the current song progress bar and playlist length
   infoname
 
   length=$(wc -L <<< "$name")
-  percent=$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')
+
+  if [ "$(GET=t player.sh)" = "playerctl" ]; then
+      # we can't get the percent, fake it for the looks
+      # cf https://bytefreaks.net/gnulinux/bash/bash-get-random-number-that-belongs-in-a-range
+      bottom=40
+      top=80
+      range=$((top-bottom+1))
+
+      percent=$RANDOM
+      let "percent %= $range"
+      percent=$((percent+bottom))
+  else
+      percent=$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')
+  fi
+
   "$HOME/.wm/panel/tools/mkb" $percent $length
-  echo "playlist: $(cat $current_playlist) | $(playlist_length)"
+
+  if [ "$(GET=t player.sh)" = "mpc" ]; then
+      echo "playlist: $(cat $current_playlist) | $(playlist_length)"
+  fi
 }
 
 op=${1:-usage}

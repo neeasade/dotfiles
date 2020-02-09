@@ -109,7 +109,7 @@ gradientGet() {
 # default declare function if not defined
 # <func_name> <func_contents>...
 default_function() {
-    func_name="$1"
+    func_name=$1
     shift
     $(iif "[ ! \"$(type -t $func_name)\" = \"function\" ]") && \
         eval "$func_name () {

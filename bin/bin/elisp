@@ -2,6 +2,7 @@
 # provide a way to run elisp in a running emacs-server
 # can act as a shebang (ie #!/usr/bin/env elisp) or
 # adhoc code (ie elisp '(message "uwu")')
+# todo: getopt, a -q option for quiet
 
 trim=false
 if [ "$1" = "-r" ]; then
@@ -55,7 +56,6 @@ if type timeout >/dev/null; then
     emacs_timeout="timeout ${elisp_timeout}"
 fi
 
-# echo "$lisp"
 result=$($emacs_timeout $eclient --eval "$lisp")
 
 quit() {
