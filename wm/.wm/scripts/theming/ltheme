@@ -41,6 +41,11 @@ fi
 margs() {
     cache=false
     template=$(eval echo \$${1}_template)
+
+    if [ ! -f "$template" ]; then
+	template=$1
+    fi
+
     target="$HOME/$2"
     mkdir -p "${target%/*}"
 
@@ -61,18 +66,28 @@ margs() {
 }
 
 git_ensure() {
-    gitdir="$HOME/git"
     case "$1" in
         acyl) gittarget="https://github.com/neeasade/acyl"
               gitdir="$HOME/.icons/"
             ;;
         oomox) gittarget="https://github.com/actionless/oomox-gtk-theme/" ;;
         css) gittarget="https://github.com/neeasade/solarized-everything-css" ;;
+        pywal) gittarget="https://github.com/dylanaraps/pywal/" ;;
+	wal_steam) gittarget="https://github.com/Tardog/wal_steam/" ;;
     esac
 
-    [ ! -d "$gitdir" ] && mkdir -p "$gitdir"
+    gitdir="$HOME/git"
+    mkdir -p "$gitdir"
     gitdest="$gitdir/$(basename "$gittarget")"
-    [ ! -d "$gitdest" ] && git clone "$gittarget" "$gitdest"
+
+    if [ ! -d "$gitdest" ]; then
+       git clone "$gittarget" "$gitdest"
+       if [ "$1" = "wal_steam" ]; then
+	   cd "$gitdest"
+	   git fetch --all
+	   git checkout -b support-new-library-view
+       fi
+    fi
 }
 
 trim_alphas() {
@@ -186,7 +201,8 @@ load_gtk() {
 
     if ! margs gtkrc .gtkrc-2.0; then
         target="$HOME/.themes/${THEME_NAME}_template"
-        mustache < $HOME/.dotfiles/templates/oomox > $target
+        # mustache < $HOME/.dotfiles/templates/oomox > $target
+	templum -o "$target" "$HOME/.dotfiles/templates/oomox"
 
         git_ensure oomox
         cd "$gitdest"
@@ -315,6 +331,51 @@ load_mintty() {
     margs mintty .minttyrc
 }
 
+# steal pywal templates
+# mostly interested in css template for load_steam
+load_pywal() {
+    # note: this is not comprehensive, does not cover the 'color1.rgb' case and whatever else there might be
+
+    # usually pywal expects colors to have the #
+    for c in color{0..15} background foreground; do
+	echo "$c=\#\$$c"
+	eval export $c=\#\$$c
+    done
+    export cursor="#${cursorColor}"
+
+    mkdir -p "${HOME}/.cache/wal/"
+    git_ensure pywal
+
+    IFS=$'\n'
+    for f in $(fd . -t f "${gitdest}/pywal/templates/"); do
+	# turn all singles into doubles
+	dest=".cache/wal/$(basename "$f")"
+	template="${HOME}/${dest}.template"
+
+	cp "$f" "$template"
+
+	# account for template differences
+	sed -i 's/{/{{/g' "$template"
+	sed -i 's/}/}}/g' "$template"
+	sed -i 's/{{{{/{/g' "$template"
+	sed -i 's/}}}}/}/g' "$template"
+
+	margs "$template" "$dest"
+    done
+
+    # todo: consider cleaning up the oomox template here (color.strip) and using that
+}
+
+# note -- not sure if this just didn't work or what but it is ugly
+load_steam() {
+    load_pywal
+
+    git_ensure wal_steam
+    cd "$gitdest"
+    # todo: -f font
+    ./wal_steam.py -w
+}
+
 load_services() {
     # clean
     find ${HOME}/.config/systemd/user/ -type f -delete
@@ -371,6 +432,10 @@ load_services() {
 
     # todo: correct lemon mpd naming conflict
     make_service mpd "/run/current-system/sw/bin/mpd --no-daemon $HOME/.config/mpd/mpd.conf"
+
+    if which lorri; then
+    	make_service lorri 'lorri daemon'
+    fi
 
     # reload units
     systemctl --user daemon-reload
