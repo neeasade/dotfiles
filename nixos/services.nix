@@ -4,9 +4,8 @@ let
   expr = import ./expr { inherit pkgs; };
 in
 {
-
   services = {
-    lorri = {enable = true;};
+    # lorri = {enable = true;};
 
     tlp = {
       enable = true;

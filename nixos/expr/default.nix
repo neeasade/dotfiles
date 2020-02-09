@@ -12,6 +12,27 @@
         src = builtins.fetchGit {url = "https://www.uninformativ.de/git/bevelbar.git"; ref = "master"; };
       }));
 
+
+      drawterm = stdenv.mkDerivation rec {
+        name = "drawterm";
+
+        src = builtins.fetchGit {url =  "https://github.com/0intro/drawterm"; ref = "master"; };
+
+        nativeBuildInputs = [ pkgconfig ];
+        buildInputs = (with pkgs; [ xorg.libX11 ncurses
+                                    # libXext
+                                    # libXft
+                                    # fontconfig
+                                  ]);
+
+        installPhase = ''
+  CONF=unix make
+  install -Dm755 drawterm $out/usr/bin/drawterm
+  install -Dm644 drawterm.ico $out/usr/share/pixmaps/drawterm.ico
+  '';
+
+      };
+
       pb-git = stdenv.mkDerivation rec {
         pname = "pb";
         version = "1.0.0";
@@ -27,6 +48,10 @@
 
       xst-git = (pkgs.xst.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
+      }));
+
+      colort-git = (pkgs.colort.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/neeasade/colort"; ref = "master"; };
       }));
 
       mpvc-git = (pkgs.mpvc.overrideAttrs(old: {

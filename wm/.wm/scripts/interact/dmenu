@@ -6,8 +6,7 @@ prompt=${*:-select: }
 while :; do
     while getopts 'p:' flag 2>/dev/null; do
 	case $flag in
-	    p) echo "I was hit!!!"
-	       prompt=$OPTARG;;
+	    p) prompt=$OPTARG;;
 	    *) ;; # nop
 	esac
     done

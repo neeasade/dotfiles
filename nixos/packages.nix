@@ -128,9 +128,16 @@ let
 
     gnutls # for circe
   ]) ++ (with unstable; [
+    lorri
 
     emacs
-    colort
+
+    # (emacsWithPackages(e: with e; [
+    #   emacs-libvterm
+    #   # proof-general
+    #   # (pdf-tools.overrideAttrs (attrs: { src = pdf-tools-src; }))
+    # ]))
+
     dunst
     dzen2
     ffmpeg
@@ -154,6 +161,9 @@ let
   ]) ++ ( with expr; [
     # qutebrowser-git
 
+    colort-git
+
+    # drawterm
     # oomox
 
     pb-git
@@ -184,7 +194,10 @@ let
 
     cloc
 
+    # damn rust really crept in there
+    fd
     ripgrep
+
     pandoc
     imagemagick
     graphviz
@@ -244,7 +257,7 @@ let
     luarocks
 
     clang
-    # gcc
+    gcc
 
     # ghc
     go
@@ -263,7 +276,7 @@ let
     rustfmt
     rustracer
 
-    python35
+    python37
     # (python35.withPackages(ps: with ps; [
     #   virtualenv
     #   django

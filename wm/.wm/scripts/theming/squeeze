@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# squeeze lemons
+# squeeze lemons into the juicer
+# generate a juicer section
 
 # information from ripening
-lemon_target="$1"
-step="$(eval "echo \${${1}}")"
-lemon_target_align="$(eval "echo \${${1}_align}")"
-lemon_target_end="$(eval "echo \${${1}_end}")"
+lemon_target=$1
+step=$(eval "echo \${${1}}")
+lemon_target_align=$(eval "echo \${${1}_align}")
+lemon_target_end=$(eval "echo \${${1}_end}")
 
 # declare, reload.
 echo "[$lemon_target]"
@@ -14,8 +15,8 @@ echo "[$lemon_target]"
 # emit a setting, or fallback on default (vanilla)
 process_target() {
     type -t $1 > /dev/null && \
-      input="$(eval $1)" || \
-      input="$(vanilla $1)"
+      input=$(eval $1) || \
+      input=$(vanilla $1)
 
     if [ ! -z "$input" ]; then
        [ ${#input} -eq 6 ] && input="#ff${input}"
