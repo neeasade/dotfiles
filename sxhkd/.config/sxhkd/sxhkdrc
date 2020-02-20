@@ -14,7 +14,11 @@ super + s
     bspc config pointer_follows_focus false
 
 super + f
-    bspc node -t ~fullscreen
+    bspc desktop -l next
+    # bspc node -t ~fullscreen
+
+super + t
+    bspc desktop -l next
 
 # if the current node is automatic, send it to the last manual, otherwise pull the last leaf
 super + y
@@ -25,9 +29,6 @@ alt + {_,shift} + Tab
 
 super + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal
-
-super + t
-    bspc desktop -l next
 
 super + {_,shift,alt,ctrl} + {h,n,e,l}
     {focus,move,resize,presel}.sh {west,south,north,east}

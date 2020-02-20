@@ -69,6 +69,10 @@ fi
 
 # hack -- set both displays to the laptops max res
 if [ "$*" = "mirror" ]; then
+
+    # stop the running version of this
+    systemctl --user stop display_sync
+
     max_res=$(echo "$xrandr" | grep -A 1 $laptop_monitor | tail -n 1 | awk '{print $1}')
 
     turn_on $laptop_monitor $max_res

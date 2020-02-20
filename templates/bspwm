@@ -5,16 +5,14 @@
 set -a
 
 # if none set, keep whatever is open.
-gapped="$1"
+gapped=$1
 [ -z "$gapped" ] && gapped=$(iif "! [ $(bspc config window_gap) -le 0 ]")
 
 xinit=$(iif "[ $(( $(date +%s) - xstart )) -lt 2 ]")
 
 PATH=$PATH:$HOME/.wm/scripts/visual
 
-$(iif "[ \"{{p_gap}}\" = \"0\" ]") &&
-    relaunch_panel=true || \
-    relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null")
+relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null")
 
 bspc config border_width {{b_border_width}}
 bspc config split_ratio  {{b_split_ratio}}
@@ -48,7 +46,8 @@ for side in right {{{iif "[ \"$p_position\" = \"top\" ]" bottom top}}} left; do
     bspc config ${side}_padding $side_padding
 done
 
-bspc config borderless_monocle $(iif "! $gapped")
+# bspc config borderless_monocle $(iif "! $gapped")
+bspc config borderless_monocle true
 bspc config single_monocle true
 
 # multihead option is the custom_monocle script
@@ -67,8 +66,8 @@ if $relaunch_panel && ! ps -p $(cat /tmp/panel-pid); then
     "{{p_launch_cmd}}" &
 fi
 
-for visual in $(ls $HOME/.wm/scripts/visual); do
-    pkill -f $HOME/.wm/scripts/visual/$visual 2>/dev/null
+for visual in $HOME/.wm/scripts/visual/*; do
+    pkill -f "$visual" 2>/dev/null
 done
 
 # extensions may be defined in themes here:

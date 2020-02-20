@@ -1,7 +1,8 @@
 #!/bin/sh
 
 theme_dir="$HOME/.wm/themes"
-theme_load="$HOME/.wm_theme"
+theme_load="${theme_load:-$HOME/.wm_theme}"
+# export elisp_timeout=0.2
 
 die() {
   echo $*
@@ -10,8 +11,8 @@ die() {
 
 getval() {
     (
-	eval "$(get)"
-	eval printf \%s \"\$$1\"
+	bash -c "$(get); eval printf \%s \"\$$1\""
+	# eval printf \%s \"\$$1\"
     )
 }
 
@@ -28,8 +29,19 @@ get() {
   echo set +a
 }
 
+# call ltheme subset for a named theme
+softload() {
+  name=$1
+  shift
+  [ -z "$name" ] && die softload needs a name.
+  [ ! -f "$theme_dir/$name" ] && die $name not found
+
+  export theme_load="${theme_dir}/${name}"
+  "$HOME/.wm/scripts/theming/ltheme" $*
+}
+
 load() {
-  name="$1"
+  name=$1
   shift
   [ -z "$name" ] && die load needs a name.
   [ ! -f "$theme_dir/$name" ] && die $name not found
@@ -45,7 +57,7 @@ edit() {
 }
 
 new() {
-  name="$*"
+  name=$*
   [ -z "$name" ] && die new needs a name.
   eval "$(get)"
   cp "$theme_dir/colors/$THEME_NAME" "$theme_dir/colors/$name"

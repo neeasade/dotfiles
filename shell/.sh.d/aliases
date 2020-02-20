@@ -1,5 +1,6 @@
 # -*- mode: sh -*-
-
+# reminder: you can always escape aliases with a '\'
+# eg \cd
 
 alias qq=colemak
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
@@ -8,7 +9,6 @@ alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.de
 alias ls=' ls --color=auto'
 alias cd=' cd'
 alias pg=' pgrep'
-alias make=" clear; make"
 alias lsblk=" clear; lsblk"
 alias pacman="pacman --color=always"
 alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files/Steam/Steam.exe >/dev/null 2>&1 &'
@@ -18,18 +18,21 @@ alias paint="pinta"
 alias tmux='tmux -2'
 alias ref='theme refresh '
 alias e='$EDITOR '
-alias syncu='git push origin $(current_branch)'
-alias syncd='git pull origin $(current_branch)'
 
 alias xl='xrdb "$HOME/.Xresources"'
-
-alias syncd='git pull origin $(current_branch)'
-alias syncu='git push origin $(current_branch)'
 alias pdfgrep='pdfgrep --cache -n '
 
+# the best
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 
 alias ds='dirs -v | head -n 10'
+
+# making this a function so EG the following can work:
+# FOO=BAR make
+make() {
+  clear
+  make
+}

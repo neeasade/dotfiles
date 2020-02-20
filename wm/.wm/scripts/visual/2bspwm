@@ -10,10 +10,11 @@ border_width_in_normal=$(( border_width_current/2 ))
 border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
 border_width_in_focused=$border_width_in_normal
 border_width_out_focused=$border_width_out_normal
-border_color_in_normal=444444
-border_color_out_normal=eeeeee
-border_color_in_focused=666666
-border_color_out_focused=dddddd
+
+# border_color_in_normal=444444
+# border_color_out_normal=eeeeee
+# border_color_in_focused=666666
+# border_color_out_focused=dddddd
 
 type theme > /dev/null 2>&1 && eval "$(theme get)"
 

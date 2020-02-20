@@ -268,12 +268,14 @@ load_dunst() {
     d_width=$(echo .24 \* $mon_width | bc | sed 's/\..*//')
 
     # todo: make this a theme option
+
     # top center
     # mon_width=$(bspc query -T -m | jq -r .rectangle.width)
     # d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
     # p_geometry="${d_width}x6+${d_x_middle}+$((b_window_gap + p_height))"
 
     # top right
+    # WIDTHxHEIGHT+XOFF+YOFF
     p_geometry="${d_width}x6-${b_window_gap}+$((b_window_gap + p_height))"
 
     margs dunstrc .config/dunst/dunstrc

@@ -1,6 +1,5 @@
 #!/usr/bin/env dash
 # neeasade
-# depends on: wmutils opt/chwb2
 # needs even borders, 4 parts, middle is 2 parts
 
 # set border widths, if odd outer is 1px larger

@@ -6,17 +6,17 @@ history_file="$HOME/.${cur_shell}_history"
 # cur_shell is from environment.
 case "$cur_shell" in
   bash)
-    HISTFILE="$history_file"
-    HISTFILESIZE="$history_length"
-    HISTSIZE="$history_length"
+    HISTFILE=$history_file
+    HISTFILESIZE=$history_length
+    HISTSIZE=$history_length
 
     shopt -s histappend
     HISTCONTROL=ignoredups:erasedups
     ;;
   zsh)
-    HISTFILE="$history_file"
-    SAVEHIST="$history_length"
-    HISTSIZE="$history_length"
+    HISTFILE=$history_file
+    SAVEHIST=$history_length
+    HISTSIZE=$history_length
 
     # setopt extended_history       # record timestamp of command in HISTFILE
     setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
@@ -28,7 +28,7 @@ case "$cur_shell" in
     setopt share_history          # share command history data
     ;;
   mksh)
-    HISTFILE="$history_file"
+    HISTFILE=$history_file
     ;;
 esac
 

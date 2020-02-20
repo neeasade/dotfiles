@@ -34,7 +34,7 @@ WINDOWS=$(iif "[ ! -n $(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}') ]")
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 LESSCHARSET='utf-8'
 
-BROWSER=qutebrowser
+BROWSER=qb_meta_open
 FILEBROWSER=thunar
 VIEW_PDF=zathura
 

@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 
-type theme > /dev/null 2>&1 &&
-    _prompt=$(theme getval PROMPT_CHAR) ||
+type theme >/dev/null 2>&1 &&
+    _prompt=$(timeout 1 theme getval PROMPT_CHAR 2>/dev/null) ||
     _prompt='%'
 
 if [ -z "$cur_shell" ]; then
@@ -11,6 +11,7 @@ fi
 
 [ "$cur_shell" = "zsh" ] && [ $_prompt = "%" ] && _prompt="%%"
 
+# todo here: timeout if we take too long (remote FS)
 git_prompt() {
   if ! git rev-parse --is-inside-work-tree &>/dev/null; then
     return
@@ -55,7 +56,7 @@ env_prompt() {
   fi
 
   changed_vars=$(diff \
-                   <(bash -ic '(set -o posix; set | grep -vE "^BASH_")') \
+                   <(cd; bash -ic '(set -o posix; set | grep -vE "^BASH_")') \
                    <((set -o posix; set) | grep -vE '^(BASH|changed_vars|FUNCNAME|PPID|SHLVL)') \
                    | grep '^> ' | sed 's/> //' | grep -oE '^[A-Z]+\=')
 

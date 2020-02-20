@@ -1,0 +1,45 @@
+#!/bin/sh
+# switch to tab or open $url
+# todo: consider basename domain vs fullname comparison
+
+url=$1
+if [ -z "$url" ]; then
+    url="this does not exist"
+fi
+
+# domain=
+# domain=$(echo "$url" | awk -F/ '{print $3}')
+
+vanilla() {
+    qutebrowser "$url"
+    exit 0
+}
+
+if ! pgrep qutebrowser; then
+    vanilla
+fi
+
+session_file="${HOME}/.local/share/qutebrowser/sessions/default.yml"
+
+# all the open urls (last in history is the current viewed thing)
+if ! sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | .url' | grep -q "$url"; then
+    echo not open
+    vanilla
+fi
+
+# do the same thing as above, but compare the url, grabbing the title
+matching_title=$(sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | select(.url == "'"${url}"'") | .title')
+
+if [ -z "$matching_title" ]; then
+    echo no found title
+    vanilla
+fi
+
+qb_command ":buffer $matching_title"
+for wid in $(bspc query -N -n .window); do
+    if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
+	echo bspc node -f $wid
+	bspc node -f $wid
+	break
+    fi
+done

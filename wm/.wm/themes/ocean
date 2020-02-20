@@ -54,8 +54,6 @@ settings() {
     p_title_only_show_active=true
     p_bg_inactive=$p_bg_normal
 
-    st_font="Droid Sans Mono-10"
-
     stepSetup()  {
 	#togetherStep
 	#reverseSteps
