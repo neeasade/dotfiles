@@ -1,21 +1,36 @@
 #!/bin/sh
-# switch to tab or open $url
+# switch to tab with $url or open $url
+# if no url found, goto or open qutebrowser window
 # todo: consider basename domain vs fullname comparison
 
 url=$1
-if [ -z "$url" ]; then
-    url="this does not exist"
-fi
 
 # domain=
 # domain=$(echo "$url" | awk -F/ '{print $3}')
 
+focus_qb_window() {
+    for wid in $(bspc query -N -n .window); do
+	if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
+	    echo bspc node -f $wid
+	    bspc node -f $wid
+	    break
+	fi
+    done
+}
+
 vanilla() {
-    qutebrowser "$url"
+    if [ ! -z "$url" ]; then
+	qutebrowser "$url"
+    fi
+    focus_qb_window
     exit 0
 }
 
 if ! pgrep qutebrowser; then
+    vanilla
+fi
+
+if [ -z "$url" ]; then
     vanilla
 fi
 
@@ -36,10 +51,4 @@ if [ -z "$matching_title" ]; then
 fi
 
 qb_command ":buffer $matching_title"
-for wid in $(bspc query -N -n .window); do
-    if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
-	echo bspc node -f $wid
-	bspc node -f $wid
-	break
-    fi
-done
+focus_qb_window
