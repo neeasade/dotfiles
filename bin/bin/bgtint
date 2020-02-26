@@ -1,0 +1,60 @@
+#!/bin/sh
+# take a tiled image, tint the colors
+
+# most seen color
+most_seen() {
+    convert "$1" txt:- | awk '{print $3}' | rg -v pixel | sort | uniq -c | sort | head -n 1 | awk '{print $2}'
+}
+
+least_seen() {
+    convert "$1" txt:- | awk '{print $3}' | rg -v pixel | sort | uniq -c | sort | tail -n 1 | awk '{print $2}'
+}
+
+rand_tile() {
+    # echo "/media/LIVEWIRE/Archive/other/squidd/pattern_125.gif"
+    (
+	# rg --files "$HOME/pngsave"
+
+    	# rg --files /media/LIVEWIRE/Archive/other/squid/
+    	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+    	# rg --files "$HOME/git/SubtlePatterns/"
+
+    	# rg --files /media/LIVEWIRE/Archive/other/squid/
+    	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+	rg --files /home/neeasade/git/tiles-and-such
+
+    ) | sort -R | head -n 1
+}
+
+# check if contrast matches
+matches() {
+    elisp "(eq
+    (ns/color-is-light-p \"$1\")
+    (ns/color-is-light-p \"$2\"))" >/dev/null \
+	&& echo true || echo false
+}
+
+target=$(rand_tile)
+background=$(theme getval background)
+
+# background=$(theme getval b_normal_border_color)
+foreground=$(theme getval b_focused_border_color)
+
+# foreground=$(greaten $background 20)
+
+foreground=$(theme getval b_normal_border_color)
+# background=$(theme getval b_focused_border_color)
+
+# try a few times
+if ! $(matches "$(most_seen "$target")" \#$background); then
+    target="$(rand_tile)"
+    if ! $(matches "$(most_seen "$target")" \#$background); then
+	target="$(rand_tile)"
+    fi
+fi
+
+convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+convert "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
+# convert /tmp/result.png -resize 180% /tmp/result.png
+
+feh --bg-tile /tmp/result.png
