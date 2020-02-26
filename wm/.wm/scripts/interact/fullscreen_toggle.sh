@@ -4,6 +4,17 @@
 
 gap=$(theme getval b_window_gap)
 
+if [ ! -z "$MONOCLE" ]; then
+    if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
+	theme refresh bg &
+    else
+	hsetroot -solid "#$(theme getval background)" &
+    fi
+
+    bspc desktop -l next
+    exit 0
+fi
+
 if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
     if [ $(bspc config window_gap) -gt 0 ]; then
 	bspc config window_gap 0

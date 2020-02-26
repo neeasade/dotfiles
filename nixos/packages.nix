@@ -128,9 +128,14 @@ let
     mesa_drivers
     libGL
 
+    gnome3.gnome-terminal
     gnutls # for circe
   ]) ++ (with unstable; [
+  # ]) ++ (
     lorri
+    tiled
+    love_11
+    luajit
 
     emacs
 
@@ -269,6 +274,7 @@ let
     maven
     jdk8
     leiningen
+    stack
     clojure
     boot
 
@@ -279,6 +285,7 @@ let
     rustracer
 
     python37
+    # python27
     # (python35.withPackages(ps: with ps; [
     #   virtualenv
     #   django
@@ -305,6 +312,8 @@ let
     # boot
     # chickenPackages_5.chicken
     # chickenPackages_5.egg2nix
+  ]) ++ (with nur; [
+    # repos.tilpner.fennel
   ]);
 
   basefonts = (with pkgs; [

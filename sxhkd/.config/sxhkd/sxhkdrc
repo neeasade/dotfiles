@@ -13,14 +13,13 @@ super + s
     bspc node -f; \
     bspc config pointer_follows_focus false
 
-# idea: cycle this with gap toggle as well as monocle layoout thing
-# bspc desktop -l next
-    # bspc node -t ~fullscreen
+# bspc node -t ~fullscreen
 super + f
     fullscreen_toggle.sh
 
+# bspc desktop -l next
 super + t
-    bspc desktop -l next
+    MONOCLE=t fullscreen_toggle.sh
 
 # if the current node is automatic, send it to the last manual, otherwise pull the last leaf
 super + y
@@ -85,6 +84,9 @@ super + {_,shift} + slash
 
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
+
+super + i
+    jump_emacs Emacs
 
 super + o
     $BROWSER
