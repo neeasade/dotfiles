@@ -13,9 +13,11 @@ super + s
     bspc node -f; \
     bspc config pointer_follows_focus false
 
-super + f
-    bspc desktop -l next
+# idea: cycle this with gap toggle as well as monocle layoout thing
+# bspc desktop -l next
     # bspc node -t ~fullscreen
+super + f
+    fullscreen_toggle.sh
 
 super + t
     bspc desktop -l next
