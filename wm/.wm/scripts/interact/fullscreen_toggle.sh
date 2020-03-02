@@ -1,29 +1,78 @@
 #!/bin/sh
 # swap between fake fullscreen modes as monocle mode
 # this is so we can enjoy fake padding in fullscreen things
+# this doesn't account for floating or overlapped situations very well
 
-gap=$(theme getval b_window_gap)
+# todo: make this a little smarter? the real issue you are trying to solve here is you like the
+# padding when 'fullscren' in qutebrowser or emacs but not for netflix or mpv
 
-if [ ! -z "$MONOCLE" ]; then
-    if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
-	theme refresh bg &
-    else
-	hsetroot -solid "#$(theme getval background)" &
-    fi
+# possible modes
+do_monocle_padded() {
+  hsetroot -solid "#$(theme getval background)" &
+  bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
 
-    bspc desktop -l next
-    exit 0
-fi
+  # the idea is that fake padding comes from
+  bspc config window_gap $(theme getval x_padding)
+  bspc config left_monocle_padding 0
+  bspc config right_monocle_padding 0
 
-if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
-    if [ $(bspc config window_gap) -gt 0 ]; then
-	bspc config window_gap 0
-    else
-	bspc config window_gap $gap
-	bspc desktop -l next
-	theme refresh bg
-    fi
+  bspc desktop -l monocle
+}
+
+do_monocle_slim() {
+  theme refresh bg &
+  bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
+
+  mon_width=$(bspc query -T -m | jq .rectangle.width)
+  percent=$(theme getval b_monocle_window_percent)
+  window_width=$(echo $percent \* $mon_width | bc -l)
+
+  monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
+  bspc config left_monocle_padding $monocle_pad_width
+  bspc config right_monocle_padding $monocle_pad_width
+
+  bspc desktop -l monocle
+}
+
+do_fullscreen() {
+  bspc node -t fullscreen
+}
+
+do_tiled() {
+  theme refresh bg &
+  bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
+
+  # $HOME/.config/bspwm/bspwmrc
+  bspc config window_gap $(theme getval b_window_gap)
+  bspc desktop -l tiled
+}
+
+state=nop
+
+if bspc query -N -n focused.fullscreen; then
+  state=fullscreen
 else
-    bspc desktop -l next
-    hsetroot -solid "#$(theme getval background)"
+  state=tiled
+
+  if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
+    if [ $(bspc config left_monocle_padding) -gt 0 ]; then
+      state=monocle_slim
+    else
+      state=monocle_padded
+    fi
+  fi
 fi
+
+# rotate
+echo before: $state
+case $state in
+  monocle_padded) state=fullscreen ;;
+  fullscreen) state=tiled ;;
+  tiled) state=monocle_slim ;;
+  monocle_slim) state=monocle_padded ;;
+esac
+
+echo after: $state
+
+echo do_$state
+do_$state
