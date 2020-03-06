@@ -53,6 +53,6 @@ in
     acpid.enable = true;
 
     # todo : look into conf of ssh.
-    # openssh.enable = true;
+    openssh.enable = true;
   };
 }

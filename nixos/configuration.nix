@@ -97,8 +97,7 @@
   # replicates the default behaviour.
   networking.useDHCP = false;
   networking.interfaces.wlp3s0.useDHCP = true;
+  networking.firewall.allowedTCPPorts = [ 22 80 ];
 
   system.stateVersion = "19.09"; # Did you read the comment?
-
 }
-

@@ -1,5 +1,4 @@
-{ pkgs ? import <nixpkgs> {}, ... }: with pkgs;
-
+{ pkgs ? import <nixpkgs> {}, edge ? import <nixpkgs>, ... }: with pkgs;
   let
     # I'm not sure of the correct form here rn
     placeholder = "temp";
@@ -69,6 +68,10 @@
 
       bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/baskerville/bspwm"; ref = "master"; };
+      }));
+
+      pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };
       }));
 
       qutebrowser-git = (pkgs.qutebrowser.overrideAttrs(old: {

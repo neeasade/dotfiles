@@ -20,7 +20,7 @@ let
   #unstable = pkgs; # force everyone to be on the same level
   #edge = pkgs;
 
-  expr = import ./expr { inherit pkgs lib; };
+  expr = import ./expr { inherit pkgs lib unstable edge; };
 
   # pkgs = stable;
   # edge = rolling;
@@ -168,6 +168,7 @@ let
   ]) ++ ( with expr; [
     # qutebrowser-git
 
+    pfetch-neeasade
     colort-git
 
     # drawterm
@@ -284,7 +285,17 @@ let
     rustfmt
     rustracer
 
-    python37
+    (python37.withPackages(ps: with ps; [
+      pip # sometimes we want user level global stuff anyway maybe
+
+      # please do the needful
+      setuptools
+      virtualenv
+    ]))
+
+    # approach: use pipenv or pyenv to bring in python packages
+    # use nix-shell to get the stuff they depend on/reference pip)
+
     # python27
     # (python35.withPackages(ps: with ps; [
     #   virtualenv
