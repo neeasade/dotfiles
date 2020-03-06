@@ -21,20 +21,8 @@ if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
     eclient="${eclient}w --server-file ${HOME}/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
 fi
 
-if [ -z "$script_name" ]; then
-    elisp_timeout=${elisp_timeout:-1}
-    lisp="(progn $@)"
-else
-    trim=true
-    elisp_timeout=${elisp_timeout:-15} # arbitrary
-
-    args=
-    for a in "$@"; do
-	args="${args} \"${a}\""
-    done
-
-    # todo: if the script_name contains a '(provide)' consider just loading rather than eval-file
-    lisp="(ns/eval-file \"${script_name}\" ${args})"
+add_stdin() {
+    # notify-send "getting stdin"
 
     # save stdin to a file and give a var
     # todo: this is blocking, and if we continue down this path it may be worth looking into input streams
@@ -49,6 +37,27 @@ else
 	cat - > "$stdin_file"
 	lisp="(let ((*stdin-file* \"${stdin_file}\")) ${lisp} )"
     fi
+}
+
+if [ -z "$script_name" ]; then
+    elisp_timeout=${elisp_timeout:-1}
+    lisp="(progn $@)"
+    if [ ! -z "$FORCE_STDIN" ]; then
+	add_stdin
+    fi
+else
+    trim=true
+    elisp_timeout=${elisp_timeout:-15} # arbitrary
+
+    args=
+    for a in "$@"; do
+	args="${args} \"${a}\""
+    done
+
+    # todo: if the script_name contains a '(provide)' consider just loading rather than eval-file
+    lisp="(ns/eval-file \"${script_name}\" ${args})"
+
+    add_stdin
 fi
 
 emacs_timeout=
