@@ -4,7 +4,7 @@ super + {_,shift} + w
     bspc node -{c,k}
 
 # take a tiled window, make it floating, but in the same position of the tile
-super + S
+super + shift + s
     nfloat
 
 super + s
@@ -14,12 +14,18 @@ super + s
     bspc config pointer_follows_focus false
 
 # bspc node -t ~fullscreen
+# bspc node -t ~fullscreen
 super + f
     fullscreen_toggle.sh
 
+super + shift + f
+    bspc node -t ~fullscreen
+
+# bspc desktop -l next
+# fullscreen_toggle.sh
 # bspc desktop -l next
 super + t
-    MONOCLE=t fullscreen_toggle.sh
+    SLIM=t fullscreen_toggle.sh
 
 # if the current node is automatic, send it to the last manual, otherwise pull the last leaf
 super + y
@@ -85,11 +91,14 @@ super + {_,shift} + slash
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
 
-super + i
-    jump_emacs Emacs
+# super + i
+#     jump_emacs Emacs
 
 super + o
     $BROWSER
+
+super + shift + o
+    qutebrowser
 
 # selecterino
 super + {_,shift,alt} + space

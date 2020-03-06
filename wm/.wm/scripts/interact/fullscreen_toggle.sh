@@ -42,9 +42,11 @@ do_tiled() {
   theme refresh bg &
   bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
 
-  # $HOME/.config/bspwm/bspwmrc
-  bspc config window_gap $(theme getval b_window_gap)
+  # bspc config window_gap $(theme getval b_window_gap)
   bspc desktop -l tiled
+  # $HOME/.config/bspwm/bspwmrc
+
+  bspc config window_gap $(theme getval b_window_gap)
 }
 
 state=nop
@@ -65,14 +67,24 @@ fi
 
 # rotate
 echo before: $state
-case $state in
-  monocle_padded) state=fullscreen ;;
-  fullscreen) state=tiled ;;
-  tiled) state=monocle_slim ;;
-  monocle_slim) state=monocle_padded ;;
-esac
+
+if [ -z "$SLIM" ]; then
+  case $state in
+    monocle_padded) state=tiled ;;
+    tiled) state=monocle_padded ;;
+    monocle_slim) state=monocle_padded ;;
+    fullscreen) exit 0;;
+  esac
+else
+  case $state in
+    monocle_padded) state=tiled ;;
+    tiled) state=monocle_slim ;;
+    monocle_slim) state=tiled ;;
+    fullscreen) exit 0;;
+  esac
+fi
+
 
 echo after: $state
-
 echo do_$state
 do_$state

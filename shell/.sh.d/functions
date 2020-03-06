@@ -1,6 +1,11 @@
 # -*- mode: sh -*-
 # todo: consider moving the shot functions into a script
 
+vdo() {
+  echo "$*"
+  "$@"
+}
+
 windowshot() {
   j=$(bspc query -T -n)
   w=$(jget width "$j")
