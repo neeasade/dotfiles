@@ -12,6 +12,9 @@ case "$cur_shell" in
 
     shopt -s histappend
     HISTCONTROL=ignoredups:erasedups
+
+    # store things in the history file as we go along
+    export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
     ;;
   zsh)
     HISTFILE=$history_file
