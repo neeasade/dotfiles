@@ -1,7 +1,13 @@
 #!/bin/sh
-# switch between a laptop or connected display
+# my laptop display management script
 # won't do anything if the desired state is already set, so can be called periodically
 # call with resolution if you wish to change it (see xrandr for available resolutions and display names)
+
+
+# note: don't leave yourself without any display or the display-manager service will kick
+
+# ^ the above becomes important if you say, try to use a projector that doesn't support some
+# resolution you try and shove on it
 
 # get these from xrandr
 external_monitor=HDMI-1
@@ -46,41 +52,74 @@ off_field_count=$(echo "$off_monitor_status" | awk '{print NF}' )
 max_res=$(echo "$xrandr" | grep -A 1 $on_monitor | tail -n 1 | awk '{print $1}')
 target_res=${1:-$max_res}
 
-# order matters -- don't leave yourself without any display or the display-manager service will kick
-did_something=false
-
-if [ $on_field_count -eq 2 ]; then
-    # it's turned off
-    turn_on $on_monitor $target_res
-else
-    # check that the resolution matches up
-    current_resolution=$(echo "$on_monitor_status" | awk '{print $NF}' | grep -Eo '[0-9]+x[0-9]+')
-    if [ ! "$target_res" = "$current_resolution" ]; then
+# if there's an external, use it, else use us.
+auto() {
+    if [ $on_field_count -eq 2 ]; then
+	# it's turned off
 	turn_on $on_monitor $target_res
+    else
+	# check that the resolution matches up
+	current_resolution=$(echo "$on_monitor_status" | awk '{print $NF}' | grep -Eo '[0-9]+x[0-9]+')
+	if [ ! "$target_res" = "$current_resolution" ]; then
+	    turn_on $on_monitor $target_res
+	fi
     fi
-fi
 
-# does the field end in a resolution
-if echo "$off_monitor_status" | grep -qE '[0-9]+x[0-9]+'; then
-    echo "turning $off_monitor off"
-    xrandr --output $off_monitor --off
-    did_something=true
-fi
+    # here's the issue -- when mirroring you might leave yourself stranded here
 
-# hack -- set both displays to the laptops max res
-if [ "$*" = "mirror" ]; then
+    # # does the field end in a resolution
+    if echo "$off_monitor_status" | grep -qE '[0-9]+x[0-9]+'; then
+	echo "turning $off_monitor off"
+	xrandr --output $off_monitor --off
+	did_something=true
+    fi
+}
 
-    # stop the running version of this
-    systemctl --user stop display_sync
+mirror() {
+    echo nop
 
     max_res=$(echo "$xrandr" | grep -A 1 $laptop_monitor | tail -n 1 | awk '{print $1}')
 
     turn_on $laptop_monitor $max_res
+
     # sometimes you can't find the same res on the external display, so this might fail lmao
     # it will be OK, just that laptop view will be trimmed/not show the whole story
+
+    # hack: check if the resolution is ref'd twice, if so assume that one is for the laptop and one
+    # is for the external display
+    count=$(echo "$randr" | grep "$max_res" | wc -l)
+    if [ $count -ne 2 ]; then
+	# the max available on the external display
+	max_res=$(echo "$xrandr" | grep -A 1 $external_monitor | tail -n 1 | awk '{print $1}')
+
+	# TODO: the max available on the external that's closest to laptop res (grep -A 1 $max_res)
+    fi
+
     turn_on $external_monitor $max_res
+
     did_something=true
-fi
+}
+
+# dota -- low res on auto monitor (assuming that's a display mode)
+dota() {
+    echo doto
+
+    systemctl --user stop display_sync
+    systemctl --user stop compton
+    systemctl --user stop unclutter
+
+    turn_on $on_monitor 1280x720 
+    # setsid nohup laptop_monitor_sync 1280x720 &
+}
+
+did_something=false
+
+# allow the desired mode to be passed in
+# systemctl --user stop display_sync
+
+# todo: handle a custom resolution option
+echo "${1:-auto}"
+"${1:-auto}"
 
 if $did_something; then
     # remove any bspwm defaults that may have been created with the new monitor
@@ -89,13 +128,12 @@ if $did_something; then
     done
 
     # reset our monocle measurement
-    "$HOME/.config/bspwm/bspwmrc"
+    # "$HOME/.config/bspwm/bspwmrc"
 
-    echo "did something, updating dmenu/dunst"
-    theme refresh dmenu_options
+    echo "did something, updating theme stuff"
+    # theme refresh dmenu_options
     theme refresh dunst
 
-    # todo: if it's only the laptop now, switch sxhkd
-    # or vice versa
+    # todo: handle potential sxhkd switching
     xbright
 fi
