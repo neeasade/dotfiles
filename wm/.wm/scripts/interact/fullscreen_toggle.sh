@@ -4,15 +4,16 @@
 # this doesn't account for floating or overlapped situations very well
 
 # todo: make this a little smarter? the real issue you are trying to solve here is you like the
-# padding when 'fullscren' in qutebrowser or emacs but not for netflix or mpv
+# padding when 'fullscreen' in qutebrowser or emacs but not for netflix or mpv
 
 # possible modes
 do_monocle_padded() {
   hsetroot -solid "#$(theme getval background)" &
-  bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
+  bspc query -N -n focused.fullscreen && \
+    bspc node -t ~fullscreen
 
   # the idea is that fake padding comes from
-  bspc config window_gap $(theme getval x_padding)
+  bspc config window_gap $(theme getval x_padding) &
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
 
@@ -40,13 +41,14 @@ do_fullscreen() {
 
 do_tiled() {
   theme refresh bg &
-  bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
+  bspc query -N -n focused.fullscreen \
+    && bspc node -t ~fullscreen
 
   # bspc config window_gap $(theme getval b_window_gap)
+  bspc config window_gap $(theme getval b_window_gap)
   bspc desktop -l tiled
   # $HOME/.config/bspwm/bspwmrc
 
-  bspc config window_gap $(theme getval b_window_gap)
 }
 
 state=nop
@@ -77,7 +79,8 @@ if [ -z "$SLIM" ]; then
   esac
 else
   case $state in
-    monocle_padded) state=tiled ;;
+    # monocle_padded) state=tiled ;;
+    monocle_padded) state=monocle_slim ;;
     tiled) state=monocle_slim ;;
     monocle_slim) state=tiled ;;
     fullscreen) exit 0;;
