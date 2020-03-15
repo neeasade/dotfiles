@@ -11,6 +11,13 @@
         src = builtins.fetchGit {url = "https://www.uninformativ.de/git/bevelbar.git"; ref = "master"; };
       }));
 
+      skroll = stdenv.mkDerivation rec {
+        name = "skroll";
+
+        src = builtins.fetchGit {url =  "https://github.com/z3bra/skroll"; ref = "master"; };
+        nativeBuildInputs = [ gcc ];
+        installPhase = "make install PREFIX=$out";
+      };
 
       drawterm = stdenv.mkDerivation rec {
         name = "drawterm";
@@ -69,6 +76,8 @@
       bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/baskerville/bspwm"; ref = "master"; };
       }));
+
+
 
       pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };

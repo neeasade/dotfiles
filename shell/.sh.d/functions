@@ -27,20 +27,23 @@ bspwm_kill_visual() {
   done
 }
 
+# todo: finish record functions
+recordfull() {
+  echo nop
+}
 
-pfetch() {
-  export PF_SEP=""
-  export PF_ASCII="linux"
-  export PF_ASCII="GNU"
-  # title os kernel host uptime pkgs memory wm de shell editor palette
-  export PF_SYNC=t
+record() {
+  read -r X Y W H G ID < <(slop -f '%x %y %w %h %g %i')
+  byzanz-record -x $X -y $Y -w $W -h $H
+  # screenkey -s small -t 0.5
+}
 
-  export PF_INFO="ascii n n title theme editor shell wm playlist"
-  # todo: use github.com/neeasade/pfetch neeasade branch
-  # this function is just for reference
-  EDITOR='𝓮𝓶𝓪𝓬𝓼' SHELL='M-x shell' ~/git/og/pfetch
+stoprecord() {
+  # todo: pkill everything record
 
-  # rm -rf "$path_ext"
+  pkill byzanz-record
+
+  echo nop
 }
 
 blog_add_post() {
@@ -123,7 +126,9 @@ shot() {
 }
 
 shellshot() {
-  eval printf "$(elisp '(ns/windowshot)' | sed 's/%/%%/g')" | pb 0x0
+  # todo: esc $
+  # printf '%s\n' "$(elisp '(ns/windowshot)')" | curl -F "file=@-" https://0x0.st
+  printf '%s\n' "$(elisp '(ns/windowshot)')" | pb 0x0
 }
 
 fullshot() {
@@ -212,9 +217,13 @@ groot() {
 # nix query
 nq() {
   local CACHE="$HOME/.cache/nq-cache"
+
   if ! ( [ -e $CACHE ] && [ $(stat -c %Y $CACHE) -gt $(( $(date +%s) - 3600 )) ] ); then
-    echo "update cache" && nix-env -qa --json > "$CACHE"
+  # if true; then
+    echo "update cache"
+    nix-env -qa --json > "$CACHE"
   fi
+
   jq -r 'to_entries | .[] | .key + "|" + .value.meta.description' < "$CACHE" |
     {
       if [ $# -gt 0 ]; then
@@ -338,9 +347,9 @@ jtemp() {
   selected=$(
     for context in ${working_dir}/*/context.txt; do
       desc=$(cat $context)
-      echo "$desc | $context"
-    done | fzf
-          )
+      # do not add a space after the pipe!
+      echo "$desc |$context"
+    done | fzf)
 
   cd "$(dirname "$(echo "$selected" | awk -F\| '{print $2}')")"
 }
@@ -359,12 +368,12 @@ ttemp() {
 # dump the structure of some json to find paths
 jqpeek() {
   # paths:
-  # cat - | jq '[path(..)|map(if type=="number" then "[]" else tostring end)|join(".")|split(".[]")|join("[]")]|unique|map("."+.)|.[]'
+  # jq '[path(..)|map(if type=="number" then "[]" else tostring end)|join(".")|split(".[]")|join("[]")]|unique|map("."+.)|.[]'
 
   # paths with values:
   # note: numbers in path are array indices
   # may get in the way of searching for like a number
-  cat - | jq -r '
+  jq -r '
 paths(scalars) as $p
   | [ ( [ $p[] | tostring ] | join(".") )
     , ( getpath($p) | tojson )
@@ -372,3 +381,4 @@ paths(scalars) as $p
   | join(" = ")
 '
 }
+

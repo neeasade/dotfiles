@@ -168,6 +168,8 @@ let
   ]) ++ ( with expr; [
     # qutebrowser-git
 
+    skroll
+
     pfetch-neeasade
     colort-git
 
