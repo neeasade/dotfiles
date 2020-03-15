@@ -2,24 +2,28 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-# todo: make this work for both your old comp and your current comp
-
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      # ./packages.nix
-      # ./services.nix
-      ../../packages.nix
-      ../../services.nix
+      ../../config/packages.nix
+      ../../config/services.nix
+      # (import ./packages.nix {inherit config pkgs lib; })
+      # (import ./services.nix {inherit config pkgs; })
     ];
 
+  # Use the systemd-boot EFI boot loader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
-  # boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
+  boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
+  # boot.initrd.kernelModules = [ "wl" ];
+  # boot.kernelModules = [ "kvm-intel" "wl" ];
+  # boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
 
-  networking.hostName = "bridge";
+  networking.hostName = "erasmus";
   # networking.wireless.enable = true;  # wpa_supplicant.
   networking.networkmanager.enable = true;  # wpa_supplicant.
 
@@ -40,7 +44,6 @@
     opengl.driSupport = true;
     pulseaudio.enable = true;
     opengl.driSupport32Bit = true;
-    opengl.extraPackages = with pkgs; [ libva ];
     pulseaudio.support32Bit = true;
 
     #bumblebee.enable = true;
@@ -77,29 +80,9 @@
   nix.gc.options = "--delete-older-than 30d";
   # nix.useSandbox = true;
 
-
-  # Use the GRUB 2 boot loader.
-  # boot.loader.grub.enable = true;
-  # boot.loader.grub.version = 2;
-
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  # boot.loader.grub.efiSupport = true;
-  # boot.loader.grub.efiInstallAsRemovable = true;
-  # boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  # Define on which hard drive you want to install Grub.
-  # boot.loader.grub.device = "/dev/sda"; # or "nodev" for efi only
-
-  # networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
-  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
-  # Per-interface useDHCP will be mandatory in the future, so this generated config
-  # replicates the default behaviour.
-  networking.useDHCP = false;
-  networking.interfaces.wlp3s0.useDHCP = true;
-  networking.firewall.allowedTCPPorts = [ 22 80 ];
-
-  system.stateVersion = "19.09";
+  # This value determines the NixOS release with which your system is to be
+  # compatible, in order to avoid breaking some software such as database
+  # servers. You should change this only after NixOS release notes say you
+  # should.
+  system.stateVersion = "18.09"; # Did you read the comment?
 }

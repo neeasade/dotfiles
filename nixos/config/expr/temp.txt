@@ -1,0 +1,12 @@
+      pb = stdenv.mkDerivation rec {
+        pname = "pb";
+        version = "1.0.0";
+
+        src = builtins.fetchGit {url = "https://github.com/syntax-samurai/pb/"; ref = "master"; };
+        installPhase= ''install -D -m +rx ./pb "${out}"'';
+
+        meta = {
+          description = "a nice pastebin script";
+          platforms   = stdenv.lib.platforms.unix;
+        };
+      };

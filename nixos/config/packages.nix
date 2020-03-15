@@ -307,6 +307,7 @@ let
     racket
     janet
 
+    python27
     (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
 
