@@ -47,14 +47,22 @@ foreground=$(theme getval b_normal_border_color)
 
 # try a few times
 if ! $(matches "$(most_seen "$target")" \#$background); then
-    target="$(rand_tile)"
+    target=$(rand_tile)
     if ! $(matches "$(most_seen "$target")" \#$background); then
-	target="$(rand_tile)"
+	target=$(rand_tile)
     fi
 fi
 
-convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
-convert "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
-# convert /tmp/result.png -resize 180% /tmp/result.png
+# note who we are inheriting from
+echo "$target" > /tmp/result_source.txt
+rm /tmp/result.png
+
+# convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+# convert "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
+
+convert "$target" -fuzz "5%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+convert "/tmp/result.png" -fuzz "8%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
+
+convert /tmp/result.png -resize 120% /tmp/result.png
 
 feh --bg-tile /tmp/result.png
