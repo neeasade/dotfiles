@@ -27,6 +27,9 @@ let
   # rolling = stable;
 
   core = (with stable; [
+    kitty
+    nmap
+    mediainfo
     direnv
     kdeFrameworks.networkmanager-qt
     networkmanager_dmenu
@@ -37,6 +40,7 @@ let
     fortune
     cmatrix
     cava
+    inotify-tools
     irssi
     glxinfo
     xorg.xdpyinfo
@@ -51,7 +55,7 @@ let
 
     # covered by gcc(?)
     # there were a few collisions between the two
-    # binutils
+    binutils
 
     cron
     curl
@@ -120,16 +124,22 @@ let
     xorg.xev
     xorg.xkbcomp
     xorg.xmodmap
+    xfontsel
     xurls
     zathura
     zsh
 
+    playerctl
+
     # emacs
+
     mesa_drivers
     libGL
 
     gnome3.gnome-terminal
     gnutls # for circe
+
+    yq
   ]) ++ (with unstable; [
   # ]) ++ (
     lorri
@@ -195,6 +205,12 @@ let
 
   inherit (pkgs) eggDerivation fetchegg;
   extra = (with stable; [
+    sqlitebrowser
+    pup
+    jo
+    screenkey
+    byzanz
+
     # oomox
     gdk_pixbuf
     glib.dev
@@ -231,7 +247,8 @@ let
   ]);
 
   games = (with stable; [
-    # minecraft
+    minecraft
+    nethack
     # wesnoth
     # dolphinEmu
 
@@ -286,6 +303,9 @@ let
     rustc
     rustfmt
     rustracer
+
+    racket
+    janet
 
     (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
