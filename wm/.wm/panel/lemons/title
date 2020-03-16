@@ -11,7 +11,7 @@
 # p_title_show_mode
 # active - only active
 # all - all all the time
-# monocle - only active when tiling, all when tiled
+# monocle - only active when tiling, all when monocle
 show_mode=${p_title_show_mode:-monocle}
 
 # Maxium window title length

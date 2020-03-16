@@ -1,0 +1,5 @@
+#!/bin/sh
+# todo: make it possible to not create a url note when viewing it
+popup_window.sh -r
+emacsclient -c --no-wait
+elisp "(ns/urlnote-jump \"${QUTE_URL}\")"

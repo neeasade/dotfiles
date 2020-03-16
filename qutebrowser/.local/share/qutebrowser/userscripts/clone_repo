@@ -1,0 +1,22 @@
+#!/bin/sh
+# clone a repo that we are looking in, regardless of where we are in it
+# pop open a terminal in the cloned repo
+
+get_repo() {
+    short=$(echo "$*" | grep -oE "${domain}/[a-zA-Z0-9]+/[a-zA-Z0-9]/")
+    if [ -z "$short" ]; then
+	return 1
+    else
+	printf 'https://%s' "$short"
+	return 0
+    fi
+}
+
+target=
+for domain in github.com gitlab.com; do
+    if target=$(get_repo "$QUTE_URL"); then
+	cd "${HOME}/git"
+
+	break
+    fi
+done
