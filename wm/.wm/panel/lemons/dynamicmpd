@@ -1,21 +1,36 @@
 #!/usr/bin/env dash
 # scrolling mpd text
 # limitation of this is it only works with monospace fonts.
+# lemonbar support arbitrary stuff
 
 max_length=30
 
-title="$($HOME/.wm/panel/lemons/mpd)"
+title=$(maxWinNameLen=100 $HOME/.wm/panel/lemons/mpd)
+
 max_length=$(echo "$title" | cut -c 1-$max_length | wc -L)
+
+# $p_font_main will come from lemonade env
+font_name=$(echo $p_font_main | sed 's/-.*//')
+font_size=$(echo $p_font_main | sed 's/.*-//')
+
 if [  "$title" = "Stopped" ]; then
     icon music
     echo Stopped
 else
     [ -z "$title" ] && exit
-    echo "$title" | skroll -r -n $((max_length-1)) -d 0 | head -n -1 | \
+
+    # approach:
+    # trim, peek at width with txtw
+    # pad with lemonbar width
+
+    width=$(txtw -f "$font_name" -s $font_size a)
+
+    echo "$title" | skroll -r -n $((max_length-1)) -d 0.2 | \
     while IFS='\n' read -r out; do
-        icon music
-        icon $icon_target
+	# txtw=$(txtw -f )
+	# format %{O<width>}
+	pad_left=
         echo "$out"
-        sleep 0.2
+	# sleep 0.2
     done
 fi

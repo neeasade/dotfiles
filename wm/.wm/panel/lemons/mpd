@@ -1,8 +1,9 @@
 #!/usr/bin/env dash
 # player by player.sh
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
+# todo: consider trimming file extentions
 
-maxWinNameLen=30
+maxWinNameLen=${maxWinNameLen:-30}
 
 player.sh | grep -qi playing && playing=true || playing=false
 player.sh | grep -qi paused && paused=true || paused=false
