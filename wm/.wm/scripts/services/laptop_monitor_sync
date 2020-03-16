@@ -3,7 +3,6 @@
 # won't do anything if the desired state is already set, so can be called periodically
 # call with resolution if you wish to change it (see xrandr for available resolutions and display names)
 
-
 # note: don't leave yourself without any display or the display-manager service will kick
 
 # ^ the above becomes important if you say, try to use a projector that doesn't support some
@@ -98,6 +97,9 @@ mirror() {
     turn_on $external_monitor $max_res
 
     did_something=true
+
+    # todo: right now we pick a bigger resolution on the external display this means that we cannot
+    # see emacs completion so it's a pain in the ass to look at stuff on the fly. need to fix that.
 }
 
 # dota -- low res on auto monitor (assuming that's a display mode)

@@ -2,6 +2,7 @@
 # all switcher dmenu
 # idea: qutebrowser history
 # idea: org headings
+# on the emacs side could really use keybinds to narrow
 
 declare -A matches_to_actions
 
@@ -10,7 +11,7 @@ add_switch() {
 }
 
 add_windows() {
-    for wid in $(bspc query -N -n .leaf); do
+    for wid in $(bspc query -N -n .window); do
 	add_switch "window: $(xtitle $wid)" "bspc node $wid -g hidden=off; bspc node -f $wid"
     done
 }

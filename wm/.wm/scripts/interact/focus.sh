@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# todo: idea: if looking at an emacs window, just window focus in that direction, and then fallback to real window
+
 dir=$1
 
 node=$(bspc query -N -n)

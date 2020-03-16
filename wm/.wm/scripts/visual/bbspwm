@@ -20,6 +20,9 @@ normal=$(bspc config normal_border_color | tr -d \#)
 
 draw() {
     chwbb -i $border_part -o $border_part -m $border_middle -c $normal $(bspwindows inactive)
+
+    # todo: idea: thicker inner part on focused windows
+    # todo: chwbb should have options for specifying colors rather than just doing the thing itself
     chwbb -i $border_part -o $border_part -m $border_middle -c $focused $(bspwindows)
 }
 
