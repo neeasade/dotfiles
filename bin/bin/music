@@ -3,12 +3,23 @@
 # define music playlists by search terms
 # add a nice display func
 
+# todo: consider a 'rename' function
+# so you could like rename the currently playing song
+# ie do the following rename inline:
+# Then & Now (Liquid Drum & Bass Mix)-fEJnyaDhF4Q.mp3
+# -> Then & Now (Liquid Drum & Bass Mix)
+
 # musicdir="$HOME/Music"
 musicdir=$(cat "$HOME/.config/mpd/mpd.conf" | awk -F\" '/music_directory/{print $2}')
 
 current_playlist="${musicdir}/playlist/current"
 
 add() { # add a url to library, fallback on clipboard content
+
+
+ # todo: idea: grep the import history log to see if we've imported it
+ #    be aware of trailing stuff on urls/for the compare
+
   url=$*
   [ -z "$url" ] && url=$(xclip -o -selection clipboard)
   echo "$url" >> "$musicdir/import_history.log"

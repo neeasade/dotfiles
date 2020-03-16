@@ -19,9 +19,17 @@ focus_qb_window() {
 }
 
 vanilla() {
-    if [ ! -z "$url" ]; then
-	qutebrowser "$url"
+    if [ -z "$url" ]; then
+	if ! pgrep qutebrowser; then
+	    qutebrowser
+	    exit 0
+	fi
+    else
+	# this is faster than
+	# qutebrowser "$url"
+	qb_command ":open -t $url"
     fi
+
     focus_qb_window
     exit 0
 }

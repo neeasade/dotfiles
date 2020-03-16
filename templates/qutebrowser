@@ -167,13 +167,14 @@ config.set('hints.border', '1px solid ' + colors['fg']['normal'])
 def makePadding(top, bottom, left, right):
     return { 'top': top, 'bottom': bottom, 'left': left , 'right': right }
 
-# TODO improve this logic
+# this doesn't work?? the value is 2small
+# font_height = {{{txth -f "$q_tab_font" -s $q_tab_fontsize ph}}}
 
-# assume height of font is ~10px, pad top by half match panel height
-# txth reference
-# ./txth -f "xft:${font_name}:style=Regular" -s $font_size "asdf"
+# todo:
+# inkscape --without-gui --query-id=id1 -H <(echo '<svg><text id="id1" font-family="Equity Text B">python</text></svg>') 2>/dev/null
+font_height = 19 # -- measured on a 'ph' qute title in pinta for test theme
 
-surround = round((theme['panel']['height'] - 10) / 2)
+surround = round((theme['panel']['height'] - font_height) / 2)
 c.tabs.padding = makePadding(surround, surround, 8, 8)
 c.tabs.indicator.padding = makePadding(0, 0, 0, 0)
 
