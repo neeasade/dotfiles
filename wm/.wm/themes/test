@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# test theme
+# idea: bspwm colors from emacs as well
 
+# test theme
 colors() {
     color0=F9F9F9
     color1=D40000
@@ -19,23 +20,28 @@ colors() {
     color14=41A4F4
     color15=536D79
     foreground=546E7A
-    background=F7F7F7
+    # background=F7F7F7
+
+    background=FAFAFA
+
     cursorColor=8B94C6
+    # try to derive from theme colors
 }
 
 settings() {
     # theme
-    BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
+    # BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
+    BG_COMMAND="${HOME}/.fehbg"
 
     emacs_theme="apropospriate-light"
-    emacs_theme="base16-grayscale-light"
+    # emacs_theme="base16-grayscale-light"
     emacs_powerline_scale="1.0"
     PROMPT_CHAR='%'
 
     # bspwm
     b_border_width=1
     b_normal_border_color=B0A8A6
-    b_window_gap=6
+    b_window_gap=10
 
     b_bspwmrc_extend="
 xpad &
@@ -47,22 +53,29 @@ xpad &
     # b_active_border_color=cecece
     # b_focused_border_color=7c7c7c
 
-    p_bg_middle=$(elisp -r "(face-attribute 'ns/mode-line-middle :background)")
+    # p_gap=$(elisp '(frame-fringe-width)')
+    p_gap=6
+
+    p_bg_middle=$(elisp -r "(ns/shorten-color (face-attribute 'ns/mode-line-middle :background))")
+    p_bg_active=$(elisp -r "(ns/shorten-color (face-attribute 'region :background))")
+    p_fg_active=$foreground
+
+    # elisp -r "(face-attribute 'region :background)"
+
     # p_bg_middle=$(elisp -r "(face-attribute 'ns/mode-line-inactive :background)")
 
     # p_fg_active="#ff525252"
-    # p_bg_active="#ffb9b9b9"
     # p_format="desktop:circe_dms:title|org_task|mpd:volume:clock"
-
     p_format="desktop:circe_dms:title|battery|mpd:volume:clock"
 
     # p_format="battery|desktop|clock"
-    p_offset="-3"
+    # todo: offset should be per font -- it can be in lemonbar
+    p_offset="-1"
 
     p_title_show_mode=active         # used by title.
 
     p_height=25
-    p_gap=0
+    # p_gap=0
     p_line=3
     p_window_class="noshadow"
     p_line=2
@@ -73,7 +86,7 @@ xpad &
     # p_font_main="Charter-10:style=Bold"
     p_font_icon="FontAwesome-10" # Panel Icon font.
     p_icon_enable=false
-    p_desktop_display_name=name
+    # p_desktop_display_name=name
     # d_font="Go Mono for Powerline 14"
     d_font="Equity Text A 12"
 
