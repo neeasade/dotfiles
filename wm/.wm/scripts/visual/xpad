@@ -41,7 +41,14 @@ pad() {
 }
 
 draw() {
-    pad $border_color_active $(bspwindows)
+    # pad $border_color_active $(bspwindows)
+    (
+	scale=1
+	x_padding=$((x_padding - scale))
+	border_width=$((border_width + scale))
+	pad $border_color_active $(bspwindows)
+    )
+
     pad $border_color_normal $(bspwindows inactive)
 }
 
