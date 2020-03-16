@@ -11,8 +11,7 @@ die() {
 
 getval() {
     (
-	bash -c "$(get); eval printf \%s \"\$$1\""
-	# eval printf \%s \"\$$1\"
+	bash -c "$(get); eval printf \"%s\" '\"\$$1\"'"
     )
 }
 
