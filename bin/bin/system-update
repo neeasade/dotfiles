@@ -1,0 +1,15 @@
+#!/bin/sh
+
+usage() {
+    echo "$0 [test|switch]"
+    exit 1
+}
+
+sudo echo yeet >/dev/null # so we and all our subshells get it
+
+channel=$(sudo nix-channel --list | sed 's#https://nixos.org/channels/nixos-##')
+echo "channel: $channel"
+
+# update our nix-channel reference:
+sudo nix-channel --update
+sudo nixos-rebuild "${*}"
