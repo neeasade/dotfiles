@@ -1,4 +1,6 @@
 
+# todo: steal from noctuid to get a colemak pdf experience
+
 # note font format
 set font                        "Cantarell 8"
 set default-bg                  "#{{background}}" #00
