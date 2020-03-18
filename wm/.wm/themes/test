@@ -41,11 +41,9 @@ settings() {
     # bspwm
     b_border_width=1
     b_normal_border_color=B0A8A6
-    b_window_gap=10
+    b_window_gap=15
 
-    b_bspwmrc_extend="
-xpad &
-"
+    b_bspwmrc_extend="xpad &"
 
     x_padding=6
 

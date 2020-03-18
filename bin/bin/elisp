@@ -31,7 +31,7 @@ add_stdin() {
 	if [ -d /dev/shm/ ]; then
 	    stdin_file=/dev/shm/elisp-${RANDOM}
 	else
-	    stdin_file=$(elisp -r '(~ "elisp-temp")')
+	    stdin_file=$(mktemp)
 	fi
 
 	cat - > "$stdin_file"

@@ -17,6 +17,10 @@ size=${size:-32}
 passed=false
 content="${l_start}"
 
+if [ $progress -eq 100 ]; then
+    l_sep=$l_complete
+fi
+
 content="${content}${start}"
 for i in $(seq 1 $size); do
     if [ "$(echo "$i < $progress / 100 * $size" | bc -l)" = 1 ]; then

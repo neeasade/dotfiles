@@ -78,7 +78,6 @@
       }));
 
 
-
       pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };
       }));

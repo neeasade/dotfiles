@@ -171,7 +171,6 @@ let
     xorg.xwininfo
     xtitle
     youtube-dl
-    qutebrowser
     pinta
 
     polybar
@@ -198,6 +197,7 @@ let
     wmutils-opt-git
     xdo-git
   ]) ++ (with edge; [
+    qutebrowser
     # emacs
     # allow images to display
     # (emacs.override { imagemagick = pkgs.imagemagickBig; } )
@@ -247,7 +247,6 @@ let
   ]);
 
   games = (with stable; [
-    minecraft
     nethack
     # wesnoth
     # dolphinEmu
@@ -260,6 +259,7 @@ let
     # wineUnstable
     # (wine.override { wineBuild = "wineWow"; })
   ]) ++ (with unstable; [
+    minecraft
     openmw
     steam
     # openmw-tes3mp

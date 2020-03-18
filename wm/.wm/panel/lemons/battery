@@ -1,18 +1,20 @@
 #!/bin/sh
 
-# icon battery
+icon battery
 
 BATC=/sys/class/power_supply/BAT0/capacity
 BATS=/sys/class/power_supply/BAT0/status
 
+charge=100
+status=Charging
+
 if [ -f $BATC ]; then
-
-    # compact:
-    # printf '%s%s\n' $(iif '[ "$(cat $BATS)" = "Charging" ]' \+ \-) $(cat $BATC)
-
-    printf '%s%s\n' $(iif '[ "$(cat $BATS)" = "Charging" ]' \+ '') $(mkb $(cat $BATC) 20)
-else
-    # no battery information found.
-    # TODO: plugged in icon if full
-    echo '+100'
+    charge=$(cat $BATC)
 fi
+
+if [ -f $BATS ]; then
+    status=$(cat $BATS)
+fi
+
+# printf '%s%s\n' $(iif "[ '$status' = 'Charging' ]" \+ \-) $charge
+printf '%s%s\n' $(iif "[ '$status' = 'Charging' ]" \+ '') "$(mkb $charge 20)"

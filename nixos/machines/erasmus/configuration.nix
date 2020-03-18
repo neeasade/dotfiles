@@ -10,8 +10,6 @@
       ./hardware-configuration.nix
       ../../config/packages.nix
       ../../config/services.nix
-      # (import ./packages.nix {inherit config pkgs lib; })
-      # (import ./services.nix {inherit config pkgs; })
     ];
 
   # Use the systemd-boot EFI boot loader.
