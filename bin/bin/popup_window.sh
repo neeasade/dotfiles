@@ -22,7 +22,6 @@ print_env() {
 set_rule() {
   print_env >/dev/null
   bspc rule -a \* -o state=floating rectangle=${W}x${H}+${X}+${Y} layer=above
-  sleep 0.1
 }
 
 act_now() {
