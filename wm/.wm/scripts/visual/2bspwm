@@ -1,7 +1,8 @@
 #!/bin/sh
 # neeasade
-# depends on: wmutils opt/chwb2
 # makes dual borders based on your bspwm colors
+# depends on: wmutils opt/chwb2,
+#        and bspwindows: https://github.com/neeasade/dotfiles/blob/master/bin/bin/bspwindows
 
 border_width_current=$(bspc config border_width)
 
