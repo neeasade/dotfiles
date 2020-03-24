@@ -91,16 +91,56 @@ add_qutebrowser_tabs() {
 	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/default.yml" | grep title | sed 's/.*title: //'
     }
 
+    # user by add_meta as well
     qute_switch_to() {
 	title=$*
-	qb_title=$(bspc query -N -n .leaf | xargs xtitle | grep  '\- qutebrowser' | head -n 1)
-	select_action "window: $qb_title"
+	qb_meta_open
 	qb_command ":buffer $title"
     }
 
     while read -r title; do
 	add_switch "tab: $title" "qute_switch_to '$(echo "$title" | sed "s/'//g;s/\"// ")'"
     done <<< "$(open_titles)"
+}
+
+# playing around
+add_meta() {
+    find_url() {
+	url_match=$*
+	session_file="${HOME}/.local/share/qutebrowser/sessions/default.yml"
+	open_urls=$(sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1].url')
+	if echo "$open_urls" | grep "$url_match"; then
+	    qute_switch_to "$url_match"
+	else
+	    $BROWSER "$url_match"
+	fi
+    }
+
+    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com'"
+    add_switch "meta: twitter" "find_url 'https://twitter.com'"
+
+    find_steam() {
+	if pgrep steam; then
+	    # seems to be constant
+	    select_action "window: Steam"
+	else
+	    steam
+	fi
+    }
+
+    add_switch "meta: steam" "find_steam"
+
+    find_last_irc_ping() {
+	echo todo
+    }
+
+    org_capture() {
+	echo todo
+    }
+
+    notes_file() {
+	echo todo
+    }
 }
 
 select_action() {
@@ -118,9 +158,12 @@ select_action() {
     # bspc desktop -l monocle
 }
 
+
 add_windows
 add_qutebrowser_tabs
 add_emacs_buffers
+add_meta
+
 # add_qutebrowser_history
 
 choice=$((for key in "${!matches_to_actions[@]}"; do
