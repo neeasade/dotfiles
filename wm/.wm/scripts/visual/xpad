@@ -6,6 +6,7 @@
 # you can achieve the above with monocle mode and some choice settings, + a solid color background
 # the transition between the two modes is not currently fluid though.
 
+
 eval "$(theme get)"
 border_width=$(bspc config border_width)
 border_color_normal=$(bspc config normal_border_color)
@@ -42,14 +43,26 @@ pad() {
 
 draw() {
     # pad $border_color_active $(bspwindows)
+
+    monocle=$(iif 'jget layout $(bspc query -T -d) | grep monocle')
+
     (
-	scale=1
-	x_padding=$((x_padding - scale))
-	border_width=$((border_width + scale))
-	pad $border_color_active $(bspwindows)
+    	scale=1
+    	x_padding=$((x_padding - scale))
+    	border_width=$((border_width + scale))
+    	pad $border_color_active $(bspwindows $(iif $monocle inactive active))
     )
 
-    pad $border_color_normal $(bspwindows inactive)
+    pad $border_color_normal $(bspwindows $(iif $monocle active inactive))
+
+    # (
+    # 	x_padding=$((x_padding - ))
+    # 	border_width=$((border_width + scale))
+    # 	# pad $border_color_active $(bspwindows)
+
+    # 	# chwbn -b $border_width -b $x_padding \ -c $border_color_active \ -c $background_color \ $(bspwindows)
+    # )
+
 }
 
 bspc config border_width $((x_padding + border_width))

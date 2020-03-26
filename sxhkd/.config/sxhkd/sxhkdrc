@@ -103,7 +103,7 @@ super + shift + o
 # selecterino
 super + {_,shift,alt} + space
     action='{switcher,run,pass} '; \
-    export GTK_THEME=$(theme getval GTK_THEME); \
+    export GTK_THEME=$(timeout 1 theme getval GTK_THEME || echo Raleigh); \
     dmenu_$action "$action"
 
 super + grave
@@ -129,7 +129,7 @@ Pause
 
 # pretend +
 super + {minus,equal}
-    ponymix {decrease,increase} 5; notify-send --urgency=low "Volume: $(ponymix get-volume)"
+    notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 5)"
 
 super + shift + {minus,equal}
     xbright {down,up}; notify-send --urgency=low "Brightness: $(cat /tmp/xbrightness)"

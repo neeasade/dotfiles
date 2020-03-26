@@ -4,6 +4,11 @@ type theme >/dev/null 2>&1 &&
     _prompt=$(timeout 1 theme getval PROMPT_CHAR 2>/dev/null) ||
     _prompt='%'
 
+# dotfiles have been setup, but we're in a special location/no theme has been loaded:
+if [ -z "$_prompt" ]; then
+  _prompt='$'
+fi
+
 if [ -z "$cur_shell" ]; then
   cur_shell=$(ps | grep $$ |  sed 's/^.* //')
   cur_shell=${cur_shell##*/}
@@ -80,7 +85,8 @@ prompt() {
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
     [ $_ERR -ne 0 ] && _prompt=${_prompt%?}!
 
-    _prompt="$(git_prompt)$(env_prompt)$_prompt"
+    # _prompt="$(git_prompt)$(env_prompt)$_prompt"
+    _prompt="$(git_prompt)$_prompt"
 
     if ${REMOTE:-false}; then
       _prompt="$(hostname) $_prompt"

@@ -37,7 +37,7 @@ if initial_start:
     if 'EDITOR' in os.environ:
         c.editor.command = [os.environ['EDITOR'] + ' "{}"']
 
-    if 'bridge' in socket.gethostname():
+    if socket.gethostname() in ['bridge', 'erasmus']:
         # c.editor.command = ['/run/current-system/sw/bin/emacsclient', '-c', '+{line}:{column}', '{file}']
         c.editor.command = ['{{{which qutebrowser-edit}}}', '-l{line}', '-c{column}', '-f{file}']
 

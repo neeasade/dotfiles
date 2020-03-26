@@ -62,7 +62,7 @@ fi
 
 # terrible
 if [ -z "$GET" ]; then
-# echo $target "$@"
+  # echo $target "$@"
   $target "$@"
 else
   echo $target

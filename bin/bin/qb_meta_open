@@ -2,6 +2,8 @@
 # switch to tab with $url or open $url
 # if no url found, goto or open qutebrowser window
 # todo: consider basename domain vs fullname comparison
+# todo: bandcamp to chrome
+# todo: youtube to mpv
 
 url=$1
 

@@ -173,6 +173,7 @@ info() { # display the current song progress bar and playlist length
   infoname
 
   length=$(wc -L <<< "$name")
+  # length=$(wc -c <<< "$name")
 
   if [ "$(GET=t player.sh)" = "playerctl" ]; then
       # we can't get the percent, fake it for the looks
