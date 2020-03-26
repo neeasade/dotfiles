@@ -1,10 +1,9 @@
 #!/bin/sh
 # my laptop display management script
+# modes: mirror auto dota manual
 # won't do anything if the desired state is already set, so can be called periodically
-# call with resolution if you wish to change it (see xrandr for available resolutions and display names)
 
 # note: don't leave yourself without any display or the display-manager service will kick
-
 # ^ the above becomes important if you say, try to use a projector that doesn't support some
 # resolution you try and shove on it
 
@@ -64,9 +63,7 @@ auto() {
 	fi
     fi
 
-    # here's the issue -- when mirroring you might leave yourself stranded here
-
-    # # does the field end in a resolution
+    # does the field end in a resolution
     if echo "$off_monitor_status" | grep -qE '[0-9]+x[0-9]+'; then
 	echo "turning $off_monitor off"
 	xrandr --output $off_monitor --off
@@ -75,14 +72,13 @@ auto() {
 }
 
 mirror() {
-    echo nop
-
     max_res=$(echo "$xrandr" | grep -A 1 $laptop_monitor | tail -n 1 | awk '{print $1}')
 
     turn_on $laptop_monitor $max_res
 
     # sometimes you can't find the same res on the external display, so this might fail lmao
     # it will be OK, just that laptop view will be trimmed/not show the whole story
+    # this means that we cannot see emacs completion so it's a pain in the ass to look at stuff on the fly. need to fix that.
 
     # hack: check if the resolution is ref'd twice, if so assume that one is for the laptop and one
     # is for the external display
@@ -98,14 +94,10 @@ mirror() {
 
     did_something=true
 
-    # todo: right now we pick a bigger resolution on the external display this means that we cannot
-    # see emacs completion so it's a pain in the ass to look at stuff on the fly. need to fix that.
 }
 
 # dota -- low res on auto monitor (assuming that's a display mode)
 dota() {
-    echo doto
-
     systemctl --user stop display_sync
     systemctl --user stop compton
     systemctl --user stop unclutter
@@ -114,14 +106,18 @@ dota() {
     # setsid nohup laptop_monitor_sync 1280x720 &
 }
 
+manual() {
+    turn_on "$1" "$2"
+}
+
 did_something=false
 
-# allow the desired mode to be passed in
-# systemctl --user stop display_sync
-
-# todo: handle a custom resolution option
-echo "${1:-auto}"
-"${1:-auto}"
+if [ -z "$*" ]; then
+    auto
+else
+    systemctl --user stop display_sync
+    "$@"
+fi
 
 if $did_something; then
     # remove any bspwm defaults that may have been created with the new monitor

@@ -257,7 +257,7 @@ let
     # wine
     # wineStaging
     # wineUnstable
-    # (wine.override { wineBuild = "wineWow"; })
+    (wine.override { wineBuild = "wineWow"; })
   ]) ++ (with unstable; [
     minecraft
     openmw
