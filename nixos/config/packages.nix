@@ -10,7 +10,7 @@ let
     ];
   };
 
-  # stable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
+  # pkgs = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
   stable = pkgs; # controlled by root nix-channel entry
   unstable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
@@ -27,6 +27,7 @@ let
   # rolling = stable;
 
   core = (with stable; [
+    syncthing
     kitty
     nmap
     mediainfo

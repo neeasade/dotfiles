@@ -16,6 +16,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  services.xserver.videoDrivers = [ "nvidia" ];
+
   boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
   # boot.initrd.kernelModules = [ "wl" ];
   # boot.kernelModules = [ "kvm-intel" "wl" ];
