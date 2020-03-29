@@ -1,6 +1,5 @@
 
-
-Setup
+** Setup:
 
 #+begin_src sh
 sudo mv /etc/nixos/hardware-configuration.nix{,.bak}
@@ -9,4 +8,11 @@ sudo mv /etc/nixos/configuration.nix{,.bak}
 sudo ln -s $(readlink -f ./machines/$(hostname)/configuration.nix) /etc/nixos/configuration.nix
 #+end_src
 
-inspo: https://github.com/curiousleo/setup/tree/master/nixos
+** Inspo
+
+- https://github.com/curiousleo/setup
+-
+
+** Machine Naming Scheme
+
+Ships from [[https://en.wikipedia.org/wiki/William_Adams_(sailor,_born_1564)#Expedition_to_the_Far_East][this expedition]], derived from erasmus as described in the book Shogun.
