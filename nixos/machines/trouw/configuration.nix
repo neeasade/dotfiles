@@ -20,8 +20,6 @@ in
   networking.firewall.allowPing = true;
   networking.firewall.allowedTCPPorts = [
     8385
-    443
-    80
   ];
   services.openssh.enable = true;
 

@@ -1,5 +1,8 @@
 { config, pkgs, lib, ... }:
 
+let
+  consts = import ../../shared/consts.nix;
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -69,16 +72,49 @@
     initialPassword="password";
   };
 
+  # todo: enable auto update maybe
   nixpkgs.config.allowUnfree = true;
 
   nix.gc.automatic = true;
   nix.gc.dates = "weekly";
   nix.gc.options = "--delete-older-than 30d";
+
   # nix.useSandbox = true;
+
+  services.syncthing = {
+      enable = true;
+      openDefaultPorts = true;
+      guiAddress = "127.0.0.1:8385";
+
+      # Run as local user
+      user = consts.user;
+      dataDir = "${consts.home}/.local/share/Syncthing";
+
+      declarative = {
+        overrideDevices = true;
+        devices = builtins.removeAttrs consts.syncthingDevices [ "erasmus" ];
+        overrideFolders = true;
+
+        folders.main = {
+          enable = true;
+          path = "${consts.home}/sync/main";
+          # devices = [ "trouw" "geloof" ];
+          devices = [ "trouw" ];
+        };
+
+        folders.orgzly = {
+          enable = true;
+          path = "${consts.home}/sync/orgzly";
+          # devices = [ "trouw" "geloof" "phone"];
+          devices = [ "trouw" "phone"];
+        };
+      };
+    };
 
   # This value determines the NixOS release with which your system is to be
   # compatible, in order to avoid breaking some software such as database
   # servers. You should change this only after NixOS release notes say you
   # should.
   system.stateVersion = "18.09"; # Did you read the comment?
+
 }

@@ -1,0 +1,38 @@
+rec {
+  email = "";
+  name  = "";
+
+  user     = "neeasade";
+  home     = "/home/${user}";
+  dotfiles = "${home}/.dotfiles";
+  sshKeys  = [
+               "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCojiWaypftE0EGubAGZbXlEh6L1ehNWiD2NiwhTk6sVzHrXJEy1GB3kFep5wCnm0iV+ks8xdKZQBCdeCswfGGWMfnHicdarHEGYuF8uhU7MW0m9IfK7W80lJfhclyf0cBI+N3CL7zw6cDYmjThKARUP0X8iusViyx2hWQF+6vnV92+ak0xbOC5OTJWx27PC6LzTKIrJZdYX7AF4V/NvyiDfw8+BPNCijhcj8hiKFjYyHWGAwD6R6/qxVR39F8Clqg1ygyIgB5g+RaRN0LyLorSEuucS1oigEhkSZ4m+j1CMsHanXuhgxGjbDpdhVw8BNcL7PYvImB4xtmV41qlWR9r neeasade@littleapple"
+             ];
+
+  gpgKeys  = {
+    signing = "";
+  };
+
+  # todo: -- maybe make this from sync'd folder or somewhere else
+  # secret = import ./secret.nix;
+
+  syncthingDevices = {
+    # geloof = {
+    #   # todo: get the value of this running on lappy
+    #   # id = "";
+    #   introducer = true;
+    # };
+
+    erasmus = {
+      id = "4MS4KGQ-X6RBE6E-XX6AOPH-VJXFZ7P-VJ7JC53-35PHBDS-NJK4JRO-LPWHPAN";
+      introducer = true;
+    };
+
+    trouw.id = "NGZND66-ZLQFRIH-M6W77CS-FTHYQWT-EGYGD6S-V6MGTS2-K7JUCWC-W4DTTAL";
+
+    phone = {
+      id = "NQOFNTU-DZ3HCGL-P25F5G2-NBIKBON-AMGH2LV-FZGJR6W-YEAVVDY-ICARSA2";
+      introducer = true;
+    };
+  };
+}
