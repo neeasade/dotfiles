@@ -63,28 +63,15 @@ in
       folders.main = {
         enable = true;
         path = "${consts.home}/sync/main";
-        # devices = [ "erasmus" "geloof" ];
-        devices = [ "erasmus" ];
+        devices = [ "erasmus" "geloof" ];
       };
 
       folders.orgzly = {
         enable = true;
         path = "${consts.home}/sync/orgzly";
-        # devices = [ "erasmus" "geloof" "phone"];
-        devices = [ "erasmus" "phone"];
+        devices = [ "erasmus" "geloof" "phone"];
       };
     };
-
-    declarative = {
-      # overrideDevices = true;
-      overrideFolders = true;
-      folders.main = {
-        enable = true;
-        path = "/home/neeasade/Sync";
-        # devices = [ "droplet" "rpi" "phone" "laptop" ];
-      };
-    };
-
   };
 
   # services.postgresql = {

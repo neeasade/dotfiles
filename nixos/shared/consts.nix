@@ -17,11 +17,10 @@ rec {
   # secret = import ./secret.nix;
 
   syncthingDevices = {
-    # geloof = {
-    #   # todo: get the value of this running on lappy
-    #   # id = "";
-    #   introducer = true;
-    # };
+    geloof = {
+      id = "5TSVINF-TJQWJOR-4UBDHAH-J3EQ2YU-OY5C5AF-3P25BH5-UKXTMJE-PLSP6QO";
+      introducer = true;
+    };
 
     erasmus = {
       id = "4MS4KGQ-X6RBE6E-XX6AOPH-VJXFZ7P-VJ7JC53-35PHBDS-NJK4JRO-LPWHPAN";

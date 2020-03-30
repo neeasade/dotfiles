@@ -99,15 +99,13 @@ in
         folders.main = {
           enable = true;
           path = "${consts.home}/sync/main";
-          # devices = [ "trouw" "geloof" ];
-          devices = [ "trouw" ];
+          devices = [ "trouw" "geloof" ];
         };
 
         folders.orgzly = {
           enable = true;
           path = "${consts.home}/sync/orgzly";
-          # devices = [ "trouw" "geloof" "phone"];
-          devices = [ "trouw" "phone"];
+          devices = [ "trouw" "geloof" "phone"];
         };
       };
     };
