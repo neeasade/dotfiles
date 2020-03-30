@@ -44,7 +44,7 @@ if [ -z "$url" ]; then
     vanilla
 fi
 
-session_file="${HOME}/.local/share/qutebrowser/sessions/default.yml"
+session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
 
 # all the open urls (last in history is the current viewed thing)
 if ! sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | .url' | grep -q "$url"; then

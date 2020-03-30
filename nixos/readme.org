@@ -1,5 +1,6 @@
+~nix~ is pretty neat.
 
-** Setup:
+** Setup
 
 #+begin_src sh
 sudo mv /etc/nixos/hardware-configuration.nix{,.bak}
@@ -11,8 +12,17 @@ sudo ln -s $(readlink -f ./machines/$(hostname)/configuration.nix) /etc/nixos/co
 ** Inspo
 
 - https://github.com/curiousleo/setup
--
+- https://git.sr.ht/~spacekookie/libkookie/tree
+- https://github.com/jD91mZM2/dotfiles
+
+... and many others
 
 ** Machine Naming Scheme
 
-Ships from [[https://en.wikipedia.org/wiki/William_Adams_(sailor,_born_1564)#Expedition_to_the_Far_East][this expedition]], derived from erasmus as described in the book Shogun.
+Ships from [[https://en.wikipedia.org/wiki/William_Adams_(sailor,_born_1564)#Expedition_to_the_Far_East][this expedition]], interest stemming from Erasmus as described in the book Shogun.
+
+| erasmus (named for the Desiderius Erasmus) | desktop                     |
+| trouw (Loyalty/Faithful)                   | vps                         |
+| geloof (Faith)                             | laptop                      |
+| hoope (hope)                               | (unused) future ARM laptop? |
+| boodschap (message/tiding)                 | (unused)                    |

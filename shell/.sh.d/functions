@@ -322,6 +322,7 @@ gset() {
     return
   fi
 
+  # todo: add a 'none'/'anon' option
   case $1 in
     pass) g_conf "$(pass git/name)" "$(pass git/email)" ;;
     manual)

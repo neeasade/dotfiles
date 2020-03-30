@@ -10,6 +10,7 @@ sudo echo yeet >/dev/null # so we and all our subshells get it
 channel=$(sudo nix-channel --list | sed 's#https://nixos.org/channels/nixos-##')
 echo "channel: $channel"
 
-# update our nix-channel reference:
-sudo nix-channel --update
-sudo nixos-rebuild "${*}"
+# sudo nix-channel --update
+# sudo nixos-rebuild "${*}"
+# the same as the above:
+sudo nixos-rebuild $* --upgrade

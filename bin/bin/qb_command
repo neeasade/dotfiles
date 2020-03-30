@@ -23,6 +23,4 @@ send_cmd() {
 }
 
 # suppress messages when called from here
-send_cmd ':set messages.timeout 1'
 send_cmd "$_url"
-send_cmd ':set messages.timeout 2000'

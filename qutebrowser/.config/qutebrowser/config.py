@@ -59,6 +59,7 @@ if initial_start:
     nmap('K', 'search-prev')
 
     # keep autosave session in sync when tabs are closed as well as opened
+    # total hack
     d_sync = ';;'.join([
         'tab-close',
         'set messages.timeout 1',
