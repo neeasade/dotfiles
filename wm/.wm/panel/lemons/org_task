@@ -7,12 +7,12 @@ calc() {
 }
 
 time_offset_percent() {
-    duration="$1" # minutes
+    duration=$1 # minutes
 
-    interval="$(calc ${duration} \* 60)"
+    interval=$(calc ${duration} \* 60)
 
-    time_left="$(elisp '(format-time-string "%s" (org-pomodoro-remaining-seconds))' | tr -d '"')"
-    percent="$(calc "((${interval} - ${time_left}) / ${interval}) * 100" | sed 's/\..*//')"
+    time_left=$(elisp '(format-time-string "%s" (org-pomodoro-remaining-seconds))' | tr -d '"')
+    percent=$(calc "((${interval} - ${time_left}) / ${interval}) * 100" | sed 's/\..*//')
 
     percent=${percent:-0}
     echo "${percent}"
@@ -26,7 +26,7 @@ get_length() {
     elisp "org-pomodoro-${@}length"
 }
 
-pomodoro_state="$(elisp org-pomodoro-state)"
+pomodoro_state=$(elisp org-pomodoro-state)
 
 case ${pomodoro_state} in
     :short-break)

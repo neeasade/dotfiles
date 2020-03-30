@@ -16,9 +16,8 @@
        ;; trying
        ;; do the thing
        (option (condition-case ()
-		   (ivy-read prompt
-			     (->> *stdin-file* f-read (s-split "\n"))
-			     :action (fn <>))
+		   (ivy-read prompt (->> *stdin-file* f-read (s-split "\n"))
+		   	     :action (fn <>))
 		 (quit nil) ;; if we quit out of the ivy-read just return nothing
 		 )))
   (delete-frame)

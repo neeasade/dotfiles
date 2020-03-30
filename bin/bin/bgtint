@@ -15,12 +15,13 @@ rand_tile() {
     (
 	# rg --files "$HOME/pngsave"
 
-    	# rg --files /media/LIVEWIRE/Archive/other/squid/
-    	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
-    	# rg --files "$HOME/git/SubtlePatterns/"
+    	rg --files /media/LIVEWIRE/Archive/other/squid/
+    	rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+    	rg --files "$HOME/git/SubtlePatterns/"
 
-    	# rg --files /media/LIVEWIRE/Archive/other/squid/
-    	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+    	rg --files /media/LIVEWIRE/Archive/other/squid/
+    	rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+
 	rg --files /home/neeasade/git/tiles-and-such
 
     ) | sort -R | head -n 1
@@ -57,11 +58,11 @@ fi
 echo "$target" > /tmp/result_source.txt
 rm /tmp/result.png
 
-# convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
-# convert "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
+convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+convert "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
 
-convert "$target" -fuzz "5%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
-convert "/tmp/result.png" -fuzz "8%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
+# convert "$target" -fuzz "5%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+# convert "/tmp/result.png" -fuzz "8%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
 
 convert /tmp/result.png -resize 120% /tmp/result.png
 
