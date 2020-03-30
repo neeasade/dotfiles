@@ -93,6 +93,7 @@ in
       declarative = {
         overrideDevices = true;
         devices = builtins.removeAttrs consts.syncthingDevices [ "erasmus" ];
+
         overrideFolders = true;
 
         folders.main = {

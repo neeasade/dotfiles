@@ -16,7 +16,7 @@ in
     ];
 
 
-  networking.hostName = "bridge";
+  networking.hostName = "geloof";
   # networking.wireless.enable = true;  # wpa_supplicant.
   networking.networkmanager.enable = true;
 
