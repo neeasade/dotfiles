@@ -3,6 +3,8 @@
 # todo: some of these are based on monitor dimensions/gapping
 # could affect: dmenu, dunst
 
+# todo: this script should also handle font checking against fc-list
+
 # setup:
 
 # relative calling
@@ -239,7 +241,7 @@ load_qutebrowser() {
     q_tab_fontsize_small="$(($q_tab_fontsize - 2))"
     q_tab_font="$(echo $p_font_main | sed 's/-.*//')"
 
-    margs qutebrowser .config/qutebrowser/config.py
+    margs qutebrowser .config/qutebrowser/colors.py
 
     current_conf=$(bspc config ignore_ewmh_focus)
     bspc config ignore_ewmh_focus true
