@@ -1,0 +1,7 @@
+#!/bin/sh
+session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
+
+# amazing
+# todo: multiple windows
+# the weird delete is because yq/jq can't handle geometry type?
+sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | select(.active == true).history[] | select (.active == true).url' -
