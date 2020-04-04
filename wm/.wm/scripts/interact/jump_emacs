@@ -13,7 +13,7 @@ current_desk=$(bspc query -D -d)
 class=${*:-Emacs}
 
 # todo: cache/don't retry checks
-for wid in $(bspc wm -d | jq '.focusHistory[] | select(.desktopId == '${current_desk}') | .nodeId' | sort -r); do
+for wid in $(bspc wm -d | jq '.focusHistory[] | select(.desktopId == "'${current_desk}'") | .nodeId' | sort -r); do
     if xprop -id $wid | grep "^WM_CLASS" | grep "$class"; then
 	echo bspc node -f $wid
 	bspc node -f $wid
