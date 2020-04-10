@@ -65,8 +65,8 @@ env_prompt() {
   fi
 
   changed_vars=$(diff \
-                   <(cd; cache_output bash -ic '(set -o posix; set | grep -vE "^(BASH_|COLUMNS|LINES)")') \
-                   <((set -o posix; set) | grep -vE '^(BASH|changed_vars|FUNCNAME|PPID|SHLVL|COLUMNS|LINES)') \
+                   <(cd; cache_output bash -ic '(set -o posix; set | grep -vE "^(BASH_|COLUMNS|LINES|PWD|OLDPWD)")') \
+                   <((set -o posix; set) | grep -vE '^(BASH|changed_vars|FUNCNAME|PPID|SHLVL|COLUMNS|LINES|PWD|OLDPWD)') \
                    | grep '^> ' | sed 's/> //' | grep -oE '^[A-Z]+\=')
 
   if [ ! -z "$changed_vars" ]; then
