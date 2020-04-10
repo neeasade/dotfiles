@@ -1,6 +1,12 @@
 #!/bin/sh
 # 2lazy
 
+persist=false
+if [ "$1" = "-p" ]; then
+    persist=true
+    shift
+fi
+
 interval=$1
 shift
 
@@ -10,7 +16,9 @@ while true; do
 	notify-send "script failed! $*"
 	echo "failed! $*">&2
 	# fail the service
-	exit 1
+	if $persist; then
+	    exit 1
+	fi
     fi
 
     sleep $interval

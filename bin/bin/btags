@@ -21,7 +21,6 @@
 (require '[joker.core :as core])
 (require '[joker.string :as str])
 (require '[joker.set :as set])
-(require '[joker.io :as io])
 (require '[joker.time :as time])
 
 (defn sh [command]

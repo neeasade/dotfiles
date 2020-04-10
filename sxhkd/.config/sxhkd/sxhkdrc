@@ -107,13 +107,13 @@ super + {_,shift,alt} + space
     dmenu_$action "$action"
 
 super + grave
-     player.sh toggle
+    player.sh toggle
 
 XF86Audio{Prev,Next,Play}
-     mpc -q {prev,next,toggle}
+    mpc -q {prev,next,toggle}
 
 XF86Audio{LowerVolume,RaiseVolume}
-    ponymix {decrease,increase} 5; notify-send --urgency=low "Volume: $(ponymix get-volume)"
+    notify-send --urgency=low "Volume: $(ponymix {decrease,increase})"
 
 super + Escape
     notify-send "reloading sxhkd!"; pkill -USR1 -x sxhkd

@@ -44,7 +44,7 @@ pad() {
 draw() {
     # pad $border_color_active $(bspwindows)
 
-    monocle=$(iif 'jget layout $(bspc query -T -d) | grep monocle')
+    monocle=$(iif 'jget layout "$(bspc query -T -d)" | grep monocle')
 
     (
     	scale=1

@@ -420,22 +420,23 @@ load_services() {
 	make_service "$1" "periodically $interval $2" "$3"
     }
 
-    # intervals
-    make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
-
-    make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
 
-    # make_periodic_service 30 qb_session_dump "qb_command ':session-save'" "Dump the qutebrowser session from time to time"
-
-    if [ "$(hostname)" = "bridge" ]; then
+    if [ "$(hostname)" = "geloof" ]; then
 	make_periodic_service 10 refresh_mpd "refresh_mpd"
+	make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
+	make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
     fi
 
-    make_service compton
+    if [ "$(hostname)" = "erasmus" ]; then
+	make_periodic_service 10 vps_connect "periodically -p 10 ssh -tt -R 22222:localhost:22 neeasade@vps.neeasade.net"
+	# ssh -t vps.neeasade.net 'ssh localhost -p 22222'
+    fi
+
     make_service unclutter 'unclutter -idle 1'
     make_service nm-applet
     make_service dunst
+    make_service compton
 
     # todo: correct lemon mpd naming conflict
     make_service mpd "/run/current-system/sw/bin/mpd --no-daemon $HOME/.config/mpd/mpd.conf"

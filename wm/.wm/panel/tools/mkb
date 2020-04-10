@@ -12,8 +12,6 @@ eval "$(theme get)"
 progress=${progress:-30}
 size=${size:-32}
 
-# some ideas
-
 passed=false
 content="${l_start}"
 
