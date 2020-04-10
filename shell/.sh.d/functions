@@ -6,6 +6,12 @@ vdo() {
   "$@"
 }
 
+prepend() {
+  tmpfile=$(mktemp)
+  cat <(echo "$1") "$2" >$tmpfile
+  mv $tmpfile "$2"
+}
+
 windowshot() {
   j=$(bspc query -T -n)
   w=$(jget width "$j")
