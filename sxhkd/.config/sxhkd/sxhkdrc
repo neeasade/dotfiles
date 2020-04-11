@@ -91,6 +91,9 @@ super + {_,shift} + slash
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
 
+super + shift + Return
+    elisp '(ns/org-capture-popup)'
+
 super + i
     jump_emacs Emacs
 

@@ -5,4 +5,5 @@ mpv=$(type -a mpv | tail -n 1 | awk '{print $3}')
 
 mpc pause >/dev/null
 
-$mpv --screenshot-directory="$HOME/Screenshots_mpv" --input-ipc-server=/tmp/mpvsocket "$@"
+
+$mpv --save-position-on-quit --screenshot-directory="$HOME/Screenshots_mpv" --input-ipc-server=/tmp/mpvsocket "$@"

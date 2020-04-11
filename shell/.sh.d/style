@@ -103,7 +103,7 @@ tell_emacs_shell_location() {
     fi
   fi
 
-  echo "|Pr0mPT|${_shell_location}|"
+  echo "+Pr0mPT+${_shell_location}+"
 }
 
 prompt() {
