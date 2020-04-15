@@ -5,7 +5,7 @@ dir=$1
 
 node=$(bspc query -N -n)
 node=${node^^}
-target=$(bspc query -N -n $dir)
+target=$(bspc query -N -n $dir.!hidden)
 
 # if there are any floating windows, use an edge of that if it overlaps into us
 node_dir=$1
@@ -16,7 +16,7 @@ case $node_dir in
   south) dir=y; sign=-lt;;
 esac
 
-floating_windows=$(bspc query -N -d -n .window.local.floating)
+floating_windows=$(bspc query -N -d -n .window.local.floating.!hidden)
 declare -A winmap=();
 while read wid x y w h; do
   wid="${wid^^}"

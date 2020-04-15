@@ -46,13 +46,22 @@ super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
 super + ctrl + space
     bspc node -p cancel
 
-super + {1-9}
-    bspc desktop -f focused:^{1-9}
+# bspc desktop -f focused:^{1-9}
+
     # btags focus ^{1-9}
 
+super + {1-9}
+    i={1-9}; \
+    if btags wids ^$i | grep $(bspc query -N -n); then \
+    btags toggle ^$i; else btags focus ^$i ; fi
+
+
+super + {1-9}
+    btags focus ^{1-9}
+
+    # bspc node -d focused:^{1-9}
 super + shift + {1-9}
-    bspc node -d focused:^{1-9}
-    # btags toggle-wids ^{1-9} $(bspc query -N -n)
+    btags toggle-wids ^{1-9} $(bspc query -N -n)
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r

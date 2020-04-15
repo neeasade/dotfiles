@@ -11,9 +11,11 @@ sudo ln -s $(readlink -f ./machines/$(hostname)/configuration.nix) /etc/nixos/co
 
 ** Inspo
 
-- https://github.com/curiousleo/setup
 - https://git.sr.ht/~spacekookie/libkookie/tree
 - https://github.com/jD91mZM2/dotfiles
+- https://git.tazj.in/tree/
+- https://github.com/willbush/system
+- https://github.com/curiousleo/setup
 
 ... and many others
 

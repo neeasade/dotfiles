@@ -255,16 +255,16 @@ let
     mesa_drivers
     mesa_glu
 
-    # wine
+    wine
     # wineStaging
     # wineUnstable
-    (wine.override { wineBuild = "wineWow"; })
-  ]) ++ (with unstable; [
+    # (wine.override { wineBuild = "wineWow"; })
+    steam
     minecraft
     openmw
-    steam
-    # openmw-tes3mp
     drawpile
+  ]) ++ (with unstable; [
+    # openmw-tes3mp
   ]);
 
   development = (with stable; [

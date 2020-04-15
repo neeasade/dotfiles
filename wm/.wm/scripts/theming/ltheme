@@ -261,7 +261,7 @@ load_dunst() {
     [ $b_window_gap -le 0 ] && b_window_gap=$x_padding
 
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
-    [ $x_padding -gt 12 ] && x_padding=$(( $x_padding/2 ))
+    # [ $x_padding -gt 12 ] && x_padding=$(( $x_padding/2 ))
 
     # WIDTHxHEIGHT+XOFF+YOFF
     # height is the number of notifications that can be open
@@ -284,7 +284,9 @@ load_dunst() {
 
     # pkill dunst
     # dunst will auto-launch on notify-send call
-    systemctl --user restart dunst
+    systemctl --user stop dunst
+    pkill dunst
+    systemctl --user start dunst
 }
 
 load_mpd() {
@@ -474,6 +476,8 @@ for conf in $targets; do
     ) &
 done
 IFS=
+
+theme cache_env
 
 # leave our children to fate.
 disown

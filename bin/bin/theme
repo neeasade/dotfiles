@@ -9,17 +9,22 @@ die() {
   exit 1
 }
 
+cache_env() {
+    bash -c "$(get); declare -px >/tmp/loaded_theme.sh"
+}
+
 getval() {
     (
-	bash -c "$(get); eval printf \"%s\" '\"\$$1\"'"
+	. /tmp/loaded_theme.sh
+	eval eval printf \"%s\" '\"\$$1\"'
     )
 }
 
 # (meant to be eval'd)
 get() {
   echo unset bg fg line prefix suffix activebg activefg activeline
-  echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
   echo set -a
+  echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
   echo . "$theme_load"
   echo colors
   echo . "$HOME/.wm/scripts/theming/defaults"

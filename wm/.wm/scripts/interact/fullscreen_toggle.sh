@@ -47,9 +47,9 @@ do_tiled() {
   bspc query -N -n focused.fullscreen \
     && bspc node -t ~fullscreen
 
-  # bspc config window_gap $(theme getval b_window_gap)
   # bspc config focused_border_color \#$(theme getval b_focused_border_color)
   bspc desktop -l tiled
+  bspc config window_gap $(theme getval b_window_gap)
   # $HOME/.config/bspwm/bspwmrc
 }
 

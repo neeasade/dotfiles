@@ -41,8 +41,9 @@ EOF
 }
 
 # this lets relative links be resolvable in orgzly
-mkdir -p "${sync_dir}/org_files"
-ln -s "${sync_dir}/org_files" "${HOME}/storage/shared/org_files"
+# update: can't have symlinks in system storage
+# mkdir -p "${sync_dir}/org_files"
+# ln -s "${sync_dir}/org_files" "${HOME}/storage/shared/org_files"
 
 if [ -f "$share_target" ]; then
     # it's not a web url! assume it's a file and we want to open it.
@@ -53,6 +54,7 @@ if [ -f "$share_target" ]; then
     else
 	# assume that we want to capture it
 	filename=$(basename "$share_target")
+	mkdir -p "${sync_dir}/org_files/"
 	cp "$share_target" "${sync_dir}/org_files/$filename"
 	capture_note "[[./org_files/$filename][$filename]]"
     fi
