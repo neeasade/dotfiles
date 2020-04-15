@@ -1,6 +1,9 @@
 #!/usr/bin/env joker
 ;; -*- mode: clojure -*-
 
+;; idea: move the drawing of borders into here
+;; idea: move the bar section drawing into here
+
 ;; a hack for cider buffer repl
 (defmacro cider-nop [& contents] (when nil contents))
 (cider-nop
@@ -14,7 +17,6 @@
        (:out (apply shell/sh (str/split command #" "))))
 
      (def state (-> state-file slurp read-string)))
-
  )
 
 (require '[joker.os :as os])
@@ -78,6 +80,7 @@
   (when (empty? (sh (format "bspc query -N -n %s.%shidden" wid (if show "\\!" ""))))
     (sh (format "bspc node %s -g hidden=%s" wid (if show "off" "on")))))
 
+
 ;; (println (core/format "bspc node %s -g hidden=%s" wid (if show "off" "on")))
 (defn render-state []
   ;; show/hide status
@@ -108,13 +111,6 @@
     (sh "bspc config pointer_follows_focus false")
     )
   )
-
-(defn action-focus "<tag> - focus the last wid in the tag"
-  [tag]
-  (update-state-focus-wid
-   (->> (:tags state)
-        (filter #(= (:name %) (tag-ident-to-name tag)))
-        first :wids last)))
 
 (defn update-tags
   "update all tags with a transform function"
@@ -152,6 +148,19 @@
        (map #(update-state-focus-wid (last (:wids %))))
        doall
        ))
+
+(defn action-focus "<tag> - focus the last wid in the tag"
+  [tag]
+  (when (not (->> (:tags state)
+                  (filter #(= (:name %) (tag-ident-to-name tag)))
+                  first :active))
+    (action-toggle tag)
+    )
+
+  (update-state-focus-wid
+   (->> (:tags state)
+        (filter #(= (:name %) (tag-ident-to-name tag)))
+        first :wids last)))
 
 (defn action-names
   "get all the tag names"
@@ -252,18 +261,21 @@
        doall
        ))
 
+(defn action-state-raw "get raw edn state" []
+  (->> state pr-str println))
+
 (defn action--h "usage" []
   (usage))
 
 (when (not *command-line-args*)
   (usage))
 
+;; we don't care about rendering+saving on state get (or subscribe)
 (when *command-line-args*
-  ;; we don't care about rendering+saving on state get (or subscribe)
-  (if (= "state" (first *command-line-args*))
-    (do (load-state)
-        (cleanup-state)
-        (action-state))
+  (if (contains?
+       ;; stateful - note: focus might not be stateful really
+       #{"toggle" "toggle-wids" "focus"}
+       (first *command-line-args*))
 
     (do (wait-for-lock)
         (load-state)
@@ -271,18 +283,11 @@
         (apply
          (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
          (rest *command-line-args*))
+        (render-state)
+        (save-state))
 
-        ;; ugh
-        (when (not (= "subscribe" (first *command-line-args*)))
-          (render-state)
-          (save-state)
-          ))))
-
-;; notes
-;; > consider: smart toggle if looking at a wid in a group, hide the group else, show the group it
-;; it's not shown, then focus it
-
-;; > tags doesn't feel right -- the 'unsolved' part is maybe managing untagged windows, maybe
-;; default adding them to a tag or something maybe add to the current tag you are focused on
-
-;; all the above may now be done via a script/at a higher level.
+    (do
+      (load-state)
+      (apply (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+             (rest *command-line-args*)))
+    ))
