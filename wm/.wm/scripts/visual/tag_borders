@@ -1,0 +1,50 @@
+#!/bin/sh
+# draw a borders according to the group some wid is in
+
+colortag00=c2c6e3
+colortag01=e4815d
+colortag10=c6dc93
+colortag11=E2E3E5
+
+b_width=$(bspc config border_width)
+
+# you can move this into the render function
+
+draw() {
+    active=$(bspwindows)
+    state=$(btags state-plain)
+
+    for wid in $active $(bspwindows inactive); do
+	i=$(echo "$state" | grep "$wid" | sed 's/|.*//' | head -n 1)
+
+	if [ -z "$i" ]; then
+	    if echo "$active" | grep -q "$wid"; then
+		chwbn \
+		    -b $(( b_width-4 )) \
+		    -b $(( 4 )) \
+		    -c 000000 \
+		    -c 666666 \
+		    $wid
+	    else
+		chwbn -b $b_width -c 000000 $wid
+	    fi
+	else
+	    if echo "$active" | grep -q "$wid"; then
+		chwbn \
+		    -b $(( b_width-4 )) \
+		    -b $(( 4 )) \
+		    -c $(eval echo \$colortag$i) \
+		    -c $(colort -l -40 $(eval echo \$colortag$i)) \
+		    $wid
+	    else
+		chwbn -b $b_width -c $(eval echo \$colortag$i) $wid
+	    fi
+	fi
+    done
+}
+
+draw
+# bspc subscribe node_flag node_state node_geometry node_focus | debounce.sh 0.1 | while read msg; do
+bspc subscribe node_flag node_state node_geometry node_focus | while read msg; do
+    draw
+done

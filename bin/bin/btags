@@ -17,6 +17,7 @@
        (:out (apply shell/sh (str/split command #" "))))
 
      (def state (-> state-file slurp read-string)))
+
  )
 
 (require '[joker.os :as os])
@@ -103,7 +104,12 @@
     (doall (map #(render-wid % false) hide-wids)))
 
   ;; refocus who we had if they exist
-  (when (not (= (:focus-wid state) ""))
+  (when (and
+         (not (= (:focus-wid state) ""))
+         ;; (not (= (:focus-wid state)
+         ;;         (-> "bspc query -N -n" sh str/trim-newline)
+         ;;         ))
+         )
     ;; (sh "sleep 1")
     ;; (sh (format "notify-send doing_%s" (:focus-wid state)))
     (sh "bspc config pointer_follows_focus true")
@@ -151,23 +157,24 @@
 
 (defn action-focus "<tag> - focus the last wid in the tag"
   [tag]
-  (when (not (->> (:tags state)
-                  (filter #(= (:name %) (tag-ident-to-name tag)))
-                  first :active))
-    (action-toggle tag)
-    )
 
-  (update-state-focus-wid
-   (->> (:tags state)
-        (filter #(= (:name %) (tag-ident-to-name tag)))
-        first :wids last)))
+  (let [full-tag (->> (:tags state)
+                      (filter #(= (:name %) (tag-ident-to-name tag)))
+                      first)]
+    (when (not (:active full-tag))
+      (action-toggle tag))
+
+    (update-state-focus-wid
+     (-> full-tag :wids last))
+    )
+  )
 
 (defn action-names
   "get all the tag names"
   [] (->> state :tags (map :name) (map println) doall))
 
 (defn get-state-untagged []
-  (let [all-wids (-> "bspc query -N -n .leaf" sh (str/trim-newline) (str/split #"\n") set)]
+  (let [all-wids (-> "bspc query -N -n .leaf.window" sh (str/trim-newline) (str/split #"\n") set)]
     all-wids
     (set/difference
      (set all-wids)
@@ -264,16 +271,28 @@
 (defn action-state-raw "get raw edn state" []
   (->> state pr-str println))
 
+(defn action-state-plain "get a plaintext representation of tags" []
+  (->> state
+       :tags
+       (map #(format "%s|%s|%s"
+                     (:name %)
+                     (if (:active %) "true" "false")
+                     (str/join " " (:wids %))))
+       (map println)
+       doall
+       ))
+
 (defn action--h "usage" []
   (usage))
 
+;; and.. action:
 (when (not *command-line-args*)
   (usage))
 
 ;; we don't care about rendering+saving on state get (or subscribe)
 (when *command-line-args*
   (if (contains?
-       ;; stateful - note: focus might not be stateful really
+       ;; stateful - focus might not be stateful really
        #{"toggle" "toggle-wids" "focus"}
        (first *command-line-args*))
 
