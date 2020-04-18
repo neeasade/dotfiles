@@ -13,7 +13,7 @@ draw() {
     state=$(btags state-plain)
 
     for wid in $active $(bspwindows inactive); do
-	tag=$(echo "$state" | head -n 1 | awk -F \| "/$wid/{print \$4}")
+	tag=$(echo "$state" | awk -F \| "/$wid/{print \$4}" | head -n 1)
 	if [ -z "$tag" ]; then
 	    if echo "$active" | grep -q "$wid"; then
 		chwbn \
@@ -26,7 +26,7 @@ draw() {
 		chwbn -b $b_width -c 000000 $wid
 	    fi
 	else
-	    color=$(echo "$state" | head -n 1 | awk -F \| "/$wid/{print \$3}")
+	    color=$(echo "$state" | awk -F \| "/$wid/{print \$3}" | head -n 1)
 
 	    if echo "$active" | grep -q "$wid"; then
 		chwbn \
