@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# <monitor_id> <desktop_id> <ip_id> <node_id>
+bspc subscribe node_add | while read -r event m d i wid; do
+    if xprop -id $wid | grep "^WM_CLASS" | grep Steam; then
+	btags toggle-wids ^3 $wid
+	continue
+    fi
+
+    if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
+	btags toggle-wids ^2 $wid
+	continue
+    fi
+
+    current_tag=$(btags get-tags "$(bspc query -N -n last)" | head -n 1)
+    if [ ! -z "$current_tag" ]; then
+	btags toggle-wids "$current_tag" $wid
+    fi
+done

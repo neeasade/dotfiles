@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 # neeasade
 # goal: natural feeling window spawning
 # behavior:
@@ -21,6 +21,7 @@ percent=.33
 # if 1 node is open, switch directions (related to custom_monocle)
 mon_width=$(jget width "$(bspc query -T -m)") # .rectangle.width
 mon_height=$(jget height "$(bspc query -T -m)") # .rectangle.height
+
 if [ $mon_width -gt $mon_height ]; then
     node_count=$(bspc query -N -d $desk -n .leaf.normal | wc -l)
     [ $node_count -eq 1 ] && vertPref=$horiPref
@@ -29,6 +30,9 @@ fi
 # get any presels on the current desktop, select one if so.
 presel=$(bspc query -N -d -n .\!automatic | head -n 1)
 targetNode=${presel:-focused}
+
+# not specifying split dir if targetting presel
+[ ! -z "$presel" ] && exit 0
 
 # we get these values early because you can't use bspc commands
 # in an external rule after you start echoing.
@@ -41,8 +45,6 @@ height=$(jget height "$(bspc query -T -n $targetNode)") # .rectangle.height
 # set node
 echo node=$targetNode
 
-# not specifying split dir if targetting presel
-[ ! -z $presel ] && exit 0
 
 bcInput=$(iif "[ $width -gt $height ]" \
     "($width-$height)/$width" \

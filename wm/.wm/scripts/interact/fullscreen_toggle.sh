@@ -12,6 +12,8 @@ do_monocle_padded() {
   bspc query -N -n focused.fullscreen && \
     bspc node -t ~fullscreen
 
+  bspc node -t tiled
+
   # the idea is that fake padding comes from
   bspc config window_gap $(theme getval x_padding) &
   bspc config left_monocle_padding 0
@@ -24,6 +26,7 @@ do_monocle_padded() {
 do_monocle_slim() {
   theme refresh bg &
   bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
+  bspc node -t tiled
 
   # this issue is for this width you want softer borders, not borderless
   bspc config borderless_monocle false

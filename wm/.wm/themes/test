@@ -23,9 +23,47 @@ colors() {
     # background=F7F7F7
 
     background=FAFAFA
-
     cursorColor=8B94C6
-    # try to derive from theme colors
+
+    color0=FEFEFE
+    color1=A70000
+    color2=213EBE
+    color3=6F3600
+    color4=5216AB
+    color5=082F5F
+    color6=710F44
+    color7=000000
+    color8=4F4F4F
+    color9=A70000
+    color10=213EBE
+    color11=6F3600
+    color12=5216AB
+    color13=082F5F
+    color14=710F44
+    color15=000000
+    foreground=000000
+    background=FAFAFA
+    cursorColor=8B94C6
+
+    # lab light
+    color0=5a5e65
+    color8=73777d
+    color1=d04245
+    color9=ff7f79
+    color2=008c36
+    color10=30c36e
+    color3=897500
+    color11=c0a946
+    color4=007bd9
+    color12=69afff
+    color5=ba48b4
+    color13=f083e7
+    color6=008fac
+    color14=00c5e0
+    color7=dee2ea
+    color15=eef0f3
+    background=eef0f3
+    foreground=5a5e65
 }
 
 settings() {
@@ -33,15 +71,18 @@ settings() {
     # BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
     BG_COMMAND="${HOME}/.fehbg"
 
-    emacs_theme="apropospriate-light"
+    # emacs_theme="apropospriate-light"
     # emacs_theme="base16-grayscale-light"
+    emacs_theme="lab-light"
     emacs_powerline_scale="1.0"
     PROMPT_CHAR='%'
 
     # bspwm
     b_border_width=1
-    b_normal_border_color=B0A8A6
-    b_window_gap=15
+    # b_normal_border_color=B0A8A6
+    b_normal_border_color=$(colort -t $(lessen 20 $color0))
+    b_window_gap=32
+    b_window_width=10
 
     b_bspwmrc_extend="xpad &"
 
@@ -49,13 +90,16 @@ settings() {
 
     # b_normal_border_color=eeeff0
     # b_active_border_color=cecece
-    # b_focused_border_color=7c7c7c
+    # b_focused_border_color=$(colort -b 20 -t $(lessen 10 $foreground))
+    # b_focused_border_color=$(elisp -r '(face-attribute 'font-lock-variable-name-face :foreground)')
+    b_focused_border_color=$(colort -t $(elisp -r "(face-attribute 'font-lock-variable-name-face :foreground)"))
+
 
     # p_gap=$(elisp '(frame-fringe-width)')
-    p_gap=6
+    p_gap=0
 
     p_bg_middle=$(elisp -r "(ns/shorten-color (face-attribute 'ns/mode-line-middle :background))")
-    p_bg_active=$(elisp -r "(ns/shorten-color (face-attribute 'region :background))")
+    p_bg_active=$(elisp -r "(ns/shorten-color (face-attribute 'company-tooltip-selection :background))")
     p_fg_active=$foreground
 
     # elisp -r "(face-attribute 'region :background)"
@@ -72,9 +116,8 @@ settings() {
 
     p_title_show_mode=active         # used by title.
 
-    p_height=25
+    p_height=30
     # p_gap=0
-    p_line=3
     p_window_class="noshadow"
     p_line=2
     # p_padding=6
@@ -84,7 +127,7 @@ settings() {
     # p_font_main="Charter-10:style=Bold"
     p_font_icon="FontAwesome-10" # Panel Icon font.
     p_icon_enable=false
-    # p_desktop_display_name=name
+    p_desktop_display_name=name
     # d_font="Go Mono for Powerline 14"
     d_font="Equity Text A 12"
 
