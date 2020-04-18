@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # take input from bspc subscribe, emit desktop stuff information.
-# todo: consider reimplementing click handling.
 
 focusMonitor=$(bspc query -M -m $mon --names)
 
@@ -10,14 +9,14 @@ focusMonitor=$(bspc query -M -m $mon --names)
 #NoModeToggle=true           # true or false
 
 # temp/compat
-DO="$p_desktop_occupied_label"
-DF="$p_desktop_empty_label"
-DT="$p_desktop_tiling_label"
-DM="$p_desktop_monocle_label"
+DO=$p_desktop_occupied_label
+DF=$p_desktop_empty_label
+DT=$p_desktop_tiling_label
+DM=$p_desktop_monocle_label
 
-NoModeToggle="$p_desktop_mode_toggle"
-showFreeDesktops="$p_desktop_show_free"
-desktopDisplay="$p_desktop_display_name"
+NoModeToggle=$p_desktop_mode_toggle
+showFreeDesktops=$p_desktop_show_free
+desktopDisplay=$p_desktop_display_name
 
 while read -r line; do
     [ "$cache" = "$line" ] && continue
@@ -29,7 +28,7 @@ while read -r line; do
         continue
     fi
 
-    input="$(echo $line | grep -Eo "[Mm]${focusMonitor}[^mM]*")"
+    input=$(echo $line | grep -Eo "[Mm]${focusMonitor}[^mM]*")
     meta start
 
     IFS=':'
@@ -46,8 +45,8 @@ while read -r line; do
         desktop_index=$((desktop_index + 1))
 
         item=$1
-        ident="$(echo $item | cut -c1)"
-        content="$(echo $item | cut -c2-)"
+        ident=$(echo $item | cut -c1)
+        content=$(echo $item | cut -c2-)
         layout=false
         free=false
         active=false

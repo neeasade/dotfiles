@@ -1,10 +1,8 @@
 #!/bin/sh
 # draw a borders according to the group some wid is in
 
-colortag00=c2c6e3
-colortag01=e4815d
-colortag10=c6dc93
-colortag11=E2E3E5
+normal=$(theme getval b_normal_border_color)
+focused=$(theme getval b_focused_border_color)
 
 b_width=$(bspc config border_width)
 
@@ -15,9 +13,8 @@ draw() {
     state=$(btags state-plain)
 
     for wid in $active $(bspwindows inactive); do
-	i=$(echo "$state" | grep "$wid" | sed 's/|.*//' | head -n 1)
-
-	if [ -z "$i" ]; then
+	tag=$(echo "$state" | head -n 1 | awk -F \| "/$wid/{print \$4}")
+	if [ -z "$tag" ]; then
 	    if echo "$active" | grep -q "$wid"; then
 		chwbn \
 		    -b $(( b_width-4 )) \
@@ -29,15 +26,17 @@ draw() {
 		chwbn -b $b_width -c 000000 $wid
 	    fi
 	else
+	    color=$(echo "$state" | head -n 1 | awk -F \| "/$wid/{print \$3}")
+
 	    if echo "$active" | grep -q "$wid"; then
 		chwbn \
 		    -b $(( b_width-4 )) \
 		    -b $(( 4 )) \
-		    -c $(eval echo \$colortag$i) \
-		    -c $(colort -l -40 $(eval echo \$colortag$i)) \
+		    -c $color \
+		    -c $(colort -l -40 $color) \
 		    $wid
 	    else
-		chwbn -b $b_width -c $(eval echo \$colortag$i) $wid
+		chwbn -b $b_width -c $color $wid
 	    fi
 	fi
     done

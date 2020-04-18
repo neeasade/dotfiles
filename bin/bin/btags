@@ -1,9 +1,6 @@
 #!/usr/bin/env joker
 ;; -*- mode: clojure -*-
 
-;; idea: move the drawing of borders into here
-;; idea: move the bar section drawing into here
-
 ;; a hack for cider buffer repl
 (defmacro cider-nop [& contents] (when nil contents))
 (cider-nop
@@ -51,10 +48,10 @@
       (-> state-file slurp read-string)
       ;; default
       {:tags
-       [{:name "00" :wids #{1} :active true}
-        {:name "01" :wids #{2} :active true}
-        {:name "10" :wids #{} :active true}
-        {:name "11" :wids #{} :active true}]
+       [{:name "00" :wids #{1} :active true :color "c2c6e3"}
+        {:name "01" :wids #{2} :active true :color "e4815d"}
+        {:name "10" :wids #{} :active true :color "c6dc93"}
+        {:name "11" :wids #{} :active true :color "E2E3E5"}]
        :focus-wid ""
        }
       ))
@@ -136,6 +133,13 @@
        (update old-tag :wids (fn [old-wids]
                                (set (filter #(contains? all-wids %) old-wids))))))
     ))
+
+(defn action-set [tag-name setting new-value]
+  (update-tags
+   (fn [old-tag]
+     (update old-tag (keyword setting)
+             #(if (= (:name old-tag) (tag-ident-to-name tag-name))
+                  new-value %)))))
 
 (defn action-toggle
   "<tags> -- toggle visibility of tags"
@@ -274,9 +278,10 @@
 (defn action-state-plain "get a plaintext representation of tags" []
   (->> state
        :tags
-       (map #(format "%s|%s|%s"
+       (map #(format "%s|%s|%s|%s"
                      (:name %)
                      (if (:active %) "true" "false")
+                     (:color %)
                      (str/join " " (:wids %))))
        (map println)
        doall
@@ -293,7 +298,7 @@
 (when *command-line-args*
   (if (contains?
        ;; stateful - focus might not be stateful really
-       #{"toggle" "toggle-wids" "focus"}
+       #{"toggle" "toggle-wids" "focus" "set"}
        (first *command-line-args*))
 
     (do (wait-for-lock)
@@ -308,5 +313,4 @@
     (do
       (load-state)
       (apply (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-             (rest *command-line-args*)))
-    ))
+             (rest *command-line-args*)))))

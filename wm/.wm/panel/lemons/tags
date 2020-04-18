@@ -3,12 +3,6 @@
 # ;; OK: underline when inactive but with wids
 # ;; else just background color if active, no background if not turned on
 
-colortag00=c2c6e3
-colortag01=e4815d
-colortag10=c6dc93
-colortag11=E2E3E5
-# colortag11=000000
-
 while read -r _; do
     meta start
     meta set fg 111111
@@ -17,8 +11,10 @@ while read -r _; do
 	# meta reset
 	# meta set bg \#00111111
 	name=$(echo "$line" | awk -F\| '{print $1}')
-	wids=$(echo "$line" | awk -F\| '{print $3}')
-	color=$(eval echo \$colortag$name)
+	wids=$(echo "$line" | awk -F\| '{print $4}')
+	color=$(echo "$line" | awk -F\| '{print $3}')
+
+	# todo: if it's empty, it might as well be toggled off
 
         meta mouse_left btags toggle $name
 

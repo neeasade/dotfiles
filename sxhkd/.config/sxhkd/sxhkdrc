@@ -32,10 +32,10 @@ super + y
     bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
 
 alt + {_,shift} + Tab
-    bspc node -f {next,prev}.local.normal
+    bspc node -f {next,prev}.local.normal.!hidden
 
 super + {_,shift} + Tab
-    bspc node -f {next,prev}.local.normal
+    bspc node -f {next,prev}.local.normal.!hidden
 
 super + {_,shift,alt,ctrl} + {h,n,e,l}
     {focus,move,resize,presel}.sh {west,south,north,east}
