@@ -1,8 +1,5 @@
 #!/bin/sh
-# draw a borders according to the group some wid is in
 
-normal=$(theme getval b_normal_border_color)
-focused=$(theme getval b_focused_border_color)
 
 b_width=$(bspc config border_width)
 
@@ -39,6 +36,34 @@ draw() {
 		chwbn -b $b_width -c $color $wid
 	    fi
 	fi
+    done
+}
+
+
+normal=$(theme getval b_normal_border_color)
+normal=$(theme getval background)
+focused=$(theme getval b_focused_border_color)
+
+# banded experiment
+draw_new() {
+    active=$(bspwindows)
+    state=$(btags state-plain)
+
+    for wid in $active $(bspwindows inactive); do
+	if echo "$state" | grep $wid | grep -q true; then
+	    border_color=$focused
+	else
+	    border_color=$normal
+	fi
+
+	# wowie
+	# awk sure is the best
+	args=$(echo "$state" | tac | awk -F\| /${wid}/'{print "-b 2 -c " $3 " -b 0 -c BC"};!'/${wid}/'{print "-b 2 -c BC"'} | \
+	    tr $'\n' ' ' | \
+	    sed "s/BC/${border_color}/g")
+
+	echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
+	chwbn $args -b 2 -c $border_color $wid
     done
 }
 
