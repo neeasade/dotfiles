@@ -203,7 +203,6 @@
        (map println) doall
        ))
 
-;; idea: if we toggle a tag that doesn't exist, add it
 (defn action-toggle-wids
   "<tag> <wids> -- toggle wids being in a tag"
   [tag & wids]
@@ -215,12 +214,26 @@
                  ;; existing minus toggles
                  (set/difference old-wids wids)
                  ;; new (old filter for not in new?)
-                 (set (filter #(not (contains? old-wids %)) wids))
-                 )
+                 (set (filter #(not (contains? old-wids %)) wids)))
+
                 old-wids
                 ))))
 
   (update-tags update-wids))
+
+;; idea: if we toggle a tag that doesn't exist, add it
+(defn action-set-tag-on-wids
+  "<tag> <wids> -- set wids to be member of one tag"
+  [tag & wids]
+  (defn update-wids-set [old-tag]
+    (update old-tag :wids
+            (fn [old-wids]
+              (if (= (tag-ident-to-name tag) (:name old-tag))
+                (set/union old-wids (set wids))
+                (set/difference old-wids (set wids))
+                ))))
+
+  (update-tags update-wids-set))
 
 ;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
 (defn action-state
@@ -298,7 +311,7 @@
 (when *command-line-args*
   (if (contains?
        ;; stateful - focus might not be stateful really
-       #{"toggle" "toggle-wids" "focus" "set"}
+       #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids"}
        (first *command-line-args*))
 
     (do (wait-for-lock)
