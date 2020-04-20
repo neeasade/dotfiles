@@ -11,8 +11,14 @@ add_switch() {
 }
 
 add_windows() {
+    reveal_window() {
+	wid=$1
+	bspc node $wid -g hidden=off
+	bspc node -f $wid
+    }
+
     for wid in $(bspc query -N -n .window); do
-	add_switch "window: $(xtitle $wid)" "bspc node $wid -g hidden=off; bspc node -f $wid"
+	add_switch "window: $(xtitle $wid)" "reveal_window $wid"
     done
 }
 
@@ -137,9 +143,9 @@ add_meta() {
 	echo todo
     }
 
-    org_capture() {
-	echo todo
-    }
+    add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
+
+    # idea: hydra menu for tag stuff? other?
 
     notes_file() {
 	echo todo

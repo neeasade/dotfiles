@@ -110,9 +110,9 @@ draw_outerdark() {
 
 	chwbn \
 	    -b 1 -c $outmost_color \
-	    -b $(( b_width-scale-2 )) -c $color \
+	    -b $(( b_width-scale-2-1 )) -c $color \
 	    -b 1 -c $inmost_color \
-	    -b $scale -c $normal \
+	    -b $((scale + 1)) -c $normal \
 	    $wid
     done
 }

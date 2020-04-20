@@ -28,8 +28,12 @@ super + t
     SLIM=t fullscreen_toggle.sh
 
 # if the current node is automatic, send it to the last manual, otherwise pull the last leaf
+# super + y
+#     bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+
+    # btags toggle $(btags get-tags $(bspc query -N -n $(bspc query -N -n)))
 super + y
-    bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+    dismiss.sh
 
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal.!hidden
@@ -47,21 +51,19 @@ super + ctrl + space
     bspc node -p cancel
 
 # bspc desktop -f focused:^{1-9}
-
-    # btags focus ^{1-9}
-
-super + {1-9}
-    i={1-9}; \
-    if btags wids ^$i | grep $(bspc query -N -n); then \
-    btags toggle ^$i; else btags focus ^$i ; fi
-
+# btags focus ^{1-9}
+# super + {1-9}
+#     i={1-9}; \
+#     if btags wids ^$i | grep $(bspwindows); then \
+#     btags toggle ^$i; else btags focus ^$i ; fi
 
 super + {1-9}
     btags focus ^{1-9}
 
     # bspc node -d focused:^{1-9}
+    # btags toggle-wids ^{1-9} $(bspwindows)
 super + shift + {1-9}
-    btags toggle-wids ^{1-9} $(bspc query -N -n)
+    btags set-tag-on-wids ^{1-9} $(bspwindows)
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
@@ -70,11 +72,6 @@ super + {_,shift} + r
 # rotate, balance
 super + {_,shift} + semicolon
     bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
-
-# hide current node, or restore a queried hidden node
-# todo: revisit this
-# super + {_,shift} + minus
-    # bspc node {,$(bspc query -N -d -n .hidden | head -n 1)} -g hidden
 
 # focus the node for the given path jump
 super + {p,b,comma,period}
@@ -93,9 +90,6 @@ super + {_,shift} + slash
 # }}}
 
 # wm independent hotkeys {{{
-
-#super + p
-#    ~/.wm/scripts/i3blur.sh
 
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
