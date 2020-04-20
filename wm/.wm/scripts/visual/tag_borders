@@ -1,7 +1,5 @@
 #!/bin/sh
-
-
-b_width=$(bspc config border_width)
+# draw borders on tags
 
 # you can move this into the render function
 
@@ -40,17 +38,17 @@ draw() {
 }
 
 
-normal=$(theme getval b_normal_border_color)
-normal=$(theme getval background)
-focused=$(theme getval b_focused_border_color)
 
-# banded experiment
-draw_new() {
+draw_banded() {
     active=$(bspwindows)
     state=$(btags state-plain)
 
+    normal=$(theme getval b_normal_border_color)
+    normal=$(theme getval background)
+    focused=$(theme getval b_focused_border_color)
+
     for wid in $active $(bspwindows inactive); do
-	if echo "$state" | grep $wid | grep -q true; then
+	if echo "$active" | grep -q "$wid"; then
 	    border_color=$focused
 	else
 	    border_color=$normal
@@ -58,17 +56,74 @@ draw_new() {
 
 	# wowie
 	# awk sure is the best
-	args=$(echo "$state" | tac | awk -F\| /${wid}/'{print "-b 2 -c " $3 " -b 0 -c BC"};!'/${wid}/'{print "-b 2 -c BC"'} | \
-	    tr $'\n' ' ' | \
-	    sed "s/BC/${border_color}/g")
+	# args=$(echo "$state" | tac | awk -F\| /${wid}/'{print "-b 2 -c " $3 " -b 0 -c BC"};!'/${wid}/'{print "-b 2 -c BC"'} | \
+	#     tr $'\n' ' ' | \
+	#     sed "s/BC/${border_color}/g")
 
-	echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
-	chwbn $args -b 2 -c $border_color $wid
+	# echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
+	# chwbn $args -b 2 -c $border_color $wid
+
+	colors=$(echo "$state" | awk -F \| /${wid}/'{print "-b W -c " $3}' | tac)
+	count=$(echo "$colors" | wc -l)
+	total_width=8 # total inner width
+	width=$((total_width / count))
+
+	args=$(echo "$colors" | tr $'\n' ' ')
+	if [ $((count * total_width)) -lt $total_width ]; then
+	    args=$(echo "$args" | rev |  sed "s/W/$((total_width - (count * width) + width))/" | rev)
+	fi
+
+	args=$(echo "$args" | sed "s/W/${width}/g")
+
+	# echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
+	chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
+
+	# echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
+	# chwbn  $args -b 2 -c $border_color $wid
     done
 }
 
-draw
+draw_outerdark() {
+    active=$(bspwindows)
+    state=$(btags state-plain)
+
+    # normal=$(theme getval b_normal_border_color)
+    normal=$(theme getval background)
+    # focused=$(theme getval b_focused_border_color)
+
+    for wid in $active $(bspwindows inactive); do
+	color=$(echo "$state" | awk -F \| "/$wid/{print \$3}" | head -n 1)
+	if [ -z "$color" ]; then
+	    color=000000
+	fi
+
+	# outer_color=$normal
+	# if $(echo "$state" | awk -F \| "/$wid/{print \$2}" | head -n 1); then
+	if echo "$active" | grep -q "$wid"; then
+	    inmost_color=$(colort -60 $color)
+	    outmost_color=$inmost_color
+	else
+	    outmost_color=$color
+	    # outmost_color=D7CDFF
+	    inmost_color=$normal
+	fi
+
+	chwbn \
+	    -b 1 -c $outmost_color \
+	    -b $(( b_width-scale-2 )) -c $color \
+	    -b 1 -c $inmost_color \
+	    -b $scale -c $normal \
+	    $wid
+    done
+}
+
+scale=6
+bspc config border_width $(( (scale*2) + 2 ))
+b_width=$(( (scale*2) + 2 ))
+# b_width=$(bspc config border_width)
+
+draw_outerdark
 # bspc subscribe node_flag node_state node_geometry node_focus | debounce.sh 0.1 | while read msg; do
 bspc subscribe node_flag node_state node_geometry node_focus | while read msg; do
-    draw
+    draw_outerdark
 done
