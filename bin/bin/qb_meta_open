@@ -2,8 +2,6 @@
 # switch to tab with $url or open $url
 # if no url found, goto or open qutebrowser window
 # todo: consider basename domain vs fullname comparison
-# todo: bandcamp to chrome
-# todo: youtube to mpv
 
 url=$1
 
@@ -13,7 +11,7 @@ url=$1
 focus_qb_window() {
     for wid in $(bspc query -N -n .window); do
 	if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
-	    echo bspc node -f $wid
+	    bspc node $wid -g hidden=off
 	    bspc node -f $wid
 	    break
 	fi
@@ -35,6 +33,21 @@ vanilla() {
     focus_qb_window
     exit 0
 }
+
+# this is probably more like xdg-open logic
+if echo "$url" | grep -qE "youtu.be|youtube.com"; then
+    # there is a delay before window launch, so let me know now:
+    notify-send "launching in MPV"
+    # todo: this isn't teneble unless you copy to clip or something as well, to share I think
+    mpv "$url"
+    exit 0
+fi
+
+if echo "$url" | grep -qE "bandcamp.com"; then
+    # if qutebrowser gets mpris support this can go away
+    google-chrome-stable "$url"
+    exit 0
+fi
 
 if ! pgrep qutebrowser; then
     vanilla
