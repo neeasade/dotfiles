@@ -1,8 +1,31 @@
 #!/bin/sh
 # i3 ipc convienence wrapper
 
+live_conf=false
+if [ "$1" = "-c" ]; then
+    live_conf=true
+    shift
+fi
+
 if [ -z "$WAYLAND_DISPLAY" ]; then
-    client=i3msg
+    client=i3-msg
+    if $live_conf; then
+	type=$1
+	if [ "$type" = "bindsym" ]; then
+	    echo not implemented
+	else
+	    temp=$(mktemp)
+	    i3-msg -t get_config | sed "s/$1 $2.*//" >$temp
+	    echo >>$temp
+	    echo "$@" >>$temp
+	    mv $temp "${HOME}/.config/i3/config"
+	    i3-msg reload
+	    # broken
+	    i3-msg gaps inner all set $(theme getval b_window_gap)
+	fi
+
+	exit 0
+    fi
 else
     client=swaymsg
 fi
@@ -12,14 +35,19 @@ send() {
     exit $?
 }
 
-get_con() { # container
+get_con() { # get focused container
     send -t get_tree| jq '[recurse(.[]?) | objects | select(.focused==true)][0]'
 }
 
-get_con_details() { # query containers with some details
-    send -t get_tree| jq '[recurse(.[]?) | objects | select(.focused==true)][0]'
+get_wids() { # get all wids
+    i3-msg -t get_tree| jq '[recurse(.[]?) | objects | select(.window!=null)]| .[] | .id' | wc -l
 }
 
+get_wids_in_dtop() { # get all wids
+    i3-msg -t get_tree| jq '[recurse(.[]?) | objects | select(.window!=null)]| .[] | .id' | wc -l
+}
+
+# todo: subscription to sub event types
 subscribe() { # subscribe to events
     # <kind> <sub kinds>
     # workspace
@@ -57,10 +85,26 @@ subscribe() { # subscribe to events
     done
 }
 
-# todo: subscription to sub event types
-if type "$*" >/dev/null 2>/dev/null; then
+
+usage() {
+  echo "options:"
+  grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
+    action=$(echo "$line" | sed 's/ #.*//')
+    desc=$(echo "$line" | sed 's/.*# //')
+    printf "%-10s : %s\n" "$action" "$desc"
+  done
+  echo "anything not matching options will be passed through to $client"
+  exit 1
+}
+
+if [ -z "$*" ]; then
+    usage
+fi
+
+valid=$(grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/().*//' | tr '\n' '|')
+
+if echo "$1" | grep -qE "(${valid%?})"; then
     "$@"
 else
     send "$@"
 fi
-

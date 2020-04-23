@@ -9,19 +9,21 @@ url=$1
 # domain=$(echo "$url" | awk -F/ '{print $3}')
 
 focus_qb_window() {
-    for wid in $(bspc query -N -n .window); do
-	if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
-	    bspc node $wid -g hidden=off
-	    bspc node -f $wid
-	    break
-	fi
-    done
+    i3c [class="qutebrowser"] focus
 }
 
 vanilla() {
+    echo yeah
     if [ -z "$url" ]; then
 	if ! pgrep qutebrowser; then
-	    qutebrowser
+	    # wayland, force software render
+	    # todo: add a check
+	    if [ -z "$WAYLAND_DISPLAY" ]; then
+		qutebrowser
+	    else
+		# this is really only needed with nouveu
+		LIBGL_ALWAYS_SOFTWARE=1 qutebrowser
+	    fi
 	    exit 0
 	fi
     else

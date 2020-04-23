@@ -15,7 +15,9 @@ do_monocle_padded() {
   bspc node -t tiled
 
   # the idea is that fake padding comes from
-  bspc config window_gap $(theme getval x_padding) &
+  # bspc config window_gap $(theme getval x_padding) &
+
+  bspc config window_gap 0
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
   bspc config borderless_monocle true
@@ -25,20 +27,26 @@ do_monocle_padded() {
 
 do_monocle_slim() {
   theme refresh bg &
-  bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
-  bspc node -t tiled
+  # bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
+  # bspc node -t tiled
 
   # this issue is for this width you want softer borders, not borderless
-  bspc config borderless_monocle false
+  # bspc config borderless_monocle false
 
-  mon_width=$(bspc query -T -m | jq .rectangle.width)
+  # mon_width=$(bspc query -T -m | jq .rectangle.width)
+  mon_width=$(i3c -t get_tree | jq .rect.width)
   percent=$(theme getval b_monocle_window_percent)
   window_width=$(echo $percent \* $mon_width | bc -l)
   monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
-  bspc config left_monocle_padding $monocle_pad_width
-  bspc config right_monocle_padding $monocle_pad_width
 
-  bspc desktop -l monocle
+  i3c gaps outer left set $monocle_pad_width
+  i3c gaps outer right set $monocle_pad_width
+  # i3c -c focus_follows_mouse yes
+  # i3c -c focus_follows_mouse yes
+  # bspc config left_monocle_padding $monocle_pad_width
+  # bspc config right_monocle_padding $monocle_pad_width
+
+  # bspc desktop -l monocle
 }
 
 do_fullscreen() {

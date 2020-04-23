@@ -4,12 +4,13 @@
 # what if you could have groups of windows associated with a project
 # or 'enabled' tags
 
-swaymsg -rt subscribe -m '["window"]' | while read -r event; do
+i3c -t subscribe -m '["window"]' | while read -r event; do
     kind=$(echo "$event" | jq -r .change)
 
-
     if [ "$kind" = "focus" ]; then
-	echo "$event"
+
+
+	# echo "$event"
 	container=$(echo "$event" | jq .container.id)
 
 	width=$(echo "$event" | jq -r .container.rect.width)
@@ -33,8 +34,8 @@ swaymsg -rt subscribe -m '["window"]' | while read -r event; do
 
 	echo split_dir=$split_dir
 
-	echo swaymsg [con_id="${container}"] $split_dir
-	swaymsg [con_id="${container}"] $split_dir
+	echo i3c [con_id="${container}"] $split_dir
+	i3c [con_id="${container}"] $split_dir
 	# i3msg [con_id="${container}"] splitv
     fi
 done

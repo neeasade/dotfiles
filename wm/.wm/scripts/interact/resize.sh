@@ -57,7 +57,7 @@ if [ "$beforeVal" = "$(dim $targetProp)" ]; then
     top)    targetNode=south;;
     bottom) targetNode=north;;
   esac
-  bspc node $targetNode -z $dir $moveArgs &
+  bspc node $targetNode -z $dir $moveArgs
 fi
 
 bspc node -f

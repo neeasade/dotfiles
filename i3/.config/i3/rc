@@ -1,28 +1,44 @@
 #!/usr/bin/env bash
 # i3/sway config
-# prep a config file
+# prep a config file, maybe load it, idk
 
 source ${HOME}/.sh.d/environment
 
+sway=$(iif [ -z "$WAYLAND_DISPLAY"])
+
+echo "" >$HOME/.config/i3/config
+
+# GIVE ME MEANINGFUL IPC FUCKS
+conf() {
+    echo "$@" >>$HOME/.config/i3/config
+}
+
 # window gap
-i3c gaps inner all set $(theme getval b_window_gap)
+conf gaps inner all set $(theme getval b_window_gap)
 
-i3c focus_follows_mouse always
+conf floating_modifier Mod4
 
-i3c focus_wrapping no
+conf focus_follows_mouse yes
+
+conf focus_wrapping no
+
+conf client.focused \#000000 \#000000 \#000000 \#$(theme getval b_focused_border_color) \#$(theme getval b_focused_border_color)
+conf client.unfocused \#000000 \#000000 \#000000 \#$(theme getval b_focused_border_color) \#$(theme getval b_normal_border_color)
 
 # eg ewmh focus requests
-i3c focus_on_window_activation none
+conf focus_on_window_activation none
 
 # cursor centering on node focus
-i3c mouse_warping container
 
-i3c '[class=".*"]' border pixel $(theme getval b_border_width)
+# conf mouse_warping $(iif $sway container no)
+conf mouse_warping no
 
-i3c default_border pixel $(theme getval b_border_width)
-i3c default_floating_border pixel $(theme getval b_border_width)
+conf '[class=".*"]' border pixel $(theme getval b_border_width)
 
-# i3c new_float $(theme getval b_border_width)
+conf default_border pixel $(theme getval b_border_width)
+conf default_floating_border pixel $(theme getval b_border_width)
+
+# conf new_float $(theme getval b_border_width)
 
 # keybinds
 echo >./keybinds
@@ -30,10 +46,10 @@ bind() {
     args=("$@")
     for i in $(seq 0 "$(( (${#args[@]} / 2) - 1 ))"); do
 	val_index=$(( i + (${#args[@]} / 2) ))
-	key=$(echo "${args[$i]}" | sed 's/super/Mod4/' )
+	key=$(echo "${args[$i]}" | sed 's/super/Mod4/' | sed 's/alt/Mod1/')
 	val=${args[$val_index]}
 	echo bindsym "$key" "$bindprefix" "$val"
-	# i3c bindsym "$key" "$bindprefix" "$val"
+	conf bindsym "$key" "$bindprefix" "$val"
     done
 }
 
@@ -59,10 +75,14 @@ bind super+{1..9} workspace\ {1..9}
 bind super+shift+{1..9} move\ container\ to\ workspace\ {1..9}
 
 binde super+{,shift+,alt+,ctrl+}{h,n,e,l} \
-    {focus,move,resize,presel}.sh\ {left,down,up,right}
+    {focus,move,sway_resize,presel}.sh\ {left,down,up,right}
 
 binde super+{,shift+,alt+,ctrl+}{Left,Down,Up,Right} \
     {focus,move,resize,presel}.sh\ {left,down,up,right}
+
+# meta takes priority in i3?:
+# binde alt+super+{Left,Down,Up,Right} \
+#     {focus,move,resize,presel}.sh\ {left,down,up,right}
 
 # I think default layout is the thing that will remove a split
 bind super+ctrl+space layout default
@@ -128,6 +148,18 @@ bind super+period "focus child"
 
 # Show the next scratchpad window or hide the focused scratchpad window.
 # If there are multiple scratchpad windows, this command cycles through them.
+
 # bindsym $mod+minus scratchpad show
 
-notify-send "reloading config!"
+if [ -p /dev/stdin ]; then
+    cat - >>$HOME/config/i3/config
+fi
+
+if [ ! -z "$*" ]; then
+    echo "$@" >>${HOME}/config/i3/config
+fi
+
+# notify-send "reloading config!"
+
+i3c reload
+i3c gaps inner all set $(theme getval b_window_gap)
