@@ -307,7 +307,6 @@
 ;; and.. action:
 (when (not *command-line-args*) (usage))
 
-;; we don't care about rendering+saving on state get (or subscribe)
 (when *command-line-args*
   (if (contains?
        ;; stateful - focus might not be stateful really

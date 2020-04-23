@@ -1,0 +1,66 @@
+#!/bin/sh
+# i3 ipc convienence wrapper
+
+if [ -z "$WAYLAND_DISPLAY" ]; then
+    client=i3msg
+else
+    client=swaymsg
+fi
+
+send() {
+    $client "$@"
+    exit $?
+}
+
+get_con() { # container
+    send -t get_tree| jq '[recurse(.[]?) | objects | select(.focused==true)][0]'
+}
+
+get_con_details() { # query containers with some details
+    send -t get_tree| jq '[recurse(.[]?) | objects | select(.focused==true)][0]'
+}
+
+subscribe() { # subscribe to events
+    # <kind> <sub kinds>
+    # workspace
+    # output
+    # window new close focus title fullscreen_mode move floating urgent mark
+    # barconfig
+    # binding
+    # shutdown
+    # tick
+
+    subargs="-m"
+    if [ "$1" = "once" ]; then
+	subargs=""
+	shift
+    fi
+
+    kind=$1
+    shift
+    all=false
+    if [ -z "$*" ]; then
+	all=true
+    else
+	pattern="($(echo "$*" | tr ' ' '|'))"
+    fi
+
+    swaymsg -rt subscribe $subargs "[${subs}]" | while read -r event; do
+	if $all; then
+	    echo "$event"
+	else
+	    event_change=$(echo "$event" | jq -r .change)
+	    if "$event_change" | grep -q "$pattern"; then
+	       echo "$event"
+	    fi
+	fi
+    done
+}
+
+# todo: subscription to sub event types
+if type "$*" >/dev/null 2>/dev/null; then
+    "$@"
+else
+    send "$@"
+fi
+

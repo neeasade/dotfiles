@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+# i3/sway config
+
+source ${HOME}/.sh.d/environment
+
+notify-send "reloading config!"
+
+# window gap
+i3c gaps inner all set $(theme getval b_window_gap)
+
+i3c focus_follows_mouse always
+
+i3c focus_wrapping no
+
+# eg ewmh focus requests
+i3c focus_on_window_activation none
+
+# cursor centering on node focus
+i3c mouse_warping container
+
+i3c '[class=".*"]' border pixel $(theme getval b_border_width)
+i3c default_border pixel $(theme getval b_border_width)
+i3c default_floating_border pixel $(theme getval b_border_width)
+# i3c new_float $(theme getval b_border_width)
+
+# keybinds
+bind() {
+    args=("$@")
+    for i in $(seq 0 "$(( (${#args[@]} / 2) - 1 ))"); do
+	val_index=$(( i + (${#args[@]} / 2) ))
+	key=$(echo "${args[$i]}" | sed 's/super/Mod4/' )
+	val=${args[$val_index]}
+	echo i3c bindsym "$key" "$bindprefix" "$val"
+	i3c bindsym "$key" "$bindprefix" "$val"
+    done
+}
+
+binde() {
+    bindprefix=exec bind "$@"
+}
+
+# bindsym $mod+Shift+c reload
+
+bind super+w kill
+
+bind super+s "floating toggle"
+binde super+shift+s nfloat
+
+bind super+shift+f fullscreen
+binde super+f fullscreen_toggle
+binde super+t "SLIM=t fullscreen_toggle"
+
+bind alt+{,shift+}Tab focus\ {prev,next}
+bind super+{,shift+}Tab focus\ {prev,next}
+
+bind super+{1..9} workspace\ {1..9}
+bind super+shift+{1..9} move\ container\ to\ workspace\ {1..9}
+
+binde super+{,shift+,alt+,ctrl+}{h,n,e,l} \
+    {focus,move,resize,presel}.sh\ {left,down,up,right}
+
+binde super+{,shift+,alt+,ctrl+}{Left,Down,Up,Right} \
+    {focus,move,resize,presel}.sh\ {left,down,up,right}
+
+# I think default layout is the thing that will remove a split
+bind super+ctrl+space layout default
+
+binde super+y dismiss.sh
+
+binde super+Return "elisp '(ns/spawn-terminal)' || $TERMINAL"
+binde super+shift+Return "elisp '(ns/org-capture-popup)'"
+
+binde super+i jump_emacs Emacs
+binde super+o "$BROWSER"
+binde super+shift+o qutebrowser
+
+binde F8 utf8
+
+binde super+shift+q "swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -b 'Yes, exit sway' 'swaymsg exit'"
+
+binde XF86Audio{Prev,Next,Play} player.sh\ {prev,next,toggle}
+
+# note: can't use ';' instead of '&&', ipc interprets it wrong
+binde XF86Audio{LowerVolume,RaiseVolume} direction={decrease,increase}' && notify-send --urgency=low Volume: $(ponymix $direction)'
+binde super+{,shift+,alt+}space action={switcher,run,pass}' && dmenu_$action "$action"'
+
+binde super+grave "player.sh toggle"
+binde XF86AudioMute "ponymix toggle"
+binde super+{minus,equal} x={decrease,increase}' && notify-send --urgency=low "Volume: $(ponymix $x 5)"'
+
+bind super+p "focus parent"
+bind super+period "focus child"
+
+# only X/laptop:
+# binde super+shift+{minus,equal} xbright\ {down,up}'; notify-send --urgency=low "Brightness: $(cat /tmp/xbrightness)"'
+# binde XF86MonBrightness{Down,Up} xbright\ {down,up}'; notify-send --urgency=low "Brightness: $(cat /tmp/xbrightness)"'
+
+# todo: rotate, balance
+# super+{,shift}+semicolon
+    # bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
+
+# todo:
+# super + {_,shift} + slash
+#     {gap,panel}t
+
+# todo: some equivalent of receptacles:
+# bind super+r insert recept
+# bind super+shift+r remove all recept
+
+# todo: checkout layouts
+# bindsym $mod+s layout stacking
+# bindsym $mod+w layout tabbed
+# bindsym $mod+e layout toggle split
+# bindsym $mod+b splith
+# bindsym $mod+v splitv
+
+
+# todo: checkout this bind
+# bindsym $mod+space focus mode_toggle
+
+# todo: scratchpad
+# You can send windows there and get them back later.
+
+# Move the currently focused window to the scratchpad
+# bindsym $mod+Shift+minus move scratchpad
+
+# Show the next scratchpad window or hide the focused scratchpad window.
+# If there are multiple scratchpad windows, this command cycles through them.
+# bindsym $mod+minus scratchpad show
