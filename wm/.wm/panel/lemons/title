@@ -12,10 +12,10 @@ show_mode=${p_title_show_mode:-monocle}
 maxWinNameLen=${maxWinNameLen:-25}
 
 # not setting any settings if $onlyShowActive.
-_meta="$(which meta)"
-meta() {
-    ! $onlyShowActive && eval $_meta "$*"
-}
+# _meta="$(which meta)"
+# meta() {
+#     ! $onlyShowActive && eval $_meta "$*"
+# }
 
 # set $1 length to $maxWinNameLen chars (trim or pad)
 setLength() {

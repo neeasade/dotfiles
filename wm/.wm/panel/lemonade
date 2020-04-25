@@ -34,20 +34,23 @@ echo "$p_format"
 format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
 format="\$$format"
 
+    # stdbuf -oL jq -r ".name + \" \" + .full_text + \"'\" " | \
 i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
     stdbuf -oL grep '^{' | \
-    stdbuf -oL jq -r ".name + \"='\" + .full_text + \"'\" " | \
-    while read -r line; do
-	eval "$line"
+    stdbuf -oL jq -r '.name + " " + .full_text' | \
+    while read -r name full_text; do
+	# shell is dumb
+	eval "${name}='$(echo "$full_text" | sed "s#'#\'\\\'\'#g")'"
 	eval "echo \"$format\""
     done | debounce.js
-   #  | \
 # 	lemonbar -d \
-# -u $(theme getval p_line) \
+# 	-u $(theme getval p_line) \
 # -o $(theme getval p_offset) \
 # -n "$(theme getval p_window_class)" \
-# -B "$(theme getval p_bg_middle)" \
-# -F "$(theme getval p_fg_normal)" \
 # -f "$(theme getval p_font_main)" \
 # -f "$(theme getval p_font_icon)" \
 # -a 20 -g "$(get_geometry)"
+
+
+# -B "$(theme getval p_bg_middle)" \
+# -F "$(theme getval p_fg_normal)" \

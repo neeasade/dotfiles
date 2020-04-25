@@ -8,13 +8,8 @@ render() {
 
     result=$(btags state-plain | while read name active color wids; do
 	tag_name=$name
-	# tag_name=$(echo "$line" | awk -F\| '{print $1}')
-	# name=$(echo "$line" | awk -F\| '{print $1}')
-	# active=$(echo "$line" | awk -F\| '{print $2}')
-	# color=$(echo "$line" | awk -F\| '{print $3}')
-	# wids=$(echo "$line" | awk -F\| '{print $4}')
 
-	background=00000000
+	background=$(theme getval p_bg_middle)
 
 	if $active; then
 	    if [ ! -z "$wids" ]; then
@@ -23,20 +18,24 @@ render() {
 	    fi
 	else
 	    if [ ! -z "$wids" ]; then
-		name="[${name}]"
+		name="${name}*"
 	    fi
 	fi
 
 	# name="  ${name}  "
 	name="$(bs B$background ":   ${name}   ")"
 
+	# border=\#666666
+	# border_side=$(bs O1 B$border U$bg +o +u)
+
 	low=$(colort -l -40 $color)
 	hats=
 	if echo "$wids" | grep -q $current; then
-	    hats='+o +u'
-	    name="$(bs B$low O2)${name}$(bs B$low O2)"
-	    # name=">${name}<"
+	    # hats='+o +u'
+	    # name="$(bs B$low O2)${name}$(bs B$low O2)"
+	    name="${name}!"
 	fi
+
 
 	# height of the under/over determined from bar itself
 	echo "$name" | bs U$low $hats \

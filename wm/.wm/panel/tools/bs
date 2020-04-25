@@ -24,7 +24,8 @@ for item in "$@"; do
     fi
 
     if [[ O == $first ]]; then
-	content=
+	content="%{${item}}"
+	continue
     fi
 
     if [[ BFU == *$first* ]]; then
