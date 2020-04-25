@@ -250,6 +250,8 @@ load_dunst() {
     [ $b_window_gap -le 0 ] && b_window_gap=$x_padding
 
     [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
+    export b_border_width=1
+    export b_focused_border_color=#777777
     # [ $x_padding -gt 12 ] && x_padding=$(( $x_padding/2 ))
 
     # WIDTHxHEIGHT+XOFF+YOFF

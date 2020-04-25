@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # bar stuff
 # example:
 # echo some text | bs Bffffff F000000 UFF000000 +o +u
@@ -10,15 +11,13 @@
 # to the left, middle, right, scroll up and scroll down
 # movements. Your mileage may vary.
 
-# so, eg bs
-
 prepend=
-# content=
+content=
 append=
 for item in "$@"; do
     first=${item:0:1}
 
-    if [[ $item == \:* ]]; then
+    if [[ : == $first ]]; then
 	content=${item:1}
 	continue
     fi
@@ -34,7 +33,6 @@ for item in "$@"; do
 	    ${first}*) color=\#${item:1} ;;
 	esac
 
-	# prepend="${prepend}%{${first}${color}}"
 	prepend="${prepend}%{${first}${color}}"
     elif [[ A == $first ]]; then
 	prepend="${prepend}%{${item:0:2}:${item:2}:}"
@@ -53,10 +51,8 @@ for item in "$@"; do
     fi
 done
 
-if [ -z "${content+xxx}" ]; then
+if [ -z "${content}" ]; then
     content=$(cat -)
 fi
 
 printf '%s' "${prepend}${content}${append}"
-# printf '%s' "${prepend}${content}"
-# printf '%s' "${content}"

@@ -5,7 +5,7 @@ midnight=$(date -d "$today 0" +%s)
 
 percent=$(echo "($((now - midnight)) / 86400 * 100)"  | bc -l | sed 's/\..*//')
 
-"$HOME/.wm/panel/tools/mkb" $percent 24
+"$HOME/.wm/panel/tools/mkb" $percent 18
 # printf "%s %s %s\n" \
 #        past \
 #        $("$HOME/.wm/panel/tools/mkb" $percent 24) \

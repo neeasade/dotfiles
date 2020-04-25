@@ -91,5 +91,5 @@ doTheThing() {
 
 while read -r trigger; do
     # doTheThing
-    xtitle
+    xtitle -t 25
 done
