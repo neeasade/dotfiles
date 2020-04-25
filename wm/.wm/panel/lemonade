@@ -1,40 +1,12 @@
 #!/usr/bin/env bash
 
-get_geometry() {
-    (
-	eval "$(theme get)"
-	dim() {
-	    bspc query -T -m | jq .rectangle.$1
-	}
-
-	gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
-	p_gap=$(iif $gapped $p_gap 0)
-	top=$(iif "[ "$p_position" = "top" ]")
-	echo "$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
-    )
-}
-
-echo lemonbar -d \
-        -u $(theme getval p_line) \
-        -o $(theme getval p_offset) \
-        -n "$(theme getval p_window_class)" \
-        -B "$(theme getval p_bg_normal)" \
-        -F "$(theme getval p_fg_normal)" \
-        -f "$(theme getval p_font_main)" \
-        -f "$(theme getval p_font_icon)" \
-        -a 20 -g "$(get_geometry)"
-
-# exit 0
-
-
 # eg desktop:circe_dms:title|org_task|mpd:volume:clock
-# -> $desktop $circe_dms $title (C)$org_task (L)mpd $volume $clock
+# -> $desktop $circe_dms $title %{c}$org_task %{r}mpd $volume $clock
 p_format=$(theme getval p_format)
-echo "$p_format"
 format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
 format="\$$format"
 
-    # stdbuf -oL jq -r ".name + \" \" + .full_text + \"'\" " | \
+# stdbuf -oL all the things? need to check if that's needed
 i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
     stdbuf -oL grep '^{' | \
     stdbuf -oL jq -r '.name + " " + .full_text' | \
@@ -43,14 +15,4 @@ i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's
 	eval "${name}='$(echo "$full_text" | sed "s#'#\'\\\'\'#g")'"
 	eval "echo \"$format\""
     done | debounce.js
-# 	lemonbar -d \
-# 	-u $(theme getval p_line) \
-# -o $(theme getval p_offset) \
-# -n "$(theme getval p_window_class)" \
-# -f "$(theme getval p_font_main)" \
-# -f "$(theme getval p_font_icon)" \
-# -a 20 -g "$(get_geometry)"
 
-
-# -B "$(theme getval p_bg_middle)" \
-# -F "$(theme getval p_fg_normal)" \
