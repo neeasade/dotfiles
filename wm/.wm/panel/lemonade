@@ -1,72 +1,53 @@
 #!/usr/bin/env bash
-# a wrapper to launch lemonade on every monitor, as determined by bspwm
-# note: this has to be bash or it won't die correctly..
-# todo: understand ^
 
-echo -e -n "
-==== ==== ==== ==== ==== \033[1;33m
- ,.        ,.        ,.
-(:;)      (:;)      (:;)
- \`'        \`'        \` \e[0m
-==== ==== ==== ==== ===="
+get_geometry() {
+    (
+	eval "$(theme get)"
+	dim() {
+	    bspc query -T -m | jq .rectangle.$1
+	}
 
-error() {
-   local sourcefile=$1
-   local lineno=$2
-   echo err: $sourcefile $lineno
-}
-trap 'error "${BASH_SOURCE}" "${LINENO}"' ERR
-
-export -f error
-
-# todo: reconsider this, is the different between juicer
-# being main config point and themes passing into lemons..
-# note: some scripts may rely on variables from here, eg icon
-eval "$(theme get)"
-set -a
-
-
-# only need this for p_gap and b_border_width values.
-# relevance
-cd $(dirname $([ -L $0  ] && readlink -f $0 || echo $0))
-export PATH=$PATH:`pwd`/tools
-
-gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
-eval bspc config ${p_position}_padding \
-     $(iif $gapped $((p_height+p_gap)) $((p_height+b_border_width)) )
-
-i=0
-
-# note: mon will be available to all lemons as reference.
-for mon in $(bspc query -M); do
-	i=$(($i+1))
-	conf=`ls juicers | sed -n "$i p"`
-	[ -z "$conf" ] && conf=`ls juicers | sed -n "1 p"`
-
-	tools/lemonade "$conf" &
-  lemonade_ids=$'\n'"$!$lemonade_ids"
-done
-
-
-set_refresh() {
-    trap "eval bspc config ${p_position}_padding $(iif $gapped 0 $b_border_width); trap - TERM; kill 0;" INT TERM QUIT
-
-
-    if ! $init; then
-        for id in $lemonade_ids; do
-            kill -USR1 $id
-        done
-    fi
-
-    trap set_refresh USR1
-    init=false
-    wait
+	gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
+	p_gap=$(iif $gapped $p_gap 0)
+	top=$(iif "[ "$p_position" = "top" ]")
+	echo "$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
+    )
 }
 
-init=true
-echo $$ > /tmp/panel-pid
-set_refresh
+echo lemonbar -d \
+        -u $(theme getval p_line) \
+        -o $(theme getval p_offset) \
+        -n "$(theme getval p_window_class)" \
+        -B "$(theme getval p_bg_normal)" \
+        -F "$(theme getval p_fg_normal)" \
+        -f "$(theme getval p_font_main)" \
+        -f "$(theme getval p_font_icon)" \
+        -a 20 -g "$(get_geometry)"
 
-# where are we?
+# exit 0
 
-#wait
+
+# eg desktop:circe_dms:title|org_task|mpd:volume:clock
+# -> $desktop $circe_dms $title (C)$org_task (L)mpd $volume $clock
+p_format=$(theme getval p_format)
+echo "$p_format"
+format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
+format="\$$format"
+
+i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
+    stdbuf -oL grep '^{' | \
+    stdbuf -oL jq -r ".name + \"='\" + .full_text + \"'\" " | \
+    while read -r line; do
+	eval "$line"
+	eval "echo \"$format\""
+    done | debounce.js
+   #  | \
+# 	lemonbar -d \
+# -u $(theme getval p_line) \
+# -o $(theme getval p_offset) \
+# -n "$(theme getval p_window_class)" \
+# -B "$(theme getval p_bg_middle)" \
+# -F "$(theme getval p_fg_normal)" \
+# -f "$(theme getval p_font_main)" \
+# -f "$(theme getval p_font_icon)" \
+# -a 20 -g "$(get_geometry)"

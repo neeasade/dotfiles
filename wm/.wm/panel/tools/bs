@@ -33,7 +33,7 @@ for item in "$@"; do
 	    ${first}*) color=\#${item:1} ;;
 	esac
 
-	prepend="${prepend}%{${first}${color}}"
+	# prepend="${prepend}%{${first}${color}}"
 	prepend="${prepend}%{${first}${color}}"
     elif [[ A == $first ]]; then
 	prepend="${prepend}%{${item:0:2}:${item:2}:}"
@@ -57,3 +57,5 @@ if [ -z "${content+xxx}" ]; then
 fi
 
 printf '%s' "${prepend}${content}${append}"
+# printf '%s' "${prepend}${content}"
+# printf '%s' "${content}"

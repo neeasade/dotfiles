@@ -12,11 +12,9 @@ if [ -z "$state" ]; then
   exit 0
 fi
 
-if echo "$state" | grep -q "|true|"; then
-  echo "um"
-  btags toggle "$(echo "$state" | awk -F \| '{print $1}')"
+if echo "$state" | grep -q " true "; then
+  btags toggle "$(echo "$state" | awk '{print $1}')"
 else
-  echo "no"
   # todo: maybe force tag render state here instead
   bspc node $wid -g hidden=true
 fi

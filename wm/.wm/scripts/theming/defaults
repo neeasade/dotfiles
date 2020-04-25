@@ -83,6 +83,9 @@ p_mail_reload=30
 # p_desktop_reload="bspc subscribe"
 p_desktop_reload="bspc subscribe"
 
+
+# persist
+p_tags_reload="-3"
 p_title_reload="(xtitle -s & bspc subscribe desktop_layout)"
 p_weather_reload=600
 p_updates_reload=600

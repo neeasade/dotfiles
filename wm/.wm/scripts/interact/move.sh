@@ -2,9 +2,6 @@
 
 dir=$1
 
-i3c move $dir
-exit $?
-
 
 node=$(bspc query -N -n)
 
