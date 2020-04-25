@@ -23,24 +23,30 @@ render() {
 	fi
 
 	# name="  ${name}  "
-	name="$(bs B$background ":   ${name}   ")"
 
-	# border=\#666666
-	# border_side=$(bs O1 B$border U$bg +o +u)
+	border=\#777777
+	border_side=$(bs O1 B$border U$bg +o +u)
 
 	low=$(colort -l -40 $color)
 	hats=
 	if echo "$wids" | grep -q $current; then
 	    # hats='+o +u'
 	    # name="$(bs B$low O2)${name}$(bs B$low O2)"
+	    border=$low
 	    name="${name}!"
 	fi
 
+	name="$(bs B$background ":   ${name}   ")"
+
+	border_side=$(bs O1 B$border U$color +o +u)
 
 	# height of the under/over determined from bar itself
-	echo "$name" | bs U$low $hats \
+	# echo "$border_side"
+	ret=$(echo "$name" | bs U$border +o +u \
 	    "A3btags toggle-wids $tag_name \$(bspwindows)" \
-	    "A1btags toggle $tag_name"
+	    "A1btags toggle $tag_name")
+	printf '%s' "$border_side$ret$border_side   "
+	# echo "$border_side"
     done
     )
 

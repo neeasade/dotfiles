@@ -6,7 +6,7 @@
 
 # clickables:
 
-border=\#666666
+border=\#777777
 border_side=$(bs O1 B$border U$bg +o +u)
 
 while read -r line; do
