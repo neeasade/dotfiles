@@ -1,10 +1,4 @@
 #!/usr/bin/env bash
-# takes input from `xtitle -s`, makes titles.
-# determines monitor from $mon variable (set outside this script)
-# todo: handle multiple title block separation better,
-# investigate handling that at lemonade level/define delimiter.
-# Neeasade
-
 
 ### OPTIONS ###
 
@@ -52,7 +46,7 @@ doTheThing() {
         all) onlyShowActive=false;;
         active) onlyShowActive=true;;
         monocle)
-            [ "$(bspc query -T -m $mon -d | jq -r .layout)" = "monocle" ] && \
+            [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ] && \
                 onlyShowActive=false || \
                 onlyShowActive=true
             ;;
@@ -64,9 +58,9 @@ doTheThing() {
     active="$(bspc query -N -n)"
 
     if $onlyShowActive; then
-      input="$(bspc query -N -d $mon:focused -n .focused.active || echo '')"
+      input="$(bspc query -N -d focused -n .focused.active || echo '')"
     else
-      input="$(bspc query -N -d $mon:focused -n .window || echo '')"
+      input="$(bspc query -N -d focused -n .window || echo '')"
     fi
 
     while read -r wid; do
@@ -76,7 +70,7 @@ doTheThing() {
         if [[ -z "${titleMap[$wid]}" ]] ||
                [[ "$wid" = "$active" ]] ||
                 ! $onlyShowActive; then
-           titleMap[$wid]="$(setLength "$(xtitle $wid)")"
+           titleMap[$wid]=$(setLength "$(xtitle $wid)")
         fi
 
         # print
@@ -93,9 +87,9 @@ doTheThing() {
 }
 
 # initial fireoff:
-doTheThing
+# doTheThing
 
 while read -r trigger; do
-    [[ ! "$mon" = "$(bspc query -M -m)" ]] && continue
-    doTheThing
+    # doTheThing
+    xtitle
 done

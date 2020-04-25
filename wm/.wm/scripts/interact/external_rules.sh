@@ -18,10 +18,9 @@ vertPref=south
 # else direction is determined by width or height being greater.
 percent=.33
 
-# if 1 node is open, switch directions (related to custom_monocle)
+# if 1 node is open, switch directions (monocle open dir preference)
 mon_width=$(jget width "$(bspc query -T -m)") # .rectangle.width
 mon_height=$(jget height "$(bspc query -T -m)") # .rectangle.height
-
 if [ $mon_width -gt $mon_height ]; then
     node_count=$(bspc query -N -d $desk -n .leaf.normal | wc -l)
     [ $node_count -eq 1 ] && vertPref=$horiPref

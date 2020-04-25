@@ -117,12 +117,13 @@ draw_outerdark() {
     done
 }
 
+# idea: do a bezel borders fith tags
+
 scale=6
 bspc config border_width $(( (scale*2) + 2 ))
 b_width=$(( (scale*2) + 2 ))
 # b_width=$(bspc config border_width)
 
-draw_outerdark
 # bspc subscribe node_flag node_state node_geometry node_focus | debounce.sh 0.1 | while read msg; do
 bspc subscribe node_flag node_state node_geometry node_focus | while read msg; do
     draw_outerdark

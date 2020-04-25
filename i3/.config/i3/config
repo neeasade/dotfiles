@@ -46,10 +46,10 @@ bindsym Mod4+shift+h exec move.sh left
 bindsym Mod4+shift+n exec move.sh down
 bindsym Mod4+shift+e exec move.sh up
 bindsym Mod4+shift+l exec move.sh right
-bindsym Mod4+Mod1+h exec sway_resize.sh left
-bindsym Mod4+Mod1+n exec sway_resize.sh down
-bindsym Mod4+Mod1+e exec sway_resize.sh up
-bindsym Mod4+Mod1+l exec sway_resize.sh right
+bindsym Mod4+Mod1+h exec resize.sh left
+bindsym Mod4+Mod1+n exec resize.sh down
+bindsym Mod4+Mod1+e exec resize.sh up
+bindsym Mod4+Mod1+l exec resize.sh right
 bindsym Mod4+ctrl+h exec presel.sh left
 bindsym Mod4+ctrl+n exec presel.sh down
 bindsym Mod4+ctrl+e exec presel.sh up

@@ -28,7 +28,6 @@ in
         default = "bspwm";
         bspwm = {
           package = expr.bspwm-git;
-          #package = pkgs.bspwm;
           enable = true;
         };
       };

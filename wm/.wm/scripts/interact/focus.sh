@@ -3,10 +3,6 @@
 
 dir=$1
 
-# vanilla while we test things:
-i3c focus $dir
-exit $?
-
 node=$(bspc query -N -n)
 node=${node^^}
 target=$(bspc query -N -n $dir.!hidden)

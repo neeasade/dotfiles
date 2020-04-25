@@ -53,6 +53,7 @@ let
     aspellDicts.en
     bash-completion
     bc
+    i3blocks
 
     # covered by gcc(?)
     # there were a few collisions between the two

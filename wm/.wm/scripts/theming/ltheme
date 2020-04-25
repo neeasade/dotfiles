@@ -167,35 +167,24 @@ load_bspwm() {
 }
 
 load_lemonade() {
-    rm $HOME/.wm/panel/juicers/*
+    rm $HOME/.config/i3blocks/config
 
-    p_format_1="$p_format"
-    juice_index=0
     IFS=$'\n'
-    for mon in $(bspc query -M); do
-        juice_index=$((juice_index+1))
 
-        (
-            conf="$(eval echo "\${p_format_${juice_index}}")"
-            [ -z "$conf" ] && conf="$p_format"
-            p_format="$conf"
+    juicer_target=".config/i3blocks/config"
 
-            juicer_target=".wm/panel/juicers/juicer$juice_index"
+    # note all lemons, generate them.
+    lemons=$(echo $p_format | tr ':|' ' ');
 
-            # note all lemons, generate them.
-            lemons=$(echo $p_format | tr ':|' ' ');
+    if ! margs juicer "$juicer_target"; then
 
-            if ! margs juicer "$juicer_target"; then
+	. ripen
+	IFS=' '
+	parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/$juicer_target
+	IFS=
 
-                . ripen
-                IFS=' '
-                parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/$juicer_target
-                IFS=
-
-                [ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
-            fi
-        ) &
-    done
+	[ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
+    fi
 }
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {

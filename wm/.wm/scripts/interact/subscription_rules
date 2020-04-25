@@ -4,67 +4,31 @@
 # what if you could have groups of windows associated with a project
 # or 'enabled' tags
 
-i3c -t subscribe -m '["window"]' | while read -r event; do
-    kind=$(echo "$event" | jq -r .change)
+# # <monitor_id> <desktop_id> <ip_id> <node_id>
+bspc subscribe node_add | while read -r event m d i wid; do
+    current_class=$(xprop -id $wid | grep -m1 "^WM_CLASS")
 
-    if [ "$kind" = "focus" ]; then
+    # if "$current-class" | grep Steam; then
+    # 	btags toggle-wids ^3 $wid
+    # 	continue
+    # fi
 
+    if echo "$current_class" | grep qutebrowser; then
+	btags toggle-wids ^2 $wid
+	continue
+    fi
 
-	# echo "$event"
-	container=$(echo "$event" | jq .container.id)
-
-	width=$(echo "$event" | jq -r .container.rect.width)
-	height=$(echo "$event" | jq -r .container.rect.height)
-	echo "$weight"
-
-	bcInput=$(iif "[ $width -gt $height ]" \
-		      "($width-$height)/$width" \
-		      "($height-$width)/$height")
-
-	result=$(echo "$bcInput < .33" | bc -l)
-
-	horiPref=splith
-	vertPref=splitv
-
-	if [ "$result" -eq "1" ]; then
-	    split_dir=$vertPref
-	else
-	    split_dir=$(iif "[ $width -gt $height ]" $horiPref $vertPref)
+    last_class=$(xprop -id $(bspc query -N last -n) | grep -m1 "^WM_CLASS")
+    if echo "$last_class" | grep qutebrowser; then
+	# if we are making an emacs window from browser assume it should be in code for now
+	if echo "$current_class" | grep Emacs; then
+	    btags toggle-wids code $wid
+	    continue
 	fi
+    fi
 
-	echo split_dir=$split_dir
-
-	echo i3c [con_id="${container}"] $split_dir
-	i3c [con_id="${container}"] $split_dir
-	# i3msg [con_id="${container}"] splitv
+    current_tag=$(btags get-tags "$(bspc query -N -n last)" | head -n 1)
+    if [ ! -z "$current_tag" ]; then
+	btags toggle-wids "$current_tag" $wid
     fi
 done
-
-# # <monitor_id> <desktop_id> <ip_id> <node_id>
-# bspc subscribe node_add | while read -r event m d i wid; do
-#     current_class=$(xprop -id $wid | grep -m1 "^WM_CLASS")
-
-#     # if "$current-class" | grep Steam; then
-#     # 	btags toggle-wids ^3 $wid
-#     # 	continue
-#     # fi
-
-#     if echo "$current_class" | grep qutebrowser; then
-# 	btags toggle-wids ^2 $wid
-# 	continue
-#     fi
-
-#     last_class=$(xprop -id $(bspc query -N last -n) | grep -m1 "^WM_CLASS")
-#     if echo "$last_class" | grep qutebrowser; then
-# 	# if we are making an emacs window from browser assume it should be in code for now
-# 	if echo "$current_class" | grep Emacs; then
-# 	    btags toggle-wids code $wid
-# 	    continue
-# 	fi
-#     fi
-
-#     current_tag=$(btags get-tags "$(bspc query -N -n last)" | head -n 1)
-#     if [ ! -z "$current_tag" ]; then
-# 	btags toggle-wids "$current_tag" $wid
-#     fi
-# done

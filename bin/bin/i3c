@@ -1,6 +1,10 @@
 #!/bin/sh
 # i3 ipc convienence wrapper
 
+if [ -t 1 ]; then
+    echo ">> i3c $*"
+fi
+
 live_conf=false
 if [ "$1" = "-c" ]; then
     live_conf=true
@@ -10,15 +14,14 @@ fi
 if [ -z "$WAYLAND_DISPLAY" ]; then
     client=i3-msg
     if $live_conf; then
-	type=$1
-	if [ "$type" = "bindsym" ]; then
-	    echo not implemented
+	if [ "$1" = "bindsym" ]; then
+	    echo "bindsym live reload not implemented"
 	else
 	    temp=$(mktemp)
 	    i3-msg -t get_config | sed "s/$1 $2.*//" >$temp
 	    echo >>$temp
 	    echo "$@" >>$temp
-	    mv $temp "${HOME}/.config/i3/config"
+	    mv $temp "${home}/.config/i3/config"
 	    i3-msg reload
 	    # broken
 	    i3-msg gaps inner all set $(theme getval b_window_gap)
@@ -35,16 +38,19 @@ send() {
     exit $?
 }
 
+# note: to tell floating -- "floating" user_on vs user_off
+# to tell fullscreen screen: # "fullscreen_mode": 1
+
 get_con() { # get focused container
     send -t get_tree| jq '[recurse(.[]?) | objects | select(.focused==true)][0]'
 }
 
 get_wids() { # get all wids
-    i3-msg -t get_tree| jq '[recurse(.[]?) | objects | select(.window!=null)]| .[] | .id' | wc -l
+    i3-msg -t get_tree| jq '[recurse(.[]?) | objects | select(.window!=null)]| .[] | .window'
 }
 
 get_wids_in_dtop() { # get all wids
-    i3-msg -t get_tree| jq '[recurse(.[]?) | objects | select(.window!=null)]| .[] | .id' | wc -l
+    i3-msg -t get_tree| jq '[recurse(.[]?) | objects | select(.window!=null)]| .[] | .id'
 }
 
 # todo: subscription to sub event types
@@ -85,6 +91,10 @@ subscribe() { # subscribe to events
     done
 }
 
+swap() {
+    echo not implemented
+    # see https://github.com/i3/i3/issues/3056
+}
 
 usage() {
   echo "options:"
@@ -107,4 +117,8 @@ if echo "$1" | grep -qE "(${valid%?})"; then
     "$@"
 else
     send "$@"
+fi
+
+if [ -t 1 ]; then
+    echo
 fi

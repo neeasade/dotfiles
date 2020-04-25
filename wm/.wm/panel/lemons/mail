@@ -5,10 +5,10 @@
 icon mail
 
 MAIL_SERVER="imap.gmail.com:993"
-MAIL_USER="$(pass gmail/user)"
-MAIL_PASSWORD="$(pass gmail/pass)"
+MAIL_USER=$(pass gmail/user)
+MAIL_PASSWORD=$(pass gmail/pass)
 MAIL_FOLDER="INBOX"
-MAIL_FILE="$(mktemp)"
+MAIL_FILE=$(mktemp)
 
 cat<<EOF | openssl s_client -connect "${MAIL_SERVER}" -crlf -ign_eof > "${MAIL_FILE}" 2>/dev/null
 ? LOGIN "${MAIL_USER}" "${MAIL_PASSWORD}"

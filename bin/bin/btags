@@ -1,5 +1,4 @@
 #!/usr/bin/env bb
-;; -*- mode: clojure -*-
 ;; note: bb is https://github.com/borkdude/babashka
 
 ;; idea: arrange tags under bspwm tree
@@ -73,8 +72,7 @@
   ;; show/hide status
   (let [show-wids
         (->> (:tags state)
-             (filter #(or (:active %)
-                          (= (:name %) (:focus-tag state))))
+             (filter #(:active %))
              (map :wids)
              (apply set/union))
 
@@ -87,7 +85,8 @@
         ]
 
     (doall (map #(render-wid % true) show-wids))
-    (doall (map #(render-wid % false) hide-wids)))
+    (doall (map #(render-wid % false) hide-wids))
+    )
 
   ;; refocus who we had if they exist
   (when (and
@@ -313,14 +312,16 @@
        #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids"}
        (first *command-line-args*))
 
-    (do (wait-for-lock)
-        (load-state)
-        (cleanup-state)
-        (apply
-         (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-         (rest *command-line-args*))
-        (render-state)
-        (save-state))
+    (do
+      (wait-for-lock)
+      (load-state)
+      (cleanup-state)
+      (apply
+       (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+       (rest *command-line-args*))
+      (save-state)
+      (render-state)
+      )
 
     (do
       (load-state)

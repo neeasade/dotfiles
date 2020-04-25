@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# i3/sway config
+# i3 config
 # prep a config file, maybe load it, idk
 
 source ${HOME}/.sh.d/environment
 
-sway=$(iif [ -z "$WAYLAND_DISPLAY"])
+# sway=$(iif [ -z "$WAYLAND_DISPLAY" ])
 
 echo "" >$HOME/.config/i3/config
 
@@ -48,7 +48,7 @@ bind() {
 	val_index=$(( i + (${#args[@]} / 2) ))
 	key=$(echo "${args[$i]}" | sed 's/super/Mod4/' | sed 's/alt/Mod1/')
 	val=${args[$val_index]}
-	echo bindsym "$key" "$bindprefix" "$val"
+	# echo bindsym "$key" "$bindprefix" "$val"
 	conf bindsym "$key" "$bindprefix" "$val"
     done
 }
@@ -74,14 +74,10 @@ bind super+{,shift+}Tab focus\ {prev,next}
 bind super+{1..9} workspace\ {1..9}
 bind super+shift+{1..9} move\ container\ to\ workspace\ {1..9}
 
-binde super+{,shift+,alt+,ctrl+}{h,n,e,l} \
-    {focus,move,sway_resize,presel}.sh\ {left,down,up,right}
+# binde super+{,shift+,alt+,ctrl+}{h,n,e,l} \
+#     {focus,move,resize,presel}.sh\ {left,down,up,right}
 
-binde super+{,shift+,alt+,ctrl+}{Left,Down,Up,Right} \
-    {focus,move,resize,presel}.sh\ {left,down,up,right}
-
-# meta takes priority in i3?:
-# binde alt+super+{Left,Down,Up,Right} \
+# binde super+{,shift+,alt+,ctrl+}{Left,Down,Up,Right} \
 #     {focus,move,resize,presel}.sh\ {left,down,up,right}
 
 # I think default layout is the thing that will remove a split
