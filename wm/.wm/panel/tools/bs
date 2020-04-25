@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# bar stuff
+# example:
+# echo some text | bs Bffffff F000000 UFF000000 +o +u
+
+# note on clicking
+# Eg. %{A:reboot:} Click here to reboot %{A}
+# The button field is optional, it defaults to the left
+# button, and it's a number ranging from 1 to 5 which maps
+# to the left, middle, right, scroll up and scroll down
+# movements. Your mileage may vary.
+
+# so, eg bs
+
+prepend=
+# content=
+append=
+for item in "$@"; do
+    first=${item:0:1}
+
+    if [[ $item == \:* ]]; then
+	content=${item:1}
+	continue
+    fi
+
+    if [[ O == $first ]]; then
+	content=
+    fi
+
+    if [[ BFU == *$first* ]]; then
+	case "$item" in
+	    ${first}#*) color=${item:1} ;;
+	    ${first}*) color=\#${item:1} ;;
+	esac
+
+	prepend="${prepend}%{${first}${color}}"
+	prepend="${prepend}%{${first}${color}}"
+    elif [[ A == $first ]]; then
+	prepend="${prepend}%{${item:0:2}:${item:2}:}"
+	append="${append}%{A}"
+    else
+	prepend="${prepend}%{${item}}"
+    fi
+
+    if [[ BTFU == *$first* ]]; then
+	append="${append}%{${first}-}"
+    fi
+
+    last=${item: -1} # the space is needed
+    if [[ ou == *$last* ]]; then
+	append="${append}%{-${last}}"
+    fi
+done
+
+if [ -z "${content+xxx}" ]; then
+    content=$(cat -)
+fi
+
+printf '%s' "${prepend}${content}${append}"

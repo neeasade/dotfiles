@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# these names don't make sense I know
+# who would season a lemon??
+
+# depend on environment to come from i3blocks
+# cat - | bb -B$background -F$foreground
+
+# clickables:
+
+while read -r line; do
+    printf '%s\n' "$(echo "$line" | bs B$bg F$fg)"
+done
