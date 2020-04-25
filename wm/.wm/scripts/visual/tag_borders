@@ -63,6 +63,7 @@ draw_banded() {
 	# echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
 	# chwbn $args -b 2 -c $border_color $wid
 
+	# note: this is broken/old state
 	colors=$(echo "$state" | awk -F \| /${wid}/'{print "-b W -c " $3}' | tac)
 	count=$(echo "$colors" | wc -l)
 	total_width=8 # total inner width
@@ -92,7 +93,8 @@ draw_outerdark() {
     # focused=$(theme getval b_focused_border_color)
 
     for wid in $active $(bspwindows inactive); do
-	color=$(echo "$state" | awk -F \| "/$wid/{print \$3}" | head -n 1)
+	# todo: this breaks  spaces in tags
+	color=$(echo "$state" | awk  "/$wid/{print \$3}" | head -n 1)
 	if [ -z "$color" ]; then
 	    color=000000
 	fi

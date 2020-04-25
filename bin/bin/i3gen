@@ -16,33 +16,17 @@
 # eg desktop:circe_dms:title|org_task|mpd:volume:clock
 # -> $desktop $circe_dms $title (C)$org_task (L)mpd $volume $clock
 p_format=$(theme getval p_format)
-format=$(echo "$p_format" | sed 's/:/ $/g' | sed 's/|/ %{c} $/' | sed 's/|/ %{r} $/' )
+format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
 format="\$$format"
 echo "format: $format"
 
-# i3blocks -o j | debounce.sh 0.1 | stdbuf -oL sed 's/\},/}\n,/g' | while read -r line; do
-i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | while read -r line; do
-
-    # line=${line:1}
-    line=$(echo "$line" | sed 's/^,//' | sed 's/\[//' | sed 's/\]$//')
-
-    # echo "$line"
-    # name=$(jget -r name "$line")
-    name=$(echo "$line" | jq -r .name)
-    # name=$(jget name "$line")
-
-    if [ -z "$name" ]; then
-	continue
-    fi
-
-    # full_text=$(jget -r full_text "$line" | sed "s#'#\'\\\'\'#g")
-    full_text=$(echo "$line" | jq -r .full_text | sed "s#'#\'\\\'\'#g")
-    # echo "${name}='${full_text}'"
-    eval "${name}='${full_text}'"
-
-    # echo bar:
-    eval "echo \"$format\""
-
-    # echo "$name $full_text"
-    # sleep 1
-done
+# i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
+#stdbuf -oL all the things
+# i3blocks -o j | debounce.sh 0.01 | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
+i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
+    stdbuf -oL grep '^{' | \
+    stdbuf -oL jq -r ".name + \"='\" + .full_text + \"'\" " | \
+    while read -r line; do
+	eval "$line"
+	eval "echo \"$format\""
+done | debounce.js | lemonbar
