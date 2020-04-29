@@ -23,7 +23,7 @@ for item in "$@"; do
     fi
 
     if [[ O == $first ]]; then
-	content="%{${item}}"
+	content="${content}%{${item}}"
 	continue
     fi
 

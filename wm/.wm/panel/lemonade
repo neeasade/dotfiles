@@ -10,9 +10,9 @@ format="\$$format"
 i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
     stdbuf -oL grep '^{' | \
     stdbuf -oL jq -r '.name + " " + .full_text' | \
-    while read -r name full_text; do
-	# shell is dumb
-	eval "${name}='$(echo "$full_text" | sed "s#'#\'\\\'\'#g")'"
+    sed "s#'#\'\\\'\'#g" | \
+    while IFS= read -r event; do
+	eval "${event%% *}=\${event#* }"
 	eval "echo \"$format\""
     done | debounce.js
 
