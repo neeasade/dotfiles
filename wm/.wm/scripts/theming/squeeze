@@ -45,7 +45,7 @@ process_target() {
 
 # targets will be exported functions by themes in bash.
 # they use resources from the theming scripts dir.
-targets="bg fg line prefix suffix activebg activefg activeline"
+targets="bg fg line activebg activefg activeline"
 
 for target in $targets; do
     case $target in

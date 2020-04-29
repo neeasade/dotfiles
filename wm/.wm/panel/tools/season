@@ -1,19 +1,36 @@
 #!/usr/bin/env bash
-# these names don't make sense I know
-# who would season a lemon??
+# squeeze lemons into a certain shape/style
+# the environment comes from i3blocks generated with ripen
 
 # depend on environment to come from i3blocks
-
 # clickables:
 
-border=\#777777
-border_side=$(bs O1 B$border U$bg +o +u)
 
-while read -r line; do
-    if [ ! "$name" = "tags" ]; then
-	printf '%s\n' "${prefix}${border_side}$(echo "  $line  " | bs B$bg F$fg U$border +u +o)${border_side}$suffix"
-    else
-	# printf '%s\n' "${prefix}$(echo "  $line  " | bs B$bg F$fg)$suffix"
-	printf '%s\n' "$line"
+spaced_buttons() {
+    border=${border:-#777777}
+    border_side=$(bs O1 B$border U$bg +o +u)
+    content=$(echo "  $line  " | bs B$bg F$fg U$border +u +o)
+    content="$border_side$content$border_side"
+
+    case $align in
+	left) printf '%s   \n' "$content" ;;
+	center) printf '%s   \n' "$content" ;;
+	right) printf '    %s\n' "$content" ;;
+    esac
+}
+
+while IFS= read -r line; do
+    if [ -z "$line" ]; then
+	continue
     fi
+
+    if [ "$name" = "tags" ]; then
+	echo "$line"
+	continue
+    fi
+
+    # todo: enhance with buttons from env?
+
+    # echo "$line"
+    spaced_buttons
 done

@@ -39,17 +39,17 @@ recordfull() {
 }
 
 record() {
+  screenkey -s small -t 0.5
   read -r X Y W H G ID < <(slop -f '%x %y %w %h %g %i')
-  byzanz-record -x $X -y $Y -w $W -h $H
-  # screenkey -s small -t 0.5
+  byzanz-record -x $X -y $Y -w $W -h $H -d 120 out.gif
+  # twilywebm
 }
 
 stoprecord() {
   # todo: pkill everything record
-
-  pkill byzanz-record
-
-  echo nop
+  # pkill byzanz-record
+  pkill -f twilywebm
+  pkill screenkey
 }
 
 # from phone
@@ -122,10 +122,16 @@ shot_location() {
   echo "$HOME/Last_Shot/shot.png"
 }
 
+
+# todo: -c option
+# cat $(shot) | xclip -selection clipboard -t image/png
+# maybe also consider just putting it in the clipboard by default
 shot() {
   # eval $(slop)
   g=$(slop -p ${1:-0})
-  maim -g ${g} "$(shot_location)"
+  dest=$(shot_location)
+  maim -g ${g} "$dest"
+  echo "$dest"
 }
 
 shellshot() {
@@ -136,7 +142,9 @@ shellshot() {
 
 fullshot() {
   [ ! -z "$1" ] && sleep $1
-  maim "$(shot_location)"
+  dest=$(shot_location)
+  maim "$dest"
+  echo "$dest"
 }
 
 lastshot() {

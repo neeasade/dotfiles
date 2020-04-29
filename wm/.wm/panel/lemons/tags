@@ -9,11 +9,10 @@ render() {
     result=$(btags state-plain | while read name active color wids; do
 	tag_name=$name
 
-	background=$(theme getval p_bg_middle)
+	background=$(theme getval p_bg_normal)
 
 	if $active; then
 	    if [ ! -z "$wids" ]; then
-		# name="$(bs B$low O2)$(bs B$color ":${name}")$(bs B$low O2)"
 		background=$color
 	    fi
 	else
@@ -22,39 +21,25 @@ render() {
 	    fi
 	fi
 
-	# name="  ${name}  "
-
-	border=\#777777
-	border_side=$(bs O1 B$border U$bg +o +u)
-
-	low=$(colort -l -40 $color)
-	hats=
+	border=
 	if echo "$wids" | grep -q $current; then
-	    # hats='+o +u'
-	    # name="$(bs B$low O2)${name}$(bs B$low O2)"
-	    border=$low
+	    border=$(colort -l -40 $color)
 	    name="${name}!"
 	fi
 
-	name="$(bs B$background ":   ${name}   ")"
-
-	border_side=$(bs O1 B$border U$color +o +u)
-
 	# height of the under/over determined from bar itself
-	# echo "$border_side"
-	ret=$(echo "$name" | bs U$border +o +u \
-	    "A3btags toggle-wids $tag_name \$(bspwindows)" \
-	    "A1btags toggle $tag_name")
-	printf '%s' "$border_side$ret$border_side   "
-	# echo "$border_side"
+	name=$(bs ":${name}" "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")
+
+	printf '%s' "$(echo "$name" | border=$border bg=$background season)"
     done
     )
 
-    echo "$result"
+    printf '%s\n' "$result"
 }
 
 render
 
-bspc subscribe node_flag node_state node_geometry node_focus | while read -r trigger; do
-    render
-done
+bspc subscribe node_flag node_state node_geometry node_focus | debounce.js 10 | \
+    while read -r trigger; do
+	render
+    done

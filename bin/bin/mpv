@@ -1,9 +1,14 @@
 #!/usr/bin/env sh
-# always run mpv w/ socket
+# always run mpv w/ socket, args as config
 
 mpv=$(type -a mpv | tail -n 1 | awk '{print $3}')
 
 mpc pause >/dev/null
 
+# todo: expand filename, so we have a full ref
+# additionally -- maintain a cache of youtube dl to title names
 
-$mpv --save-position-on-quit --screenshot-directory="$HOME/Screenshots_mpv" --input-ipc-server=/tmp/mpvsocket "$@"
+$mpv \
+    --write-filename-in-watch-later-config --save-position-on-quit \
+    --screenshot-directory="$HOME/Screenshots_mpv" \
+    --input-ipc-server=/tmp/mpvsocket "$@"

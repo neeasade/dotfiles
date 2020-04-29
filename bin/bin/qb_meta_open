@@ -9,7 +9,20 @@ url=$1
 # domain=$(echo "$url" | awk -F/ '{print $3}')
 
 focus_qb_window() {
-    i3c [class="qutebrowser"] focus
+    for wid in $(bspc query -N -n .window); do
+	if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
+
+	    bspc node $wid -g hidden=off
+	    bspc node -f $wid
+
+	    # if wid is in a hidden tag, show it
+	    if status=$(btags state-plain | grep $wid | grep false); then
+		btags toggle $(echo "$status" | awk '{print $1}')
+	    fi
+
+	    break
+	fi
+    done
 }
 
 vanilla() {
@@ -36,6 +49,14 @@ vanilla() {
     exit 0
 }
 
+if ! pgrep qutebrowser; then
+    vanilla
+fi
+
+if [ -z "$url" ]; then
+    vanilla
+fi
+
 # this is probably more like xdg-open logic
 if echo "$url" | grep -qE "youtu.be|youtube.com"; then
     # there is a delay before window launch, so let me know now:
@@ -49,14 +70,6 @@ if echo "$url" | grep -qE "bandcamp.com"; then
     # if qutebrowser gets mpris support this can go away
     google-chrome-stable "$url"
     exit 0
-fi
-
-if ! pgrep qutebrowser; then
-    vanilla
-fi
-
-if [ -z "$url" ]; then
-    vanilla
 fi
 
 session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"

@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+# regen i3blocks config:
+# theme refresh lemonade
+
 # eg desktop:circe_dms:title|org_task|mpd:volume:clock
 # -> $desktop $circe_dms $title %{c}$org_task %{r}mpd $volume $clock
 p_format=$(theme getval p_format)
+# p_format='tags:chunks:title|org_task|mpd:weather:clock'
+
 format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
 format="\$$format"
 
@@ -14,5 +19,4 @@ i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's
     while IFS= read -r event; do
 	eval "${event%% *}=\${event#* }"
 	eval "echo \"$format\""
-    done | debounce.js
-
+    done | debounce.js 30

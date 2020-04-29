@@ -13,7 +13,7 @@ if status=$(playerctl status 2>/dev/null); then
     dbusplaying=false
   fi
 
-  if [ -z "$(playerctl metadata)" ]; then
+  if [ -z "$(playerctl metadata 2>/dev/null)" ]; then
     dbuspresent=false
   fi
 fi

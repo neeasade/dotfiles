@@ -13,6 +13,14 @@ print_env() {
   X=$(( ($(dim width) - W) / 2 ))
   Y=$(( ($(dim height) - H) / 4 ))
 
+  # W=$(echo .20 \* $(dim width) | bc | sed 's/\..*//')
+  # H=$(echo .40 \* $(dim height) | bc | sed 's/\..*//')
+  # X=$(( ($(dim width) - W) / 2 ))
+  # Y=$(( ($(dim height) - H) / 4 ))
+  # Y=$((Y+100))
+
+
+
   echo "W=$W"
   echo "H=$H"
   echo "X=$X"

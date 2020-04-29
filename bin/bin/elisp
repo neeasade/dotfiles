@@ -3,6 +3,7 @@
 # can act as a shebang (ie #!/usr/bin/env elisp) or
 # adhoc code (ie elisp '(message "uwu")')
 # todo: getopt, a -q option for quiet
+# todo: a way to connect in the current terminal and maybe edit a file from here
 
 trim=false
 if [ "$1" = "-r" ]; then
@@ -35,7 +36,6 @@ add_stdin() {
 	fi
 
 	cat - > "$stdin_file"
-	lisp="(let ((*stdin-file* \"${stdin_file}\")) ${lisp} )"
     fi
 }
 
@@ -44,6 +44,9 @@ if [ -z "$script_name" ]; then
     lisp="(progn $@)"
     if [ ! -z "$FORCE_STDIN" ]; then
 	add_stdin
+	if [ ! -z "$stdin_file" ]; then
+	    lisp="(let ((*stdin-file* \"${stdin_file}\")) ${lisp})"
+	fi
     fi
 else
     trim=true
@@ -55,9 +58,8 @@ else
     done
 
     # todo: if the script_name contains a '(provide)' consider just loading rather than eval-file
-    lisp="(ns/eval-file \"${script_name}\" ${args})"
-
     add_stdin
+    lisp="(ns/eval-file \"${script_name}\" \"${stdin_file:-nil}\" ${args})"
 fi
 
 emacs_timeout=
