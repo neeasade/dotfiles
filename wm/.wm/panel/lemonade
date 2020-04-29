@@ -11,12 +11,15 @@ p_format=$(theme getval p_format)
 format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
 format="\$$format"
 
-# stdbuf -oL all the things? need to check if that's needed
-i3blocks -o j | stdbuf -oL sed 's/\},/}\n,/g' | stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
+# stdbuf -oL all the things.
+# this has been poked at alot by a tired me, I think it's good now.
+stdbuf -oL i3blocks -o j | \
+    stdbuf -oL sed 's/\},/}\n,/g' | \
+    stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
     stdbuf -oL grep '^{' | \
     stdbuf -oL jq -r '.name + " " + .full_text' | \
-    sed "s#'#\'\\\'\'#g" | \
-    while IFS= read -r event; do
+    stdbuf -oL sed "s#'#\'\\\'\'#g" | \
+    while IFS=$'\n' read -r event; do
 	eval "${event%% *}=\${event#* }"
 	eval "echo \"$format\""
-    done | debounce.js 30
+    done | stdbuf -oL debounce.js 30

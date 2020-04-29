@@ -19,14 +19,16 @@ spaced_buttons() {
     esac
 }
 
-while IFS= read -r line; do
+while IFS=$'\n' read -r line; do
     if [ -z "$line" ]; then
 	continue
     fi
 
-    if [ "$name" = "tags" ]; then
-	echo "$line"
-	continue
+    if [ -z "$FORCE" ]; then
+	if [ "$name" = "tags" ]; then
+	    echo "$line"
+	    continue
+	fi
     fi
 
     # todo: enhance with buttons from env?

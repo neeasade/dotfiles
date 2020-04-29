@@ -3,13 +3,15 @@
 # ;; OK: underline when inactive but with wids
 # ;; else just background color if active, no background if not turned on
 
+p_bg_inactive=$(theme getval p_bg_inactive)
+
 render() {
     current=$(bspc query -N -n)
 
-    result=$(btags state-plain | while read name active color wids; do
-	tag_name=$name
-
-	background=$(theme getval p_bg_normal)
+    # do not rename tname to name
+    result=$(btags state-plain | while read tname active color wids; do
+	tag_name=$tname
+	background=$p_bg_inactive
 
 	if $active; then
 	    if [ ! -z "$wids" ]; then
@@ -17,29 +19,29 @@ render() {
 	    fi
 	else
 	    if [ ! -z "$wids" ]; then
-		name="${name}*"
+		tname="${tname}*"
 	    fi
 	fi
 
 	border=
 	if echo "$wids" | grep -q $current; then
 	    border=$(colort -l -40 $color)
-	    name="${name}!"
+	    tname="${tname}!"
 	fi
 
 	# height of the under/over determined from bar itself
-	name=$(bs ":${name}" "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")
+	tname=$(bs ":${tname}" "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")
 
-	printf '%s' "$(echo "$name" | border=$border bg=$background season)"
+	printf '%s' "$(echo "$tname" | border=$border bg=$background FORCE=t season)"
     done
     )
 
-    printf '%s\n' "$result"
+    echo "$result"
 }
 
 render
 
-bspc subscribe node_flag node_state node_geometry node_focus | debounce.js 10 | \
+bspc subscribe node_flag node_state node_focus | \
     while read -r trigger; do
 	render
     done
