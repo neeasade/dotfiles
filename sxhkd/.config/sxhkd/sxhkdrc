@@ -28,14 +28,18 @@ super + t
     SLIM=t fullscreen_toggle.sh
 
 # if the current node is automatic, send it to the last manual, otherwise pull the last leaf
+# super + y
+#     bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+
+    # btags toggle $(btags get-tags $(bspc query -N -n $(bspc query -N -n)))
 super + y
-    bspc query -N -n focused.automatic && bspc node -n last.!automatic || bspc node last.leaf -n focused
+    dismiss.sh
 
 alt + {_,shift} + Tab
-    bspc node -f {next,prev}.local.normal
+    bspc node -f {next,prev}.local.normal.!hidden
 
 super + {_,shift} + Tab
-    bspc node -f {next,prev}.local.normal
+    bspc node -f {next,prev}.local.normal.!hidden
 
 super + {_,shift,alt,ctrl} + {h,n,e,l}
     {focus,move,resize,presel}.sh {west,south,north,east}
@@ -46,13 +50,20 @@ super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
 super + ctrl + space
     bspc node -p cancel
 
-super + {1-9}
-    bspc desktop -f focused:^{1-9}
-    # btags focus ^{1-9}
+# bspc desktop -f focused:^{1-9}
+# btags focus ^{1-9}
+# super + {1-9}
+#     i={1-9}; \
+#     if btags wids ^$i | grep $(bspwindows); then \
+#     btags toggle ^$i; else btags focus ^$i ; fi
 
+super + {1-9}
+    btags focus ^{1-9}
+
+    # bspc node -d focused:^{1-9}
+    # btags toggle-wids ^{1-9} $(bspwindows)
 super + shift + {1-9}
-    bspc node -d focused:^{1-9}
-    # btags toggle-wids ^{1-9} $(bspc query -N -n)
+    btags set-tag-on-wids ^{1-9} $(bspwindows)
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
@@ -61,11 +72,6 @@ super + {_,shift} + r
 # rotate, balance
 super + {_,shift} + semicolon
     bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
-
-# hide current node, or restore a queried hidden node
-# todo: revisit this
-# super + {_,shift} + minus
-    # bspc node {,$(bspc query -N -d -n .hidden | head -n 1)} -g hidden
 
 # focus the node for the given path jump
 super + {p,b,comma,period}
@@ -85,14 +91,14 @@ super + {_,shift} + slash
 
 # wm independent hotkeys {{{
 
-#super + p
-#    ~/.wm/scripts/i3blur.sh
-
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
 
-# super + i
-#     jump_emacs Emacs
+super + shift + Return
+    elisp '(ns/org-capture-popup)'
+
+super + i
+    jump_emacs Emacs
 
 super + o
     $BROWSER
@@ -107,13 +113,13 @@ super + {_,shift,alt} + space
     dmenu_$action "$action"
 
 super + grave
-     player.sh toggle
+    player.sh toggle
 
 XF86Audio{Prev,Next,Play}
-     mpc -q {prev,next,toggle}
+    mpc -q {prev,next,toggle}
 
 XF86Audio{LowerVolume,RaiseVolume}
-    ponymix {decrease,increase} 5; notify-send --urgency=low "Volume: $(ponymix get-volume)"
+    notify-send --urgency=low "Volume: $(ponymix {decrease,increase})"
 
 super + Escape
     notify-send "reloading sxhkd!"; pkill -USR1 -x sxhkd

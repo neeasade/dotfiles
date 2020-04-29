@@ -2,6 +2,9 @@
 # reminder: you can always escape aliases with a '\'
 # eg \cd
 
+# let's see if this is too generic
+alias open='xdg-open'
+
 alias qq=colemak
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
 alias grep="grep --color=auto"

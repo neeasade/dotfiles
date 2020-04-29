@@ -1,16 +1,1 @@
-; -*- mode: conf -*-
 
-[bar]
-line={{p_line}}
-padding={{p_padding}}
-bg = "{{p_bg_middle}}"
-fg = "{{p_fg_normal}}"
-format = "{{p_format}}"
-fonts = "{{p_font_main}}"
-        "{{p_font_icon}}"
-        "font-linux-10"
-class = "{{p_window_class}}"
-offset = {{p_offset}}
-
-; guesstimate 3 clickables per section
-clickables = {{{echo "3 * $(echo $lemons | wc -w)" | bc}}}

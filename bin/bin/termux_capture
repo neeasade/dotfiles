@@ -1,0 +1,98 @@
+#!/bin/sh
+# use termux as a share target on android for fun stuff!
+# cf https://amp.reddit.com/r/linux/comments/66fh4f/what_do_you_use_termux_on_android_for/
+# cf https://wiki.termux.com/wiki/Intents_and_Hooks
+
+# setup:
+# termux-setup-storage
+# place this script in a sync'd dir
+# ln -s /path/to/script ~/bin/termux-url-opener
+# ln -s /path/to/script ~/bin/termux-file-editor
+
+sync_dir="${HOME}/storage/shared/Sync/orgzly"
+echo "share recieved: $*"
+share_target=$*
+
+installed=$(pkg list-installed | sed 's#/.*##')
+
+ensure() {
+    if ! echo "$installed" | grep "$*" >/dev/null; then
+	pkg install "$*"
+    fi
+}
+
+# some basics that we want in termux
+for x in git vim wget file python openssh; do
+    ensure $x
+done
+
+capture_note() {
+    # todo: should the captured headlines be marked as todos? maybe schedule them for like 3 days in
+    # advance or something rather than capture metadata
+    # todo: consider prompting for a note to be associated with the captured link/file
+
+    headline=$*
+    cat<<EOF >>"${sync_dir}/capture.org"
+* TODO ${headline}
+:PROPERTIES:
+:captured: <$(date +%Y-%m-%d)>
+:END:
+EOF
+}
+
+# this lets relative links be resolvable in orgzly
+# update: can't have symlinks in system storage
+# mkdir -p "${sync_dir}/org_files"
+# ln -s "${sync_dir}/org_files" "${HOME}/storage/shared/org_files"
+
+if [ -f "$share_target" ]; then
+    # it's not a web url! assume it's a file and we want to open it.
+    # example.json: UTF-8 Unicode text, with very long lines
+    if file "$share_target" | grep 'text,'; then
+	# assume we want to view it here
+	vim "$share_target"
+    else
+	# assume that we want to capture it
+	filename=$(basename "$share_target")
+	mkdir -p "${sync_dir}/org_files/"
+	cp "$share_target" "${sync_dir}/org_files/$filename"
+	capture_note "[[./org_files/$filename][$filename]]"
+    fi
+
+    exit 0
+fi
+
+# expand youtube shortlinks
+# http://youtu.be/FdeioVndUhs
+# -> http://www.youtube.com/watch?v=FdeioVndUhs
+share_target=$(echo "$share_target" | sed 's|youtu\.be/|www.youtube.com/watch?v=|')
+
+# todo: peek at $share_target and see what's up
+if echo "$share_target" | grep 'youtube.com' >/dev/null; then
+    echo "capture youtube!"
+    ensure ffmpeg
+    if ! which youtube-dl >/dev/null; then
+	pip install youtube-dl
+    fi
+
+    mkdir -p "${sync_dir}/youtube"
+    termux-wake-lock # make sure we stay awake while we get the thing.
+    capture_url="${HOME}/storage"
+    youtube-dl -x -i -o "${sync_dir}//%(title)s.%(ext)s" "$share_target"
+    exit 0
+fi
+
+# terrible
+is_image=false
+if ext=$(echo "$share_target" | grep -oE "\.(png|jpg|jpeg)"); then
+    is_image=true
+fi
+
+if $is_image; then
+    # catch the url
+    filename="$(date +%s)${ext}"
+    wget -O "${sync_dir}/org_files/$filename" "$share_target"
+    capture_note "[[./org_files/$filename][$filename]] from $share_target"
+else
+    capture_note "${share_target}"
+fi

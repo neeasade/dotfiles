@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+
+# ;; OK: underline when inactive but with wids
+# ;; else just background color if active, no background if not turned on
+
+render() {
+    current=$(bspc query -N -n)
+
+    result=$(btags state-plain | while read name active color wids; do
+	tag_name=$name
+
+	background=$(theme getval p_bg_middle)
+
+	if $active; then
+	    if [ ! -z "$wids" ]; then
+		# name="$(bs B$low O2)$(bs B$color ":${name}")$(bs B$low O2)"
+		background=$color
+	    fi
+	else
+	    if [ ! -z "$wids" ]; then
+		name="${name}*"
+	    fi
+	fi
+
+	# name="  ${name}  "
+
+	border=\#777777
+	border_side=$(bs O1 B$border U$bg +o +u)
+
+	low=$(colort -l -40 $color)
+	hats=
+	if echo "$wids" | grep -q $current; then
+	    # hats='+o +u'
+	    # name="$(bs B$low O2)${name}$(bs B$low O2)"
+	    border=$low
+	    name="${name}!"
+	fi
+
+	name="$(bs B$background ":   ${name}   ")"
+
+	border_side=$(bs O1 B$border U$color +o +u)
+
+	# height of the under/over determined from bar itself
+	# echo "$border_side"
+	ret=$(echo "$name" | bs U$border +o +u \
+	    "A3btags toggle-wids $tag_name \$(bspwindows)" \
+	    "A1btags toggle $tag_name")
+	printf '%s' "$border_side$ret$border_side   "
+	# echo "$border_side"
+    done
+    )
+
+    echo "$result"
+}
+
+render
+
+bspc subscribe node_flag node_state node_geometry node_focus | while read -r trigger; do
+    render
+done

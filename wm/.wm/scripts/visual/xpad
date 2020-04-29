@@ -17,6 +17,8 @@ background_color=${background_color//\#}
 border_color_normal=${border_color_normal//\#}
 border_color_active=${border_color_active//\#}
 
+background_color_normal=$background
+
 bspc config focused_border_color "#$background_color"
 bspc config normal_border_color "#$background_color"
 
@@ -44,7 +46,7 @@ pad() {
 draw() {
     # pad $border_color_active $(bspwindows)
 
-    monocle=$(iif 'jget layout $(bspc query -T -d) | grep monocle')
+    monocle=$(iif 'jget layout "$(bspc query -T -d)" | grep monocle')
 
     (
     	scale=1

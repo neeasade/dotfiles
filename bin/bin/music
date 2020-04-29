@@ -198,4 +198,4 @@ info() { # display the current song progress bar and playlist length
 
 op=${1:-usage}
 shift
-$op "$*"
+$op "$@"

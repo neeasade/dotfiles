@@ -6,6 +6,12 @@ vdo() {
   "$@"
 }
 
+prepend() {
+  tmpfile=$(mktemp)
+  cat <(echo "$1") "$2" >$tmpfile
+  mv $tmpfile "$2"
+}
+
 windowshot() {
   j=$(bspc query -T -n)
   w=$(jget width "$j")
@@ -46,19 +52,16 @@ stoprecord() {
   echo nop
 }
 
-blog_add_post() {
-  if [ -z "$*" ]; then
-    echo "provide a title"
-    return
-  fi
+# from phone
+sync_last_phone_file() {
+  file=$(ls -t "$HOME/sync/orgzly/org_files" | head -n1)
+  echo "$HOME/sync/orgzly/org_files/${file}"
+}
 
-  title=$(echo "$*" | sed 's/ /-/g')
-
-  date=$(date +%Y-%m-%d)
-  file="${HOME}/git/neeasade.github.io/posts/${date}-${title}.org"
-  echo "#+title: $*" >"$file"
-  echo "#+draft: t" >>"$file"
-  $EDITOR "$file"
+blog_add_asset() {
+  target=$*
+  echo cp "$*" "${HOME}/git/neeasade.github.io/site/assets/posts/$*"
+  cp "$*" "${HOME}/git/neeasade.github.io/site/assets/posts/$*"
 }
 
 blog_add_dtop() {

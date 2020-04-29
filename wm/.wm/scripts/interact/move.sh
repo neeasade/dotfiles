@@ -1,6 +1,8 @@
 #!/bin/sh
 
 dir=$1
+
+
 node=$(bspc query -N -n)
 
 case $dir in
@@ -22,6 +24,7 @@ tiled_move() {
 
   # compare height or width to parent
   self_measure=$(bspc query -T -n "$node" | jq .rectangle.$tdim)
+  # note climb up until parent visible? idk
   parent_measure=$(bspc query -T -n "${node}#@parent" | jq .rectangle.$tdim)
 
   if [ "$parent_measure" -gt "$self_measure" ]; then
@@ -32,7 +35,7 @@ tiled_move() {
     bspc node $node -n $receptacle_id
     bspc node "${node}#@parent" -B
   else
-    node="$(bspc query -N -n "${node}#@parent")"
+    node=$(bspc query -N -n "${node}#@parent")
     [ ! -z "$node" ] && tiled_move
   fi
 }

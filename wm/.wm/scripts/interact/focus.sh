@@ -4,19 +4,27 @@
 dir=$1
 
 node=$(bspc query -N -n)
-node=${node^^}
-target=$(bspc query -N -n $dir)
+target=$(bspc query -N -n $dir.!hidden)
 
 # if there are any floating windows, use an edge of that if it overlaps into us
 node_dir=$1
 case $node_dir in
-  east)  dir=x; sign=-lt;;
-  west)  dir=x; sign=-gt;;
-  north) dir=y; sign=-gt;;
-  south) dir=y; sign=-lt;;
+  east)  dir=x; sign=-lt; emacs_dir=right ;;
+  west)  dir=x; sign=-gt; emacs_dir=left ;;
+  north) dir=y; sign=-gt; emacs_dir=up ;;
+  south) dir=y; sign=-lt; emacs_dir=down ;;
 esac
 
-floating_windows=$(bspc query -N -d -n .window.local.floating)
+if xprop -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
+  if elisp "(evil-window-$emacs_dir 1) t"; then
+    exit 0
+  fi
+fi
+
+node=${node^^}
+
+
+floating_windows=$(bspc query -N -d -n .window.local.floating.!hidden)
 declare -A winmap=();
 while read wid x y w h; do
   wid="${wid^^}"

@@ -1,39 +1,24 @@
-#!/usr/bin/env joker
-;; -*- mode: clojure -*-
+#!/usr/bin/env bb
+;; note: bb is https://github.com/borkdude/babashka
 
-;; a hack for cider buffer repl
-(defmacro cider-nop [& contents] (when nil contents))
-(cider-nop
- (do (require '[clojure.core :as core])
-     (require '[clojure.string :as str])
-     (require '[clojure.set :as set])
-     (require '[clojure.java.io :as io])
-     (require '[clojure.java.shell :as shell])
+;; idea: arrange tags under bspwm tree
 
-     (defn sh [command]
-       (:out (apply shell/sh (str/split command #" "))))
+(require '[clojure.core :as core])
+(require '[clojure.string :as str])
+(require '[clojure.set :as set])
+(require '[clojure.java.io :as io])
+(require '[clojure.java.shell :as shell])
 
-     (def state (-> state-file slurp read-string)))
-
- )
-
-(require '[joker.os :as os])
-(require '[joker.core :as core])
-(require '[joker.string :as str])
-(require '[joker.set :as set])
-(require '[joker.io :as io])
-(require '[joker.time :as time])
-
-(defn sh [command]
-  (:out (apply os/sh (str/split command #" "))))
+(defn sh [command] (:out (apply shell/sh (str/split command #" "))))
 
 ;; todo: better than this
 (def state-file "/tmp/btags-state")
 (def state-lockfile "/tmp/btags-state-lock")
 
 (defn wait-for-lock []
-  (while (os/exists? state-lockfile)
-    (time/sleep 10000000)))
+  (while (.exists (io/file state-lockfile))
+    (Thread/sleep 10) ; ms
+    ))
 
 (defn update-state-focus-wid [wid]
   (when wid
@@ -45,14 +30,14 @@
 
 (defn load-state []
   (def state
-    (if (os/exists? state-file)
+    (if (.exists (io/file state-file))
       (-> state-file slurp read-string)
       ;; default
       {:tags
-       [{:name "00" :wids #{1} :active true}
-        {:name "01" :wids #{2} :active true}
-        {:name "10" :wids #{} :active true}
-        {:name "11" :wids #{} :active true}]
+       [{:name "00" :wids #{} :active true :color "c2c6e3"}
+        {:name "01" :wids #{} :active true :color "e4815d"}
+        {:name "10" :wids #{} :active true :color "c6dc93"}
+        {:name "11" :wids #{} :active true :color "E2E3E5"}]
        :focus-wid ""
        }
       ))
@@ -72,7 +57,10 @@
                 ;; am inferring not a thing in joker
                 ;; cf https://github.com/candid82/joker/blob/9dcaacdeb4d80e37ec2273a299c562dc97e6fdbc/tests/eval/tools_cli.joke#L114
                 (- (read-string (apply str (rest ident)))
-                   1)))
+                   1))
+           ;; we tried to use an index on a tag that doesn't exist, just use the current timestamp to name it
+           ;; note: this will call date all the time to resolve the default tag name when index is used..
+           (sh "date +%s"))
     ident))
 
 (defn render-wid [wid show]
@@ -84,8 +72,7 @@
   ;; show/hide status
   (let [show-wids
         (->> (:tags state)
-             (filter #(or (:active %)
-                          (= (:name %) (:focus-tag state))))
+             (filter #(:active %))
              (map :wids)
              (apply set/union))
 
@@ -98,24 +85,23 @@
         ]
 
     (doall (map #(render-wid % true) show-wids))
-    (doall (map #(render-wid % false) hide-wids)))
+    (doall (map #(render-wid % false) hide-wids))
+    )
 
   ;; refocus who we had if they exist
-  (when (not (= (:focus-wid state) ""))
+  (when (and
+         (not (= (:focus-wid state) ""))
+         ;; (not (= (:focus-wid state)
+         ;;         (-> "bspc query -N -n" sh str/trim-newline)
+         ;;         ))
+         )
     ;; (sh "sleep 1")
     ;; (sh (format "notify-send doing_%s" (:focus-wid state)))
     (sh "bspc config pointer_follows_focus true")
     (sh (core/format "bspc node %s -f" (:focus-wid state)))
-    (sh "bspc config pointer_follows_focus false")
-    )
-  )
+    (sh "bspc config pointer_follows_focus false")))
 
-(defn action-focus "<tag> - focus the last wid in the tag"
-  [tag]
-  (update-state-focus-wid
-   (->> (:tags state)
-        (filter #(= (:name %) (tag-ident-to-name tag)))
-        first :wids last)))
+(defn action-render "call to force a state render" [] (render-state))
 
 (defn update-tags
   "update all tags with a transform function"
@@ -133,8 +119,24 @@
     (update-tags
      (fn [old-tag]
        (update old-tag :wids (fn [old-wids]
-                               (set (filter #(contains? all-wids %) old-wids))))))
-    ))
+                               (set (filter #(contains? all-wids %) old-wids))))))))
+
+(defn action-set "<tag> <setting> <value> - set [name|color] value on tag"
+  [tag-name setting new-value]
+  (update-tags
+   (fn [old-tag]
+     (update old-tag (keyword setting)
+             #(if (= (:name old-tag) (tag-ident-to-name tag-name))
+                new-value %)))))
+
+;; (defn action-add "<tag-name> <color> - create a new tag with an associated color"
+;;   [tag-name color]
+;;   (update state
+;;           :tags
+;;           (conj
+;;            (:tags state)
+;;            {:name tag-name :wids #{} :color color}
+;;            )))
 
 (defn action-toggle
   "<tags> -- toggle visibility of tags"
@@ -154,12 +156,30 @@
        doall
        ))
 
+(defn action-focus "<tag> - focus the last wid in the tag"
+  [tag]
+
+  (let [full-tag (->> (:tags state)
+                      (filter #(= (:name %) (tag-ident-to-name tag)))
+                      first)
+        last-wid (-> full-tag :wids last)
+        ]
+    (when (not (:active full-tag))
+      (action-toggle tag))
+
+    (update-state-focus-wid
+     (if (= (:focus-wid state) last-wid)
+       (if (> (count (:wids state)) 1)
+         (nth (-> full-tag :wids) 1))
+       last-wid
+       ))))
+
 (defn action-names
   "get all the tag names"
   [] (->> state :tags (map :name) (map println) doall))
 
 (defn get-state-untagged []
-  (let [all-wids (-> "bspc query -N -n .leaf" sh (str/trim-newline) (str/split #"\n") set)]
+  (let [all-wids (-> "bspc query -N -n .leaf.window" sh (str/trim-newline) (str/split #"\n") set)]
     all-wids
     (set/difference
      (set all-wids)
@@ -193,12 +213,26 @@
                  ;; existing minus toggles
                  (set/difference old-wids wids)
                  ;; new (old filter for not in new?)
-                 (set (filter #(not (contains? old-wids %)) wids))
-                 )
+                 (set (filter #(not (contains? old-wids %)) wids)))
+
                 old-wids
                 ))))
 
   (update-tags update-wids))
+
+;; idea: if we toggle a tag that doesn't exist, add it
+(defn action-set-tag-on-wids
+  "<tag> <wids> -- set wids to be member of one tag"
+  [tag & wids]
+  (defn update-wids-set [old-tag]
+    (update old-tag :wids
+            (fn [old-wids]
+              (if (= (tag-ident-to-name tag) (:name old-tag))
+                (set/union old-wids (set wids))
+                (set/difference old-wids (set wids))
+                ))))
+
+  (update-tags update-wids-set))
 
 ;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
 (defn action-state
@@ -253,37 +287,46 @@
        doall
        ))
 
-(defn action--h "usage" []
-  (usage))
+(defn action-state-raw "get raw edn state" []
+  (-> state pr-str println))
 
-(when (not *command-line-args*)
-  (usage))
+(defn action-state-plain "get a plaintext representation of tags" []
+  (->> (:tags state)
+       (map #(format "%s %s %s %s"
+                     (:name %)
+                     (if (:active %) "true" "false")
+                     (:color %)
+                     (str/join " " (:wids %))))
+       (map println)
+       doall
+       ))
+
+(defn action--h "usage" [] (usage))
+
+;; and.. action:
+(when (not *command-line-args*) (usage))
 
 (when *command-line-args*
-  ;; we don't care about rendering+saving on state get (or subscribe)
-  (if (= "state" (first *command-line-args*))
-    (do (load-state)
-        (cleanup-state)
-        (action-state))
+  (if (contains?
+       ;; stateful - focus might not be stateful really
+       #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids"}
+       (first *command-line-args*))
 
-    (do (wait-for-lock)
-        (load-state)
-        (cleanup-state)
-        (apply
-         (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-         (rest *command-line-args*))
+    (do
+      (wait-for-lock)
+      (load-state)
+      (cleanup-state)
+      (apply
+       (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+       (rest *command-line-args*))
+      (save-state)
+      (render-state)
+      )
 
-        ;; ugh
-        (when (not (= "subscribe" (first *command-line-args*)))
-          (render-state)
-          (save-state)
-          ))))
+    (do
+      (load-state)
+      (apply (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+             (rest *command-line-args*)))))
 
-;; notes
-;; > consider: smart toggle if looking at a wid in a group, hide the group else, show the group it
-;; it's not shown, then focus it
-
-;; > tags doesn't feel right -- the 'unsolved' part is maybe managing untagged windows, maybe
-;; default adding them to a tag or something maybe add to the current tag you are focused on
-
-;; all the above may now be done via a script/at a higher level.
+;; calling this here means bb won't just print the last sexp value
+(System/exit 0)

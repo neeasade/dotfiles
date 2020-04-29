@@ -16,7 +16,8 @@ target=
 for domain in github.com gitlab.com; do
     if target=$(get_repo "$QUTE_URL"); then
 	cd "${HOME}/git"
-
+	notify-send "git clone $target"
+	git clone "$target"
 	break
     fi
 done

@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# fun ideas for later
+# what if you could have groups of windows associated with a project
+# or 'enabled' tags
+
+# # <monitor_id> <desktop_id> <ip_id> <node_id>
+bspc subscribe node_add | while read -r event m d i wid; do
+    current_class=$(xprop -id $wid | grep -m1 "^WM_CLASS")
+
+    # if "$current-class" | grep Steam; then
+    # 	btags toggle-wids ^3 $wid
+    # 	continue
+    # fi
+
+    if echo "$current_class" | grep qutebrowser; then
+	btags toggle-wids ^2 $wid
+	continue
+    fi
+
+    last_class=$(xprop -id $(bspc query -N last -n) | grep -m1 "^WM_CLASS")
+    if echo "$last_class" | grep qutebrowser; then
+	# if we are making an emacs window from browser assume it should be in code for now
+	if echo "$current_class" | grep Emacs; then
+	    btags toggle-wids code $wid
+	    continue
+	fi
+    fi
+
+    current_tag=$(btags get-tags "$(bspc query -N -n last)" | head -n 1)
+    if [ ! -z "$current_tag" ]; then
+	btags toggle-wids "$current_tag" $wid
+    fi
+done
