@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# generate environment values to be passed to season
 
 # vanilla/theme intention for all targets:
 vanilla() {
@@ -29,16 +30,22 @@ separateStep() {
   i=0
   for section in $p_format; do
     # reverse count on left
-    [ "$i" = "0" ] && j=$((leftTotal-1)) || j=0
+    # [ "$i" = "0" ] && j=$((leftTotal-1)) || j=0
+    j=1
 
-    IFS=':'
+    section=$(echo "$section" | tr ':' ' ')
+    [ "$i" = "2" ] &&
+	section=$(echo "$section" | tr ' ' $'\n' | tac | tr '$\n' ' ')
+
+    IFS=' '
     for lemon in $section; do
       [ "$i" = "0" ] && eval ${lemon}_align=left
       [ "$i" = "1" ] && eval ${lemon}_align=center
       [ "$i" = "2" ] && eval ${lemon}_align=right
 
       eval $lemon=$j
-      [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
+      # [ "$i" = "0" ] && j=$((j-1)) || j=$((j+1))
+      j=$((j+1))
 
       grep "^${lemon}\|${lemon}$" <<< "${p_format}" &&
         eval ${lemon}_end=true ||
@@ -102,7 +109,11 @@ reverseSteps() {
 
 # get gradient by step, use total as step.
 gradientGet() {
-  step=$((step+1))
+    if [ -z "$*" ]; then
+	step=$((step+1))
+    else
+	step=$*
+    fi
   gradient $total $color0 $color7 | sed -n ${step}p
 }
 

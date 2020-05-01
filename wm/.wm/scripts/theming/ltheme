@@ -154,13 +154,8 @@ load_bspwm() {
     fi
 
     bspwmrc=".config/bspwm/bspwmrc"
-    panelt=".wm/scripts/interact/panelt"
-    icon=".wm/panel/tools/icon"
-
     margs bspwm "$bspwmrc"
-    margs icon "$icon"
-    margs panelt "$panelt"
-    chmod +x "$HOME/$bspwmrc" "$HOME/$panelt" "$HOME/$icon"
+    chmod +x "$HOME/$bspwmrc"
 
     wait
     setsid "$HOME/$bspwmrc"
@@ -263,13 +258,13 @@ load_dunst() {
     # todo: make this a theme option
 
     # top center
-    # mon_width=$(bspc query -T -m | jq -r .rectangle.width)
-    # d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
-    # p_geometry="${d_width}x6+${d_x_middle}+$((b_window_gap + p_height))"
+    mon_width=$(bspc query -T -m | jq -r .rectangle.width)
+    d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
+    p_geometry="${d_width}x6+${d_x_middle}+$((b_window_gap + p_height))"
 
     # top right
     # WIDTHxHEIGHT+XOFF+YOFF
-    p_geometry="${d_width}x6-${b_window_gap}+$((b_window_gap + p_height))"
+    # p_geometry="${d_width}x6-${b_window_gap}+$((b_window_gap + p_height))"
 
     margs dunstrc .config/dunst/dunstrc
 
@@ -431,6 +426,8 @@ load_services() {
     make_service dunst
     make_service compton
 
+    make_service panel "$HOME/.wm/panel/lemonade"
+
     # todo: correct lemon mpd naming conflict
     make_service mpd "/run/current-system/sw/bin/mpd --no-daemon $HOME/.config/mpd/mpd.conf"
 
@@ -446,6 +443,9 @@ load_services() {
 	systemctl --user start $s
 	systemctl --user enable $s
     done
+
+    # just kidding
+    systemctl --user disable panel
 }
 
 if uname | grep -q MINGW; then

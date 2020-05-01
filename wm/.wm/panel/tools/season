@@ -25,7 +25,7 @@ while IFS=$'\n' read -r line; do
     fi
 
     if [ -z "$FORCE" ]; then
-	if [ "$name" = "tags" ]; then
+	if [ "$lemon" = "tags" ]; then
 	    echo "$line"
 	    continue
 	fi

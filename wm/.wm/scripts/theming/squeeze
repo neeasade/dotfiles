@@ -76,5 +76,7 @@ eval echo "\$p_${lemon_target}_theme"
 # debug reference
 echo step=$step
 echo align=$lemon_target_align
+echo lemon=$lemon_target
+echo lemon_end=${lemon_end}
 
 echo ""

@@ -22,7 +22,7 @@ percent=.33
 mon_width=$(jget width "$(bspc query -T -m)") # .rectangle.width
 mon_height=$(jget height "$(bspc query -T -m)") # .rectangle.height
 if [ $mon_width -gt $mon_height ]; then
-    node_count=$(bspc query -N -d $desk -n .leaf.normal | wc -l)
+    node_count=$(bspc query -N -d $desk -n '.leaf.normal.!hidden' | wc -l)
     [ $node_count -eq 1 ] && vertPref=$horiPref
 fi
 

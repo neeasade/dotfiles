@@ -55,7 +55,7 @@ MPDCRON_DIR="$HOME/.config/mpd"
 _JAVA_AWT_WM_NONREPARENTING=1
 LANG="en_US.UTF-8"
 TERMCMD=$TERMINAL
-PAGER="less"
+PAGER=less
 
 # if has npm; then
 #   if has cache_output; then

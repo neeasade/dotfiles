@@ -54,6 +54,7 @@ load() {
   ln -s "$theme_dir/$name" "$theme_load"
 
   "$HOME/.wm/scripts/theming/ltheme" $*
+  cache_env
 }
 
 edit() {
