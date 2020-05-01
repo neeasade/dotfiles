@@ -20,24 +20,10 @@ geom=$(
 # eg desktop:circe_dms:title|org_task|mpd:volume:clock
 # -> $desktop $circe_dms $title %{c}$org_task %{r}mpd $volume $clock
 p_format=$(theme getval p_format)
-# p_format='org_task:title|none|mpd:weather:clock'
-# p_format='tags:title|org_task|mpd:weather:clock'
+# p_format='org_task:title|tags|mpd:weather:clock'
 
 format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
 format="\$$format"
-
-# 	echo lemonbar -d \
-# -u $(theme getval p_line) \
-# -n $(theme getval p_window_class) \
-# -B \#cceef0f3 \
-# -F \#ff5a5e65 \
-# -o -1 \
-# -f 'Equity Caps B-10:style=Regular' \
-# -f 'Equity Caps B-10:style=Bold' \
-# -f 'Equity B-10' \
-# -a 40 \
-# -g "$(get_geometry)"
-
 
 # stdbuf -oL all the things.
 # this has been poked at alot by a tired me, I think it's good now.
