@@ -19,14 +19,14 @@ time_offset_percent() {
 }
 
 progress() {
-    echo
+    # echo
 
     # here
     # mkb "$(time_offset_percent "$1")" 10
 
-    # WIDTH=25
-    # percent=$(WIDTH=$WIDTH time_offset_percent "$1")
-    # echo "$(bs "B$fg" O$(( percent )) )$(bs Beef0f3 O$(($WIDTH - percent)) )"
+    WIDTH=60
+    percent=$(WIDTH=$WIDTH time_offset_percent "$1")
+    echo "$(bs "B$(colort -70 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
 }
 
 get_length() {

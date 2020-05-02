@@ -125,7 +125,7 @@ target_corners() {
 # if any corner falls in us, use that, biased to higher values
 if [ ! -z "$floating_windows" ]; then
   for wid in $floating_windows; do
-    wid="${wid^^}"
+    wid=${wid^^}
     [ "$wid" = "$node" ] && continue
     check_corners "$wid"
   done

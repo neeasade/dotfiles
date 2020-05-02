@@ -5,6 +5,24 @@
 # depend on environment to come from i3blocks
 # clickables:
 
+new() {
+    # border=${border:-#777777}
+    if [ -z "$border" ]; then
+	border=$(colort -30 "$bg")
+    fi
+
+    # border_side=$(bs O1 B$border U$border +o +u)
+    content=$(echo "  $line" | bs B$bg F$fg U$border +u)
+    content="$content$(bs B$bg F$fg U$border +u ':  ')"
+
+
+    # todo: consider gradient fade into section here
+    case $align in
+	left) printf '%s\n' "$content" ;;
+	center) printf '%s\n' "$content" ;;
+	right) printf '%s\n' "$content" ;;
+    esac
+}
 
 spaced_buttons() {
     border=${border:-#777777}
@@ -34,5 +52,6 @@ while IFS=$'\n' read -r line; do
     # todo: enhance with buttons from env?
 
     # echo "$line"
-    spaced_buttons
+    # spaced_buttons
+    new
 done

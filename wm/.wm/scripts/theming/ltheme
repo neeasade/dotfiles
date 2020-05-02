@@ -180,7 +180,12 @@ load_lemonade() {
 
 	[ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
     fi
+
+    if systemctl --user status lemonade >/dev/null; then
+	systemctl --user restart lemonade
+    fi
 }
+
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
     trim_alphas

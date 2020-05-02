@@ -8,7 +8,6 @@ p_bg_inactive=$(theme getval p_bg_inactive)
 render() {
     current=$(bspc query -N -n)
 
-    # do not rename tname to name
     result=$(btags state-plain | while read tname active color wids; do
 	tag_name=$tname
 	background=$p_bg_inactive
@@ -39,9 +38,98 @@ render() {
     echo "$result"
 }
 
-render
+render_smol() {
+    current=$(bspc query -N -n)
+
+    result=$(btags state-plain | while read tname active color wids; do
+	tag_name=$tname
+	background=$p_bg_inactive
+
+	T=1
+	if $active; then
+	    T=2
+	    if [ ! -z "$wids" ]; then
+		background=$color
+	    fi
+	else
+	    if [ ! -z "$wids" ]; then
+		tname="${tname}*"
+	    fi
+	fi
+
+	border=
+
+	if echo "$wids" | grep -q $current; then
+	    border=$(colort -l -40 $color)
+	    tname="${tname}!"
+	fi
+
+	# height of the under/over determined from bar itself
+	# printf "%s^" "$(bs ": ${tname} " "U$border" +u +o B$background "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
+	# printf "%s^" "$(bs ": ${tname} " "U$border" +u +o T$T "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
+
+	printf "%s^" "$(bs ": ${tname} " T$T "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
+
+	# printf '%s' "$(echo "$tname" | border=$border bg=$background FORCE=t season)"
+    done
+    )
+
+    echo "$(echo "$result" | rev | sed 's/\^//' | rev | sed 's/\^/·/g')"
+}
+
+render_supersmol() {
+    current=$(bspc query -N -n)
+
+    # endgoal: foreground color to indicate 'on': C!NCH*
+
+    result=$(btags state-plain | while read tname active color wids; do
+	tag_name=$tname
+	foreground=$(colort -50 "$bg")
+
+	tname=${tname:0:1}
+
+	T=1
+	if $active; then
+	    foreground=$p_fg_inactive
+	    # foreground=$(colort -40 "$color")
+	    if [ ! -z "$wids" ]; then
+		# tname="${tname}!"
+		T=2
+	    fi
+	else
+	    if [ ! -z "$wids" ]; then
+		tname="${tname}*"
+		T=2
+	    fi
+	fi
+
+	border=
+	if echo "$wids" | grep -q $current; then
+	    border=$(colort -l -40 $color)
+	    tname="${tname}!"
+	fi
+
+	# height of the under/over determined from bar itself
+	# printf "%s^" "$(bs ": ${tname} " "U$border" +u +o B$background "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
+	# printf "%s^" "$(bs ": ${tname} " "U$border" +u +o T$T "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
+
+	printf "%s" "$(bs ":${tname}" T$T "F$foreground" "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
+
+    done
+    )
+
+    # echo "$(echo "$result" | rev | sed 's/\^//' | rev | sed 's/\^/·/g')"
+    echo "$result" | FORCE=t season
+}
+
+draw() {
+    # render
+    render_supersmol
+}
+
+draw
 
 bspc subscribe node_flag node_state node_focus | \
     while read -r trigger; do
-	render
+	draw
     done

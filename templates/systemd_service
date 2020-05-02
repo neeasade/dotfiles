@@ -5,7 +5,9 @@ Description={{Description}}
 ExecStart={{ExecStart}}
 ExecStop={{{which kill}}} -int $MAINPID
 
+
 Environment=PATH={{PATH}}
+Environment=NODE_PATH={{NODE_PATH}}
 Environment=DISPLAY="{{DISPLAY}}"
 Environment=XAUTHORITY="{{XAUTHORITY}}"
 Environment=WAYLAND_DISPLAY="{{WAYLAND_DISPLAY}}"

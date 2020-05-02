@@ -12,7 +12,7 @@ xinit=$(iif "[ $(( $(date +%s) - xstart )) -lt 2 ]")
 
 PATH=$PATH:$HOME/.wm/scripts/visual
 
-relaunch_panel=$(iif "kill -s TERM $(cat /tmp/panel-pid) 2>/dev/null")
+relaunch_panel=$(iif "systemctl --user status panel")
 
 bspc config border_width {{b_border_width}}
 bspc config split_ratio  {{b_split_ratio}}
@@ -62,8 +62,8 @@ for monitor in $(bspc query -M); do
     bspc monitor $monitor -d {{b_desktop_names}}
 done
 
-if $relaunch_panel && ! ps -p $(cat /tmp/panel-pid); then
-    "{{p_launch_cmd}}" &
+if $relaunch_panel; then
+    systemctl --user restart panel
 fi
 
 for visual in $HOME/.wm/scripts/visual/*; do
@@ -78,5 +78,5 @@ bspc rule -a Emacs state=tiled
 # initial wm startup actions
 if $xinit; then
     $HOME/.wm/startup.sh &
-    "{{p_launch_cmd}}" &
+    panelt
 fi
