@@ -181,8 +181,8 @@ load_lemonade() {
 	[ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
     fi
 
-    if systemctl --user status lemonade >/dev/null; then
-	systemctl --user restart lemonade
+    if systemctl --user status panel >/dev/null; then
+	systemctl --user restart panel
     fi
 }
 

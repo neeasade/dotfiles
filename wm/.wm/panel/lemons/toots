@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+count=0
+if ! diff=$(diff <(cache_output $((60 * 1)) toot notifications) <(cat /tmp/toot-notifications)); then
+    new_content=$(echo "$diff" | grep '^<' | sed 's/< //')
+    count=$(echo "$new_content" | awk 'BEGIN { RS="\n─+\n" }; /mentioned you/{print "mentioned"}' | wc -l)
+fi
+
+echo "$count toots"
