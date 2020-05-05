@@ -1,4 +1,9 @@
 #!/bin/sh
 # inline if
 
-eval $1 >/dev/null && echo -n "${2-true}" || echo -n "${3-false}"
+res=${2-true}
+if ! eval "$1" >/dev/null; then
+    res=${3-false}
+fi
+
+printf '%s' "$res"
