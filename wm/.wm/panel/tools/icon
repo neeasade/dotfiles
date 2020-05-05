@@ -42,4 +42,4 @@ esac
 
 icon_result=$(uchar $(echo $icon | cut -d ' ' -f$index))
 
-env printf "$icon_result"
+env printf "$icon_result "

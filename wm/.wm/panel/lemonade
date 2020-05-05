@@ -32,19 +32,22 @@ stdbuf -oL i3blocks -o j | \
     stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
     stdbuf -oL grep '^{' | \
     stdbuf -oL jq -r '.name + " " + .full_text' | \
-    stdbuf -oL sed "s#'#\'\\\'\'#g" | \
     while IFS=$'\n' read -r event; do
 	eval "${event%% *}=\${event#* }"
 	eval "echo \"$format\""
     done | stdbuf -oL debounce.js 30 | \
 	lemonbar -d \
--u $(theme getval p_line) \
+-u 1 \
 -n $(theme getval p_window_class) \
 -B \#cceef0f3 \
 -F \#ff5a5e65 \
--o -1 \
 -f 'Equity Caps B-10:style=Regular' \
 -f 'Equity Caps B-10:style=Bold' \
--f 'Equity B-10' \
+-f 'Font Awesome 5 Free Solid-8' \
+-o 0 \
+-o 0 \
+-o -4 \
 -a 20 \
 -g "$geom" | sh
+
+# -u $(theme getval p_line) \

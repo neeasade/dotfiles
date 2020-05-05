@@ -80,8 +80,6 @@ render_smol() {
 render_supersmol() {
     current=$(bspc query -N -n)
 
-    # endgoal: foreground color to indicate 'on': C!NCH*
-
     result=$(btags state-plain | while read tname active color wids; do
 	tag_name=$tname
 	foreground=$(colort -50 "$bg")
@@ -113,13 +111,14 @@ render_supersmol() {
 	# printf "%s^" "$(bs ": ${tname} " "U$border" +u +o B$background "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
 	# printf "%s^" "$(bs ": ${tname} " "U$border" +u +o T$T "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
 
+	# notify-send "$foreground"
 	printf "%s" "$(bs ":${tname}" T$T "F$foreground" "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
-
     done
     )
 
     # echo "$(echo "$result" | rev | sed 's/\^//' | rev | sed 's/\^/·/g')"
-    echo "$result" | FORCE=t season
+    # echo "$result" | FORCE=t season
+    echo "$result"
 }
 
 draw() {

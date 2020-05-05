@@ -11,17 +11,41 @@ new() {
 	border=$(colort -30 "$bg")
     fi
 
+
     # border_side=$(bs O1 B$border U$border +o +u)
-    content=$(echo "  $line" | bs B$bg F$fg U$border +u)
-    content="$content$(bs B$bg F$fg U$border +u ':  ')"
+    content=$(echo " $line" | bs "B$bg" "F$fg" "U$border" +u)
+    content="$content$(bs "B$bg" "F$fg" "U$border" +u ': ')"
 
+    # gradient fade -- depends on dir
 
-    # todo: consider gradient fade into section here
-    case $align in
-	left) printf '%s\n' "$content" ;;
-	center) printf '%s\n' "$content" ;;
-	right) printf '%s\n' "$content" ;;
-    esac
+    if [ "$align" = "left" ]; then
+	# pain
+	# if [ "$lemon" = "title" ]; then notify-send 'made it here'; fi
+	# if [ "$lemon" = "title" ]; then notify-send "gradient 10 $bg $bg_next"; fi
+	for g in $(gradient 10 "$bg" "$bg_next"); do
+	    # if [ "$lemon" = "title" ]; then notify-send "arstarst $g"; fi
+	    # notify-send "$g"
+	    content="$content$(bs "B$g" O2 U$(colort -30 -t "$g") +u)"
+	done
+    fi
+
+    if [ "$align" = "right" ]; then
+	# notify-send "gradient 4 $bg $bg_next"
+	for g in $(gradient 10 "$bg" "$bg_next"); do
+	    # notify-send "$g"
+	    content="$(bs "B$g" O2 U$(colort -30 "$g") +u)${content}"
+	done
+    fi
+
+    if [ "$align" = "center" ]; then
+	# bg_next=$(colort -t "$(theme getval p_bg_normal)")
+	# notify-send "gradient 10 $bg $bg_next"
+	for g in $(gradient 10 "$bg" "$bg_next"); do
+	    content="$(bs "B$g" O2 U$(colort -30 "$g") +u)${content}$(bs "B$g" O2 U$(colort -30 "$g") +u)"
+	done
+    fi
+
+    printf '%s\n' "$content"
 }
 
 spaced_buttons() {
@@ -37,10 +61,16 @@ spaced_buttons() {
     esac
 }
 
-while IFS=$'\n' read -r line; do
+while read -d $'\n' -r line; do
     if [ -z "$line" ]; then
+	# blank it out
+	echo
 	continue
     fi
+
+    # if [ "$lemon" = "dynamicmpd" ]; then
+    # 	notify-send "wow fuck me"
+    # fi
 
     if [ -z "$FORCE" ]; then
 	if [ "$lemon" = "tags" ]; then

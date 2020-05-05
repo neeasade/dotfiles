@@ -81,7 +81,7 @@ if ! sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .h
 fi
 
 # do the same thing as above, but compare the url, grabbing the title
-matching_title=$(sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | select(.url == "'"${url}"'") | .title')
+matching_title=$(sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | select(.url == "'"${url}"'") | .title' | head -n 1)
 
 if [ -z "$matching_title" ]; then
     echo no found title

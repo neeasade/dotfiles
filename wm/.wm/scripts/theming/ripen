@@ -50,6 +50,11 @@ separateStep() {
       grep "^${lemon}\|${lemon}$" <<< "${p_format}" &&
         eval ${lemon}_end=true ||
         eval ${lemon}_end=false
+
+      grep -E "${lemon}\||\|${lemon}" <<< "${p_format}" &&
+	eval ${lemon}_end_inner=true ||
+        eval ${lemon}_end_inner=false
+
     done
     i=$((i+1))
   done
@@ -114,6 +119,7 @@ gradientGet() {
     else
 	step=$*
     fi
+
   gradient $total $color0 $color7 | sed -n ${step}p
 }
 
@@ -133,12 +139,12 @@ default_function() {
 # means we need default bg activebg as well...
 default_function fg '
     colort -c "$(bg)" && check="$p_bg_normal" || check="$p_fg_normal"
-    colort -c "$check" && echo $p_fg_normal || echo $p_bg_normal
+    colort -c "$check" && echo "$p_fg_normal" || echo "$p_bg_normal"
 '
 
 default_function activefg '
     colort -c "$(activebg)" && check="$p_bg_active" || check="$p_fg_active"
-    colort -c "$check" && echo $p_fg_active || echo $p_bg_active
+    colort -c "$check" && echo "$p_fg_active" || echo "$p_bg_active"
 '
 
 default_function bg 'vanilla bg'

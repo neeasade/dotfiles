@@ -50,8 +50,8 @@ case ${pomodoro_state} in
         ;;
 
     :none)
-        # echo "current focus: $(elisp -r '(ns/org-get-active)')"
-        echo "Select a task!"
+        echo "RESUME: $(elisp -r '(ns/org-get-active)')"
+        # echo "Select a task!"
         ;;
 
     *)
