@@ -5,8 +5,8 @@ mpv=$(type -a mpv | tail -n 1 | awk '{print $3}')
 
 mpc pause >/dev/null
 
-# todo: expand filename, so we have a full ref
-# additionally -- maintain a cache of youtube dl to title names
+# todo maybe - maintain a cache of youtube dl to title names,
+# then mpv_resume could resume by youtube channel/title
 
 args=( )
 for a in "$@"; do
