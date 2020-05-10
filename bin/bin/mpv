@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # always run mpv w/ socket, args as config
 
 mpv=$(type -a mpv | tail -n 1 | awk '{print $3}')
@@ -7,6 +7,17 @@ mpc pause >/dev/null
 
 # todo: expand filename, so we have a full ref
 # additionally -- maintain a cache of youtube dl to title names
+
+args=( )
+for a in "$@"; do
+    if [ -e "$a" ]; then
+	args+=( "$(realpath "$a")" )
+    else
+	args+=( "$a" )
+    fi
+done
+
+set -- "${args[@]}"
 
 $mpv \
     --write-filename-in-watch-later-config --save-position-on-quit \
