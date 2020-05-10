@@ -10,7 +10,7 @@ mpc pause >/dev/null
 
 args=( )
 for a in "$@"; do
-    if [ -e "$a" ]; then
+    if [[ -e "$a" ]]; then
 	args+=( "$(realpath "$a")" )
     else
 	args+=( "$a" )

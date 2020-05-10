@@ -24,7 +24,7 @@ windowshot() {
   x=$((x - (border/2)))
   y=$((y - (border/2)))
 
-  maim -g "${w}x${h}+${x}+${y}" "$(shot_location)"
+  maim -u -g "${w}x${h}+${x}+${y}" "$(shot_location)"
 }
 
 bspwm_kill_visual() {
@@ -59,9 +59,16 @@ sync_last_phone_file() {
 }
 
 blog_add_asset() {
-  target=$*
-  echo cp "$*" "${HOME}/git/neeasade.github.io/site/assets/posts/$*"
-  cp "$*" "${HOME}/git/neeasade.github.io/site/assets/posts/$*"
+  if [ -z "$*" ]; then
+    echo "blog_add_dtop <asset filename> <file>"
+    echo 'EG blog_add_dtop <asset filename> $(shot)'
+    return
+  fi
+
+  echo cp "$2" "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
+  cp "$2" "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
+  echo "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
+  echo ""
 }
 
 blog_add_dtop() {
@@ -130,7 +137,7 @@ shot() {
   # eval $(slop)
   g=$(slop -p ${1:-0})
   dest=$(shot_location)
-  maim -g ${g} "$dest"
+  maim -u -g ${g} "$dest"
   echo "$dest"
 }
 
@@ -143,7 +150,7 @@ shellshot() {
 fullshot() {
   [ ! -z "$1" ] && sleep $1
   dest=$(shot_location)
-  maim "$dest"
+  maim -u "$dest"
   echo "$dest"
 }
 
@@ -172,7 +179,7 @@ monshot() {
   x=$(jget x)
   y=$(jget y)
 
-  maim -g ${w}x${h}+${x}+${y} "$(shot_location)"
+  maim -u -g ${w}x${h}+${x}+${y} "$(shot_location)"
 }
 
 settitle() {

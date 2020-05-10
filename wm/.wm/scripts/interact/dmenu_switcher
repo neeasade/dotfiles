@@ -3,6 +3,8 @@
 # idea: qutebrowser history
 # idea: org headings
 # on the emacs side could really use keybinds to narrow
+# auto export
+set -a
 
 declare -A matches_to_actions
 
@@ -22,7 +24,7 @@ add_windows() {
     done
 }
 
-add_emacs_buffers() {
+add_buffers() {
     find_emacs_window() {
 	emacs_wid=
 	check_id() {
@@ -75,7 +77,8 @@ add_emacs_buffers() {
     done
 }
 
-add_qutebrowser_history() {
+# nb: name intentional.
+add_historys() {
     start_day=$(date --date="1 days ago" +%F)
     end_day=$(date +%F)
     start=$(date -d "$start_day 00:00:00" +%s)
@@ -91,7 +94,7 @@ add_qutebrowser_history() {
     done < <(sqlite3 "$qutedb" "$query" | head -n 2)
 }
 
-add_qutebrowser_tabs() {
+add_tabs() {
     open_titles() {
 	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/_autosave.yml" | grep title | sed 's/.*title: //'
     }
@@ -111,7 +114,7 @@ add_qutebrowser_tabs() {
 # playing around
 # idea: meta history that opens up new dmenu with qutebrowser browsing history from sqlite
 # idea: find a current window with shell on vps or spawn one
-add_meta() {
+add_metas() {
     find_url() {
 	url_match=$*
 	session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
@@ -155,12 +158,14 @@ select_action() {
     # maybe consider allow partial match later (turned out accumulating options was really slow/maybe revisit this in keys)
 
     if [ -z "$*" ]; then
+	echo "no action selected"
 	return
     fi
 
     # target=$(echo "$options" | grep "$*" | head -n 1)
     target=$*
-    echo "$target"
+
+    echo "target: '$target'"
     echo "${matches_to_actions[${target}]}"
     eval "${matches_to_actions[${target}]}"
     # bspc desktop -l monocle
@@ -168,16 +173,24 @@ select_action() {
 
 # doing it this way let's us call dmenu right away/just start typing
 enact() {
-    add_windows >/dev/null
-    add_qutebrowser_tabs >/dev/null
-    add_emacs_buffers >/dev/null
-    add_meta >/dev/null
-    add_qutebrowser_history >/dev/null
+    if [ -z "$*" ]; then
+	add_windows >/dev/null
+	add_tabs >/dev/null
+	add_buffers >/dev/null
+	add_metas >/dev/null
+	add_historys >/dev/null
+    else
+	eval add_${*}s >/dev/null
+    fi
 
     for key in "${!matches_to_actions[@]}"; do
 	echo "$key"
     done
 }
 
+# we call enact twice to get the matches_to_actions array with our choice
+# there doesn't appear to be a way to export arrays in bash >_<
+
 choice=$(enact | dmenu "$@")
+enact "$(awk -F: '{print $1}' <<< "$choice")" >/dev/null
 select_action "$choice"

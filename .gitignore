@@ -1,4 +1,5 @@
 nohup.out
+*.elc
 *.*~
 
 shell/.sh.d/extend
