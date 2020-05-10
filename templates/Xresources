@@ -1,3 +1,9 @@
+! wiping out control+e
+rofi.kb-move-end:
+rofi.kb-row-up: Up,Control+e,ISO_Left_Tab
+rofi.kb-row-down: Down,Control+n
+rofi.font: {{{echo "$st_font" | sed 's/-/ /'}}}
+
 st.font: {{st_font}}
 st.font_variable: {{st_font_variable}}
 st.borderpx: 0

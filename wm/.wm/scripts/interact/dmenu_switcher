@@ -76,20 +76,19 @@ add_emacs_buffers() {
 }
 
 add_qutebrowser_history() {
-
-    start_day=$(date --date="7 days ago" +%F)
+    start_day=$(date --date="1 days ago" +%F)
     end_day=$(date +%F)
     start=$(date -d "$start_day 00:00:00" +%s)
     end=$(date -d "$end_day 23:59:59" +%s)
     query="select * from history where atime > ${start} and atime < ${end}"
     qutedb="$HOME/.local/share/qutebrowser/history.sqlite"
 
-    IFS=$'\n'
-    for result in "$(sqlite3 "$qutedb" "$query")"; do
+    while read -r result; do
 	url=$(awk -F\| '{print $1}' <<<"$result")
 	title=$(awk -F\| '{print $2}' <<<"$result")
-	# add_switch "history: $title" "notify-send wtf"
-    done
+	# echo "add_switch history: $title notify-send wtf"
+	add_switch "history: $title" "notify-send wtf"
+    done < <(sqlite3 "$qutedb" "$query" | head -n 2)
 }
 
 add_qutebrowser_tabs() {
@@ -167,16 +166,18 @@ select_action() {
     # bspc desktop -l monocle
 }
 
+# doing it this way let's us call dmenu right away/just start typing
+enact() {
+    add_windows >/dev/null
+    add_qutebrowser_tabs >/dev/null
+    add_emacs_buffers >/dev/null
+    add_meta >/dev/null
+    add_qutebrowser_history >/dev/null
 
-add_windows
-add_qutebrowser_tabs
-add_emacs_buffers
-add_meta
+    for key in "${!matches_to_actions[@]}"; do
+	echo "$key"
+    done
+}
 
-# add_qutebrowser_history
-
-choice=$((for key in "${!matches_to_actions[@]}"; do
-	      echo "$key"
-	  done) | dmenu "$@")
-
+choice=$(enact | dmenu "$@")
 select_action "$choice"

@@ -16,13 +16,12 @@ case $node_dir in
 esac
 
 if xprop -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
-  if elisp "(evil-window-$emacs_dir 1) t"; then
+  if timeout 0.2 elisp "(evil-window-$emacs_dir 1) t"; then
     exit 0
   fi
 fi
 
 node=${node^^}
-
 
 floating_windows=$(bspc query -N -d -n .window.local.floating.!hidden)
 declare -A winmap=();
