@@ -56,6 +56,10 @@
         src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
       }));
 
+      lemonbar= (pkgs.lemonbar-xft.overrideAttrs(old: {
+        src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc"; };
+      }));
+
       colort-git = (pkgs.colort.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/colort"; ref = "master"; };
       }));

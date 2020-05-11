@@ -9,7 +9,11 @@ set -a
 declare -A matches_to_actions
 
 add_switch() {
-    matches_to_actions["$1"]=$2
+    if ${ASSOCIATE:-false}; then
+	matches_to_actions["$1"]=$2
+    fi
+
+    echo "$1"
 }
 
 add_windows() {
@@ -89,9 +93,9 @@ add_historys() {
     while read -r result; do
 	url=$(awk -F\| '{print $1}' <<<"$result")
 	title=$(awk -F\| '{print $2}' <<<"$result")
-	# echo "add_switch history: $title notify-send wtf"
-	add_switch "history: $title" "notify-send wtf"
-    done < <(sqlite3 "$qutedb" "$query" | head -n 2)
+	add_switch "history: $title" "$BROWSER '$url'"
+    # done < <(sqlite3 "$qutedb" "$query" | head -n 2)
+    done < <(sqlite3 "$qutedb" "$query" | head -n 200)
 }
 
 add_tabs() {
@@ -166,31 +170,40 @@ select_action() {
     target=$*
 
     echo "target: '$target'"
-    echo "${matches_to_actions[${target}]}"
+    echo "match: ${matches_to_actions[${target}]}"
+
+    # echo "${matches_to_actions[${key}]}"
     eval "${matches_to_actions[${target}]}"
     # bspc desktop -l monocle
 }
 
 # doing it this way let's us call dmenu right away/just start typing
 enact() {
+    # rofi
+    echo FEEDER_PID=$$
+    echo " "
+
     if [ -z "$*" ]; then
-	add_windows >/dev/null
-	add_tabs >/dev/null
-	add_buffers >/dev/null
-	add_metas >/dev/null
-	add_historys >/dev/null
+	add_windows
+	add_tabs
+	add_buffers
+	add_metas
+	add_historys
     else
-	eval add_${*}s >/dev/null
+	echo eval add_${*}s
+	eval add_${*}s
     fi
 
-    for key in "${!matches_to_actions[@]}"; do
-	echo "$key"
-    done
+    # for key in "${!matches_to_actions[@]}"; do
+    # 	echo "$key"
+    # done
 }
 
-# we call enact twice to get the matches_to_actions array with our choice
-# there doesn't appear to be a way to export arrays in bash >_<
+choice=$(setsid bash -c "enact | dmenu $@")
+echo "choice: $choice"
+type=$(awk -F: '{print $1}' <<< "$choice")
 
-choice=$(enact | dmenu "$@")
-enact "$(awk -F: '{print $1}' <<< "$choice")" >/dev/null
+echo "enact choice type: $type"
+ASSOCIATE=true enact "$type" >/dev/null
+
 select_action "$choice"

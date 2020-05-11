@@ -35,6 +35,10 @@ super + t
 super + y
     dismiss.sh
 
+    # dismiss.sh
+super + shift + y
+    btags set-tag-on-wids hole $(bspc query -N -n)
+
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal.!hidden
 
