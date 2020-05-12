@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-prompt=${*:-select: }
+prompt=${*:-select}
 
 # cheat a little: if called like regular dmenu ignore everything except -p
 while :; do

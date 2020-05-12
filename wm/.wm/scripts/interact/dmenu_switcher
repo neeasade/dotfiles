@@ -83,11 +83,11 @@ add_buffers() {
 
 # nb: name intentional.
 add_historys() {
-    start_day=$(date --date="1 days ago" +%F)
+    start_day=$(date --date="7 days ago" +%F)
     end_day=$(date +%F)
     start=$(date -d "$start_day 00:00:00" +%s)
     end=$(date -d "$end_day 23:59:59" +%s)
-    query="select * from history where atime > ${start} and atime < ${end}"
+    query="select distinct url, title from history where atime > ${start} and atime < ${end}"
     qutedb="$HOME/.local/share/qutebrowser/history.sqlite"
 
     while read -r result; do
@@ -95,7 +95,7 @@ add_historys() {
 	title=$(awk -F\| '{print $2}' <<<"$result")
 	add_switch "history: $title" "$BROWSER '$url'"
     # done < <(sqlite3 "$qutedb" "$query" | head -n 2)
-    done < <(sqlite3 "$qutedb" "$query" | head -n 200)
+    done < <(sqlite3 "$qutedb" "$query" | head -n 300)
 }
 
 add_tabs() {
@@ -113,6 +113,12 @@ add_tabs() {
     while read -r title; do
 	add_switch "tab: $title" "qute_switch_to '$(echo "$title" | sed "s/'//g;s/\"// ")'"
     done <<< "$(open_titles)"
+}
+
+add_tags() {
+    while read -r name; do
+	add_switch "tag: set $name" "btags set-tag-on-wids $name \$(bspwindows)"
+    done < <(btags state-raw | bb -o '(->> *input* :tags (map :name))')
 }
 
 # playing around
@@ -151,6 +157,11 @@ add_metas() {
 
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
 
+    # todo: these might be org links instead of meta thing shere
+    add_switch "meta: music now" "music now"
+    add_switch "meta: mpv resume" "mpv_resume"
+    add_switch "meta: netflix" "google-chrome-stable netflix.com"
+
     # idea: hydra menu for tag stuff? other?
 
     notes_file() {
@@ -184,22 +195,27 @@ enact() {
     echo " "
 
     if [ -z "$*" ]; then
-	add_windows
-	add_tabs
-	add_buffers
-	add_metas
-	add_historys
+	# the reason for wrapping this in a subshell is to batch the adds for rofi
+	echo "$(add_windows)"
+	echo "$(add_tabs)"
+	echo "$(add_buffers)"
+	echo "$(add_metas)"
+	echo "$(add_tags)"
+	echo "$(add_historys)" | sort | uniq
+	wait
     else
-	echo eval add_${*}s
+	# echo eval add_${*}s
 	eval add_${*}s
     fi
-
-    # for key in "${!matches_to_actions[@]}"; do
-    # 	echo "$key"
-    # done
 }
 
-choice=$(setsid bash -c "enact | dmenu $@")
+# narrow:
+kind=$(echo window tab buffer meta tag history | tr ' ' $'\n' | dmenu)
+choice=$(setsid bash -c "enact $kind | dmenu $@")
+
+# broad:
+# choice=$(setsid bash -c "enact | dmenu $@")
+
 echo "choice: $choice"
 type=$(awk -F: '{print $1}' <<< "$choice")
 
