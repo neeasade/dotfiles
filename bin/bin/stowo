@@ -1,24 +1,40 @@
 #!/bin/sh
 # narrow symlinker to match stow, but only from ~/.dotfiles
 
+if [ -z "$*" ]; then
+    echo "give me something to stOwO:"
+    ls "$HOME/.dotfiles/"
+    exit 0
+fi
+
 while [ ! -z "$1" ]; do
-    echo "stowwing $1"
     cd "$HOME/.dotfiles/$1"
-    find . -type f | while read -r path; do
+    echo "stOwOing $1"
+    pwd
+    # find . -type f | while read -r path; do
+    git ls-files | while read -r path; do
 	target="${HOME}/${path}"
 	target=$(echo "$target" | sed 's#/\./#/#')
 
-	# match symlink style of stoww
+	# match symlink style of vanilla stow
 	path="$(pwd)/${path}"
 	path=$(echo "$path" | sed 's#/\./#/#')
-	path=$(echo "$path" | sed "s#$HOME#..#")
+	path=$(echo "$path" | sed "s#$HOME/##")
+
+	# hell yeah brother HH
+	prepend=$(echo "$path" | tr -dc '/' | cut -c3- | sed 's#/#../#g')
+	path="$prepend$path"
+
 
 	mkdir -p "$(dirname "$target")"
 
 	if readlink "$target" >/dev/null; then
 	    if [ "$(readlink "$target")" = "$path" ]; then
-		echo "link already in place, skipping $path"
+		# echo "link already in place, skipping $path"
 		continue
+	    else
+		echo "updating link $path"
+		echo placeholder >/dev/null
 	    fi
 
 	    rm "$target"
