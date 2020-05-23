@@ -2,7 +2,6 @@
 ;; note: bb is https://github.com/borkdude/babashka
 
 ;; idea: arrange tags under bspwm tree
-
 (require '[clojure.core :as core])
 (require '[clojure.string :as str])
 (require '[clojure.set :as set])
@@ -34,10 +33,10 @@
       (-> state-file slurp read-string)
       ;; default
       {:tags
-       [{:name "00" :wids #{} :active true :color "c2c6e3"}
-        {:name "01" :wids #{} :active true :color "e4815d"}
-        {:name "10" :wids #{} :active true :color "c6dc93"}
-        {:name "11" :wids #{} :active true :color "E2E3E5"}]
+       [{:name "code" :wids #{} :active true :color "c2c6e3"}
+        {:name "net" :wids #{} :active true :color "e4815d"}
+        {:name "chat" :wids #{} :active true :color "c6dc93"}
+        {:name "hole" :wids #{} :active true :color "E2E3E5"}]
        :focus-wid ""
        }
       ))
@@ -109,17 +108,28 @@
   (def state
     (update state :tags
             (fn [old-tags]
-              (doall
-               (map transform-func old-tags))))))
+              (vec
+               (doall
+                (map transform-func old-tags)))
+              ))))
 
 (defn cleanup-state
-  "remove any nonexistent wids from state"
+  "cleanup state"
   []
+  ;; remove killed windows from tags
   (let [all-wids (-> "bspc query -N -n .leaf" sh (str/trim-newline) (str/split #"\n") set)]
     (update-tags
      (fn [old-tag]
        (update old-tag :wids (fn [old-wids]
-                               (set (filter #(contains? all-wids %) old-wids))))))))
+                               (set (filter #(contains? all-wids %) old-wids)))))))
+
+  ;; make sure there are no duplicate tag names
+  (def state
+    (update state :tags
+            (fn [old-tags]
+              (map #(-> % second first)
+                   (group-by :name old-tags)))))
+  )
 
 (defn action-set "<tag> <setting> <value> - set [name|color] value on tag"
   [tag-name setting new-value]
@@ -129,14 +139,17 @@
              #(if (= (:name old-tag) (tag-ident-to-name tag-name))
                 new-value %)))))
 
-;; (defn action-add "<tag-name> <color> - create a new tag with an associated color"
-;;   [tag-name color]
-;;   (update state
-;;           :tags
-;;           (conj
-;;            (:tags state)
-;;            {:name tag-name :wids #{} :color color}
-;;            )))
+(defn action-add "<tag-name> <color> - create a new tag with an associated color"
+  [tag-name color]
+  (def state
+    (update state :tags
+            (fn [tags] (conj tags {:active true :name tag-name :color color :wids #{}})))))
+
+(defn action-remove "<tag-name> - remove tag name from the tags list"
+  [tag-name]
+  (def state
+    (update state :tags
+            (fn [tags] (filter #(not (= (:name %) tag-name)) tags)))))
 
 (defn action-toggle
   "<tags> -- toggle visibility of tags"
@@ -231,6 +244,10 @@
                 (set/union old-wids (set wids))
                 (set/difference old-wids (set wids))
                 ))))
+
+  ;; add tag if it doesn't exist
+  (when (not (contains? (map :name (:tags state)) (tag-ident-to-name tag)))
+    (action-add (tag-ident-to-name tag) "444444"))
 
   (update-tags update-wids-set))
 
