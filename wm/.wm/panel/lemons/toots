@@ -3,10 +3,13 @@
 # todo: export enviroment in systemd service template (here just $BROWSER)
 . "$HOME/.sh.d/environment"
 
-count=0
-if ! diff=$(diff <(cache_output $((60 * 1)) toot notifications) <(cat /tmp/toot-notifications)); then
+if ! diff=$(diff <(cache_output $((60 * 1)) toot notifications) <(cat /tmp/toot-notifications.txt)); then
     new_content=$(echo "$diff" | grep '^<' | sed 's/< //')
     count=$(echo "$new_content" | awk 'BEGIN { RS="\n─+\n" }; /mentioned you/{print "mentioned"}' | wc -l)
+    if [ $count -gt 0 ]; then
+	echo "$(bs ":$count toots" "A1$BROWSER 'https://mastodon.social'; toot notifications >/tmp/toot-notifications.txt")"
+    else
+	echo
+    fi
 fi
 
-echo "$(bs ":$count toots" "A1$BROWSER 'https://mastodon.social'; toot notifications >/tmp/toot-notifications.txt")"
