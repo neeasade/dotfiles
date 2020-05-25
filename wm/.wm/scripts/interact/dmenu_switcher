@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# all switcher dmenu
-# idea: qutebrowser history
-# idea: org headings
-# on the emacs side could really use keybinds to narrow
+# switch between 'things' with a dmenu-like or pie style interface
+
+# idea: use keybinds to narrow the current selection
+
 # auto export
 set -a
 
@@ -124,6 +124,7 @@ add_tags() {
 # playing around
 # idea: meta history that opens up new dmenu with qutebrowser browsing history from sqlite
 # idea: find a current window with shell on vps or spawn one
+# idea: org headings
 add_metas() {
     find_url() {
 	url_match=$*
@@ -196,11 +197,11 @@ enact() {
 
     if [ -z "$*" ]; then
 	# the reason for wrapping this in a subshell is to batch the adds for rofi
+	echo "$(add_tags)"
 	echo "$(add_windows)"
 	echo "$(add_tabs)"
 	echo "$(add_buffers)"
 	echo "$(add_metas)"
-	echo "$(add_tags)"
 	echo "$(add_historys)" | sort | uniq
 	wait
     else
@@ -209,17 +210,70 @@ enact() {
     fi
 }
 
-# narrow:
-kind=$(echo window tab buffer meta tag history | tr ' ' $'\n' | dmenu)
-choice=$(setsid bash -c "enact $kind | dmenu $@")
 
-# broad:
-# choice=$(setsid bash -c "enact | dmenu $@")
+# todo: this is optimized by single letter -- tab/tag conflict rn
+get_kind() {
+    declare -A kinds=(
+	["w"]="window"
+	# ["t"]="tab"
+	["b"]="buffer"
+	["m"]="meta"
+	["t"]="tag"
+	["h"]="history"
+    )
 
-echo "choice: $choice"
-type=$(awk -F: '{print $1}' <<< "$choice")
+    selected=$(
+	for kind in "${!kinds[@]}"; do
+	    echo "$kind"
+	done | dmenu "$@")
+    echo "${kinds[$selected]}"
+}
 
-echo "enact choice type: $type"
-ASSOCIATE=true enact "$type" >/dev/null
+# circles
+pie_select() {
+    pie_options=$(while read -r line; do
+	echo "$line"
+    done | tr $'\n' '^')
 
-select_action "$choice"
+    pie_options=${pie_options%?}
+    pie_options=$(echo "$pie_options" | sed 's|\^|" "|g')
+    pie_options="\"${pie_options}\""
+
+    # to create:
+    # cd /home/neeasade/git/Pye-Menu/
+    # nix-build shell.nix
+    eval /home/neeasade/git/Pye-Menu/result/bin/pye_menu_shell $pie_options
+}
+
+# pie
+do_narrow_piemenu() {
+    type=$(echo tab window meta tag | tr ' ' $'\n' | pie_select)
+    test -z "$type" && exit 0
+
+    # type=tag
+    choice=$(add_${type}s | sed "s/${type}: //" | pie_select)
+    ASSOCIATE=true enact "$type" >/dev/null
+    select_action "$type: $choice"
+}
+
+do_narrow_dmenu() {
+    type=$(get_kind)
+    test -z "$type" && exit 0
+    choice=$(setsid bash -c "enact $type | dmenu $@")
+    select_action "$choice"
+}
+
+do_broad_dmenu() {
+    choice=$(setsid bash -c "enact | dmenu $@")
+    type=$(awk -F: '{print $1}' <<< "$choice")
+    ASSOCIATE=true enact "$type" >/dev/null
+    select_action "$choice"
+}
+
+if [ -z "$SWITCH_KIND" ]; then
+    # do_narrow_piemenu
+    # do_narrow_dmenu
+    do_broad_dmenu
+else
+    $SWITCH_KIND
+fi

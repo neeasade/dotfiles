@@ -10,6 +10,18 @@
 wid=$1
 class_name=$2
 
+if [ "$class_name"  = "pye-menu" ]; then
+  echo state=floating
+
+  size=400
+  eval "$(xdotool getmouselocation --shell)"
+  echo geometry=${size}x${size}+${X}+${Y}
+
+  # echo rectangle=
+  # 2560x1440+0+0*? %
+  exit 0
+fi
+
 # preferred split directions:
 horiPref=east
 vertPref=south
