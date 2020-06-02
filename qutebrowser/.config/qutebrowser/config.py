@@ -20,54 +20,63 @@ def nmap(key, command):
 # this check is so we can have speedy reloading of say, theme colors
 initial_start = c.tabs.background == False
 
-if initial_start:
-    # ui
-    c.completion.scrollbar.width = 10
-    c.tabs.position = 'top'
-    c.tabs.show = 'multiple'
-    c.tabs.indicator.width = 0
-    c.tabs.title.format = '{current_title}'
-    c.tabs.title.alignment = 'center'
-    c.downloads.position = 'bottom'
-    c.tabs.favicons.show = 'never'
+# ui
+c.completion.scrollbar.width = 10
+c.tabs.position = 'top'
+c.tabs.show = 'multiple'
+c.tabs.indicator.width = 0
+c.tabs.title.format = '{current_title}'
+c.tabs.title.alignment = 'center'
+c.downloads.position = 'bottom'
+c.tabs.favicons.show = 'never'
 
-    # behavior
-    c.downloads.location.prompt = False
-    c.hints.scatter = False
-    c.url.searchengines = {'DEFAULT': 'https://google.com/search?q={}' }
-    c.input.insert_mode.auto_load = True
-    c.input.insert_mode.auto_leave = False
-    c.tabs.background = True
+# behavior
+c.downloads.location.prompt = False
+c.hints.scatter = False
+c.url.searchengines = {'DEFAULT': 'https://google.com/search?q={}' }
+c.input.insert_mode.auto_load = True
+c.input.insert_mode.auto_leave = False
+c.tabs.background = True
 
-    if 'EDITOR' in os.environ:
-        c.editor.command = [os.environ['EDITOR'] + ' "{}"']
+if 'EDITOR' in os.environ:
+    c.editor.command = [os.environ['EDITOR'] + ' "{}"']
 
-    if which("qutebrowser-edit"):
-        c.editor.command = [which("qutebrowser-edit"), '-l{line}', '-c{column}', '-f{file}']
+if which("qutebrowser-edit"):
+    c.editor.command = [which("qutebrowser-edit"), '-l{line}', '-c{column}', '-f{file}']
 
-    c.auto_save.session = True
+c.auto_save.session = True
 
-    nmap('b', 'set-cmd-text --space :buffer')
+nmap('b', 'set-cmd-text --space :buffer')
 
-    # colemak
-    c.hints.chars = 'arstgkneio'
-    nmap('n', 'scroll-page 0 0.2')
-    nmap('e', 'scroll-page 0 -0.2')
-    nmap('N', 'tab-next')
-    nmap('E', 'tab-prev')
-    nmap('k', 'search-next')
-    nmap('K', 'search-prev')
+# trying to match to 's' avy hinting in emacs
+config.unbind('sf');
+config.unbind('sk');
+config.unbind('sl');
+config.unbind('ss');
+nmap('s', 'hint')
 
-    # keep autosave session in sync when tabs are closed as well as opened
-    # total hack
-    d_sync = ';;'.join([
-        'tab-close',
-        'set messages.timeout 1',
-        'session-save --force _autosave',
-        'set messages.timeout 2000',
-        ])
+# kill the old habit:
+config.unbind('f');
 
-    nmap('d', d_sync)
+# colemak
+c.hints.chars = 'arstgkneio'
+nmap('n', 'scroll-page 0 0.2')
+nmap('e', 'scroll-page 0 -0.2')
+nmap('N', 'tab-next')
+nmap('E', 'tab-prev')
+nmap('k', 'search-next')
+nmap('K', 'search-prev')
+
+# keep autosave session in sync when tabs are closed as well as opened
+# total hack
+d_sync = ';;'.join([
+    'tab-close',
+    'set messages.timeout 1',
+    'session-save --force _autosave',
+    'set messages.timeout 2000',
+    ])
+
+nmap('d', d_sync)
 
 # default theme:
 theme = {

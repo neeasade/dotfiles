@@ -11,13 +11,15 @@ in
       ../../config/services.nix
     ];
 
+  programs.gnupg.agent.enable = true;
+  programs.gnupg.agent.pinentryFlavor  = "qt";
+
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
-  boot.extraModulePackages = [ config.boot.kernelPackages.rtlwifi_new ];
   # boot.initrd.kernelModules = [ "wl" ];
   # boot.kernelModules = [ "kvm-intel" "wl" ];
   # boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
@@ -64,7 +66,7 @@ in
     isNormalUser = true;
     uid = 1000;
     extraGroups= [
-      "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers"
+      "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers" "cdrom"
     ];
     createHome=true;
     home="/home/neeasade";
@@ -115,5 +117,4 @@ in
   # servers. You should change this only after NixOS release notes say you
   # should.
   system.stateVersion = "18.09"; # Did you read the comment?
-
 }

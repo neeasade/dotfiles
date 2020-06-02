@@ -2,6 +2,6 @@
 
 while read -r trigger; do
     # doTheThing
-    xtitle -t 25
+    xtitle -t 25 | season
 done
 

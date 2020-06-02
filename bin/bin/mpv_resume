@@ -12,5 +12,14 @@ print_resume_dirs() {
 }
 
 jump=$(print_resume_dirs | dmenu)
-cd "$jump"
-mpv *
+if [ -z "$jump" ]; then
+    exit
+fi
+
+if [ -z "$*" ]; then
+    cd "$jump"
+    mpv *
+else
+    # TODO
+    echo 'todo: find file, delete it'
+fi

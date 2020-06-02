@@ -2,15 +2,11 @@
 # squeeze lemons into a certain shape/style
 # the environment comes from i3blocks generated with ripen
 
-# depend on environment to come from i3blocks
-# clickables:
-
 new() {
     # border=${border:-#777777}
     if [ -z "$border" ]; then
 	border=$(colort -30 "$bg")
     fi
-
 
     # border_side=$(bs O1 B$border U$border +o +u)
     content=$(echo " $line" | bs "B$bg" "F$fg" "U$border" +u)

@@ -4,10 +4,6 @@ let
   nixcfg = {
     allowUnfree = true;
     oraclejdk.accept_license = true;
-
-    permittedInsecurePackages = [
-      "samba-3.6.25"
-    ];
   };
 
   # pkgs = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
@@ -27,6 +23,12 @@ let
   # rolling = stable;
 
   core = (with stable; [
+    pinentry_qt5
+
+    rofi
+    cdparanoia
+    cdrkit
+    cdrtools
     syncthing
     kitty
     nmap
@@ -67,9 +69,6 @@ let
     file
     filezilla
     gitAndTools.gitFull
-
-    # todo: find this
-    gnome3.zenity
 
     go-mtpfs
     gparted
@@ -133,8 +132,6 @@ let
 
     playerctl
 
-    # emacs
-
     mesa_drivers
     libGL
 
@@ -149,8 +146,6 @@ let
     love_11
     luajit
 
-    emacs
-
     # (emacsWithPackages(e: with e; [
     #   emacs-libvterm
     #   # proof-general
@@ -161,7 +156,6 @@ let
     dzen2
     ffmpeg
     i3lock
-    lemonbar-xft
     meh
     ranger
     sxhkd
@@ -179,6 +173,7 @@ let
   ]) ++ ( with expr; [
     # qutebrowser-git
 
+    lemonbar
     skroll
 
     pfetch-neeasade
@@ -191,7 +186,6 @@ let
     mpvc-git
     xst-git
     dmenu
-    bevelbar
     gtkrc-reload
     neeasade-opt
     txth
@@ -260,12 +254,14 @@ let
     # wineStaging
     # wineUnstable
     # (wine.override { wineBuild = "wineWow"; })
-    steam
+
     minecraft
     openmw
     drawpile
+    steam
   ]) ++ (with unstable; [
     # openmw-tes3mp
+    # steam
   ]);
 
   development = (with stable; [
@@ -312,6 +308,7 @@ let
     python27
     (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
+      toot
 
       # please do the needful
       setuptools
@@ -353,28 +350,27 @@ let
   ]);
 
   basefonts = (with pkgs; [
-    roboto-mono
-    siji
-    tewi-font
+    dejavu_fonts
+    corefonts
   ]);
 
   extrafonts = (with pkgs; [
-    gohufont
-    corefonts
-    dejavu_fonts
-    fantasque-sans-mono
-    fira
-    fira-code
+    roboto roboto-mono
+    siji tewi-font
+    fira fira-code
     font-awesome-ttf
     noto-fonts
-    powerline-fonts
-    roboto
-    roboto-slab
-    source-code-pro
+    powerline-fonts # includes a 'Go Mono for powerline'
   ]);
 
 in
 {
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    }))
+  ];
+
   # "just give me something pls"
   # environment.systemPackages = core
   # fonts.fonts = basefonts
@@ -384,6 +380,7 @@ in
     extra ++
     development ++
     games ++
+    [pkgs.emacsUnstable] ++
     [];
 
   fonts.fonts =

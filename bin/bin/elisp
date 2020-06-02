@@ -2,6 +2,7 @@
 # provide a way to run elisp in a running emacs-server
 # can act as a shebang (ie #!/usr/bin/env elisp) or
 # adhoc code (ie elisp '(message "uwu")')
+# note: when args are passed to a shebang, they are available with the variable 'ns-args' as a list
 # todo: getopt, a -q option for quiet
 # todo: a way to connect in the current terminal and maybe edit a file from here
 
@@ -52,14 +53,24 @@ else
     trim=true
     elisp_timeout=${elisp_timeout:-15} # arbitrary
 
+    # shell -> elisp
     args=
     for a in "$@"; do
-	args="${args} \"${a}\""
+	args="${args} \\\"${a}\\\""
     done
+    args="(${args})"
 
-    # todo: if the script_name contains a '(provide)' consider just loading rather than eval-file
+    script_name="\"${script_name}\""
+
     add_stdin
-    lisp="(ns/eval-file \"${script_name}\" \"${stdin_file:-nil}\" ${args})"
+
+    if [ -z "$stdin_file" ]; then
+	stdin_file=nil
+    else
+	stdin_file="\"${stdin_file}\""
+    fi
+
+    lisp="(->> ${script_name} f-read (format \"(let ((*stdin-file* ${stdin_file}) (ns-args '${args})) %s)\") read eval)"
 fi
 
 emacs_timeout=
@@ -67,11 +78,14 @@ if type timeout >/dev/null; then
     emacs_timeout="timeout ${elisp_timeout}"
 fi
 
+# echo $emacs_timeout $eclient --eval "$lisp"
 result=$($emacs_timeout $eclient --eval "$lisp")
 
 quit() {
     if [ ! -z "$stdin_file" ]; then
-	rm "$stdin_file"
+	if [ ! "$stdin_file" = "nil" ]; then
+	    rm "$stdin_file"
+	fi
     fi
 
     exit ${*:-1}

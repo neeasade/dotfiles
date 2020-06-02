@@ -105,9 +105,11 @@ draw_outerdark() {
 	    inmost_color=$(colort -60 $color)
 	    outmost_color=$inmost_color
 	else
-	    outmost_color=$color
+	    outmost_color=$(colort -30 $color)
+	    # outmost_color=$color
 	    # outmost_color=D7CDFF
 	    inmost_color=$normal
+	    # inmost_color=$outmost_color
 	fi
 
 	chwbn \

@@ -12,7 +12,12 @@ has() {
 # duplication with ~/bin/iif is intentional
 # function call vs script means can use shell functions in condition
 iif() {
-  eval $1 >/dev/null && echo -n "${2-true}" || echo -n "${3-false}"
+  res=${2-true}
+  if ! eval "$1" >/dev/null; then
+    res=${3-false}
+  fi
+
+  printf '%s' "$res"
 }
 
 pathmunge () {
@@ -96,6 +101,8 @@ succ .wm/panel/lemons
 succ .wm/panel/tools
 # pip --user location
 succ .local/bin
+
+succ git/Pye-Menu/result/bin
 
 # guix
 # succ .config/guix/current/bin

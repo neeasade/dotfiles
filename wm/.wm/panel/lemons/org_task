@@ -33,7 +33,10 @@ get_length() {
     elisp "org-pomodoro-${@}length"
 }
 
-pomodoro_state=$(elisp org-pomodoro-state)
+if ! pomodoro_state=$(elisp org-pomodoro-state); then
+    # don't echo anything, presume we couldn't reach emacs
+    exit 0
+fi
 
 case ${pomodoro_state} in
     :short-break)

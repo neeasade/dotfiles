@@ -137,9 +137,10 @@ add_metas() {
 	fi
     }
 
-    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com'"
+    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
     add_switch "meta: telegram" "https://web.telegram.org/"
-    add_switch "meta: twitter" "find_url 'https://twitter.com'"
+    add_switch "meta: twitter" "find_url 'https://twitter.com/'"
+    add_switch "meta: nixers" "find_url 'https://nixers.net/'"
 
     find_steam() {
 	if pgrep steam; then
@@ -246,6 +247,9 @@ pie_select() {
 }
 
 # pie
+# ideas for pie:
+# music operations
+# window operations
 do_narrow_piemenu() {
     type=$(echo tab window meta tag | tr ' ' $'\n' | pie_select)
     test -z "$type" && exit 0
