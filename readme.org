@@ -3,7 +3,7 @@
 blursed computer garden.
 
 | [[http://notes.neeasade.net/rice.html][screenshots]]     | [[https://notes.neeasade.net/rice-links.html][rice links]]                   |
-| OS              | [[https:https://nixos.org/][NixOS]]                        |
+| OS              | [[https://nixos.org/][NixOS]]                         |
 | WM              | [[https://github.com/baskerville/bspwm][BSPWM]]                        |
 | Panel           | lemonbar, driven by [[https://github.com/vivien/i3blocks][i3blocks]] |
 | Browser         | [[https://www.qutebrowser.org/][qutebrowser]]                  |
