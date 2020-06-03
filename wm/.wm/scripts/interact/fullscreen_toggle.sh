@@ -15,13 +15,18 @@ do_monocle_padded() {
   bspc node -t tiled
   bspc desktop -l monocle
 
-  # the idea is that fake padding comes from
-  bspc config window_gap $(theme getval x_padding)
-  # bspc config window_gap 0
+
+  # what are we looking at?
+  window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
+  if echo $window_class | grep -E '(mpv)'; then
+    bspc config window_gap 0
+  else
+    bspc config window_gap $(theme getval x_padding)
+  fi
+
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
   bspc config borderless_monocle true
-
 }
 
 do_monocle_slim() {
@@ -61,6 +66,7 @@ do_tiled() {
   # bspc config focused_border_color \#$(theme getval b_focused_border_color)
   bspc desktop -l tiled
   bspc config window_gap $(theme getval b_window_gap)
+  bspc config borderless_monocle false
   # $HOME/.config/bspwm/bspwmrc
 }
 
@@ -71,11 +77,16 @@ if bspc query -N -n focused.fullscreen; then
 else
   state=tiled
 
+  # ensure that we are not floating with these states
+  bspc node -t tiled
+
   if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
     if [ $(bspc config left_monocle_padding) -gt 0 ]; then
       state=monocle_slim
     else
-      state=monocle_padded
+      if [ $(bspc config window_gap) -eq $(theme getval x_padding) ]; then
+        state=monocle_padded
+      fi
     fi
   fi
 fi
