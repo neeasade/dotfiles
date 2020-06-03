@@ -1,10 +1,6 @@
 #!/bin/sh
 # swap between fake fullscreen modes as monocle mode
-# this is so we can enjoy fake padding in fullscreen things
-# this doesn't account for floating or overlapped situations very well
-
-# todo: make this a little smarter? the real issue you are trying to solve here is you like the
-# padding when 'fullscreen' in qutebrowser or emacs but not for netflix or mpv
+# this is so we can enjoy fake padding in fullscreen things (and account for panel presence)
 
 # possible modes
 do_monocle_padded() {
@@ -18,7 +14,7 @@ do_monocle_padded() {
 
   # what are we looking at?
   window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
-  if echo $window_class | grep -E '(mpv)'; then
+  if echo $window_class | grep -E '(mpv|Google-chrome)'; then
     bspc config window_gap 0
   else
     bspc config window_gap $(theme getval x_padding)
@@ -84,7 +80,9 @@ else
     if [ $(bspc config left_monocle_padding) -gt 0 ]; then
       state=monocle_slim
     else
-      if [ $(bspc config window_gap) -eq $(theme getval x_padding) ]; then
+      if [ $(bspc config window_gap) -eq 0 ]; then
+        state=monocle_padded
+      elif [ $(bspc config window_gap) -eq $(theme getval x_padding) ]; then
         state=monocle_padded
       fi
     fi
