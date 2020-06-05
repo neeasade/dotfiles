@@ -45,7 +45,7 @@ colors() {
     background=FAFAFA
     cursorColor=8B94C6
 
-    # lab light
+    # lab light (from the xresources)
     color0=5a5e65
     color8=73777d
     color1=d04245
@@ -78,13 +78,14 @@ settings() {
     PROMPT_CHAR='%'
 
     # bspwm
-    b_border_width=1
+    b_border_width=4
+
     # b_normal_border_color=B0A8A6
     b_normal_border_color=$(colort -t $(lessen 20 $color0))
     b_window_gap=32
     b_window_width=10
 
-    b_bspwmrc_extend="xpad &"
+    b_bspwmrc_extend="tag_borders &"
 
     x_padding=6
 
@@ -107,8 +108,9 @@ settings() {
     # p_bg_middle=$(elisp -r "(face-attribute 'ns/mode-line-inactive :background)")
 
     # p_fg_active="#ff525252"
-    p_format="desktop:circe_dms:title|org_task|mpd:volume:clock"
-    # p_format="desktop:circe_dms:title|battery|mpd:volume:clock"
+    p_format="org_task:title|tags|mpd:weather:clock"
+    # p_format="tags:toots:title|org_task|mpd:weather:clock"
+    p_format="tags:title:misc:circe_dms|mpd|weather:clock"
 
     # p_format="battery|desktop|clock"
     # todo: offset should be per font -- it can be in lemonbar
@@ -116,7 +118,7 @@ settings() {
 
     p_title_show_mode=active         # used by title.
 
-    p_height=30
+    p_height=24
     # p_gap=0
     p_window_class="noshadow"
     p_line=2
@@ -143,8 +145,8 @@ settings() {
     p_title_only_show_active=true
     maxWinNameLen=40
 
-    p_title_theme="fg=\"#ff$(colort -t 30 525252)\""
-    p_desktop_theme="fg=\"#ff$(colort -t 30 525252)\""
+    p_title_theme="fg=#ff$(colort -t 30 525252)"
+    p_desktop_theme="fg=#ff$(colort -t 30 525252)"
 
     c_shadow="false"
     c_frame_opacity="1.0"
@@ -166,38 +168,61 @@ line() {
     bg
 }
 
-stepSetup() {
-    separateStep
-}
-
-# fg() {
-#     elisp
-# }
-
-activebg() {
-    bg
-}
-
-# experiment: getting colors from the emacs moedline
 bg() {
-    elisp -r "(face-attribute 'mode-line :background)"
+  # gradient $total $background d7cdff | sed -n ${step}p
+  # gradient $total d7cdff $background | sed -n ${step}p
+
+# btags state-plain | awk '{print $3}' | sed -n ${step}p
+# return
+
+    cat<<EOF | sed -n ${step}p
+#9abcdd
+#dae4e5
+#697fa3
+#97c2c1
+#cad8d2
+#eae7e3
+#69a4a2
+#94c0c2
+#94c0c2
+#69a4a2
+#296e6b
+#69a4a2
+#94c0c2
+#dae4e5
+$color13
+$color4
+$color12
+$color4
+$color5
+$color6
+$color7
+EOF
+
+}
+
+stepSetup() {
+    # togetherStep
+    separateStep
 }
 
 suffix() {
     if [ "$lemon_target_align" = left ]; then
 	color=$(elisp -r "(face-attribute 'ns/mode-line-sep :background)")
+
 	if $lemon_target_end; then
 	    color=$(elisp -r "(face-attribute 'ns/mode-line-sep-edge :background)")
 	fi
 	color=$(colort -t "$color")
-	# todo: derive width from thin space pixel width in emacs mode line
-	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+	# bs O3 B${color}
+	bs B00000000 ":   "
     fi
 
     if [ "$lemon_target_align" = center ]; then
 	color=$(elisp -r "(face-attribute 'ns/mode-line-sep :background)")
 	color=$(colort -t "$color")
-	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+	# bs O3 B${color}
+	bs B00000000 ":   "
     fi
 }
 
@@ -209,12 +234,15 @@ prefix() {
 	fi
 
 	color=$(colort -t "$color")
-	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+	# echo "%{B#FF${color}}%{O3}%{B-}"
+	# bs O3 B${color}
+	bs B00000000 ":   "
     fi
 
     if [ "$lemon_target_align" = center ]; then
 	color=$(elisp -r "(face-attribute 'ns/mode-line-sep :background)")
 	color=$(colort -t "$color")
-	echo "%%{B#FF${color}}%%{O3}%%{B-}"
+	# bs O3 B${color}
+	bs B00000000 ":   "
     fi
 }

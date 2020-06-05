@@ -17,6 +17,8 @@ for template in $(ls $HOME/.dotfiles/templates); do
     eval ${template}_template="$HOME/.dotfiles/templates/${template}"
 done
 
+# todo: should this used the cached theme? then you wouldn't depend
+# on emacs running for eg, panel startup/refresh theme there
 eval "$(theme get)"
 set -a
 

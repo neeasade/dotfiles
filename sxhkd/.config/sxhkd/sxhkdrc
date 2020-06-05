@@ -1,5 +1,7 @@
 # -*- mode: conf -*-
 
+# todo: idea: when super + w on an mpv window, send q instead
+# this will make sure we always keep the saved spot where we are playing something
 super + {_,shift} + w
     bspc node -{c,k}
 
@@ -26,7 +28,7 @@ super + y
     dismiss.sh
 
 super + shift + y
-    btags set-tag-on-wids hole $(bspc query -N -n)
+    btags set-tag-on-wids hole $(bspwindows)
 
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal.!hidden
@@ -83,9 +85,6 @@ super + Return
 
 super + shift + Return
     elisp '(ns/org-capture-popup)'
-
-super + shift + o
-    qutebrowser
 
 super + {_,shift,alt} + space
     action='{switcher,run,pass} '; \
