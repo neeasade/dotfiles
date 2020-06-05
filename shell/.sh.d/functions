@@ -6,6 +6,23 @@ vdo() {
   "$@"
 }
 
+mount_diskfile() {
+  if [ -z "$*" ]; then
+    echo "$mount_diskfile <iso/disk file> <mountpath (optional)>"
+    return
+  fi
+
+  diskfile=$1
+  # mountpath=${2:-./$(basename "$diskfile" | sed 's/\..*//')}
+  mountpath=${2:-/media/filemount/$(basename "$diskfile" | sed 's/\..*//')}
+
+  mkdir -p "$mountpath"
+
+  echo sudo mount "$diskfile" "$mountpath" -o loop
+  sudo mount "$diskfile" "$mountpath" -o loop
+  echo "$mountpath"
+}
+
 prepend() {
   tmpfile=$(mktemp)
   cat <(echo "$1") "$2" >$tmpfile
