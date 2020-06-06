@@ -360,6 +360,7 @@ gset() {
   # todo: add a 'none'/'anon' option
   case $1 in
     pass) g_conf "$(pass git/name)" "$(pass git/email)" ;;
+    github) g_conf "neeasade" "neeasade@users.noreply.github.com" ;;
     manual)
       echo name:; read name
       echo email:; read email
@@ -371,7 +372,7 @@ gset() {
       ;;
     *)
       echo "gset <name> <email>"
-      echo "or: gset manual|adhoc|pass"
+      echo "or: gset manual|adhoc|pass|github"
       ;;
   esac
 }
