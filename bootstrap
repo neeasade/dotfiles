@@ -22,7 +22,7 @@ emacs() {
   git clone "https://github.com/neeasade/emacs.d" "$HOME/.emacs.d"
 
   # initial launch/install packages
-  type emacs >/dev/null 2>&1 && emacs
+  type emacs >/dev/null 2>&1 && emacs --debug-init
 }
 
 rice() {

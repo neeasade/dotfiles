@@ -4,7 +4,13 @@
 
 # possible modes
 do_monocle_padded() {
-  hsetroot -solid "#$(theme getval background)" &
+
+  if pgrep compton; then
+    hsetroot -solid "#$(theme getval background)" &
+  else
+    xsetroot -solid "#$(theme getval background)" &
+  fi
+
   bspc query -N -n focused.fullscreen && \
     bspc node -t ~fullscreen
 
