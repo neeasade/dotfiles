@@ -18,7 +18,7 @@ if [ -f "$1" ]; then
 fi
 
 eclient="emacsclient"
-if [ ! -z "$(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}')" ]; then
+if uname | grep -qE '(MINGW|MSYS)'; then
     # windows
     eclient="${eclient}w --server-file ${HOME}/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
 fi
