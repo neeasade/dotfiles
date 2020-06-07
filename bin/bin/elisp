@@ -3,14 +3,20 @@
 # can act as a shebang (ie #!/usr/bin/env elisp) or
 # adhoc code (ie elisp '(message "uwu")')
 # note: when args are passed to a shebang, they are available with the variable 'ns-args' as a list
-# todo: getopt, a -q option for quiet
 # todo: a way to connect in the current terminal and maybe edit a file from here
 
-trim=false
-if [ "$1" = "-r" ]; then
-    trim=true
-    shift
-fi
+trim=false  # note: we always set trim in script mode
+quiet=false
+
+while getopts qr flag; do
+    case $flag in
+        q) quiet=true;;
+        r) trim=true;;
+        e) edit=true;;
+        *) usage;;
+    esac
+done
+shift $((OPTIND-1))
 
 if [ -f "$1" ]; then
     script_name=$(realpath "$1")
@@ -18,14 +24,15 @@ if [ -f "$1" ]; then
 fi
 
 eclient="emacsclient"
-if uname | grep -qE '(MINGW|MSYS)'; then
-    # windows
-    eclient="${eclient}w --server-file ${HOME}/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
-fi
+
+# this check is fairly heavy for time-to-eval -- would rather uncomment this if I find myself on windows later
+# (sorry potential future me)
+# if uname | grep -qE '(MINGW|MSYS)'; then
+#     # windows
+#     eclient="${eclient}w --server-file ${HOME}/.emacs.d/server/${EMACS_SERVER_FILE:-emacs-server-file}"
+# fi
 
 add_stdin() {
-    # notify-send "getting stdin"
-
     # save stdin to a file and give a var
     # todo: this is blocking, and if we continue down this path it may be worth looking into input streams
     # note: it's important to only do this in script mode, else any elisp call will slurp up stdin
@@ -106,27 +113,30 @@ if [ $? -eq 1 ]; then
     quit 1
 fi
 
-if [ "$result" = "nil" ] || [ -z "$result" ]; then
+if ! $quiet; then
+    if $trim; then
+	case "$result" in
+	    # (1 2 3) -> # 1 2 3
+	    "("*) result=${result:1:${#result}-2}; echo "$result";;
+	    # "\"~/.dotfiles/bin/bin/elisp\n~/.emacs.d/recentf\""
+	    #     -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
+	    '"'*) result=${result:1:${#result}-2}
+		  result=$(echo "$result" | sed 's/%/%%/g')
+		  # replace
+		  printf "$result"
+		  echo
+		  ;;
+	    # just print it
+	    *) echo "$result" ;;
+	esac
+    else
+	echo "$result"
+    fi
+fi
+
+if [ "$result" = "nil" ] || [ -z "$result" ] || [ "$result" = '""' ]; then
     quit 1
-fi
-
-if $trim; then
-    case "$result" in
-	# (1 2 3) -> # 1 2 3
-	"("*) result=${result:1:${#result}-2}; echo "$result";;
-	# "\"~/.dotfiles/bin/bin/elisp\n~/.emacs.d/recentf\""
-	#     -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
-	'"'*) result=${result:1:${#result}-2}
-	      result=$(echo "$result" | sed 's/%/%%/g')
-	      # replace
-	      printf "$result"
-	      echo
-	      ;;
-	# just print it
-	*) echo "$result" ;;
-    esac
 else
-    echo "$result"
+    quit 0
 fi
 
-quit 0
