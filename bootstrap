@@ -15,7 +15,7 @@ stoww() {
 }
 
 core() {
-  stoww bin shell vim tools
+  stoww bin shell vim tools qutebrowser
 }
 
 emacs() {
