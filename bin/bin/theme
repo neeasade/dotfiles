@@ -15,6 +15,12 @@ cache_env() {
 
 getval() {
     (
+	if [ ! -f /tmp/loaded_theme.sh ]; then
+	    if elisp t >/dev/null; then
+		bash -c "$(get); declare -px >/tmp/loaded_theme.sh"
+	    fi
+	fi
+
 	. /tmp/loaded_theme.sh
 	eval eval printf \"%s\" '\"\$$1\"'
     )
