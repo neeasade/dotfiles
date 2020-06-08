@@ -39,6 +39,7 @@ act_now() {
     wid=$(bspc query -N -n)
   fi
 
+  bspc node $wid -g hidden=off
   bspc node $wid -t floating
   xdotool windowmove $wid $X $Y
   xdotool windowsize $wid $W $H
