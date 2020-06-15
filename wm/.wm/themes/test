@@ -76,9 +76,10 @@ settings() {
     emacs_theme="lab-light"
     emacs_powerline_scale="1.0"
     PROMPT_CHAR='%'
+    PROMPT_CHAR='♥'
 
     # bspwm
-    b_border_width=4
+    b_border_width=1
 
     # b_normal_border_color=B0A8A6
     b_normal_border_color=$(colort -t $(lessen 20 $color0))
@@ -141,7 +142,7 @@ settings() {
 
     # st_font="Go Mono for Powerline-12:style=Regular"
     st_font="Triplicate T4c-12"
-    st_font_variable="Equity Text B-12"
+    st_font_variable="Equity Text A-13"
     p_title_only_show_active=true
     maxWinNameLen=40
 

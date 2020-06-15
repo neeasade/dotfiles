@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # bar stuff
 # example:
 # echo some text | bs Bffffff F000000 UFF000000 +o +u

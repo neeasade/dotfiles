@@ -198,13 +198,12 @@ enact() {
 
     if [ -z "$*" ]; then
 	# the reason for wrapping this in a subshell is to batch the adds for rofi
-	echo "$(add_tags)"
-	echo "$(add_windows)"
-	echo "$(add_tabs)"
-	echo "$(add_buffers)"
-	echo "$(add_metas)"
-	echo "$(add_historys)" | sort | uniq
-	wait
+	add_tags
+	add_windows
+	add_tabs
+	add_buffers
+	add_metas
+	# add_historys | sort | uniq
     else
 	# echo eval add_${*}s
 	eval add_${*}s

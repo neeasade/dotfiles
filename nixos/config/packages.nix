@@ -25,6 +25,7 @@ let
   core = (with stable; [
     pinentry_qt5
 
+    entr
     rofi
     cdparanoia
     cdrkit

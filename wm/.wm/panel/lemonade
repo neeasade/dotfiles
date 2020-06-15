@@ -29,7 +29,7 @@ format="\$$format"
 # this has been poked at alot by a tired me, I think it's good now.
 stdbuf -oL i3blocks -o j | \
     stdbuf -oL sed 's/\},/}\n,/g' | \
-    stdbuf -oL sed -e 's/^,//' -e 's/\[//' -e 's/\]$//' | \
+    stdbuf -oL sed -e 's/^,//' -e 's/^\[//' -e 's/\]$//' | \
     stdbuf -oL grep '^{' | \
     stdbuf -oL jq -r '.name + " " + .full_text' | \
     while IFS=$'\n' read -r event; do
