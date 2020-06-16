@@ -1,0 +1,22 @@
+#!/usr/bin/env elisp
+;; let's make a script to dump the colors of the current theme
+;; I'm currently keeping the colors in a hashtable called ns/theme
+;; we just want to iterate and print.
+;; (this script is writteng for the nixers workflow compliation)
+;; cf https://nixers.net/showthread.php?tid=2320
+
+(->> ns/theme
+     (ht-keys)
+     (-map
+      (fn
+       (list
+	(s-replace ":" "" (prin1-to-string <>))
+	(ht-get ns/theme <>))
+       ))
+     (-map
+      (fn (format "%s - %s"
+		  (first <>)
+		  (second <>))
+	  ))
+     (s-join "\n")
+     )

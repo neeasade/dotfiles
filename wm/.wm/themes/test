@@ -96,12 +96,11 @@ settings() {
     # b_focused_border_color=$(elisp -r '(face-attribute 'font-lock-variable-name-face :foreground)')
     b_focused_border_color=$(colort -t $(elisp -r "(face-attribute 'font-lock-variable-name-face :foreground)"))
 
-
     # p_gap=$(elisp '(frame-fringe-width)')
     p_gap=0
 
-    p_bg_middle=$(elisp -r "(ns/shorten-color (face-attribute 'ns/mode-line-middle :background))")
-    p_bg_active=$(elisp -r "(ns/shorten-color (face-attribute 'company-tooltip-selection :background))")
+    p_bg_middle=$(elisp -r "(ns/color-shorten (face-attribute 'ns/mode-line-middle :background))")
+    p_bg_active=$(elisp -r "(ns/color-shorten (face-attribute 'company-tooltip-selection :background))")
     p_fg_active=$foreground
 
     # elisp -r "(face-attribute 'region :background)"
