@@ -10,11 +10,10 @@ let
   stable = pkgs; # controlled by root nix-channel entry
   unstable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
-
   nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
 
-  #unstable = pkgs; # force everyone to be on the same level
-  #edge = pkgs;
+  # unstable = pkgs;
+  # edge = pkgs;
 
   expr = import ./expr { inherit pkgs lib unstable edge; };
 
@@ -23,7 +22,14 @@ let
   # rolling = stable;
 
   core = (with stable; [
+
+    nix-direnv # note: depends on nixpkgs >20.03
+
     pinentry_qt5
+
+    nodejs # see repo:debounce.js
+
+    leiningen clojure
 
     entr
     rofi
@@ -31,7 +37,6 @@ let
     cdrkit
     cdrtools
     syncthing
-    kitty
     nmap
     mediainfo
     direnv
@@ -95,7 +100,6 @@ let
     wlroots
     wayland-protocols
 
-    # nix-repl
     ntfs3g
     openssl
     telnet
@@ -139,49 +143,35 @@ let
     gnome3.gnome-terminal
     gnutls # for circe
 
+    fd ripgrep
+    google-chrome
+    rxvt_unicode
+
     yq
+
   ]) ++ (with unstable; [
   # ]) ++ (
-    lorri
-    tiled
-    love_11
-    luajit
 
-    # (emacsWithPackages(e: with e; [
-    #   emacs-libvterm
-    #   # proof-general
-    #   # (pdf-tools.overrideAttrs (attrs: { src = pdf-tools-src; }))
-    # ]))
-
-    dunst
-    dzen2
+    dunst dzen2
     ffmpeg
-    i3lock
-    meh
-    ranger
-    sxhkd
-    txtw
-    x11idle
-    xdotool
+    i3lock meh
+    sxhkd txtw
+    x11idle xdotool
     xfce.thunar
     xorg.xprop
     xorg.xwininfo
     xtitle
     youtube-dl
     pinta
-
-    polybar
   ]) ++ ( with expr; [
-    # qutebrowser-git
+    # drawterm
+    # oomox
 
     lemonbar
-    skroll
+    skroll # todo: maybe zscroll this
 
     pfetch-neeasade
     colort-git
-
-    # drawterm
-    # oomox
 
     pb-git
     mpvc-git
@@ -193,18 +183,17 @@ let
     wmutils-core-git
     wmutils-opt-git
     xdo-git
-  ]) ++ (with edge; [
+
+  ]) ++ (with unstable; [
     qutebrowser
-    # emacs
-    # allow images to display
-    # (emacs.override { imagemagick = pkgs.imagemagickBig; } )
   ]);
 
   inherit (pkgs) eggDerivation fetchegg;
   extra = (with stable; [
+    tiled love_11 luajit
+
     sqlitebrowser
-    pup
-    jo
+    pup jo
     screenkey
     byzanz
 
@@ -217,14 +206,9 @@ let
 
     cloc
 
-    # damn rust really crept in there
-    fd
-    ripgrep
-
     pandoc
     imagemagick
     graphviz
-    google-chrome
     audacity
     bfg-repo-cleaner
     compton
@@ -239,7 +223,6 @@ let
     libtiff
     neovim
     pcmanfm
-    rxvt_unicode
     # texlive.combined.scheme-full
   ]);
 
@@ -292,9 +275,7 @@ let
     gradle
     maven
     jdk8
-    leiningen
     stack
-    clojure
     boot
 
     # rust
@@ -303,8 +284,8 @@ let
     rustfmt
     rustracer
 
-    racket
-    janet
+    # racket
+    # janet
 
     python27
     (python37.withPackages(ps: with ps; [
@@ -337,17 +318,11 @@ let
     zlib
 
     mono
-    nodejs
     ruby
   ]) ++ (with edge; [
-    # lorri
-
     # joker
-    # boot
     # chickenPackages_5.chicken
     # chickenPackages_5.egg2nix
-  ]) ++ (with nur; [
-    # repos.tilpner.fennel
   ]);
 
   basefonts = (with pkgs; [
@@ -356,11 +331,11 @@ let
   ]);
 
   extrafonts = (with pkgs; [
-    roboto roboto-mono
-    siji tewi-font
-    fira fira-code
+    # roboto roboto-mono
+    # tewi-font siji
+    # fira fira-code
     font-awesome-ttf
-    noto-fonts
+    noto-fonts # todo: noto-emoji?
     powerline-fonts # includes a 'Go Mono for powerline'
   ]);
 
@@ -373,8 +348,8 @@ in
   ];
 
   # "just give me something pls"
-  # environment.systemPackages = core
-  # fonts.fonts = basefonts
+  # environment.systemPackages = core ++ [pkgs.emacsUnstable];
+  # fonts.fonts = basefonts;
 
   environment.systemPackages =
     core ++
@@ -383,6 +358,16 @@ in
     games ++
     [pkgs.emacsUnstable] ++
     [];
+
+  # for nix-direnv:
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
+
+  environment.pathsToLink = [
+    "/share/nix-direnv"
+  ];
 
   fonts.fonts =
     basefonts ++

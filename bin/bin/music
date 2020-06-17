@@ -127,6 +127,7 @@ now() { # fuzzy search for a song, play it now
     mpc insert "$song"
     mpc next
     mpc play
+    echo "custom" > "$current_playlist"
   fi
 }
 
