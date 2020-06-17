@@ -46,6 +46,16 @@ del() { # delete the currently playing song
   mpc update
 }
 
+rename() { # delete the currently playing song
+  location=$(mpc -f "%file%" | head -n 1)
+  location="$musicdir$location"
+  new_name=$*
+  new_name="$(dirname "$location")/$new_name"
+  mv "$location" "$new_name"
+  mpc next
+  mpc update
+}
+
 usage() {
   echo "music options:"
   grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
