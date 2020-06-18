@@ -38,7 +38,7 @@ stdbuf -oL i3blocks -o j | \
 	lemonbar -d \
 	    -u 1 \
 	    -n $(theme getval p_window_class) \
-	    -B \#cceef0f3 \
+	    -B \#ffeef0f3 \
 	    -F \#ff5a5e65 \
 	    -f 'Equity Caps B-10:style=Regular' \
 	    -f 'Equity Caps B-10:style=Bold' \

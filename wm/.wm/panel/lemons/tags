@@ -112,12 +112,13 @@ render_supersmol() {
 	# printf "%s^" "$(bs ": ${tname} " "U$border" +u +o T$T "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
 
 	# notify-send "$foreground"
-	printf "%s" "$(bs ":${tname}" T$T "F$foreground" "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
+	printf "%s" "$(bs ":${tname}" T$T "B$bg" "F$foreground" "A3btags toggle-wids $tag_name \$(bspwindows)" "A1btags toggle $tag_name")"
     done
     )
 
     # echo "$(echo "$result" | rev | sed 's/\^//' | rev | sed 's/\^/·/g')"
     # echo "$result" | FORCE=t season
+    export FORCE=t
     echo "$result"
 }
 

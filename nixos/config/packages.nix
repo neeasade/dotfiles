@@ -151,6 +151,7 @@ let
 
   ]) ++ (with unstable; [
   # ]) ++ (
+    qutebrowser
 
     dunst dzen2
     ffmpeg
@@ -185,7 +186,6 @@ let
     xdo-git
 
   ]) ++ (with unstable; [
-    qutebrowser
   ]);
 
   inherit (pkgs) eggDerivation fetchegg;

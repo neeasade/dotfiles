@@ -7,10 +7,9 @@
 
 (->> ns/theme
      (ht-keys)
-     (-map (fn
-	    (list
-	     (s-replace ":" "" (prin1-to-string <>))
-	     (ht-get ns/theme <>))))
+     (-map (fn (list
+		(s-replace ":" "" (prin1-to-string <>))
+		(ht-get ns/theme <>))))
      (-map (fn (format "%s: %s"
 		       (s-pad-right 12 " " (first <>))
 		       (second <>))))

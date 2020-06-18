@@ -23,15 +23,14 @@ l_sep="□"
 l_start=""
 l_end=""
 
-# l_complete="/"
-# ⫦
-#
-#
-
-
 l_complete="—"
 l_empty="—"
 l_sep="+"
+
+l_complete="◈"
+l_empty="◇"
+l_sep="◈"
+
 
 
 
