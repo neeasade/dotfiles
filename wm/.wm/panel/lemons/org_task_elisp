@@ -24,7 +24,9 @@
 	     (:long-break . ,org-pomodoro-long-break-length)
 	     (:pomodoro . ,org-pomodoro-length))))))
     (format "%s^%s"
-	    (s-clean org-clock-current-task)
-	    (ns/let-script-args (width) (floor (* (string-to-number width) (/ percent 100)))))
-    ;; percent
-    ))
+	    (or
+	     (s-clean org-clock-current-task)
+	     (-> org-pomodoro-state
+		 prin1-to-string
+		 (substring 1)))
+	    (ns/let-script-args (width) (floor (* (string-to-number width) (/ percent 100)))))))
