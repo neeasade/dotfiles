@@ -8,14 +8,50 @@
 	  (* length-minutes 60))
        (* 100)))
 
+;; note to self: standup is the wrong word probably -- it's the heading we track all of 'today'
+;; changing the name would make more sense for slamming it on project headings as well
+(defun ns/notes-current-standup-headline ()
+  "get the current standup heading as matched from notes"
+  (when (not (get-file-buffer org-default-notes-file))
+    (ns/find-or-open org-default-notes-file))
+
+  (with-current-buffer (get-file-buffer org-default-notes-file)
+    ;; note: om-get-headlines API will be changing to name (om-parse-headlines)
+    (->> (om-get-headlines)
+	 (om-match '((:tags '("standup"))))
+	 first
+	 ;; (om-headline-get-path)
+	 ;; (first)
+	 )))
+
+(defun ns/notes-current-standup-task (parent-headline)
+  "get the current standup heading as matched from notes"
+  (let ((standup-point
+	 (->> parent-headline
+	      cdr car
+	      (-partition 2)
+	      (-filter (fn (eq (car <>) :begin)))
+	      first second)))
+
+    ;; standup-point
+    (with-current-buffer (get-file-buffer org-default-notes-file)
+      (->> (om-parse-element-at standup-point)
+	   (om-get-children)
+	   (om-match '((:todo-keyword "TODO")))
+	   first))))
+
 (if (eq org-pomodoro-state :none)
-    (progn
-      ;; cascade:
-      ;; make standup for today
-      ;; resume: first headline in standup for today
-      "TODO^"
-      )
-  ;;
+    (let* ((top-headline (ns/notes-current-standup-headline))
+	   (top-headline-text (-> top-headline om-headline-get-path last first)))
+      (if (and
+	   ;; hack, assume '<' means org date
+	   (s-contains-p "<" top-headline-text)
+	   (not (s-contains-p
+		 (concat "<" (format-time-string "%Y-%m-%d"))
+		 top-headline-text
+		 )))
+	  "Decide what to do today!"
+	(concat "Resume: " (-> top-headline ns/notes-current-standup-task om-headline-get-path last first))))
   (let ((percent
 	 (ns/org-pomo-progress
 	  (alist-get

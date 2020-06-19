@@ -2,7 +2,7 @@
 ;; let's make a script to dump the colors of the current theme
 ;; I'm currently keeping the colors in a hashtable called ns/theme
 ;; we just want to iterate and print.
-;; (this script is writteng for the nixers workflow compliation)
+;; (this script is written for the nixers workflow compilation)
 ;; cf https://nixers.net/showthread.php?tid=2320
 
 (->> ns/theme
