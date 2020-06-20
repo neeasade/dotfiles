@@ -1,19 +1,19 @@
 #!/usr/bin/env elisp
 ;; HACK: use ^ to delimit percent and topic.
+;; idea: instead of progress could include a countdown like in the mode-line
 
 (defun ns/org-pomo-progress (length-minutes)
   "percent through current pomodoro state"
   (->> (/ (- (* length-minutes 60)
 	     (org-pomodoro-remaining-seconds))
-	  (* length-minutes 60))
-       (* 100)))
+	  (* length-minutes 60)) (* 100)))
 
 ;; note to self: standup is the wrong word probably -- it's the heading we track all of 'today'
 ;; changing the name would make more sense for slamming it on project headings as well
 (defun ns/notes-current-standup-headline ()
   "get the current standup heading as matched from notes"
   (when (not (get-file-buffer org-default-notes-file))
-    (ns/find-or-open org-default-notes-file))
+    (find-file org-default-notes-file))
 
   (with-current-buffer (get-file-buffer org-default-notes-file)
     ;; note: om-get-headlines API will be changing to name (om-parse-headlines)
@@ -73,4 +73,4 @@
 	     (-> org-pomodoro-state
 		 prin1-to-string
 		 (substring 1)))
-	    (ns/let-script-args (width) (floor (* (string-to-number width) (/ percent 100)))))))
+	    (ns/let-script-args (width) (floor (* (string-to-number (or width "100")) (/ percent 100)))))))

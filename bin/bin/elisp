@@ -90,7 +90,9 @@ result=$($emacs_timeout $eclient --eval "$lisp")
 
 quit() {
     if [ ! -z "$stdin_file" ]; then
-	rm "$stdin_file"
+	if [ -f "$stdin_file" ]; then
+	    rm "$stdin_file"
+	fi
     fi
 
     exit ${*:-1}
