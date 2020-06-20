@@ -26,6 +26,7 @@
 
 (defun ns/notes-current-standup-task (parent-headline)
   "get the current standup heading as matched from notes"
+  ;; todo: lmao this is a plist, should use plist get instead of this funky -partition 2 filter business
   (let ((standup-point
 	 (->> parent-headline
 	      cdr car
@@ -37,7 +38,14 @@
     (with-current-buffer (get-file-buffer org-default-notes-file)
       (->> (om-parse-element-at standup-point)
 	   (om-get-children)
-	   (om-match '((:todo-keyword "TODO")))
+	   ;; (om-map-property)
+	   ((lambda (children)
+	      (append
+	       ;; TODO: can't find out how to query headlines with no todo keyword
+	       ;; idea: map headlines, set todo keyword to 'unset'
+	       ;; (om-match '((:todo-keyword "")) children)
+	       (om-match '((:todo-keyword "TODO")) children)
+	       )))
 	   first))))
 
 (if (eq org-pomodoro-state :none)
