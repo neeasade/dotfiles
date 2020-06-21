@@ -16,13 +16,7 @@
     (find-file org-default-notes-file))
 
   (with-current-buffer (get-file-buffer org-default-notes-file)
-    ;; note: om-get-headlines API will be changing to name (om-parse-headlines)
-    (->> (om-get-headlines)
-	 (om-match '((:tags '("standup"))))
-	 first
-	 ;; (om-headline-get-path)
-	 ;; (first)
-	 )))
+    (om-parse-headline-at (org-find-property "focus"))))
 
 (defun ns/notes-current-standup-task (parent-headline)
   "get the current standup heading as matched from notes"
