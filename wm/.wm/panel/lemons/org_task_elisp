@@ -20,19 +20,17 @@
 
 (defun ns/notes-current-standup-task (parent-headline)
   "get the current standup heading as matched from notes"
-  ;; todo: lmao this is a plist, should use plist get instead of this funky -partition 2 filter business
   (let ((standup-point
 	 (->> parent-headline
 	      cdr car
-	      (-partition 2)
-	      (-filter (fn (eq (car <>) :begin)))
-	      first second)))
+	      ((lambda (props) (plist-get props :begin))))))
 
     ;; standup-point
     (with-current-buffer (get-file-buffer org-default-notes-file)
       (->> (om-parse-element-at standup-point)
 	   (om-get-children)
-	   ;; (om-map-property)
+	   ;; what we want:
+	   ;; next headline that has TODO blank or TODO, with no scheduled time
 	   ((lambda (children)
 	      (append
 	       ;; TODO: can't find out how to query headlines with no todo keyword
