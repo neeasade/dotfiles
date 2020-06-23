@@ -15,7 +15,7 @@ case $node_dir in
   south) dir=y; sign=-lt; emacs_dir=down ;;
 esac
 
-if xprop -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
+if xprop WM_CLASS -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
   if timeout 0.2 elisp "(evil-window-$emacs_dir 1) t"; then
     exit 0
   fi

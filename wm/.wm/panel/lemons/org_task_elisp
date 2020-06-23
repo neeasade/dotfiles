@@ -12,10 +12,7 @@
 ;; changing the name would make more sense for slamming it on project headings as well
 (defun ns/notes-current-standup-headline ()
   "get the current standup heading as matched from notes"
-  (when (not (get-file-buffer org-default-notes-file))
-    (find-file org-default-notes-file))
-
-  (with-current-buffer (get-file-buffer org-default-notes-file)
+  (with-current-buffer (find-file-noselect org-default-notes-file)
     (om-parse-headline-at (org-find-property "focus"))))
 
 (defun ns/notes-current-standup-task (parent-headline)
