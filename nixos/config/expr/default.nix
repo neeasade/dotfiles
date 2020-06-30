@@ -10,9 +10,37 @@
       skroll = stdenv.mkDerivation rec {
         name = "skroll";
 
-        src = builtins.fetchGit {url =  "https://github.com/z3bra/skroll"; ref = "master"; };
+        src = builtins.fetchGit {url = "https://github.com/z3bra/skroll"; ref = "master"; };
         nativeBuildInputs = [ gcc ];
         installPhase = "make install PREFIX=$out";
+      };
+
+      # note: won't work for ARM oof
+      babashka = stdenv.mkDerivation rec {
+        name = "babashka";
+        # reminder: nix-prefetch-url <url>
+        src = (fetchurl {
+          url = "https://github.com/borkdude/babashka/releases/download/v0.1.3/babashka-0.1.3-linux-amd64.zip";
+          sha256 = "0nldq063a1sfk0qnkd37dpw8jq43p4divn4j4qiif6dy1qz9xdcq";
+        });
+
+        unpackPhase = "unzip $src";
+
+        # note: the chmod is only needed when using direct path to local executable
+        patchPhase = ''
+            patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./bb
+            new_rpath=$(echo "$NIX_LDFLAGS" | tr ' ' $'\n' | grep "^-L" | sed -E 's/^-L/:/' | tr -d $'\n')
+            patchelf --set-rpath "$new_rpath" ./bb
+        '';
+
+        dontBuild = true;
+
+        installPhase = ''
+            mkdir -p $out/bin
+            cp bb $out/bin
+        '';
+
+        nativeBuildInputs = (with pkgs; [gcc-unwrapped.lib zlib unzip]);
       };
 
       drawterm = stdenv.mkDerivation rec {
