@@ -132,7 +132,11 @@ let
     xorg.xmodmap
     xfontsel
     xurls
+
     zathura
+
+    calibre
+
     zsh
 
     playerctl
@@ -167,6 +171,7 @@ let
   ]) ++ ( with expr; [
     # drawterm
     # oomox
+    babashka
 
     lemonbar
     skroll # todo: maybe zscroll this

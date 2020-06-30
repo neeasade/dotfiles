@@ -11,7 +11,7 @@ b_focused_border_color=$foreground
 b_presel_feedback_color=$color8
 b_desktop_names="00 01 10 11"
 
-b_monocle_window_percent=.64 # 100
+b_monocle_window_percent=.54 # 100
 
 # meant to be used for effects, like pulse or 2bspwm
 b_bspwmrc_extend=""
@@ -30,8 +30,6 @@ l_sep="+"
 l_complete="◈"
 l_empty="◇"
 l_sep="◈"
-
-
 
 
 # Panel variables

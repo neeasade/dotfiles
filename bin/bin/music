@@ -10,7 +10,7 @@
 # -> Then & Now (Liquid Drum & Bass Mix)
 
 # musicdir="$HOME/Music"
-musicdir=$(cat "$HOME/.config/mpd/mpd.conf" | awk -F\" '/music_directory/{print $2}')
+musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 
 current_playlist="${musicdir}/playlist/current"
 

@@ -5,7 +5,7 @@
 new() {
     # border=${border:-#777777}
     if [ -z "$border" ]; then
-	border=$(colort -30 "$bg")
+	border=$(colort -l -30 "$bg")
     fi
 
     # border_side=$(bs O1 B$border U$border +o +u)
@@ -21,7 +21,7 @@ new() {
 	for g in $(gradient 10 "$bg" "$bg_next"); do
 	    # if [ "$lemon" = "title" ]; then notify-send "arstarst $g"; fi
 	    # notify-send "$g"
-	    content="$content$(bs "B$g" O2 U$(colort -30 -t "$g") +u)"
+	    content="$content$(bs "B$g" O2 U$(colort -l -30 -t "$g") +u)"
 	done
     fi
 
@@ -29,7 +29,7 @@ new() {
 	# notify-send "gradient 4 $bg $bg_next"
 	for g in $(gradient 10 "$bg" "$bg_next"); do
 	    # notify-send "$g"
-	    content="$(bs "B$g" O2 U$(colort -30 "$g") +u)${content}"
+	    content="$(bs "B$g" O2 U$(colort -l -30 "$g") +u)${content}"
 	done
     fi
 
@@ -37,7 +37,7 @@ new() {
 	# bg_next=$(colort -t "$(theme getval p_bg_normal)")
 	# notify-send "gradient 10 $bg $bg_next"
 	for g in $(gradient 10 "$bg" "$bg_next"); do
-	    content="$(bs "B$g" O2 U$(colort -30 "$g") +u)${content}$(bs "B$g" O2 U$(colort -30 "$g") +u)"
+	    content="$(bs "B$g" O2 U$(colort -l -30 "$g") +u)${content}$(bs "B$g" O2 U$(colort -30 "$g") +u)"
 	done
     fi
 
