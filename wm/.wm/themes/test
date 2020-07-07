@@ -3,67 +3,25 @@
 
 # test theme
 colors() {
-    color0=F9F9F9
-    color1=D40000
-    color2=8FA3AD
-    color3=D74214
-    color4=7D56C1
-    color5=65BA69
-    color6=41A4F4
-    color7=536D79
-    color8=7F7F7F
-    color9=D40000
-    color10=8FA3AD
-    color11=D74214
-    color12=7D56C1
-    color13=65BA69
-    color14=41A4F4
-    color15=536D79
-    foreground=546E7A
-    # background=F7F7F7
-
-    background=FAFAFA
-    cursorColor=8B94C6
-
-    color0=FEFEFE
-    color1=A70000
-    color2=213EBE
-    color3=6F3600
-    color4=5216AB
-    color5=082F5F
-    color6=710F44
-    color7=000000
-    color8=4F4F4F
-    color9=A70000
-    color10=213EBE
-    color11=6F3600
-    color12=5216AB
-    color13=082F5F
-    color14=710F44
-    color15=000000
-    foreground=000000
-    background=FAFAFA
-    cursorColor=8B94C6
-
-    # lab light (from the xresources)
-    color0=5a5e65
-    color8=73777d
-    color1=d04245
-    color9=ff7f79
-    color2=008c36
-    color10=30c36e
-    color3=897500
-    color11=c0a946
-    color4=007bd9
-    color12=69afff
-    color5=ba48b4
-    color13=f083e7
-    color6=008fac
-    color14=00c5e0
-    color7=dee2ea
-    color15=eef0f3
-    background=eef0f3
-    foreground=5a5e65
+    color0=F3F5F8
+    color1=A95011
+    color2=5E7111
+    color3=C38418
+    color4=176FA8
+    color5=407EE7
+    color6=E71FD2
+    color7=3F4043
+    color8=898A8D
+    color9=A95011
+    color10=5E7111
+    color11=C38418
+    color12=176FA8
+    color13=407EE7
+    color14=E71FD2
+    color15=3F4043
+    foreground=3f4043
+    background=f3f5f8
+    cursorColor=176fa8
 }
 
 settings() {
@@ -83,6 +41,7 @@ settings() {
 
     # b_normal_border_color=B0A8A6
     b_normal_border_color=$(colort -t $(lessen 20 $color0))
+    b_window_gap=14
     b_window_gap=32
     b_window_width=10
 
@@ -145,8 +104,8 @@ settings() {
     p_title_only_show_active=true
     maxWinNameLen=40
 
-    p_title_theme="fg=#ff$(colort -t 30 525252)"
-    p_desktop_theme="fg=#ff$(colort -t 30 525252)"
+    # p_title_theme="fg=#ff$(colort -t 30 525252)"
+    # p_desktop_theme="fg=#ff$(colort -t 30 525252)"
 
     c_shadow="false"
     c_frame_opacity="1.0"
@@ -168,36 +127,46 @@ line() {
     bg
 }
 
+fg() {
+    elisp -r "(ns/color-shorten (ht-get ns/theme (if (ns/color-is-light-p \"$(bg)\") :foreground :background)))"
+}
+
 bg() {
   # gradient $total $background d7cdff | sed -n ${step}p
   # gradient $total d7cdff $background | sed -n ${step}p
 
-# btags state-plain | awk '{print $3}' | sed -n ${step}p
-# return
-
-    cat<<EOF | sed -n ${step}p
-#9abcdd
-#dae4e5
-#697fa3
-#97c2c1
-#cad8d2
-#eae7e3
-#69a4a2
-#94c0c2
-#94c0c2
-#69a4a2
-#296e6b
-#69a4a2
-#94c0c2
-#dae4e5
-$color13
-$color4
-$color12
-$color4
-$color5
-$color6
-$color7
+# $(elisp -r '(->> :accent1 (ht-get ns/theme) ns/color-shorten ns/color-pastel ns/color-pastel)')
+    if [ "$lemon_target_align" = left ]; then
+	    cat<<EOF | sed -n ${step}p
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+$(elisp -r '(->> :accent1 (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
 EOF
+    elif [ "$lemon_target_align" = right ]; then
+	    cat<<EOF | sed -n ${step}p
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+$(elisp -r '(->> :accent1 (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+EOF
+    else
+	# maybe generate a new color for this section
+	    cat<<EOF | sed -n ${step}p
+$(elisp -r '(->> :background+ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list L C H))))) ns/color-shorten)')
+$(elisp -r '(->> :accent2 (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+$(elisp -r '(ns/color-shorten (ht-get ns/theme :accent1_))')
+EOF
+	# center
+    fi
+
+#     cat<<EOF | sed -n ${step}p
+# $color13
+# $color4
+# $color12
+# $color4
+# $color5
+# $color6
+# $color7
+# EOF
 
 }
 

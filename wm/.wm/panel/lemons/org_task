@@ -3,15 +3,19 @@
 # tied to mpd, toggles on when working, off on break
 
 WIDTH=60
-org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH)
+if ! org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH); then
+    echo "Decide what to do today!"
+    exit
+fi
 
 topic=$(echo "$org_task_status" | awk -F \^ '{print $1}')
 percent=$(echo "$org_task_status" | awk -F \^ '{print $2}')
 
 if [ -z "$percent" ]; then
-    echo "$topic"
+    echo "${topic:-Failed to get org task!}"
 else
     # echo "$topic $((percent / WIDTH))%"
     # todo: status bar colors
-    echo "$topic $(bs "B$(colort -70 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+    echo "$topic $(bs "B$(colort -l -40 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+    # echo "$topic $(bs "B50545b" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
 fi

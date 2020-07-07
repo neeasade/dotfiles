@@ -8,35 +8,6 @@
 	     (org-pomodoro-remaining-seconds))
 	  (* length-minutes 60)) (* 100)))
 
-;; note to self: standup is the wrong word probably -- it's the heading we track all of 'today'
-;; changing the name would make more sense for slamming it on project headings as well
-(defun ns/notes-current-standup-headline ()
-  "get the current standup heading as matched from notes"
-  (with-current-buffer (find-file-noselect org-default-notes-file)
-    (om-parse-headline-at (org-find-property "focus"))))
-
-(defun ns/notes-current-standup-task (parent-headline)
-  "get the current standup heading as matched from notes"
-  (let ((standup-point
-	 (->> parent-headline
-	      cdr car
-	      ((lambda (props) (plist-get props :begin))))))
-
-    ;; standup-point
-    (with-current-buffer (get-file-buffer org-default-notes-file)
-      (->> (om-parse-element-at standup-point)
-	   (om-get-children)
-	   ;; what we want:
-	   ;; next headline that has TODO blank or TODO, with no scheduled time
-	   ((lambda (children)
-	      (append
-	       ;; TODO: can't find out how to query headlines with no todo keyword
-	       ;; idea: map headlines, set todo keyword to 'unset'
-	       ;; (om-match '((:todo-keyword "")) children)
-	       (om-match '((:todo-keyword "TODO")) children)
-	       )))
-	   first))))
-
 (if (eq org-pomodoro-state :none)
     (let* ((top-headline (ns/notes-current-standup-headline))
 	   (top-headline-text (-> top-headline om-headline-get-path last first)))
@@ -47,7 +18,8 @@
 		 (concat "<" (format-time-string "%Y-%m-%d"))
 		 top-headline-text
 		 )))
-	  "Decide what to do today!"
+	  ;; "Decide what to do today!"
+	  nil
 	(concat "Resume: " (-> top-headline ns/notes-current-standup-task om-headline-get-path last first))))
   (let ((percent
 	 (ns/org-pomo-progress

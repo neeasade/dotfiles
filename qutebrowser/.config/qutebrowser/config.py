@@ -211,6 +211,8 @@ tabFont = GetSize('tab') + fonts['tabbar']
 if fonts['tab_bold']:
     tabFont = 'bold {0}'.format(tabFont)
 
-c.fonts.tabs = tabFont
+c.fonts.tabs.selected = tabFont
+c.fonts.tabs.unselected = tabFont
+
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 c.fonts.statusbar = GetSize('completion') + fonts['completion']

@@ -139,7 +139,6 @@ load_xresources() {
     xrdb $HOME/.Xresources
 
     load_xst
-    load_emacs
 }
 
 load_emacs() {
@@ -229,8 +228,9 @@ load_qutebrowser() {
     q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
     q_tab_bold="${q_tab_bold^}"  # bashism, make first letter capital
     q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
-    q_tab_fontsize_small="$(($q_tab_fontsize - 2))"
-    q_tab_font="$(echo $p_font_main | sed 's/-.*//')"
+    q_tab_fontsize_small="$(($q_tab_fontsize - 1))"
+    q_tab_font=$(echo "$p_font_main" | sed 's/-.*//')
+    q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
 
     margs qutebrowser .config/qutebrowser/colors.py
 
