@@ -82,14 +82,15 @@ render_supersmol() {
 
     result=$(btags state-plain | while read tname active color wids; do
 	tag_name=$tname
-	foreground=$(colort -50 "$bg")
+	# foreground=$(colort -50 "$bg")
+	foreground=$fg
 
 	tname=${tname:0:1}
 
 	T=1
 	if $active; then
-	    foreground=$p_fg_inactive
-	    # foreground=$(colort -40 "$color")
+	    # foreground=$p_fg_inactive
+	    # foreground=$(colort -l 40 "$foreground")
 	    if [ ! -z "$wids" ]; then
 		# tname="${tname}!"
 		T=2
@@ -103,7 +104,7 @@ render_supersmol() {
 
 	border=
 	if echo "$wids" | grep -q $current; then
-	    border=$(colort -l -40 $color)
+	    border=$(colort -l -20 $color)
 	    tname="${tname}!"
 	fi
 

@@ -67,9 +67,9 @@ settings() {
     # p_bg_middle=$(elisp -r "(face-attribute 'ns/mode-line-inactive :background)")
 
     # p_fg_active="#ff525252"
-    p_format="org_task:title|tags|mpd:weather:clock"
-    # p_format="tags:toots:title|org_task|mpd:weather:clock"
-    p_format="tags:title:misc:circe_dms|mpd|weather:clock"
+    # p_format="org_task:title|tags|mpd:weather:clock"
+    p_format="tags:title|org_task|mpd:weather:clock"
+    # p_format="tags:title:misc:circe_dms|mpd|weather:clock"
 
     # p_format="battery|desktop|clock"
     # todo: offset should be per font -- it can be in lemonbar
@@ -84,9 +84,14 @@ settings() {
     # p_padding=6
 
     # p_font_main="Charter-10:style=Bold"
-    p_font_main="Equity Text B-11"
+
+    p_font_main="Equity Text A-11"
+    p_font_main="Equity Caps B-10"
+
+    # p_font_main="Charter-13"
     # p_font_main="Charter-10:style=Bold"
-    p_font_icon="FontAwesome-10" # Panel Icon font.
+
+    p_font_icon="Font Awesome 5 Free Solid-8"
     p_icon_enable=false
     p_desktop_display_name=name
     # d_font="Go Mono for Powerline 14"

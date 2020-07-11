@@ -4,12 +4,20 @@ rofi.kb-row-up: Up,Control+e,ISO_Left_Tab
 rofi.kb-row-down: Down,Control+n
 rofi.font: {{{echo "$st_font" | sed 's/-/ /'}}}
 
+! State:           'bg',     'fg',     'bgalt',  'hlbg',   'hlfg'
+rofi.color-normal: #{{background}}, #{{foreground}}, #{{background}}, #{{p_bg_active}}, #{{foreground}}
+! rofi.color-urgent:
+! rofi.color-active:
+
+! 'background', 'border', 'separator'
+rofi.color-window: #{{background}}, #{{foreground}}, #{{background}}
+
 st.font: {{st_font}}
 st.font_variable: {{st_font_variable}}
 st.borderpx: 0
 st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
-st.prompt_char: {{PROMPT_CHAR}}
+st.disablebold: 1
 
 ! note: these aren't official, I'm referencing them in config.
 Emacs.theme: {{emacs_theme}}

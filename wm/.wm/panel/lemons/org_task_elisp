@@ -20,7 +20,11 @@
 		 )))
 	  ;; "Decide what to do today!"
 	  nil
-	(concat "Resume: " (-> top-headline ns/notes-current-standup-task om-headline-get-path last first))))
+	(concat "Resume: "
+		(or
+		 (-> top-headline ns/notes-current-standup-task om-headline-get-path last first)
+		 top-headline-text
+		 ))))
   (let ((percent
 	 (ns/org-pomo-progress
 	  (alist-get

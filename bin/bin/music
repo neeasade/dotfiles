@@ -133,7 +133,7 @@ remove() { # remove some search match from the playlist
 }
 
 now() { # fuzzy search for a song, play it now
-  if song=$(mpc listall | dmenu); then
+  if song=$(mpc listall | dmenu "song"); then
     mpc insert "$song"
     mpc next
     mpc play

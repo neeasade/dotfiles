@@ -38,11 +38,11 @@ stdbuf -oL i3blocks -o j | \
 	lemonbar -d \
 	    -u 1 \
 	    -n $(theme getval p_window_class) \
-	    -B \#ffeef0f3 \
-	    -F \#ff5a5e65 \
-	    -f 'Equity Caps B-10:style=Regular' \
-	    -f 'Equity Caps B-10:style=Bold' \
-	    -f 'Font Awesome 5 Free Solid-8' \
+	    -B \#00$(theme getval background) \
+	    -F \#ff$(theme getval foreground) \
+	    -f "$(theme getval p_font_main)" \
+	    -f "$(theme getval p_font_main):style=Bold" \
+	    -f "$(theme getval p_font_icon)" \
 	    -o 0 \
 	    -o 0 \
 	    -o -4 \

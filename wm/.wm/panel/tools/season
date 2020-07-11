@@ -10,35 +10,51 @@ new() {
 
     # border_side=$(bs O1 B$border U$border +o +u)
     content=$(echo " $line" | bs "B$bg" "F$fg" "U$border" +u)
-    content="$content$(bs "B$bg" "F$fg" "U$border" +u ': ')"
+    # content="$content$(bs "B$bg" "F$fg" "U$border" +u ': ')"
+    content="$content$(bs "B$bg" "F$fg" "U$border" +u ':  ')"
 
     # gradient fade -- depends on dir
-
     if [ "$align" = "left" ]; then
 	# pain
 	# if [ "$lemon" = "title" ]; then notify-send 'made it here'; fi
 	# if [ "$lemon" = "title" ]; then notify-send "gradient 10 $bg $bg_next"; fi
 	for g in $(gradient 10 "$bg" "$bg_next"); do
 	    # if [ "$lemon" = "title" ]; then notify-send "arstarst $g"; fi
-	    # notify-send "$g"
-	    content="$content$(bs "B$g" O2 U$(colort -l -30 -t "$g") +u)"
+	    underline=$(colort -l -30 -t "$g")
+	    content="$content$(bs "B$g" O2 U$underline +u)"
 	done
+
+	if $lemon_end_inner; then
+	    # underline=$(colort -l -30 -t "$g")
+	    content="$content$(bs "B$underline" O1 U$underline +u)"
+	fi
     fi
 
     if [ "$align" = "right" ]; then
 	# notify-send "gradient 4 $bg $bg_next"
 	for g in $(gradient 10 "$bg" "$bg_next"); do
-	    # notify-send "$g"
-	    content="$(bs "B$g" O2 U$(colort -l -30 "$g") +u)${content}"
+	    underline=$(colort -l -30 "$g")
+	    content="$(bs "B$g" O2 U$underline +u)${content}"
 	done
+
+	if $lemon_end_inner; then
+	    # underline=$(colort -l -30 -t "$g")
+	    content="$(bs "B$underline" O1 U$underline +u)$content"
+	fi
     fi
 
     if [ "$align" = "center" ]; then
 	# bg_next=$(colort -t "$(theme getval p_bg_normal)")
 	# notify-send "gradient 10 $bg $bg_next"
 	for g in $(gradient 10 "$bg" "$bg_next"); do
-	    content="$(bs "B$g" O2 U$(colort -l -30 "$g") +u)${content}$(bs "B$g" O2 U$(colort -30 "$g") +u)"
+	    underline=$(colort -l -30 "$g")
+	    content="$(bs "B$g" O2 U$underline +u)${content}$(bs "B$g" O2 U$underline +u)"
 	done
+
+	if $lemon_end_inner; then
+	    # underline=$(colort -l -30 -t "$g")
+	    content="$(bs "B$underline" O1 U$underline +u)$content$(bs "B$underline" O1 U$underline +u)"
+	fi
     fi
 
     printf '%s\n' "$content"

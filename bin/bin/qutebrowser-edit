@@ -11,4 +11,5 @@ while getopts c:l:f: flag; do
 done
 
 popup_window.sh -r
-emacsclient -c "+${line}:${column}" "${file}"
+emacsclient -c "+${line:-0}:${column:-0}" "${file}"
+# todo here: set variable width font, turn off mode line

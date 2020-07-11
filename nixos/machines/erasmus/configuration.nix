@@ -115,8 +115,8 @@ in
   # todo: have this read from file/togglable
   networking.extraHosts =
     ''
-    127.0.0.1 twitter.com
-    127.0.0.1 www.twitter.com
+    # 127.0.0.1 twitter.com
+    # 127.0.0.1 www.twitter.com
   '';
 
   # This value determines the NixOS release with which your system is to be

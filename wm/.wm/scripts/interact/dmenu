@@ -30,7 +30,7 @@ do_rofi() {
 	    echo "$first_line"
 	fi
 	cat -
-    } | rofi -sort -columns 2 -l 30 -yoffset $Y -width $W -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit -location 2 "$(theme getval p_font_main | sed 's/-/ /')" |
+    } | rofi -sort -columns 1 -l 30 -yoffset $Y -width $W -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit -location 2 "$(theme getval p_font_main | sed 's/-/ /')" |
 	while IFS=$'\n' read -r rofi_line; do
 	    echo "$rofi_line"
 	    if [ ! -z "$FEEDER_PID" ]; then
