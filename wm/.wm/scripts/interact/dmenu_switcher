@@ -100,7 +100,8 @@ add_historys() {
 
 add_tabs() {
     open_titles() {
-	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/_autosave.yml" | grep title | sed 's/.*title: //'
+	session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
+	sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
     }
 
     # user by add_meta as well
@@ -110,8 +111,8 @@ add_tabs() {
 	qb_command ":buffer $title"
     }
 
-    while read -r title; do
-	add_switch "tab: $title" "qute_switch_to '$(echo "$title" | sed "s/'//g;s/\"// ")'"
+    while read -r url title; do
+	add_switch "tab: $title $url" "qute_switch_to '$(echo "$url" | sed "s/'//g;s/\"// ")'"
     done <<< "$(open_titles)"
 }
 
