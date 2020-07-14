@@ -21,12 +21,16 @@ else
   title="Stopped"
 fi
 
-icon music
 
-if [  "$title" = "Stopped" ]; then
-    echo Stopped
-else
-    $playing && icon pause
-    $paused && icon play
-    echo "$title" | cut -c 1-$maxWinNameLen
-fi
+# $playing && icon pause
+# $paused && icon play
+
+title=$(echo "$title" | cut -c 1-$maxWinNameLen)
+echo "$title"
+
+# WIDTH=30
+# percent=$(mpc | grep -oE "([0-9]+)%"  | tr -d \%)
+# first=$(echo ".$percent * $WIDTH" | bc -l  | sed 's/\..*//')
+# second=$((WIDTH - first))
+
+# echo $(bs 'A1player.sh toggle; pkill -SIGRTMIN+10 i3blocks' ":$title $(bs "B$(colort -70 "$bg")" O${first} +o)$(bs Beef0f3 +o O${second})")

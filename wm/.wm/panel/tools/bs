@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # bar stuff
 # example:
 # echo some text | bs Bffffff F000000 UFF000000 +o +u
@@ -23,7 +22,7 @@ for item in "$@"; do
     fi
 
     if [[ O == $first ]]; then
-	content="%{${item}}"
+	content="${content}%{${item}}"
 	continue
     fi
 
@@ -35,7 +34,7 @@ for item in "$@"; do
 
 	prepend="${prepend}%{${first}${color}}"
     elif [[ A == $first ]]; then
-	prepend="${prepend}%{${item:0:2}:${item:2}:}"
+	prepend="${prepend}%{${item:0:2}:$(sed 's/:/\\:/g' <<< "${item:2}"):}"
 	append="${append}%{A}"
     else
 	prepend="${prepend}%{${item}}"

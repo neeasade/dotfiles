@@ -1,0 +1,41 @@
+#!/usr/bin/env elisp
+;; HACK: use ^ to delimit percent and topic.
+;; idea: instead of progress could include a countdown like in the mode-line
+
+(defun ns/org-pomo-progress (length-minutes)
+  "percent through current pomodoro state"
+  (->> (/ (- (* length-minutes 60)
+	     (org-pomodoro-remaining-seconds))
+	  (* length-minutes 60)) (* 100)))
+
+(if (eq org-pomodoro-state :none)
+    (let* ((top-headline (ns/notes-current-standup-headline))
+	   (top-headline-text (-> top-headline om-headline-get-path last first)))
+      (if (and
+	   ;; hack, assume '<' means org date
+	   (s-contains-p "<" top-headline-text)
+	   (not (s-contains-p
+		 (concat "<" (format-time-string "%Y-%m-%d"))
+		 top-headline-text
+		 )))
+	  ;; "Decide what to do today!"
+	  nil
+	(concat "Resume: "
+		(or
+		 (-> top-headline ns/notes-current-standup-task om-headline-get-path last first)
+		 top-headline-text
+		 ))))
+  (let ((percent
+	 (ns/org-pomo-progress
+	  (alist-get
+	   org-pomodoro-state
+	   `((:short-break . ,org-pomodoro-short-break-length)
+	     (:long-break . ,org-pomodoro-long-break-length)
+	     (:pomodoro . ,org-pomodoro-length))))))
+    (format "%s^%s"
+	    (or
+	     (s-clean org-clock-current-task)
+	     (-> org-pomodoro-state
+		 prin1-to-string
+		 (substring 1)))
+	    (ns/let-script-args (width) (floor (* (string-to-number (or width "100")) (/ percent 100)))))))

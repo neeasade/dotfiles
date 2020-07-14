@@ -2,51 +2,20 @@
 # show status of org-pomodoro in a progress bar.
 # tied to mpd, toggles on when working, off on break
 
-calc() {
-    echo "$*" | bc -l
-}
+WIDTH=60
+if ! org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH); then
+    echo "Decide what to do today!"
+    exit
+fi
 
-time_offset_percent() {
-    duration=$1 # minutes
+topic=$(echo "$org_task_status" | awk -F \^ '{print $1}')
+percent=$(echo "$org_task_status" | awk -F \^ '{print $2}')
 
-    interval=$(calc ${duration} \* 60)
-
-    time_left=$(elisp '(format-time-string "%s" (org-pomodoro-remaining-seconds))' | tr -d '"')
-    percent=$(calc "((${interval} - ${time_left}) / ${interval}) * 100" | sed 's/\..*//')
-
-    percent=${percent:-0}
-    echo "${percent}"
-}
-
-progress() {
-    mkb "$(time_offset_percent "$1")" 10
-}
-
-get_length() {
-    elisp "org-pomodoro-${@}length"
-}
-
-pomodoro_state=$(elisp org-pomodoro-state)
-
-case ${pomodoro_state} in
-    :short-break)
-        echo "Break $(progress $(get_length short-break-))"
-        ;;
-
-    :long-break)
-        echo "Long break $(progress $(get_length long-break-))"
-        ;;
-
-    :pomodoro)
-        task="$(elisp -r '(s-clean org-clock-current-task)')"
-        echo "${task} $(progress $(get_length))"
-        ;;
-
-    :none)
-        echo "current focus: $(elisp -r '(ns/org-get-active)')"
-        ;;
-
-    *)
-        echo "No Task!"
-        ;;
-esac
+if [ -z "$percent" ]; then
+    echo "${topic:-Failed to get org task!}"
+else
+    # echo "$topic $((percent / WIDTH))%"
+    # todo: status bar colors
+    echo "$topic $(bs "B$(colort -l -40 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+    # echo "$topic $(bs "B50545b" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+fi

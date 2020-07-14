@@ -1,4 +1,4 @@
 #!/usr/bin/env dash
 
-# icon cloud
-cache_output $((60 * 10)) curl wttr.in/?format=j1 | jq -r '.current_condition[0] | .temp_F + "°F, " + .weatherDesc[0].value'
+label=$(cache_output $((60 * 10)) curl wttr.in/?format=j1 | jq -r '.current_condition[0] | .temp_F + "°F, " + .weatherDesc[0].value' || echo "no weather :(")
+echo "$(icon cloud)$(bs ":$label" "A1qb_meta_open 'https://wttr.in/'")"

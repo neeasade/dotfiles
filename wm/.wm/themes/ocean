@@ -65,7 +65,7 @@ settings() {
     bg() {
 	#step=$((step-1))
 	#input="$(eval "echo \#\${color$step}")"
-	input="$(gradientGet)"
+	input=$(gradientGet)
 	#input="$(maxchroma "$(colort -t $input)")"
 	#echo "#ff$(colort -t -l -30 $input)"
 	echo "$input"

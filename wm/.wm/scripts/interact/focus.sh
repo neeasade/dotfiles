@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# todo: idea: if looking at an emacs window, just window focus in that direction, and then fallback to real window
 
 dir=$1
 
@@ -15,14 +14,13 @@ case $node_dir in
   south) dir=y; sign=-lt; emacs_dir=down ;;
 esac
 
-if xprop -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
-  if elisp "(evil-window-$emacs_dir 1) t"; then
+if xprop WM_CLASS -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
+  if timeout 0.2 elisp "(evil-window-$emacs_dir 1) t"; then
     exit 0
   fi
 fi
 
 node=${node^^}
-
 
 floating_windows=$(bspc query -N -d -n .window.local.floating.!hidden)
 declare -A winmap=();
@@ -125,7 +123,7 @@ target_corners() {
 # if any corner falls in us, use that, biased to higher values
 if [ ! -z "$floating_windows" ]; then
   for wid in $floating_windows; do
-    wid="${wid^^}"
+    wid=${wid^^}
     [ "$wid" = "$node" ] && continue
     check_corners "$wid"
   done

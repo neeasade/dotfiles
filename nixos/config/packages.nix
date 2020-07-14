@@ -4,21 +4,16 @@ let
   nixcfg = {
     allowUnfree = true;
     oraclejdk.accept_license = true;
-
-    permittedInsecurePackages = [
-      "samba-3.6.25"
-    ];
   };
 
   # pkgs = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
   stable = pkgs; # controlled by root nix-channel entry
   unstable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
-
   nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
 
-  #unstable = pkgs; # force everyone to be on the same level
-  #edge = pkgs;
+  # unstable = pkgs;
+  # edge = pkgs;
 
   expr = import ./expr { inherit pkgs lib unstable edge; };
 
@@ -27,8 +22,21 @@ let
   # rolling = stable;
 
   core = (with stable; [
+
+    nix-direnv # note: depends on nixpkgs >20.03
+
+    pinentry_qt5
+
+    nodejs # see repo:debounce.js
+
+    leiningen clojure
+
+    entr
+    rofi
+    cdparanoia
+    cdrkit
+    cdrtools
     syncthing
-    kitty
     nmap
     mediainfo
     direnv
@@ -68,9 +76,6 @@ let
     filezilla
     gitAndTools.gitFull
 
-    # todo: find this
-    gnome3.zenity
-
     go-mtpfs
     gparted
     hfsprogs
@@ -95,7 +100,6 @@ let
     wlroots
     wayland-protocols
 
-    # nix-repl
     ntfs3g
     openssl
     telnet
@@ -128,12 +132,14 @@ let
     xorg.xmodmap
     xfontsel
     xurls
+
     zathura
+
+    calibre
+
     zsh
 
     playerctl
-
-    # emacs
 
     mesa_drivers
     libGL
@@ -141,75 +147,58 @@ let
     gnome3.gnome-terminal
     gnutls # for circe
 
+    fd ripgrep
+    google-chrome
+    rxvt_unicode
+
     yq
+
   ]) ++ (with unstable; [
   # ]) ++ (
-    lorri
-    tiled
-    love_11
-    luajit
+    qutebrowser
 
-    emacs
-
-    # (emacsWithPackages(e: with e; [
-    #   emacs-libvterm
-    #   # proof-general
-    #   # (pdf-tools.overrideAttrs (attrs: { src = pdf-tools-src; }))
-    # ]))
-
-    dunst
-    dzen2
+    dunst dzen2
     ffmpeg
-    i3lock
-    lemonbar-xft
-    meh
-    ranger
-    sxhkd
-    txtw
-    x11idle
-    xdotool
+    i3lock meh
+    sxhkd txtw
+    x11idle xdotool
     xfce.thunar
     xorg.xprop
     xorg.xwininfo
     xtitle
     youtube-dl
     pinta
-
-    polybar
   ]) ++ ( with expr; [
-    # qutebrowser-git
+    # drawterm
+    # oomox
+    babashka
 
-    skroll
+    lemonbar
+    skroll # todo: maybe zscroll this
 
     pfetch-neeasade
     colort-git
-
-    # drawterm
-    # oomox
 
     pb-git
     mpvc-git
     xst-git
     dmenu
-    bevelbar
     gtkrc-reload
     neeasade-opt
     txth
     wmutils-core-git
     wmutils-opt-git
     xdo-git
-  ]) ++ (with edge; [
-    qutebrowser
-    # emacs
-    # allow images to display
-    # (emacs.override { imagemagick = pkgs.imagemagickBig; } )
+
+  ]) ++ (with unstable; [
   ]);
 
   inherit (pkgs) eggDerivation fetchegg;
   extra = (with stable; [
+    tiled love_11 luajit
+
     sqlitebrowser
-    pup
-    jo
+    pup jo
     screenkey
     byzanz
 
@@ -222,14 +211,9 @@ let
 
     cloc
 
-    # damn rust really crept in there
-    fd
-    ripgrep
-
     pandoc
     imagemagick
     graphviz
-    google-chrome
     audacity
     bfg-repo-cleaner
     compton
@@ -244,7 +228,6 @@ let
     libtiff
     neovim
     pcmanfm
-    rxvt_unicode
     # texlive.combined.scheme-full
   ]);
 
@@ -260,12 +243,14 @@ let
     # wineStaging
     # wineUnstable
     # (wine.override { wineBuild = "wineWow"; })
-    steam
+
     minecraft
     openmw
     drawpile
+    steam
   ]) ++ (with unstable; [
     # openmw-tes3mp
+    # steam
   ]);
 
   development = (with stable; [
@@ -295,9 +280,7 @@ let
     gradle
     maven
     jdk8
-    leiningen
     stack
-    clojure
     boot
 
     # rust
@@ -306,12 +289,13 @@ let
     rustfmt
     rustracer
 
-    racket
-    janet
+    # racket
+    # janet
 
     python27
     (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
+      toot
 
       # please do the needful
       setuptools
@@ -339,52 +323,56 @@ let
     zlib
 
     mono
-    nodejs
     ruby
   ]) ++ (with edge; [
-    # lorri
-
     # joker
-    # boot
     # chickenPackages_5.chicken
     # chickenPackages_5.egg2nix
-  ]) ++ (with nur; [
-    # repos.tilpner.fennel
   ]);
 
   basefonts = (with pkgs; [
-    roboto-mono
-    siji
-    tewi-font
+    dejavu_fonts
+    corefonts
   ]);
 
   extrafonts = (with pkgs; [
-    gohufont
-    corefonts
-    dejavu_fonts
-    fantasque-sans-mono
-    fira
-    fira-code
+    # roboto roboto-mono
+    # tewi-font siji
+    # fira fira-code
     font-awesome-ttf
-    noto-fonts
-    powerline-fonts
-    roboto
-    roboto-slab
-    source-code-pro
+    noto-fonts # todo: noto-emoji?
+    powerline-fonts # includes a 'Go Mono for powerline'
   ]);
 
 in
 {
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    }))
+  ];
+
   # "just give me something pls"
-  # environment.systemPackages = core
-  # fonts.fonts = basefonts
+  # environment.systemPackages = core ++ [pkgs.emacsUnstable];
+  # fonts.fonts = basefonts;
 
   environment.systemPackages =
     core ++
     extra ++
     development ++
     games ++
+    [pkgs.emacsUnstable] ++
     [];
+
+  # for nix-direnv:
+  nix.extraOptions = ''
+    keep-outputs = true
+    keep-derivations = true
+  '';
+
+  environment.pathsToLink = [
+    "/share/nix-direnv"
+  ];
 
   fonts.fonts =
     basefonts ++

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # wrap the importing of music from the internet
 # define music playlists by search terms
-# add a nice display func
+# add a neat display func
 
 # todo: consider a 'rename' function
 # so you could like rename the currently playing song
@@ -10,7 +10,7 @@
 # -> Then & Now (Liquid Drum & Bass Mix)
 
 # musicdir="$HOME/Music"
-musicdir=$(cat "$HOME/.config/mpd/mpd.conf" | awk -F\" '/music_directory/{print $2}')
+musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 
 current_playlist="${musicdir}/playlist/current"
 
@@ -42,6 +42,16 @@ add() { # add a url to library, fallback on clipboard content
 del() { # delete the currently playing song
   location=$(mpc -f "%file%" | head -n 1)
   rm "$musicdir/$location"
+  mpc next
+  mpc update
+}
+
+rename() { # delete the currently playing song
+  location=$(mpc -f "%file%" | head -n 1)
+  location="$musicdir$location"
+  new_name=$*
+  new_name="$(dirname "$location")/$new_name"
+  mv "$location" "$new_name"
   mpc next
   mpc update
 }
@@ -85,6 +95,11 @@ is_long() {
 append() { # append some search term to the current playlist
   echo append "$*"
 
+  if [ "$op" = "append" ]; then
+      # we called append at a top level, therefore we are no longer tied to any playlist
+      echo "custom" > "$current_playlist"
+  fi
+
   if [ "$*" = "long_songs" ]; then
     cat "${musicdir}/long_songs"
     mpc listall | is_long_filter | mpc add
@@ -118,16 +133,24 @@ remove() { # remove some search match from the playlist
 }
 
 now() { # fuzzy search for a song, play it now
-  if song=$(mpc listall | dmenu); then
+  if song=$(mpc listall | dmenu "song"); then
     mpc insert "$song"
     mpc next
     mpc play
+    echo "custom" > "$current_playlist"
+  fi
+}
+
+nowmpv() { # fuzzy search for a song, play it now with MPV
+  if song=$(mpc listall | dmenu); then
+      mpv "$musicdir/$song"
+      echo mpv "$musicdir/$song"
   fi
 }
 
 bl() { # blacklist the currently playing song from the current playlist.
-  playlist="$(cat "$current_playlist")"
-  songname="$(basename "$(mpc -f '%file%' | head -n 1)")"
+  playlist=$(cat "$current_playlist")
+  songname=$(basename "$(mpc -f '%file%' | head -n 1)")
   printf "\n-$songname" >> "$musicdir/playlist/$playlist"
   mpc next
 }
@@ -156,6 +179,7 @@ playlist() { # select a search term based playlist to play
   # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
   mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
 
+  # todo: some flag to not shuffle a playlist
   mpc shuffle
   mpc play
 }

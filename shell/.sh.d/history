@@ -11,7 +11,7 @@ case "$cur_shell" in
     HISTSIZE=$history_length
 
     shopt -s histappend
-    HISTCONTROL=ignoredups:erasedups
+    HISTCONTROL=ignoredups:erasedups:ignorespace
 
     # store things in the history file as we go along
     export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"

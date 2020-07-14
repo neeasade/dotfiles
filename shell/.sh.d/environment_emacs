@@ -43,7 +43,7 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   set_editor "$eclient"
 
   succ .emacs.d/scripts
-  PAGER="epager"
+  export PAGER="epager"
 
   for yeet in htop nethack cava; do
     if has $yeet; then
@@ -66,11 +66,16 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   }
 
   # won't work in sh, but is fine in bash/zsh
+  # todo: see if we can do this on the emacs end
   exit() {
     if [ $(jobs | wc -l) -ne 0 ]; then
       echo "There are jobs present."
     else
-      elisp "(run-at-time 0 nil 'delete-frame)"
+      if [ $(ps | wc -l) -eq 3 ]; then
+        elisp "(run-at-time 0 nil 'delete-frame)"
+      else
+        builtin exit
+      fi
     fi
   }
 

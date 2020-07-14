@@ -1,4 +1,5 @@
 #!/usr/bin/env elisp
+;; elisp-eval: read_stdin=true
 ;; dmenu in emacs
 ;; cursed
 ;; takes one arg, the prompt string -- style/placement is handled by popup_window.sh
@@ -16,7 +17,7 @@
        ;; trying
        ;; do the thing
        (option (condition-case ()
-		   (ivy-read prompt (->> *stdin-file* f-read (s-split "\n"))
+		   (ivy-read (concat prompt " ") (->> *stdin-file* f-read (s-split "\n"))
 		   	     :action (fn <>))
 		 (quit nil) ;; if we quit out of the ivy-read just return nothing
 		 )))

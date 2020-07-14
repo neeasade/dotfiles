@@ -1,9 +1,25 @@
-#!/usr/bin/env sh
-# always run mpv w/ socket
+#!/usr/bin/env bash
+# always run mpv w/ socket, args as config
 
 mpv=$(type -a mpv | tail -n 1 | awk '{print $3}')
 
 mpc pause >/dev/null
 
+# todo maybe - maintain a cache of youtube dl to title names,
+# then mpv_resume could resume by youtube channel/title
 
-$mpv --save-position-on-quit --screenshot-directory="$HOME/Screenshots_mpv" --input-ipc-server=/tmp/mpvsocket "$@"
+args=( )
+for a in "$@"; do
+    if [[ -e "$a" ]]; then
+	args+=( "$(realpath "$a")" )
+    else
+	args+=( "$a" )
+    fi
+done
+
+set -- "${args[@]}"
+
+$mpv \
+    --write-filename-in-watch-later-config --save-position-on-quit \
+    --screenshot-directory="$HOME/Screenshots_mpv" \
+    --input-ipc-server=/tmp/mpvsocket "$@"

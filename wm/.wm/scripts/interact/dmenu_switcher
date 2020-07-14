@@ -1,13 +1,19 @@
 #!/usr/bin/env bash
-# all switcher dmenu
-# idea: qutebrowser history
-# idea: org headings
-# on the emacs side could really use keybinds to narrow
+# switch between 'things' with a dmenu-like or pie style interface
+
+# idea: use keybinds to narrow the current selection
+
+# auto export
+set -a
 
 declare -A matches_to_actions
 
 add_switch() {
-    matches_to_actions["$1"]=$2
+    if ${ASSOCIATE:-false}; then
+	matches_to_actions["$1"]=$2
+    fi
+
+    echo "$1"
 }
 
 add_windows() {
@@ -22,7 +28,7 @@ add_windows() {
     done
 }
 
-add_emacs_buffers() {
+add_buffers() {
     find_emacs_window() {
 	emacs_wid=
 	check_id() {
@@ -75,26 +81,27 @@ add_emacs_buffers() {
     done
 }
 
-add_qutebrowser_history() {
-
+# nb: name intentional.
+add_historys() {
     start_day=$(date --date="7 days ago" +%F)
     end_day=$(date +%F)
     start=$(date -d "$start_day 00:00:00" +%s)
     end=$(date -d "$end_day 23:59:59" +%s)
-    query="select * from history where atime > ${start} and atime < ${end}"
+    query="select distinct url, title from history where atime > ${start} and atime < ${end}"
     qutedb="$HOME/.local/share/qutebrowser/history.sqlite"
 
-    IFS=$'\n'
-    for result in "$(sqlite3 "$qutedb" "$query")"; do
+    while read -r result; do
 	url=$(awk -F\| '{print $1}' <<<"$result")
 	title=$(awk -F\| '{print $2}' <<<"$result")
-	# add_switch "history: $title" "notify-send wtf"
-    done
+	add_switch "history: $title" "$BROWSER '$url'"
+    # done < <(sqlite3 "$qutedb" "$query" | head -n 2)
+    done < <(sqlite3 "$qutedb" "$query" | head -n 300)
 }
 
-add_qutebrowser_tabs() {
+add_tabs() {
     open_titles() {
-	grep -A 6 '    \- active: true' "$HOME/.local/share/qutebrowser/sessions/_autosave.yml" | grep title | sed 's/.*title: //'
+	session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
+	sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
     }
 
     # user by add_meta as well
@@ -104,15 +111,22 @@ add_qutebrowser_tabs() {
 	qb_command ":buffer $title"
     }
 
-    while read -r title; do
-	add_switch "tab: $title" "qute_switch_to '$(echo "$title" | sed "s/'//g;s/\"// ")'"
+    while read -r url title; do
+	add_switch "tab: $title $url" "qute_switch_to '$(echo "$url" | sed "s/'//g;s/\"// ")'"
     done <<< "$(open_titles)"
+}
+
+add_tags() {
+    while read -r name; do
+	add_switch "tag: set $name" "btags set-tag-on-wids $name \$(bspwindows)"
+    done < <(btags state-raw | bb -o '(->> *input* :tags (map :name))')
 }
 
 # playing around
 # idea: meta history that opens up new dmenu with qutebrowser browsing history from sqlite
 # idea: find a current window with shell on vps or spawn one
-add_meta() {
+# idea: org headings
+add_metas() {
     find_url() {
 	url_match=$*
 	session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
@@ -124,9 +138,11 @@ add_meta() {
 	fi
     }
 
-    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com'"
+    add_switch "meta: exec" "sh -c '\$(echo | dmenu)'"
+    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
     add_switch "meta: telegram" "https://web.telegram.org/"
-    add_switch "meta: twitter" "find_url 'https://twitter.com'"
+    add_switch "meta: twitter" "find_url 'https://twitter.com/'"
+    add_switch "meta: nixers" "find_url 'https://nixers.net/'"
 
     find_steam() {
 	if pgrep steam; then
@@ -145,6 +161,11 @@ add_meta() {
 
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
 
+    # todo: these might be org links instead of meta thing shere
+    add_switch "meta: music now" "music now"
+    add_switch "meta: mpv resume" "mpv_resume"
+    add_switch "meta: netflix" "google-chrome-stable netflix.com"
+
     # idea: hydra menu for tag stuff? other?
 
     notes_file() {
@@ -156,27 +177,108 @@ select_action() {
     # maybe consider allow partial match later (turned out accumulating options was really slow/maybe revisit this in keys)
 
     if [ -z "$*" ]; then
+	echo "no action selected"
 	return
     fi
 
     # target=$(echo "$options" | grep "$*" | head -n 1)
     target=$*
-    echo "$target"
-    echo "${matches_to_actions[${target}]}"
+
+    echo "target: '$target'"
+    echo "match: ${matches_to_actions[${target}]}"
+
+    # echo "${matches_to_actions[${key}]}"
     eval "${matches_to_actions[${target}]}"
     # bspc desktop -l monocle
 }
 
+# doing it this way let's us call dmenu right away/just start typing
+enact() {
+    # rofi
+    echo FEEDER_PID=$$
+    echo " "
 
-add_windows
-add_qutebrowser_tabs
-add_emacs_buffers
-add_meta
+    if [ -z "$*" ]; then
+	# the reason for wrapping this in a subshell is to batch the adds for rofi
+	add_tags
+	add_windows
+	add_tabs
+	add_buffers
+	add_metas
+	# add_historys | sort | uniq
+    else
+	# echo eval add_${*}s
+	eval add_${*}s
+    fi
+}
 
-# add_qutebrowser_history
 
-choice=$((for key in "${!matches_to_actions[@]}"; do
-	      echo "$key"
-	  done) | dmenu "$@")
+# todo: this is optimized by single letter -- tab/tag conflict rn
+get_kind() {
+    declare -A kinds=(
+	["w"]="window"
+	# ["t"]="tab"
+	["b"]="buffer"
+	["m"]="meta"
+	["t"]="tag"
+	["h"]="history"
+    )
 
-select_action "$choice"
+    selected=$(
+	for kind in "${!kinds[@]}"; do
+	    echo "$kind"
+	done | dmenu "$@")
+    echo "${kinds[$selected]}"
+}
+
+# circles
+pie_select() {
+    pie_options=$(while read -r line; do
+	echo "$line"
+    done | tr $'\n' '^')
+
+    pie_options=${pie_options%?}
+    pie_options=$(echo "$pie_options" | sed 's|\^|" "|g')
+    pie_options="\"${pie_options}\""
+
+    # to create:
+    # cd /home/neeasade/git/Pye-Menu/
+    # nix-build shell.nix
+    eval /home/neeasade/git/Pye-Menu/result/bin/pye_menu_shell $pie_options
+}
+
+# pie
+# ideas for pie:
+# music operations
+# window operations
+do_narrow_piemenu() {
+    type=$(echo tab window meta tag | tr ' ' $'\n' | pie_select)
+    test -z "$type" && exit 0
+
+    # type=tag
+    choice=$(add_${type}s | sed "s/${type}: //" | pie_select)
+    ASSOCIATE=true enact "$type" >/dev/null
+    select_action "$type: $choice"
+}
+
+do_narrow_dmenu() {
+    type=$(get_kind)
+    test -z "$type" && exit 0
+    choice=$(setsid bash -c "enact $type | dmenu $@")
+    select_action "$choice"
+}
+
+do_broad_dmenu() {
+    choice=$(setsid bash -c "enact | dmenu $@")
+    type=$(awk -F: '{print $1}' <<< "$choice")
+    ASSOCIATE=true enact "$type" >/dev/null
+    select_action "$choice"
+}
+
+if [ -z "$SWITCH_KIND" ]; then
+    # do_narrow_piemenu
+    # do_narrow_dmenu
+    do_broad_dmenu
+else
+    $SWITCH_KIND
+fi

@@ -4,10 +4,6 @@
 # targetting: awesome, siji, ionic.
 # usage: $0  <icon_type/code>
 
-if ! $p_icon_enable; then
-    exit
-fi
-
 case $1 in
     # awesome, siji, ionic.
     desktop)  icon='f108 e1d7 f380';;
@@ -32,10 +28,10 @@ case $1 in
     window)   icon='f2d0';;
     linux)    icon='f17c';;
     github)   icon='f09b';;
-    *)        icon="$*";;
+    *)        icon=$*;;
 esac
 
-iconfont=awesome
+iconfont=$(theme getval p_font_icon | tr '[:upper:]' '[:lower:]' | grep -Eo 'awesome|siji|ionic')
 
 case $iconfont in
     awesome) index=1;;
@@ -46,4 +42,4 @@ esac
 
 icon_result=$(uchar $(echo $icon | cut -d ' ' -f$index))
 
-env printf "$icon_result"
+env printf "$icon_result "

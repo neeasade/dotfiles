@@ -9,6 +9,7 @@ lemon_target=$1
 step=$(eval "echo \${${1}}")
 lemon_target_align=$(eval "echo \${${1}_align}")
 lemon_target_end=$(eval "echo \${${1}_end}")
+lemon_target_end_inner=$(eval "echo \${${1}_end_inner}")
 
 # declare, reload.
 echo "[$lemon_target]"
@@ -45,7 +46,18 @@ process_target() {
 
 # targets will be exported functions by themes in bash.
 # they use resources from the theming scripts dir.
-targets="bg fg line prefix suffix activebg activefg activeline"
+targets="bg fg line activebg activefg activeline bg_next"
+
+bg_next() {
+    if $lemon_target_end_inner; then
+	# echo "#eef0f3"
+	colort -30 "$(bg)"
+    else
+	step=$((step + 1)) bg
+    fi
+
+    # step=$((step + 1)) bg
+}
 
 for target in $targets; do
     case $target in
@@ -76,5 +88,8 @@ eval echo "\$p_${lemon_target}_theme"
 # debug reference
 echo step=$step
 echo align=$lemon_target_align
+echo lemon=$lemon_target
+echo lemon_end=$lemon_target_end
+echo lemon_end_inner=$lemon_target_end_inner
 
 echo ""

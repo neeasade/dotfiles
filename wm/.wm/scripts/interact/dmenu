@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-prompt=${*:-select: }
+prompt=${*:-select}
 
 # cheat a little: if called like regular dmenu ignore everything except -p
 while :; do
@@ -14,9 +14,46 @@ while :; do
     [ $OPTIND -gt $# ] && break
 done
 
-if elisp t >/dev/null; then
-    cat - | emacs_dmenu "$prompt"
+# wowie wow oh my
+do_rofi() {
+    read -r first_line;
+    include=true
+    if [[ $first_line == FEEDER_PID* ]]; then
+	eval "$first_line"
+	include=false
+    fi
+
+    eval "$(popup_window.sh -e)"
+
+    {
+	if $include; then
+	    echo "$first_line"
+	fi
+	cat -
+    } | rofi -sort -columns 1 -l 30 -yoffset $Y -width $W -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit -location 2 "$(theme getval p_font_main | sed 's/-/ /')" |
+	while IFS=$'\n' read -r rofi_line; do
+	    echo "$rofi_line"
+	    if [ ! -z "$FEEDER_PID" ]; then
+		kill -- -$(ps -o pgid= $FEEDER_PID | grep -o [0-9]*)
+		# kill -- $FEEDER_PID
+	    fi
+	    break;
+	done
+}
+
+if type rofi >/dev/null; then
+    result=$(do_rofi)
+elif elisp t >/dev/null; then
+    result=$(cat - | emacs_dmenu "$prompt")
 else
     real_dmenu=$(type -a dmenu | tail -n 1 | awk '{print $3}')
-    cat - | "$real_dmenu" -p "$prompt"
+    result=$(cat - | "$real_dmenu" -p "$prompt")
+fi
+
+if [ -z "$result" ]; then
+    echo
+    exit 1
+else
+    echo "$result"
+    exit 0
 fi

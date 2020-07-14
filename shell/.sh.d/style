@@ -1,12 +1,12 @@
 # -*- mode: sh -*-
 
 type theme >/dev/null 2>&1 &&
-    _prompt=$(timeout 1 theme getval PROMPT_CHAR 2>/dev/null) ||
-    _prompt='%'
+    _promptchar=$(timeout 1 theme getval PROMPT_CHAR 2>/dev/null) ||
+    _promptchar='%'
 
 # dotfiles have been setup, but we're in a special location/no theme has been loaded:
-if [ -z "$_prompt" ]; then
-  _prompt='$'
+if [ -z "$_promptchar" ]; then
+  _promptchar='$'
 fi
 
 if [ -z "$cur_shell" ]; then
@@ -14,7 +14,7 @@ if [ -z "$cur_shell" ]; then
   cur_shell=${cur_shell##*/}
 fi
 
-[ "$cur_shell" = "zsh" ] && [ $_prompt = "%" ] && _prompt="%%"
+[ "$cur_shell" = "zsh" ] && [ $_promptchar = "%" ] && _promptchar="%%"
 
 # todo here: timeout if we take too long (remote FS)
 git_prompt() {
@@ -108,12 +108,16 @@ tell_emacs_shell_location() {
 
 prompt() {
     _ERR=$?
-    [ "$(id -u)" = "0" ] && _prompt=\#
+    [ "$(id -u)" = "0" ] && _promptchar=\#
+
+    _prompt=$_promptchar
+
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
     [ $_ERR -ne 0 ] && _prompt=${_prompt%?}!
 
     _prompt="$(git_prompt)$(env_prompt)$_prompt"
     # _prompt="$(git_prompt)$_prompt"
+    # _prompt="$_prompt"
 
     if ${REMOTE:-false}; then
       _prompt="$(hostname) $_prompt"
@@ -123,7 +127,17 @@ prompt() {
       _prompt="$(tell_emacs_shell_location)$_prompt"
     fi
 
+
     printf "%b%s" "$_prompt "
+
+    # dumb (see clear alias in environment_emacs)
+    # only use this for a screenshot
+    # if [ -f /tmp/dont_prompt_newline ]; then
+    #   rm /tmp/dont_prompt_newline
+    #   printf "%b%s" "$_prompt "
+    # else
+    #   printf "\n%b%s" "$_prompt "
+    # fi
 }
 
 PS1='$(prompt)'

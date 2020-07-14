@@ -36,6 +36,8 @@ alias ds='dirs -v | head -n 10'
 # making this a function so EG the following can work:
 # FOO=BAR make
 make() {
+
+  real_make=$(type -a make | tail -n 1 | awk '{print $3}')
   clear
-  make
+  $real_make "$@"
 }

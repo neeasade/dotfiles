@@ -17,6 +17,8 @@ for template in $(ls $HOME/.dotfiles/templates); do
     eval ${template}_template="$HOME/.dotfiles/templates/${template}"
 done
 
+# todo: should this used the cached theme? then you wouldn't depend
+# on emacs running for eg, panel startup/refresh theme there
 eval "$(theme get)"
 set -a
 
@@ -137,7 +139,6 @@ load_xresources() {
     xrdb $HOME/.Xresources
 
     load_xst
-    load_emacs
 }
 
 load_emacs() {
@@ -154,13 +155,8 @@ load_bspwm() {
     fi
 
     bspwmrc=".config/bspwm/bspwmrc"
-    panelt=".wm/scripts/interact/panelt"
-    icon=".wm/panel/tools/icon"
-
     margs bspwm "$bspwmrc"
-    margs icon "$icon"
-    margs panelt "$panelt"
-    chmod +x "$HOME/$bspwmrc" "$HOME/$panelt" "$HOME/$icon"
+    chmod +x "$HOME/$bspwmrc"
 
     wait
     setsid "$HOME/$bspwmrc"
@@ -185,7 +181,12 @@ load_lemonade() {
 
 	[ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
     fi
+
+    if systemctl --user status panel >/dev/null; then
+	systemctl --user restart panel
+    fi
 }
+
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
     trim_alphas
@@ -227,8 +228,9 @@ load_qutebrowser() {
     q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
     q_tab_bold="${q_tab_bold^}"  # bashism, make first letter capital
     q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
-    q_tab_fontsize_small="$(($q_tab_fontsize - 2))"
-    q_tab_font="$(echo $p_font_main | sed 's/-.*//')"
+    q_tab_fontsize_small="$(($q_tab_fontsize - 1))"
+    q_tab_font=$(echo "$p_font_main" | sed 's/-.*//')
+    q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
 
     margs qutebrowser .config/qutebrowser/colors.py
 
@@ -263,13 +265,13 @@ load_dunst() {
     # todo: make this a theme option
 
     # top center
-    # mon_width=$(bspc query -T -m | jq -r .rectangle.width)
-    # d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
-    # p_geometry="${d_width}x6+${d_x_middle}+$((b_window_gap + p_height))"
+    mon_width=$(bspc query -T -m | jq -r .rectangle.width)
+    d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
+    p_geometry="${d_width}x6+${d_x_middle}+$((b_window_gap + p_height))"
 
     # top right
     # WIDTHxHEIGHT+XOFF+YOFF
-    p_geometry="${d_width}x6-${b_window_gap}+$((b_window_gap + p_height))"
+    # p_geometry="${d_width}x6-${b_window_gap}+$((b_window_gap + p_height))"
 
     margs dunstrc .config/dunst/dunstrc
 
@@ -424,12 +426,16 @@ load_services() {
     if [ "$(hostname)" = "erasmus" ]; then
 	make_periodic_service 10 vps_connect "periodically -p 10 ssh -tt -R 22222:localhost:22 neeasade@vps.neeasade.net"
 	# ssh -t vps.neeasade.net 'ssh localhost -p 22222'
+
+	make_periodic_service 120 sync_org_schedule
     fi
 
     make_service unclutter 'unclutter -idle 1'
     make_service nm-applet
     make_service dunst
     make_service compton
+
+    make_service panel "$HOME/.wm/panel/lemonade"
 
     # todo: correct lemon mpd naming conflict
     make_service mpd "/run/current-system/sw/bin/mpd --no-daemon $HOME/.config/mpd/mpd.conf"
@@ -446,6 +452,9 @@ load_services() {
 	systemctl --user start $s
 	systemctl --user enable $s
     done
+
+    # just kidding
+    systemctl --user disable panel
 }
 
 if uname | grep -q MINGW; then

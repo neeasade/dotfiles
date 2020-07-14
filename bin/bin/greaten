@@ -2,7 +2,7 @@
 ;; make dark colors darker
 ;; make light colors lighter
 
-(ns/let-script-args (percent color)
-		    (let ((color (concat "#" color))
-			  (percent (string-to-number percent)))
-		      (ns/color-greaten percent color)))
+(apply 'ns/color-greaten
+       (ns/let-script-args (percent color)
+			   (list (string-to-number percent)
+				 (ns/color-format color))))

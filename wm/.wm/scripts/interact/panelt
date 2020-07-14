@@ -1,8 +1,13 @@
 #!/usr/bin/env dash
 # Toggle the panel on/off
 
-kill -s TERM $(cat /tmp/panel-pid) || (nohup "/home/neeasade/.wm/panel/lemonade" &)
-
+if systemctl --user status panel >/dev/null; then
+    bspc config top_padding 0
+    systemctl --user stop panel
+else
+    # top padding is set in the script
+    systemctl --user start panel
+fi
 
 # dunst pgrep's for panel
 sleep 0.3

@@ -102,12 +102,14 @@ draw_outerdark() {
 	# outer_color=$normal
 	# if $(echo "$state" | awk -F \| "/$wid/{print \$2}" | head -n 1); then
 	if echo "$active" | grep -q "$wid"; then
-	    inmost_color=$(colort -60 $color)
+	    inmost_color=$(colort -l -60 $color)
 	    outmost_color=$inmost_color
 	else
-	    outmost_color=$color
+	    outmost_color=$(colort -l -30 $color)
+	    # outmost_color=$color
 	    # outmost_color=D7CDFF
 	    inmost_color=$normal
+	    # inmost_color=$outmost_color
 	fi
 
 	chwbn \

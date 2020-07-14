@@ -1,19 +1,99 @@
 #!/usr/bin/env bash
-# these names don't make sense I know
-# who would season a lemon??
+# squeeze lemons into a certain shape/style
+# the environment comes from i3blocks generated with ripen
 
-# depend on environment to come from i3blocks
-
-# clickables:
-
-border=\#777777
-border_side=$(bs O1 B$border U$bg +o +u)
-
-while read -r line; do
-    if [ ! "$name" = "tags" ]; then
-	printf '%s\n' "${prefix}${border_side}$(echo "  $line  " | bs B$bg F$fg U$border +u +o)${border_side}$suffix"
-    else
-	# printf '%s\n' "${prefix}$(echo "  $line  " | bs B$bg F$fg)$suffix"
-	printf '%s\n' "$line"
+new() {
+    # border=${border:-#777777}
+    if [ -z "$border" ]; then
+	border=$(colort -l -30 "$bg")
     fi
+
+    # border_side=$(bs O1 B$border U$border +o +u)
+    content=$(echo " $line" | bs "B$bg" "F$fg" "U$border" +u)
+    # content="$content$(bs "B$bg" "F$fg" "U$border" +u ': ')"
+    content="$content$(bs "B$bg" "F$fg" "U$border" +u ':  ')"
+
+    # gradient fade -- depends on dir
+    if [ "$align" = "left" ]; then
+	# pain
+	# if [ "$lemon" = "title" ]; then notify-send 'made it here'; fi
+	# if [ "$lemon" = "title" ]; then notify-send "gradient 10 $bg $bg_next"; fi
+	for g in $(gradient 10 "$bg" "$bg_next"); do
+	    # if [ "$lemon" = "title" ]; then notify-send "arstarst $g"; fi
+	    underline=$(colort -l -30 -t "$g")
+	    content="$content$(bs "B$g" O2 U$underline +u)"
+	done
+
+	if $lemon_end_inner; then
+	    # underline=$(colort -l -30 -t "$g")
+	    content="$content$(bs "B$underline" O1 U$underline +u)"
+	fi
+    fi
+
+    if [ "$align" = "right" ]; then
+	# notify-send "gradient 4 $bg $bg_next"
+	for g in $(gradient 10 "$bg" "$bg_next"); do
+	    underline=$(colort -l -30 "$g")
+	    content="$(bs "B$g" O2 U$underline +u)${content}"
+	done
+
+	if $lemon_end_inner; then
+	    # underline=$(colort -l -30 -t "$g")
+	    content="$(bs "B$underline" O1 U$underline +u)$content"
+	fi
+    fi
+
+    if [ "$align" = "center" ]; then
+	# bg_next=$(colort -t "$(theme getval p_bg_normal)")
+	# notify-send "gradient 10 $bg $bg_next"
+	for g in $(gradient 10 "$bg" "$bg_next"); do
+	    underline=$(colort -l -30 "$g")
+	    content="$(bs "B$g" O2 U$underline +u)${content}$(bs "B$g" O2 U$underline +u)"
+	done
+
+	if $lemon_end_inner; then
+	    # underline=$(colort -l -30 -t "$g")
+	    content="$(bs "B$underline" O1 U$underline +u)$content$(bs "B$underline" O1 U$underline +u)"
+	fi
+    fi
+
+    printf '%s\n' "$content"
+}
+
+spaced_buttons() {
+    border=${border:-#777777}
+    border_side=$(bs O1 B$border U$bg +o +u)
+    content=$(echo "  $line  " | bs B$bg F$fg U$border +u +o)
+    content="$border_side$content$border_side"
+
+    case $align in
+	left) printf '%s   \n' "$content" ;;
+	center) printf '%s   \n' "$content" ;;
+	right) printf '    %s\n' "$content" ;;
+    esac
+}
+
+while read -d $'\n' -r line; do
+    if [ -z "$line" ]; then
+	# blank it out
+	echo
+	continue
+    fi
+
+    # if [ "$lemon" = "dynamicmpd" ]; then
+    # 	notify-send "wow fuck me"
+    # fi
+
+    if [ -z "$FORCE" ]; then
+	if [ "$lemon" = "tags" ]; then
+	    echo "$line"
+	    continue
+	fi
+    fi
+
+    # todo: enhance with buttons from env?
+
+    # echo "$line"
+    # spaced_buttons
+    new
 done

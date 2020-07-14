@@ -11,7 +11,7 @@ b_focused_border_color=$foreground
 b_presel_feedback_color=$color8
 b_desktop_names="00 01 10 11"
 
-b_monocle_window_percent=.64 # 100
+b_monocle_window_percent=.54 # 100
 
 # meant to be used for effects, like pulse or 2bspwm
 b_bspwmrc_extend=""
@@ -23,17 +23,13 @@ l_sep="□"
 l_start=""
 l_end=""
 
-
-# l_complete="/"
-# ⫦
-#
-#
-
-
 l_complete="—"
 l_empty="—"
 l_sep="+"
 
+l_complete="◈"
+l_empty="◇"
+l_sep="◈"
 
 
 # Panel variables
@@ -46,8 +42,6 @@ p_gap=4                      # Gaps of panel off screen.
 p_padding=4                  # number of pixels to pad panel information (sections/blocks) with
 p_line=2 # width of the over/underlines
 p_launch_cmd="$HOME/.wm/panel/lemonade" # The command to launch the panel
-
-p_icon_handler="env printf \"\$icon_result\""
 
 p_icon=unset              # icon color - used in qutebrowser completion, ACYL icons color
 p_window_class="lemonbar" # window class to use in lemonade's juicer
@@ -98,6 +92,7 @@ p_github_reload=120
 p_themeSwitch_mouse_left="dzen.sh theme"
 # p_org_task_mouse_left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
 # p_org_task_mouse_right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
+
 p_dropdown_mouse_left="dzen.sh menu"
 p_github_mouse_left="dzen.sh github"
 p_circe_dms_mouse_left="dzen.sh circe"

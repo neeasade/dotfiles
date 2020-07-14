@@ -6,6 +6,23 @@ vdo() {
   "$@"
 }
 
+mount_diskfile() {
+  if [ -z "$*" ]; then
+    echo "$mount_diskfile <iso/disk file> <mountpath (optional)>"
+    return
+  fi
+
+  diskfile=$1
+  # mountpath=${2:-./$(basename "$diskfile" | sed 's/\..*//')}
+  mountpath=${2:-/media/filemount/$(basename "$diskfile" | sed 's/\..*//')}
+
+  mkdir -p "$mountpath"
+
+  echo sudo mount "$diskfile" "$mountpath" -o loop
+  sudo mount "$diskfile" "$mountpath" -o loop
+  echo "$mountpath"
+}
+
 prepend() {
   tmpfile=$(mktemp)
   cat <(echo "$1") "$2" >$tmpfile
@@ -24,7 +41,7 @@ windowshot() {
   x=$((x - (border/2)))
   y=$((y - (border/2)))
 
-  maim -g "${w}x${h}+${x}+${y}" "$(shot_location)"
+  maim -u -g "${w}x${h}+${x}+${y}" "$(shot_location)"
 }
 
 bspwm_kill_visual() {
@@ -39,17 +56,17 @@ recordfull() {
 }
 
 record() {
+  screenkey -s small -t 0.5
   read -r X Y W H G ID < <(slop -f '%x %y %w %h %g %i')
-  byzanz-record -x $X -y $Y -w $W -h $H
-  # screenkey -s small -t 0.5
+  byzanz-record -x $X -y $Y -w $W -h $H -d 120 out.gif
+  # twilywebm
 }
 
 stoprecord() {
   # todo: pkill everything record
-
-  pkill byzanz-record
-
-  echo nop
+  # pkill byzanz-record
+  pkill -f twilywebm
+  pkill screenkey
 }
 
 # from phone
@@ -59,9 +76,16 @@ sync_last_phone_file() {
 }
 
 blog_add_asset() {
-  target=$*
-  echo cp "$*" "${HOME}/git/neeasade.github.io/site/assets/posts/$*"
-  cp "$*" "${HOME}/git/neeasade.github.io/site/assets/posts/$*"
+  if [ -z "$*" ]; then
+    echo "blog_add_dtop <asset filename> <file>"
+    echo 'EG blog_add_dtop <asset filename> $(shot)'
+    return
+  fi
+
+  echo cp "$2" "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
+  cp "$2" "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
+  echo "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
+  echo ""
 }
 
 blog_add_dtop() {
@@ -122,10 +146,16 @@ shot_location() {
   echo "$HOME/Last_Shot/shot.png"
 }
 
+
+# todo: -c option
+# cat $(shot) | xclip -selection clipboard -t image/png
+# maybe also consider just putting it in the clipboard by default
 shot() {
   # eval $(slop)
   g=$(slop -p ${1:-0})
-  maim -g ${g} "$(shot_location)"
+  dest=$(shot_location)
+  maim -u -g ${g} "$dest"
+  echo "$dest"
 }
 
 shellshot() {
@@ -136,7 +166,9 @@ shellshot() {
 
 fullshot() {
   [ ! -z "$1" ] && sleep $1
-  maim "$(shot_location)"
+  dest=$(shot_location)
+  maim -u "$dest"
+  echo "$dest"
 }
 
 lastshot() {
@@ -164,7 +196,7 @@ monshot() {
   x=$(jget x)
   y=$(jget y)
 
-  maim -g ${w}x${h}+${x}+${y} "$(shot_location)"
+  maim -u -g ${w}x${h}+${x}+${y} "$(shot_location)"
 }
 
 settitle() {
@@ -328,6 +360,7 @@ gset() {
   # todo: add a 'none'/'anon' option
   case $1 in
     pass) g_conf "$(pass git/name)" "$(pass git/email)" ;;
+    github) g_conf "neeasade" "neeasade@users.noreply.github.com" ;;
     manual)
       echo name:; read name
       echo email:; read email
@@ -339,7 +372,7 @@ gset() {
       ;;
     *)
       echo "gset <name> <email>"
-      echo "or: gset manual|adhoc|pass"
+      echo "or: gset manual|adhoc|pass|github"
       ;;
   esac
 }

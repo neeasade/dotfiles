@@ -1,5 +1,5 @@
 #!/bin/sh
-# dismiss what I'm looking at
+# dismiss what I'm looking at, maybe throw it in the hole
 
 wid=$(bspc query -N -n)
 state=$(btags state-plain | grep $wid)

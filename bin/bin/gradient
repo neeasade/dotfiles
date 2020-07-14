@@ -6,6 +6,6 @@
  (ns/make-lines
   (mapcar (fn (eval `(color-rgb-to-hex ,@<> 2)))
 	  (color-gradient
-	   (color-name-to-rgb (format "#%s" start))
-	   (color-name-to-rgb (format "#%s" end))
+	   (color-name-to-rgb (ns/color-format start))
+	   (color-name-to-rgb (ns/color-format end))
 	   (string-to-number step)))))

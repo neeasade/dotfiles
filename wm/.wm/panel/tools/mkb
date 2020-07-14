@@ -6,7 +6,13 @@
 progress=$1
 size=$2
 
-eval "$(theme get)"
+# eval "$(theme get)"
+l_complete=$(theme getval l_complete)
+l_empty=$(theme getval l_empty)
+l_sep=$(theme getval l_sep)
+l_start=$(theme getval l_start)
+l_end=$(theme getval l_end)
+
 
 # defaults
 progress=${progress:-30}

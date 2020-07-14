@@ -10,6 +10,18 @@
 wid=$1
 class_name=$2
 
+if [ "$class_name"  = "pye-menu" ]; then
+  echo state=floating
+
+  size=400
+  eval "$(xdotool getmouselocation --shell)"
+  echo geometry=${size}x${size}+${X}+${Y}
+
+  # echo rectangle=
+  # 2560x1440+0+0*? %
+  exit 0
+fi
+
 # preferred split directions:
 horiPref=east
 vertPref=south
@@ -22,7 +34,7 @@ percent=.33
 mon_width=$(jget width "$(bspc query -T -m)") # .rectangle.width
 mon_height=$(jget height "$(bspc query -T -m)") # .rectangle.height
 if [ $mon_width -gt $mon_height ]; then
-    node_count=$(bspc query -N -d $desk -n .leaf.normal | wc -l)
+    node_count=$(bspc query -N -d $desk -n '.leaf.normal.!hidden' | wc -l)
     [ $node_count -eq 1 ] && vertPref=$horiPref
 fi
 
