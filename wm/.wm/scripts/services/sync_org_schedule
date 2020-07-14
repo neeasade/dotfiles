@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+current_content=$(elisp -r '(ns/export-scheduled-org-headings)')
+sync_file="$HOME/sync/orgzly/scheduled.org"
+
+if ! diff <(echo "$current_content") <(cat "$sync_file") >/dev/null 2>&1; then
+    echo "scheduled contents differ! syncing!"
+    echo "$current_content" > "$sync_file"
+fi

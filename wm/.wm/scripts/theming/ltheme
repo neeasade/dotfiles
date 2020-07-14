@@ -426,6 +426,8 @@ load_services() {
     if [ "$(hostname)" = "erasmus" ]; then
 	make_periodic_service 10 vps_connect "periodically -p 10 ssh -tt -R 22222:localhost:22 neeasade@vps.neeasade.net"
 	# ssh -t vps.neeasade.net 'ssh localhost -p 22222'
+
+	make_periodic_service 120 sync_org_schedule
     fi
 
     make_service unclutter 'unclutter -idle 1'
