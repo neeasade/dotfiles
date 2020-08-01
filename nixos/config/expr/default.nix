@@ -5,13 +5,92 @@
   in
     rec {
       gtkrc-reload = callPackage ./gtkrc-reload {};
-      oomox = callPackage ./oomox {};
+
+      foliate = stdenv.mkDerivation rec {
+        pname = "foliate";
+        version = "1.5.3";
+
+        # Fetch this from gnome mirror if/when available there instead!
+        src = fetchFromGitHub {
+          owner = "johnfactotum";
+          repo = pname;
+          rev = version;
+          sha256 = "1bjlk9n1j34yx3bvzl95mpb56m2fjc5xcd6yks96pwfyfvjnbp93";
+        };
+
+        nativeBuildInputs = [
+          meson
+          ninja
+          pkgconfig
+          gettext
+          python3
+          desktop-file-utils
+          wrapGAppsHook
+          hicolor-icon-theme
+        ];
+
+        buildInputs = [
+          glib
+          gtk3
+          gjs
+          webkitgtk
+          gsettings-desktop-schemas
+          gobject-introspection
+          libarchive
+          # TODO: Add once packaged, unclear how language packages best handled
+          # hyphen
+          dict # dictd for offline dictionary support
+        ];
+
+        doCheck = true;
+
+        postPatch = ''
+    chmod +x build-aux/meson/postinstall.py
+    patchShebangs build-aux/meson/postinstall.py
+  '';
+
+        # Kludge so gjs can find resources by using the unwrapped name
+        # Improvements/alternatives welcome, but this seems to work for now :/.
+        # See: https://github.com/NixOS/nixpkgs/issues/31168#issuecomment-341793501
+        postInstall = ''
+    sed -e $'2iimports.package._findEffectiveEntryPointName = () => \'com.github.johnfactotum.Foliate\' ' \
+      -i $out/bin/com.github.johnfactotum.Foliate
+  '';
+
+        meta = with stdenv.lib; {
+          description = "Simple and modern GTK eBook reader";
+          homepage = "https://johnfactotum.github.io/foliate/";
+          license = licenses.gpl3Plus;
+          maintainers = with maintainers; [ dtzWill ];
+        };
+      };
 
       skroll = stdenv.mkDerivation rec {
         name = "skroll";
-
         src = builtins.fetchGit {url = "https://github.com/z3bra/skroll"; ref = "master"; };
         nativeBuildInputs = [ gcc ];
+        installPhase = "make install PREFIX=$out";
+      };
+
+      oomox = stdenv.mkDerivation rec {
+        # src = builtins.fetchGit {
+        name = "oomox";
+        src = builtins.fetchGit {
+          "url" = "https://github.com/themix-project/oomox/";
+          # "rev" = "483d011551458472738bc58014bcfa8d05e49cdd";
+          "ref" = "master";
+          # "sha256" = "1flkly48ck9s82gyifxrm542fbdjinsrd1pkyxj39bdx3x6hrfpj";
+          # "fetchSubmodules" = false;
+        };
+
+        nativeBuildInputs = [
+          gdk_pixbuf
+          glib.dev
+          gtk-engine-murrine
+          gtk3
+          sassc
+        ];
+
         installPhase = "make install PREFIX=$out";
       };
 
@@ -41,26 +120,6 @@
         '';
 
         nativeBuildInputs = (with pkgs; [gcc-unwrapped.lib zlib unzip]);
-      };
-
-      drawterm = stdenv.mkDerivation rec {
-        name = "drawterm";
-
-        src = builtins.fetchGit {url =  "https://github.com/0intro/drawterm"; ref = "master"; };
-
-        nativeBuildInputs = [ pkgconfig ];
-        buildInputs = (with pkgs; [ xorg.libX11 ncurses
-                                    # libXext
-                                    # libXft
-                                    # fontconfig
-                                  ]);
-
-        installPhase = ''
-  CONF=unix make
-  install -Dm755 drawterm $out/usr/bin/drawterm
-  install -Dm644 drawterm.ico $out/usr/share/pixmaps/drawterm.ico
-  '';
-
       };
 
       pb-git = stdenv.mkDerivation rec {
@@ -105,7 +164,6 @@
         src = builtins.fetchGit {url = "https://github.com/neeasade/bspwm"; ref = "master"; };
       }));
 
-
       pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };
       }));
@@ -120,7 +178,6 @@
       }));
 
       wmutils-core-git = (pkgs.wmutils-opt.overrideAttrs(old: {
-
         buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil pkgs.xcb-util-cursor ];
         src = builtins.fetchGit {url = "https://github.com/wmutils/core"; ref = "master"; };
       }));
