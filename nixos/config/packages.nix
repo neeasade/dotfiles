@@ -153,9 +153,9 @@ let
 
     yq
 
+    qutebrowser
   ]) ++ (with unstable; [
   # ]) ++ (
-    qutebrowser
 
     dunst dzen2
     ffmpeg
@@ -171,6 +171,7 @@ let
   ]) ++ ( with expr; [
     # drawterm
     # oomox
+    # foliate
     babashka
 
     lemonbar
@@ -203,11 +204,11 @@ let
     byzanz
 
     # oomox
-    gdk_pixbuf
-    glib.dev
-    gtk-engine-murrine
-    gtk3
-    sassc
+    # gdk_pixbuf
+    # glib.dev
+    # gtk-engine-murrine
+    # gtk3
+    # sassc
 
     cloc
 
@@ -216,7 +217,7 @@ let
     graphviz
     audacity
     bfg-repo-cleaner
-    compton
+    picom
     deluge
     firefox
     fzf
