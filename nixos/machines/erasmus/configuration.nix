@@ -42,6 +42,8 @@ in
   };
 
   hardware = {
+
+    bluetooth.enable = true;
     opengl.driSupport = true;
     pulseaudio.enable = true;
     opengl.driSupport32Bit = true;
@@ -69,7 +71,8 @@ in
       "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers" "cdrom"
     ];
     createHome=true;
-    home="/home/neeasade";
+    # home="/home/neeasade";
+    home = consts.home;
     shell="/run/current-system/sw/bin/bash";
     initialPassword="password";
   };
