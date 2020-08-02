@@ -2,12 +2,12 @@
 # get dimensions for a floating dialog, maybe act on it.
 
 print_env() {
-  # note: maybe consolidate the dmenu_options logic and this together
   dim() {
     # bspc query -T -m | jq .rectangle.$1
     jget "$1" "$(bspc query -T -m)"
   }
 
+  LINES=30
   W=$(echo .66 \* $(dim width) | bc | sed 's/\..*//')
   H=$(echo .33 \* $(dim width) | bc | sed 's/\..*//')
   X=$(( ($(dim width) - W) / 2 ))
@@ -19,12 +19,15 @@ print_env() {
   # Y=$(( ($(dim height) - H) / 4 ))
   # Y=$((Y+100))
 
-
+  if [ "$(hostname)" = "geloof" ]; then
+    LINES=20
+  fi
 
   echo "W=$W"
   echo "H=$H"
   echo "X=$X"
   echo "Y=$Y"
+  echo "LINES=$LINES"
 }
 
 set_rule() {

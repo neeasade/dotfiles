@@ -20,6 +20,8 @@ in
   # networking.wireless.enable = true;  # wpa_supplicant.
   networking.networkmanager.enable = true;
 
+  programs.gnupg.agent.pinentryFlavor  = "qt";
+
   virtualisation = {
     virtualbox = {
       host.enable = false;
