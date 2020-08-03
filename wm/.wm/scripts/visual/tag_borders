@@ -37,8 +37,6 @@ draw() {
     done
 }
 
-
-
 draw_banded() {
     active=$(bspwindows)
     state=$(btags state-plain)
@@ -112,6 +110,16 @@ draw_outerdark() {
 	    # inmost_color=$outmost_color
 	fi
 
+	outmost_color=$color
+
+	if jget layout "$(bspc query -T -d)" | grep -q monocle; then
+	    if [ ! "$color" = 000000 ]; then
+		outmost_color=$normal
+		inmost_color=$normal
+		color=$normal
+	    fi
+	fi
+
 	chwbn \
 	    -b 1 -c $outmost_color \
 	    -b $(( b_width-scale-2-1 )) -c $color \
@@ -121,9 +129,7 @@ draw_outerdark() {
     done
 }
 
-# idea: do a bezel borders fith tags
-
-scale=6
+scale=3
 bspc config border_width $(( (scale*2) + 2 ))
 b_width=$(( (scale*2) + 2 ))
 # b_width=$(bspc config border_width)
