@@ -110,7 +110,7 @@ draw_outerdark() {
 	    # inmost_color=$outmost_color
 	fi
 
-	outmost_color=$color
+	# outmost_color=$color
 
 	if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	    if [ ! "$color" = 000000 ]; then
@@ -129,7 +129,7 @@ draw_outerdark() {
     done
 }
 
-scale=3
+scale=4
 bspc config border_width $(( (scale*2) + 2 ))
 b_width=$(( (scale*2) + 2 ))
 # b_width=$(bspc config border_width)

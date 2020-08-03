@@ -99,7 +99,7 @@ mirror() {
 # dota -- low res on auto monitor (assuming that's a display mode)
 dota() {
     systemctl --user stop display_sync
-    systemctl --user stop compton
+    systemctl --user stop picom
     systemctl --user stop unclutter
 
     turn_on $on_monitor 1280x720 

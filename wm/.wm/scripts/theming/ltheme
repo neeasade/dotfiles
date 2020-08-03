@@ -109,9 +109,9 @@ load_tmux() {
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
-load_compton() {
-    margs compton .config/compton.conf
-    systemctl --user restart compton
+load_picom() {
+    margs picom .config/picom.conf
+    systemctl --user restart picom
 }
 
 load_bg() {
@@ -418,7 +418,7 @@ load_services() {
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
 
     if [ "$(hostname)" = "geloof" ]; then
-	make_periodic_service 10 refresh_mpd "refresh_mpd"
+	make_periodic_service 10 refresh_mpd refresh_mpd
 	make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
 	make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
     fi
@@ -427,13 +427,13 @@ load_services() {
 	make_periodic_service 10 vps_connect "periodically -p 10 ssh -tt -R 22222:localhost:22 neeasade@vps.neeasade.net"
 	# ssh -t vps.neeasade.net 'ssh localhost -p 22222'
 
-	make_periodic_service 120 sync_org_schedule
+	make_periodic_service 120 sync_org_schedule sync_org_schedule
     fi
 
     make_service unclutter 'unclutter -idle 1'
     make_service nm-applet
     make_service dunst
-    make_service compton
+    make_service picom
 
     make_service panel "$HOME/.wm/panel/lemonade"
 
@@ -461,10 +461,10 @@ if uname | grep -q MINGW; then
     # windows
     targets=${*:-mintty mpd_windows tmux}
 else
-    targets=${*:-compton tmux xresources bspwm bg gtk dunst qutebrowser zathura}
+    targets=${*:-picom tmux xresources bspwm bg gtk dunst qutebrowser zathura}
 fi
 
-# targets="${*:-compton tmux xresources bspwm bg dunst qutebrowser}"
+# targets="${*:-picom tmux xresources bspwm bg dunst qutebrowser}"
 
 IFS=" "
 for conf in $targets; do

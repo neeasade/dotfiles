@@ -40,14 +40,18 @@ settings() {
     b_border_width=1
 
     # b_normal_border_color=B0A8A6
-    b_normal_border_color=$(colort -t $(lessen 20 $color0))
+    # b_normal_border_color=$(colort -t $(lessen 20 $color0))
+
+    b_normal_border_color=$(elisp -r "(ns/color-shorten (face-attribute 'mode-line-inactive :background))")
+    b_normal_border_color=$(colort -t "$b_normal_border_color")
+
     b_window_gap=14
     b_window_gap=32
     b_window_width=10
 
     b_bspwmrc_extend="tag_borders &"
 
-    x_padding=6
+    x_padding=11
 
     # b_normal_border_color=eeeff0
     # b_active_border_color=cecece
@@ -137,7 +141,15 @@ fg() {
 }
 
 bg() {
-  # gradient $total $background d7cdff | sed -n ${step}p
+    # elisp -r '(->> "#d1dae5" (-map (lambda (ns/color-lch-transform ))) )'
+    gradient $total 8fe7d5 7cbefc | sed -n ${step}p
+
+    # if [ "$lemon_target_align" = center ]; then
+    # 	echo \#$background
+    # else
+    # 	gradient 3 176fa8 $background | sed -n ${step}p
+    # fi
+    return
   # gradient $total d7cdff $background | sed -n ${step}p
 
 # $(elisp -r '(->> :accent1 (ht-get ns/theme) ns/color-shorten ns/color-pastel ns/color-pastel)')
@@ -176,8 +188,8 @@ EOF
 }
 
 stepSetup() {
-    # togetherStep
-    separateStep
+    togetherStep
+    # separateStep
 }
 
 suffix() {

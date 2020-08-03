@@ -11,6 +11,10 @@ interval=$1
 shift
 
 while true; do
+    if [ -z "$*" ]; then
+	notify-send "invalid periodic script!"
+    fi
+
     echo "calling $*"
     if ! "$@"; then
 	notify-send "script failed! $*"

@@ -22,7 +22,7 @@ launch() {
 }
 
 not_together() {
-    json="$(bspc query -T -n)"
+    json=$(bspc query -T -n)
     jget() {
         echo "$json" | jq -r ".client.$1"
     }
@@ -40,7 +40,7 @@ not_together() {
         w=$((w+b+b))
     fi
 
-    json="$(bspc query -T -n $wid)"
+    json=$(bspc query -T -n $wid)
     state=floating
     f_x=$(jget ${state}Rectangle.x)
     f_y=$(jget ${state}Rectangle.y)

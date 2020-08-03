@@ -13,7 +13,7 @@ if bspc query -N -n focused.leaf && which chbpresel 2>/dev/null 1>&2; then
             presel_win=$(xdotool search --classname "presel_feedback")
             if [ ! -z "$presel_win" ]; then
                 cond=false
-                compton-trans -w $presel_win 0
+                picom-trans -w $presel_win 0
             fi
         done
     ) &

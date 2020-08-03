@@ -51,9 +51,17 @@ targets="bg fg line activebg activefg activeline bg_next"
 bg_next() {
     if $lemon_target_end_inner; then
 	# echo "#eef0f3"
-	colort -30 "$(bg)"
+	colort -20 "$(bg)"
     else
-	step=$((step + 1)) bg
+	# separate step:
+	# step=$((step + 1)) bg
+
+	# together step:
+	if [ "$lemon_target_align" = "right" ]; then
+	    step=$((step - 1)) bg
+	elif [ "$lemon_target_align" = "left" ]; then
+	    step=$((step + 1)) bg
+	fi
     fi
 
     # step=$((step + 1)) bg

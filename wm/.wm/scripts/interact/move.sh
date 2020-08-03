@@ -24,7 +24,9 @@ tiled_move() {
 
   # compare height or width to parent
   self_measure=$(bspc query -T -n "$node" | jq .rectangle.$tdim)
+
   # note climb up until parent visible? idk
+  # mabye just climb until you are visible with 2 children
   parent_measure=$(bspc query -T -n "${node}#@parent" | jq .rectangle.$tdim)
 
   if [ "$parent_measure" -gt "$self_measure" ]; then

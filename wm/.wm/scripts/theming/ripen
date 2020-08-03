@@ -67,7 +67,7 @@ togetherStep() {
 
   # set step
   IFS=\|:
-  j=0
+  j=1
   for lemon in $p_format; do
       eval $lemon=$j
       j=$((j+1))
@@ -87,6 +87,11 @@ togetherStep() {
           grep "^${lemon}\|${lemon}$" <<< "${p_format}" &&
               eval ${lemon}_end=true ||
                   eval ${lemon}_end=false
+
+	grep -E "${lemon}\||\|${lemon}" <<< "${p_format}" &&
+	    eval ${lemon}_end_inner=true ||
+	    eval ${lemon}_end_inner=false
+
       done
       i=$((i+1))
   done

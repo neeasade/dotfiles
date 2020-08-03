@@ -5,7 +5,7 @@
 # possible modes
 do_monocle_padded() {
 
-  if pgrep compton; then
+  if pgrep picom; then
     hsetroot -solid "#$(theme getval background)" &
   else
     xsetroot -solid "#$(theme getval background)" &
@@ -37,6 +37,10 @@ do_monocle_slim() {
   # hsetroot -solid "#$(theme getval background)" &
 
   bspc config borderless_monocle false
+
+  # bspwm_kill_visual
+  # nohup setsid xpad &
+
   bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
   bspc node -t tiled
 
@@ -69,6 +73,10 @@ do_tiled() {
   bspc desktop -l tiled
   bspc config window_gap $(theme getval b_window_gap)
   bspc config borderless_monocle false
+
+  # bspwm_kill_visual
+  # nohup setsid tag_borders &
+
   # $HOME/.config/bspwm/bspwmrc
 }
 
