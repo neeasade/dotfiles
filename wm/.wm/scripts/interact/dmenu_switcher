@@ -163,6 +163,7 @@ add_metas() {
 
     # todo: these might be org links instead of meta thing shere
     add_switch "meta: music now" "music now"
+    add_switch "meta: music playlist" "music playlist"
     add_switch "meta: mpv resume" "mpv_resume"
     add_switch "meta: netflix" "google-chrome-stable netflix.com"
 

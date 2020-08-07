@@ -75,6 +75,7 @@ done
 
 bspc rule -a Emacs state=tiled
 bspc rule -a Emacs-27.0.91 state=tiled
+bspc rule -a Emacs-27.1 state=tiled
 
 # initial wm startup actions
 if $xinit; then

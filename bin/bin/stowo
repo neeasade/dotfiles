@@ -1,17 +1,24 @@
 #!/bin/sh
 # narrow symlinker to match stow, but only from ~/.dotfiles
+# idea for here: add an "all" to stowo paths you commonly care about
 
 if [ -z "$*" ]; then
     echo "give me something to stOwO:"
     ls "$HOME/.dotfiles/"
+    echo "or use the keyword 'all' to get:"
+    ls "$HOME/.dotfiles/" | grep -vE "(nixos|readme.org|templates|windows|i3|bootstrap)" | tr $'\n' ' '
+    echo
     exit 0
+fi
+
+if [ "$*" = "all" ]; then
+    set -- $(ls "$HOME/.dotfiles/" | grep -vE "(nixos|readme.org|templates|windows|i3|bootstrap)" | tr $'\n' ' ')
 fi
 
 while [ ! -z "$1" ]; do
     cd "$HOME/.dotfiles/$1"
-    echo "stOwOing $1"
-    pwd
     # find . -type f | while read -r path; do
+    results=$(
     git ls-files | while read -r path; do
 	target="${HOME}/${path}"
 	target=$(echo "$target" | sed 's#/\./#/#')
@@ -42,7 +49,7 @@ while [ ! -z "$1" ]; do
 
 	if [ -f "$target" ]; then
 	    if [ -z "$BS" ]; then
-		echo "skipping conflict: $target (set BS=t to override)" 1>&2
+		echo "skipping conflict: $target (set BS=t to override)"
 		continue
 	    fi
 
@@ -52,7 +59,14 @@ while [ ! -z "$1" ]; do
 	echo ln -s "$path" "$target"
 	ln -s "$path" "$target"
     done
+    )
+
+    if [ ! -z "$results" ]; then
+	echo "stOwOing $1"
+	pwd
+	echo "$results"
+	echo
+    fi
 
     shift
-    echo
 done

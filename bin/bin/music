@@ -120,9 +120,9 @@ remove() { # remove some search match from the playlist
 	fi
       done
     }
-    positions="$(mpc playlist -f '%position% %file%' | is_long_filter | sed 's/ .*//')"
+    positions=$(mpc playlist -f '%position% %file%' | is_long_filter | sed 's/ .*//')
   else
-    positions="$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')"
+    positions=$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')
   fi
 
   delta=0
@@ -137,7 +137,7 @@ now() { # fuzzy search for a song, play it now
     mpc insert "$song"
     mpc next
     mpc play
-    echo "custom" > "$current_playlist"
+    # echo "custom" > "$current_playlist"
   fi
 }
 

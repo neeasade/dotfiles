@@ -44,15 +44,12 @@ new() {
     fi
 
     if [ "$align" = "center" ]; then
-	# bg_next=$(colort -t "$(theme getval p_bg_normal)")
-	# notify-send "gradient 10 $bg $bg_next"
 	for g in $(gradient 10 "$bg" "$bg_next"); do
 	    underline=$(colort -l -30 "$g")
 	    content="$(bs "B$g" O2 U$underline +u)${content}$(bs "B$g" O2 U$underline +u)"
 	done
 
 	if $lemon_end_inner; then
-	    # underline=$(colort -l -30 -t "$g")
 	    content="$(bs "B$underline" O1 U$underline +u)$content$(bs "B$underline" O1 U$underline +u)"
 	fi
     fi
