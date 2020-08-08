@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # always run mpv w/ socket, args as config
 
-mpv=$(type -a mpv | tail -n 1 | awk '{print $3}')
-
 mpc pause >/dev/null
 
 # todo maybe - maintain a cache of youtube dl to title names,
 # then mpv_resume could resume by youtube channel/title
+
+# by expanding filenames to their fullpaths for mpv args, we can use the paths to resume location later
 
 args=( )
 for a in "$@"; do
@@ -19,7 +19,7 @@ done
 
 set -- "${args[@]}"
 
-$mpv \
+og mpv \
     --write-filename-in-watch-later-config --save-position-on-quit \
     --screenshot-directory="$HOME/Screenshots_mpv" \
     --input-ipc-server=/tmp/mpvsocket "$@"

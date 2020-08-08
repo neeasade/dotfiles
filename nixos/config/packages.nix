@@ -154,6 +154,8 @@ let
     yq
 
     qutebrowser
+    blueman
+    pasystray
   ]) ++ (with unstable; [
   # ]) ++ (
 

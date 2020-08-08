@@ -54,7 +54,7 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   sxhkd() {
     pgrep sxhkd >/dev/null && pkill sxhkd
     path_remove "$HOME/.emacs.d/scripts"
-    $(type -a sxhkd | awk 'END{print $3}')
+    og sxhkd
   }
 
   man() {

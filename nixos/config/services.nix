@@ -6,6 +6,9 @@ in
 {
   services = {
     # lorri = {enable = true;};
+    blueman = {
+      enable = true;
+    };
 
     tlp = {
       enable = true;

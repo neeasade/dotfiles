@@ -46,8 +46,7 @@ if type rofi >/dev/null; then
 elif elisp t >/dev/null; then
     result=$(cat - | emacs_dmenu "$prompt")
 else
-    real_dmenu=$(type -a dmenu | tail -n 1 | awk '{print $3}')
-    result=$(cat - | "$real_dmenu" -p "$prompt")
+    result=$(cat - | og dmenu -p "$prompt")
 fi
 
 if [ -z "$result" ]; then

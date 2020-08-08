@@ -95,7 +95,7 @@ super + grave
     player.sh toggle
 
 XF86Audio{Prev,Next,Play,Pause}
-    mpc -q {prev,next,toggle,toggle}
+    player.sh {prev,next,toggle,toggle}
 
 XF86Audio{LowerVolume,RaiseVolume}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase})"

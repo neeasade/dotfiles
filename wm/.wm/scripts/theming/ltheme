@@ -431,18 +431,17 @@ load_services() {
     fi
 
     make_service unclutter 'unclutter -idle 1'
-    make_service nm-applet
     make_service dunst
     make_service picom
+
+    # tray stuff
+    make_service nm-applet
+    make_service pasystray
 
     make_service panel "$HOME/.wm/panel/lemonade"
 
     # todo: correct lemon mpd naming conflict
     make_service mpd "/run/current-system/sw/bin/mpd --no-daemon $HOME/.config/mpd/mpd.conf"
-
-    if which lorri; then
-    	make_service lorri 'lorri daemon'
-    fi
 
     # reload units
     systemctl --user daemon-reload

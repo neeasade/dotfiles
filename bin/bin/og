@@ -1,0 +1,5 @@
+#!/bin/sh
+# call the original version of some thing in $PATH
+og=$1
+shift
+"$(type -a "$og" | tail -n 1 | sed -E "s/${og}//;s/ is //;")" "$@"

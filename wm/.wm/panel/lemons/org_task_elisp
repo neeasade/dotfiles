@@ -10,7 +10,7 @@
 
 (if (eq org-pomodoro-state :none)
     (let* ((top-headline (ns/notes-current-standup-headline))
-	   (top-headline-text (-> top-headline om-headline-get-path last first)))
+	   (top-headline-text (-> top-headline org-ml-headline-get-path last first)))
       (if (and
 	   ;; hack, assume '<' means org date
 	   (s-contains-p "<" top-headline-text)
@@ -22,7 +22,7 @@
 	  nil
 	(concat "Resume: "
 		(or
-		 (-> top-headline ns/notes-current-standup-task om-headline-get-path last first)
+		 (-> top-headline ns/notes-current-standup-task org-ml-headline-get-path last first)
 		 top-headline-text
 		 ))))
   (let ((percent
