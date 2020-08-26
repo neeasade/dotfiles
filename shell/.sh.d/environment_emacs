@@ -68,8 +68,9 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
     if [ -z "$*" ]; then
       $TERMINAL
     else
-      # todo here: consider pausing after running the command
       $TERMINAL -e "$@"
+      # todo here: consider pausing after running the command
+      # eval "$TERMINAL -e sh -c 'echo $@; echo; echo command finished.; read pause' "
     fi
   }
 
