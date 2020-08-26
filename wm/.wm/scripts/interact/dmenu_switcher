@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# switch between 'things' with a dmenu-like or pie style interface
+# switch between 'things' with a dmenu-like or pie-menu style interface
 
 # idea: use keybinds to narrow the current selection
 
@@ -28,7 +28,9 @@ add_windows() {
     done
 }
 
-add_buffers() {
+
+# this is silly, and intentional.
+add_emacss() {
     find_emacs_window() {
 	emacs_wid=
 	check_id() {
@@ -71,13 +73,12 @@ add_buffers() {
     buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
     for buffer in $buffers; do
 	# note: this will break if ever switching to a file with a ' in the name
-	add_switch "file: $buffer" "emacs_find_file '$buffer'"
+	add_switch "emacs: $buffer" "emacs_find_file '$buffer'"
     done
 
     buffers=$(elisp -r "(->> (buffer-list) (-filter (fn (not (buffer-file-name <>)))) (mapcar 'buffer-name) (ns/make-lines))")
     for buffer in $buffers; do
-	# note: this will break if ever switching to a file with a ' in the name
-	add_switch "buffer: $buffer" "emacs_find_buffer '$buffer'"
+	add_switch "emacs: $buffer" "emacs_find_buffer '$buffer'"
     done
 }
 
@@ -195,17 +196,14 @@ select_action() {
 
 # doing it this way let's us call dmenu right away/just start typing
 enact() {
-    # rofi
     echo FEEDER_PID=$$
-    echo " "
 
     if [ -z "$*" ]; then
-	# the reason for wrapping this in a subshell is to batch the adds for rofi
+	add_metas
 	add_tags
 	add_windows
 	add_tabs
-	add_buffers
-	add_metas
+	add_emacss
 	# add_historys | sort | uniq
     else
 	# echo eval add_${*}s
@@ -242,10 +240,13 @@ pie_select() {
     pie_options=$(echo "$pie_options" | sed 's|\^|" "|g')
     pie_options="\"${pie_options}\""
 
+    # todo: this is slow -- there is a python api that allows for better nested options
+    # make a wrapper that creates a nested python script, and calls it
+
     # to create:
     # cd /home/neeasade/git/Pye-Menu/
     # nix-build shell.nix
-    eval /home/neeasade/git/Pye-Menu/result/bin/pye_menu_shell $pie_options
+    eval $HOME/git/Pye-Menu/result/bin/pye_menu_shell $pie_options
 }
 
 # pie

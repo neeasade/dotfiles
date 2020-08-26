@@ -70,6 +70,8 @@ margs() {
 }
 
 git_ensure() {
+    gitdir="$HOME/git"
+
     case "$1" in
         acyl) gittarget="https://github.com/neeasade/acyl"
               gitdir="$HOME/.icons/"
@@ -80,10 +82,10 @@ git_ensure() {
 	wal_steam) gittarget="https://github.com/Tardog/wal_steam/" ;;
     esac
 
-    gitdir="$HOME/git"
     mkdir -p "$gitdir"
     gitdest="$gitdir/$(basename "$gittarget")"
 
+    # echo git clone "$gittarget" "$gitdest"
     if [ ! -d "$gitdest" ]; then
        git clone "$gittarget" "$gitdest"
        if [ "$1" = "wal_steam" ]; then
@@ -230,7 +232,9 @@ load_qutebrowser() {
     q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
     q_tab_fontsize_small="$(($q_tab_fontsize - 1))"
     q_tab_font=$(echo "$p_font_main" | sed 's/-.*//')
-    q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
+
+    # next stable qutebrowser version:
+    # q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
 
     margs qutebrowser .config/qutebrowser/colors.py
 
@@ -393,6 +397,7 @@ load_services() {
 
     made_services=
     # note: service PATH is set to whatever PATH is when you call this script
+    # todo: some sort of validation -- don't make service files for executables you don't have maybe
     make_service() {
 	export service_name=$1
 	export ExecStart=${2:-$1}
@@ -437,6 +442,8 @@ load_services() {
     # tray stuff
     make_service nm-applet
     make_service pasystray
+    make_service stalonetray
+    make_service blueman-applet
 
     make_service panel "$HOME/.wm/panel/lemonade"
 
@@ -454,6 +461,7 @@ load_services() {
 
     # just kidding
     systemctl --user disable panel
+    systemctl --user disable stalonetray
 }
 
 if uname | grep -q MINGW; then

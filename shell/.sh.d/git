@@ -187,3 +187,8 @@ gtr() {
   git tag $1
   git push origin $1
 }
+
+gclone() {
+  cd "$HOME/git"
+  git clone "$*"
+}

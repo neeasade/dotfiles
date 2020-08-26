@@ -1,26 +1,42 @@
 #!/usr/bin/env elisp
 ;; elisp-eval: read_stdin=true
 ;; dmenu in emacs
-;; cursed
 ;; takes one arg, the prompt string -- style/placement is handled by popup_window.sh
 
-;; weird flow
-(let* ((prompt (ns/let-script-args (prompt-string) prompt-string))
-       (preamble (progn (ns/shell-exec-dontcare "popup_window.sh -r")
-			(select-frame (make-frame '((minibuffer . only))))))
+(let* (
+       (prompt (ns/let-script-args (prompt-string) prompt-string))
+
+       (existing-frame
+	(->> (frame-list)
+	     (-filter (fn (string= "emacs_dmenu_frame" (frame-parameter  <> 'name))))
+	     (first)))
+
+       (target-frame
+	(if existing-frame
+	    (progn
+	      (ns/shell-exec-dontcare
+	       (format "popup_window.sh -w %s -n" (frame-parameter existing-frame 'outer-window-id)))
+	      existing-frame)
+	  (progn (ns/shell-exec-dontcare "popup_window.sh -r")
+		 (make-frame '((minibuffer . only) (name . "emacs_dmenu_frame"))))))
+
+       (target-frame (select-frame target-frame))
 
        ;; set the stuff
        (ivy-fixed-height-minibuffer nil)
        (ivy-add-newline-after-prompt nil)
        (ivy-height-alist '((t lambda (_caller) (frame-height))))
 
-       ;; trying
        ;; do the thing
        (option (condition-case ()
 		   (ivy-read (concat prompt " ") (->> *stdin-file* f-read (s-split "\n"))
 		   	     :action (fn <>))
 		 (quit nil) ;; if we quit out of the ivy-read just return nothing
 		 )))
-  (delete-frame)
-  (select-window (next-window))
-  option)
+  ;; (delete-frame)
+  (ns/shell-exec-dontcare
+   (format "bspc node %s -g hidden=true"
+	   (frame-parameter target-frame 'outer-window-id)))
+  ;; (select-window (next-window))
+  option
+  )

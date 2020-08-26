@@ -3,7 +3,7 @@
 # cf: ~/bin/mpv
 
 print_resume_dirs() {
-    fd . /home/neeasade/.config/mpv/watch_later -x head -n 1 {} | awk '/^#/{print substr($0, 3)}' | \
+    fd . $HOME/.config/mpv/watch_later -x head -n 1 {} | awk '/^#/{print substr($0, 3)}' | \
 	while read -r save_file; do
 	    if [ -e "$save_file" ]; then
 		echo "$(dirname "$save_file")"

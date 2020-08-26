@@ -51,7 +51,7 @@ settings() {
 
     b_bspwmrc_extend="tag_borders &"
 
-    x_padding=11
+    x_padding=5
 
     # b_normal_border_color=eeeff0
     # b_active_border_color=cecece

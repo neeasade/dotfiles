@@ -77,8 +77,8 @@ sync_last_phone_file() {
 
 blog_add_asset() {
   if [ -z "$*" ]; then
-    echo "blog_add_dtop <asset filename> <file>"
-    echo 'EG blog_add_dtop <asset filename> $(shot)'
+    echo "blog_add_asset <asset filename> <file>"
+    echo 'EG blog_add_asset <asset filename> $(shot)'
     return
   fi
 

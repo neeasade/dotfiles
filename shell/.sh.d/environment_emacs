@@ -17,13 +17,11 @@ path_remove() {
 }
 
 to_term() {
-  cat <<EOF
-  $1() {
-    setsid sh -c "( $TERMINAL -e '$1 \$@'; elisp '(ns/spawn-terminal)')" &
-    sleep 0.2
-    elisp "(run-at-time 0 nil 'delete-frame)" >/dev/null
-  }
-EOF
+  target=$1
+  shift
+  echo "${target} () {
+    term $target \"\$@\"
+  }"
 }
 
 # if emacs is non-responsive, blow past it.
@@ -65,6 +63,16 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
     elisp "(run-at-time 0 nil 'comint-clear-buffer)" >/dev/null
   }
 
+  term() {
+    # elisp '(ns/shell-exec-dontcare (getenv "TERMINAL"))'
+    if [ -z "$*" ]; then
+      $TERMINAL
+    else
+      # todo here: consider pausing after running the command
+      $TERMINAL -e "$@"
+    fi
+  }
+
   # won't work in sh, but is fine in bash/zsh
   # todo: see if we can do this on the emacs end
   exit() {
@@ -77,10 +85,6 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
         builtin exit
       fi
     fi
-  }
-
-  ranger() {
-    elisp '(deer)'
   }
 
   # alias sudo='sudo PS1=$PS1 PAGER=$PAGER'

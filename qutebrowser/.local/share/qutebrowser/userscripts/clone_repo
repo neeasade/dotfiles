@@ -3,7 +3,8 @@
 # pop open a terminal in the cloned repo
 
 get_repo() {
-    short=$(echo "$*" | grep -oE "${domain}/[a-zA-Z0-9]+/[a-zA-Z0-9]/")
+    notify-send "try $domain $*"
+    short=$(echo "$*" | grep -oE "${domain}/[a-zA-Z0-9\~]+/[a-zA-Z0-9\-]+")
     if [ -z "$short" ]; then
 	return 1
     else
@@ -13,7 +14,7 @@ get_repo() {
 }
 
 target=
-for domain in github.com gitlab.com; do
+for domain in github.com gitlab.com git.sr.ht; do
     if target=$(get_repo "$QUTE_URL"); then
 	cd "${HOME}/git"
 	notify-send "git clone $target"

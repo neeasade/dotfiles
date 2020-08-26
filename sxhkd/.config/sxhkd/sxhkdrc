@@ -1,7 +1,7 @@
 # -*- mode: conf -*-
 
-# todo: idea: when super + w on an mpv window, send q instead
-# this will make sure we always keep the saved spot where we are playing something
+# todo: consider having a toggle for the tray
+
 super + {_,shift} + w
     bspc node -{c,k}
 
@@ -107,9 +107,6 @@ super + Escape
 
 # mute toggle
 XF86AudioMute
-    ponymix toggle
-
-Pause
     ponymix toggle
 
 # pretend +

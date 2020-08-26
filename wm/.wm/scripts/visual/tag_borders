@@ -1,8 +1,6 @@
 #!/bin/sh
 # draw borders on tags
 
-# you can move this into the render function
-
 draw() {
     active=$(bspwindows)
     state=$(btags state-plain)
@@ -112,11 +110,13 @@ draw_outerdark() {
 
 	# outmost_color=$color
 
-	if jget layout "$(bspc query -T -d)" | grep -q monocle; then
-	    if [ ! "$color" = 000000 ]; then
-		outmost_color=$normal
-		inmost_color=$normal
-		color=$normal
+	if ! bspc query -N -n ${wid}.floating; then
+	    if jget layout "$(bspc query -T -d)" | grep -q monocle; then
+		if [ ! "$color" = 000000 ]; then
+		    outmost_color=$normal
+		    inmost_color=$normal
+		    color=$normal
+		fi
 	    fi
 	fi
 

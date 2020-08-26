@@ -20,7 +20,7 @@ do_monocle_padded() {
 
   # what are we looking at?
   window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
-  if echo $window_class | grep -E '(mpv|Google-chrome)'; then
+  if echo $window_class | grep -E '(mpv|Google-chrome|dota2|factorio)'; then
     bspc config window_gap 0
   else
     bspc config window_gap $(theme getval x_padding)

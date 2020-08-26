@@ -15,7 +15,7 @@ while :; do
 done
 
 # wowie wow oh my
-do_rofi() {
+read_input() {
     read -r first_line;
     include=true
     if [[ $first_line == FEEDER_PID* ]]; then
@@ -23,14 +23,16 @@ do_rofi() {
 	include=false
     fi
 
+    if $include; then
+	echo "$first_line"
+    fi
+    cat -
+}
+
+do_rofi() {
     eval "$(popup_window.sh -e)"
 
-    {
-	if $include; then
-	    echo "$first_line"
-	fi
-	cat -
-    } | rofi -sort -columns 1 -l $LINES -yoffset $Y -width $W -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit -location 2 "$(theme getval p_font_main | sed 's/-/ /')" |
+    rofi -sort -columns 1 -l $LINES -yoffset $Y -width $W -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit -location 2 "$(theme getval p_font_main | sed 's/-/ /')" |
 	while IFS=$'\n' read -r rofi_line; do
 	    echo "$rofi_line"
 	    if [ ! -z "$FEEDER_PID" ]; then
@@ -41,12 +43,12 @@ do_rofi() {
 	done
 }
 
-if type rofi >/dev/null; then
-    result=$(do_rofi)
-elif elisp t >/dev/null; then
-    result=$(cat - | emacs_dmenu "$prompt")
+if elisp t >/dev/null; then
+    result=$(read_input | emacs_dmenu "$prompt")
+elif type rofi >/dev/null; then
+    result=$(read_input | do_rofi)
 else
-    result=$(cat - | og dmenu -p "$prompt")
+    result=$(read_input | og dmenu -p "$prompt")
 fi
 
 if [ -z "$result" ]; then
