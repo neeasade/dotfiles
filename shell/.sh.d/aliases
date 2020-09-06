@@ -3,7 +3,7 @@
 # eg \cd
 
 # let's see if this is too generic
-alias open='xdg-open'
+# alias open='xdg-open'
 
 alias qq=colemak
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
@@ -18,9 +18,6 @@ alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files/Steam/Steam
 alias paint="pinta"
 
 alias ref='theme refresh '
-alias e='$EDITOR '
-
-alias xl='xrdb "$HOME/.Xresources"'
 alias pdfgrep='pdfgrep --cache -n '
 
 # the best
@@ -31,11 +28,13 @@ alias .....='cd ../../../..'
 
 alias ds='dirs -v | head -n 10'
 
-alias nix-env='echo Be careful. use nix-run'
-
 # making this a function so EG the following can work:
 # FOO=BAR make
 make() {
   clear
   og make "$@"
 }
+
+# change some habits
+alias nix-env='echo Be careful. use nix-run'
+alias stalonetray='use scu-{start,stop,status} stalonetray'

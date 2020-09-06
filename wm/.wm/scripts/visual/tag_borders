@@ -157,6 +157,8 @@ draw_outerdark_state() {
 	    $wids &
     done
 
+    wait
+
     monocle_mod=
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	outmost_color=$normal
@@ -172,7 +174,7 @@ draw_outerdark_state() {
 	    $(bspc query -N -n .tiled.window) &
     fi
 
-    for wid in $(bspwindows $monocle_mod); do
+    for wid in $(bspwindows active $monocle_mod); do
 	if info=$(echo "$state" | grep "$wid"); then
 	    echo "$info" | head -n 1 | while read name active color other; do
 		inmost_color=$(colort -l -60 $color)

@@ -16,6 +16,9 @@ if [ -z "$percent" ]; then
 else
     # echo "$topic $((percent / WIDTH))%"
     # todo: status bar colors
-    echo "$topic $(bs "B$(colort -l -40 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+    # echo "$topic $(bs "B$(colort -l -40 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+
+    # XXX: you will need to tweak ./org_task_elisp as well
     # echo "$topic $(bs "B50545b" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+    echo "$topic $(mkb "$percent" 10)"
 fi

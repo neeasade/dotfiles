@@ -331,6 +331,7 @@ dotadd() {
   file=$(basename "$file")
   echo mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
   mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
+  (cd "$HOME/.dotfiles/bin/bin/"; git add "$file")
   stowo bin
 }
 

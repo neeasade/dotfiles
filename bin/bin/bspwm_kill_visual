@@ -1,0 +1,4 @@
+#!/bin/sh
+for visual in $HOME/.wm/scripts/visual/*; do
+    pkill -f $visual 2> /dev/null;
+done

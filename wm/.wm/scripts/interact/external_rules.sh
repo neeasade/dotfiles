@@ -13,7 +13,7 @@ class_name=$2
 if [ "$class_name"  = "pye-menu" ]; then
   echo state=floating
 
-  size=400
+  size=200
   eval "$(xdotool getmouselocation --shell)"
   echo geometry=${size}x${size}+${X}+${Y}
 
@@ -55,7 +55,6 @@ height=$(jget height "$(bspc query -T -n $targetNode)") # .rectangle.height
 
 # set node
 echo node=$targetNode
-
 
 bcInput=$(iif "[ $width -gt $height ]" \
     "($width-$height)/$width" \

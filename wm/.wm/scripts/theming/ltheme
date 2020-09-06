@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 # Load themes for programs from current theme
-# todo: some of these are based on monitor dimensions/gapping
-# could affect: dmenu, dunst
 
 # todo: this script should also handle font checking against fc-list
 

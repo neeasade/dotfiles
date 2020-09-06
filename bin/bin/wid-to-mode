@@ -1,0 +1,15 @@
+#!/usr/bin/env elisp
+;; print wids to modes of the focused buffer within a frame
+
+(defun ns/frame-to-modelist (frame)
+  (list
+   (frame-parameter frame 'outer-window-id)
+   (-> frame (frame-parameter 'buffer-list) first crux-buffer-mode prin1-to-string)))
+
+(->> (frame-list)
+     (-map 'ns/frame-to-modelist)
+     (-map (fn (format "0x%08X %s"
+		       (string-to-number (first <>))
+		       (second <>))))
+     (-flatten)
+     (s-join "\n"))

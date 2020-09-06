@@ -49,7 +49,8 @@ settings() {
     b_window_gap=32
     b_window_width=10
 
-    b_bspwmrc_extend="tag_borders &"
+    b_bspwmrc_extend="tag_borders &
+subscription_rules &"
 
     x_padding=5
 

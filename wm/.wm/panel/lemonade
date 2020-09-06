@@ -43,10 +43,11 @@ stdbuf -oL i3blocks -o j | \
 	    -f "$(theme getval p_font_main)" \
 	    -f "$(theme getval p_font_main):style=Bold" \
 	    -f "$(theme getval p_font_icon)" \
+	    -f "DejaVu Sans Mono for Powerline-10" \
 	    -o 0 \
 	    -o 0 \
 	    -o -4 \
+	    -o -2 \
 	    -a 20 \
 	    -g "$geom" | sh
 
-# -u $(theme getval p_line) \
