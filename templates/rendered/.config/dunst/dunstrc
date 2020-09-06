@@ -1,0 +1,52 @@
+[global]
+    font = Equity Text A 12
+    markup = full
+    format = "%s\n%b"
+    sort = yes
+    alignment = center
+    show_age_threshold = 60
+    geometry = "614x6+973+56"
+    idle_threshold = 60
+    follow = mouse
+    word_wrap = yes
+    history_length = 20
+    separator_height = 1
+    padding = 5
+    horizontal_padding = 5
+    separator_color = frame
+    browser = qb_meta_open
+    icon_position = off
+    # icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+    frame_width = 1
+    frame_color = "#777777"
+
+[shortcuts]
+    close = ctrl+space
+    close_all = ctrl+shift+space
+    history = ctrl+grave
+    context = ctrl+shift+period
+
+[urgency_low]
+    background = "#F3F5F8"
+    foreground = "#3F4043"
+    timeout = 3
+
+[urgency_normal]
+    background = "#F3F5F8"
+    foreground = "#3F4043"
+    timeout = 0
+
+[urgency_critical]
+    background = "#8FE7D5"
+    foreground = "#3F4043"
+    timeout = 0
+
+# delay notifications when something is fullscreen
+# todo: only do this if the fullscreen is a game or netflix/mpv or something
+# optionally also consider rolling your own lemonbar things and just move the windows around
+# [fullscreen_delay_everything]
+#    fullscreen = delay
+
+# [fullscreen_show_critical]
+#    msg_urgency = critical
+#    fullscreen = show

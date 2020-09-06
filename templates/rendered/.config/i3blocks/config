@@ -1,0 +1,109 @@
+
+[org_task]
+interval=5
+command=/home/neeasade/.wm/panel/lemons/org_task | season
+bg=#86d5e5
+fg=#3f4043
+line=#86d5e5
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#72C1D1
+
+step=3
+align=center
+lemon=org_task
+lemon_end=false
+lemon_end_inner=true
+
+[tags]
+interval=-3
+command=/home/neeasade/.wm/panel/lemons/tags | season
+bg=#8ce1da
+fg=#3f4043
+line=#8ce1da
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#89dbe0
+
+step=1
+align=left
+lemon=tags
+lemon_end=true
+lemon_end_inner=false
+
+[weather]
+interval=600
+command=/home/neeasade/.wm/panel/lemons/weather | season
+bg=#81c9f0
+fg=#3f4043
+line=#81c9f0
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#84cfeb
+
+step=5
+align=right
+lemon=weather
+lemon_end=false
+lemon_end_inner=false
+
+[mpd]
+interval=5
+command=/home/neeasade/.wm/panel/lemons/mpd | season
+bg=#84cfeb
+fg=#3f4043
+line=#84cfeb
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#70BBD7
+mouse_left="player.sh toggle"
+mouse_right="player.sh next"
+mouse_middle="mpc clear"
+scroll_up="mpc seek +00:00:02"
+scroll_down="mpc seek -00:00:02"
+
+step=4
+align=right
+lemon=mpd
+lemon_end=false
+lemon_end_inner=true
+
+[clock]
+interval=5
+command=/home/neeasade/.wm/panel/lemons/clock | season
+bg=#7ec3f6
+fg=#3f4043
+line=#7ec3f6
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#81c9f0
+mouse_left="dzen.sh cal"
+
+step=6
+align=right
+lemon=clock
+lemon_end=true
+lemon_end_inner=false
+
+[title]
+interval=persist
+command=(xtitle -s & bspc subscribe desktop_layout) | /home/neeasade/.wm/panel/lemons/title | season
+bg=#89dbe0
+fg=#3f4043
+line=#89dbe0
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#75C7CC
+
+step=2
+align=left
+lemon=title
+lemon_end=false
+lemon_end_inner=true
+

@@ -1,0 +1,47 @@
+! wiping out control+e
+rofi.kb-move-end:
+rofi.kb-row-up: Up,Control+e,ISO_Left_Tab
+rofi.kb-row-down: Down,Control+n
+rofi.font: Triplicate T4c 12
+
+! State:           'bg',     'fg',     'bgalt',  'hlbg',   'hlfg'
+rofi.color-normal: #f3f5f8, #3f4043, #f3f5f8, #8FE7D5, #3f4043
+! rofi.color-urgent:
+! rofi.color-active:
+
+! 'background', 'border', 'separator'
+rofi.color-window: #f3f5f8, #3f4043, #f3f5f8
+
+st.font: Triplicate T4c-12
+st.font_variable: Equity Text A-13
+st.borderpx: 0
+st.cursorshape: 2
+st.cursorthickness: 2
+st.disablebold: 1
+
+! note: these aren't official, I'm referencing them in config.
+Emacs.theme: lab-light
+Emacs.powerlinescale: 1.0
+Emacs.powerline: bar
+Emacs.doomlineheight: 24
+
+
+! colors (appended in ltheme script)
+*.background: #f3f5f8
+*.foreground: #3f4043
+*.color0: #F3F5F8
+*.color1: #A95011
+*.color2: #5E7111
+*.color3: #C38418
+*.color4: #176FA8
+*.color5: #407EE7
+*.color6: #E71FD2
+*.color7: #3F4043
+*.color8: #898A8D
+*.color9: #A95011
+*.color10: #5E7111
+*.color11: #C38418
+*.color12: #176FA8
+*.color13: #407EE7
+*.color14: #E71FD2
+*.color15: #3F4043
