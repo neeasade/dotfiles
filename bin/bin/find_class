@@ -1,0 +1,10 @@
+#!/bin/sh
+# find a window by wm_class
+
+for wid in $(bspc query -N -n .window); do
+    if xprop WM_CLASS -id $wid | grep -i "$*"; then
+	bspc node $wid -g hidden=off
+	bspc node -f $wid
+	exit 0
+    fi
+done

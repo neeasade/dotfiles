@@ -39,7 +39,7 @@ add_emacss() {
 		return 0
 	    fi
 
-	    if xprop -id $wid | grep WM_CLASS | grep Emacs; then
+	    if xprop WM_CLASS -id $wid | grep Emacs; then
 		emacs_wid=$wid
 		return 0
 	    fi
@@ -47,7 +47,7 @@ add_emacss() {
 	}
 
 	check_id $(bspc query -N -n)
-	for wid in $(bspc query -N -d focused -n .leaf); do
+	for wid in $(bspc query -N -d focused -n .window); do
 	    check_id $wid && break
 	done
 

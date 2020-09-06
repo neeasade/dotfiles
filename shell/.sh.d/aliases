@@ -31,6 +31,8 @@ alias .....='cd ../../../..'
 
 alias ds='dirs -v | head -n 10'
 
+alias nix-env='echo Be careful. use nix-run'
+
 # making this a function so EG the following can work:
 # FOO=BAR make
 make() {

@@ -10,7 +10,7 @@ url=$1
 
 focus_qb_window() {
     for wid in $(bspc query -N -n .window); do
-	if xprop -id $wid | grep "^WM_CLASS" | grep qutebrowser; then
+	if xprop WM_CLASS -id $wid | grep qutebrowser; then
 
 	    bspc node $wid -g hidden=off
 	    bspc node -f $wid

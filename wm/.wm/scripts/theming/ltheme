@@ -208,7 +208,7 @@ load_gtk() {
     $HOME/.icons/acyl/icon.sh "#$p_icon"
 
     # reload
-    gtkrc-reload &
+    gtkrc-reload
 
     # set a place to reference active theme for newly launched GTK3 programs.
     echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME

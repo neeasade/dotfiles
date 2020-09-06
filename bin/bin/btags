@@ -301,13 +301,20 @@
   (-> state pr-str println))
 
 (defn action-state-plain "get a plaintext representation of tags" []
-  (->> (:tags state)
-       (map #(format "%s %s %s %s"
-                     (:name %)
-                     (if (:active %) "true" "false")
-                     (:color %)
-                     (str/join " " (:wids %))))
-       (run! println)))
+  (->>
+   (conj
+    (:tags state)
+    {:color "dddddd" :name "untagged"
+     ;; active value doesn't matter for untagged tags
+     :active true
+     :wids (get-state-untagged)})
+
+   (map #(format "%s %s %s %s"
+                 (:name %)
+                 (if (:active %) "true" "false")
+                 (:color %)
+                 (str/join " " (:wids %))))
+   (run! println)))
 
 (defn action--h "usage" [] (usage))
 

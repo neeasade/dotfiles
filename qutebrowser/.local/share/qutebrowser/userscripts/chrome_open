@@ -1,0 +1,4 @@
+#!/bin/sh
+
+setsid google-chrome-stable "$QUTE_URL" >/dev/null 2>&1 &
+find_class "google-chrome"
