@@ -302,29 +302,27 @@ extract() {      # Handy Extract Program
 }
 
 # manpages with colors
-if [ ! $ESHELL ]; then
-  man() {
-    settitle "$* - manual"
-    # removing standout means find highlights stay inverted..
-    #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
+man() {
+  settitle "$* - manual"
+  # removing standout means find highlights stay inverted..
+  #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
 
-    env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
-        LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
-        LESS_TERMCAP_me=$(printf '\e[0m') \
-        LESS_TERMCAP_se=$(printf '\e[0m') \
-        LESS_TERMCAP_ue=$(printf '\e[0m') \
-        LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
-        man "$@"
+  env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
+      LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
+      LESS_TERMCAP_me=$(printf '\e[0m') \
+      LESS_TERMCAP_se=$(printf '\e[0m') \
+      LESS_TERMCAP_ue=$(printf '\e[0m') \
+      LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
+      man "$@"
 
-    defaulttitle
-  }
-fi
+  defaulttitle
+}
 
-# page() {
-#   settitle "$* - less"
-#   less "$@"
-#   defaulttitle
-# }
+less() {
+  settitle "$* - less"
+  og less "$@"
+  defaulttitle
+}
 
 dotadd() {
   file=$(find ~/bin | fzf) || return
@@ -333,11 +331,6 @@ dotadd() {
   mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
   (cd "$HOME/.dotfiles/bin/bin/"; git add "$file")
   stowo bin
-}
-
-book() {
-  player.sh pause
-  google-chrome-stable "$(cat ~/.book_url)" &
 }
 
 passadd() {

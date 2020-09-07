@@ -43,7 +43,8 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   succ .emacs.d/scripts
   export PAGER="epager"
 
-  for yeet in htop nethack cava; do
+  # npm interfaces like to use cursor movement sometimes
+  for yeet in htop nethack cava npm; do
     if has $yeet; then
       eval "$(to_term $yeet)"
     fi
@@ -68,23 +69,9 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
     if [ -z "$*" ]; then
       $TERMINAL
     else
-      $TERMINAL -e "$@"
-      # todo here: consider pausing after running the command
-      # eval "$TERMINAL -e sh -c 'echo $@; echo; echo command finished.; read pause' "
-    fi
-  }
-
-  # won't work in sh, but is fine in bash/zsh
-  # todo: see if we can do this on the emacs end
-  exit() {
-    if [ $(jobs | wc -l) -ne 0 ]; then
-      echo "There are jobs present."
-    else
-      if [ $(ps | wc -l) -eq 3 ]; then
-        elisp "(run-at-time 0 nil 'delete-frame)"
-      else
-        builtin exit
-      fi
+      # $TERMINAL -e "$@"
+      # todo: cosider saving all stderr stdout somewhere
+      eval "$TERMINAL -e sh -c '$@; echo; echo command finished.; read pause' "
     fi
   }
 
