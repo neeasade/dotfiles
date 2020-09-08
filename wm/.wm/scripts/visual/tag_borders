@@ -157,8 +157,6 @@ draw_outerdark_state() {
 	    $wids &
     done
 
-    wait
-
     monocle_mod=
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	outmost_color=$normal

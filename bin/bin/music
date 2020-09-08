@@ -22,7 +22,6 @@ add() { # add a url to library, fallback on clipboard content
 
   url=$*
   [ -z "$url" ] && url=$(xclip -o -selection clipboard)
-  echo "$url" >> "$musicdir/import_history.log"
   mkdir -p "$musicdir/import"
 
   # note: get all of an artists album links example:
@@ -31,11 +30,15 @@ add() { # add a url to library, fallback on clipboard content
 
   if echo "$url" | grep -q 'bandcamp.com'; then
     # bandcamp music is organized by album:
-    youtube-dl -x -i -o "$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(title)s.%(ext)s" "$url"
+    format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(title)s.%(ext)s"
   else
-    youtube-dl -x -i -o "$musicdir/import/%(artist)s/%(title)s.%(ext)s" "$url"
+    format="$musicdir/import/%(uploader)s/%(title)s.%(ext)s"
   fi
 
+  title=$(youtube-dl -x -i -j -o "$format" "$url" | jq -r .title)
+  youtube-dl -x -i -o "$format" "$url"
+
+  printf "|%s|%s|%s|" "$url" "$title" "$(date)" >> "$musicdir/import_history.log"
   mpc update # re-index
 }
 
@@ -218,6 +221,16 @@ info() { # display the current song progress bar and playlist length
   if [ "$(GET=t player.sh)" = "mpc" ]; then
       echo "playlist: $(cat $current_playlist) | $(playlist_length)"
   fi
+}
+
+recent() { # play recently added songs
+  recent_count=10
+
+  grep -E "^\|.*" "$musicdir/import_history.log"  | \
+      awk -F\| '{print "+" $3}' | \
+      tail -n $recent_count > "${musicdir}/playlist/recent"
+
+  playlist recent
 }
 
 op=${1:-usage}
