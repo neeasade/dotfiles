@@ -16,10 +16,6 @@ current_playlist="${musicdir}/playlist/current"
 
 add() { # add a url to library, fallback on clipboard content
 
-
- # todo: idea: grep the import history log to see if we've imported it
- #    be aware of trailing stuff on urls/for the compare
-
   url=$*
   [ -z "$url" ] && url=$(xclip -o -selection clipboard)
   mkdir -p "$musicdir/import"
@@ -35,10 +31,18 @@ add() { # add a url to library, fallback on clipboard content
     format="$musicdir/import/%(uploader)s/%(title)s.%(ext)s"
   fi
 
-  title=$(youtube-dl -x -i -j -o "$format" "$url" | jq -r .title)
-  youtube-dl -x -i -o "$format" "$url"
+  titles=$(youtube-dl -x -i -j -o "$format" "$url" | jq -r .title)
 
-  printf "|%s|%s|%s|" "$url" "$title" "$(date)" >> "$musicdir/import_history.log"
+  if youtube-dl -x -i -o "$format" "$url"; then
+    echo "$titles" | while read -r title; do
+	printf "\n|%s|%s|%s|%s|" "$url" "$title" "$(date)" "success" >> "$musicdir/import_history.log"
+    done
+  else
+    echo "$titles" | while read -r title; do
+	printf "\n|%s|%s|%s|%s|\n" "$url" "$title" "$(date)" "fail" >> "$musicdir/import_history.log"
+    done
+  fi
+
   mpc update # re-index
 }
 
