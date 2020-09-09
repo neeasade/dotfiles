@@ -8,24 +8,22 @@
 	     (org-pomodoro-remaining-seconds))
 	  (* length-minutes 60)) (* 100)))
 
-;; TODO: some option to show just the currently clocked in task rather than a full timer
-;; something outside a pomo
 (if (eq org-pomodoro-state :none)
-    (let* ((top-headline (with-current-buffer (find-file-noselect org-default-notes-file)
-			   (save-excursion (org-ml-parse-headline-at (ns/org-get-active-point)))))
-	   (top-headline-text (-> top-headline org-ml-headline-get-path last first)))
-      (if (and
-	   (s-matches-p org-element--timestamp-regexp top-headline-text)
-	   (not (s-contains-p
-		 (concat "<" (format-time-string "%Y-%m-%d"))
-		 top-headline-text
-		 )))
-	  ;; "Decide what to do today!"
-	  nil
-	(concat "Resume: "
-		(or (-> top-headline ns/notes-current-standup-task org-ml-headline-get-path last first)
-		    top-headline-text
-		    ))))
+    (if (org-clocking-p)
+	(format  "clocked in: %s" org-clock-heading)
+      (let* ((top-headline (with-current-buffer (find-file-noselect org-default-notes-file)
+			     (save-excursion (org-ml-parse-headline-at (ns/org-get-active-point)))))
+	     (top-headline-text (-> top-headline org-ml-headline-get-path last first)))
+	(if (and
+	     (s-matches-p org-element--timestamp-regexp top-headline-text)
+	     (not (s-contains-p
+		   (concat "<" (format-time-string "%Y-%m-%d"))
+		   top-headline-text
+		   )))
+	    "Set up a dated headline"
+	  (concat "Resume: "
+		  (or (-> top-headline ns/notes-current-standup-task org-ml-headline-get-path last first)
+		      top-headline-text)))))
   (let ((percent
 	 (ns/org-pomo-progress
 	  (alist-get
