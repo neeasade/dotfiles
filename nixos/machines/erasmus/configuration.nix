@@ -1,6 +1,13 @@
 { config, pkgs, lib, ... }:
 
 let
+  nixcfg = {
+    allowUnfree = true;
+    oraclejdk.accept_license = true;
+  };
+
+  edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
+
   consts = import ../../shared/consts.nix;
 in
 {
@@ -23,6 +30,7 @@ in
   # boot.initrd.kernelModules = [ "wl" ];
   # boot.kernelModules = [ "kvm-intel" "wl" ];
   # boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
+  boot.kernelPackages = edge.linuxPackages_zen;
 
   networking.hostName = "erasmus";
   # networking.wireless.enable = true;  # wpa_supplicant.
@@ -35,9 +43,12 @@ in
     };
   };
 
+  console = {
+    font = "Lat2-Terminus16";
+    keyMap = "us";
+  };
+
   i18n = {
-    consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "us";
     defaultLocale = "en_US.UTF-8";
   };
 

@@ -28,9 +28,12 @@ in
     };
   };
 
+  console = {
+    font =  "Lat2-Terminus16";
+    keyMap = "us";
+  };
+
   i18n = {
-    consoleFont = "Lat2-Terminus16";
-    consoleKeyMap = "us";
     defaultLocale = "en_US.UTF-8";
   };
 
