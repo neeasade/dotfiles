@@ -127,18 +127,29 @@ prompt() {
       _prompt="$(tell_emacs_shell_location)$_prompt"
     fi
 
-
-    printf "%b%s" "$_prompt "
-
-    # dumb (see clear alias in environment_emacs)
-    # only use this for a screenshot
-    # if [ -f /tmp/dont_prompt_newline ]; then
-    #   rm /tmp/dont_prompt_newline
-    #   printf "%b%s" "$_prompt "
-    # else
-    #   printf "\n%b%s" "$_prompt "
-    # fi
+    if ${_prompt_newline:-false}; then
+      printf "\n%b%s" "$_prompt "
+    else
+      printf "%b%s" "$_prompt "
+    fi
 }
+
+# this might be a bad way to go about this
+# at the least, it feels annoyingly verbose
+_prompt_first=${_prompt_first:-true}
+prompt_set_newline() {
+  if $_prompt_first; then
+    _prompt_first=false
+  else
+    _prompt_newline=true
+  fi
+}
+
+if ! echo "$PROMPT_COMMAND"  | grep -q prompt_set_newline; then
+  export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+fi
+
+# PROMPT_COMMAND=prompt_set_newline
 
 PS1='$(prompt)'
 

@@ -166,7 +166,13 @@ add_metas() {
     add_switch "meta: music now" "music now"
     add_switch "meta: music playlist" "music playlist"
     add_switch "meta: mpv resume" "mpv_resume"
-    add_switch "meta: netflix" "google-chrome-stable netflix.com"
+
+    netflix() {
+	google-chrome-stable netflix.com
+	find_class "google-chrome"
+    }
+
+    add_switch "meta: netflix" "netflix"
 
     # idea: hydra menu for tag stuff? other?
 
@@ -208,6 +214,7 @@ enact() {
     else
 	# echo eval add_${*}s
 	eval add_${*}s
+	add_windows
     fi
 }
 

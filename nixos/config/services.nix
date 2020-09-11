@@ -28,7 +28,6 @@ in
       };
 
       windowManager = {
-        default = "bspwm";
         bspwm = {
           package = expr.bspwm-git;
           enable = true;
@@ -37,8 +36,9 @@ in
 
       desktopManager = {
         xterm.enable = true;
-        default = "none";
       };
+
+      displayManager.defaultSession = "none+bspwm";
 
       displayManager.lightdm = {
         enable = true;

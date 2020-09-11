@@ -1,13 +1,15 @@
-# this will be run with python 3
-
+# note: this will be run with python 3
 
 import os
 import socket
+import operator
 import subprocess
 from shutil import which
 
 from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
 from qutebrowser.config.config import ConfigContainer  # noqa: F401
+
+from qutebrowser.api import interceptor, message
 
 config = config  # type: ConfigAPI # noqa: F821
 c = c  # type: ConfigContainer # noqa: F821
@@ -16,9 +18,6 @@ c = c  # type: ConfigContainer # noqa: F821
 def nmap(key, command):
     """Bind key to command in normal mode."""
     config.bind(key, command, mode='normal')
-
-# this check is so we can have speedy reloading of say, theme colors
-initial_start = c.tabs.background == False
 
 # ui
 c.completion.scrollbar.width = 10
@@ -221,3 +220,24 @@ c.fonts.tabs = tabFont
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 c.fonts.statusbar = GetSize('completion') + fonts['completion']
 
+nmap('<F10>', 'spawn --userscript chrome_open')
+nmap('<F12>', 'inspector')
+
+REDIRECT_MAP = {
+    # "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
+    # "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
+    # "twitter.com": operator.methodcaller('setHost', 'google.com'),
+}
+
+def redirect_intercept(info):
+    """Block the given request if necessary."""
+    if (info.resource_type != interceptor.ResourceType.main_frame
+            or info.request_url.scheme() in {"data", "blob"}):
+        return
+    url = info.request_url
+    redir = REDIRECT_MAP.get(url.host())
+    if redir is not None and redir(url) is not False:
+        message.info("Redirecting to " + url.toString())
+        info.redirect(url)
+
+interceptor.register(redirect_intercept)

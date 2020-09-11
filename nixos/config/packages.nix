@@ -73,7 +73,6 @@ let
     expect
     feh
     file
-    filezilla
     gitAndTools.gitFull
 
     go-mtpfs
@@ -153,11 +152,13 @@ let
 
     yq
 
-    qutebrowser
     blueman
     pasystray
+    pdftk
+    qutebrowser
   ]) ++ (with unstable; [
   # ]) ++ (
+    zoom-us
 
     dunst dzen2
     ffmpeg
@@ -196,9 +197,9 @@ let
   ]) ++ (with unstable; [
   ]);
 
-  inherit (pkgs) eggDerivation fetchegg;
   extra = (with stable; [
     tiled love_11 luajit
+    filezilla
 
     sqlitebrowser
     pup jo
