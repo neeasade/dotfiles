@@ -10,7 +10,6 @@ bspc subscribe node_add | while read -r event m d i wid; do
     current_name=$(xprop WM_NAME -id $wid)
     last_class=$(xprop WM_CLASS -id $(bspc query -N last -n))
 
-    echo "current name: $current_name"
     if echo "$current_name" | grep emacs_dmenu_frame; then
        continue
     fi

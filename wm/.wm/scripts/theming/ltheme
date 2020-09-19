@@ -232,7 +232,7 @@ load_qutebrowser() {
     q_tab_font=$(echo "$p_font_main" | sed 's/-.*//')
 
     # next stable qutebrowser version:
-    # q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
+    q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
 
     margs qutebrowser .config/qutebrowser/colors.py
 

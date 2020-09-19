@@ -19,6 +19,10 @@ def nmap(key, command):
     """Bind key to command in normal mode."""
     config.bind(key, command, mode='normal')
 
+
+# is this the first time running?
+_QB_FIRST_TIME = c.tabs.show == 'multiple'
+
 # ui
 c.completion.scrollbar.width = 10
 c.tabs.position = 'top'
@@ -211,11 +215,11 @@ tabFont = GetSize('tab') + fonts['tabbar']
 if fonts['tab_bold']:
     tabFont = 'bold {0}'.format(tabFont)
 
-c.fonts.tabs = tabFont
+# c.fonts.tabs = tabFont
 
 # next stable qutebrowser version:
-# c.fonts.tabs.selected = tabFont
-# c.fonts.tabs.unselected = tabFont
+c.fonts.tabs.selected = tabFont
+c.fonts.tabs.unselected = tabFont
 
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 c.fonts.statusbar = GetSize('completion') + fonts['completion']
@@ -224,9 +228,9 @@ nmap('<F10>', 'spawn --userscript chrome_open')
 nmap('<F12>', 'inspector')
 
 REDIRECT_MAP = {
-    # "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
-    # "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
-    # "twitter.com": operator.methodcaller('setHost', 'google.com'),
+    # note: the redirect stuff needs a newish version of qb (at least, newer than nixpkgs stable)
+    "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
+    "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
 }
 
 def redirect_intercept(info):
@@ -234,10 +238,16 @@ def redirect_intercept(info):
     if (info.resource_type != interceptor.ResourceType.main_frame
             or info.request_url.scheme() in {"data", "blob"}):
         return
+
     url = info.request_url
     redir = REDIRECT_MAP.get(url.host())
     if redir is not None and redir(url) is not False:
         message.info("Redirecting to " + url.toString())
         info.redirect(url)
 
-interceptor.register(redirect_intercept)
+adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock.txt'
+if os.path.exists(themefile):
+    c.content.host_blocking.lists = [
+        'file://' + adblock_file,
+        'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts',
+        ]

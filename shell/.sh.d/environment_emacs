@@ -43,6 +43,10 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   succ .emacs.d/scripts
   export PAGER="epager"
 
+  less() {
+    epager
+  }
+
   # npm interfaces like to use cursor movement sometimes
   for yeet in htop nethack cava npm; do
     if has $yeet; then
