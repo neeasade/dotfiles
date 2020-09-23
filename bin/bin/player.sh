@@ -3,12 +3,12 @@
 
 dbusplaying=false
 dbuspresent=false
-if status=$(playerctl status 2>/dev/null); then
+if status=$(playerctl -a status 2>/dev/null); then
   dbusplaying=true
 
   dbuspresent=true
 
-  if [ ! "$status" = "Playing" ]; then
+  if ! echo "$status" | grep -q "Playing"; then
     # paused or stopped
     dbusplaying=false
   fi
@@ -57,7 +57,11 @@ if [ "$target" = "playerctl" ]; then
 fi
 
 if [ -z "$*" ]; then
-  set -- status
+  if [ "$target" = "playerctl" ]; then
+    set -- -a status
+  else
+    set -- status
+  fi
 fi
 
 # terrible

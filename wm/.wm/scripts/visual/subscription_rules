@@ -20,7 +20,7 @@ bspc subscribe node_add | while read -r event m d i wid; do
     # fi
 
     if echo "$current_class" | grep qutebrowser; then
-	btags toggle-wids set-tag-on-wids $wid
+	btags set-tag-on-wids net $wid
 	continue
     fi
 

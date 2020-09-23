@@ -21,7 +21,7 @@ def nmap(key, command):
 
 
 # is this the first time running?
-_QB_FIRST_TIME = c.tabs.show == 'multiple'
+initial_start = c.tabs.background == False
 
 # ui
 c.completion.scrollbar.width = 10
@@ -245,9 +245,12 @@ def redirect_intercept(info):
         message.info("Redirecting to " + url.toString())
         info.redirect(url)
 
+if initial_start:
+    interceptor.register(redirect_intercept)
+
 adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock.txt'
 if os.path.exists(themefile):
     c.content.host_blocking.lists = [
-        'file://' + adblock_file,
         'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts',
+        'file://' + adblock_file,
         ]
