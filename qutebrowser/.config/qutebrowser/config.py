@@ -240,16 +240,18 @@ def redirect_intercept(info):
         return
 
     url = info.request_url
+    # message.info(url.host())
     redir = REDIRECT_MAP.get(url.host())
     if redir is not None and redir(url) is not False:
         message.info("Redirecting to " + url.toString())
         info.redirect(url)
 
+# idea here: you could have an interceptor that does the url note check for emacs
 if initial_start:
     interceptor.register(redirect_intercept)
 
 adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock.txt'
-if os.path.exists(themefile):
+if os.path.exists(adblock_file):
     c.content.host_blocking.lists = [
         'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts',
         'file://' + adblock_file,
