@@ -1,0 +1,12 @@
+#!/bin/sh
+# cf https://unix.stackexchange.com/questions/65246/change-pulseaudio-input-output-from-shell/67398#67398
+
+target=$1
+
+echo pactl set-default-sink $target
+pactl set-default-sink $target
+
+pactl list short sink-inputs | awk '{print $1}' | while read stream; do
+    pactl move-sink-input "$stream" "$target"
+    echo pactl move-sink-input "$stream" "$target"
+done
