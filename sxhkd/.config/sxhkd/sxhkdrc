@@ -132,7 +132,8 @@ F8
 
 # idea for these: screenshot buttons - or a popup menu
 @button8
-    SWITCH_KIND=do_narrow_piemenu dmenu_switcher switcher
+    pointer_menu
+    # SWITCH_KIND=do_narrow_piemenu dmenu_switcher switcher
     # notify-send "you pressed mouse8"
 
 button9

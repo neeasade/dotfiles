@@ -8,3 +8,5 @@ for wid in $(bspc query -N -n .window); do
 	exit 0
     fi
 done
+
+exit 1

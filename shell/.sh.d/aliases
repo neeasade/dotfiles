@@ -35,6 +35,10 @@ make() {
   og make "$@"
 }
 
-# change some habits
-alias nix-env='echo Be careful. use nix-run'
-alias stalonetray='use scu-{start,stop,status} stalonetray'
+stalonetray() {
+  if pgrep stalonetray; then
+    vdo systemctl --user stop stalonetray
+  else
+    vdo systemctl --user start stalonetray
+  fi
+}

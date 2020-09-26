@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# use jgmenu to do things(tm)
+
+cat<<EOF | jgmenu --simple --at-pointer
+
+cancel
+steam,SWITCH='meta: steam' dmenu_switcher
+pavucontrol,SWITCH='meta: pavucontrol' dmenu_switcher
+toggle player,player.sh toggle
+dismiss window,dismiss.sh
+
+switch audio,^checkout(1)
+
+^tag(1)
+$(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
+      <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
+
+# windows,^checkout(2)
+
+EOF

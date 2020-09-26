@@ -462,11 +462,15 @@ load_services() {
     systemctl --user disable stalonetray
 }
 
+load_jgmenu() {
+    margs jgmenu .config/jgmenu/jgmenurc
+}
+
 if uname | grep -q MINGW; then
     # windows
     targets=${*:-mintty mpd_windows tmux}
 else
-    targets=${*:-picom tmux xresources bspwm bg gtk dunst qutebrowser zathura}
+    targets=${*:-picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu}
 fi
 
 # targets="${*:-picom tmux xresources bspwm bg dunst qutebrowser}"

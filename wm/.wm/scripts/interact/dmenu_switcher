@@ -156,6 +156,12 @@ add_metas() {
 
     add_switch "meta: steam" "find_steam"
 
+    find_pavucontrol() {
+	find_class pavucontrol || pavucontrol
+    }
+
+    add_switch "meta: pavucontrol" "find_pavucontrol"
+
     find_last_irc_ping() {
 	echo todo
     }
@@ -283,6 +289,13 @@ do_broad_dmenu() {
     ASSOCIATE=true enact "$type" >/dev/null
     select_action "$choice"
 }
+
+if [ ! -z "$SWITCH" ]; then
+    type=$(awk -F: '{print $1}' <<< "$SWITCH")
+    ASSOCIATE=true enact "$type" >/dev/null
+    select_action "$SWITCH"
+    exit $?
+fi
 
 if [ -z "$SWITCH_KIND" ]; then
     # do_narrow_piemenu

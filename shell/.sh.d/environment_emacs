@@ -48,7 +48,7 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   }
 
   # npm interfaces like to use cursor movement sometimes
-  for yeet in htop nethack cava npm; do
+  for yeet in htop nethack cava npm iotop; do
     if has $yeet; then
       eval "$(to_term $yeet)"
     fi
