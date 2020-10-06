@@ -4,8 +4,10 @@
 cat<<EOF | jgmenu --simple --at-pointer
 
 cancel
-steam,SWITCH='meta: steam' dmenu_switcher
 pavucontrol,SWITCH='meta: pavucontrol' dmenu_switcher
+fullshot,bash -ic 'fullshot'
+stalonetray,bash -ic 'stalonetray'
+steam,SWITCH='meta: steam' dmenu_switcher
 toggle player,player.sh toggle
 dismiss window,dismiss.sh
 

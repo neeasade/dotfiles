@@ -412,3 +412,7 @@ paths(scalars) as $p
 '
 }
 
+eve() {
+  cd /media/CODERED/games/EVE
+  wine eve.exe
+}

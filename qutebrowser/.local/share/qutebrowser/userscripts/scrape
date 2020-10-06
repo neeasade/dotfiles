@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+mkdir /tmp/scrapes
+cp "$QUTE_HTML" "/tmp/scrapes/$(date +%s)-${RANDOM}.html"
+notify-send --urgency=low "scraped"
+# cp "$QUTE_HTML" "/tmp/$(date +%s).html"

@@ -225,6 +225,7 @@ c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 c.fonts.statusbar = GetSize('completion') + fonts['completion']
 
 nmap('<F10>', 'spawn --userscript chrome_open')
+# nmap('W', 'spawn --userscript scrape')
 nmap('<F12>', 'inspector')
 
 REDIRECT_MAP = {

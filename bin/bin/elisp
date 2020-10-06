@@ -7,13 +7,15 @@
 
 trim=false  # note: we always set trim in script mode
 quiet=false
-read_stdin=${READ_IN:-false}
+read_stdin=false
+emacs_batch=false
 
-while getopts qrs flag; do
+while getopts qrsb flag; do
     case $flag in
         q) quiet=true;;
         r) trim=true;;
         s) read_stdin=true;;
+        b) emacs_batch=true;;
         *) usage;;
     esac
 done
@@ -85,8 +87,12 @@ if type timeout >/dev/null; then
     emacs_timeout="timeout ${elisp_timeout}"
 fi
 
-# echo $emacs_timeout $eclient --eval "$lisp"
-result=$($emacs_timeout $eclient --eval "$lisp")
+if $emacs_batch; then
+    result=$(NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1 | tail -n 1)
+else
+    # echo $emacs_timeout $eclient --eval "$lisp"
+    result=$($emacs_timeout $eclient --eval "$lisp")
+fi
 
 quit() {
     if [ ! -z "$stdin_file" ]; then
