@@ -59,15 +59,46 @@ new() {
 
 spaced_buttons() {
     border=${border:-#777777}
-    border_side=$(bs O1 B$border U$bg +o +u)
-    content=$(echo "  $line  " | bs B$bg F$fg U$border +u +o)
-    content="$border_side$content$border_side"
+    # border="111111"
+    border_side=$(bs O1 B$border U00ffffff +u)
+    # border_side=$(bs O1 B$border U$bg +o +u)
+    # content=$(echo "  $line  " | bs B$bg F$fg U$border +u +o)
+    _padding=10
+    content=$(printf "%s%s%s\n" \
+		     "$(bs B$bg F$fg U$border +u O$_padding)" \
+		     "$(echo "$line" | bs B$bg F$fg U$border +u)" \
+		     "$(bs B$bg F$fg U$border +u O$_padding)")
+    # content="$border_side$content$border_side"
+
+    # case $align in
+    # 	left) printf '%s   \n' "$content" ;;
+    # 	center) printf '%s   \n' "$content" ;;
+    # 	right) printf '    %s\n' "$content" ;;
+    # esac
 
     case $align in
-	left) printf '%s   \n' "$content" ;;
-	center) printf '%s   \n' "$content" ;;
-	right) printf '    %s\n' "$content" ;;
+	left) content=$(printf '%s' "$content$border_side") ;;
+	center) content=$(printf '%s' "$border_side$content$border_side") ;;
+	right) content=$(printf '%s' "$border_side$content") ;;
     esac
+
+    # if $lemon_end_inner; then
+    # 	case $align in
+    # 	    left) content=$(printf '%s' "$content$border_side") ;;
+    # 	    right) content=$(printf '%s' "$border_side$content") ;;
+    # 	    # center) content=$(printf '%s' "$border_side$content$border_side") ;;
+    # 	esac
+    # fi
+
+    printf '%s\n' "$content"
+}
+
+give_clickables() {
+    # todo: map these to A buttons in amap, check env, then bs
+    options="mouse_left mouse_right mouse_middle scroll_up scroll_down overline underline activeoverline activeunderline"
+    for o in $options; do
+	echo nope
+    done
 }
 
 while read -d $'\n' -r line; do
@@ -77,20 +108,19 @@ while read -d $'\n' -r line; do
 	continue
     fi
 
-    # if [ "$lemon" = "dynamicmpd" ]; then
-    # 	notify-send "wow fuck me"
+    # if [ -z "$FORCE" ]; then
+    # 	if [ "$lemon" = "tags" ]; then
+    # 	    # echo "$line"
+    # 	    spaced_buttons
+    # 	    continue
+    # 	fi
     # fi
-
-    if [ -z "$FORCE" ]; then
-	if [ "$lemon" = "tags" ]; then
-	    echo "$line"
-	    continue
-	fi
-    fi
 
     # todo: enhance with buttons from env?
 
+
+
     # echo "$line"
-    # spaced_buttons
-    new
+    spaced_buttons
+    # new
 done
