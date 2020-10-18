@@ -10,6 +10,6 @@ else
 fi
 
 # dunst pgrep's for panel
-sleep 0.3
-
-theme refresh dunst
+# commenting this out b/c resetting dunst clears the notification queue
+# sleep 0.3
+# theme refresh dunst

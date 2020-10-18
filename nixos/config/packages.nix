@@ -22,6 +22,9 @@ let
   # rolling = stable;
 
   core = (with stable; [
+    dos2unix
+    lsof
+    redshift
 
     nix-direnv # note: depends on nixpkgs >20.03
 
@@ -37,7 +40,7 @@ let
     cdrkit
     cdrtools
     syncthing
-    nmap
+    nmap pciutils
     mediainfo
     direnv
     kdeFrameworks.networkmanager-qt
@@ -66,6 +69,7 @@ let
     # covered by gcc(?)
     # there were a few collisions between the two
     binutils
+    sharutils
 
     cron
     curl
@@ -155,9 +159,9 @@ let
     blueman
     pasystray
     pdftk
-    qutebrowser
   ]) ++ (with unstable; [
   # ]) ++ (
+    qutebrowser
     zoom-us
 
     dunst dzen2
@@ -193,11 +197,15 @@ let
     wmutils-core-git
     wmutils-opt-git
     xdo-git
-
   ]) ++ (with unstable; [
   ]);
 
   extra = (with stable; [
+    jgmenu
+    mediainfo
+    okular
+    oil
+
     tiled love_11 luajit
     filezilla
 
@@ -213,6 +221,7 @@ let
     # gtk3
     # sassc
 
+    # obs
     cloc
 
     pandoc
@@ -232,21 +241,22 @@ let
     libtiff
     neovim
     pcmanfm
-    # texlive.combined.scheme-full
+    texlive.combined.scheme-full
   ]);
 
   games = (with stable; [
+    runelite
     nethack
-    # wesnoth
-    # dolphinEmu
+    wesnoth
+    dolphinEmu
 
     mesa_drivers
     mesa_glu
 
-    wine
+    # wine
     # wineStaging
     # wineUnstable
-    # (wine.override { wineBuild = "wineWow"; })
+    (wine.override { wineBuild = "wineWow"; })
 
     minecraft
     openmw
@@ -258,6 +268,8 @@ let
   ]);
 
   development = (with stable; [
+    # perf
+
     # build tools
     meson
     cmake
@@ -280,6 +292,8 @@ let
     # ghc
     go
 
+    rpm
+
     # JVM
     gradle
     maven
@@ -300,6 +314,7 @@ let
     (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
       toot
+      pyfa
 
       # please do the needful
       setuptools

@@ -1,5 +1,4 @@
 # -*- mode: sh -*-
-# todo: consider moving the shot functions into a script
 
 vdo() {
   echo "$*"

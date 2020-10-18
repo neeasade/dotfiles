@@ -77,9 +77,9 @@ spaced_buttons() {
     # esac
 
     case $align in
-	left) content=$(printf '%s' "$content$border_side") ;;
-	center) content=$(printf '%s' "$border_side$content$border_side") ;;
-	right) content=$(printf '%s' "$border_side$content") ;;
+	left) printf -v content '%s' "$content$border_side" ;;
+	center) printf -v content '%s' "$border_side$content$border_side" ;;
+	right) printf -v content '%s' "$border_side$content" ;;
     esac
 
     # if $lemon_end_inner; then

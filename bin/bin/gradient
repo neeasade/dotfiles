@@ -1,4 +1,10 @@
 #!/usr/bin/env elisp
+;; elisp-eval: emacs_batch=true
+;; making this run in batch mode is mega slower.
+;; that's ok because using it in a panel/dynamic contexts doesn't touch our running emacs.
+
+(ns/util)
+(ns/colors)
 
 (ns/let-script-args
  (step start end)

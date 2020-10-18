@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 while read -r trigger; do
-    # doTheThing
     xtitle -t 25
 done
 

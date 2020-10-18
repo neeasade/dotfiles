@@ -36,7 +36,7 @@ stdbuf -oL i3blocks -o j | \
 	eval "printf '%s\n' \"$format\""
     done | stdbuf -oL debounce.js 30 | \
 	lemonbar -d \
-	    -u 1 \
+	    -u 2 \
 	    -n $(theme getval p_window_class) \
 	    -B \#00$(theme getval background) \
 	    -F \#ff$(theme getval foreground) \
@@ -44,8 +44,8 @@ stdbuf -oL i3blocks -o j | \
 	    -f "$(theme getval p_font_main):style=Bold" \
 	    -f "$(theme getval p_font_icon)" \
 	    -f "DejaVu Sans Mono for Powerline-10" \
-	    -o 0 \
-	    -o 0 \
+	    -o -1 \
+	    -o -1 \
 	    -o -4 \
 	    -o -2 \
 	    -a 20 \
