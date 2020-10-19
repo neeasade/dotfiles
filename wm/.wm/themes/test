@@ -22,6 +22,10 @@ colors() {
     foreground=3f4043
     background=f3f5f8
     cursorColor=176fa8
+
+    if elisp t; then
+        eval "$(elisp -r "(ns/emacs-to-theme)")"
+    fi
 }
 
 settings() {
