@@ -37,7 +37,7 @@ stdbuf -oL i3blocks -o j | \
     done | stdbuf -oL debounce.js 30 | \
 	lemonbar -d \
 	    -u 2 \
-	    -n $(theme getval p_window_class) \
+	    -n "$(theme getval p_window_class)" \
 	    -B \#00$(theme getval background) \
 	    -F \#ff$(theme getval foreground) \
 	    -f "$(theme getval p_font_main)" \
@@ -49,5 +49,9 @@ stdbuf -oL i3blocks -o j | \
 	    -o -4 \
 	    -o -2 \
 	    -a 20 \
-	    -g "$geom" | sh
+	    -g "$geom" | sh &
 
+wid=$(xdo id -m -a "$(theme getval p_window_class)")
+xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$wid"
+
+wait
