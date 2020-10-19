@@ -10,8 +10,6 @@ vanilla() {
     activebg) echo "$p_bg_active" ;;
     line) echo "$p_bg_inactive" ;;
     activeline) echo "$p_bg_active" ;;
-    prefix) echo "";;
-    suffix) echo "";;
   esac
 }
 
@@ -155,7 +153,5 @@ default_function activefg '
 default_function bg 'vanilla bg'
 default_function activebg 'vanilla activebg'
 default_function stepSetup 'separateStep'
-default_function suffix 'vanilla suffix'
-default_function prefix 'vanilla prefix'
 
 stepSetup

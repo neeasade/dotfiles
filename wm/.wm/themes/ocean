@@ -74,48 +74,4 @@ settings() {
     activebg() {
 	colort -l 20 "$(bg)"
     }
-
-    # gradient
-    suffix() {
-	$(iif "[ \"$lemon_target_align\" = \"right\" ]") && return
-
-	if echo "$lemon_target" | grep -E "mpd|title" >/dev/null; then
-	    [ -z "$nextbg" ] && nextbg="$p_bg_normal"
-	fi
-
-	[ -z "$prevbg" ] && prevbg="$(bg)"
-
-	# if [ "${lemon_target_align}" = "left" ]; then
-	#     step=$((step-1))
-	# else
-	#     step=$((step+1));
-	# fi
-
-	[ -z "$nextbg" ] && nextbg="$(bg)"
-
-	nextbg="$(colort -t $nextbg)"
-	prevbg="$(colort -t $prevbg)"
-
-	content=""
-	size=3
-	IFS=$'\n'
-	for color in $(gradient $size "$prevbg" "$nextbg"); do
-	    # content="${content}%%{B#ff$(colort -t $color)} %%{B-}"
-	    # content="%%{B#ff$(colort -t $color)} %%{B-}${content}"
-	    content=""
-	done
-	IFS=
-
-	# echo "${content}"
-	echo ""
-    }
-
-    prefix() {
-	$lemon_target_end && $(iif "[ \"$lemon_target_align\" = \"left\" ]") && return
-
-	prevbg="$p_bg_normal"
-	nextbg="$(bg)"
-	echo ""
-	# suffix
-    }
 }

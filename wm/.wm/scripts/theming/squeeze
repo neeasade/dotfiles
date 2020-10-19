@@ -68,11 +68,6 @@ bg_next() {
 }
 
 for target in $targets; do
-    case $target in
-        suffix) $lemon_target_end && [ "$lemon_target_align" = "right" ] && continue;;
-        prefix) $lemon_target_end && [ "$lemon_target_align" = "left" ] && continue;;
-    esac
-
     process_target $target
 done
 
