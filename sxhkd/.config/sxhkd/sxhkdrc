@@ -24,12 +24,6 @@ super + t
 super + shift + f
     bspc node -t ~fullscreen
 
-super + y
-    dismiss.sh
-
-super + shift + y
-    btags set-tag-on-wids hole $(bspwindows)
-
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal.!hidden
 
@@ -45,6 +39,9 @@ super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
 super + ctrl + space
     bspc node -p cancel
 
+super + y
+    dismiss.sh
+
 super + {1-9}
     btags focus ^{1-9}
 
@@ -54,8 +51,8 @@ super + shift + {1-9}
 super + {i,o,u}
     btags focus ^{1,2,3}
 
-super + shift + {i,o,u}
-    btags set-tag-on-wids ^{1,2,3} $(bspwindows)
+super + shift + {i,o,u,y}
+    btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)
 
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
