@@ -1,9 +1,9 @@
 #!/bin/sh
 
 resolve() {
-    # xrdb -query | sort | awk -F: /${*}:/'{$1=""; print $0}' | head -n 1 | awk '{$1=$1;print}'
+    xrdb -query | sort | awk -F: /${*}:/'{$1=""; print $0}' | head -n 1 | awk '{$1=$1;print}'
     # no xrdb in swayland
-    cat ${HOME}/.Xresources | grep -v "^!.*" | sort | awk -F: /${*}:/'{$1=""; print $0}' | head -n 1 | awk '{$1=$1;print}'
+    # cat ${HOME}/.Xresources | grep -v "^!.*" | sort | awk -F: /${*}:/'{$1=""; print $0}' | head -n 1 | awk '{$1=$1;print}'
 }
 
 for key in "$@"; do

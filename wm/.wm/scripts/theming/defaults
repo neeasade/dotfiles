@@ -110,7 +110,6 @@ p_dynamicmpd_mouse_left="player.sh toggle"
 p_dynamicmpd_mouse_right="player.sh next"
 
 emacs_theme="xresources"
-emacs_powerline_scale="1.6"
 
 # options (spaceline)
 # alternate, arrow, arrow-fade, bar, box, brace, butt, chamfer, contour, curve, rounded, roundstub, wave, zigzag, utf-8.
