@@ -1,8 +1,8 @@
-#!/usr/bin/env dash
-# neeasade
+#!/bin/sh
 # print icon for different symbols in a few different fonts
-# targetting: awesome, siji, ionic.
-# usage: $0  <icon_type/code>
+# usage: $0 <icon_type/code>
+
+exit 0
 
 case $1 in
     # awesome, siji, ionic.

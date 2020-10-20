@@ -28,7 +28,7 @@ getval() {
 
 # (meant to be eval'd)
 get() {
-  echo unset bg fg line prefix suffix activebg activefg activeline
+  echo unset bg fg line activebg activefg activeline
   echo set -a
   echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
   echo . "$theme_load"

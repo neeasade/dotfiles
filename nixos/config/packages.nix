@@ -314,7 +314,7 @@ let
     (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
       toot
-      pyfa
+      # pyfa
 
       # please do the needful
       setuptools

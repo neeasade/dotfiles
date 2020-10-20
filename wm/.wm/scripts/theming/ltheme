@@ -463,6 +463,7 @@ load_services() {
 }
 
 load_jgmenu() {
+    p_font_main=$(echo "$p_font_main" | sed 's/-.*//')
     margs jgmenu .config/jgmenu/jgmenurc
 }
 

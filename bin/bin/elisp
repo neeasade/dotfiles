@@ -87,7 +87,7 @@ if type timeout >/dev/null; then
 fi
 
 if $emacs_batch; then
-    result=$(NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$')
+    result=$(NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ ")
 
     # NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1
     # exit 0

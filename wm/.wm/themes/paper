@@ -147,13 +147,3 @@ activebg() {
 bg() {
     iif $(even_section) "b9b9b9" "f7f7f7"
 }
-
-suffix() {
-    border="%%{B#FFcecece}%%{O2}%%{B-}"
-    iif $(even_section) "$border" ""
-}
-
-prefix() {
-    border="%%{B#FFcecece}%%{O2}%%{B-}"
-    iif $(even_section) "$border" ""
-}

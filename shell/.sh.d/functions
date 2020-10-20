@@ -5,9 +5,21 @@ vdo() {
   "$@"
 }
 
+mark() {
+  if [ -z "$*" ]; then
+    echo "mark <file> <file-name (optional)>"
+    return
+  fi
+
+  # mark a file to be used in a gui later
+  target=$(realpath "$1")
+  vdo mkdir -p "$HOME/Last_Shot"
+  vdo ln -s "$target" "$HOME/Last_Shot/${2:-$(basename "$target")}"
+}
+
 mount_diskfile() {
   if [ -z "$*" ]; then
-    echo "$mount_diskfile <iso/disk file> <mountpath (optional)>"
+    echo "mount_diskfile <iso/disk file> <mountpath (optional)>"
     return
   fi
 
