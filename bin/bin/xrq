@@ -9,7 +9,7 @@ resolve() {
 for key in "$@"; do
     ret=$(resolve "$key")
     if [ -z "$ret" ]; then
-	resolve "\*.$(echo "$key" | sed 's/.*\.//')"
+	ret=$(resolve "\*.$(echo "$key" | sed 's/.*\.//')")
     fi
 
     printf '%s\n' "$ret"
