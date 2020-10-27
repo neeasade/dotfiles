@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-current_content=$(elisp -r '(ns/export-scheduled-org-headings)')
+current_content=$(elisp -br '(progn (shut-up (ns/util)  (ns/evil) (ns/git) (ns/org) (ns/staging)) (ns/export-scheduled-org-headings))')
 sync_file="$HOME/sync/orgzly/orgzly/scheduled.org"
 
 if [ ! -z "$current_content" ]; then

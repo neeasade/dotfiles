@@ -58,8 +58,8 @@ foreground=$(elisp -r "(ht-get ns/theme :accent1)")
 background=$(elisp -r "(ht-get ns/theme :accent1_)")
 # background=$(elisp -r "(ht-get ns/theme :background__)")
 
-foreground=$(lessen 40 "$foreground")
-background=$(lessen 30 "$background")
+# foreground=$(lessen 40 "$foreground")
+# background=$(lessen 30 "$background")
 
 # foreground=$(lessen 30 "$foreground")
 # background=$(lessen 30 "$background")
