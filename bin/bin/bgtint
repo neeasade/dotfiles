@@ -16,21 +16,21 @@ least_seen() {
 rand_tile() {
     # echo "/media/LIVEWIRE/Archive/other/squidd/pattern_125.gif"
     (
+	# cat /tmp/result_source.txt
+	# echo /tmp/result.png
+
 	# rg --files "$HOME/pngsave"
+	# rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
 
     	rg --files /media/LIVEWIRE/Archive/other/squid/
     	rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
-    	# rg --files "$HOME/git/SubtlePatterns/"
-	# rg --files /home/neeasade/git/tiles-and-such
+    	rg --files "$HOME/git/SubtlePatterns/"
+	rg --files /home/neeasade/git/tiles-and-such
 
-	rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump
+	# # rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump
+	# rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump2
 	# $(lastshot)
 	# echo '/media/CODERED/git/SubtlePatterns/out.png'
-
-	# use the existing picture:
-	# cat /tmp/result_source.txt
-	# echo "/home/neeasade/Screenshots_mpv/mpv-shot0003.jpg"
-	# echo /home/neeasade/Screenshots_mpv/mpv-shot0042.jpg
 
     ) | sort -R | head -n 1
 }
@@ -54,15 +54,16 @@ target=$(rand_tile)
 # foreground=D7CDFF
 # background=$(theme getval background)
 
-# foreground=$(elisp -r "(->> :accent2 (ht-get ns/theme) ns/color-shorten ns/color-format)")
-# background=$(elisp -r "(->> :background (ht-get ns/theme) ns/color-shorten ns/color-format)")
-
 foreground=$(elisp -r "(ht-get ns/theme :accent1)")
-# background=$(elisp -r "(ht-get ns/theme :accent2)")
-background=$(elisp -r "(ht-get ns/theme :background__)")
+background=$(elisp -r "(ht-get ns/theme :accent1_)")
+# background=$(elisp -r "(ht-get ns/theme :background__)")
 
 foreground=$(lessen 40 "$foreground")
-# background=$(lessen 60 "$background")
+background=$(lessen 30 "$background")
+
+# foreground=$(lessen 30 "$foreground")
+# background=$(lessen 30 "$background")
+
 
 foreground=$(colort -t "$foreground")
 background=$(colort -t "$background")
@@ -98,16 +99,18 @@ cp "$target" /tmp/result.png
 # convert "$target" -fuzz 3% -fill "#$background" -opaque '#0F1C25' /tmp/result.png
 # convert /tmp/result.png -fuzz 3% -fill "#$foreground" -opaque '#FBFCFE' /tmp/result.png
 
-# convert /tmp/result.png -resize 110% /tmp/result.png
+convert /tmp/result.png -resize 120% /tmp/result.png
 
 color() {
-    convert "/tmp/result.png" -fuzz "${1}%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
     convert "/tmp/result.png" -fuzz "${2}%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+    convert "/tmp/result.png" -fuzz "${1}%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
 }
 
 # fuzz percentage fg bg
-# color 2 5
-color 5 2
+# color 10 22
+# color 18 30
+color 3 3
 
 
-feh --bg-tile /tmp/result.png
+echo "$target"
+feh --bg-tile /tmp/result.png || "$0"

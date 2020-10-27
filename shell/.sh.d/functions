@@ -121,11 +121,14 @@ blog_add_dtop() {
 }
 
 sysinfo() {
-  clear
+  # clear
   pfetch
   music info
-  pcs() { for i in {0..7}; do echo -en "\e[${1}$((30+$i))m \u2588\u2588 \e[0m"; done; }
-  printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
+  # pcs() { for i in {0..7}; do echo -en "\e[${1}$((30+$i))m \u2588\u2588 \e[0m"; done; }
+  # printf "\n%s\n%s\n\n" "$(pcs)" "$(pcs '1;')"
+
+  # this doesn't work inline like this--
+  # elisp '(with-current-buffer (window-buffer) (shx-cmd-view "/path/to/image"))'
 }
 
 bicc() {

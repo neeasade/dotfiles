@@ -23,7 +23,7 @@ colors() {
     background=f3f5f8
     cursorColor=176fa8
 
-    if elisp t; then
+    if elisp t >/dev/null; then
         eval "$(elisp -r "(ns/emacs-to-theme)")"
     fi
 }
@@ -33,10 +33,6 @@ settings() {
     # BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
     BG_COMMAND="${HOME}/.fehbg"
 
-    # emacs_theme="apropospriate-light"
-    # emacs_theme="base16-grayscale-light"
-    emacs_theme="lab-light"
-    emacs_powerline_scale="1.0"
     PROMPT_CHAR='%'
     PROMPT_CHAR='♥'
 
@@ -50,7 +46,7 @@ settings() {
     b_normal_border_color=$(colort -t "$b_normal_border_color")
 
     b_window_gap=14
-    b_window_gap=32
+    # b_window_gap=32
     b_window_width=10
 
     b_bspwmrc_extend="tag_borders &
@@ -86,7 +82,7 @@ subscription_rules &"
 
     p_title_show_mode=active         # used by title.
 
-    p_height=24
+    p_height=22
     # p_gap=0
     p_window_class="noshadow"
     p_line=2
@@ -113,8 +109,8 @@ subscription_rules &"
     p_desktop_monocle_label=$(uchar f00b)
 
     # st_font="Go Mono for Powerline-12:style=Regular"
-    st_font="Triplicate T4c-12"
-    st_font_variable="Equity Text A-13"
+    st_font="Triplicate T4c-10"
+    st_font_variable="Equity Text A-11"
     p_title_only_show_active=true
     maxWinNameLen=40
 
@@ -142,20 +138,46 @@ line() {
 }
 
 fg() {
-    elisp -r "(ns/color-shorten (ht-get ns/theme (if (ns/color-is-light-p \"$(bg)\") :foreground :background)))"
+    # elisp -r "(ns/color-shorten (ht-get ns/theme (if (ns/color-is-light-p \"$(bg)\") :foreground :background)))"
+
+    if [ "$lemon_target_align" = left ]; then
+	elisp -r '(ht-get ns/theme :foreground)'
+    elif [ "$lemon_target_align" = right ]; then
+	elisp -r '(ht-get ns/theme :foreground)'
+    else
+	elisp -r '(ht-get ns/theme :foreground)'
+    fi
+
 }
 
 bg() {
+    if [ "$lemon_target_align" = center ]; then
+	    elisp -r '(ht-get ns/theme :background__)'
+    else
+	    elisp -r '(ht-get ns/theme :background_)'
+    fi
+
+    # if [ "$lemon_target_align" = left ]; then
+    # 	# light=$(elisp -r '(->> :accent2_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+    # 	# gradient $total
+    # 	elisp -r '(ht-get ns/theme :foreground)'
+    # elif [ "$lemon_target_align" = right ]; then
+    # 	elisp -r '(ht-get ns/theme :foreground)'
+    # else
+    # 	elisp -r '(ht-get ns/theme :accent1)'
+    # fi
+
+    return
+
     # elisp -r '(->> "#d1dae5" (-map (lambda (ns/color-lch-transform ))) )'
-    gradient $total 8fe7d5 7cbefc | sed -n ${step}p
+    # gradient $total 8fe7d5 7cbefc | sed -n ${step}p
 
     # if [ "$lemon_target_align" = center ]; then
     # 	echo \#$background
     # else
     # 	gradient 3 176fa8 $background | sed -n ${step}p
     # fi
-    return
-  # gradient $total d7cdff $background | sed -n ${step}p
+    # return
 
 # $(elisp -r '(->> :accent1 (ht-get ns/theme) ns/color-shorten ns/color-pastel ns/color-pastel)')
     if [ "$lemon_target_align" = left ]; then
@@ -193,6 +215,6 @@ EOF
 }
 
 stepSetup() {
-    togetherStep
-    # separateStep
+    # togetherStep
+    separateStep
 }

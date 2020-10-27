@@ -467,14 +467,28 @@ load_jgmenu() {
     margs jgmenu .config/jgmenu/jgmenurc
 }
 
+load_btag_borders() {
+    if ! elisp t; then
+	return
+    fi
+
+    elisp '(->> (list :accent1_ :accent2_ :accent1 :foreground_)
+  (ht-with-context ns/theme)
+  (-map
+    (lambda (c)
+      (ns/color-hsl-transform c
+        (lambda (H S L) (list H S (* 1.7 L))))))
+  (-map (lambda (c) (ns/color-shorten c)))
+  (-map (fn (substring <> 1)))
+  (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
+}
+
 if uname | grep -q MINGW; then
     # windows
     targets=${*:-mintty mpd_windows tmux}
 else
-    targets=${*:-picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu}
+    targets=${*:-picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu zeal btag_borders}
 fi
-
-# targets="${*:-picom tmux xresources bspwm bg dunst qutebrowser}"
 
 IFS=" "
 for conf in $targets; do

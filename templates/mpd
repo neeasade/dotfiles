@@ -7,16 +7,12 @@ pid_file           "{{mpd_dir}}/pid"
 state_file         "{{mpd_dir}}/state"
 sticker_file       "{{mpd_dir}}/sticker.sql"
 
-# For audio visualization in ncmpcpp
-audio_output {
-    type                    "fifo"
-    name                    "my_fifo"
-    path                    "/tmp/mpd.fifo"
-    format                  "44100:16:2"
-}
-
 # Define alsa output so we actually hear something :)
 audio_output {
     type    "alsa"
     name    "sound"
+
+    # https://github.com/MusicPlayerDaemon/MPD/issues/72#issuecomment-339394839
+    audio_buffer_size "8192"
+    buffer_before_play "25%"
 }

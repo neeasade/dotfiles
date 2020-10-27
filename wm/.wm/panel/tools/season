@@ -63,7 +63,7 @@ spaced_buttons() {
     border_side=$(bs O1 B$border U00ffffff +u)
     # border_side=$(bs O1 B$border U$bg +o +u)
     # content=$(echo "  $line  " | bs B$bg F$fg U$border +u +o)
-    _padding=10
+    _padding=6
     content=$(printf "%s%s%s\n" \
 		     "$(bs B$bg F$fg U$border +u O$_padding)" \
 		     "$(echo "$line" | bs B$bg F$fg U$border +u)" \

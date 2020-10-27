@@ -3,8 +3,7 @@
 
 var timeout = process.argv[2]
 
-// npm i -g lodash
-// npm i -g split
+// npm i -g lodash split
 lodash = require('lodash');
 process.stdin.pipe(require('split')()).on('data', lodash.debounce(processLine, timeout))
 
