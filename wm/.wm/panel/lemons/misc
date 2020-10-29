@@ -1,0 +1,3 @@
+#!/bin/sh
+
+elisp -r '(ns/export-scheduled-org-headings-past)'

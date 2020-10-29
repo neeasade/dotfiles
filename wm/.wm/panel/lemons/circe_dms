@@ -1,4 +1,7 @@
 #!/usr/bin/env elisp
 
 (let ((unread-count (length (ns/circe-unread-query-buffers))))
-  (if (> unread-count 0) unread-count ""))
+  (if (> unread-count 0)
+      (format "DMs: %s" unread-count)
+    ""
+    ))
