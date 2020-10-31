@@ -186,7 +186,7 @@ EOF
     append "\- ${artist}"
 
     # correct case for exact matches from the above
-    real=$(mpc listall -f '%artist%' | grep -i "^${artist}$")
+    real=$(mpc listall -f '%artist%' | grep -i "^${artist}$" | head -n 1)
     if [ ! -z  "$real" ]; then
       mpc find artist "$real" | mpc add
     fi
