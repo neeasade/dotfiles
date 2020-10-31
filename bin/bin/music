@@ -162,6 +162,44 @@ bl() { # blacklist the currently playing song from the current playlist.
   mpc next
 }
 
+artist() { # play songs by an artist
+  artist=$(cat<<EOF | shuf | dmenu
+$(mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq)
+purity ring
+ryo fukui
+hiroshi yoshimura
+filmmaker
+runescape
+com truise
+sofi tukker
+windows96
+elder scrolls
+late night alumni
+EOF
+	)
+
+  if [ ! -z "$artist" ]; then
+    echo "$artist" > "$current_playlist"
+    mpc clear
+
+    append "/${artist} -"
+    append "\- ${artist}"
+
+    # correct case for exact matches from the above
+    real=$(mpc listall -f '%artist%' | grep -i "^${artist}$")
+    if [ ! -z  "$real" ]; then
+      mpc find artist "$real" | mpc add
+    fi
+
+    mpc shuffle
+    mpc play
+
+    # clear duplicates
+    # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
+    mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
+  fi
+}
+
 playlist() { # select a search term based playlist to play
   if [ -z "$1" ]; then
     if ! target=$(ls "${musicdir}/playlist" | dmenu); then
