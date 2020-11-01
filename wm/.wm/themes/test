@@ -102,6 +102,8 @@ subscription_rules &"
     # d_font="Go Mono for Powerline 14"
     d_font="Equity Text A 12"
 
+    p_icon=$(colort -t "$(elisp -r '(ht-get ns/theme :accent2)')")
+
     # p_desktop_occupied_label=$(uchar f111)
     # p_desktop_empty_label=$(uchar f1db)
 
@@ -152,7 +154,7 @@ fg() {
 
 bg() {
     if [ "$lemon_target_align" = center ]; then
-	    elisp -r '(ht-get ns/theme :background__)'
+	    elisp -r '(ht-get ns/theme :background)'
     else
 	    elisp -r '(ht-get ns/theme :background_)'
     fi

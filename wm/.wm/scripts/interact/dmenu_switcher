@@ -168,9 +168,10 @@ add_metas() {
 
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
 
-    # todo: these might be org links instead of meta thing shere
-    add_switch "meta: music now" "music now"
-    add_switch "meta: music playlist" "music playlist"
+    for o in now playlist artist del; do
+	add_switch "meta: music $o" "music $o"
+    done
+
     add_switch "meta: mpv resume" "mpv_resume"
 
     netflix() {

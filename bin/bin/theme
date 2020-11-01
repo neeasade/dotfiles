@@ -10,15 +10,15 @@ die() {
 }
 
 cache_env() {
-    bash -c "$(get); declare -px >/tmp/loaded_theme.sh"
+  # if elisp t >/dev/null; then
+  bash -c "$(get); declare -px >/tmp/loaded_theme.sh"
+  # fi
 }
 
 getval() {
     (
 	if [ ! -f /tmp/loaded_theme.sh ]; then
-	    if elisp t >/dev/null; then
-		bash -c "$(get); declare -px >/tmp/loaded_theme.sh"
-	    fi
+	    cache_env
 	fi
 
 	. /tmp/loaded_theme.sh
@@ -60,7 +60,6 @@ load() {
   ln -s "$theme_dir/$name" "$theme_load"
 
   "$HOME/.wm/scripts/theming/ltheme" $*
-  cache_env
 }
 
 edit() {
