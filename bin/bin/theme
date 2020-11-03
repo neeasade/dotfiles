@@ -11,6 +11,7 @@ die() {
 
 cache_env() {
   # if elisp t >/dev/null; then
+  notify-send "recache!"
   bash -c "$(get); declare -px >/tmp/loaded_theme.sh"
   # fi
 }

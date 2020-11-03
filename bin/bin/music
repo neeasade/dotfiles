@@ -165,16 +165,7 @@ bl() { # blacklist the currently playing song from the current playlist.
 artist() { # play songs by an artist
   artist=$(cat<<EOF | shuf | dmenu
 $(mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq)
-purity ring
-ryo fukui
-hiroshi yoshimura
-filmmaker
-runescape
-com truise
-sofi tukker
-windows96
-elder scrolls
-late night alumni
+$(cat ${HOME}/Music/playlist/artists)
 EOF
 	)
 

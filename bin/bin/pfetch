@@ -763,8 +763,15 @@ get_de() {
     log de "${XDG_CURRENT_DESKTOP:-$DESKTOP_SESSION}"
 }
 
+get_browser() {
+    log net qutebrowser
+}
+
+get_term() {
+    log term "M-x shell"
+}
+
 get_shell() {
-    # Display the basename of the '$SHELL' environment variable.
     log shell "${SHELL##*/}"
 }
 
@@ -814,6 +821,7 @@ get_ascii() {
             ascii="$ascii$line
 "
         done
+	ascii=${ascii:0:${#ascii}-2}
     }
 
     # This checks for ascii art in the following order:
@@ -1332,7 +1340,7 @@ main() {
         # Disable globbing and set the positional parameters to the
         # contents of 'PF_INFO'.
         set -f
-        set +f ${PF_INFO-ascii title os host kernel uptime pkgs memory}
+        set +f ${PF_INFO-ascii title os uptime pkgs wm term browser}
 
         # Grab the ascii art if the user has enabled it. This simply
         # populates the '$ascii' variable.

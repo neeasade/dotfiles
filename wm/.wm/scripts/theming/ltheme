@@ -115,7 +115,7 @@ load_picom() {
 }
 
 load_bg() {
-    eval "$BG_COMMAND"
+    $BG_COMMAND
 }
 
 # also loads xst, emacs
@@ -468,16 +468,12 @@ load_jgmenu() {
 }
 
 load_btag_borders() {
-    if ! elisp t; then
-	return
-    fi
-
-    elisp '(->> (list :accent1_ :accent2_ :accent1 :foreground_)
+    elisp '(->> (list :accent1_ :accent2_ :accent2 :foreground_)
   (ht-with-context ns/theme)
   (-map
     (lambda (c)
-      (ns/color-hsl-transform c
-        (lambda (H S L) (list H S (* 1.7 L))))))
+      (ns/color-lch-transform c
+        (lambda (L C H) (list (* 1.7 L) (* 1.3 C) H)))))
   (-map (lambda (c) (ns/color-shorten c)))
   (-map (fn (substring <> 1)))
   (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'

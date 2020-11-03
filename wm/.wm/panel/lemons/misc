@@ -1,3 +1,4 @@
 #!/bin/sh
 
-elisp -r '(ns/export-scheduled-org-headings-past)'
+cache_output 500 elisp -r '(ns/export-scheduled-org-headings-past)'
+# echo

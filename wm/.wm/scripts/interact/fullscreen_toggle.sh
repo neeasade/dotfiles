@@ -33,7 +33,7 @@ do_monocle_padded() {
 }
 
 do_monocle_slim() {
-  theme refresh bg &
+  $(theme getval BG_COMMAND) &
 
   # hsetroot -solid "#$(theme getval background)" &
 
@@ -66,7 +66,8 @@ do_fullscreen() {
 }
 
 do_tiled() {
-  theme refresh bg &
+  # theme refresh bg &
+  $(theme getval BG_COMMAND) &
   bspc query -N -n focused.fullscreen \
     && bspc node -t ~fullscreen
 

@@ -121,6 +121,7 @@ blog_add_dtop() {
 }
 
 sysinfo() {
+  date
   # clear
   pfetch
   music info

@@ -31,7 +31,9 @@ colors() {
 settings() {
     # theme
     # BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
+    # BG_COMMAND="${HOME}/.fehbg"
     BG_COMMAND="${HOME}/.fehbg"
+    BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :background+)')"
 
     PROMPT_CHAR='%'
     PROMPT_CHAR='♥'
@@ -74,7 +76,7 @@ subscription_rules &"
 
     # p_format="org_task:title|tags|mpd:weather:clock"
     # p_format="tags:title|org_task|mpd:weather:clock"
-    p_format="tags:title:misc:circe_dms|org_task|mpd:weather:clock"
+    p_format="tags:title|org_task:misc:circe_dms|mpd:weather:clock"
 
     # p_format="battery|desktop|clock"
     # todo: offset should be per font -- it can be in lemonbar
