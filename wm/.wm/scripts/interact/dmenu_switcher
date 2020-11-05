@@ -181,6 +181,13 @@ add_metas() {
 
     add_switch "meta: netflix" "netflix"
 
+    hulu() {
+	google-chrome-stable hulu.com
+	find_class "google-chrome"
+    }
+
+    add_switch "meta: hulu" "hulu"
+
     # idea: hydra menu for tag stuff? other?
 
     notes_file() {

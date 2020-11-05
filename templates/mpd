@@ -11,6 +11,7 @@ sticker_file       "{{mpd_dir}}/sticker.sql"
 audio_output {
     type    "alsa"
     name    "sound"
+    mixer_type "software"
 
     # https://github.com/MusicPlayerDaemon/MPD/issues/72#issuecomment-339394839
     audio_buffer_size "8192"

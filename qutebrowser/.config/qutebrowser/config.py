@@ -113,6 +113,10 @@ themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
 if os.path.exists(themefile):
     exec(open(themefile).read())
 
+cssfile = os.environ["HOME"] + '/.config/qutebrowser/settings.css'
+if os.path.exists(cssfile):
+    c.content.user_stylesheets = [cssfile]
+
 colors = theme['colors']
 
 # apply the theme:
