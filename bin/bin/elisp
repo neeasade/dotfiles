@@ -8,13 +8,15 @@ trim=false  # note: we always set trim in script mode
 quiet=false
 read_stdin=false
 emacs_batch=false
+emacs_batch_window=false
 
-while getopts qrsb flag; do
+while getopts qrsbw flag; do
     case $flag in
         q) quiet=true;;
         r) trim=true;;
         s) read_stdin=true;;
         b) emacs_batch=true;;
+        w) emacs_batch_window=true;;
         *) usage;;
     esac
 done
@@ -86,7 +88,10 @@ if type timeout >/dev/null; then
     emacs_timeout="timeout ${elisp_timeout}"
 fi
 
-if $emacs_batch; then
+if $emacs_batch_window; then
+    NS_EMACS_BATCH=$lisp emacs -f kill-emacs 2>&1
+    exit $?
+elif $emacs_batch; then
     result=$(NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ " | grep -v "^Starting new Ispell")
 
     # NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1
