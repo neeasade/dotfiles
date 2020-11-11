@@ -105,7 +105,9 @@ render_supersmol() {
 	border=
 	if echo "$wids" | grep -q $current; then
 	    border=$(colort -l -20 $color)
-	    tname="${tname}!"
+	    # tname="${tname}!"
+	    tname="[${tname}]"
+	    # tname="「${tname}」"
 	fi
 
 	# height of the under/over determined from bar itself
@@ -119,7 +121,8 @@ render_supersmol() {
 
     # echo "$(echo "$result" | rev | sed 's/\^//' | rev | sed 's/\^/·/g')"
     # echo "$result" | FORCE=t season
-    export FORCE=t
+
+    # export FORCE=t
     echo "$result"
 }
 

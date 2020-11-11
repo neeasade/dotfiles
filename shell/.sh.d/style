@@ -113,7 +113,13 @@ prompt() {
     _prompt=$_promptchar
 
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
-    [ $_ERR -ne 0 ] && _prompt=${_prompt%?}!
+
+    if [ $_ERR -ne 0 ]; then
+       _prompt="${_prompt%?}!"
+       if [ $_ERR -ne 1 ]; then
+         _prompt="${_prompt%?}!$_ERR"
+       fi
+    fi
 
     _prompt="$(git_prompt)$(env_prompt)$_prompt"
     # _prompt="$(git_prompt)$_prompt"
