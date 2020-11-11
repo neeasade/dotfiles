@@ -1,0 +1,4 @@
+#!/bin/sh
+
+curl 'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts' \
+     > "${HOME}/.config/qutebrowser/adblock_internet.txt"

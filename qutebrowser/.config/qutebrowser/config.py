@@ -256,8 +256,15 @@ if initial_start:
     interceptor.register(redirect_intercept)
 
 adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock.txt'
+adblock_normal_file = os.environ["HOME"] + '/.config/qutebrowser/adblock_internet.txt'
+
+if os.path.exists(adblock_normal_file):
+    adblock_normal_file = "file://" + adblock_normal_file
+else:
+    adblock_normal_file = 'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts'
+
 if os.path.exists(adblock_file):
     c.content.host_blocking.lists = [
-        'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts',
+        adblock_normal_file,
         'file://' + adblock_file,
         ]
