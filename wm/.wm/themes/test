@@ -35,8 +35,8 @@ settings() {
     BG_COMMAND="${HOME}/.fehbg"
     BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :background+)')"
 
-    PROMPT_CHAR='%'
-    PROMPT_CHAR='♥'
+    # PROMPT_CHAR='%'
+    # PROMPT_CHAR='♥'
 
     # bspwm
     b_border_width=1
