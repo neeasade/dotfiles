@@ -187,12 +187,7 @@ add_metas() {
     }
 
     add_switch "meta: hulu" "hulu"
-
-    # idea: hydra menu for tag stuff? other?
-
-    notes_file() {
-	echo todo
-    }
+    add_switch "meta: stalonetray" "bash -ic 'stalonetray'"
 }
 
 select_action() {
