@@ -7,13 +7,23 @@ pid_file           "{{mpd_dir}}/pid"
 state_file         "{{mpd_dir}}/state"
 sticker_file       "{{mpd_dir}}/sticker.sql"
 
-# Define alsa output so we actually hear something :)
+# # Define alsa output so we actually hear something :)
+# audio_output {
+#     type    "alsa"
+#     name    "sound"
+#     mixer_type "software"
+
+#     # https://github.com/MusicPlayerDaemon/MPD/issues/72#issuecomment-339394839
+#     audio_buffer_size "8192"
+#     buffer_before_play "25%"
+# }
+
 audio_output {
-    type    "alsa"
-    name    "sound"
-    mixer_type "software"
+        type            "pulse"
+        name            "pulse audio"
 
     # https://github.com/MusicPlayerDaemon/MPD/issues/72#issuecomment-339394839
     audio_buffer_size "8192"
     buffer_before_play "25%"
+
 }
