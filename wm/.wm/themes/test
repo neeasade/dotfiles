@@ -151,7 +151,6 @@ fg() {
     else
 	elisp -r '(ht-get ns/theme :foreground)'
     fi
-
 }
 
 bg() {
@@ -205,17 +204,6 @@ $(elisp -r '(ns/color-shorten (ht-get ns/theme :accent1_))')
 EOF
 	# center
     fi
-
-#     cat<<EOF | sed -n ${step}p
-# $color13
-# $color4
-# $color12
-# $color4
-# $color5
-# $color6
-# $color7
-# EOF
-
 }
 
 stepSetup() {
