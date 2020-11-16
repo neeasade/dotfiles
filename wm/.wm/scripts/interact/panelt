@@ -1,12 +1,22 @@
 #!/usr/bin/env dash
 # Toggle the panel on/off
 
-if systemctl --user status panel >/dev/null; then
-    bspc config top_padding 0
-    systemctl --user stop panel
-else
+toggle=$1
+if [ -z "$toggle" ]; then
+    if systemctl --user status panel >/dev/null; then
+	toggle=false
+    else
+	toggle=true
+    fi
+fi
+
+if $toggle; then
     # top padding is set in the script
     systemctl --user start panel
+else
+    # todo: really this should be a trap in lemonade
+    bspc config top_padding 0
+    systemctl --user stop panel
 fi
 
 # dunst pgrep's for panel
