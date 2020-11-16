@@ -11,11 +11,8 @@ if [ -z "$toggle" ]; then
 fi
 
 if $toggle; then
-    # top padding is set in the script
     systemctl --user start panel
 else
-    # todo: really this should be a trap in lemonade
-    bspc config top_padding 0
     systemctl --user stop panel
 fi
 

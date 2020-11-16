@@ -54,4 +54,11 @@ stdbuf -oL i3blocks -o j | \
 wid=$(xdo id -m -a "$(theme getval p_window_class)")
 xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$wid"
 
+cleanup() {
+    bspc config top_padding 0
+
+    trap - TERM; kill 0
+}
+trap cleanup INT TERM QUIT EXIT
+
 wait
