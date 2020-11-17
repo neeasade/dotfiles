@@ -248,7 +248,7 @@ info() { # display the current song progress bar and playlist length
       let "percent %= $range"
       percent=$((percent+bottom))
   else
-      percent=$(mpc | awk 'match($0,/([0-9]+)%/, groups) {print groups[1]}')
+      percent=$(mpc | awk 'match($0,/\(([0-9]+)%\)/, groups) {print groups[1]}')
   fi
 
   "$HOME/.wm/panel/tools/mkb" $percent $length
