@@ -7,10 +7,10 @@
 (ns/colors)
 
 (ns/let-script-args
- (step start end)
+ (step start end with-ends)
  (ns/make-lines
-  (mapcar (fn (eval `(color-rgb-to-hex ,@<> 2)))
-	  (color-gradient
-	   (color-name-to-rgb (concat "#" start))
-	   (color-name-to-rgb (concat "#" end))
-	   (string-to-number step)))))
+  (ns/color-gradient
+   (string-to-number step)
+   (if (s-starts-with? "#" start) start (concat "#" start))
+   (if (s-starts-with? "#" end) end (concat "#" end))
+   with-ends)))
