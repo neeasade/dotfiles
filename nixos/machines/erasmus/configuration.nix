@@ -25,12 +25,33 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_12;
+    enableTCPIP = true;
+
+    authentication = pkgs.lib.mkOverride 10 ''
+      local all all trust
+      host all all ::1/128 trust
+    '';
+
+    initialScript = pkgs.writeText "backend-initScript" ''
+      CREATE ROLE localdev WITH LOGIN PASSWORD 'localdev' CREATEDB;
+      CREATE DATABASE localdev;
+      GRANT ALL PRIVILEGES ON DATABASE localdev TO localdev;
+    '';
+  };
+
   services.xserver.videoDrivers = [ "nvidia" ];
+
+  services.openssh.enable = true;
+  services.openssh.passwordAuthentication = true;
 
   # boot.initrd.kernelModules = [ "wl" ];
   # boot.kernelModules = [ "kvm-intel" "wl" ];
   # boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
-  boot.kernelPackages = edge.linuxPackages_zen;
+
+  # boot.kernelPackages = edge.linuxPackages_zen;
 
   networking.hostName = "erasmus";
   # networking.wireless.enable = true;  # wpa_supplicant.
@@ -40,6 +61,9 @@ in
   virtualisation = {
     virtualbox = {
       host.enable = false;
+    };
+    docker = {
+      enable = true;
     };
   };
 
@@ -79,7 +103,7 @@ in
     isNormalUser = true;
     uid = 1000;
     extraGroups= [
-      "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers" "cdrom"
+      "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers" "cdrom" "docker"
     ];
     createHome=true;
     # home="/home/neeasade";
@@ -90,6 +114,7 @@ in
 
   # todo: enable auto update maybe
   nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.pulseAudio = true;
 
   nix.gc.automatic = true;
   nix.gc.dates = "weekly";
@@ -126,6 +151,10 @@ in
       };
     };
 
+
+
+  networking.firewall.allowPing = true;
+  networking.firewall.allowedTCPPorts = [ 22 ];
   # todo: have this read from file/togglable
   networking.extraHosts =
     ''

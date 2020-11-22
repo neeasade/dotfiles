@@ -148,6 +148,7 @@ let
     libGL
 
     gnome3.gnome-terminal
+    kitty
     gnutls # for circe
 
     fd ripgrep
@@ -245,6 +246,7 @@ let
   ]);
 
   games = (with stable; [
+    discord
     runelite
     nethack
     wesnoth
@@ -269,6 +271,7 @@ let
 
   development = (with stable; [
     # perf
+    circleci-cli
 
     # build tools
     meson
