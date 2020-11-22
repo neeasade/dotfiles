@@ -14,9 +14,11 @@
 (def state-lockfile "/tmp/btags-state-lock")
 
 (defn wait-for-lock []
+  ;; todo: if we're ever here for like a full second,
+  ;; assume we're stuck/remove it
   (while (.exists (io/file state-lockfile))
     ;; (println "waiting for lock!")
-    (Thread/sleep 10) ; ms
+    (Thread/sleep 10)                   ; ms
     ))
 
 (defn update-state-focus-wid [wid]
@@ -177,7 +179,7 @@
 
     (update-state-focus-wid
      (if (= (:focus-wid state) last-wid)
-       (if (> (count (:wids state)) 1)
+       (if (> (count (:wids full-tag)) 1)
          (nth (-> full-tag :wids) 1))
        last-wid
        ))))
@@ -304,7 +306,7 @@
   (->>
    (conj
     (:tags state)
-    {:color "dddddd" :name "untagged"
+    {:color "e2e4e7" :name "untagged"
      ;; active value doesn't matter for untagged tags
      :active true
      :wids (get-state-untagged)})
