@@ -37,6 +37,6 @@
 	     (-> org-pomodoro-state
 		 prin1-to-string
 		 (substring 1)))
-	    ;; (ns/let-script-args (width) (floor (* (string-to-number (or width "100")) (/ percent 100))))
-	    (floor percent)
+	    (ns/let-script-args (width) (floor (* (string-to-number (or width "100")) (/ percent 100))))
+	    ;; (floor percent)
 	    )))

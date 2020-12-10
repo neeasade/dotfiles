@@ -19,6 +19,8 @@ else
     # echo "$topic $(bs "B$(colort -l -40 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
 
     # XXX: you will need to tweak ./org_task_elisp as well
-    # echo "$topic $(bs "B50545b" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
-    echo "$topic $(mkb "$percent" 10)"
+    empty=$(elisp -r '(ht-get ns/theme :background__)')
+    full=$(elisp -r '(ns/color-shorten (ns/color-transform-hsluv-l (ht-get ns/theme :accent2) 55))')
+    echo "$topic $(bs "B$full" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
+    # echo "$topic $(mkb "$percent" 10)"
 fi
