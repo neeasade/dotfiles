@@ -5,6 +5,7 @@ launch() {
     setsid nohup "$*" &
 }
 
-launch emacs-26.3
+launch qutebrowser
+launch emacs-27.1
 # launch $TERMINAL
 # colemak

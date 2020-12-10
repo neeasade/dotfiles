@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 # I want one toggle for all my media
 
 dbusplaying=false

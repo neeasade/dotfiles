@@ -33,7 +33,10 @@ settings() {
     # BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
     # BG_COMMAND="${HOME}/.fehbg"
     BG_COMMAND="${HOME}/.fehbg"
-    BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :background+)')"
+    # BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :background+)')"
+    BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :accent1_)')"
+    BG_COMMAND="feh --bg-tile /tmp/result.png"
+
 
     # PROMPT_CHAR='%'
     # PROMPT_CHAR='♥'
