@@ -47,7 +47,12 @@ do_monocle_slim() {
 
   # this issue is for this width you want softer borders, not borderless
   # bspc config borderless_monocle false
-  bspc config window_gap $(theme getval b_window_gap)
+
+  if pgrep lemonbar; then
+    bspc config window_gap $(theme getval b_window_gap)
+  else
+    bspc config window_gap 0
+  fi
 
   mon_width=$(bspc query -T -m | jq .rectangle.width)
   # mon_width=$(i3c -t get_tree | jq .rect.width)
