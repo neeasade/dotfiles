@@ -84,7 +84,7 @@ shuffle() { # reshuffle current selection from all
   mpc play
 }
 
-# is a file longer than 25 min
+# is a file longer than 20 min
 is_long() {
   milli=$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')
   if [ -z "$milli" ]; then
@@ -92,7 +92,7 @@ is_long() {
   fi
 
   seconds=$(( $milli / 1000))
-  if [ $seconds -gt $((60 * 25)) ]; then
+  if [ $seconds -gt $((60 * 20)) ]; then
     return 0
   else
     return 1
@@ -111,7 +111,7 @@ append() { # append some search term to the current playlist
     cat "${musicdir}/long_songs"
     mpc listall | is_long_filter | mpc add
   else
-    mpc listall | grep -iE "$*" | mpc add
+    mpc listall | grep -i "$*" | mpc add
   fi
 }
 
