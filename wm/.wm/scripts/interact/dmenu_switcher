@@ -196,6 +196,11 @@ add_metas() {
 
     add_switch "meta: hulu" "hulu"
     add_switch "meta: stalonetray" "bash -ic 'stalonetray'"
+
+    while read -r option; do
+	add_switch "meta: sound switch $(cut -d, -f1 <<< "$option")" "$(cut -d, -f2 <<< "$option")"
+    done <<< $(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
+		  <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
 }
 
 select_action() {
