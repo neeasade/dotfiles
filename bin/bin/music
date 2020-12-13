@@ -3,12 +3,6 @@
 # define music playlists by search terms
 # add a neat display func
 
-# todo: consider a 'rename' function
-# so you could like rename the currently playing song
-# ie do the following rename inline:
-# Then & Now (Liquid Drum & Bass Mix)-fEJnyaDhF4Q.mp3
-# -> Then & Now (Liquid Drum & Bass Mix)
-
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 
@@ -53,14 +47,22 @@ del() { # delete the currently playing song
   mpc update
 }
 
-rename() { # delete the currently playing song
+rename() { # rename the currently playing song file name (keep directory)
   location=$(mpc -f "%file%" | head -n 1)
-  location="$musicdir$location"
+  location="${musicdir}/$location"
   new_name=$*
+
+  # new name needs
+  if ! echo "$new_name" | grep "\."; then
+    ext=${location##*.}
+    new_name="${new_name}.${ext}"
+  fi
+
   new_name="$(dirname "$location")/$new_name"
+  echo mv "$location" "$new_name"
   mv "$location" "$new_name"
-  mpc next
   mpc update
+  mpc next
 }
 
 usage() {
