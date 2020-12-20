@@ -10,12 +10,13 @@ read_stdin=false
 emacs_batch=false
 emacs_batch_window=false
 
-while getopts qrsbw flag; do
+while getopts qrsbwn: flag; do
     case $flag in
         q) quiet=true;;
         r) trim=true;;
         s) read_stdin=true;;
         b) emacs_batch=true;;
+        n) emacs_server_file=$OPTARG;;
         w) emacs_batch_window=true;;
         *) usage;;
     esac
@@ -92,13 +93,17 @@ if $emacs_batch_window; then
     NS_EMACS_BATCH=$lisp emacs -f kill-emacs 2>&1
     exit $?
 elif $emacs_batch; then
-    result=$(NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ " | grep -v "^Starting new Ispell")
+    result=$(NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ " | grep -v "^Starting new Ispell" | grep -v "^Building ")
 
     # NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1
     # exit 0
 else
     # echo $emacs_timeout $eclient --eval "$lisp"
-    result=$($emacs_timeout $eclient --eval "$lisp")
+    if [ -z "$emacs_server_file" ]; then
+	result=$($emacs_timeout $eclient --eval "$lisp")
+    else
+	result=$($emacs_timeout $eclient --server-file=$emacs_server_file --eval "$lisp")
+    fi
 fi
 
 quit() {
