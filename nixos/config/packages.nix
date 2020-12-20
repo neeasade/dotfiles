@@ -246,7 +246,6 @@ let
   ]);
 
   games = (with stable; [
-    discord
     runelite
     nethack
     wesnoth
@@ -267,6 +266,8 @@ let
   ]) ++ (with unstable; [
     # openmw-tes3mp
     # steam
+  ]) ++ (with edge; [
+    discord
   ]);
 
   development = (with stable; [
