@@ -1,0 +1,83 @@
+#!/usr/bin/env bash
+# colort shim that interacts with emacs instead
+# colort: https://github.com/neeasade/colort
+# this is slower, but removes colort as a util from my needs
+# differences from og colort:
+# remove -l, -r -g -b,
+# -s subselects rather than inline changes
+# note: tint value is not 0-100, it is 0-256 -- always controlling lightness adjustment.
+
+# do we have the original? use that
+count=$(wc -l <<< "$(type -a colort)")
+if [ $count -gt 1 ]; then
+    og colort "$@"
+    exit $?
+fi
+
+# optimize a common use case
+if [ ${#*} -eq 2 ]; then
+    if [ "$1" = "-t" ]; then
+	start=$((${#2}-6))
+	printf '%s' "${2:$start}"
+	exit 0
+    fi
+fi
+
+trim=true
+invert=false
+contrast=false
+count=0
+negative_count=
+
+while getopts :tils:c flag; do
+    case $flag in
+	t) trim=true;;
+        s) cutoff=$OPTARG;;
+        i) invert=true;;
+        c) contrast=true;;
+        l) ;;
+        ?) negative_count=$negative_count$OPTARG ;;
+        *) usage;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ ${#*} -eq 2 ]; then
+    count=$1
+    shift
+fi
+
+if [ ! -z "$negative_count" ]; then
+    count=$((count - negative_count))
+fi
+
+code=$*
+if [ ! -z "$cutoff" ]; then
+    printf -v code '#%s' "${code:$cutoff:6}"
+fi
+case code in
+    #*) ;;
+    *) code="#${code}";;
+esac
+code="\"${code}\""
+
+if $invert; then
+    code="(->> $code color-complement (apply 'color-rgb-to-hex) ns/color-shorten)"
+fi
+
+# cf https://stackoverflow.com/questions/2395284/round-a-divided-number-in-bash
+add=$((count/2))
+count=$(( ((count + add) * 100) / 255))
+code="(ns/color-shorten (ns/color-lab-lighten $code $count))"
+
+if $contrast; then
+    elisp "(not (ns/color-is-light-p $code))" >/dev/null
+    exit $?
+fi
+
+if $trim; then
+    code="(substring $code -6)"
+fi
+
+# echo elisp "$code"
+printf '%s' "$(elisp -r "$code")"

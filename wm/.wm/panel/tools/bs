@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# bar stuff
+# (lemon)bar stuff
+# this script closes tags and manages content wrapping
 # example:
 # echo some text | bs Bffffff F000000 UFF000000 +o +u
 
