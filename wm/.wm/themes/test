@@ -34,8 +34,8 @@ settings() {
     # BG_COMMAND="${HOME}/.fehbg"
     BG_COMMAND="${HOME}/.fehbg"
     # BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :background+)')"
-    BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :accent1_)')"
-    BG_COMMAND="feh --bg-tile /tmp/result.png"
+    # BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :accent1_)')"
+    # BG_COMMAND="feh --bg-tile /tmp/result.png"
 
 
     # PROMPT_CHAR='%'
@@ -115,8 +115,8 @@ subscription_rules &"
     p_desktop_tiling_label=''
     p_desktop_monocle_label=$(uchar f00b)
 
-    # st_font="Go Mono for Powerline-12:style=Regular"
-    st_font="Triplicate T4c-10"
+    st_font="Go Mono for Powerline-10"
+    # st_font="Triplicate T4c-10"
     st_font_variable="Equity Text A-11"
     p_title_only_show_active=true
     maxWinNameLen=40

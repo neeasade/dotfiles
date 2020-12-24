@@ -17,7 +17,13 @@ print_env() {
   # H=$(echo .40 \* $(dim height) | bc | sed 's/\..*//')
   # X=$(( ($(dim width) - W) / 2 ))
   # Y=$(( ($(dim height) - H) / 4 ))
+
   # Y=$((Y+100))
+
+  # TODO
+  # emacs_dmenu correction:
+  # bw=$(bspc config border_width)
+  # X=$((x-))
 
   if [ "$(hostname)" = "geloof" ]; then
     LINES=20

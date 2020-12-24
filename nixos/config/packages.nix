@@ -174,7 +174,6 @@ let
     xorg.xprop
     xorg.xwininfo
     xtitle
-    youtube-dl
     pinta
   ]) ++ ( with expr; [
     # drawterm
@@ -198,7 +197,8 @@ let
     wmutils-core-git
     wmutils-opt-git
     xdo-git
-  ]) ++ (with unstable; [
+  ]) ++ (with edge; [
+    youtube-dl
   ]);
 
   extra = (with stable; [
@@ -253,6 +253,9 @@ let
 
     mesa_drivers
     mesa_glu
+
+    # jstest
+    qjoypad
 
     # wine
     # wineStaging
@@ -372,6 +375,11 @@ in
     (import (builtins.fetchTarball {
       url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
     }))
+  # (self: super: {
+  #   mpv = super.mpv-with-scripts.override {
+  #     scripts = [ self.mpvScripts.mpris ];
+  #   };
+  # })
   ];
 
   # "just give me something pls"
