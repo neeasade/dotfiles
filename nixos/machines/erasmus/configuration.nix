@@ -77,7 +77,7 @@ in
   };
 
   hardware = {
-
+    steam-hardware.enable = true;
     bluetooth.enable = true;
     opengl.driSupport = true;
     pulseaudio.enable = true;

@@ -39,21 +39,6 @@ super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
 super + ctrl + space
     bspc node -p cancel
 
-super + y
-    dismiss.sh
-
-super + {1-9}
-    btags focus ^{1-9}
-
-super + shift + {1-9}
-    btags set-tag-on-wids ^{1-9} $(bspwindows)
-
-super + {i,o,u}
-    btags focus ^{1,2,3}
-
-super + shift + {i,o,u,y}
-    btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)
-
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
     {bspc node -i,for win in $(bspc query -N -d -n .leaf.!window); do bspc node $win -k; done}
@@ -67,10 +52,9 @@ super + {_,shift} + semicolon
 super + {p,b,comma,period}
     bspc node -f @{parent,brother,first,second}
 
-# kill panel, nicely ask all windows to close, quit.
 # todo: ask nicely for real.
 super + shift + q
-    pgrep lemonbar && panelt; \
+    systemctl --user stop panel; \
     zenity --question "Quit wm?" && bspc quit
 
 # toggle panel or gaps.
@@ -99,8 +83,6 @@ XF86Audio{LowerVolume,RaiseVolume}
 
 super + Escape
     notify-send "reloading sxhkd!"; pkill -USR1 -x sxhkd
-
-# from here down are keys that I'm treating like macro keys
 
 # mute toggle
 XF86AudioMute
@@ -136,3 +118,42 @@ F8
 button9
     bash -ic ". $HOME/.profile; shot"
     # notify-send "you pressed mouse9"
+
+# window management
+
+super + y
+    dismiss.sh
+
+super + {1-9}
+    btags focus ^{1-9}
+
+super + shift + {1-9}
+    btags set-tag-on-wids ^{1-9} $(bspwindows)
+
+super + {i,o,u}
+    btags focus ^{1,2,3}
+
+super + shift + {i,o,u,y}
+    btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)
+
+
+# workspaces:
+#########################
+
+# super + y
+#     dismiss.sh
+
+# super + y
+#     bspc node -f older
+
+# super + {1-9}
+#     bspc desktop -f focused:^{1-9}
+
+# super + shift + {1-9}
+#     bspc node -d focused:^{1-9}
+
+# super + {i,o,u}
+#     btags focus ^{1,2,3}
+
+# super + shift + {i,o,u,y}
+#     btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)

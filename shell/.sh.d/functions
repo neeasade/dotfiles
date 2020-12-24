@@ -427,7 +427,6 @@ paths(scalars) as $p
 '
 }
 
-eve() {
-  cd /media/CODERED/games/EVE
-  wine eve.exe
+misc-time() {
+  (ns/org-check-casual-time-today)
 }
