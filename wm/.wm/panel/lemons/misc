@@ -1,4 +1,13 @@
 #!/bin/sh
 
-cache_output 500 elisp -r '(ns/export-scheduled-org-headings-past)'
-# echo
+(
+    cache_output 500 elisp -r '(ns/export-scheduled-org-headings-past)'
+
+    if pgrep obs >/dev/null; then
+	echo "OBS OPEN"
+    fi
+
+) | tr '\n' '|' | sed 's/.$//'
+echo
+
+# cache_output 30 elisp -r '(- ns/org-casual-timelimit (float (ns/with-notes (ns/org-check-casual-time-today))))'
