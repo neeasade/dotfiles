@@ -1,0 +1,6 @@
+#!/bin/sh
+# note time things
+# future ideas:
+# show clocked per project
+
+cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'

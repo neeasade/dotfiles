@@ -1,4 +1,5 @@
 #!/bin/sh
+# this lemon is meant to have temporary things that may popup, show front and center
 
 (
     cache_output 500 elisp -r '(ns/export-scheduled-org-headings-past)'
@@ -7,8 +8,10 @@
 	echo "OBS OPEN"
     fi
 
-    cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'
+    elisp '(when-let (unread-dms (ns/circe-unread-query-buffers))
+	(format "DMs: %s" (length unread-dms)))'
 
+    # cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'
 ) | awk NF | tr '\n' '^' | sed 's/.$//' | sed 's/\^/ • /g'
 echo
 
