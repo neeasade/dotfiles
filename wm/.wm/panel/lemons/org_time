@@ -3,4 +3,4 @@
 # future ideas:
 # show clocked per project
 
-cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'
+cache_output 30 elisp -r '(ns/org-check-casual-time-today)'
