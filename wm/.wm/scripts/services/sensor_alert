@@ -27,16 +27,34 @@ cpu_temp() {
 	current=$(echo "$line" | awk '{print $3}' | grep -m 1 -oE '[0-9][0-9]+')
 	high_sensor=$(echo "$line" | awk '{print $6}' | grep -m 1 -oE '[0-9][0-9]+')
 
-	# thinking -- under 80 is OK, under 100 is safe
-	high=$(iif 'pgrep dota2' 95 $high_sensor)
+	if [ "$(hostname)" = "geloof" ]; then
+	    # thinking -- under 80 is OK, under 100 is safe
+	    high=$(iif 'pgrep dota2' 95 $high_sensor)
+	fi
+
 	core=$(echo "$line" | awk '{print $1$2}')
 
 	maybe_alert "[ $current -gt $high ]" "high CPU temp!"  "$core ${current}C"
     done
 }
 
+memory() {
+    # origin: kori
+    t=$(awk '/MemTotal/{print $2}' /proc/meminfo)
+    f=$(awk '/MemFree/{print $2}'  /proc/meminfo)
+    b=$(awk '/^Buffers/{print $2}' /proc/meminfo)
+    c=$(awk '/^Cached/{print $2}'  /proc/meminfo)
+
+    used=$((t - f - c - b))
+    total=$t
+    percent_used=$(echo "$used / $total * 100" | bc -l | awk -F. '{print $1}')
+
+    # arbitrary (about .5G on my 16G machine)
+    maybe_alert "[ $percent_used -gt 96 ]" "High memory usage!" "${percent_used}%"
+}
+
 if [ -z "$*" ]; then
-    echo "options: battery cpu_temp "
+    echo "options: battery cpu_temp memory"
     echo
 else
     $1
