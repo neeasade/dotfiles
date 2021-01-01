@@ -38,8 +38,8 @@ rand_tile() {
 # check if contrast matches
 matches() {
     elisp "(eq
-    (ns/color-is-light-p \"$1\")
-    (ns/color-is-light-p \"$2\"))" >/dev/null \
+    (ct/is-light-p \"$1\")
+    (ct/is-light-p \"$2\"))" >/dev/null \
 	&& echo true || echo false
 }
 

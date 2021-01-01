@@ -62,16 +62,16 @@ esac
 code="\"${code}\""
 
 if $invert; then
-    code="(->> $code color-complement (apply 'color-rgb-to-hex) ns/color-shorten)"
+    code="(->> $code color-complement (apply 'color-rgb-to-hex) ct/shorten)"
 fi
 
 # cf https://stackoverflow.com/questions/2395284/round-a-divided-number-in-bash
 add=$((count/2))
 count=$(( ((count + add) * 100) / 255))
-code="(ns/color-shorten (ns/color-lab-lighten $code $count))"
+code="(ct/shorten (ct/lab-lighten $code $count))"
 
 if $contrast; then
-    elisp "(not (ns/color-is-light-p $code))" >/dev/null
+    elisp "(not (ct/is-light-p $code))" >/dev/null
     exit $?
 fi
 

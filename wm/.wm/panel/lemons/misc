@@ -1,8 +1,28 @@
 #!/bin/sh
 # this lemon is meant to have temporary things that may popup, show front and center
 
+check_disk_space() {
+    # 10G
+    # arbitrary
+    concern=$((1000 * 1000 * 10))
+
+    df | grep \^/dev | awk '{printf "%s", $4; $1=$2=$3=$4=$5=""; print $0}' | \
+	while read avail name; do
+	    if [ "$name" = "/boot" ]; then
+		continue
+	    fi
+
+	    if [ $avail -lt $concern ]; then
+		# echo "$avail $name"
+		echo "DISK LOW ($name)"
+	    fi
+	done
+}
+
 (
     cache_output 500 elisp -r '(ns/export-scheduled-org-headings-past)'
+
+    check_disk_space
 
     if pgrep obs >/dev/null; then
 	echo "OBS OPEN"

@@ -4,12 +4,12 @@
 ;; that's ok because using it in a panel/dynamic contexts doesn't touch our running emacs.
 
 (ns/util)
-(ns/colors)
+(ns/use-package color-tools "neeasade/color-tools.el")
 
 (ns/let-script-args
  (step start end with-ends)
  (ns/make-lines
-  (ns/color-gradient
+  (ct/gradient
    (string-to-number step)
    (if (s-starts-with? "#" start) start (concat "#" start))
    (if (s-starts-with? "#" end) end (concat "#" end))

@@ -5,4 +5,4 @@
 (ns/let-script-args (percent color)
 		    (let ((color (concat "#" color))
 			  (percent (string-to-number percent)))
-		      (ns/color-lessen percent color)))
+		      (ct/lessen percent color)))
