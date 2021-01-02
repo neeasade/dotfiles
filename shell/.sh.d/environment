@@ -9,6 +9,11 @@ has() {
   silent type "$@"
 }
 
+vdo() {
+    echo "$*"
+    "$@"
+}
+
 # duplication with ~/bin/iif is intentional
 # function call vs script means can use shell functions in condition
 iif() {

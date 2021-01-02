@@ -20,7 +20,7 @@ else
 
     # XXX: you will need to tweak ./org_task_elisp as well
     empty=$(elisp -r '(ht-get ns/theme :background__)')
-    full=$(elisp -r '(ns/color-shorten (ns/color-transform-hsluv-l (ht-get ns/theme :accent2) 55))')
+    full=$(elisp -r '(ct/shorten (ct/transform-hsluv-l (ht-get ns/theme :accent2) 55))')
     echo "$topic $(bs "B$full" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
     # echo "$topic $(mkb "$percent" 10)"
 fi

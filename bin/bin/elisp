@@ -3,6 +3,7 @@
 # can act as a shebang (ie #!/usr/bin/env elisp) or
 # adhoc code (ie elisp '(message "uwu")')
 # note: when args are passed to a shebang, they are available with the variable 'ns-args' as a list
+# todo: idea: pass fallback program for when we cannot reach emacs
 
 trim=false  # note: we always set trim in script mode
 quiet=false

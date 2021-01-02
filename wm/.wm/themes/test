@@ -34,8 +34,8 @@ settings() {
     # BG_COMMAND="${HOME}/.fehbg"
     # BG_COMMAND="${HOME}/.fehbg"
     BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :background+)')"
-    # BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :accent1_)')"
-    BG_COMMAND="feh --bg-tile /tmp/result.png"
+    BG_COMMAND="hsetroot -solid $(elisp -r '(ht-get ns/theme :accent1_)')"
+    # BG_COMMAND="feh --bg-tile /tmp/result.png"
 
 
     # PROMPT_CHAR='%'
@@ -47,7 +47,7 @@ settings() {
     # b_normal_border_color=B0A8A6
     # b_normal_border_color=$(colort -t $(lessen 20 $color0))
 
-    b_normal_border_color=$(elisp -r "(ns/color-shorten (face-attribute 'mode-line-inactive :background))")
+    b_normal_border_color=$(elisp -r "(ct/shorten (face-attribute 'mode-line-inactive :background))")
     b_normal_border_color=$(colort -t "$b_normal_border_color")
 
     b_window_gap=14
@@ -68,9 +68,9 @@ subscription_rules &"
     # p_gap=$(elisp '(frame-fringe-width)')
     p_gap=0
 
-    p_bg_middle=$(elisp -r "(ns/color-shorten (face-attribute 'ns/mode-line-middle :background))")
+    p_bg_middle=$(elisp -r "(ct/shorten (face-attribute 'ns/mode-line-middle :background))")
 
-    p_bg_active=$(elisp -r "(ns/color-shorten (face-attribute 'company-tooltip-selection :background))")
+    p_bg_active=$(elisp -r "(ct/shorten (face-attribute 'company-tooltip-selection :background))")
     p_fg_active=$foreground
 
     # elisp -r "(face-attribute 'region :background)"
@@ -145,7 +145,7 @@ line() {
 }
 
 fg() {
-    # elisp -r "(ns/color-shorten (ht-get ns/theme (if (ns/color-is-light-p \"$(bg)\") :foreground :background)))"
+    # elisp -r "(ct/shorten (ht-get ns/theme (if (ct/is-light-p \"$(bg)\") :foreground :background)))"
 
     if [ "$lemon_target_align" = left ]; then
 	elisp -r '(ht-get ns/theme :foreground)'
@@ -164,7 +164,7 @@ bg() {
     fi
 
     # if [ "$lemon_target_align" = left ]; then
-    # 	# light=$(elisp -r '(->> :accent2_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+    # 	# light=$(elisp -r '(->> :accent2_ (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
     # 	# gradient $total
     # 	elisp -r '(ht-get ns/theme :foreground)'
     # elif [ "$lemon_target_align" = right ]; then
@@ -175,7 +175,7 @@ bg() {
 
     return
 
-    # elisp -r '(->> "#d1dae5" (-map (lambda (ns/color-lch-transform ))) )'
+    # elisp -r '(->> "#d1dae5" (-map (lambda (ct/lch-transform ))) )'
     # gradient $total 8fe7d5 7cbefc | sed -n ${step}p
 
     # if [ "$lemon_target_align" = center ]; then
@@ -185,25 +185,25 @@ bg() {
     # fi
     # return
 
-# $(elisp -r '(->> :accent1 (ht-get ns/theme) ns/color-shorten ns/color-pastel ns/color-pastel)')
+# $(elisp -r '(->> :accent1 (ht-get ns/theme) ct/shorten ct/pastel ct/pastel)')
     if [ "$lemon_target_align" = left ]; then
 	    cat<<EOF | sed -n ${step}p
-$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
-$(elisp -r '(->> :accent1 (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
-$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
+$(elisp -r '(->> :accent1 (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
 EOF
     elif [ "$lemon_target_align" = right ]; then
 	    cat<<EOF | sed -n ${step}p
-$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
-$(elisp -r '(->> :accent1 (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
-$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
+$(elisp -r '(->> :accent1 (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
+$(elisp -r '(->> :accent1_ (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
 EOF
     else
 	# maybe generate a new color for this section
 	    cat<<EOF | sed -n ${step}p
-$(elisp -r '(->> :background+ (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list L C H))))) ns/color-shorten)')
-$(elisp -r '(->> :accent2 (ht-get ns/theme) ((lambda (c) (ns/color-lch-transform c (lambda (L C H) (list 75 C H))))) ns/color-shorten)')
-$(elisp -r '(ns/color-shorten (ht-get ns/theme :accent1_))')
+$(elisp -r '(->> :background+ (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list L C H))))) ct/shorten)')
+$(elisp -r '(->> :accent2 (ht-get ns/theme) ((lambda (c) (ct/lch-transform c (lambda (L C H) (list 75 C H))))) ct/shorten)')
+$(elisp -r '(ct/shorten (ht-get ns/theme :accent1_))')
 EOF
 	# center
     fi

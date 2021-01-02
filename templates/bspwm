@@ -8,8 +8,6 @@ set -a
 gapped=$1
 [ -z "$gapped" ] && gapped=$(iif "! [ $(bspc config window_gap) -le 0 ]")
 
-xinit=$(iif "[ $(( $(date +%s) - xstart )) -lt 2 ]")
-
 PATH=$PATH:$HOME/.wm/scripts/visual
 
 relaunch_panel=$(iif "systemctl --user status panel")
@@ -77,8 +75,8 @@ bspc rule -a Emacs state=tiled
 bspc rule -a Emacs-27.0.91 state=tiled
 bspc rule -a Emacs-27.1 state=tiled
 
-# initial wm startup actions
-if $xinit; then
-    $HOME/.wm/startup.sh &
+# initial wm startup actions ($xstart set in xinitrc)
+if [ $(( $(date +%s) - ${xstart:-0} )) -lt 2 ]; then
+    setsid $HOME/.wm/startup.sh &
     panelt
 fi
