@@ -3,6 +3,7 @@
 # this script closes tags and manages content wrapping
 # example:
 # echo some text | bs Bffffff F000000 UFF000000 +o +u
+# => "%{B#ffffff}%{F#000000}%{U#FF000000}%{+o}%{+u}some text%{B-}%{F-}%{U-}%{-o}%{-u}"
 
 # note on clicking
 # Eg. %{A:reboot:} Click here to reboot %{A}

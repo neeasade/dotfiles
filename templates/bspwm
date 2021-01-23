@@ -71,9 +71,10 @@ done
 # extensions may be defined in themes here:
 {{b_bspwmrc_extend}}
 
-bspc rule -a Emacs state=tiled
-bspc rule -a Emacs-27.0.91 state=tiled
-bspc rule -a Emacs-27.1 state=tiled
+# bspc rule -a Emacs state=tiled
+# bspc rule -a Emacs-27.0.91 state=tiled
+# bspc rule -a Emacs-27.1 state=tiled
+# bspc rule -a Emacs-27.0.90 state=tiled
 
 # initial wm startup actions ($xstart set in xinitrc)
 if [ $(( $(date +%s) - ${xstart:-0} )) -lt 2 ]; then

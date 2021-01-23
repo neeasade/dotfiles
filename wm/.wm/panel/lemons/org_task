@@ -4,7 +4,7 @@
 
 WIDTH=60
 if ! org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH); then
-    echo "Decide what to do today!"
+    echo "Start emacs!"
     exit
 fi
 
@@ -19,8 +19,10 @@ else
     # echo "$topic $(bs "B$(colort -l -40 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
 
     # XXX: you will need to tweak ./org_task_elisp as well
-    empty=$(elisp -r '(ht-get ns/theme :background__)')
-    full=$(elisp -r '(ct/shorten (ct/transform-hsluv-l (ht-get ns/theme :accent2) 55))')
+    # empty=$(elisp -r '(tarp/get :background :normal)')
+    full=$(elisp -r '(-> (tarp/get :assumed) (ct-pastel 20 20))')
+    # empty=$(elisp -r '(-> (tarp/get :assumed) (ct-pastel 35 35))')
+    empty=$(elisp -r '(-> (tarp/get :background :normal))')
     echo "$topic $(bs "B$full" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
     # echo "$topic $(mkb "$percent" 10)"
 fi

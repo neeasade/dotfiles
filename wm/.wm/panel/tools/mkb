@@ -13,6 +13,9 @@ l_sep=$(theme getval l_sep)
 l_start=$(theme getval l_start)
 l_end=$(theme getval l_end)
 
+# temp, char width for emoji
+# size=$((size / 2))
+
 
 # defaults
 progress=${progress:-30}

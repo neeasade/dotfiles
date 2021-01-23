@@ -10,7 +10,7 @@
 wid=$1
 class_name=$2
 
-if [ "$class_name"  = "pye-menu" ]; then
+if [ "$class_name" = "pye-menu" ]; then
   echo state=floating
 
   size=200
@@ -69,3 +69,9 @@ else
 fi
 
 echo split_dir=$split_dir
+
+if echo "$class_name" | grep -E "^Emacs" >/dev/null; then
+      echo state=tiled
+fi
+
+

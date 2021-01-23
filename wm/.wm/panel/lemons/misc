@@ -28,7 +28,7 @@ check_disk_space() {
 	echo "OBS OPEN"
     fi
 
-    elisp '(when-let (unread-dms (ns/circe-unread-query-buffers))
+    elisp -r '(when-let (unread-dms (ns/circe-unread-query-buffers))
 	(format "DMs: %s" (length unread-dms)))'
 
     # cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'

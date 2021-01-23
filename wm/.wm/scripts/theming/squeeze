@@ -51,7 +51,10 @@ targets="bg fg line activebg activefg activeline bg_next"
 bg_next() {
     if $lemon_target_end_inner; then
 	# echo "#eef0f3"
-	colort -20 "$(bg)"
+	# colort -20 "$(bg)"
+	vanilla bg
+	# lmao
+	echo "#000000"
     else
 	# separate step:
 	# step=$((step + 1)) bg

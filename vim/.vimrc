@@ -411,11 +411,19 @@ set clipboard=unnamed
 " colemak
 imap tn <ESC>
 vmap tn <ESC>
+
 noremap e k
-noremap n j
+noremap E K
+
 noremap k n
 noremap K N
+
+noremap n j
 noremap N J
+
+noremap j e
+noremap J E
+
 
 " tell vim to keep a backup file
 set backup

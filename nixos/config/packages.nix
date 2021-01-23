@@ -364,6 +364,7 @@ let
     # roboto roboto-mono
     # tewi-font siji
     # fira fira-code
+    twemoji-color-font
     font-awesome-ttf
     noto-fonts # todo: noto-emoji?
     powerline-fonts # includes a 'Go Mono for powerline'

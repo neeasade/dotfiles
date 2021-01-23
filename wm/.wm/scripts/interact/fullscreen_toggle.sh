@@ -1,6 +1,7 @@
 #!/bin/sh
 # swap between fake fullscreen modes as monocle mode
 # this is so we can enjoy fake padding in fullscreen things (and account for panel presence)
+# todo: this script assumes that gaps are always what you want.
 
 # possible modes
 do_monocle_padded() {
@@ -21,7 +22,7 @@ do_monocle_padded() {
   # what are we looking at?
   window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
   # Wine is for eve
-  if echo $window_class | grep -E '(mpv|Google-chrome|dota2|factorio|Wine)'; then
+  if echo $window_class | grep -E '(Civ5XP|mpv|Google-chrome|dota2|factorio|Wine)'; then
     bspc config window_gap 0
   else
     bspc config window_gap $(theme getval x_padding)

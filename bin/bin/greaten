@@ -2,7 +2,7 @@
 ;; make dark colors darker
 ;; make light colors lighter
 
-(apply 'ct/greaten
+(apply 'ct-greaten
        (ns/let-script-args (percent color)
 			   (list
 			    (concat "#" color)

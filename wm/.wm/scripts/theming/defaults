@@ -23,9 +23,10 @@ l_empty="—"
 l_sep="+"
 
 # note: keeping the sep empty feels way more natural
-l_complete="◈"
-l_empty="◇"
-l_sep="◇"
+# l_complete="🐝"
+# l_empty="🌻"
+# l_sep="🌻"
+
 l_start=""
 l_end=""
 
