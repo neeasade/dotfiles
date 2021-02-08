@@ -27,6 +27,7 @@ in {
   ];
 
   # todo: cf https://wiki.nikitavoloboev.xyz/package-managers/nix/nix-darwin
+  nixpkgs.config = nixcfg;
 
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
@@ -52,7 +53,7 @@ in {
       gnused
       grpcurl
       isync
-      iterm2
+      # iterm2
       jq
       leiningen
       miller
@@ -91,7 +92,7 @@ in {
       # avrdude
       # awscli
       # clojure-lsp
-      # coreutils
+      coreutils
       # go
       # dep
       # dos2unix

@@ -39,12 +39,18 @@ set_editor() {
 set_editor vim
 
 WINDOWS=$(iif "[ ! -n $(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}') ]")
+MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
 
 # less status line
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 LESSCHARSET='utf-8'
 
 BROWSER=qb_meta_open
+
+if $MAC && has google-chrome-mac; then
+   BROWSER=google-chrome-mac
+fi
+
 FILEBROWSER=thunar
 VIEW_PDF=zathura
 
@@ -135,3 +141,21 @@ cur_shell=${cur_shell##*/}
 if has direnv; then
   eval "$(direnv hook $cur_shell)"
 fi
+
+if ! has update_terminal_cwd; then
+  # macos
+  update_terminal_cwd() {
+    if [ $TERM = dumb ]; then
+      return
+    fi
+
+    # Identify the directory using a "file:" scheme URL,
+    # including the host name to disambiguate local vs.
+    # remote connections. Percent-escape spaces.
+    local SEARCH=' '
+    local REPLACE='%20'
+    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+    printf '\e]7;%s\a' "$PWD_URL"
+  }
+fi
+
