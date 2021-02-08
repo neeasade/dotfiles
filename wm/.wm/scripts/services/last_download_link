@@ -1,0 +1,9 @@
+#!/bin/sh
+
+inotifywait -m "${HOME}/Downloads" -e create -e moved_to | debounce.js 30 | \
+    while read dir action file; do
+	echo rm "${HOME}/Last_Shot/last_download_"*
+	rm "${HOME}/Last_Shot/last_download_"*
+	echo ln -s "${dir}/${file}" "${HOME}/Last_Shot/last_download_${file}"
+	ln -s "${dir}/${file}" "${HOME}/Last_Shot/last_download_${file}"
+    done

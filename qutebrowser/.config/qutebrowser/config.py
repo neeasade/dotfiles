@@ -230,7 +230,7 @@ c.fonts.statusbar = GetSize('completion') + fonts['completion']
 
 nmap('<F10>', 'spawn --userscript chrome_open')
 # nmap('W', 'spawn --userscript scrape')
-nmap('<F12>', 'inspector')
+nmap('<F12>', 'devtools')
 
 REDIRECT_MAP = {
     # note: the redirect stuff needs a newish version of qb (at least, newer than nixpkgs stable)

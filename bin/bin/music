@@ -131,7 +131,7 @@ remove() { # remove some search match from the playlist
     }
     positions=$(mpc playlist -f '%position% %file%' | is_long_filter | sed 's/ .*//')
   else
-    positions=$(mpc playlist -f '%position% %file%' | grep -i "$@" | sed 's/ .*//')
+    positions=$(mpc playlist -f '%position% %file%' | grep -i "$*" | sed 's/ .*//')
   fi
 
   delta=0
@@ -177,6 +177,7 @@ EOF
 
     append "/${artist} -"
     append "/${artist}-"
+    # todo: fix this ( you removed -E from grep because it broke sound-log playlist)
     append "/${artist} \(.+\)"
     append "\- ${artist}"
 

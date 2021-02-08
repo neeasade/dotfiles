@@ -1,0 +1,370 @@
+#!/bin/sh
+
+# data hack stolen from x0
+if selected=$(sed '0,/^__DATA__$/d' "$0" | dmenu); then
+    selected=$(echo "$selected" | sed 's/ .*//')
+    printf '%s' "$selected" | xclip -selection clipboard -i
+    printf '%s' "$selected" | xclip -selection primary -i
+
+    # paste it
+    xdotool key shift+Insert
+fi
+
+exit
+
+__DATA__
+>.<﻿ Upset
+>_>﻿ Looking
+<( ･ｪ-)<}﻿ Bow and Arrow
+<(;￣ ･￣)﻿ Scratching
+<(^oo^)>﻿ Pig
+<コ:彡﻿ Squid
+(#^.^#)﻿ Embarrassed
+(#×_×)﻿ Dead
+(>^_^)><(^o^<)﻿ Hugging
+(>_<)﻿ Painful
+( --)/ ==卍﻿ Ninja Star
+( -_-)旦~﻿ Drinking
+( ^_^)／﻿ Waving
+( `_)?(_' )﻿ Dueling
+( `_)乂(_' )﻿ Arm wrestle
+( ° ᴗ°)~ð﻿ Proposal
+( ´-ω･)︻┻┳══━一﻿ Sniper
+( ˇ෴ˇ )﻿ Hipster
+( ˘ ³˘)♥﻿ Kiss me
+( ͡° ͜ʖ ͡°)﻿ Smiling
+( • ∀•)っθΘʘ﻿ Hiding Easter eggs
+( •_•)O °Q(•_• )﻿ Playing Ping Pong
+( ｀o´)_θ☆﻿ Kicking
+( ｀皿´)｡ﾐ/﻿ Hitting
+( ￣┏＿┓￣)﻿ Mustache
+(( ＿ ＿)☆ ≡〇﻿ Header
+((((((^_^;)﻿ Evading
+(((((^_^)﻿ Teleporting
+(((༼•̫͡•༽)))﻿ Ghost
+(((☎)))﻿ Phone
+(* ￣)(￣ *)﻿ Kissing
+(*@_＊#)﻿ Beaten Up
+(*^o^)人(^o^*)﻿ Buddies
+(*°∀°)=3﻿ Infatuated
+(*’(OO)’*)﻿ Piggy
+(*≧m≦*)﻿ Enraged
+(*▿▿* ƪ)﻿ Vampire
+(*・)σσ(*゜O゜)﻿ Poking
+(*・_・)ノ⌒*﻿ Throwing Away
+(*￣m￣)﻿ Dissatisfied
+(+.+)(-.-)(_ _)﻿ Falling Asleep
+(+[__]∙:∙)﻿ PlayStation Portable
+(- o - ) zzZ ☽﻿ Sleepy
+(-_-)#﻿ Girl
+(-_ゞ﻿ Groggy
+(-ε- )﻿ Pucker up
+(-□-)︵*﻿ Blowing a Kiss
+(.〜◍`皿′◍〜.)﻿ Livid
+(//_^)﻿ Emo
+(/ω･＼)﻿ Peering
+(:3 っ)っ﻿ Walrus
+(;-_-)ノ﻿ Giving up
+(;´ρ`)﻿ Yawning
+(;´Д`)﻿ Giving Up
+(;´༎ຶД༎ຶ`)﻿ Weeping
+(=^_^=)﻿ Bunny
+(=^ェ^=)﻿ Cat
+(=^･ｪ･^=)﻿ Kitty
+(^ _ ^)/~~﻿ Goodbye
+(^^)//﻿ Applause
+(^_^)﻿ Laughing
+(^o^)﻿ Singing
+(^‿◕)﻿ Winking
+(_ _)..ooOO﻿ Dreaming
+(`_^)﻿ Wink
+(o^-^o)﻿ Pikachu
+(o´・Υ・)ﾉ･﻿ Help
+(o￣∇￣)=◯)`ν゜)･﻿ Punching
+(p_-)﻿ Thinking
+(ToT)﻿ Crying
+(V) (°,,,,°) (V)﻿ Zoidberg
+(z_z~.)﻿ Tired
+(~_(]=--Z(◡˘)﻿ Pie Fight
+(¬_¬")﻿ Annoyed
+(¬_¬ )﻿ Neglected
+(¬‿¬)﻿ Cunning
+(¬､¬)﻿ Shifty
+(°̥̥̥̥̥̥̥̥ᴗ°̥̥̥̥̥̥̥̥)﻿ Happy crying
+(´>_●)メ(●_<｀)﻿ Sword Fighting
+(´~`)﻿ Weary
+(´∪`*)﻿ Friendly
+(´╹〽╹`)﻿ Worried
+(´・ω・)っ由﻿ Gift
+(´ー｀)┌ﾌｯ﻿ Golf Clap
+(´･ω･`)﻿ Snubbing
+(ò_ó)﻿ Furious
+(ó ì_í)=óò=(ì_í ò)﻿ Bro Pound
+(ɔˆ ³(ˆ⌣ˆc)﻿ Loving couple
+(ɔ˘з˘)ɔ﻿ Romantic
+(ʘ‿ʘ)﻿ Smile
+(о＾ω＾о)﻿ Giggling
+(ू˃̣̣̣̣̣̣︿˂̣̣̣̣̣̣ ू)﻿ Sobbing
+(ಥ﹏ಥ)﻿ Devastated
+(ง •̀_•́)ง﻿ Feisty
+(ง •̀ゝ•́)ง﻿ Fighting
+(๑´•.̫ • `๑)﻿ Blushing
+(๑≖ิิ益≖ิ๑)﻿ Evil Laugh
+(๑╹ڡ╹๑)﻿ Tasty
+(•͡.•͡)﻿ Skeptical
+(•ᴥ• )́`́'́`́'́⻍﻿ Porcupine
+(‥;)﻿ Depressed
+(″･ิ_･ิ)っ﻿ Wait
+(‾ʖ̫‾)﻿ Lethargic
+(∩｀-´)⊃━☆ﾟ.*･｡ﾟ﻿ Wizard
+(∩｀-´)⊃━☆ﾟ.*･｡ﾟ﻿ Magic Attack
+(∿°○°)∿ ︵ ǝʌol﻿ Heartbroken
+(≧∇≦)/﻿ Joyful
+(⊃‿⊂)﻿ Anticipation
+(⊙_◎)﻿ Crazed
+(⌒ ͜ʖ⌒)b﻿ Attentive
+(⓪益⓪)﻿ Staring
+(─‿‿─)﻿ Pleased
+(╬☉Д⊙ฺ)﻿ Cyborg
+(╯3╰)﻿ Kiss
+(╯_╰)﻿ Bummed out
+(╯°□°)╯︵ ʞooqǝɔɐɟ﻿ Flipping Facebook
+(╯°□°)╯︵ ┻━┻﻿ Flipping Table
+(╯°□°）╯︵ ┻━┻﻿ Flipping table
+(╯˘ -˘ )╯﻿ Praying
+(╯ნ_㇁ნ)╯﻿ Defeated
+(╯‵Д′)╯﻿ Scary
+(▀̿Ĺ̯▀̿ ̿)﻿ Deal with it
+(▰˘◡˘▰)﻿ Satisfied
+(○｀д´)ﾉｼ Σ(っﾟДﾟ)っ﻿ Chasing
+(●´ﾉω`)ｺ﻿ Whispering
+(●∈∋●)﻿ Bird
+(◐‿◑)﻿ Crazy
+(◣_◢)﻿ Angry
+(☄ฺ◣д◢)☄ฺ﻿ Scaring
+(★▼▼)o┳*--﻿ Shooting
+(☉__☉”)﻿ Yikes
+(♥_♥)﻿ In Love
+(✖╭╮✖)﻿ Deceased
+(。_°)☆﻿ Punched
+(。。;)＼(-_-)﻿ Comforting
+(。･_･)ノ”【】﻿ Painting
+(っ^‿^)っ﻿ Kirby
+(っ˘ڡ˘ς)﻿ Yummy
+(っ⌒‿⌒)っ﻿ Hug
+(づ￣ ³￣)づ﻿ Smooch
+(シ_ _)シ﻿ Apology
+(＊☉౪ ⊙｡)ﾉ﻿ Imbecile
+(－‸ლ)﻿ Whoops
+(／o^)/°⊥＼(^o＼)﻿ Volleyball
+(／。＼)﻿ Frightened
+(；^＿^)ッ☆(　゜o゜)﻿ Slapping
+(；一_一)﻿ Ashamed
+(＾▽＾)﻿ Cheerful
+(｡▼皿▼)﻿ Darth Vader
+(｡♥‿♥｡)﻿ Smitten
+(｡･ˇдˇ･｡)﻿ Pompous
+(ﾉ-o-)ﾉ 中﻿ Olympic Hammer Throw
+(ﾉ_ _)ﾉ﻿ Surrender
+(ﾉﾟ0ﾟ)ﾉ~	Yoo-﻿ Hoo
+(￣┏∞┓￣)﻿ Fu Manchu Man
+(￣▼￣)﻿ Big Grin
+(￣ー￣)//””﻿ Clapping
+(￣ー￣（＿　＿（﻿ Nodding
+---(o_　_)o﻿ Tripping
+-_-*﻿ Frustrated
+-_-;﻿ Anime Sweat Drop
+-{'''|'''|'''|''']=[]﻿ Syringe
+-ˆ ω ˆ-﻿ Kitten
+.∵･(ﾟДﾟ)﻿ Scared
+/( ＿0＿)￣θ☆≡≡○﻿ Scissor Kick
+/|\( ;,; )/|\﻿ Bat
+8(>_<)8﻿ Jealous
+:(¦)﻿ Frog
+:-{  -__-:﻿ Stinky
+:-Þ﻿ Teasing
+:þ﻿ Playful
+@( o･ω･)@﻿ Monkey
+[ ± _ ± ]﻿ Sick
+[-_-]~﻿ Ninja
+[]゛７(∀゜*）﻿ Dialing
+[^._.^]ﾉ彡﻿ Nyan Cat
+[¬º-°]¬﻿ Zombie
+[•.•ิ]﻿ Huh
+\\(<.<|>.>)//﻿ Panicking
+\m/d(^_^)b\m/﻿ Rocking Out
+\＿(´▽｀)♪＿/﻿ Bathtub
+^(#｀∀´)_Ψ﻿ Demon
+^)_(^﻿ Chubby
+^-^﻿ Happy
+^;;^﻿ Spider
+^^﻿ Blissful
+^_^﻿ Overjoyed
+^_^/﻿ High Five
+^_^;﻿ Guilty
+^o^﻿ Mog
+___ψ(‥ )﻿ Studying
+d(^_^)b﻿ Listening to Music
+d-(^.^)z﻿ Thumbs Up
+d^_^b﻿ DJ
+L(´□｀L)	﻿ Oh No!
+m( ﾟ皿ﾟ)m★━━﻿ Laser
+o(>< )o⌒*﻿ Mad
+O(<>'<>)O﻿ Aang
+o(^^o)(o^^)o﻿ Hopeful
+o(^_-)O﻿ Boxer
+o(^▽^)o﻿ Pumped
+o(´^｀)o﻿ Reluctant
+Q('.'Q)﻿ Put Em Up
+T.T﻿ Sad
+U=･ x ･=U﻿ Rabbit
+uwu﻿ Happy Anime Face
+U＾ェ＾U﻿ Puppy
+v(^_^)v﻿ Victory
+V=(° °)=V﻿ Crab
+V●ᴥ●V﻿ Doggy
+{{|└(>o< )┘|}}﻿ Up In Arms
+{♥‿♥}﻿ Lovestruck
+|̲̅̅●̲̅̅|̲̅̅=̲̅̅|̲̅̅●̲̅̅|﻿ Stereo
+|д･)﻿ Hiding
+|∴め ϖ め∴|﻿ SpongeBob SquarePants
+¤\( `⌂´ )/¤﻿ Lifting weights
+¥[*.*]¥﻿ Robot
+¬.¬﻿ Whatever
+¯\_(ツ)_/¯﻿ Shrugging
+¯(°_o)/¯﻿ Confused shrug
+¯\(°_o)/¯﻿ Confused
+ƪ(˘⌣˘)ʃ﻿ Raise the roof
+ƪ(˘▽˘ƪ)﻿ Worshiping
+Ƹ̵̡Ӝ̵̨̄Ʒ﻿ Butterfly
+ʕ •́؈•̀)﻿ Winnie the Pooh
+ʕ •ᴥ•ʔ﻿ Koala
+ʕʔ﻿ Bread
+ʕु•̫͡•ʔु﻿ Bear cub
+ʕ•͡ᴥ•ʔ﻿ Polar bear
+ʘ‿ʘ﻿ Eager
+˙ ͜ʟ˙﻿ Content
+ε-(´・｀) ﾌ﻿ Phew
+ε=(☉_☉)﻿ Accidental farting
+ε=ε=ε=┌(๑ʘ∀ʘ)┘﻿ Sprinting
+ε=┌( ≧▽)┘﻿ Elated
+ε=┌(^-^)┘﻿ Skipping
+ε=┏( >_<)┛﻿ Running
+ϵ( 'Θ' )϶﻿ Fish
+٩◔̯◔۶﻿ Eye Roll With Hands Up
+੯ू•́ू ໒꒱⁼³₌₃﻿ Sonic the Hedgehog
+੯ू‵ू ໒꒱﻿ Poodle
+ಠ_ಠ﻿ Disapproval
+ಠ_ರೃ﻿ Monocle
+ಠᴗಠ﻿ Scheming
+ಥ_ಥ﻿ Bawling
+๏-)﻿ Cyclops
+༼ ༎ຶ ෴ ༎ຶ༽﻿ Distraught
+༼ つ ◕_◕ ༽つ﻿ Take my energy
+༼ つ ◕_◕ ༽つ﻿ Gimme
+༼ঢ_༽ঢ༽﻿ Perplexed
+༼ঢ_㇁ঢ༽﻿ Bad hair day
+ლ(´ڡ`ლ)﻿ Licking
+ლ(ಠ益ಠ)ლ﻿ Anger
+ლ(ಠ益ಠლ)﻿ But At What Cost
+ᒄ₍⁽ˆ⁰ˆ⁾₎ᒃ♪♬﻿ Frosty the Snowman
+ᕕ( ᐛ )ᕗ﻿ Celebrating
+ᕦ(ò_óˇ)ᕤ﻿ Flexing
+ᕦ◉▿◉ᕤ﻿ Owl
+ᕦ❍ᴗ❍ᕤ﻿ Muscular Person
+ᘛ⁐̤ᕐᐷ﻿ Chameleon
+ᡊ|◔じ◔|ᡊ﻿ Woody Allen
+ᶘ ᵒᴥᵒᶅ﻿ Seal
+‎(>o<)ρミ┳┷┳゜﻿ Table Tennis
+†_(ﾟｰﾟ*)β﻿ Exorcism
+•:_:•﻿ Nagato
+←～（o ｀▽´ )oΨ﻿ Satan
+∊ಠ_ಠ∍﻿ Distressed
+∊♡_ᴥ_♡∍﻿ Puppy Love
+∋(°O°)∈﻿ Blowfish
+∋∞(●ﾟvﾟ)∞∈﻿ Pigtails
+⊂ •͡˘∠•͡˘ ⊃﻿ Suspicious
+⊂((・▽・))⊃﻿ Hug me
+⊂(^(工)^)⊃﻿ Teddy bear
+⊂(◜ᴥ◝)つ﻿ Teddy Bear
+⊆☉ᴥ☉⊇﻿ Bear
+⊙▂⊙﻿ Shocked
+⋟^≏^⋞﻿ Kitty Cat
+⎰≀.☮-☮≀⎰﻿ John Lennon
+─=≡Σ(([ ⊐•̀⌂•́]⊐﻿ Superhero
+┌|°з°|┘﻿ Cutting a rug
+└(^o^ )Ｘ( ^o^)┘﻿ Best buddies
+└(^o^)┐﻿ Grooving
+└@(･ｪ･)@┐﻿ Beefcake
+┗( ●-﹏ ｀｡)づ﻿ Hurt
+┗(･ω･;)┛﻿ How Should I Know
+┬─┬ノ( º _ ºノ)﻿ Putting Table Back
+┬─┬︵/(.□.)╯﻿ Table Flips You
+┬┴┬┴┤(･_├┬┴┬┴﻿ Snooper
+┳┻┳°﻿ Ping Pong table
+╹﹏╹﻿ Cold
+▼o･_･o▼﻿ Hello
+◔̯◔﻿ Rolling Eyes
+◖ර◞ʖ◟ර◗﻿ Grandma
+◖⎚∠⎚◗﻿ Geek
+◖㈠ ω ㈠◗﻿ Panda
+◤◡ᴥ◡◥﻿ Dog
+◦°˚\☺/˚°◦﻿ Playing in the snow
+◯０o。(ー。ー)y﻿ Smoking
+☉ϖ☉﻿ Lobster
+♥‿♥﻿ Enamored
+♪(●′▽`)ﾉ﻿ Good Night
+♪┏(・o･)┛♪﻿ Dancing
+♪～(￣ε￣；)﻿ Whistling
+♫.(◠౪◠).♫﻿ Jamming to music
+✌(გ_㇁გ)✌﻿ Ringo Starr
+✌(◕‿-)✌﻿ Peace
+✖‿✖﻿ Dead person
+❆❅❉﻿ Snowing
+⨌⨀_⨀⨌﻿ Benjamin Franklin
+⪿ ↂ ˒̫̮ ↂ ⫀﻿ Elton John
+⫷ °⧭° ⫸﻿ Clown
+「(°ヘ°)﻿ Puzzled
+〜〜(／￣▽)／　〜ф﻿ Chasing A Butterfly
+ヘ（。□°）ヘ﻿ Psycho
+ヽ( ★ω★)ノ﻿ Pumped up
+ヽ(´Д｀ヽミノ´Д｀)ノ﻿ Frantic
+ヽ(⌐■_■)ノ♪♬﻿ Boogie down
+ヽ(★ω★)ノ﻿ Excited
+ヽ(ﾟДﾟ)ﾉ﻿ Freak Out
+ヽ（´ー｀）┌﻿ Mellow
+ヾ(*￣O￣)ツ﻿ Yelling
+ヾ(｀ε´)ﾉ﻿ Booing
+㐈⦁ཽし⦁ཽ㐈﻿ Larry David
+且_(ﾟ◇ﾟ；)ノﾞ﻿ Waiter
+꒡ᘦ̲꒡﻿ Sleeping
+（ つ Д ｀）﻿ Wiping Tears
+（*・)｢｣｢｣﻿ Magic Casting
+（/｡＼)﻿ Shy
+（´Д゜）/゜⌒。﻿ Discarding
+（　＾）／占~~~﻿ Banksy
+（　＾＾）人（＾＾　）﻿ Best Buds
+（。_°☆＼(- – )﻿ Punch
+（。々°）﻿ Herp Derp
+（・д・）｝﻿ On The Phone
+（人’∀’）﻿ Precious
+（＾～＾）﻿ Meh
+（＿ε＿）﻿ Kiss my butt
+（￢з￢）σ﻿ Pointing
+（￣□￣；）﻿ Surprised
+（￣へ￣）﻿ Discontent
+（￣～￣）﻿ Unimpressed
+／人◕ ‿‿ ◕人＼﻿ Kyubey
+＝( ^o^)ノ___ｏ﻿ Bowling
+＼(-_- )﻿ Thank You
+＼(^o)(^0^)(o^)／﻿ Caroling
+＼(＾O＾)／﻿ Celebrate
+＼(｀0´)／﻿ Fed Up
+＼（＾ ＾）／﻿ Glad
+＼（～Ｏ～）／﻿ Good Morning
+＿φ( °-°)/﻿ Doing Homework
+＿φ(°-°=)﻿ Doing homework
+＿〆(。。)﻿ Writing
+Ｃ:。ミ﻿ Octopus
+～゜・_・゜～﻿ Raving
+｡◕‿◕｡﻿ Gleeful

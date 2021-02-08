@@ -41,10 +41,6 @@ in
     initialPassword = "password";
   };
 
-  # environment.systemPackages = (with stable; [
-  #   syncthing
-  # ]);
-
   services.syncthing = {
     enable = true;
     openDefaultPorts = true;

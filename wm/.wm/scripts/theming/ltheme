@@ -236,6 +236,8 @@ load_qutebrowser() {
 
     margs qutebrowser .config/qutebrowser/colors.py
 
+    margs qute_css .config/qutebrowser/settings.css
+
     current_conf=$(bspc config ignore_ewmh_focus)
     bspc config ignore_ewmh_focus true
     qb_command ':config-source'
@@ -432,6 +434,7 @@ load_services() {
     fi
 
     if [ "$(hostname)" = "erasmus" ]; then
+	# TODO: this should move to ssh config
 	make_periodic_service 10 vps_connect "periodically -p 10 ssh -tt -R 22222:localhost:22 neeasade@vps.neeasade.net"
 	# ssh -t vps.neeasade.net 'ssh localhost -p 22222'
 
@@ -441,6 +444,7 @@ load_services() {
     make_service unclutter 'unclutter -idle 1'
     make_service dunst
     make_service picom
+    make_service download_watch last_download_link
 
     # tray stuff
     make_service nm-applet

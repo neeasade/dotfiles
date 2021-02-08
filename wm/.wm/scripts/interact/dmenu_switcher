@@ -141,7 +141,7 @@ add_metas() {
 
     dmenu_exec() {
 	save_file="$HOME/.dmenu_exec_history"
-	choice=$(cat "$save_file" | dmenu)
+	choice=$(cat "$save_file" | sort | uniq | dmenu)
 	echo "$choice" >> "$save_file"
 	sh -c "$choice"
     }
@@ -149,7 +149,7 @@ add_metas() {
     add_switch "meta: exec" "dmenu_exec"
 
     add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
-    add_switch "meta: telegram" "https://web.telegram.org/"
+    add_switch "meta: telegram" "find_url 'https://web.telegram.org/'"
     add_switch "meta: twitter" "find_url 'https://twitter.com/'"
     add_switch "meta: nixers" "find_url 'https://nixers.net/'"
 

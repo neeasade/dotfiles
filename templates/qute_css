@@ -1,0 +1,11 @@
+/* -*- mode: css -*- */
+
+* {
+  scroll-behavior: auto !important;
+}
+
+::selection {
+	/* Set background color for selected text */
+	background: #{{e_background_focused}};
+	color: #{{e_foreground_focused}};
+}
