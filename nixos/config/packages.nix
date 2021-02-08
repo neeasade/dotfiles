@@ -10,7 +10,7 @@ let
   stable = pkgs; # controlled by root nix-channel entry
   unstable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
-  nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
+  # nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
 
   # unstable = pkgs;
   # edge = pkgs;
@@ -376,11 +376,6 @@ in
     (import (builtins.fetchTarball {
       url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
     }))
-  # (self: super: {
-  #   mpv = super.mpv-with-scripts.override {
-  #     scripts = [ self.mpvScripts.mpris ];
-  #   };
-  # })
   ];
 
   # "just give me something pls"
@@ -394,16 +389,6 @@ in
     games ++
     [pkgs.emacsUnstable] ++
     [];
-
-  # for nix-direnv:
-  nix.extraOptions = ''
-    keep-outputs = true
-    keep-derivations = true
-  '';
-
-  environment.pathsToLink = [
-    "/share/nix-direnv"
-  ];
 
   fonts.fonts =
     basefonts ++

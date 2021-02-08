@@ -5,6 +5,7 @@ rec {
   user     = "neeasade";
   home     = "/home/${user}";
   dotfiles = "${home}/.dotfiles";
+
   sshKeys  = [
                "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCojiWaypftE0EGubAGZbXlEh6L1ehNWiD2NiwhTk6sVzHrXJEy1GB3kFep5wCnm0iV+ks8xdKZQBCdeCswfGGWMfnHicdarHEGYuF8uhU7MW0m9IfK7W80lJfhclyf0cBI+N3CL7zw6cDYmjThKARUP0X8iusViyx2hWQF+6vnV92+ak0xbOC5OTJWx27PC6LzTKIrJZdYX7AF4V/NvyiDfw8+BPNCijhcj8hiKFjYyHWGAwD6R6/qxVR39F8Clqg1ygyIgB5g+RaRN0LyLorSEuucS1oigEhkSZ4m+j1CMsHanXuhgxGjbDpdhVw8BNcL7PYvImB4xtmV41qlWR9r neeasade@littleapple"
              ];
@@ -12,9 +13,6 @@ rec {
   gpgKeys  = {
     signing = "";
   };
-
-  # todo: -- maybe make this from sync'd folder or somewhere else
-  # secret = import ./secret.nix;
 
   syncthingDevices = {
     geloof = {
