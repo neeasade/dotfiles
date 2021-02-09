@@ -1,0 +1,11 @@
+#!/bin/sh
+
+case $(uname) in
+    Darwin)
+    # sort of limited - only taking one argument.
+    /usr/bin/osascript -e "display notification \"$*\""
+    ;;
+    *)
+      og notify-send "$@"
+      ;;
+esac

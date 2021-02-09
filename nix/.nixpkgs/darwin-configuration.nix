@@ -15,7 +15,7 @@ let
   # nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
 
   # todo: check if this is relative to symlink location
-  # expr = import ../../nixos/config/expr { inherit pkgs lib unstable edge; };
+  expr = import ../../nixos/config/expr { inherit pkgs lib unstable edge; };
 
   # todo: check if this is relative to symlink location
   # consts = import ../../nixos/shared/consts.nix
@@ -46,6 +46,7 @@ in {
       docker
       docker-compose
       emacsMacport
+      # emacs
       fd
       fira-code
       git
@@ -89,75 +90,63 @@ in {
       # below from: https://github.com/dcarley/dotfiles/blob/master/Brewfile
 
       # todo: compare against above
+
+      # not available on darwin
+      # _1password
+      # _1password-gui
+
       # avrdude
+      # aws-vault
       # awscli
-      # clojure-lsp
-      coreutils
-      # go
-      # dep
-      # dos2unix
-      # entr
+      # borkdude/brew/clj-kondo
+
+      # ARST caffeine
+
+      dep
+
+      # docker
+      dos2unix
+
+      entr
       # exercism
-      # gh
-      # git
       # git-filter-repo
       # gnu-sed
+      go
       # graphviz
       # helm
-      # htop
-      # httpie
+      htop
+      httpie
       # hub
-      # hugo
-      # jq
-      # kubernetes-cli
-      # minikube
-      # mitmproxy
-      # multimarkdown
-      # ngrep
-      # nmap
-      # p7zip
-      # parallel
-      # pass
-      # pipenv
-      # pstree
-      # pv
-      # pwgen
-      # python@3.7
-      # ripgrep
-      # shellcheck
-      # sslscan
-      # tfenv
-      # tig
-      # tmux
-      # watch
-      # wget
-      # yamllint
-      # youtube-dl
-      # borkdude/brew/clj-kondo
-      # versent/taps/saml2aws
-      # 1password
-      # 1password-cli
-      # aws-vault
-      # caffeine
-      # docker
-      # emacs-mac
-      # firefox
-      # font-meslo-for-powerline
-
-      # google-chrome
-
-      # graalvm-ce-java8
-      # iterm2
-      # java8
       # key-codes
       # keybase
+      kubernetes kubectl
+      minikube
+      mitmproxy
+      # multimarkdown
+      nmap
+      # p7zip
+      parallel
+      # pipenv
+      pstree
+      # python@3.7
       # qmk-toolbox
+      shellcheck
       # spotify
+      # sslscan
+      # note: there are many terraform providers as well
+      # might also consider: terraform-full
+      terraform
+      # versent/taps/saml2aws
       # visualvm
-      # wireshark
+      wireshark
+      yamllint
+      youtube-dl
+      coreutils
 
     ]) ++ (with unstable; [
     ]) ++ (with edge; [
+    ]) ++ (with expr; [
+      pb-git
     ]);
 
 
@@ -194,6 +183,25 @@ in {
   #   # home_directory = consts.home_directory;
   #   home_directory = "/Users/nathan";
   # };
+
+  launchd.user.agents = {
+    # pkgs = pkgs;
+    # home_directory = "/Users/nathan";
+
+    skhd = {
+      command = "${pkgs.skhd}/bin/skhd";
+      serviceConfig = {
+        RunAtLoad = true;
+        KeepAlive = true;
+      };
+    };
+  };
+
+  services.yabai = {
+    enable = true;
+    package = pkgs.yabai;
+    enableScriptingAddition = false;
+  };
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
