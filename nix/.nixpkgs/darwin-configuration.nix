@@ -33,9 +33,11 @@ in {
   # $ nix-env -qaP | grep wget
   environment.systemPackages =
     (with stable; [
+      socat
 
       # sulami's
       adoptopenjdk-hotspot-bin-8
+
       aspell
       aspellDicts.en
       circleci-cli
@@ -62,6 +64,7 @@ in {
       mtr
       netcat
       ngrok
+      nodejs
       nodePackages.typescript
       notmuch
       pandoc

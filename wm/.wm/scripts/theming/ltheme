@@ -20,21 +20,6 @@ done
 eval "$(theme get)"
 set -a
 
-# adjust pIcon to theme (rel for panel, acyl, qutebrowser.)
-if [ "$p_icon" = "unset" ]; then
-    colort -c "$p_bg_active" && intensity=40 || intensity=60
-
-    p_icon=$(colort -c "$p_fg_inactive" && \
-                 colort -l -$intensity "$p_fg_inactive" || \
-                 colort -l $intensity "$p_fg_inactive")
-
-    [ $? -ne 0 ] && p_icon=$(colort -c "$p_fg_inactive" && \
-                                 colort -l $intensity "$p_fg_inactive" || \
-                                 colort -l -$intensity "$p_fg_inactive")
-
-    p_icon="$(colort -t $p_icon)"
-fi
-
 # util:
 
 # mustache args, cache.
@@ -225,24 +210,31 @@ load_qutebrowser() {
         # stylus --include styl --import styl/my.styl -p sites/all-sites.styl > css/all.css
     )
 
-    q_tab_bold="$(iif "echo $p_font_main | grep -q Bold")"
-    q_tab_bold="${q_tab_bold^}"  # bashism, make first letter capital
-    q_tab_fontsize="$(echo $p_font_main | grep -Eo '[0-9]+')"
-    q_tab_fontsize_small="$(($q_tab_fontsize - 1))"
+    q_tab_bold=$(iif "echo $p_font_main | grep -q Bold")
+    q_tab_bold=${q_tab_bold^}  # bashism, make first letter capital
+    q_tab_fontsize=$(echo $p_font_main | grep -Eo '[0-9]+')
+    q_tab_fontsize_small=$(($q_tab_fontsize - 1))
     q_tab_font=$(echo "$p_font_main" | sed 's/-.*//')
 
     # next stable qutebrowser version:
     q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
 
-    margs qutebrowser .config/qutebrowser/colors.py
 
+    MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
+
+    margs qutebrowser .config/qutebrowser/colors.py
     margs qute_css .config/qutebrowser/settings.css
 
-    current_conf=$(bspc config ignore_ewmh_focus)
-    bspc config ignore_ewmh_focus true
-    qb_command ':config-source'
-    # qb_command ':reload' # reload current page w/ css
-    bspc config ignore_ewmh_focus $current_conf
+    if $MAC; then
+	qb_command ':config-source'
+    else
+	current_conf=$(bspc config ignore_ewmh_focus)
+	bspc config ignore_ewmh_focus true
+	qb_command ':config-source'
+	# qb_command ':reload' # reload current page w/ css
+	bspc config ignore_ewmh_focus $current_conf
+    fi
+
 }
 
 # dunst

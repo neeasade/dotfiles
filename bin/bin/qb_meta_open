@@ -9,6 +9,12 @@ url=$1
 # domain=$(echo "$url" | awk -F/ '{print $3}')
 
 focus_qb_window() {
+    MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
+
+    if $MAC; then
+       return
+    fi
+
     for wid in $(bspc query -N -n .window); do
 	if xprop WM_CLASS -id $wid | grep qutebrowser; then
 

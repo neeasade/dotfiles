@@ -26,6 +26,7 @@ iif() {
 }
 
 pathmunge () {
+  # todo: consider checking if the path exists or not
   if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
     PATH=$1:$PATH
   fi
@@ -44,12 +45,6 @@ MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
 # less status line
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 LESSCHARSET='utf-8'
-
-BROWSER=qb_meta_open
-
-if $MAC && has google-chrome-mac; then
-   BROWSER=google-chrome-mac
-fi
 
 FILEBROWSER=thunar
 VIEW_PDF=zathura
@@ -115,6 +110,11 @@ succ .local/bin
 
 succ git/Pye-Menu/result/bin
 
+# gross
+pathmunge "/Applications/Google Chrome.app/Contents/MacOS/"
+pathmunge "/run/current-system/Applications/Emacs.app/Contents/MacOS/"
+pathmunge "/Applications/qutebrowser.app/Contents/MacOS/"
+
 # guix
 # succ .config/guix/current/bin
 # succ .guix-profile/bin
@@ -131,6 +131,14 @@ else
   case $(ps -o comm= -p $PPID) in
     sshd|*/sshd) REMOTE=true;;
   esac
+fi
+
+if $MAC && has 'google chrome'; then
+   BROWSER='google chrome'
+fi
+
+if has qutebrowser; then
+  BROWSER=qb_meta_open
 fi
 
 set +a

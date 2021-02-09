@@ -17,4 +17,6 @@ if [ "$looking_at" = "Emacs" ]; then
   fi
 fi
 
+yabai -m config mouse_follows_focus on
 yabai -m window --focus $node_dir
+yabai -m config mouse_follows_focus off
