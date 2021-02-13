@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# the default qb dir has many things in mac/windows, including it's own version of python. we don't
+# want to squash our python in $PATH !
+
+qb_mac='/Applications/qutebrowser.app/Contents/MacOS/qutebrowser'
+
+if [ -f "$qb_mac" ]; then
+   "$qb_mac" "$@"
+else
+    og qutebrowser "$@"
+fi

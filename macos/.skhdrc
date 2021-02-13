@@ -97,7 +97,9 @@ shift + ctrl - e : yabai -m window --swap north
 # shift + cmd - h : yabai -m window --warp east
 
 # balance size of windows
-# shift + cmd - semicolon : yabai -m space --balance
+# ctrl - semicolon : yabai -m space --rotate 90
+# ctrl - colon : yabai -m space --rotate 90
+# shift + ctrl - semicolon : yabai -m space --balance
 
 # make floating window fill screen
 # shift + alt - up     : yabai -m window --grid 1:1:0:0:1:1
@@ -132,10 +134,10 @@ ctrl - return : ~/bin/elisp '(ns/spawn-terminal)' || $TERMINAL
 # shift + ctrl - a : yabai -m window --move rel:-20:0
 # shift + ctrl - s : yabai -m window --move rel:0:20
 
-alt + ctrl - l : ~/.wm/scripts/interact/resize_mac.sh east
-alt + ctrl - h : ~/.wm/scripts/interact/resize_mac.sh west
-alt + ctrl - n : ~/.wm/scripts/interact/resize_mac.sh south
-alt + ctrl - e : ~/.wm/scripts/interact/resize_mac.sh north
+ctrl + alt - l : ~/.wm/scripts/interact/resize_mac.sh east
+ctrl + alt - h : ~/.wm/scripts/interact/resize_mac.sh west
+ctrl + alt - n : ~/.wm/scripts/interact/resize_mac.sh south
+ctrl + alt - e : ~/.wm/scripts/interact/resize_mac.sh north
 
 # increase window size
 # shift + alt - a : yabai -m window --resize left:-20:0
@@ -154,8 +156,8 @@ alt + ctrl - e : ~/.wm/scripts/interact/resize_mac.sh north
 ctrl - f : yabai -m window --toggle zoom-fullscreen
 ctrl - w : yabai -m window --close
 
-
-# this never finds a window 
+# this never finds a window
+# todo: something like cycle yabai -m query --windows | jq '.[] | .id'
 # ctrl - tab : yabai -m window --focus next
 
 # toggle window split type

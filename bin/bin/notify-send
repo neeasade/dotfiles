@@ -3,9 +3,11 @@
 case $(uname) in
     Darwin)
     # sort of limited - only taking one argument.
-    /usr/bin/osascript -e "display notification \"$*\""
+    case "$*" in
+	DUNST_*) ;;
+	*) /usr/bin/osascript -e "display notification \"$*\""
+	;;
+    esac
     ;;
-    *)
-      og notify-send "$@"
-      ;;
+    *) og notify-send "$@" ;;
 esac

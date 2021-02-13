@@ -92,7 +92,7 @@ subscription_rules &"
     p_line=2
     # p_padding=6
 
-    p_font_main="Charter-10"
+    p_font_main="Charter-14"
 
     # p_font_main="Charter-13"
     # p_font_main="Charter-10:style=Bold"

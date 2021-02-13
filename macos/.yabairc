@@ -26,6 +26,7 @@ yabai -m config window_opacity               off
 yabai -m config window_border                on
 yabai -m config window_border_width          4
 
+yabai -m config active_window_border_color  0xff006f96
 yabai -m config active_window_border_color   0xff4b4e4f
 yabai -m config normal_window_border_color   0xffcecccd
 yabai -m config insert_feedback_color        0xff0000dd
@@ -40,8 +41,11 @@ yabai -m config mouse_action2                resize
 yabai -m config mouse_drop_action            swap
 
 # general space settings
-gap=8
+
+# todo: a way to detect first run -- setting the layout retiles everything.
 yabai -m config layout                       bsp
+
+gap=$(theme getval b_window_gap)
 yabai -m config top_padding                  $gap
 yabai -m config bottom_padding               $gap
 yabai -m config left_padding                 $gap
@@ -55,6 +59,8 @@ if [ "$(yabai -m query --spaces | jq 'length')" -lt 5 ]; then
     done
 fi
 
+
+yabai -m rule --add app=Emacs manage=on
 yabai -m space 4 --layout float
 
 yabai -m rule --add app='System Preferences' manage=off

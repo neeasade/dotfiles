@@ -1,6 +1,39 @@
 # -*- mode: sh -*-
 set -a
 
+pathmunge () {
+  # todo: consider checking if the path exists or not
+  if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
+    PATH=$1:$PATH
+  fi
+}
+
+succ() {
+  pathmunge "$HOME/$@"
+}
+
+XDG_CONFIG_HOME=$HOME/.config
+
+succ bin
+succ .gem/bin
+succ .go/bin
+succ .cargo/bin
+succ .wm/scripts/interact
+succ .wm/scripts/visual
+succ .wm/scripts/services
+succ .wm/panel/lemons
+succ .wm/panel/tools
+# pip --user location
+succ .local/bin
+
+succ git/Pye-Menu/result/bin
+
+# gross
+pathmunge "/run/current-system/Applications/Emacs.app/Contents/MacOS/"
+pathmunge "/Applications/Google Chrome.app/Contents/MacOS/"
+pathmunge "/Applications/iterm.app/contents/macos"
+pathmunge "/Applications/BitBar.app/Contents/MacOS/"
+
 silent() {
   "$@" >/dev/null 2>&1
 }
@@ -25,13 +58,6 @@ iif() {
   printf '%s' "$res"
 }
 
-pathmunge () {
-  # todo: consider checking if the path exists or not
-  if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
-    PATH=$1:$PATH
-  fi
-}
-
 set_editor() {
   export EDITOR="$@"
   export GIT_EDITOR="$@"
@@ -50,13 +76,12 @@ FILEBROWSER=thunar
 VIEW_PDF=zathura
 
 if [ -z "$TERMINAL" ]; then
-  if $WINDOWS; then
-    TERMINAL=git-bash
-  elif has xst; then
-    TERMINAL=xst
-  elif has urxvt; then
-    TERMINAL=urxvt
-  fi
+  for t in git-bash xst urxvt iterm2; do
+    if has $t; then
+      TERMINAL=$t
+      break
+    fi
+  done
 fi
 
 # default
@@ -89,39 +114,6 @@ GOPATH="$HOME/.go"
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
   . $HOME/.nix-profile/etc/profile.d/nix.sh; 
 fi 
-
-succ() {
-  pathmunge "$HOME/$@"
-}
-
-XDG_CONFIG_HOME=$HOME/.config
-
-succ bin
-succ .gem/bin
-succ .go/bin
-succ .cargo/bin
-succ .wm/scripts/interact
-succ .wm/scripts/visual
-succ .wm/scripts/services
-succ .wm/panel/lemons
-succ .wm/panel/tools
-# pip --user location
-succ .local/bin
-
-succ git/Pye-Menu/result/bin
-
-# gross
-pathmunge "/Applications/Google Chrome.app/Contents/MacOS/"
-pathmunge "/run/current-system/Applications/Emacs.app/Contents/MacOS/"
-pathmunge "/Applications/qutebrowser.app/Contents/MacOS/"
-
-# guix
-# succ .config/guix/current/bin
-# succ .guix-profile/bin
-# GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
-# CPATH="$HOME/.guix-profile/include${CPATH:+:}$CPATH"
-# LIBRARY_PATH="$HOME/.guix-profile/lib${LIBRARY_PATH:+:}$LIBRARY_PATH"
-# PYTHONPATH="$HOME/.guix-profile/lib/python3.6/site-packages${PYTHONPATH:+:}$PYTHONPATH"
 
 REMOTE=false
 

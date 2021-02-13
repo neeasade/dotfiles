@@ -49,7 +49,7 @@ if which("qutebrowser-edit"):
 
 c.auto_save.session = True
 
-nmap('b', 'set-cmd-text --space :buffer')
+nmap('b', 'set-cmd-text --space :tab-select')
 
 # trying to match to 's' avy hinting in emacs
 config.unbind('sf');

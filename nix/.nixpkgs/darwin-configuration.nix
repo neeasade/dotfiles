@@ -67,7 +67,6 @@ in {
       nodejs
       nodePackages.typescript
       notmuch
-      pandoc
       pass
       pinentry_mac
       poetry
@@ -75,6 +74,7 @@ in {
       racket-minimal
       restic
       ripgrep
+      fd
       rlwrap
       ruby
       sbcl
@@ -106,6 +106,7 @@ in {
       # ARST caffeine
 
       dep
+      tldr
 
       # docker
       dos2unix
@@ -131,6 +132,18 @@ in {
       parallel
       # pipenv
       pstree
+
+      (python37.withPackages(ps: with ps; [
+      pip # sometimes we want user level global stuff anyway maybe
+      requests
+      toml
+
+      # please do the needful
+      setuptools
+      virtualenv
+    ]))
+      # python37
+
       # python@3.7
       # qmk-toolbox
       shellcheck
@@ -147,7 +160,9 @@ in {
       coreutils
 
     ]) ++ (with unstable; [
+
     ]) ++ (with edge; [
+      pandoc
     ]) ++ (with expr; [
       pb-git
     ]);
