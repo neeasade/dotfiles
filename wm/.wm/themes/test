@@ -62,7 +62,9 @@ subscription_rules &"
     # b_active_border_color=cecece
     # b_focused_border_color=$(colort -b 20 -t $(lessen 10 $foreground))
     # b_focused_border_color=$(elisp -r '(face-attribute 'font-lock-variable-name-face :foreground)')
-    b_focused_border_color=$(colort -t $(elisp -r "(face-attribute 'font-lock-variable-name-face :foreground)"))
+
+    # pastel variation might be nice here
+    b_focused_border_color=$e_primary_focused
 
     # p_gap=$(elisp '(frame-fringe-width)')
     p_gap=0
@@ -93,18 +95,16 @@ subscription_rules &"
     # p_padding=6
 
     p_font_main="Charter-14"
+    st_font="Go Mono for Powerline-14"
+    st_font_variable="Charter-14"
 
-    # p_font_main="Charter-13"
-    # p_font_main="Charter-10:style=Bold"
+    d_font="Charter 12"
 
     p_font_icon="Font Awesome 5 Free Solid-8"
     p_icon_enable=false
     p_desktop_display_name=name
-    d_font="Charter 12"
 
-    # p_icon=$(colort -t "$(elisp -r '(tarp/get :assumed)')")
-    p_icon=$(colort -t "$(elisp -r '(tarp/get :alt)')")
-    # p_icon=$(colort -t "$(elisp -r '(tarp/get :alt)')")
+    p_icon=$e_alt_normal
 
     # p_desktop_occupied_label=$(uchar f111)
     # p_desktop_empty_label=$(uchar f1db)
@@ -112,8 +112,6 @@ subscription_rules &"
     p_desktop_tiling_label=''
     p_desktop_monocle_label=$(uchar f00b)
 
-    st_font="Go Mono for Powerline-14"
-    st_font_variable="Charter-14"
 
     p_title_only_show_active=true
     maxWinNameLen=40

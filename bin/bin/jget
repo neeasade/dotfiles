@@ -1,8 +1,13 @@
 #!/bin/sh
+# cf https://github.com/turquoise-hexagon/dots/blob/76c50dc7eaf578371f8d900efa2231f2b59ce8a0/wm/.local/bin/move#L5
+# "I wish this had never left my dots"
 
 if [ -z "$*" ]; then
-    echo 'jget $key $value'
-    echo 'jget -r $key $value'
+    echo "ONLY USE THIS IN SIMPLE SITUATIONS"
+    echo "IT WILL ONLY MATCH THE FIRST KEY"
+    echo 'jget $key $json'
+    echo 'jget -r $key $json'
+    echo '<json> | jget [-r] $key $json'
 fi
 
 trim=false
@@ -11,11 +16,14 @@ if [ "$1" = "-r" ]; then
     shift
 fi
 
-# cf https://github.com/turquoise-hexagon/dots/blob/76c50dc7eaf578371f8d900efa2231f2b59ce8a0/wm/.local/bin/move#L5
 # match on the first key match, then cut off the rest
 # only valid if the first key you get happens to match/you can make that assumption
 key=$1
 shift
+
+if [ -z "$*" ]; then
+    set -- "$(cat -)"
+fi
 
 # filthy json parsing
 var=${*#*\"$key\":}

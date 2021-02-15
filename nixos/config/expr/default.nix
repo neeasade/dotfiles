@@ -97,10 +97,11 @@
       # note: won't work for ARM oof
       babashka = stdenv.mkDerivation rec {
         name = "babashka";
-        # reminder: nix-prefetch-url <url>
+
+        # NB: regenerate with nix-prefetch-url <zip url>
         src = (fetchurl {
-          url = "https://github.com/borkdude/babashka/releases/download/v0.1.3/babashka-0.1.3-linux-amd64.zip";
-          sha256 = "0nldq063a1sfk0qnkd37dpw8jq43p4divn4j4qiif6dy1qz9xdcq";
+          url = "https://github.com/babashka/babashka/releases/download/v0.2.10/babashka-0.2.10-linux-amd64.zip";
+          sha256 = "0s24jzmh7qdcc9kdfd4lhcdh9ihgvb32wy8rbh9xdmg2izvwnrpa";
         });
 
         unpackPhase = "unzip $src";

@@ -30,9 +30,12 @@ succ git/Pye-Menu/result/bin
 
 # gross
 pathmunge "/run/current-system/Applications/Emacs.app/Contents/MacOS/"
-pathmunge "/Applications/Google Chrome.app/Contents/MacOS/"
 pathmunge "/Applications/iterm.app/contents/macos"
 pathmunge "/Applications/BitBar.app/Contents/MacOS/"
+
+# somehow the space in the path here screws everything in other places
+# pathmunge "/Applications/Google Chrome.app/Contents/MacOS/"
+
 
 silent() {
   "$@" >/dev/null 2>&1

@@ -1,9 +1,25 @@
 # -*- mode: conf -*-
 
-# todo: consider having a toggle for the tray
+# TODO:
+# Say I'm playing a game, and toggle the music, but keep running forward (W)
+#   it's easy to fat finger a close window command
+# Similarly, w and f are right next to each other, so "fullscreen" and "close window" can get fat fingered
+#   both of these are rather unpleasant for games
 
-super + {_,shift} + w
-    bspc node -{c,k}
+super + shift + w
+    notify-send "todo: new force kill binding"
+
+super + w
+    bspc node -c
+
+super + f
+    fullscreen_toggle.sh
+
+super + shift + f
+    bspc node -t ~fullscreen
+
+super + t
+    SLIM=t fullscreen_toggle.sh
 
 # take a tiled window, make it floating, but in the same position of the tile
 super + shift + s
@@ -14,15 +30,6 @@ super + s
     bspc node -t $(bspc query -N -n -n .tiled >/dev/null && echo floating || echo tiled); \
     bspc node -f; \
     bspc config pointer_follows_focus false
-
-super + f
-    fullscreen_toggle.sh
-
-super + t
-    SLIM=t fullscreen_toggle.sh
-
-super + shift + f
-    bspc node -t ~fullscreen
 
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal.!hidden
