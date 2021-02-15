@@ -112,7 +112,6 @@ subscription_rules &"
     p_desktop_tiling_label=''
     p_desktop_monocle_label=$(uchar f00b)
 
-
     p_title_only_show_active=true
     maxWinNameLen=40
 

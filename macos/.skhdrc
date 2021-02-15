@@ -153,7 +153,10 @@ ctrl + alt - e : ~/.wm/scripts/interact/resize_mac.sh north
 # toggle window zoom
 # ctrl - d : yabai -m window --toggle zoom-parent
 # ctrl - f : yabai -m window --toggle native-fullscreen
-ctrl - f : yabai -m window --toggle zoom-fullscreen
+
+ctrl - f : ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+ctrl - t : SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+
 ctrl - w : yabai -m window --close
 
 # this never finds a window

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# boolean query yabai
+# only use for true/false values
+# only for use on singular domains
+# will auto narrow argument, EG:
+# yabai-query --window .zoom-parent
+# --> yabai -m query --windows --window | jq .zoom-parent --> exit status
+
+# (this script exists to use yabai's 1/0 stats as conditionals elsewhere)
+
+kind=$1
+key=$2
+
+# return true or false for yabai state in queries
+# (it's a 0 or 1 in yabai's world)
+result=$(jget "$key" "$(yabai -m query ${kind}s ${kind})")
+case "$result" in
+    1) exit 0 ;;
+    0) exit 1 ;;
+    *) printf "%s\n" "$result"; exit 0;;
+esac

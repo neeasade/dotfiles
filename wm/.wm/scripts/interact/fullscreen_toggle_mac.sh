@@ -5,12 +5,33 @@
 
 # possible modes
 do_monocle_padded() {
+
+  # native fullscreen cancels out skhd bindings and generally just acts.. weird.
+  # yabai -m window --toggle native-fullscreen
+
+  pad=10
+  yabai -m config top_padding $pad
+  yabai -m config bottom_padding $pad
+  yabai -m config left_padding $pad
+  yabai -m config right_padding $pad
+
+  # are we
+  # if ! yabai-query window zoom-fullscreen; then
+  # fi
+  yabai -m window --toggle zoom-fullscreen
+
+  # todo later: coordinate bg color and border color
+  yabai -m config window_border_width 1
+
+  # need a way to set the the desktop bg programmatically
+
   bspc query -N -n focused.fullscreen && \
     bspc node -t ~fullscreen
 
-  bspc config left_monocle_padding 0
-  bspc config right_monocle_padding 0
-  bspc config borderless_monocle true
+  yabai -m config top_padding 0
+  yabai -m config bottom_padding 0
+
+  yabai -m window --toggle zoom-fullscreen
 }
 
 do_monocle_slim() {
@@ -75,7 +96,10 @@ do_tiled() {
 
 state=nop
 
-if bspc query -N -n focused.fullscreen; then
+current_gap=$(yabai -m config window_gap)
+current_padding=$(yabai -m config top_padding)
+
+if yabai-query window zoom-fullscreen && [ "$current_gap" = "0"]; then
   state=fullscreen
 else
   state=tiled

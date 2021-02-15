@@ -26,11 +26,18 @@ if [ -z "$*" ]; then
 fi
 
 # filthy json parsing
-var=${*#*\"$key\":}
-var=${var%%[,\}]*}
+result=${*#*\"$key\":}
+result=${result%%[,\}]*}
 
 if $trim; then
-    var=${var:1:${#var}-2}
+    case "$result" in
+	'"'*) result=${result:1:${#result}-2}
+	      result=$(echo "$result" | sed 's/%/%%/g')
+	      printf "$result\n"
+	      ;;
+	# just print it
+	*) echo "$result" ;;
+    esac
+else
+    echo "$result"
 fi
-
-echo "$var"
