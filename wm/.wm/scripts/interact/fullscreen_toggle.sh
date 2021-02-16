@@ -133,7 +133,6 @@ else
   esac
 fi
 
-
 echo after: $state
 echo do_$state
 do_$state

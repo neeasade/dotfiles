@@ -2,6 +2,9 @@
 # narrow symlinker to match stow, but only from ~/.dotfiles
 # idea for here: add an "all" to stowo paths you commonly care about
 
+# todo: this doesn't deal well in replacing files that are currently in stow-created directories
+# (IE, migration from stow -> stowo, if stow created the outline)
+
 if [ -z "$*" ]; then
     echo "give me something to stOwO:"
     ls "$HOME/.dotfiles/"

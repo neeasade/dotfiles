@@ -97,7 +97,6 @@ subscription_rules &"
     p_font_main="Charter-14"
     st_font="Go Mono for Powerline-14"
     st_font_variable="Charter-14"
-
     d_font="Charter 12"
 
     p_font_icon="Font Awesome 5 Free Solid-8"
