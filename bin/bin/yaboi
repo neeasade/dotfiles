@@ -37,6 +37,7 @@ toggle() {
     want=$3
 
     have=$(queryprint $kind $prop)
+    prop=$(echo "$prop" | sed 's/floating/float/')
 
     if [ ! "$want" = "$have" ]; then
 	echo yabai -m $kind --toggle $prop $want

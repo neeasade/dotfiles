@@ -49,6 +49,7 @@ do_tiled() {
 }
 
 state=nop
+yaboi toggle window floating false
 
 # current_gap=$(yaboi config window_gap)
 current_padding=$(yaboi config left_padding)
