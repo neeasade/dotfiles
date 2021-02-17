@@ -44,7 +44,6 @@ while [ ! -z "$1" ]; do
 		continue
 	    else
 		echo "updating link $path"
-		echo placeholder >/dev/null
 	    fi
 
 	    rm "$target"

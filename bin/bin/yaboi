@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+query() {
+    kind=$1
+    key=$2
+
+    if [ -z "$key" ]; then
+	yabai -m query --${kind}s --${kind}
+	return;
+    fi
+
+    # return true or false for yabai state in queries
+    # (it's a 0 or 1 in yabai's world)
+    result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
+    case "$result" in
+	1) exit 0 ;;
+	0) exit 1 ;;
+	*) printf "%s\n" "$result"; exit 0;;
+    esac
+}
+
+queryprint() {
+    if res=$(query "$@"); then
+	if [ -z "$res" ]; then
+	    echo true;
+	else
+	    echo "$res";
+	fi
+    else
+	echo false;
+    fi
+}
+
+toggle() {
+    kind=$1
+    prop=$2
+    want=$3
+
+    have=$(queryprint $kind $prop)
+
+    if [ ! "$want" = "$have" ]; then
+	echo yabai -m $kind --toggle $prop $want
+	yabai -m $kind --toggle $prop $want
+    fi
+
+    # desktop:
+    # --toggle padding|gap|mission-control|show-desktop
+
+    # window:
+    # --toggle float|sticky|topmost|pip|shadow|border|split|zoom-parent|zoom-fullscreen|native-fullscreen|expose
+}
+
+config() {
+    prop=$1
+    want=$2
+
+    if [ -z "$want" ]; then
+	yabai -m config $prop
+	return;
+    fi
+
+    have=$(yabai -m config $prop)
+    if [ ! "$want" = "$have" ]; then
+	echo yabai -m config $prop $want
+	yabai -m config $prop $want
+    fi
+}
+
+padding() {
+    config top_padding $1
+    config bottom_padding $1
+    config left_padding $1
+    config right_padding $1
+}
+
+"$@"
