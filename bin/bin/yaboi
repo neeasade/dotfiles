@@ -5,13 +5,18 @@ query() {
     key=$2
 
     if [ -z "$key" ]; then
-	yabai -m query --${kind}s --${kind}
+	case "$kind" in
+	    *s) yabai -m query --${kind} ;;
+	    *) yabai -m query --${kind}s --${kind}
+	esac
+
 	return;
     fi
 
     # return true or false for yabai state in queries
     # (it's a 0 or 1 in yabai's world)
     result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
+
     case "$result" in
 	1) exit 0 ;;
 	0) exit 1 ;;

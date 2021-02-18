@@ -2,8 +2,7 @@
 set -a
 
 pathmunge () {
-  # todo: consider checking if the path exists or not
-  if ! echo $PATH | egrep -q "(^|:)$1($|:)" ; then
+  if ! echo $PATH | grep -qE "(^|:)$1($|:)" ; then
     PATH=$1:$PATH
   fi
 }
@@ -115,8 +114,8 @@ BUNDLE_PATH="$HOME/.gem"
 GOPATH="$HOME/.go"
 
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
-  . $HOME/.nix-profile/etc/profile.d/nix.sh; 
-fi 
+  . $HOME/.nix-profile/etc/profile.d/nix.sh;
+fi
 
 REMOTE=false
 
@@ -161,4 +160,3 @@ if ! has update_terminal_cwd; then
     printf '\e]7;%s\a' "$PWD_URL"
   }
 fi
-

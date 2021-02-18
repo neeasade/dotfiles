@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# toggle through windows in the current space
+
+. ~/.sh.d/environment
+
+# the sort is just there to give /some/ order
+wids=$(yabai -m query --windows --space | jq '.[] | .id' | sort)
+wids="${wids}
+$(head -n 1 <<< "$wids")"
+
+if [ ! -z "$*" ]; then
+    wids=$(tac <<< "$wids")
+fi
+
+wid=$(yaboi query window | jq .id)
+
+next=$(awk "/${wid}/{getline; print; exit 0}" <<< "$wids")
+
+echo yabai -m window --focus $next
+yabai -m window --focus $next
