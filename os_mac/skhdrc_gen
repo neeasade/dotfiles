@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# cf https://notes.neeasade.net/sxhkd-ish.html
+
+# nb: I'm getting some keycodes by searching the label if it's in this list:
+#
+
+bind() {
+    args=("$@")
+    for i in $(seq 0 "$(( (${#args[@]} / 2) - 1 ))"); do
+	key=${args[$i]}
+
+        val_index=$(( i + (${#args[@]} / 2) ))
+        val=${args[$val_index]}
+
+	printf "%s : %s\n" "$key" "$val"
+    done
+}
+
+bind ctrl{,+shift,+alt}-{h,n,e,l} \
+    ~/.wm/scripts/interact/{focus,move,resize}_mac.sh\ {west,south,north,east}
+
+bind ctrl-{i,o,u,y} \
+    ~/bin/yabai-dtop-focus\ {1,2,3,4}
+
+bind ctrl-{1,2,3,4} \
+    ~/bin/yabai-dtop-focus\ {1,2,3,4}
+
+bind ctrl-{i,o,u,y} \
+     'yabai -m window --space '{1,2,3,4}
+
+bind ctrl-{1,2,3,4} \
+     'yabai -m window --space '{1,2,3,4}
+
+# minus: 0x1B
+bind ctrl-{minus} \
+    current=$(osascript -e 'output volume of (get volume settings)'); osascript -e "set volume output volume $((current + 5))"

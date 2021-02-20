@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. ~/.sh.d/environment
+
 # the scripting-addition must be loaded manually if
 # you are running yabai on macOS Big Sur. Uncomment
 # the following line to have the injection performed
@@ -16,17 +18,17 @@
 
 # global settings
 yabai -m config mouse_follows_focus          off
-yabai -m config focus_follows_mouse          autoraise
+yabai -m config focus_follows_mouse          autofocus
 yabai -m config window_placement             second_child
 
-yabai -m config window_topmost               off
+yabai -m config window_topmost               on
 yabai -m config window_shadow                off
 yabai -m config window_opacity               off
 
 yabai -m config window_border                on
 yabai -m config window_border_width          4
 
-yabai -m config active_window_border_color  0xff006f96
+yabai -m config active_window_border_color   0xff006f96
 yabai -m config active_window_border_color   0xff4b4e4f
 yabai -m config normal_window_border_color   0xffcecccd
 yabai -m config insert_feedback_color        0xff0000dd
@@ -34,7 +36,6 @@ yabai -m config insert_feedback_color        0xff0000dd
 yabai -m config split_ratio                  0.50
 yabai -m config auto_balance                 off
 
-# todo later: tryout cmd as the mouse modifier
 yabai -m config mouse_modifier               ctrl
 yabai -m config mouse_action1                move
 yabai -m config mouse_action2                resize
@@ -45,22 +46,14 @@ yabai -m config mouse_drop_action            swap
 # todo: a way to detect first run -- setting the layout retiles everything.
 yabai -m config layout                       bsp
 
-gap=$(theme getval b_window_gap)
-yabai -m config top_padding                  $gap
-yabai -m config bottom_padding               $gap
-yabai -m config left_padding                 $gap
-yabai -m config right_padding                $gap
-yabai -m config window_gap                   $gap
-
-# create desktops:
 if [ "$(yabai -m query --spaces | jq 'length')" -lt 5 ]; then
     for i in $(seq 3); do
 	yabai -m space --create
     done
 fi
 
+# yabai -m space 4 --layout float
 
+# yabai -m rule --add title=emacs_dmenu_frame manage=off
 yabai -m rule --add app=Emacs manage=on
-yabai -m space 4 --layout float
-
 yabai -m rule --add app='System Preferences' manage=off

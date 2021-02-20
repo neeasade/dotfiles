@@ -3,6 +3,7 @@
 query() {
     kind=$1
     key=$2
+    # shift; shift;
 
     if [ -z "$key" ]; then
 	case "$kind" in

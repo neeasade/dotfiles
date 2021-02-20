@@ -33,7 +33,7 @@ settings() {
     # BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
     # BG_COMMAND="${HOME}/.fehbg"
     # BG_COMMAND="${HOME}/.fehbg"
-    BG_COMMAND="hsetroot -solid $(elisp -r '(tarp/get :background :focused)')"
+    # BG_COMMAND="hsetroot -solid $(elisp -r '(tarp/get :background :focused)')"
     # BG_COMMAND="hsetroot -solid $(elisp -r '(-> (tarp/get :assumed) (ct-transform-hsl-l (ct-get-hsl-l (tarp/get :background :weak))))')"
     # BG_COMMAND="feh --bg-tile /tmp/result.png"
 
@@ -46,8 +46,8 @@ settings() {
     # b_normal_border_color=B0A8A6
     # b_normal_border_color=$(colort -t $(lessen 20 $color0))
 
-    b_normal_border_color=$(elisp -r "(ct-shorten (face-attribute 'mode-line-inactive :background))")
-    b_normal_border_color=$(colort -t "$b_normal_border_color")
+    # b_normal_border_color=$(elisp -r "(ct-shorten (face-attribute 'mode-line-inactive :background))")
+    # b_normal_border_color=$(colort -t "$b_normal_border_color")
 
     b_window_gap=14
     # b_window_gap=32
@@ -69,11 +69,6 @@ subscription_rules &"
     # p_gap=$(elisp '(frame-fringe-width)')
     p_gap=0
 
-    p_bg_middle=$(elisp -r "(ct-shorten (face-attribute 'ns/mode-line-middle :background))")
-
-    p_bg_active=$(elisp -r "(ct-shorten (face-attribute 'company-tooltip-selection :background))")
-    p_fg_active=$foreground
-
     # elisp -r "(face-attribute 'region :background)"
 
     # p_bg_middle=$(elisp -r "(face-attribute 'ns/mode-line-inactive :background)")
@@ -94,9 +89,9 @@ subscription_rules &"
     p_line=2
     # p_padding=6
 
-    p_font_main="Charter-14"
     st_font="Go Mono for Powerline-14"
     st_font_variable="Charter-14"
+    p_font_main="Charter-14"
     d_font="Charter 12"
 
     p_font_icon="Font Awesome 5 Free Solid-8"
