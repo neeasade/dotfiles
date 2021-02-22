@@ -67,14 +67,25 @@ env_prompt() {
   changed_vars=$(diff \
                    <(cd; cache_output bash -ic '(set -o posix; set | grep -vE "^(BASH_|COLUMNS|LINES|PWD|OLDPWD|HISTCMD)")') \
                    <((set -o posix; set) | grep -vE '^(BASH|changed_vars|FUNCNAME|PPID|SHLVL|COLUMNS|LINES|PWD|OLDPWD|HISTCMD)') \
-                   | grep '^> ' | sed 's/> //' | grep -oE '^[A-Z]+\=')
+                   | grep '^> ' | sed 's/> //' )
 
-  if [ ! -z "$changed_vars" ]; then
+  changed_vars_caps=$(grep -oE '^[A-Z]+\=' <<< "$changed_vars")
+
+  if [ ! -z "$changed_vars_caps" ]; then
     echo "E "
   fi
 }
 
 envv() {
+  # prompt function runs in subshell so we have to get it again
+  env_prompt >/dev/null
+
+  for v in $changed_vars_caps; do
+    printf '%s%q\n' $v "$(eval "echo \"\${${v}}\"")"
+  done
+}
+
+envv_all() {
   # prompt function runs in subshell so we have to get it again
   env_prompt >/dev/null
 

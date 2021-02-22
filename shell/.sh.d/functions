@@ -1,12 +1,12 @@
 # -*- mode: sh -*-
 
 mark() {
+  # mark a file to be used in a gui later
   if [ -z "$*" ]; then
     echo "mark <file> <file-name (optional)>"
     return
   fi
 
-  # mark a file to be used in a gui later
   target=$(realpath "$1")
   vdo mkdir -p "$HOME/Last_Shot"
   vdo ln -s "$target" "$HOME/Last_Shot/${2:-$(basename "$target")}"
@@ -422,6 +422,15 @@ paths(scalars) as $p
 '
 }
 
-misc-time() {
-  (ns/org-check-casual-time-today)
+qq() {
+  if $MAC; then
+    # todo
+    f_normal=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_normal.json
+    f_colemak=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_normal.json
+    f_status=$HOME/.config/karabiner/karabiner.json
+  else
+    colemak
+  fi
 }
+
+# alias qq=colemak
