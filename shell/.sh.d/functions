@@ -426,8 +426,16 @@ qq() {
   if $MAC; then
     # todo
     f_normal=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_normal.json
-    f_colemak=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_normal.json
+    f_colemak=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_colemakdhk.json
+
     f_status=$HOME/.config/karabiner/karabiner.json
+    current=$(readlink "$f_status")
+
+    case "$current" in
+      $f_normal) rm "$f_status"; vdo ln -s "$f_colemak" "$f_status" ;;
+      $f_colemak) rm "$f_status"; vdo ln -s "$f_normal" "$f_status" ;;
+      *) echo "existing karabiner.json in unknown state!" >&2 ;;
+    esac
   else
     colemak
   fi

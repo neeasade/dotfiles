@@ -1,0 +1,15 @@
+#!/bin/sh
+
+. ~/.sh.d/environment
+
+space=$1
+
+wid=$(yabai -m query --windows --space $space | jq '.[] | .id' | head -n 1)
+
+# note: focusing without switching to space will BRING the window to you
+
+yabai -m space --focus $space
+
+if [ ! -z "$wid" ]; then
+    yabai -m window --focus $wid
+fi
