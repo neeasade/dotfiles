@@ -431,6 +431,11 @@ qq() {
     f_status=$HOME/.config/karabiner/karabiner.json
     current=$(readlink "$f_status")
 
+
+    if [ ! -f "$f_status" ]; then
+      ln -s "$f_colemak" "$f_status"
+    fi
+
     case "$current" in
       $f_normal) rm "$f_status"; vdo ln -s "$f_colemak" "$f_status" ;;
       $f_colemak) rm "$f_status"; vdo ln -s "$f_normal" "$f_status" ;;

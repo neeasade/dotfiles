@@ -2,7 +2,6 @@
 # cf https://notes.neeasade.net/sxhkd-ish.html
 
 # nb: I'm getting some keycodes by searching the label if it's in this list:
-#
 
 bind() {
     args=("$@")
@@ -16,21 +15,57 @@ bind() {
     done
 }
 
-bind ctrl{,+shift,+alt}-{h,n,e,l} \
+cat<<EOF
+# I'm using the fn key as a hyper key because it can be used as a modifier
+# and thus, in combination with other modifiers.
+#
+# the main con is there are some keys that can't be bound with FN, but I happen to not be using them
+# see: https://github.com/koekeishiya/skhd/issues/1
+#
+# karabiner allows this to work, because I have remapped my left command key --> fn
+# in other places, the control key acts as the command key, so I don't have to let them live in harmony.
+
+# This file is generated.
+EOF
+
+bind {,shift+,alt+}fn-{h,n,e,l} \
     ~/.wm/scripts/interact/{focus,move,resize}_mac.sh\ {west,south,north,east}
 
-bind ctrl-{i,o,u,y} \
+bind fn-{i,o,u,y} \
     ~/bin/yabai-dtop-focus\ {1,2,3,4}
 
-bind ctrl-{1,2,3,4} \
+bind fn-{1,2,3,4} \
     ~/bin/yabai-dtop-focus\ {1,2,3,4}
 
-bind ctrl-{i,o,u,y} \
+bind shift+fn-{i,o,u,y} \
      'yabai -m window --space '{1,2,3,4}
 
-bind ctrl-{1,2,3,4} \
+bind fn-{1,2,3,4} \
      'yabai -m window --space '{1,2,3,4}
 
-# minus: 0x1B
-bind ctrl-{minus} \
-    current=$(osascript -e 'output volume of (get volume settings)'); osascript -e "set volume output volume $((current + 5))"
+# minus, equals
+bind fn-{0x1B,0x18} ~/bin/macos-vol\ {subtract,add}\ 5
+
+# semicolon
+bind {,shift+}fn-0x29 'yabai -m space '{'--rotate 90',--balance}
+
+bind fn-0x4C '~/bin/elisp "(ns/spawn-terminal)" || $TERMINAL'
+
+bind fn-f ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+bind fn-t 'SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh'
+
+bind fn-w 'yabai -m window --close'
+
+bind fn-s 'yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2'
+
+# other/todo:
+# shift + fn - h : yabai -m window --warp east
+# shift + fn - a : yabai -m window --move rel:-20:0
+# shift + fn - s : yabai -m window --move rel:0:20
+
+# # toggle sticky(+float), topmost, picture-in-picture
+# # alt - p : yabai -m window --toggle sticky;\
+# #           yabai -m window --toggle topmost;\
+# #           yabai -m window --toggle pip
+
+# # fn + alt - h : yabai -m window --insert west

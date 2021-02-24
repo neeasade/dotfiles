@@ -2,7 +2,6 @@
 
 dir=$1
 
-
 node=$(bspc query -N -n)
 
 case $dir in

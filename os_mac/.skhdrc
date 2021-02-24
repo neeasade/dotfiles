@@ -1,80 +1,47 @@
-# TODO: generate some of this. see the sxhkd-ish post.
+# I'm using the fn key as a hyper key because it can be used as a modifier
+# and thus, in combination with other modifiers.
+#
+# the main con is there are some keys that can't be bound with FN, but I happen to not be using them
+# see: https://github.com/koekeishiya/skhd/issues/1
+#
+# karabiner allows this to work, because I have remapped my left command key --> fn
+# in other places, the control key acts as the command key, so I don't have to let them live in harmony.
 
-# note: I'm swapping stuff -- control is command and command is control
-# that level of binding seems to be 'above' skdhrc, so the names will be flipped here
-
-# focus window
-ctrl - l : ~/.wm/scripts/interact/focus_mac.sh east
-ctrl - h : ~/.wm/scripts/interact/focus_mac.sh west
-ctrl - n : ~/.wm/scripts/interact/focus_mac.sh south
-ctrl - e : ~/.wm/scripts/interact/focus_mac.sh north
-
-# swap managed window
-shift + ctrl - l : yabai -m window --swap east
-shift + ctrl - h : yabai -m window --swap west
-shift + ctrl - n : yabai -m window --swap south
-shift + ctrl - e : yabai -m window --swap north
-
-# todo: what is warp
-# shift + cmd - h : yabai -m window --warp east
-
-# this is the semicolon
-ctrl - 0x29 : yabai -m space --rotate 90
-shift + ctrl - 0x29 : yabai -m space --balance
-
-
-# send window to desktop and follow focus
-ctrl + shift - 1 : yabai -m window --space 1
-ctrl + shift - 2 : yabai -m window --space 2
-ctrl + shift - 3 : yabai -m window --space 3
-ctrl + shift - 4 : yabai -m window --space 4
-
-ctrl - 1 : ~/bin/yabai-dtop-focus 1
-ctrl - 2 : ~/bin/yabai-dtop-focus 2
-ctrl - 3 : ~/bin/yabai-dtop-focus 3
-ctrl - 4 : ~/bin/yabai-dtop-focus 4
-
-ctrl + shift - i : yabai -m window --space 1
-ctrl + shift - o : yabai -m window --space 2
-ctrl + shift - u : yabai -m window --space 3
-ctrl + shift - y : yabai -m window --space 4
-
-ctrl - i : ~/bin/yabai-dtop-focus 1
-ctrl - o : ~/bin/yabai-dtop-focus 2
-ctrl - u : ~/bin/yabai-dtop-focus 3
-ctrl - y : ~/bin/yabai-dtop-focus 4
-
-# yabai -m window --focus "$(yabai -m query --spaces --space 1 | jq -r '."last-window"')" || yabai -m space --focus 1
-ctrl - return : ~/bin/elisp '(ns/spawn-terminal)' || $TERMINAL
-
-# move floating window
-# shift + ctrl - a : yabai -m window --move rel:-20:0
-# shift + ctrl - s : yabai -m window --move rel:0:20
-
-ctrl + alt - l : ~/.wm/scripts/interact/resize_mac.sh east
-ctrl + alt - h : ~/.wm/scripts/interact/resize_mac.sh west
-ctrl + alt - n : ~/.wm/scripts/interact/resize_mac.sh south
-ctrl + alt - e : ~/.wm/scripts/interact/resize_mac.sh north
-
-# set insertion point in focused container
-# ctrl + alt - h : yabai -m window --insert west
-
-ctrl - f : ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
-ctrl - t : SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
-
-ctrl - w : yabai -m window --close
-
-ctrl - tab : ~/bin/yabai-rotate
-ctrl + shift - tab : ~/bin/yabai-rotate REV
-
-# toggle window split type
-# alt - e : yabai -m window --toggle split
-
-# float / unfloat window and center on screen
-# note: grid won't apply on a tiled window
-ctrl - s : yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2
-
-# toggle sticky(+float), topmost, picture-in-picture
-# alt - p : yabai -m window --toggle sticky;\
-#           yabai -m window --toggle topmost;\
-#           yabai -m window --toggle pip
+# This file is generated.
+fn-h : /Users/nathan/.wm/scripts/interact/focus_mac.sh west
+fn-n : /Users/nathan/.wm/scripts/interact/focus_mac.sh south
+fn-e : /Users/nathan/.wm/scripts/interact/focus_mac.sh north
+fn-l : /Users/nathan/.wm/scripts/interact/focus_mac.sh east
+shift+fn-h : /Users/nathan/.wm/scripts/interact/move_mac.sh west
+shift+fn-n : /Users/nathan/.wm/scripts/interact/move_mac.sh south
+shift+fn-e : /Users/nathan/.wm/scripts/interact/move_mac.sh north
+shift+fn-l : /Users/nathan/.wm/scripts/interact/move_mac.sh east
+alt+fn-h : /Users/nathan/.wm/scripts/interact/resize_mac.sh west
+alt+fn-n : /Users/nathan/.wm/scripts/interact/resize_mac.sh south
+alt+fn-e : /Users/nathan/.wm/scripts/interact/resize_mac.sh north
+alt+fn-l : /Users/nathan/.wm/scripts/interact/resize_mac.sh east
+fn-i : /Users/nathan/bin/yabai-dtop-focus 1
+fn-o : /Users/nathan/bin/yabai-dtop-focus 2
+fn-u : /Users/nathan/bin/yabai-dtop-focus 3
+fn-y : /Users/nathan/bin/yabai-dtop-focus 4
+fn-1 : /Users/nathan/bin/yabai-dtop-focus 1
+fn-2 : /Users/nathan/bin/yabai-dtop-focus 2
+fn-3 : /Users/nathan/bin/yabai-dtop-focus 3
+fn-4 : /Users/nathan/bin/yabai-dtop-focus 4
+shift+fn-i : yabai -m window --space 1
+shift+fn-o : yabai -m window --space 2
+shift+fn-u : yabai -m window --space 3
+shift+fn-y : yabai -m window --space 4
+fn-1 : yabai -m window --space 1
+fn-2 : yabai -m window --space 2
+fn-3 : yabai -m window --space 3
+fn-4 : yabai -m window --space 4
+fn-0x1B : /Users/nathan/bin/macos-vol subtract 5
+fn-0x18 : /Users/nathan/bin/macos-vol add 5
+fn-0x29 : yabai -m space --rotate 90
+shift+fn-0x29 : yabai -m space --balance
+fn-0x4C : ~/bin/elisp "(ns/spawn-terminal)" || $TERMINAL
+fn-f : /Users/nathan/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+fn-t : SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+fn-w : yabai -m window --close
+fn-s : yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2

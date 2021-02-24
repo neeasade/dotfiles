@@ -36,7 +36,7 @@ yabai -m config insert_feedback_color        0xff0000dd
 yabai -m config split_ratio                  0.50
 yabai -m config auto_balance                 off
 
-yabai -m config mouse_modifier               ctrl
+yabai -m config mouse_modifier               fn
 yabai -m config mouse_action1                move
 yabai -m config mouse_action2                resize
 yabai -m config mouse_drop_action            swap

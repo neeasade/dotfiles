@@ -15,7 +15,7 @@ do_monocle_padded() {
   # yaboi padding $(theme getval x_padding)
   yaboi padding $(theme getval b_window_gap)
   # yaboi padding 0
-  yaboi config window_border off
+  # yaboi config window_border off
   yaboi toggle window zoom-fullscreen true
 }
 
@@ -32,7 +32,7 @@ do_monocle_slim() {
   # yaboi config top_padding 0
   # yaboi config bottom_padding 0
 
-  yaboi config window_border off
+  # yaboi config window_border off
   yaboi toggle window zoom-fullscreen true
 }
 
@@ -40,7 +40,7 @@ do_fullscreen() {
   # native fullscreen cancels out skhd bindings and generally just acts.. weird.
   yaboi padding 0
   yaboi toggle window zoom-fullscreen true
-  yabai -m config window_border off
+  # yabai -m config window_border off
 }
 
 do_tiled() {

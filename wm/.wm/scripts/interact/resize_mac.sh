@@ -13,15 +13,16 @@ dir=$1
 # get rectangle property of origin node, floating or tiling (x,y,width,height)
 originalNode=$(bspc query -N -n)
 dim() {
-  bspc query -T -n $originalNode | jq ".rectangle.$1"
+  yaboi query window
+  bspc query -T -n $originalNode | jq ".frame.$1"
 }
 
 # set fall back, and target window property.
 case $dir in
-  west)  dir=left;   fallDir=right;  targetProp=width;  queryDir=x; op="min"; sign=-;;
-  east)  dir=right;  fallDir=left;   targetProp=width;  queryDir=x; op="max"; sign=+;;
-  north) dir=top;    fallDir=bottom; targetProp=height; queryDir=y; op="min"; sign=-;;
-  south) dir=bottom; fallDir=top;    targetProp=height; queryDir=y; op="max"; sign=+;;
+  west)  dir=left;   fallDir=right;  targetProp=w;  queryDir=x; op="min"; sign=-;;
+  east)  dir=right;  fallDir=left;   targetProp=w;  queryDir=x; op="max"; sign=+;;
+  north) dir=top;    fallDir=bottom; targetProp=h; queryDir=y; op="min"; sign=-;;
+  south) dir=bottom; fallDir=top;    targetProp=h; queryDir=y; op="max"; sign=+;;
   *) exit 1;;
 esac
 
