@@ -440,15 +440,17 @@ qq() {
       $f_normal)
         # WE ARE ON THE LAPTOP
         rm "$f_status"
+        vdo ln -s "$f_colemak" "$f_status"
         $HOME/.dotfiles/os_mac/skhdrc_gen arst > $HOME/.skhdrc
         # use this when using external qwerty keyboard:
         # $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
-        vdo ln -s "$f_colemak" "$f_status"
+        skhd --reload
         ;;
       $f_colemak)
         rm "$f_status"
-        $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
         vdo ln -s "$f_normal" "$f_status"
+        $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
+        skhd --reload
         ;;
       *) echo "existing karabiner.json in unknown state!" >&2 ;;
     esac
