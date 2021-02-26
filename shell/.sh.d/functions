@@ -429,16 +429,27 @@ qq() {
     f_colemak=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_colemakdhk.json
 
     f_status=$HOME/.config/karabiner/karabiner.json
-    current=$(readlink "$f_status")
-
 
     if [ ! -f "$f_status" ]; then
-      ln -s "$f_colemak" "$f_status"
+      ln -s "$f_normal" "$f_status"
     fi
 
+    current=$(readlink "$f_status")
+
     case "$current" in
-      $f_normal) rm "$f_status"; vdo ln -s "$f_colemak" "$f_status" ;;
-      $f_colemak) rm "$f_status"; vdo ln -s "$f_normal" "$f_status" ;;
+      $f_normal)
+        # WE ARE ON THE LAPTOP
+        rm "$f_status"
+        $HOME/.dotfiles/os_mac/skhdrc_gen arst > $HOME/.skhdrc
+        # use this when using external qwerty keyboard:
+        # $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
+        vdo ln -s "$f_colemak" "$f_status"
+        ;;
+      $f_colemak)
+        rm "$f_status"
+        $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
+        vdo ln -s "$f_normal" "$f_status"
+        ;;
       *) echo "existing karabiner.json in unknown state!" >&2 ;;
     esac
   else

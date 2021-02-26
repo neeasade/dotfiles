@@ -74,10 +74,7 @@ config() {
 }
 
 padding() {
-    config top_padding $1
-    config bottom_padding $1
-    config left_padding $1
-    config right_padding $1
+    yabai -m space --padding abs:$1:$1:$1:$1
 }
 
 "$@"

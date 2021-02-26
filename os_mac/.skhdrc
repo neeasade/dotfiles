@@ -8,40 +8,43 @@
 # in other places, the control key acts as the command key, so I don't have to let them live in harmony.
 
 # This file is generated.
-fn-h : /Users/nathan/.wm/scripts/interact/focus_mac.sh west
-fn-n : /Users/nathan/.wm/scripts/interact/focus_mac.sh south
-fn-e : /Users/nathan/.wm/scripts/interact/focus_mac.sh north
-fn-l : /Users/nathan/.wm/scripts/interact/focus_mac.sh east
-shift+fn-h : /Users/nathan/.wm/scripts/interact/move_mac.sh west
-shift+fn-n : /Users/nathan/.wm/scripts/interact/move_mac.sh south
-shift+fn-e : /Users/nathan/.wm/scripts/interact/move_mac.sh north
-shift+fn-l : /Users/nathan/.wm/scripts/interact/move_mac.sh east
-alt+fn-h : /Users/nathan/.wm/scripts/interact/resize_mac.sh west
-alt+fn-n : /Users/nathan/.wm/scripts/interact/resize_mac.sh south
-alt+fn-e : /Users/nathan/.wm/scripts/interact/resize_mac.sh north
-alt+fn-l : /Users/nathan/.wm/scripts/interact/resize_mac.sh east
-fn-i : /Users/nathan/bin/yabai-dtop-focus 1
-fn-o : /Users/nathan/bin/yabai-dtop-focus 2
-fn-u : /Users/nathan/bin/yabai-dtop-focus 3
-fn-y : /Users/nathan/bin/yabai-dtop-focus 4
+
+fn-m : /Users/nathan/.wm/scripts/interact/focus_mac.sh west
+fn-j : /Users/nathan/.wm/scripts/interact/focus_mac.sh south
+fn-k : /Users/nathan/.wm/scripts/interact/focus_mac.sh north
+fn-u : /Users/nathan/.wm/scripts/interact/focus_mac.sh east
+shift+fn-m : /Users/nathan/.wm/scripts/interact/move_mac.sh west
+shift+fn-j : /Users/nathan/.wm/scripts/interact/move_mac.sh south
+shift+fn-k : /Users/nathan/.wm/scripts/interact/move_mac.sh north
+shift+fn-u : /Users/nathan/.wm/scripts/interact/move_mac.sh east
+alt+fn-m : /Users/nathan/.wm/scripts/interact/resize_mac.sh west
+alt+fn-j : /Users/nathan/.wm/scripts/interact/resize_mac.sh south
+alt+fn-k : /Users/nathan/.wm/scripts/interact/resize_mac.sh north
+alt+fn-u : /Users/nathan/.wm/scripts/interact/resize_mac.sh east
+fn-l : /Users/nathan/bin/yabai-dtop-focus 1
+fn-0x29 : /Users/nathan/bin/yabai-dtop-focus 2
+fn-i : /Users/nathan/bin/yabai-dtop-focus 3
+fn-o : /Users/nathan/bin/yabai-dtop-focus 4
 fn-1 : /Users/nathan/bin/yabai-dtop-focus 1
 fn-2 : /Users/nathan/bin/yabai-dtop-focus 2
 fn-3 : /Users/nathan/bin/yabai-dtop-focus 3
 fn-4 : /Users/nathan/bin/yabai-dtop-focus 4
-shift+fn-i : yabai -m window --space 1
-shift+fn-o : yabai -m window --space 2
-shift+fn-u : yabai -m window --space 3
-shift+fn-y : yabai -m window --space 4
+shift+fn-l : yabai -m window --space 1
+shift+fn-0x29 : yabai -m window --space 2
+shift+fn-i : yabai -m window --space 3
+shift+fn-o : yabai -m window --space 4
 fn-1 : yabai -m window --space 1
 fn-2 : yabai -m window --space 2
 fn-3 : yabai -m window --space 3
 fn-4 : yabai -m window --space 4
 fn-0x1B : /Users/nathan/bin/macos-vol subtract 5
 fn-0x18 : /Users/nathan/bin/macos-vol add 5
-fn-0x29 : yabai -m space --rotate 90
-shift+fn-0x29 : yabai -m space --balance
+fn-p : yabai -m space --rotate 90
+shift+fn-p : yabai -m space --balance
 fn-0x4C : ~/bin/elisp "(ns/spawn-terminal)" || $TERMINAL
-fn-f : /Users/nathan/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
-fn-t : SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+fn-e : /Users/nathan/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+fn-f : SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
 fn-w : yabai -m window --close
-fn-s : yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2
+fn-d : yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2
+fn-tab : /Users/nathan/bin/yabai-rotate 
+shift+fn-tab : /Users/nathan/bin/yabai-rotate REV

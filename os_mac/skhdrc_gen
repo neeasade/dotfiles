@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
-# cf https://notes.neeasade.net/sxhkd-ish.html
+# context for the templating https://notes.neeasade.net/sxhkd-ish.html
 
-# nb: I'm getting some keycodes by searching the label if it's in this list:
+# ok so... on the macbook LAPTOP keyboard when you use fn + a key it sends it's OG code,
+# while on an EXTERNAL keyboard it sends the intended map.
+# the remapping I've got going on below allows me to use colemak-dhk skhd bindings while on the go on my laptop
+
+a=a b=b c=c d=d e=e f=f g=g h=h i=i j=j k=k l=l m=m n=n o=o p=p q=q r=r s=s t=t u=u v=v w=w x=x y=y z=z
+semicolon=0x29
+
+if [ ! -z "$*" ]; then
+    a=a z=b d=c s=d f=e t=f g=g k=h u=i n=j e=k i=l h=m m=n y=o
+    semicolon=p
+    o=0x29
+    q=q p=r r=s b=t l=u v=v w=w c=x j=y x=z
+fi
 
 bind() {
+    (
     args=("$@")
     for i in $(seq 0 "$(( (${#args[@]} / 2) - 1 ))"); do
 	key=${args[$i]}
@@ -13,6 +26,7 @@ bind() {
 
 	printf "%s : %s\n" "$key" "$val"
     done
+    )
 }
 
 cat<<EOF
@@ -26,18 +40,19 @@ cat<<EOF
 # in other places, the control key acts as the command key, so I don't have to let them live in harmony.
 
 # This file is generated.
+
 EOF
 
-bind {,shift+,alt+}fn-{h,n,e,l} \
+bind {,shift+,alt+}fn-{$h,$n,$e,$l} \
     ~/.wm/scripts/interact/{focus,move,resize}_mac.sh\ {west,south,north,east}
 
-bind fn-{i,o,u,y} \
+bind fn-{$i,$o,$u,$y} \
     ~/bin/yabai-dtop-focus\ {1,2,3,4}
 
 bind fn-{1,2,3,4} \
     ~/bin/yabai-dtop-focus\ {1,2,3,4}
 
-bind shift+fn-{i,o,u,y} \
+bind shift+fn-{$i,$o,$u,$y} \
      'yabai -m window --space '{1,2,3,4}
 
 bind fn-{1,2,3,4} \
@@ -46,17 +61,18 @@ bind fn-{1,2,3,4} \
 # minus, equals
 bind fn-{0x1B,0x18} ~/bin/macos-vol\ {subtract,add}\ 5
 
-# semicolon
-bind {,shift+}fn-0x29 'yabai -m space '{'--rotate 90',--balance}
+bind {,shift+}fn-$semicolon 'yabai -m space '{'--rotate 90',--balance}
 
 bind fn-0x4C '~/bin/elisp "(ns/spawn-terminal)" || $TERMINAL'
 
-bind fn-f ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
-bind fn-t 'SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh'
+bind fn-$f ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
+bind fn-$t 'SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh'
 
-bind fn-w 'yabai -m window --close'
+bind fn-$w 'yabai -m window --close'
 
-bind fn-s 'yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2'
+bind fn-$s 'yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2'
+
+bind {,shift+}fn-tab ~/bin/yabai-rotate\ {,REV}
 
 # other/todo:
 # shift + fn - h : yabai -m window --warp east

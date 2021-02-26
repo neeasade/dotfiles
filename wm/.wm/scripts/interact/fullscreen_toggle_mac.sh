@@ -1,20 +1,16 @@
 #!/bin/sh
-# swap between fake fullscreen modes as monocle mode
-# this is so we can enjoy fake padding in fullscreen things (and account for panel presence)
+# enact window modes
+
 # todo: this script assumes that gaps are always what you want.
+# macos native fullscreen cancels out skhd bindings and generally just acts.. weird -- prefer zoom-fullscreen everywhere.
 
 # todo: figure out skhd environment
 . $HOME/.sh.d/environment
 
 # possible modes
 do_monocle_padded() {
+  yaboi padding $(theme getval x_padding)
 
-  # native fullscreen cancels out skhd bindings and generally just acts.. weird.
-  # yabai -m window --toggle native-fullscreen
-
-  # yaboi padding $(theme getval x_padding)
-  yaboi padding $(theme getval b_window_gap)
-  # yaboi padding 0
   # yaboi config window_border off
   yaboi toggle window zoom-fullscreen true
 }
@@ -22,22 +18,16 @@ do_monocle_padded() {
 do_monocle_slim() {
   mon_width=$(yaboi query display | jq .frame.w)
   percent=$(theme getval b_monocle_window_percent)
-  monocle_pad_width=$(bb "(/ (- $mon_width (* 0${percent} ${mon_width})) 2)")
+  monocle_pad_width=$(bb "(int (Math/floor (/ (- $mon_width (* 0${percent} ${mon_width})) 2)))")
 
-  yaboi config left_padding $monocle_pad_width
-  yaboi config right_padding $monocle_pad_width
-
-  yaboi config top_padding $(theme getval b_window_gap)
-  yaboi config bottom_padding $(theme getval b_window_gap)
-  # yaboi config top_padding 0
-  # yaboi config bottom_padding 0
+  yabai -m space --padding abs:0:0:${monocle_pad_width}:${monocle_pad_width}
 
   # yaboi config window_border off
+  # yabai -m config active_window_border_color   0xff$(theme getval background)
   yaboi toggle window zoom-fullscreen true
 }
 
 do_fullscreen() {
-  # native fullscreen cancels out skhd bindings and generally just acts.. weird.
   yaboi padding 0
   yaboi toggle window zoom-fullscreen true
   # yabai -m config window_border off
@@ -48,14 +38,20 @@ do_tiled() {
   gap=$(theme getval b_window_gap)
   yaboi padding $gap
   yaboi config window_gap $gap
-  yaboi config window_border on
+  # yaboi config window_border on
 }
-
 state=nop
 yaboi toggle window floating false
 
 # current_gap=$(yaboi config window_gap)
-current_padding=$(yaboi config left_padding)
+# current_padding=$(yaboi config left_padding)
+# current_gap=$(yaboi query display)
+
+# there isn't a way to get display gap? only global gap, which might be different
+mon_width=$(yaboi query display | jq .frame.w)
+win_width=$(yaboi query window | jq .frame.w)
+current_padding=$((mon_width - win_width))
+
 zoomed=$(yaboi queryprint window zoom-fullscreen)
 
 if $zoomed && test "$current_padding" -eq "0"; then
