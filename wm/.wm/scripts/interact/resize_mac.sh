@@ -1,70 +1,26 @@
 #!/bin/sh
-# depends on: jq, bc, bspc
-# resize windows or groups of windows in bspwm.
-# (percent of current monitor resolution to resize)
 
-~/bin/notify-send "resize called"
-exit 0
+. $HOME/.sh.d/environment
 
 percent=5
 dir=$1
 
-
-# get rectangle property of origin node, floating or tiling (x,y,width,height)
-originalNode=$(bspc query -N -n)
-dim() {
-  yaboi query window
-  bspc query -T -n $originalNode | jq ".frame.$1"
-}
-
-# set fall back, and target window property.
 case $dir in
-  west)  dir=left;   fallDir=right;  targetProp=w;  queryDir=x; op="min"; sign=-;;
-  east)  dir=right;  fallDir=left;   targetProp=w;  queryDir=x; op="max"; sign=+;;
-  north) dir=top;    fallDir=bottom; targetProp=h; queryDir=y; op="min"; sign=-;;
-  south) dir=bottom; fallDir=top;    targetProp=h; queryDir=y; op="max"; sign=+;;
+  west)  dir=left;   fallDir=right;  targetProp=w; op="min"; sign=-;;
+  east)  dir=right;  fallDir=left;   targetProp=w; op="max"; sign=+;;
+  north) dir=top;    fallDir=bottom; targetProp=h; op="min"; sign=-;;
+  south) dir=bottom; fallDir=top;    targetProp=h; op="max"; sign=+;;
   *) exit 1;;
 esac
 
-# if we're focused on a group of nodes, select a window within, leaning towards our desired direction.
-# bspc query -N -n focused.\!window > /dev/null && targetNode=$(bspc query -T -n | jq "[recurse(.[]?) | objects | select(has(\"id\") and .client!=null)] | ${op}_by(.rectangle.$queryDir).id")
-targetNode=${targetNode:-focused}
+moveArgs="$sign$(echo "$percent/100*$(yaboi query display | jq .frame.$targetProp)" | bc -l | awk -F. '{print $1}')"
+[ $targetProp = "h" ] && moveArgs="0:$moveArgs" || moveArgs="$moveArgs:0"
 
-# set move args
-moveArgs="$sign$(echo "$percent/100*$(bspc query -T -m | jq .rectangle.$targetProp)" | bc -l)"
-[ $targetProp = "height" ] && moveArgs="0 $moveArgs" || moveArgs="$moveArgs 0"
-
-
-bspc config pointer_follows_focus true
-
-# note current state, initial move attempt.
-beforeVal=$(dim $targetProp)
-bspc node $targetNode -z $dir $moveArgs
-
-
-# if we're floating, this is all that is needed.
-if bspc query -N -n focused.floating; then
-  bspc node -f
-  bspc config pointer_follows_focus false
+if yaboi query window floating; then
+  yabai -m window --resize $dir:$moveArgs
   exit 0
 fi
 
-# if we weren't successful, try resizing the other way
-[ "$beforeVal" = "$(dim $targetProp)" ] && bspc node $targetNode -z $fallDir $moveArgs
+yabai -m window --resize $dir:$moveArgs || \
+  yabai -m window --resize $fallDir:$moveArgs
 
-if [ "$beforeVal" = "$(dim $targetProp)" ]; then
-  # undo our wrong resize
-  bspc node $targetNode -z $fallDir $(echo $moveArgs | tr +- -+) &
-
-  # attempt to jump the other direction and push into the node
-  case $dir in
-    left)   targetNode=east;;
-    right)  targetNode=west;;
-    top)    targetNode=south;;
-    bottom) targetNode=north;;
-  esac
-  bspc node $targetNode -z $dir $moveArgs
-fi
-
-bspc node -f
-bspc config pointer_follows_focus false
