@@ -109,7 +109,7 @@ PAGER=less
 # fi
 
 NODE_PATH="$HOME/.npm-packages/lib/node_modules"
-pathmunge "$HOME/.npm-packages/bin"
+succ ".npm-packages/bin"
 
 GEM_HOME="$HOME/.gem"
 BUNDLE_PATH="$HOME/.gem"
@@ -139,14 +139,18 @@ fi
 
 set +a
 
-cur_shell=$(ps | grep $$ | sed 's/^.* //')
-cur_shell=${cur_shell##*/}
+if $REMOTE; then
+  # nb: this is really slow -- that's why we have the below alternative for local.
+  cur_shell=$(ps | grep $$ | awk '{print $NF}')
+else
+  cur_shell=$(ps -o comm= -p $PPID)
+fi
 
 if has direnv; then
   eval "$(direnv hook $cur_shell)"
 fi
 
-if ! has update_terminal_cwd; then
+if $MAC && ! has update_terminal_cwd; then
   # macos
   update_terminal_cwd() {
     if [ $TERM = dumb ]; then

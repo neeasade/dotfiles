@@ -9,10 +9,10 @@ case $node_dir in
   south) dir=y; sign=-lt; emacs_dir=down ;;
 esac
 
-looking_at=$(jget -r app "$(yabai -m query --windows --window)")
+looking_at=$(yaboi query window | jq -r .app)
 
 if [ "$looking_at" = "Emacs" ]; then
-  if timeout 0.2 elisp "(evil-window-$emacs_dir 1) t"; then
+  if timeout 0.2 elisp "(evil-window-${emacs_dir} 1) t"; then
     exit 0
   fi
 fi

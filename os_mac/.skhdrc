@@ -48,3 +48,4 @@ fn-w : yabai -m window --close
 fn-d : yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2
 fn-tab : /Users/nathan/bin/yabai-rotate 
 shift+fn-tab : /Users/nathan/bin/yabai-rotate REV
+fn-space : /Users/nathan/.wm/scripts/interact/dmenu_switcher_mac.sh

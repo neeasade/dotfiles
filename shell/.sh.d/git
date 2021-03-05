@@ -101,9 +101,9 @@ gtest() {
   fi
 }
 
-alias ggpull='git pull origin $(git_current_branch)'
+alias ggpull='vdo git pull origin $(git_current_branch)'
 
-alias ggpush='git push origin $(git_current_branch)'
+alias ggpush='vdo git push origin $(git_current_branch)'
 alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'
 alias gpsup='git push --set-upstream origin $(git_current_branch)'
 alias ghh='git help'

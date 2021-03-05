@@ -74,6 +74,8 @@ bind fn-$s 'yabai -m window --toggle float; yabai -m window --grid 4:4:1:1:2:2'
 
 bind {,shift+}fn-tab ~/bin/yabai-rotate\ {,REV}
 
+bind fn-space $HOME/.wm/scripts/interact/dmenu_switcher_mac.sh
+
 # other/todo:
 # shift + fn - h : yabai -m window --warp east
 # shift + fn - a : yabai -m window --move rel:-20:0

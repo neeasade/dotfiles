@@ -5,7 +5,9 @@ case $(uname) in
     # sort of limited - only taking one argument.
     case "$*" in
 	DUNST_*) ;;
-	*) /usr/bin/osascript -e "display notification \"$*\""
+	*)
+	    # elisp "(alert \"${*}\" )"
+	    /usr/bin/osascript -e "display notification \"$*\""
 	;;
     esac
     ;;
