@@ -9,10 +9,9 @@
 
 # possible modes
 do_monocle_padded() {
-  yaboi padding $(theme getval x_padding)
-
   # yaboi config window_border off
   yaboi toggle window zoom-fullscreen true
+  yaboi padding $(theme getval x_padding)
 }
 
 do_monocle_slim() {
@@ -20,16 +19,16 @@ do_monocle_slim() {
   percent=$(theme getval b_monocle_window_percent)
   monocle_pad_width=$(bb "(int (Math/floor (/ (- $mon_width (* 0${percent} ${mon_width})) 2)))")
 
-  yabai -m space --padding abs:0:0:${monocle_pad_width}:${monocle_pad_width}
 
   # yaboi config window_border off
   # yabai -m config active_window_border_color   0xff$(theme getval background)
   yaboi toggle window zoom-fullscreen true
+  yabai -m space --padding abs:0:0:${monocle_pad_width}:${monocle_pad_width}
 }
 
 do_fullscreen() {
-  yaboi padding 0
   yaboi toggle window zoom-fullscreen true
+  yaboi padding 0
   # yabai -m config window_border off
 }
 
