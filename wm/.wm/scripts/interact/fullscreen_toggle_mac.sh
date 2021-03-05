@@ -1,17 +1,15 @@
 #!/bin/sh
 # enact window modes
 
-# todo: this script assumes that gaps are always what you want.
 # macos native fullscreen cancels out skhd bindings and generally just acts.. weird -- prefer zoom-fullscreen everywhere.
 
-# todo: figure out skhd environment
 . $HOME/.sh.d/environment
 
 # possible modes
 do_monocle_padded() {
   # yaboi config window_border off
-  yaboi toggle window zoom-fullscreen true
   yaboi padding $(theme getval x_padding)
+  yaboi toggle window zoom-fullscreen true
 }
 
 do_monocle_slim() {
@@ -89,3 +87,6 @@ fi
 echo after: $state
 echo do_$state
 do_$state
+
+# Wherever you go, there you are.
+yaboi window focus $(yaboi query window id)

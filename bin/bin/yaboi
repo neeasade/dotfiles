@@ -73,6 +73,13 @@ config() {
     fi
 }
 
+window() {
+    kind=$1
+    shift
+    echo yabai -m window --$kind "$@"
+    yabai -m window --$kind "$@"
+}
+
 padding() {
     yabai -m space --padding abs:$1:$1:$1:$1
 }

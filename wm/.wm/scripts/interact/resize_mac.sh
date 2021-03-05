@@ -17,10 +17,9 @@ moveArgs="$sign$(echo "$percent/100*$(yaboi query display | jq .frame.$targetPro
 [ $targetProp = "h" ] && moveArgs="0:$moveArgs" || moveArgs="$moveArgs:0"
 
 if yaboi query window floating; then
-  yabai -m window --resize $dir:$moveArgs
+  yaboi window resize $dir:$moveArgs
   exit 0
 fi
 
-yabai -m window --resize $dir:$moveArgs || \
-  yabai -m window --resize $fallDir:$moveArgs
-
+yaboi window resize $dir:$moveArgs || \
+  yaboi window resize $fallDir:$moveArgs
