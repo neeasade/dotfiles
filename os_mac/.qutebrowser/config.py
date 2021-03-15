@@ -1,1 +1,1 @@
-../.config/qutebrowser/config.py
+../../qutebrowser/.config/qutebrowser/config.py
