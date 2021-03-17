@@ -1,4 +1,6 @@
 # -*- mode: sh -*-
+# this script is kind of special -- it may be sourced by outside scripts to get a world bearing.
+
 set -a
 
 pathmunge () {
@@ -9,8 +11,14 @@ pathmunge () {
   fi
 }
 
+path_remove() {
+  PATH=${PATH//":$1:"/":"} # middle
+  PATH=${PATH/#"$1:"/}     # beginning
+  PATH=${PATH/%":$1"/}     # end
+}
+
 succ() {
-  pathmunge "$HOME/$@"
+  pathmunge "$HOME/$*"
 }
 
 XDG_CONFIG_HOME=$HOME/.config
@@ -37,7 +45,6 @@ pathmunge "/Applications/BitBar.app/Contents/MacOS/"
 # somehow the space in the path here screws everything in other places
 # pathmunge "/Applications/Google Chrome.app/Contents/MacOS/"
 
-
 silent() {
   "$@" >/dev/null 2>&1
 }
@@ -62,6 +69,21 @@ iif() {
   printf '%s' "$res"
 }
 
+set_system () {
+    MAC=false
+    WINDOWS=false
+    LINUX=false
+
+    eval $*=true
+}
+
+case "$(uname)" in
+    *MINGW*) set_system WINDOWS ;;
+    *MSYS*) set_system WINDOWS ;;
+    *Darwin*) set_system MAC ;;
+    *) set_system LINUX;;
+esac
+
 set_editor() {
   export EDITOR="$@"
   export GIT_EDITOR="$@"
@@ -69,8 +91,6 @@ set_editor() {
 }
 set_editor vim
 
-WINDOWS=$(iif "[ ! -n $(uname | awk '$1 ~ /MINGW|MSYS/ {print $1}') ]")
-MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
 
 # less status line
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
@@ -80,7 +100,7 @@ FILEBROWSER=thunar
 VIEW_PDF=zathura
 
 if [ -z "$TERMINAL" ]; then
-  for t in git-bash xst urxvt iterm2; do
+  for t in git-bash xst urxvt kitty iterm2; do
     if has $t; then
       TERMINAL=$t
       break
@@ -88,7 +108,6 @@ if [ -z "$TERMINAL" ]; then
   done
 fi
 
-# default
 GTK_THEME=${GTK_THEME:-adwaita}
 SXHKD_SHELL=sh
 MPDCRON_DIR="$HOME/.config/mpd"
@@ -99,12 +118,12 @@ PAGER=less
 
 # if has npm; then
 #   if has cache_output; then
-#     day="$(expr 60 \* 60 \* 24)"
-#     NODE_PATH="$(cache_output $day npm root -g)"
-#     PATH="$PATH:$(cache_output $day npm bin -g)"
+#     day=$((60 * 60 * 24))
+#     NODE_PATH=$(cache_output $day npm root -g)
+#     pathmunge "$(cache_output $day npm bin -g)"
 #   else
-#     NODE_PATH="$(npm root -g)"
-#     PATH="$PATH:$(npm bin -g)"
+#     NODE_PATH=$(npm root -g)
+#     pathmunge "$(npm bin -g)"
 #   fi
 # fi
 
@@ -139,30 +158,3 @@ fi
 
 set +a
 
-if $REMOTE; then
-  # nb: this is really slow -- that's why we have the below alternative for local.
-  cur_shell=$(ps | grep $$ | awk '{print $NF}')
-else
-  cur_shell=$(ps -o comm= -p $PPID)
-fi
-
-if has direnv; then
-  eval "$(direnv hook $cur_shell)"
-fi
-
-if $MAC && ! has update_terminal_cwd; then
-  # macos
-  update_terminal_cwd() {
-    if [ $TERM = dumb ]; then
-      return
-    fi
-
-    # Identify the directory using a "file:" scheme URL,
-    # including the host name to disambiguate local vs.
-    # remote connections. Percent-escape spaces.
-    local SEARCH=' '
-    local REPLACE='%20'
-    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
-    printf '\e]7;%s\a' "$PWD_URL"
-  }
-fi

@@ -34,6 +34,8 @@ in {
   environment.systemPackages =
     (with stable; [
       socat
+      kitty
+      # valgrind
 
       # sulami's
       adoptopenjdk-hotspot-bin-8
@@ -50,6 +52,7 @@ in {
       emacsMacport
       # emacs
       fd
+      fzf
       fira-code
       git
       gnupg
@@ -58,6 +61,7 @@ in {
       isync
       # iterm2
       jq
+      yq
       leiningen
       miller
       msmtp
@@ -105,6 +109,7 @@ in {
 
       # ARST caffeine
 
+      # moreutils
       dep
       tldr
 
@@ -130,13 +135,14 @@ in {
       nmap
       # p7zip
       parallel
-      # pipenv
+      pipenv
       pstree
 
       (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
       requests
       toml
+      dateutil
 
       # please do the needful
       setuptools
@@ -158,13 +164,14 @@ in {
       yamllint
       youtube-dl
       coreutils
+      imagemagick
 
+      pandoc
     ]) ++ (with unstable; [
 
     ]) ++ (with edge; [
-      pandoc
-    ]) ++ (with expr; [
-      pb-git
+    # ]) ++ (with expr; [
+      # pb-git
     ]);
 
 

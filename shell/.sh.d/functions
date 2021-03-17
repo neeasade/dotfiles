@@ -235,20 +235,6 @@ cursorStyle() {
   printf "%b%s" "\e[${index} q"
 }
 
-gitupdate() {
-  cur_dir=$(pwd)
-
-  # Find all git repositories and update it to the master latest revision
-  for i in $(find . -name ".git" | cut -c 3-); do
-    echo "$i";
-    cd "$i";
-    cd ..;
-
-    git pull origin $(git rev-parse --abbrev-ref HEAD);
-    cd $cur_dir
-  done
-}
-
 # Change to root of git repo
 groot() {
   if git status &> /dev/null; then
@@ -257,6 +243,23 @@ groot() {
     echo "Error: Not a git repository"
     return 128
   fi
+}
+
+# go up until you find something
+cdu() {
+  start=$PWD
+  look=${*:-project.clj}
+  while ! [ -f "$look" ] && ! [ -d "$look" ]; do
+    cd ..
+    if [ "$PWD" = "/" ]; then
+      echo "not found, reached /"
+      vdo cd "$start"
+      return 1
+    fi
+  done
+
+  pwd
+  return 0
 }
 
 # nix query
@@ -370,7 +373,7 @@ gset() {
       g_conf "$name" "$email"
       ;;
     adhoc)
-      name="$(getent passwd "$USER" | cut -d ':' -f 5 | sed 's/,//g')"
+      name=$(getent passwd "$USER" | cut -d ':' -f 5 | sed 's/,//g')
       g_conf "${name:-$USER}" "${USER}@$(hostname).machine"
       ;;
     *)
@@ -459,4 +462,19 @@ qq() {
   fi
 }
 
-# alias qq=colemak
+if $MAC && ! has update_terminal_cwd; then
+  # macos
+  update_terminal_cwd() {
+    if [ $TERM = dumb ]; then
+      return
+    fi
+
+    # Identify the directory using a "file:" scheme URL,
+    # including the host name to disambiguate local vs.
+    # remote connections. Percent-escape spaces.
+    local SEARCH=' '
+    local REPLACE='%20'
+    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}"
+    printf '\e]7;%s\a' "$PWD_URL"
+  }
+fi

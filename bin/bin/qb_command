@@ -1,5 +1,5 @@
 #!/bin/sh
-# ($_url is any command)
+# qutebrowser ipc
 # note: qute will request focus when you use this
 # disable in bspwm with:
 # bspc config ignore_ewmh_focus false
@@ -12,6 +12,13 @@ _qb_version='1.0.4'
 _proto_version=1
 _ipc_socket="${XDG_RUNTIME_DIR}/qutebrowser/ipc-$(echo -n "$USER" | md5sum | cut -d' ' -f1)"
 _url=$@
+
+. "$HOME/.sh.d/environment"
+
+if $MAC; then
+    # cache time here is arbitrary
+    _ipc_socket=$(cache_output $((60 * 60)) fd 'i-' /private/var/folders | awk '/qutebrowser/{print $0; exit}')
+fi
 
 send_cmd() {
     wew=$*

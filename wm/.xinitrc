@@ -2,11 +2,13 @@
 
 . $HOME/.sh.d/environment
 
-xrdb -load $HOME/.Xresources
-wmname LG3D
-xsetroot -cursor_name left_ptr
-theme refresh bg
-xbright
+if $LINUX; then
+    xrdb -load $HOME/.Xresources
+    wmname LG3D
+    xsetroot -cursor_name left_ptr
+    theme refresh bg
+    xbright
+fi
 
 export xstart=$(date +%s)
 

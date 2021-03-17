@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # switch between 'things'
 
+. $HOME/.sh.d/environment
+
 set -a
 
 declare -A matches_to_actions
@@ -97,15 +99,14 @@ add_historys() {
 
 add_tabs() {
     open_titles() {
-        session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
-        sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
+        qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
     }
 
     # user by add_meta as well
     qute_switch_to() {
         title=$*
         qb_meta_open
-        qb_command ":buffer $title"
+        qb_command ":tab-select $title"
     }
 
     while read -r url title; do
@@ -119,84 +120,23 @@ add_tags() {
     done < <(btags state-raw | bb -o '(->> *input* :tags (map :name))')
 }
 
-# playing around
-# idea: meta history that opens up new dmenu with qutebrowser browsing history from sqlite
-# idea: find a current window with shell on vps or spawn one
-# idea: org headings
+# playing around, ideas:
+# - limit tabs to domain -- IE only search for github tabs
+# - search against open github issues/prs you have
+# - jump to jira stuff (get from org-jira?)
 add_metas() {
-    find_url() {
-        url_match=$*
-        session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
-        open_urls=$(sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1].url')
-        if echo "$open_urls" | grep "$url_match"; then
-              qute_switch_to "$url_match"
-        else
-            $BROWSER "$url_match"
-        fi
-    }
+    # issue here -- slack title changes a lot -- want to just use one title partial match, 'Slack |'
+    add_switch "meta: slack" "qb_meta_open '$(pass slack/url)'"
 
-    dmenu_exec() {
-        save_file="$HOME/.dmenu_exec_history"
-        choice=$(cat "$save_file" | sort | uniq | dmenu)
-        echo "$choice" >> "$save_file"
-        sh -c "$choice"
-    }
+    # dmenu_exec() {
+    #     save_file="$HOME/.dmenu_exec_history"
+    #     choice=$(cat "$save_file" | sort | uniq | dmenu)
+    #     echo "$choice" >> "$save_file"
+    #     sh -c "$choice"
+    # }
 
-    add_switch "meta: exec" "dmenu_exec"
-
-    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
-    add_switch "meta: telegram" "find_url 'https://web.telegram.org/'"
-    add_switch "meta: twitter" "find_url 'https://twitter.com/'"
-    add_switch "meta: nixers" "find_url 'https://nixers.net/'"
-
-    find_steam() {
-        if pgrep steam; then
-              # seems to be constant
-              select_action "window: Steam"
-        else
-            steam
-        fi
-    }
-
-    add_switch "meta: steam" "find_steam"
-
-    find_pavucontrol() {
-        find_class pavucontrol || pavucontrol
-    }
-
-    add_switch "meta: pavucontrol" "find_pavucontrol"
-
-    find_last_irc_ping() {
-        echo todo
-    }
-
-    add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
-
-    for o in now playlist artist del; do
-  add_switch "meta: music $o" "music $o"
-    done
-
-    add_switch "meta: mpv resume" "mpv_resume"
-
-    netflix() {
-        google-chrome-stable netflix.com
-        find_class "google-chrome"
-    }
-
-    add_switch "meta: netflix" "netflix"
-
-    hulu() {
-        google-chrome-stable hulu.com
-        find_class "google-chrome"
-    }
-
-    add_switch "meta: hulu" "hulu"
-    add_switch "meta: stalonetray" "bash -ic 'stalonetray'"
-
-    while read -r option; do
-  add_switch "meta: sound switch $(cut -d, -f1 <<< "$option")" "$(cut -d, -f2 <<< "$option")"
-    done <<< $(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
-                     <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
+    # add_switch "meta: exec" "dmenu_exec"
+    # add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
 }
 
 select_action() {
@@ -223,10 +163,10 @@ enact() {
     echo FEEDER_PID=$$
 
     if [ -z "$*" ]; then
-          # add_metas
+          add_metas
           # add_tags
           add_windows
-          # add_tabs
+          add_tabs
           add_emacss
           # add_historys | sort | uniq
     else

@@ -43,7 +43,7 @@ git_prompt() {
       git rev-parse --short HEAD 2> /dev/null || \
       echo 'unknown')"
 
-  if [ "$g_branch" = "master" ]; then
+  if [ "$g_branch" = "master" ] || [ "$g_branch" = "main" ]; then
     if [ ! -z "${g_status}" ]; then
       echo "${g_status} "
     fi

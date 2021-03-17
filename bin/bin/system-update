@@ -7,6 +7,11 @@ usage() {
 
 sudo echo yeet >/dev/null # so we and all our subshells get it
 
+if ${MAC:-false}; then
+    darwin-rebuild switch
+    exit $?
+fi
+
 channel=$(sudo nix-channel --list | sed 's#https://nixos.org/channels/nixos-##')
 echo "channel: $channel"
 

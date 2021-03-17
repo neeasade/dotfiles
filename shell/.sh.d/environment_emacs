@@ -1,37 +1,22 @@
 # -*- mode: sh -*-
+
+cur_shell=$(ps | grep $$ |  sed 's/^.* //')
+cur_shell="${cur_shell##*/}"
+
+if has direnv; then
+  eval "$(direnv hook $cur_shell)"
+fi
+
+# ESHELL meaning shell-mode in emacs
 ESHELL=$(iif '[ -n "$INSIDE_EMACS" ] && [ "$TERM" = "dumb" ]')
 
 if ! "$ESHELL"; then
   ESHELL=$(iif '$REMOTE && [ "$TERM" = "dumb" ]')
 fi
 
-if [ -z "$cur_shell" ]; then
-  cur_shell=$(ps | grep $$ |  sed 's/^.* //')
-  cur_shell="${cur_shell##*/}"
-fi
+if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
 
-path_remove() {
-  PATH=${PATH//":$1:"/":"} # middle
-  PATH=${PATH/#"$1:"/}     # beginning
-  PATH=${PATH/%":$1"/}     # end
-}
-
-to_term() {
-  target=$1
-  shift
-  echo "${target} () {
-    term $target \"\$@\"
-  }"
-}
-
-# if emacs is non-responsive, blow past it.
-emacs_timeout=$(iif 'has timeout' 'timeout 1' '')
-
-# todo: tramp emacsclient?
-[ "$cur_shell" = "zsh" ] && setopt SH_WORD_SPLIT
-if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)"; then
-  [ "$cur_shell" = "zsh" ] && unsetopt SH_WORD_SPLIT
-
+  succ .emacs.d/scripts
   eclient="emacsclient"
 
   if $WINDOWS; then
@@ -40,19 +25,9 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
 
   set_editor "$eclient"
 
-  succ .emacs.d/scripts
-  export PAGER="epager"
-
   less() {
     epager
   }
-
-  # npm interfaces like to use cursor movement sometimes
-  for yeet in vim htop nethack cava npm iotop; do
-    if has $yeet; then
-      eval "$(to_term $yeet)"
-    fi
-  done
 
   sxhkd() {
     pgrep sxhkd >/dev/null && pkill sxhkd
@@ -65,19 +40,35 @@ if $ESHELL && ! $REMOTE && silent $emacs_timeout emacsclient --eval "(progn t)";
   }
 
   clear() {
-    elisp "(run-at-time 0 nil 'comint-clear-buffer)" >/dev/null
+    silent elisp "(run-at-time 0 nil 'comint-clear-buffer)"
   }
 
   term() {
-    # elisp '(ns/shell-exec-dontcare (getenv "TERMINAL"))'
     if [ -z "$*" ]; then
       $TERMINAL
     else
       # $TERMINAL -e "$@"
       # todo: cosider saving all stderr stdout somewhere
+      # todo: mac handling
+      echo "$TERMINAL -e sh -c '$@; echo; echo command finished.; read pause' "
       eval "$TERMINAL -e sh -c '$@; echo; echo command finished.; read pause' "
     fi
   }
+
+  to_term() {
+    target=$1
+    shift
+    echo "${target} () {
+    term $target \"\$@\"
+  }"
+  }
+
+  # npm interfaces like to use cursor movement sometimes
+  for yeet in vim htop nethack cava npm iotop; do
+    if has $yeet; then
+      eval "$(to_term $yeet)"
+    fi
+  done
 
   # alias sudo='sudo PS1=$PS1 PAGER=$PAGER'
   # todo: sudo alias that can pass along PAGER var

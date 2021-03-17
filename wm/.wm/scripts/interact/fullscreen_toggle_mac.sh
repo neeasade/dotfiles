@@ -1,6 +1,14 @@
 #!/bin/sh
 # enact window modes
 
+# todo future settings:
+# getopt
+# get the current state
+# set a desired state
+
+# rotate state:
+#   optionally set trim mode rotation
+
 # macos native fullscreen cancels out skhd bindings and generally just acts.. weird -- prefer zoom-fullscreen everywhere.
 
 . $HOME/.sh.d/environment
@@ -61,7 +69,12 @@ else
   state=tiled
 fi
 
-# rotate
+if [ ! -z "$*" ]; then
+  # get
+  echo $state
+  exit 0
+fi
+
 echo before: $state
 
 if [ -z "$SLIM" ]; then
@@ -82,7 +95,6 @@ else
     fullscreen) state=tiled ;;
   esac
 fi
-
 
 echo after: $state
 echo do_$state

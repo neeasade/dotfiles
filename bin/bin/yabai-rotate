@@ -12,9 +12,9 @@ if [ ! -z "$*" ]; then
     wids=$(tac <<< "$wids")
 fi
 
-wid=$(yaboi query window | jq .id)
+current=$(yaboi query window | jq .id)
 
-next=$(awk "/${wid}/{getline; print; exit 0}" <<< "$wids")
+next=$(awk "/${current}/{getline; print; exit 0}" <<< "$wids")
 
 echo yabai -m window --focus $next
 yabai -m window --focus $next

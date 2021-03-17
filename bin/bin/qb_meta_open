@@ -1,16 +1,12 @@
 #!/bin/sh
 # switch to tab with $url or open $url
 # if no url found, goto or open qutebrowser window
-# todo: consider basename domain vs fullname comparison
 
 url=$1
 
-# domain=
-# domain=$(echo "$url" | awk -F/ '{print $3}')
+. "${HOME}/.sh.d/environment"
 
 focus_qb_window() {
-    MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
-
     if $MAC; then
        return
     fi
@@ -35,7 +31,6 @@ vanilla() {
     if [ -z "$url" ]; then
 	if ! pgrep qutebrowser; then
 	    # wayland, force software render
-	    # todo: add a check
 	    if [ -z "$WAYLAND_DISPLAY" ]; then
 		qutebrowser
 	    else
@@ -63,13 +58,13 @@ if [ -z "$url" ]; then
 fi
 
 # this is probably more like xdg-open logic
-if echo "$url" | grep -qE "youtu.be|youtube.com"; then
-    # there is a delay before window launch, so let me know now:
-    notify-send "launching in MPV"
-    # todo: this isn't teneble unless you copy to clip or something as well, to share I think
-    mpv "$url"
-    exit 0
-fi
+# if echo "$url" | grep -qE "youtu.be|youtube.com"; then
+#     # there is a delay before window launch, so let me know now:
+#     notify-send "launching in MPV"
+#     # todo: this isn't teneble unless you copy to clip or something as well, to share I think
+#     mpv "$url"
+#     exit 0
+# fi
 
 if echo "$url" | grep -qE "bandcamp.com"; then
     # if qutebrowser gets mpris support this can go away
@@ -77,20 +72,19 @@ if echo "$url" | grep -qE "bandcamp.com"; then
     exit 0
 fi
 
-session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
-
 # all the open urls (last in history is the current viewed thing)
-if ! sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | .url' | grep -q "$url"; then
+if ! qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | .url' | grep -q "$url"; then
     vanilla
 fi
 
-# do the same thing as above, but compare the url, grabbing the title
-matching_title=$(sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | select(.url == "'"${url}"'") | .title' | head -n 1)
+# do the same thing as above, but compare the url, grabbing the title (we use title text to switch to tab)
+# matching_title=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | select(.url == "'"${url}"'") | .title' | head -n 1)
+matching_title=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | select(.url | startswith("'"${url}"'")) | .title' | head -n 1)
 
 if [ -z "$matching_title" ]; then
     echo no found title
     vanilla
 fi
 
-qb_command ":buffer $matching_title"
+qb_command ":tab-select $matching_title"
 focus_qb_window

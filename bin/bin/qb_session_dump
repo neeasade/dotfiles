@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -z "$MAC" ]; then
+    . "${HOME}/.sh.d/environment"
+fi
+
+if $MAC; then
+    session_file="${HOME}/Library/Application Support/qutebrowser/sessions/_autosave.yml"
+else
+    session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
+fi
+
+# the delete is because yq/jq can't handle geometry type (bytes)
+cat "$session_file" | bb -io '(as-> *input* it (str/join "\n" it) (str/replace it #"!!binary \|(\n[ ]{4}[a-zA-Z0-9]+){1,2}" ""))'

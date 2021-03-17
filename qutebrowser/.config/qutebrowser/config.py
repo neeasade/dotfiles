@@ -28,10 +28,11 @@ c.completion.scrollbar.width = 10
 c.tabs.position = 'top'
 c.tabs.show = 'multiple'
 c.tabs.indicator.width = 0
-c.tabs.title.format = '{current_title}'
+c.tabs.title.format = '{audio}{current_title}'
 c.tabs.title.alignment = 'center'
 c.downloads.position = 'bottom'
-c.tabs.favicons.show = 'never'
+# c.tabs.favicons.show = 'never'
+c.tabs.favicons.show = 'always'
 
 # behavior
 c.downloads.location.prompt = False
@@ -90,8 +91,6 @@ theme = {
         'completion': 'monospace',
         'completion_size': 9,
         'tab_bold': False,
-        'tab_size': 11,
-        'status_size': 9,
     },
     'colors': {
         'bg': {
@@ -206,6 +205,7 @@ font_height = 19 # -- measured on a 'ph' qute title in pinta for test theme
 surround = round((theme['panel']['height'] - font_height) / 2)
 c.tabs.padding = makePadding(surround, surround, 8, 8)
 c.tabs.indicator.padding = makePadding(0, 0, 0, 0)
+c.statusbar.padding = makePadding(4, 4, 0, 0)
 
 # fonts
 fonts = theme['fonts']
@@ -216,6 +216,9 @@ def GetSize(fontType):
 
 tabFont = GetSize('tab') + fonts['tabbar']
 
+# placement matters: bold handling:
+c.fonts.hints = 'bold {0}'.format(tabFont)
+
 if fonts['tab_bold']:
     tabFont = 'bold {0}'.format(tabFont)
 
@@ -224,6 +227,8 @@ if fonts['tab_bold']:
 # next stable qutebrowser version:
 c.fonts.tabs.selected = tabFont
 c.fonts.tabs.unselected = tabFont
+
+c.hints.radius = 0
 
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 c.fonts.statusbar = GetSize('completion') + fonts['completion']

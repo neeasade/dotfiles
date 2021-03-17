@@ -101,8 +101,7 @@ add_historys() {
 
 add_tabs() {
     open_titles() {
-	session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
-	sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
+	qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
     }
 
     # user by add_meta as well
@@ -130,8 +129,7 @@ add_tags() {
 add_metas() {
     find_url() {
 	url_match=$*
-	session_file="${HOME}/.local/share/qutebrowser/sessions/_autosave.yml"
-	open_urls=$(sed -E '/^  geometry/,+2d' "$session_file" | yq -r '.windows[0].tabs[] | .history[-1].url')
+	open_urls=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1].url')
 	if echo "$open_urls" | grep "$url_match"; then
 	    qute_switch_to "$url_match"
 	else
