@@ -421,7 +421,6 @@ qq() {
     fi
 
     current=unknown
-
     if silent diff "$f_status" "$f_normal"; then
       current=$f_normal
     elif silent diff "$f_status" "$f_colemak"; then
@@ -441,7 +440,7 @@ qq() {
       $f_colemak)
         rm "$f_status"
         vdo cp "$f_normal" "$f_status"
-        $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
+        skhdrc-gen > $HOME/.skhdrc
         skhd --reload
         ;;
       *) echo "existing karabiner.json in unknown state!" >&2 ;;
