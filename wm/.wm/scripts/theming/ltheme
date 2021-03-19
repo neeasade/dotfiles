@@ -3,8 +3,6 @@
 
 # todo: this script should also handle font checking against fc-list
 
-# setup:
-
 # relative calling
 cd $(dirname $([ -L $0 ] && readlink -f $0 || echo $0))
 export PATH="$PATH:$(pwd)"
@@ -121,7 +119,9 @@ load_xresources() {
 	fi
     fi
 
-    xrdb $HOME/.Xresources
+    if type xrdb >/dev/null 2>&1; then
+	xrdb $HOME/.Xresources
+    fi
 
     load_xst
 }
@@ -131,7 +131,9 @@ load_emacs() {
 }
 
 load_xst() {
-    pkill -x --signal USR1 xst
+    if type xst >/dev/null 2>&1; then
+	pkill -x --signal USR1 xst
+    fi
 }
 
 load_bspwm() {

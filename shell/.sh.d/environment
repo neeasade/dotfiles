@@ -74,7 +74,7 @@ set_system () {
     WINDOWS=false
     LINUX=false
 
-    eval $*=true
+    export $*=true
 }
 
 case "$(uname)" in

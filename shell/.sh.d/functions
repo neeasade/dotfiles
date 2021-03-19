@@ -314,36 +314,20 @@ extract() {      # Handy Extract Program
   fi
 }
 
-# manpages with colors
-man() {
-  settitle "$* - manual"
-  # removing standout means find highlights stay inverted..
-  #LESS_TERMCAP_so=$(printf '\e[38;5;246m') \
-
-  env LESS_TERMCAP_mb=$(printf '\e[01;31m') \
-      LESS_TERMCAP_md=$(printf '\e[01;38;5;74m') \
-      LESS_TERMCAP_me=$(printf '\e[0m') \
-      LESS_TERMCAP_se=$(printf '\e[0m') \
-      LESS_TERMCAP_ue=$(printf '\e[0m') \
-      LESS_TERMCAP_us=$(printf '\e[04;38;5;146m') \
-      man "$@"
-
-  defaulttitle
-}
-
-less() {
-  settitle "$* - less"
-  og less "$@"
-  defaulttitle
-}
-
 dotadd() {
+  echo stowo $(iif $MAC os_mac bin)
   file=$(find ~/bin | fzf) || return
   file=$(basename "$file")
-  echo mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
-  mv "$HOME/bin/$file" "$HOME/.dotfiles/bin/bin/$file"
-  (cd "$HOME/.dotfiles/bin/bin/"; git add "$file")
-  stowo bin
+
+  binpath="$HOME/.dotfiles/bin/bin/"
+  if $MAC; then
+    binpath="$HOME/.dotfiles/os_mac/bin/"
+  fi
+
+  vdo mv "$HOME/bin/$file" "$binpath/$file"
+  (cd "$binpath"; git add "$file")
+
+  echo stowo $(iif $MAC os_mac bin)
 }
 
 passadd() {
@@ -427,31 +411,36 @@ paths(scalars) as $p
 
 qq() {
   if $MAC; then
-    # todo
     f_normal=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_normal.json
     f_colemak=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_colemakdhk.json
 
     f_status=$HOME/.config/karabiner/karabiner.json
 
     if [ ! -f "$f_status" ]; then
-      ln -s "$f_normal" "$f_status"
+      cp "$f_normal" "$f_status"
     fi
 
-    current=$(readlink "$f_status")
+    current=unknown
+
+    if silent diff "$f_status" "$f_normal"; then
+      current=$f_normal
+    elif silent diff "$f_status" "$f_colemak"; then
+      current=$f_colemak
+    fi
 
     case "$current" in
       $f_normal)
         # WE ARE ON THE LAPTOP
         rm "$f_status"
-        vdo ln -s "$f_colemak" "$f_status"
-        $HOME/.dotfiles/os_mac/skhdrc_gen arst > $HOME/.skhdrc
+        vdo cp "$f_colemak" "$f_status"
+        skhdrc-gen laptop > $HOME/.skhdrc
         # use this when using external qwerty keyboard:
-        # $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
+        # skdhrc-gen > $HOME/.skhdrc
         skhd --reload
         ;;
       $f_colemak)
         rm "$f_status"
-        vdo ln -s "$f_normal" "$f_status"
+        vdo cp "$f_normal" "$f_status"
         $HOME/.dotfiles/os_mac/skhdrc_gen > $HOME/.skhdrc
         skhd --reload
         ;;

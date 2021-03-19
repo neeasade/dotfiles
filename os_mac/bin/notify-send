@@ -1,0 +1,10 @@
+#!/bin/sh
+
+case "$*" in
+    # hide dunst notifications (this wrapper use used away)
+    DUNST_*) ;;
+    *)
+	# elisp "(alert \"${*}\" )"
+	/usr/bin/osascript -e "display notification \"$*\""
+	;;
+esac

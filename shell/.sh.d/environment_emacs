@@ -25,6 +25,7 @@ if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
 
   set_editor "$eclient"
 
+  export PAGER=epager
   less() {
     epager
   }
@@ -36,7 +37,9 @@ if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
   }
 
   man() {
-    elisp "(woman \"$*\") (require 'man) (Man-cleanup-manpage)"
+    elisp "(man \"$*\") (ns/find-or-open \"*Man ${*}*\") (require 'man) (Man-cleanup-manpage)"
+
+    # elisp "(woman \"$*\") (require 'man) (Man-cleanup-manpage)"
   }
 
   clear() {

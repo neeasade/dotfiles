@@ -126,7 +126,7 @@ add_tags() {
 # - jump to jira stuff (get from org-jira?)
 add_metas() {
     # issue here -- slack title changes a lot -- want to just use one title partial match, 'Slack |'
-    add_switch "meta: slack" "qb_meta_open '$(pass slack/url)'"
+    add_switch "meta: slack" "qb_meta_open '$(cache_output $((60 60 24)) pass slack/url)'"
 
     # dmenu_exec() {
     #     save_file="$HOME/.dmenu_exec_history"

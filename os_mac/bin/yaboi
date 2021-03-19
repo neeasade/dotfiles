@@ -16,6 +16,7 @@ query() {
 
     # return true or false for yabai state in queries
     # (it's a 0 or 1 in yabai's world)
+    # result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
     result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
 
     case "$result" in
