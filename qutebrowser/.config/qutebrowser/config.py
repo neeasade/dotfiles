@@ -85,27 +85,38 @@ nmap('d', d_sync)
 
 # default theme:
 theme = {
-    'panel': {'height': 25,},
+    'panel': {
+        'height': 22,
+    },
+
     'fonts': {
         'tabbar': 'monospace',
         'completion': 'monospace',
-        'completion_size': 9,
+        'completion_size': 13,
         'tab_bold': False,
+        'tab_size': 14,
+        'status_size': 13,
     },
+
     'colors': {
         'bg': {
-            'normal': '#FAFAFA',
-            'active': '#E4E4E4',
-            'inactive': '#FAFAFA',
+            'normal': '#e9eced',
+            'weak': '#d8d9da',
+            'strong': '#cecccd',
+            'focused': '#a9d2ef',
         },
+
         'fg': {
-            'normal': '#546E7A',
-            'active': '#546E7A',
-            'inactive': '#546E7A',
-            'match': '#18323E', # completion and hints
+            'normal': '#454849',
+            'weak': '#3c3d3e',
+            'strong': '#363435',
+            'focused': '#003855',
+
+            'match': '#006f96', # completion and hints
         },
     }
 }
+
 
 # import templated theme when file exists
 themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
@@ -136,6 +147,7 @@ def colorSync(colortype, setting):
         setToFG(colortype, setting + '.fg')
         setToBG(colortype, setting + '.bg')
 
+# normal, weak, strong, focused
 targets = {
     'normal' : [
         'statusbar.normal',
@@ -148,9 +160,17 @@ targets = {
 
         'tabs.even',
         'tabs.odd',
+
+        # prev: weak
+        'completion.scrollbar',
+        'downloads.start',
+        'messages.info',
+        'completion.fg',
+        'completion.odd.bg',
+        'completion.even.bg',
     ],
 
-    'active' : [
+    'focused' : [
         'tabs.selected.even',
         'tabs.selected.odd',
         'statusbar.insert',
@@ -166,16 +186,17 @@ targets = {
 
         'completion.item.selected.border.top',
         'completion.item.selected.border.bottom',
+
     ],
 
-    'inactive': [
-        'completion.scrollbar',
-        'downloads.start',
-        'messages.info',
-        'completion.fg',
-        'completion.odd.bg',
-        'completion.even.bg',
-    ],
+    # 'weak': [
+    #     'completion.scrollbar',
+    #     'downloads.start',
+    #     'messages.info',
+    #     'completion.fg',
+    #     'completion.odd.bg',
+    #     'completion.even.bg',
+    # ],
 
     'match': [
         'completion.match.fg',
@@ -187,7 +208,7 @@ for colortype in targets:
     for target in targets[colortype]:
         colorSync(colortype, target)
 
-setToFG('active', 'statusbar.progress.bg')
+setToFG('focused', 'statusbar.progress.bg')
 
 config.set('hints.border', '1px solid ' + colors['fg']['normal'])
 

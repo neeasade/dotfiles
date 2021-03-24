@@ -16,16 +16,19 @@ theme = {
 
     'colors': {
         'bg': {
-            'normal': '#{{p_bg_normal}}',
-            'active': '#{{p_bg_active}}',
-            'inactive': '#{{p_bg_inactive}}',
+            'normal': '#{{e_background_normal}}',
+            'weak': '#{{e_background_weak}}',
+            'strong': '#{{e_background_strong}}',
+            'focused': '#{{e_background_focused}}',
         },
 
         'fg': {
-            'normal': '#{{p_fg_normal}}',
-            'active': '#{{p_fg_active}}',
-            'inactive': '#{{p_fg_inactive}}',
-            'match': '#{{p_icon}}', # completion and hints
+            'normal': '#{{e_foreground_normal}}',
+            'weak': '#{{e_foreground_weak}}',
+            'strong': '#{{e_foreground_strong}}',
+            'focused': '#{{e_foreground_focused}}',
+
+            'match': '#{{e_alt_normal}}', # completion and hints
         },
     }
 }
