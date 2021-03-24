@@ -37,14 +37,6 @@ succ .local/bin
 
 succ git/Pye-Menu/result/bin
 
-# gross
-pathmunge "/run/current-system/Applications/Emacs.app/Contents/MacOS/"
-pathmunge "/Applications/iterm.app/contents/macos"
-pathmunge "/Applications/BitBar.app/Contents/MacOS/"
-
-# somehow the space in the path here screws everything in other places
-# pathmunge "/Applications/Google Chrome.app/Contents/MacOS/"
-
 silent() {
   "$@" >/dev/null 2>&1
 }
@@ -84,13 +76,24 @@ case "$(uname)" in
     *) set_system LINUX;;
 esac
 
+if $MAC; then
+  add_macapp() {
+    pathmunge "/run/current-system/Applications/${*}/Contents/MacOS/"
+    pathmunge "/Applications/${*}/contents/MacOS"
+  }
+
+  add_macapp Emacs.app
+  add_macapp iTerm.app
+  add_macapp BitBar.app
+  add_macapp xbar.app
+fi
+
 set_editor() {
   export EDITOR="$@"
   export GIT_EDITOR="$@"
   export SVN_EDITOR="$@"
 }
 set_editor vim
-
 
 # less status line
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
