@@ -9,7 +9,12 @@ case $node_dir in
   south) dir=y; sign=-lt; emacs_dir=down ;;
 esac
 
-looking_at=$(yaboi query window | jq -r .app)
+if ! looking_at=$(yaboi query window); then
+  # we failed to see what we were looking at. assume it's a fullscreen emacs window
+  looking_at=Emacs
+else
+  looking_at=$(echo "$looking_at" | jq -r .app)
+fi
 
 if [ "$looking_at" = "Emacs" ]; then
   if timeout 0.2 elisp "(evil-window-${emacs_dir} 1) t"; then
