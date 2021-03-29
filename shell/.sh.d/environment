@@ -48,6 +48,7 @@ has() {
 vdo() {
     echo "$*"
     "$@"
+    return $?
 }
 
 # duplication with ~/bin/iif is intentional
