@@ -211,7 +211,7 @@ monshot() {
 
 settitle() {
   $ESHELL && return
-  printf "%b%s" "\033]0;$*\a"
+  printf "%b" "\033]0;$*\a"
 }
 
 defaulttitle() {
@@ -249,17 +249,37 @@ groot() {
 cdu() {
   start=$PWD
   look=${*:-project.clj}
-  while ! [ -f "$look" ] && ! [ -d "$look" ]; do
+  while ! (test -f "$look" || test -d "$look"); do
     cd ..
     if [ "$PWD" = "/" ]; then
-      echo "not found, reached /"
-      vdo cd "$start"
+      echo "not found, reached /" >&2
+      cd "$start"
+      pwd
       return 1
     fi
   done
 
   pwd
   return 0
+}
+
+kondo() {
+  (
+  # fd . | clj-kondo --config .clj-kondo/config.edn --lint -
+  vdo cdu .clj-kondo
+
+  # doing this way because I don't trust the splitting of:
+  # clj-kondo .. --lint "$(fd -e clj)"
+
+  while read -r file; do
+    res=$(clj-kondo --config .clj-kondo/config.edn --lint "$file" 2>&1)
+    res_line=$(tail -n 1 <<< "$res")
+    if ! grep -q "errors: 0, warnings: 0" <<< "$res_line"; then
+      printf '%s\n\n' "$res"
+    fi
+  done < <(fd -e clj)
+  # done < <(fd -e clj "$start")
+  )
 }
 
 # nix query
@@ -448,6 +468,12 @@ qq() {
   else
     colemak
   fi
+}
+
+# kitty escc testing
+escc() {
+  # printf "\e\[=1u" >/dev/tty
+  printf "%b" "\033]${*}u" >/dev/tty
 }
 
 if $MAC && ! has update_terminal_cwd; then

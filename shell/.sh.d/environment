@@ -82,6 +82,7 @@ if $MAC; then
     pathmunge "/Applications/${*}/contents/MacOS"
   }
 
+  add_macapp Slack.app
   add_macapp Emacs.app
   add_macapp iTerm.app
   add_macapp BitBar.app

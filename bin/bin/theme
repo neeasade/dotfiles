@@ -11,19 +11,20 @@ die() {
 
 cache_env() {
   # if elisp t >/dev/null; then
+  mkdir -p "$HOME/.cache/rice"
   notify-send "recache!"
-  bash -c "$(get); declare -px >/tmp/loaded_theme.sh"
-  # bash -ic "$(get); envv_all | grep -oE '^[A-Z_]+\=' >/tmp/loaded_theme.sh"
+  bash -c "$(get); declare -px >$HOME/.cache/rice/loaded_theme.sh"
+  # bash -ic "$(get); envv_all | grep -oE '^[A-Z_]+\=' >$HOME/.cache/rice/loaded_theme.sh"
   # fi
 }
 
 getval() {
     (
-	if [ ! -f /tmp/loaded_theme.sh ]; then
+	if [ ! -f $HOME/.cache/rice/loaded_theme.sh ]; then
 	    cache_env
 	fi
 
-	. /tmp/loaded_theme.sh
+	. $HOME/.cache/rice/loaded_theme.sh
 	eval eval printf \"%s\" '\"\$$1\"'
     )
 }

@@ -8,6 +8,8 @@ usage() {
 sudo echo yeet >/dev/null # so we and all our subshells get it
 
 if ${MAC:-false}; then
+    brew upgrade
+    brew upgrade --cask
     darwin-rebuild switch
     exit $?
 fi

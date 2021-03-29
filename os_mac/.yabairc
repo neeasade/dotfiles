@@ -58,3 +58,4 @@ fi
 yabai -m rule --add app=Emacs manage=on
 yabai -m rule --add app='System Preferences' manage=off
 yabai -m rule --add app=choose manage=off
+yabai -m rule --add title=emacs_dmenu_frame manage=off
