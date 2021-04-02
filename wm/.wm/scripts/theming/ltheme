@@ -101,7 +101,7 @@ load_bg() {
     $BG_COMMAND
 }
 
-# also loads xst, emacs
+# also loads xst
 load_xresources() {
     trim_alphas
 
@@ -124,10 +124,6 @@ load_xresources() {
     fi
 
     load_xst
-}
-
-load_emacs() {
-    elisp '(ns/style)'
 }
 
 load_xst() {
@@ -485,11 +481,14 @@ load_btag_borders() {
   (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
 }
 
-if uname | grep -q MINGW; then
-    # windows
-    targets=${*:-mintty mpd_windows tmux}
-else
+. "$HOME/.sh.d/environment"
+
+if $MAC; then
+    targets=${*:-tmux xresources qutebrowser}
+elif $LINUX; then
     targets=${*:-picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu zeal btag_borders}
+elif $WINDOWS; then
+    targets=${*:-mintty mpd_windows tmux}
 fi
 
 IFS=" "
