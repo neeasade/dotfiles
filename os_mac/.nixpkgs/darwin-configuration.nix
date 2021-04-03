@@ -104,7 +104,7 @@ in {
 
       # avrdude
       # aws-vault
-      # awscli
+      awscli2
       # borkdude/brew/clj-kondo
 
       # ARST caffeine

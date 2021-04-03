@@ -78,19 +78,6 @@ case "$(uname)" in
     *) set_system LINUX;;
 esac
 
-if $MAC; then
-  add_macapp() {
-    pathmunge "/run/current-system/Applications/${*}/Contents/MacOS/"
-    pathmunge "/Applications/${*}/contents/MacOS"
-  }
-
-  add_macapp Slack.app
-  add_macapp Emacs.app
-  add_macapp iTerm.app
-  add_macapp BitBar.app
-  add_macapp xbar.app
-fi
-
 set_editor() {
   export EDITOR="$@"
   export GIT_EDITOR="$@"
@@ -142,6 +129,19 @@ GOPATH="$HOME/.go"
 
 if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
   . $HOME/.nix-profile/etc/profile.d/nix.sh;
+fi
+
+if $MAC; then
+  add_macapp() {
+    pathmunge "/run/current-system/Applications/${*}/Contents/MacOS/"
+    pathmunge "/Applications/${*}/contents/MacOS"
+  }
+
+  add_macapp Slack.app
+  add_macapp Emacs.app
+  add_macapp iTerm.app
+  add_macapp BitBar.app
+  add_macapp xbar.app
 fi
 
 REMOTE=false

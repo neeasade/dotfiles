@@ -17,7 +17,8 @@ query() {
     # return true or false for yabai state in queries
     # (it's a 0 or 1 in yabai's world)
     # result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
-    result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
+    # result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
+    result=$(yabai -m query --${kind}s --${kind} | jq -r .$key)
 
     case "$result" in
 	1) exit 0 ;;
@@ -44,7 +45,7 @@ toggle() {
     want=$3
 
     have=$(queryprint $kind $prop)
-    prop=$(echo "$prop" | sed 's/floating/float/')
+    prop=$(sed 's/floating/float/' <<< "$prop")
 
     if [ ! "$want" = "$have" ]; then
 	echo yabai -m $kind --toggle $prop $want

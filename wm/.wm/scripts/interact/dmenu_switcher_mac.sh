@@ -16,65 +16,31 @@ add_switch() {
 }
 
 add_windows() {
-    reveal_window() {
-        wid=$1
-        yabai -m window --focus $wid
-    }
-
-    while read -r wid; do
-  read -r title
-  add_switch "window: $title" "reveal_window $wid"
-    done < <(yaboi query windows | jq -r '.[] | .id, .title')
+    while read -r wid title; do
+  add_switch "window: $title" "yaboi window focus $wid"
+    done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + .app)')
 }
 
 # this is silly, and intentional.
 add_emacss() {
-    find_emacs_window() {
-        emacs_wid=
-        check_id() {
-            wid=$1
-            if [ ! -z "$emacs_wid" ]; then
-                  return 0
-            fi
-
-            if yabai -m query --windows --window $wid | jq -r .app | grep Emacs; then
-                  emacs_wid=$wid
-                  return 0
-            fi
-            return 1
-        }
-
-        check_id $(bspc query -N -n)
-        for wid in $(yaboi query windows | jq -r '.[] | .id'); do
-      check_id $wid && break
-        done
-
-        if [ -z "$emacs_wid" ]; then
-              elisp '(ns/spawn-terminal)'
-              check_id $(bspc query -N -n)
-        fi
-
-        bspc node -f $emacs_wid
-    }
-
     emacs_find_file() {
-        find_emacs_window
+        find_class emacs || elisp '(ns/spawn-terminal)'
         elisp "(find-file \"${*}\")"
     }
 
     emacs_find_buffer() {
-        find_emacs_window
+        find_class emacs || elisp '(ns/spawn-terminal)'
         elisp "(-> \"${*}\" get-buffer switch-to-buffer)"
     }
 
     IFS=$'\n'
-    buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
+    buffers=$(elisp -r '(ns/make-lines (append (ns/jump-file-candidates) (ns/jump-file-candidates :buffers-without-files)))')
     for buffer in $buffers; do
   # note: this will break if ever switching to a file with a ' in the name
   add_switch "emacs: $buffer" "emacs_find_file '$buffer'"
     done
 
-    buffers=$(elisp -r "(->> (buffer-list) (-filter (fn (not (buffer-file-name <>)))) (mapcar 'buffer-name) (ns/make-lines))")
+    buffers=$(elisp -r '(ns/make-lines (ns/jump-file-candidates :buffers-without-files))')
     for buffer in $buffers; do
   add_switch "emacs: $buffer" "emacs_find_buffer '$buffer'"
     done
@@ -126,7 +92,8 @@ add_tags() {
 # - jump to jira stuff (get from org-jira?)
 add_metas() {
     # issue here -- slack title changes a lot -- want to just use one title partial match, 'Slack |'
-    add_switch "meta: slack" "qb_meta_open '$(cache_output $((60 * 60 * 24)) pass slack/url)'"
+    # add_switch "meta: slack" "qb_meta_open '$(cache_output $((60 * 60 * 24)) pass slack/url)'"
+    add_switch "meta: slack" "find_class slack || (nohup slack &)"
 
     # dmenu_exec() {
     #     save_file="$HOME/.dmenu_exec_history"
