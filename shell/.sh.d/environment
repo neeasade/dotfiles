@@ -5,9 +5,10 @@ set -a
 
 pathmunge () {
   if [ -d "$1" ]; then
-    if ! echo $PATH | grep -qE "(^|:)$1($|:)" ; then
-      PATH=$1:$PATH
-    fi
+    case ":${PATH}:" in
+      *:"$1":*) ;;
+      *) PATH=$1:$PATH
+    esac
   fi
 }
 
