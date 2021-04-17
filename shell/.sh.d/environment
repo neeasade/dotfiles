@@ -49,7 +49,6 @@ has() {
 vdo() {
     echo "$*"
     "$@"
-    return $?
 }
 
 # duplication with ~/bin/iif is intentional
@@ -83,6 +82,7 @@ set_editor() {
   export GIT_EDITOR="$@"
   export SVN_EDITOR="$@"
 }
+
 set_editor vim
 
 # less status line

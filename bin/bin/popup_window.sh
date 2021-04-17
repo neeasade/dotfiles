@@ -49,11 +49,18 @@ act_now() {
     wid=$(bspc query -N -n)
   fi
 
-  bspc node $wid -g hidden=off
-  bspc node $wid -t floating
-  xdotool windowmove $wid $X $Y
-  xdotool windowsize $wid $W $H
-  bspc node $wid -f
+  . $HOME/.sh.d/environment
+
+  if $MAC; then
+    yaboi toggle window floating true
+    # todo: the rest of this/if it's a want
+  else
+    bspc node $wid -g hidden=off
+    bspc node $wid -t floating
+    xdotool windowmove $wid $X $Y
+    xdotool windowsize $wid $W $H
+    bspc node $wid -f
+  fi
 }
 
 while getopts w:ren flag; do

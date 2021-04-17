@@ -11,7 +11,6 @@ if ! yaboi query window floating; then
   exit 0
 fi
 
-
 case $dir in
   west)  fdim=w; tdim=height; sign=-;;
   east)  fdim=w; tdim=height;;

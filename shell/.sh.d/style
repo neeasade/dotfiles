@@ -98,7 +98,7 @@ envv_all() {
 tell_emacs_shell_location() {
   _shell_location=$PWD
 
-  if $REMOTE; then
+  if ${REMOTE:-false}; then
     if [ ! -z "$TRAMP_INFO" ]; then
       _shell_location="$TRAMP_INFO$PWD"
     else

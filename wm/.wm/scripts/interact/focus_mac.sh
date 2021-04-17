@@ -1,6 +1,7 @@
 #!/bin/sh
 
 PATH=$PATH:$HOME/bin
+
 node_dir=$1
 case $node_dir in
   east)  dir=x; sign=-lt; emacs_dir=right ;;

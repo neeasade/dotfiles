@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# todo: set mode on url (eg, markdown for github)
+
 while getopts c:l:f: flag; do
     case $flag in
 	c) column=$OPTARG;;

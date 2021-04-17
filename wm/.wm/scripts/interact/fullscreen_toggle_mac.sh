@@ -45,19 +45,19 @@ do_tiled() {
   yaboi config window_gap $gap
   # yaboi config window_border on
 }
+
 state=nop
 yaboi toggle window floating false
 
-# current_gap=$(yaboi config window_gap)
-# current_padding=$(yaboi config left_padding)
-# current_gap=$(yaboi query display)
-
 # there isn't a way to get display gap? only global gap, which might be different
+# current_padding=$(yaboi config left_padding)
+
+zoomed=$(yaboi query window zoom-fullscreen)
+
+# current_padding used this way is only valid when zoomed
 mon_width=$(yaboi query display | jq .frame.w)
 win_width=$(yaboi query window | jq .frame.w)
 current_padding=$((mon_width - win_width))
-
-zoomed=$(yaboi queryprint window zoom-fullscreen)
 
 if $zoomed && test "$current_padding" -eq "0"; then
   state=fullscreen
@@ -69,13 +69,7 @@ else
   state=tiled
 fi
 
-if [ ! -z "$*" ]; then
-  # get
-  echo $state
-  exit 0
-fi
-
-echo before: $state
+before=$state
 
 if [ -z "$SLIM" ]; then
   case $state in
@@ -96,7 +90,7 @@ else
   esac
 fi
 
-echo after: $state
+echo "state: $before -> $state"
 echo do_$state
 do_$state
 

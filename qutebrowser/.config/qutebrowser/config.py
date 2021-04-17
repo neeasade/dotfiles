@@ -5,7 +5,6 @@ import socket
 import operator
 import subprocess
 from shutil import which
-
 from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
 from qutebrowser.config.config import ConfigContainer  # noqa: F401
 
@@ -13,6 +12,10 @@ from qutebrowser.api import interceptor, message
 
 config = config  # type: ConfigAPI # noqa: F821
 c = c  # type: ConfigContainer # noqa: F821
+
+# todo: bind cmd-e edit
+# todo: config.load
+
 
 # https://github.com/noctuid/dotfiles/blob/master/browsing/.config/qutebrowser/config.py
 def nmap(key, command):

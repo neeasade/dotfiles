@@ -15,7 +15,6 @@ if ! "$ESHELL"; then
 fi
 
 if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
-
   succ .emacs.d/scripts
   eclient="emacsclient"
 

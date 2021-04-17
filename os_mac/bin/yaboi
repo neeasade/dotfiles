@@ -1,89 +1,77 @@
 #!/usr/bin/env bash
+# a yabai wrapper that gives me toggle and some sane query responses
+# note: yabai query time is really slow compared to bspwm
 
 query() {
-    kind=$1
-    key=$2
-    # shift; shift;
+  kind=$1
+  key=$2
+  # shift; shift;
 
-    if [ -z "$key" ]; then
-	case "$kind" in
-	    *s) yabai -m query --${kind} ;;
-	    *) yabai -m query --${kind}s --${kind}
-	esac
-
-	return;
-    fi
-
-    # return true or false for yabai state in queries
-    # (it's a 0 or 1 in yabai's world)
-    # result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
-    # result=$(jget -r "$key" "$(yabai -m query --${kind}s --${kind})")
-    result=$(yabai -m query --${kind}s --${kind} | jq -r .$key)
-
-    case "$result" in
-	1) exit 0 ;;
-	0) exit 1 ;;
-	*) printf "%s\n" "$result"; exit 0;;
+  if [ -z "$key" ]; then
+    case "$kind" in
+      *s) yabai -m query --${kind} ;;
+      *) yabai -m query --${kind}s --${kind}
     esac
-}
 
-queryprint() {
-    if res=$(query "$@"); then
-	if [ -z "$res" ]; then
-	    echo true;
-	else
-	    echo "$res";
-	fi
-    else
-	echo false;
-    fi
+    return;
+  fi
+
+  # return true or false for yabai state in queries
+  # (it's a 0 or 1 in yabai's world)
+  result=$(yabai -m query --${kind}s --${kind} | jq -r ".[\"${key}\"]")
+
+  case "$result" in
+    1) echo true; return 0 ;;
+    0) echo false; return 1 ;;
+    *) printf "%s\n" "$result"; return 0;;
+  esac
 }
 
 toggle() {
-    kind=$1
-    prop=$2
-    want=$3
+  kind=$1
+  prop=$2
+  want=$3
 
-    have=$(queryprint $kind $prop)
+  have=$(query "$kind" "$prop")
+
+  if [ ! "$want" = "$have" ]; then
     prop=$(sed 's/floating/float/' <<< "$prop")
+    echo yabai -m $kind --toggle $prop $want
+    yabai -m $kind --toggle $prop $want
+  fi
 
-    if [ ! "$want" = "$have" ]; then
-	echo yabai -m $kind --toggle $prop $want
-	yabai -m $kind --toggle $prop $want
-    fi
+  # desktop:
+  # --toggle padding|gap|mission-control|show-desktop
 
-    # desktop:
-    # --toggle padding|gap|mission-control|show-desktop
-
-    # window:
-    # --toggle float|sticky|topmost|pip|shadow|border|split|zoom-parent|zoom-fullscreen|native-fullscreen|expose
+  # window:
+  # --toggle float|sticky|topmost|pip|shadow|border|split|zoom-parent|zoom-fullscreen|native-fullscreen|expose
 }
 
 config() {
-    prop=$1
-    want=$2
+  prop=$1
+  want=$2
 
-    if [ -z "$want" ]; then
-	yabai -m config $prop
-	return;
-    fi
+  if [ -z "$want" ]; then
+    yabai -m config $prop
+    return;
+  fi
 
-    have=$(yabai -m config $prop)
-    if [ ! "$want" = "$have" ]; then
-	echo yabai -m config $prop $want
-	yabai -m config $prop $want
-    fi
+  have=$(yabai -m config $prop)
+  if [ ! "$want" = "$have" ]; then
+    echo yabai -m config $prop $want
+    yabai -m config $prop $want
+  fi
 }
 
 window() {
-    kind=$1
-    shift
-    echo yabai -m window --$kind "$@"
-    yabai -m window --$kind "$@"
+  kind=$1
+  shift
+  echo yabai -m window --$kind "$@"
+  yabai -m window --$kind "$@"
 }
 
 padding() {
-    yabai -m space --padding abs:$1:$1:$1:$1
+  yabai -m space --padding abs:$1:$1:$1:$1
 }
 
 "$@"

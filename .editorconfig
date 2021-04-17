@@ -11,3 +11,8 @@ indent_style = space
 [shell/.sh.d/*]
 indent_size = 2
 indent_style = space
+
+
+[os_mac/bin/*]
+indent_size = 2
+indent_style = space

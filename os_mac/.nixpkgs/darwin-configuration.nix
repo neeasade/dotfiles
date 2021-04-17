@@ -198,11 +198,6 @@ in {
   # networking.computerName = consts.computer_name;
   # networking.hostName = consts.hostname;
 
-  users.users.nathan.name = "nathan";
-  users.users.nathan.home = "/Users/nathan";
-  networking.computerName = "boodschap";
-  networking.hostName = "boodschap";
-
   # launchd.user.agents = import ./launchd.nix {
   #   pkgs = pkgs;
   #   # home_directory = consts.home_directory;

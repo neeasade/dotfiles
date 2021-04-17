@@ -117,8 +117,8 @@ select_action() {
     # target=$(echo "$options" | grep "$*" | head -n 1)
     target=$*
 
-    echo "target: '$target'"
-    echo "match: ${matches_to_actions[${target}]}"
+    echo "selected: '$target'"
+    echo "action: ${matches_to_actions[${target}]}"
 
     # echo "${matches_to_actions[${key}]}"
     eval "${matches_to_actions[${target}]}"

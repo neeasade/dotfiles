@@ -271,19 +271,21 @@ kondo() {
       return
     fi
 
-    echo
+    vdo clj-kondo --config .clj-kondo/config.edn --lint "$start"
 
-    # doing this way because I don't trust the splitting of:
-    # clj-kondo .. --lint "$(fd -e clj)"
+    # echo
 
-    while read -r file; do
-      res=$(clj-kondo --config .clj-kondo/config.edn --lint "$file" 2>&1)
-      res_line=$(tail -n 1 <<< "$res")
-      if ! grep -q "errors: 0, warnings: 0" <<< "$res_line"; then
-        printf '%s\n\n' "$res"
-      fi
-    done < <(fd -e clj)
-    # done < <(fd -e clj "$start")
+    # # doing this way because I don't trust the splitting of:
+    # # clj-kondo .. --lint "$(fd -e clj)"
+
+    # while read -r file; do
+    #   res=$(clj-kondo --config .clj-kondo/config.edn --lint "$file" 2>&1)
+    #   res_line=$(tail -n 1 <<< "$res")
+    #   if ! grep -q "errors: 0, warnings: 0" <<< "$res_line"; then
+    #     printf '%s\n\n' "$res"
+    #   fi
+    # done < <(fd -e clj)
+    # # done < <(fd -e clj "$start")
   )
 }
 

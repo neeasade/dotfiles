@@ -78,8 +78,6 @@ subscription_rules &"
     p_format="tags:title|org_task:misc|toots:mpd:org_time:clock"
 
     # p_format="battery|desktop|clock"
-    # todo: offset should be per font -- it can be in lemonbar
-    p_offset="-1"
 
     p_title_show_mode=active         # used by title.
 

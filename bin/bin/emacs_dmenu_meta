@@ -1,0 +1,16 @@
+#!/bin/sh
+# the reason this script exists is somehow, calling yaboi query window from an emacs instance (ie,
+# elisp/the emacs_dmenu script) re-focuses emacs
+
+if type yaboi >/dev/null 2>&1; then
+    looking_at=$(yaboi query window | jq -r .app)
+else
+    # xprop WM_CLASS | grep Emacs
+    looking_at=$(xprop WM_CLASS)
+    # looking_at=$(yaboi query window | jq -r .app)
+fi
+if [ "$looking_at" = "Emacs" ]; then
+    "$HOME/.emacs.d/scripts/fzf"
+else
+    emacs_dmenu "$@"
+fi

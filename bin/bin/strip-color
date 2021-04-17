@@ -1,4 +1,7 @@
 #!/bin/sh
 # cf https://stackoverflow.com/questions/17998978/removing-colors-from-output
 # ugh
-sed -r "s/[[:cntrl:]]\[[0-9]{1,3}m//g"
+sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'
+
+# old, needs gnu sed:
+# sed -r "s/[[:cntrl:]]\[[0-9]{1,3}m//g"

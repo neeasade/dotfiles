@@ -8,19 +8,24 @@
 
        (existing-frame
 	(->> (frame-list)
-	     (-filter (fn (string= "emacs_dmenu_frame" (frame-parameter  <> 'name))))
-	     (first)))
+	  (-filter (fn (string= "emacs_dmenu_frame" (frame-parameter  <> 'name))))
+	  (first)))
 
        (target-frame
-	(if existing-frame
-	    (progn
-	      (ns/shell-exec-dontcare
-	       (format "popup_window.sh -w %s -n" (frame-parameter existing-frame 'outer-window-id)))
-	      existing-frame)
-	  (progn (ns/shell-exec-dontcare "popup_window.sh -r")
-		 (make-frame '((minibuffer . only) (name . "emacs_dmenu_frame"))))))
+	(if ns/enable-linux-p
+	    (if existing-frame
+		(progn
+		  (ns/shell-exec-dontcare
+		   (format "popup_window.sh -w %s -n" (frame-parameter existing-frame 'outer-window-id)))
+		  existing-frame)
+	      (progn (ns/shell-exec-dontcare "popup_window.sh -r")
+		     (make-frame '((minibuffer . only) (name . "emacs_dmenu_frame")))))
+	  ;; mac:
+	  (progn
+	    (ns/shell-exec-dontcare "popup_window.sh -r")
+	    (make-frame '((minibuffer . only) (name . "emacs_dmenu_frame"))))))
 
-       (target-frame (select-frame target-frame))
+       (_ (select-frame-set-input-focus target-frame))
 
        ;; set the stuff
        (ivy-fixed-height-minibuffer nil)
@@ -31,12 +36,16 @@
        (option (condition-case ()
 		   (ivy-read (concat prompt " ") (->> *stdin-file* f-read (s-split "\n"))
 		   	     :action (fn <>))
-		 (quit nil) ;; if we quit out of the ivy-read just return nothing
-		 )))
-  ;; (delete-frame)
-  (ns/shell-exec-dontcare
-   (format "bspc node %s -g hidden=true"
-	   (frame-parameter target-frame 'outer-window-id)))
-  ;; (select-window (next-window))
-  option
-  )
+		 ;; if we quit out of the ivy-read just return nothing
+		 (quit nil))))
+
+  (if ns/enable-linux-p
+      (ns/shell-exec-dontcare
+       (format "bspc node %s -g hidden=true" (frame-parameter target-frame 'outer-window-id)))
+    ;; mac
+    (delete-frame))
+
+  ;; de-select mini-buffer on emacs
+  (select-window (next-window))
+
+  option)

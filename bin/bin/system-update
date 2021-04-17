@@ -10,6 +10,11 @@ sudo echo yeet >/dev/null # so we and all our subshells get it
 if ${MAC:-false}; then
     brew upgrade
     brew upgrade --cask
+
+    # todo:
+    # nix-channel --update darwin
+    # darwin-rebuild changelog
+
     darwin-rebuild switch
     exit $?
 fi
