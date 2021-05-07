@@ -11,11 +11,13 @@ if ${MAC:-false}; then
     brew upgrade
     brew upgrade --cask
 
-    # todo:
-    # nix-channel --update darwin
+
+    # not doing this because you might bump yabai/become out of sync (SIP issue)
+    # nix-channel --update
+
     # darwin-rebuild changelog
 
-    darwin-rebuild switch
+    darwin-rebuild --upgrade --show-trace switch
     exit $?
 fi
 

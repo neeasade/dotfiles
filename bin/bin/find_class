@@ -3,7 +3,7 @@
 
 if ${MAC:-false}; then
     while read -r wid app; do
-	if echo "$app" | grep -i "$*"; then
+	if grep -i "$*" <<< "$app"; then
 	    yaboi window focus $wid
 	    exit 0
 	fi

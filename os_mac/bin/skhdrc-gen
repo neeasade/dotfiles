@@ -76,6 +76,7 @@ bind {,shift+}fn-tab ~/bin/yabai-rotate\ {,REV}
 
 bind fn-space $HOME/.wm/scripts/interact/dmenu_switcher_mac.sh
 bind shift+fn-space $HOME/.wm/scripts/interact/dmenu_run
+# bind shift+alt+fn-space $HOME/.wm/scripts/interact/dmenu_pass
 
 # other/todo:
 # shift + fn - h : yabai -m window --warp east

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 PATH=$PATH:$HOME/bin
 
@@ -14,7 +14,7 @@ if ! looking_at=$(yaboi query window); then
   # we failed to see what we were looking at. assume it's a fullscreen emacs window
   looking_at=Emacs
 else
-  looking_at=$(echo "$looking_at" | jq -r .app)
+  looking_at=$(jq -r .app <<< "$looking_at")
 fi
 
 if [ "$looking_at" = "Emacs" ]; then
