@@ -64,6 +64,7 @@ config() {
 }
 
 window() {
+  # todo: if the action if focus, switch to window desktop first
   kind=$1
   shift
   echo yabai -m window --$kind "$@"

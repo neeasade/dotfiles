@@ -92,6 +92,14 @@ load_tmux() {
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
+load_kitty() {
+    # st_font_size=$(echo "$st_font" | tr -dc '0-9')
+    st_font=$(echo "$st_font" | sed 's/ .*//')
+
+    margs kitty .config/kitty/kitty.conf
+    # pgrep tmux && tmux source-file "$HOME/.tmux.conf"
+}
+
 load_picom() {
     margs picom .config/picom.conf
     systemctl --user restart picom

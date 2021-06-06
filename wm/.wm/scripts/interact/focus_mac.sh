@@ -17,11 +17,17 @@ else
   looking_at=$(jq -r .app <<< "$looking_at")
 fi
 
-if [ "$looking_at" = "Emacs" ]; then
+try_emacs_dir() {
   if timeout 0.2 elisp "(evil-window-${emacs_dir} 1) t"; then
     exit 0
   fi
-fi
+}
+
+case $looking_at in
+  Emacs) try_emacs_dir ;;
+  .kitty-wrapped) try_emacs_dir ;;
+  kitty) try_emacs_dir ;;
+esac
 
 yabai -m config mouse_follows_focus on
 yabai -m window --focus $node_dir

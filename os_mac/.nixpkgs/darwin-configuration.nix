@@ -14,6 +14,10 @@ let
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   # nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
 
+  # https://github.com/NixOS/nixpkgs/blob/8284fc30c84ea47e63209d1a892aca1dfcd6bdf3/pkgs/os-specific/darwin/yabai/default.nix
+  yabai_pin = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/8284fc30c84ea47e63209d1a892aca1dfcd6bdf3.tar.gz ) { config = nixcfg; };
+  # using this because everytime you change the definition you need to re-grant SIP
+
   # todo: check if this is relative to symlink location
   expr = import ../../nixos/config/expr { inherit pkgs lib unstable edge; };
 
@@ -49,12 +53,12 @@ in {
       cmake
       docker
       docker-compose
-      emacsMacport
-      # emacs
+      #emacsMacport 
+      emacs
       fd
       fzf
       fira-code
-      git
+      # git
       gnupg
       gnused
       grpcurl
@@ -138,6 +142,19 @@ in {
       pipenv
       pstree
 
+# (python27.withPackages(ps: with ps; [
+#       # pip # sometimes we want user level global stuff anyway maybe
+#       # requests
+#       # toml
+#       # dateutil
+#   cryptography
+# pycryptodome
+
+#       # please do the needful
+#       # setuptools
+#       # virtualenv
+#     ]))
+
       (python37.withPackages(ps: with ps; [
       pip # sometimes we want user level global stuff anyway maybe
       requests
@@ -168,6 +185,8 @@ in {
 
       pandoc
     ]) ++ (with unstable; [
+      git
+      cacert
 
     ]) ++ (with edge; [
     # ]) ++ (with expr; [
@@ -219,7 +238,10 @@ in {
 
   services.yabai = {
     enable = true;
-    package = pkgs.yabai;
+    # 3.3.4 is the unstable version you are currently tracking;
+    # everytime you bump yabai you have to re-give it permissions/sip (annoying)
+    # package = pkgs.yabai;
+    package = yabai_pin.yabai;
     enableScriptingAddition = false;
   };
 

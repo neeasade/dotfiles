@@ -1,3 +1,5 @@
 #!/bin/sh
 
-qb_session_dump | yq -r '.windows[0].tabs[] | select(.active == true).history[] | select (.active == true).url' -
+prop=${*:-.url}
+
+qb_session_dump | yq -r '.windows[0].tabs[] | select(.active == true).history[] | select (.active == true)'${prop} -

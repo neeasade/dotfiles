@@ -55,11 +55,12 @@ bind fn-{1,2,3,4} \
 bind shift+fn-{$i,$o,$u,$y} \
      'yabai -m window --space '{1,2,3,4}
 
-bind fn-{1,2,3,4} \
+bind shift+fn-{1,2,3,4} \
      'yabai -m window --space '{1,2,3,4}
 
 # minus, equals
 bind fn-{0x1B,0x18} ~/bin/macos-vol\ {subtract,add}\ 5
+# bind cmd-{0x1B,0x18} ~/bin/macos-vol\ {subtract,add}\ 5
 
 bind {,shift+}fn-$semicolon 'yabai -m space '{'--rotate 90',--balance}
 

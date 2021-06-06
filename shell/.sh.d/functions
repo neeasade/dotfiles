@@ -236,6 +236,8 @@ cursorStyle() {
 }
 
 # Change to root of git repo
+# todo: this should probably print the where we are
+# (or be implemented in terms of cdu?)
 groot() {
   if git status &> /dev/null; then
     cd $(git rev-parse --show-toplevel)
