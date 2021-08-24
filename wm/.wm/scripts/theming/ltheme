@@ -510,7 +510,7 @@ for conf in $targets; do
 done
 IFS=
 
-theme cache_env
+theme cache
 
 # leave our children to fate.
 disown

@@ -241,6 +241,7 @@ cursorStyle() {
 groot() {
   if git status &> /dev/null; then
     cd $(git rev-parse --show-toplevel)
+    pwd
   else
     echo "Error: Not a git repository"
     return 128

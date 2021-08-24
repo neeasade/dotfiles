@@ -20,10 +20,10 @@ alias ref='theme refresh '
 alias pdfgrep='pdfgrep --cache -n '
 
 # the best
-alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
+alias ..='cd ..;pwd'
+alias ...='cd ../..;pwd'
+alias ....='cd ../../..;pwd'
+alias .....='cd ../../../..;pwd'
 
 alias ds='dirs -v | head -n 10'
 

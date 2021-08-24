@@ -44,7 +44,7 @@ do_rofi() {
 }
 
 if elisp t >/dev/null; then
-    result=$(read_input | emacs_dmenu_meta "$prompt")
+    result=$(read_input | emacs_dmenu "$prompt")
 elif type rofi >/dev/null; then
     result=$(read_input | do_rofi)
 else

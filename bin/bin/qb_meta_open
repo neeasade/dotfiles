@@ -6,27 +6,6 @@ url=$1
 
 . "${HOME}/.sh.d/environment"
 
-focus_qb_window() {
-    if $MAC; then
-       return
-    fi
-
-    for wid in $(bspc query -N -n .window); do
-	if xprop WM_CLASS -id $wid | grep qutebrowser; then
-
-	    bspc node $wid -g hidden=off
-	    bspc node -f $wid
-
-	    # if wid is in a hidden tag, show it
-	    if status=$(btags state-plain | grep $wid | grep false); then
-		btags toggle $(echo "$status" | awk '{print $1}')
-	    fi
-
-	    break
-	fi
-    done
-}
-
 vanilla() {
     if [ -z "$url" ]; then
 	if ! pgrep qutebrowser; then
@@ -45,7 +24,8 @@ vanilla() {
 	qb_command ":open -t $url"
     fi
 
-    focus_qb_window
+
+    find_class qutebrowser
     exit 0
 }
 
@@ -87,4 +67,4 @@ if [ -z "$matching_title" ]; then
 fi
 
 qb_command ":tab-select $matching_title"
-focus_qb_window
+find_class qutebrowser

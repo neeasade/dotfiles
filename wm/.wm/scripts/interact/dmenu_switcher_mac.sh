@@ -94,6 +94,7 @@ add_metas() {
     # issue here -- slack title changes a lot -- want to just use one title partial match, 'Slack |'
     # add_switch "meta: slack" "qb_meta_open '$(cache_output $((60 * 60 * 24)) pass slack/url)'"
     add_switch "meta: slack" "find_class slack || (nohup slack &)"
+    add_switch "meta: linkmarks" "elisp '(linkmark-select)'"
 
     # dmenu_exec() {
     #     save_file="$HOME/.dmenu_exec_history"
@@ -150,16 +151,21 @@ do_broad_dmenu() {
     select_action "$choice"
 }
 
-if [ ! -z "$SWITCH" ]; then
-      type=$(awk -F: '{print $1}' <<< "$SWITCH")
-      ASSOCIATE=true enact "$type" >/dev/null
-      select_action "$SWITCH"
-      exit $?
+act_on() {
+    SWITCH=$*
+    type=$(awk -F: '{print $1}' <<< "$SWITCH")
+    ASSOCIATE=true enact "$type" >/dev/null
+    select_action "$SWITCH"
+    exit $?
+}
+
+# pick something ahead of time
+if [ -n "$SWITCH" ]; then
+    act_on "$SWITCH"
 fi
 
 if [ -z "$SWITCH_KIND" ]; then
-      # do_narrow_dmenu
-      do_broad_dmenu
+    do_broad_dmenu
 else
     $SWITCH_KIND
 fi

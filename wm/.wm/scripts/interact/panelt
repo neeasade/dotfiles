@@ -1,20 +1,15 @@
-#!/usr/bin/env dash
+#!/bin/sh
 # Toggle the panel on/off
 
-toggle=$1
-if [ -z "$toggle" ]; then
+want=${1:-start}
+
+if [ -z "$*" ]; then
     if systemctl --user status panel >/dev/null; then
-	toggle=false
-    else
-	toggle=true
+	want=stop
     fi
 fi
 
-if $toggle; then
-    systemctl --user start panel
-else
-    systemctl --user stop panel
-fi
+systemctl --user $want panel
 
 # dunst pgrep's for panel
 # commenting this out b/c resetting dunst clears the notification queue

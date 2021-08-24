@@ -36,7 +36,7 @@ if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
   }
 
   man() {
-    elisp "(man \"$*\") (ns/find-or-open \"*Man ${*}*\") (require 'man) (Man-cleanup-manpage)"
+    elisp "(man \"$*\") (ns/find-or-open \"*Man ${*}*\") (Man-cleanup-manpage)"
 
     # elisp "(woman \"$*\") (require 'man) (Man-cleanup-manpage)"
   }

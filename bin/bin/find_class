@@ -1,18 +1,40 @@
 #!/usr/bin/env bash
-# find a window by wm_class (or 'app' on macos)
+# find and goto a window by wm_class (or 'app' on macos)
+
+search=$*
 
 if ${MAC:-false}; then
-    while read -r wid app; do
-	if grep -i "$*" <<< "$app"; then
+    while read -r wid app pid space; do
+	app=${app,,}
+
+	if [ "${search,,}" = "$app" ]; then
+	    yabai -m space --focus $space
 	    yaboi window focus $wid
 	    exit 0
 	fi
-    done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + .app)')
+
+	if [ "$app" = kitty ]; then
+	    # catch 'apps' running in terminal (mainly concerned with finding emacs)
+	    if grep -i "$search" <<< "$(pstree $pid | awk '{print $4}')"; then
+		yabai -m space --focus $space
+		# yaboi window focus $wid
+		exit 0
+	    fi
+	fi
+
+    done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + .app + " " + (.pid|tostring) + " " + (.space|tostring))')
 else
     for wid in $(bspc query -N -n .window); do
-	if xprop WM_CLASS -id $wid | grep -i "$*"; then
+	if xprop WM_CLASS -id $wid | grep -i "$search"; then
 	    bspc node $wid -g hidden=off
 	    bspc node -f $wid
+
+	    # if wid is in a hidden tag, show it
+	    # TODO: consider this vs temporary popup state
+	    if status=$(btags state-plain | grep $wid | grep false); then
+		btags toggle $(echo "$status" | awk '{print $1}')
+	    fi
+
 	    exit 0
 	fi
     done

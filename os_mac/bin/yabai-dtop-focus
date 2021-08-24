@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# pain point: jq is slowwwwwwww
 # expected arg is space index
+# pain point: jq is slowwwwwwww
 
 . ~/.sh.d/environment
 
@@ -11,17 +11,17 @@ json=$(yaboi query windows | jq '.[] | [select(.app != "zoom.us")]')
 # json="[${json}]"
 
 # if anyone is fullscreen, check if there's an index to switch to
-fullscreen_wid=$(jq '.[] | select(."native-fullscreen" == 1).id' <<< "$json" | awk "NR==${space}{print \$0}")
-if [ -n "$fullscreen_wid" ]; then
-    yabai -m window --focus "$fullscreen_wid"
+# side note for confused future me: focusing the space instead of the wid allows you to skip the transition animation
+fullscreen_space=$(jq '.[] | select(."native-fullscreen" == 1).space' <<< "$json" | awk "NR==${space}{print \$0}")
+if [ -n "$fullscreen_space" ]; then
+		yabai -m space --focus $fullscreen_space
     exit $?
 fi
-
-wid=$(jq ".[] | select (.space==${space}) | .id" <<< "$json" | head -n 1)
 
 # note: focusing without switching to space will BRING the window to you
 yabai -m space --focus $space
 
+wid=$(jq ".[] | select (.space==${space}) | .id" <<< "$json" | head -n 1)
 if [ -n "$wid" ]; then
     yabai -m window --focus $wid
 fi

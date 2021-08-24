@@ -1,5 +1,6 @@
 # -*- mode: sh -*-
 # this script is kind of special -- it may be sourced by outside scripts to get a world bearing.
+# (thus, speed is super important here)
 
 set -a
 
@@ -35,8 +36,6 @@ succ .wm/panel/lemons
 succ .wm/panel/tools
 # pip --user location
 succ .local/bin
-
-succ git/Pye-Menu/result/bin
 
 silent() {
   "$@" >/dev/null 2>&1
@@ -89,7 +88,6 @@ set_editor vim
 LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
 LESSCHARSET='utf-8'
 
-FILEBROWSER=thunar
 VIEW_PDF=zathura
 
 if [ -z "$TERMINAL" ]; then

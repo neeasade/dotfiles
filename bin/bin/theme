@@ -9,7 +9,7 @@ die() {
   exit 1
 }
 
-cache_env() {
+cache() {
   # if elisp t >/dev/null; then
   mkdir -p "$HOME/.cache/rice"
   notify-send "recache!"
@@ -21,7 +21,7 @@ cache_env() {
 getval() {
     (
 	if [ ! -f $HOME/.cache/rice/loaded_theme.sh ]; then
-	    cache_env
+	    cache
 	fi
 
 	. $HOME/.cache/rice/loaded_theme.sh

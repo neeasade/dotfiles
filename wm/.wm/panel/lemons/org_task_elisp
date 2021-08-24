@@ -10,9 +10,9 @@
 
 (if (eq org-pomodoro-state :none)
     (if (org-clocking-p)
-	(format  "clocked in: %s" org-clock-heading)
+	(format "🕒 %s" org-clock-heading)
       (let* ((top-headline (ns/with-notes (org-ml-parse-headline-at (ns/org-get-active-point))))
-	     (top-headline-text (-> top-headline org-ml-headline-get-path last first)))
+	     (top-headline-text (-> top-headline org-ml-headline-get-path -last-item)))
 	(if (and
 	     (s-matches-p org-element--timestamp-regexp top-headline-text)
 	     (not (s-contains-p
