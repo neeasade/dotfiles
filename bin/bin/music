@@ -1,15 +1,79 @@
 #!/usr/bin/env bash
-# wrap the importing of music from the internet
-# define music playlists by search terms
-# add a neat display func
+# https://notes.neeasade.net/search-term-playlists.html
+# duties:
+# - wrap the importing of music from the internet
+# - define music playlists by search terms
+# - add a neat display func
+# - some helpers to manage your local music
 
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 
 current_playlist="${musicdir}/playlist/current"
 
-add() { # add a url to library, fallback on clipboard content
+### HELPERS/MAINT
 
+usage() {
+  echo "music options:"
+  grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
+    action=$(echo "$line" | sed 's/ #.*//')
+    desc=$(echo "$line" | sed 's/.*# //')
+    printf "%-10s : %s\n" "$action" "$desc"
+  done
+  exit 1
+}
+
+# is a file longer than 20 min
+# todo: cache this information -- ~20ms per file blows up fast
+is_long() {
+  milli=$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')
+  if [ -z "$milli" ]; then
+    return 1
+  fi
+
+  seconds=$(( $milli / 1000))
+  if [ $seconds -gt $((60 * 20)) ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+remove_positions() {
+  # remove known positions from current playlist
+  delta=0
+  for position in $(cat -); do
+    mpc del $((position - delta))
+    delta=$((delta + 1))
+  done
+}
+
+filter_long() { # filter current playlist for long songs
+  mpc playlist -f '%position% %file%' |
+    while read -r pos file; do
+      if ! is_long "${musicdir}/$file"; then
+	echo "$pos"
+      fi
+    done | remove_positions
+}
+
+filter_short() { # filter current playlist for not long songs
+  mpc playlist -f '%position% %file%' |
+    while read -r pos file; do
+      if is_long "${musicdir}/$file"; then
+	echo "$pos"
+      fi
+    done | remove_positions
+}
+
+clear_duplicates() {
+  # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
+  mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
+}
+
+### ACTIONS
+
+add() { # add a url to library, fallback on clipboard content
   url=$*
   [ -z "$url" ] && url=$(xclip -o -selection clipboard)
   mkdir -p "$musicdir/import"
@@ -25,17 +89,25 @@ add() { # add a url to library, fallback on clipboard content
     format="$musicdir/import/%(uploader)s/%(title)s.%(ext)s"
   fi
 
-  titles=$(youtube-dl -x -i -j -o "$format" "$url" | jq -r .title)
+  # break things out by song url, so we can report statuses individually for later cleanup
+  # this is sort of a wonky way to do things (new process per song url)
+  # TODO: checkout --print-json (download but still print json)
+  youtube-dl -x -i -j -o "$format" "$url" | jq -r '.webpage_url + " " + .title' | \
+    while read narrow_url title; do
+	# remove previous status entries for this url
+	sed -i "\^|${narrow_url}|^d" "$musicdir/import_history.log"
 
-  if youtube-dl -x -i -o "$format" "$url"; then
-    echo "$titles" | while read -r title; do
-	printf "\n|%s|%s|%s|%s|" "$url" "$title" "$(date)" "success" >> "$musicdir/import_history.log"
+	if youtube-dl -x -i -o "$format" "$narrow_url"; then
+	  result=success
+	else
+	  result=fail
+	fi
+
+	printf "\n|%s|%s|%s|%s|\n" "$narrow_url" "$title" "$(date)" "$result" >> "$musicdir/import_history.log"
     done
-  else
-    echo "$titles" | while read -r title; do
-	printf "\n|%s|%s|%s|%s|\n" "$url" "$title" "$(date)" "fail" >> "$musicdir/import_history.log"
-    done
-  fi
+
+  sed -i '/^$/d' "$musicdir/import_history.log"
+  echo >> "$musicdir/import_history.log"
 
   mpc update # re-index
 }
@@ -65,80 +137,26 @@ rename() { # rename the currently playing song file name (keep directory)
   mpc next
 }
 
-usage() {
-  echo "music options:"
-  grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
-    action=$(echo "$line" | sed 's/ #.*//')
-    desc=$(echo "$line" | sed 's/.*# //')
-    printf "%-10s : %s\n" "$action" "$desc"
-  done
-  exit 1
-}
-
 shuffle() { # reshuffle current selection from all
   mpc clear
-  if [ -z "$*" ]; then
-    mpc listall | sort -R | head -n 1000 | mpc add
-  else
-    append "$*"
-  fi
-  echo "shuffle" > "$current_playlist"
+  mpc listall | sort -R | head -n 1000 | mpc add
+  echo "shuffle $*" > "$current_playlist"
   mpc play
-}
-
-# is a file longer than 20 min
-is_long() {
-  milli=$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')
-  if [ -z "$milli" ]; then
-    return 1
-  fi
-
-  seconds=$(( $milli / 1000))
-  if [ $seconds -gt $((60 * 20)) ]; then
-    return 0
-  else
-    return 1
-  fi
 }
 
 append() { # append some search term to the current playlist
   echo append "$*"
 
-  if [ "$op" = "append" ]; then
-      # we called append at a top level, therefore we are no longer tied to any playlist
+  if [ "$interactive_op" = "append" ]; then
+      # we called append at an interative level, therefore we are no longer tied to any playlist
       echo "custom" > "$current_playlist"
   fi
 
-  if [ "$*" = "long_songs" ]; then
-    cat "${musicdir}/long_songs"
-    mpc listall | is_long_filter | mpc add
-  else
-    mpc listall | grep -i "$*" | mpc add
-  fi
+  mpc listall | grep -i $GREP_EXTRA "$*" | mpc add
 }
 
 remove() { # remove some search match from the playlist
-  echo remove "$*"
-
-  if [ "$*" = "long_songs" ]; then
-    is_long_filter() {
-      while read -r pos_song; do
-	song=$(echo "$pos_song" | sed -E 's/[0-9]+ //')
-	if is_long "${musicdir}/$song"; then
-	  echo "$pos_song"
-	fi
-      done
-    }
-    positions=$(mpc playlist -f '%position% %file%' | is_long_filter | sed 's/ .*//')
-  else
-    positions=$(mpc playlist -f '%position% %file%' | grep -i "$*" | sed 's/ .*//')
-  fi
-
-  delta=0
-  for position in $positions; do
-    mpc del $((position - delta))
-    delta=$((delta + 1))
-  done
+  mpc playlist -f '%position% %file%' | grep -i "$*" | sed 's/ .*//' | remove_positions
 }
 
 now() { # fuzzy search for a song, play it now
@@ -150,13 +168,6 @@ now() { # fuzzy search for a song, play it now
   fi
 }
 
-nowmpv() { # fuzzy search for a song, play it now with MPV
-  if song=$(mpc listall | dmenu); then
-      mpv "$musicdir/$song"
-      echo mpv "$musicdir/$song"
-  fi
-}
-
 bl() { # blacklist the currently playing song from the current playlist.
   playlist=$(cat "$current_playlist")
   songname=$(basename "$(mpc -f '%file%' | head -n 1)")
@@ -165,11 +176,10 @@ bl() { # blacklist the currently playing song from the current playlist.
 }
 
 artist() { # play songs by an artist
-  artist=$(cat<<EOF | dmenu
-$(mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq)
-$(cat ${HOME}/Music/playlist/artists)
-EOF
-	)
+  artist=$({
+mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq
+cat "${HOME}/Music/playlist/artists"
+} | dmenu)
 
   if [ ! -z "$artist" ]; then
     echo "$artist" > "$current_playlist"
@@ -177,22 +187,19 @@ EOF
 
     append "/${artist} -"
     append "/${artist}-"
-    # todo: fix this ( you removed -E from grep because it broke sound-log playlist)
-    append "/${artist} \(.+\)"
+    append "/${artist} "
     append "\- ${artist}"
+    GREP_EXTRA='-E' append "/${artist} \(.+\)"
 
     # correct case for exact matches from the above
-    real=$(mpc listall -f '%artist%' | grep -i "^${artist}$" | head -n 1)
-    if [ ! -z  "$real" ]; then
-      mpc find artist "$real" | mpc add
-    fi
+    # todo: check this
+    mpc listall -f '%artist%' | grep -i "^${artist}$" | \
+      while read corrected; do
+	mpc find artist "$corrected" | mpc add
+      done
 
     mpc shuffle
     mpc play
-
-    # clear duplicates
-    # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
-    mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
   fi
 }
 
@@ -207,21 +214,23 @@ playlist() { # select a search term based playlist to play
 
   echo "$target" >"$current_playlist"
   mpc clear
+  delayed_commands=':' # intentional
+
   while read -r line ; do
-    case "${line:0:1}" in
-      +) append "${line#?}";;
-      -) remove "${line#?}";;
+    op=${line:0:1}
+    line=${line#?}
+    case $op in
+      +) append "$line";;
+      -) remove "$line";;
+      !) delayed_commands="${delayed_commands}; ${line}";;
       *) ;;
     esac
-    # the cat is so a newline is appended
-  done < <(cat "$musicdir/playlist/$target"; echo)
+    # ensure to print lines with newlines (1 is just a short 'true' in awk)
+  done < <(awk 1 "$musicdir/playlist/$target")
 
-  # clear duplicates
-  # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
-  mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
+  clear_duplicates
 
-  # todo: some flag to not shuffle a playlist
-  mpc shuffle
+  eval "$delayed_commands"
   mpc play
 }
 
@@ -234,14 +243,14 @@ infoname() {
   echo "$name"
 }
 
-info() { # display the current song progress bar and playlist length
+info() { # display the current audio progress bar and playlist length
   infoname
 
   length=$(wc -L <<< "$name")
   # length=$(wc -c <<< "$name")
 
   if [ "$(GET=t player.sh)" = "playerctl" ]; then
-      # we can't get the percent, fake it for the looks
+      # we can't get the percent from playerctl, fake it for the looks
       # cf https://bytefreaks.net/gnulinux/bash/bash-get-random-number-that-belongs-in-a-range
       bottom=40
       top=80
@@ -265,12 +274,12 @@ recent() { # play recently added songs
   recent_count=10
 
   grep -E "^\|.*" "$musicdir/import_history.log"  | \
-      awk -F\| '{print "+" $3}' | \
+    awk -F\| '{print "+" $2}' | \
       tail -n $recent_count > "${musicdir}/playlist/recent"
 
   playlist recent
 }
 
-op=${1:-usage}
+interactive_op=${1:-usage}
 shift
-$op "$@"
+$interactive_op "$@"
