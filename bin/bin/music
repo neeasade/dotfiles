@@ -39,22 +39,13 @@ is_long() {
   fi
 }
 
-remove_positions() {
-  # remove known positions from current playlist
-  delta=0
-  for position in $(cat -); do
-    mpc del $((position - delta))
-    delta=$((delta + 1))
-  done
-}
-
 filter_long() { # filter current playlist for long songs
   mpc playlist -f '%position% %file%' |
     while read -r pos file; do
       if ! is_long "${musicdir}/$file"; then
 	echo "$pos"
       fi
-    done | remove_positions
+    done | mpc del
 }
 
 filter_short() { # filter current playlist for not long songs
@@ -63,12 +54,18 @@ filter_short() { # filter current playlist for not long songs
       if is_long "${musicdir}/$file"; then
 	echo "$pos"
       fi
-    done | remove_positions
+    done | mpc del
 }
 
 clear_duplicates() {
-  # cf https://gist.github.com/hfs/1b7c120c07ce63cd9105ed59788a6915
-  mpc playlist -f '%position%\t%file%' | sort -k 2 | perl -ne 'm/(.*)\t(.*)/; print "$1\n" if $2 eq $prev; $prev=$2' | mpc del
+  # sort based on filename, print duplicate matches based on filename, remove from the duplicate that pops up
+  duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | uniq -f1 -d)
+
+  # doing this the gross way because -d only catches single duplicates, and I couldn't find a way to get it to do what I wanted
+  while [ ! -z "$duplicates" ]; do
+    echo "$duplicates" | sed 's/ .*//' | mpc del
+    duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | uniq -f1 -d)
+  done
 }
 
 ### ACTIONS
@@ -156,7 +153,7 @@ append() { # append some search term to the current playlist
 }
 
 remove() { # remove some search match from the playlist
-  mpc playlist -f '%position% %file%' | grep -i "$*" | sed 's/ .*//' | remove_positions
+  mpc playlist -f '%position% %file%' | grep -i "$*" | sed 's/ .*//' | mpc del
 }
 
 now() { # fuzzy search for a song, play it now
@@ -198,6 +195,7 @@ cat "${HOME}/Music/playlist/artists"
 	mpc find artist "$corrected" | mpc add
       done
 
+    clear_duplicates
     mpc shuffle
     mpc play
   fi
