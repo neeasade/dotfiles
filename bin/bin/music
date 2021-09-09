@@ -210,7 +210,6 @@ playlist() { # select a search term based playlist to play
     target=$*
   fi
 
-  echo "$target" >"$current_playlist"
   mpc clear
   delayed_commands=':' # intentional
 
@@ -226,9 +225,9 @@ playlist() { # select a search term based playlist to play
     # ensure to print lines with newlines (1 is just a short 'true' in awk)
   done < <(awk 1 "$musicdir/playlist/$target")
 
-  clear_duplicates
-
   eval "$delayed_commands"
+  clear_duplicates
+  echo "$target" >"$current_playlist"
   mpc play
 }
 
