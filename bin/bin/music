@@ -8,7 +8,6 @@
 
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
-
 current_playlist="${musicdir}/playlist/current"
 
 ### HELPERS/MAINT
@@ -16,8 +15,8 @@ current_playlist="${musicdir}/playlist/current"
 usage() {
   echo "music options:"
   grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | while read -r line; do
-    action=$(echo "$line" | sed 's/ #.*//')
-    desc=$(echo "$line" | sed 's/.*# //')
+    action=$(sed 's/ #.*//' <<< "$line" )
+    desc=$(sed 's/.*# //' <<< "$line" )
     printf "%-10s : %s\n" "$action" "$desc"
   done
   exit 1
@@ -39,19 +38,16 @@ is_long() {
   fi
 }
 
-filter_long() { # filter current playlist for long songs
-  mpc playlist -f '%position% %file%' |
-    while read -r pos file; do
-      if ! is_long "${musicdir}/$file"; then
-	echo "$pos"
-      fi
-    done | mpc del
+is_short () {
+  ! is_long "$@"
 }
 
-filter_short() { # filter current playlist for not long songs
+filter() {
+  echo "filter $*"
+  fn=$1
   mpc playlist -f '%position% %file%' |
     while read -r pos file; do
-      if is_long "${musicdir}/$file"; then
+      if ! $fn "${musicdir}/$file"; then
 	echo "$pos"
       fi
     done | mpc del
@@ -79,7 +75,7 @@ add() { # add a url to library, fallback on clipboard content
   # url='https://sewerslvt.bandcamp.com/'
   # curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '${url}#" -e "s/$/'/"
 
-  if echo "$url" | grep -q 'bandcamp.com'; then
+  if [[ $url =~ bandcamp.com ]]; then
     # bandcamp music is organized by album:
     format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(title)s.%(ext)s"
   else
@@ -110,28 +106,10 @@ add() { # add a url to library, fallback on clipboard content
 }
 
 del() { # delete the currently playing song
-  location=$(mpc -f "%file%" | head -n 1)
+  read -r location <<< $(mpc -f '%file%')
   rm "$musicdir/$location"
   mpc next
   mpc update
-}
-
-rename() { # rename the currently playing song file name (keep directory)
-  location=$(mpc -f "%file%" | head -n 1)
-  location="${musicdir}/$location"
-  new_name=$*
-
-  # new name needs
-  if ! echo "$new_name" | grep "\."; then
-    ext=${location##*.}
-    new_name="${new_name}.${ext}"
-  fi
-
-  new_name="$(dirname "$location")/$new_name"
-  echo mv "$location" "$new_name"
-  mv "$location" "$new_name"
-  mpc update
-  mpc next
 }
 
 shuffle() { # reshuffle current selection from all
@@ -153,6 +131,7 @@ append() { # append some search term to the current playlist
 }
 
 remove() { # remove some search match from the playlist
+  echo remove "$*"
   mpc playlist -f '%position% %file%' | grep -i "$*" | sed 's/ .*//' | mpc del
 }
 
@@ -189,7 +168,6 @@ cat "${HOME}/Music/playlist/artists"
     GREP_EXTRA='-E' append "/${artist} \(.+\)"
 
     # correct case for exact matches from the above
-    # todo: check this
     mpc listall -f '%artist%' | grep -i "^${artist}$" | \
       while read corrected; do
 	mpc find artist "$corrected" | mpc add
@@ -227,7 +205,15 @@ playlist() { # select a search term based playlist to play
 
   eval "$delayed_commands"
   clear_duplicates
+  echo "naming: $target"
   echo "$target" >"$current_playlist"
+  mpc rm "$target"
+  mpc save "$target"
+
+  # more 'deliberate' playlists may set `! SHUFFLE=false`
+  if ${SHUFFLE:-true}; then
+    mpc shuffle
+  fi
   mpc play
 }
 
@@ -272,7 +258,7 @@ recent() { # play recently added songs
 
   grep -E "^\|.*" "$musicdir/import_history.log"  | \
     awk -F\| '{print "+" $2}' | \
-      tail -n $recent_count > "${musicdir}/playlist/recent"
+    tail -n $recent_count > "${musicdir}/playlist/recent"
 
   playlist recent
 }
