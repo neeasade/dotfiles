@@ -147,7 +147,8 @@ now() { # fuzzy search for a song, play it now
 bl() { # blacklist the currently playing song from the current playlist.
   playlist=$(cat "$current_playlist")
   songname=$(basename "$(mpc -f '%file%' | head -n 1)")
-  printf "\n-$songname" >> "$musicdir/playlist/$playlist"
+  songname=$(sed "s#'#\'\\\'\'#g" <<< "$songname")
+  printf "\n- '${songname}'" >> "$musicdir/playlist/$playlist"
   mpc next
 }
 
@@ -189,32 +190,21 @@ playlist() { # select a search term based playlist to play
   fi
 
   mpc clear
-  delayed_commands=':' # intentional
 
-  while read -r line ; do
-    op=${line:0:1}
-    line=${line#?}
-    case $op in
-      +) append "$line";;
-      -) remove "$line";;
-      !) delayed_commands="${delayed_commands}; ${line}";;
-      *) ;;
-    esac
-    # ensure to print lines with newlines (1 is just a short 'true' in awk)
-  done < <(awk 1 "$musicdir/playlist/$target")
+  # let's get really dumb, DSL through character functions
+  + () { append "$@"; }
+  - () { remove "$@"; }
+  . "$musicdir/playlist/$target"
 
-  eval "$delayed_commands"
   clear_duplicates
-  echo "naming: $target"
-  echo "$target" >"$current_playlist"
-  mpc rm "$target"
-  mpc save "$target"
-
-  # more 'deliberate' playlists may set `! SHUFFLE=false`
   if ${SHUFFLE:-true}; then
     mpc shuffle
   fi
   mpc play
+
+  echo "$target" >"$current_playlist"
+  mpc rm "$target"
+  mpc save "$target"
 }
 
 infoname() {
@@ -246,7 +236,7 @@ info() { # display the current audio progress bar and playlist length
       percent=$(mpc | awk 'match($0,/\(([0-9]+)%\)/, groups) {print groups[1]}')
   fi
 
-  "$HOME/.wm/panel/tools/mkb" $percent $length
+  mkb $percent $length
 
   if [ "$(GET=t player.sh)" = "mpc" ]; then
       echo "playlist: $(cat $current_playlist) | $(playlist_length)"
