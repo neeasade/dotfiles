@@ -21,8 +21,17 @@ do_monocle_padded() {
 
   # what are we looking at?
   window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
+
   # Wine is for eve
-  if echo $window_class | grep -E '(Civ5XP|mpv|Google-chrome|dota2|factorio|Wine)'; then
+  no_trim_list='.openmw-wrapped
+Civ5XP
+mpv
+Google-chrome
+dota2
+factorio
+Wine'
+
+  if echo "$no_trim_list" | grep "$window_class"; then
     bspc config window_gap 0
   else
     bspc config window_gap $(theme getval x_padding)
@@ -63,6 +72,9 @@ do_monocle_slim() {
 
   bspc config left_monocle_padding $monocle_pad_width
   bspc config right_monocle_padding $monocle_pad_width
+
+  bspc config top_monocle_padding 0
+  bspc config bottom_monocle_padding 0
 
   bspc desktop -l monocle
 }

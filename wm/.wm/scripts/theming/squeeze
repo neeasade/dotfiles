@@ -53,8 +53,6 @@ bg_next() {
 	# echo "#eef0f3"
 	# colort -20 "$(bg)"
 	vanilla bg
-	# lmao
-	echo "#000000"
     else
 	# separate step:
 	# step=$((step + 1)) bg

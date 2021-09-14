@@ -1,27 +1,56 @@
 #!/usr/bin/env bash
-# idea: bspwm colors from emacs as well
+# if emacs is running, the colors are derived from the currently running emacs session
 
-# test theme
 colors() {
-    color0=F3F5F8
-    color1=A95011
-    color2=5E7111
+    color0=E8EBEC
+    color1=006E96
+    color2=007C00
     color3=C38418
-    color4=176FA8
+    color4=0065C8
     color5=407EE7
-    color6=E71FD2
-    color7=3F4043
-    color8=898A8D
-    color9=A95011
-    color10=5E7111
+    color6=C6007F
+    color7=4A4D4E
+    color8=6A6D6E
+    color9=006E96
+    color10=007C00
     color11=C38418
-    color12=176FA8
+    color12=0065C8
     color13=407EE7
-    color14=E71FD2
-    color15=3F4043
-    foreground=3f4043
-    background=f3f5f8
-    cursorColor=176fa8
+    color14=C6007F
+    color15=4A4D4E
+
+    foreground=4a4d4e
+    background=e8ebec
+    cursorColor=0065c8
+
+    e_background_normal=e8ebec
+    e_foreground_normal=4a4d4e
+    e_faded_normal=6a6d6e
+    e_primary_normal=c6007f
+    e_alt_normal=006e96
+    e_strings_normal=007c00
+    e_assumed_normal=0065c8
+    e_background_weak=d5d6d7
+    e_foreground_weak=3f4041
+    e_faded_weak=5f6061
+    e_primary_weak=ba0073
+    e_alt_weak=00668e
+    e_strings_weak=007400
+    e_assumed_weak=005dc0
+    e_background_strong=ccc9ca
+    e_foreground_strong=3a3738
+    e_faded_strong=5a5758
+    e_primary_strong=ac0065
+    e_alt_strong=005e86
+    e_strings_strong=006c00
+    e_assumed_strong=0053b6
+    e_background_focused=a4cfed
+    e_foreground_focused=103b59
+    e_faded_focused=305b79
+    e_primary_focused=ac0065
+    e_alt_focused=005e86
+    e_strings_focused=006c00
+    e_assumed_focused=0053b6
 
     if elisp t >/dev/null; then
         eval "$(elisp -r "(ns/emacs-to-theme)")"
@@ -34,6 +63,7 @@ settings() {
     # BG_COMMAND="${HOME}/.fehbg"
     # BG_COMMAND="${HOME}/.fehbg"
     # BG_COMMAND="hsetroot -solid $(elisp -r '(tarp/get :background :focused)')"
+    BG_COMMAND="hsetroot -solid #$e_background_focused"
     # BG_COMMAND="hsetroot -solid $(elisp -r '(-> (tarp/get :assumed) (ct-transform-hsl-l (ct-get-hsl-l (tarp/get :background :weak))))')"
     # BG_COMMAND="feh --bg-tile /tmp/result.png"
 
@@ -87,10 +117,13 @@ subscription_rules &"
     p_line=2
     # p_padding=6
 
-    st_font="Go Mono for Powerline-14"
-    st_font_variable="Charter-14"
-    p_font_main="Charter-14"
-    d_font="Charter 12"
+    st_font="Go Mono for Powerline-10"
+    st_font_variable="Charter-10"
+    # st_font_variable="Go Mono for Powerline-10"
+    p_font_main="Charter-10"
+    d_font="Charter 10"
+
+    st_font_variable="Equity-10"
 
     p_font_icon="Font Awesome 5 Free Solid-8"
     p_icon_enable=false

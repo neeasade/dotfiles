@@ -68,27 +68,12 @@ spaced_buttons() {
 		     "$(bs B$bg F$fg U$border +u O$_padding)" \
 		     "$(echo "$line" | bs B$bg F$fg U$border +u)" \
 		     "$(bs B$bg F$fg U$border +u O$_padding)")
-    # content="$border_side$content$border_side"
-
-    # case $align in
-    # 	left) printf '%s   \n' "$content" ;;
-    # 	center) printf '%s   \n' "$content" ;;
-    # 	right) printf '    %s\n' "$content" ;;
-    # esac
 
     case $align in
-	left) printf -v content '%s' "$content$border_side" ;;
+	left)   printf -v content '%s' "$content$border_side" ;;
 	center) printf -v content '%s' "$border_side$content$border_side" ;;
-	right) printf -v content '%s' "$border_side$content" ;;
+	right)  printf -v content '%s' "$border_side$content" ;;
     esac
-
-    # if $lemon_end_inner; then
-    # 	case $align in
-    # 	    left) content=$(printf '%s' "$content$border_side") ;;
-    # 	    right) content=$(printf '%s' "$border_side$content") ;;
-    # 	    # center) content=$(printf '%s' "$border_side$content$border_side") ;;
-    # 	esac
-    # fi
 
     printf '%s\n' "$content"
 }
@@ -117,8 +102,6 @@ while read -d $'\n' -r line; do
     # fi
 
     # todo: enhance with buttons from env?
-
-
 
     # echo "$line"
     spaced_buttons

@@ -1,10 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-case "$*" in
-    # hide dunst notifications (this wrapper use used away)
-    DUNST_*) ;;
-    *)
-	# elisp "(alert \"${*}\" )"
-	/usr/bin/osascript -e "display notification \"$*\""
-	;;
-esac
+last_arg=${@: -1}
+/usr/bin/osascript -e "display notification \"${last_arg}\""

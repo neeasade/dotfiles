@@ -17,13 +17,10 @@ st.font_variable: {{st_font_variable}}
 st.borderpx: 0
 st.cursorshape: {{st_cursorshape}}
 st.cursorthickness: {{st_cursorthickness}}
-st.disablebold: 1
+st.depth: 24
 
-! note: these aren't official, I'm referencing them in config.
-Emacs.theme: {{emacs_theme}}
-Emacs.powerline: {{emacs_powerline}}
+! personal/so we can sync p_height and modeline height
 Emacs.doomlineheight: {{p_height}}
-
 
 ! colors (appended in ltheme script)
 *.background: #{{background}}
