@@ -54,13 +54,13 @@ filter() {
 }
 
 clear_duplicates() {
-  # sort based on filename, print duplicate matches based on filename, remove from the duplicate that pops up
-  duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | uniq -f1 -d)
+  duplicates_exist() {
+    duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | uniq -f1 -d | sed 's/ .*//')
+    ! test -z "$duplicates"
+  }
 
-  # doing this the gross way because -d only catches single duplicates, and I couldn't find a way to get it to do what I wanted
-  while [ ! -z "$duplicates" ]; do
-    echo "$duplicates" | sed 's/ .*//' | mpc del
-    duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | uniq -f1 -d)
+  while duplicates_exist; do
+    mpc del <<< "$duplicates"
   done
 }
 
