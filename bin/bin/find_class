@@ -4,7 +4,7 @@
 search=$*
 
 if ${MAC:-false}; then
-    while read -r wid app pid space; do
+    while read -r wid pid space app; do
 	app=${app,,}
 
 	if [ "${search,,}" = "$app" ]; then
@@ -15,14 +15,14 @@ if ${MAC:-false}; then
 
 	if [ "$app" = kitty ]; then
 	    # catch 'apps' running in terminal (mainly concerned with finding emacs)
-	    if grep -i "$search" <<< "$(pstree $pid | awk '{print $4}')"; then
+	    if grep -iq "$search" <<< "$(pstree $pid | awk '{print $4}')"; then
 		yabai -m space --focus $space
 		# yaboi window focus $wid
 		exit 0
 	    fi
 	fi
 
-    done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + .app + " " + (.pid|tostring) + " " + (.space|tostring))')
+    done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + (.pid|tostring) + " " + (.space|tostring) + " " + .app)')
 else
     for wid in $(bspc query -N -n .window); do
 	if xprop WM_CLASS -id $wid | grep -i "$search"; then

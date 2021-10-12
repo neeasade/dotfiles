@@ -69,7 +69,7 @@ env_prompt() {
                    <((set -o posix; set) | grep -vE '^(BASH|changed_vars|FUNCNAME|PPID|SHLVL|COLUMNS|LINES|PWD|OLDPWD|HISTCMD)') \
                    | grep '^> ' | sed 's/> //' )
 
-  changed_vars_caps=$(grep -oE '^[A-Z]+\=' <<< "$changed_vars")
+  changed_vars_caps=$(grep -oE '^[A-Z_]+\=' <<< "$changed_vars")
 
   if [ ! -z "$changed_vars_caps" ]; then
     echo "E "

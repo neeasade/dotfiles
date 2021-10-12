@@ -46,7 +46,6 @@
 
 (defun ns/dmenu-inplace ()
   (let* ((prompt (ns/let-script-args (prompt-string) prompt-string)))
-    (ns/shell-exec "find_class emacs")
     (condition-case ()
 	(ivy-read (concat prompt " ") (->> *stdin-file* f-read (s-split "\n"))
 		  :action (fn <>))

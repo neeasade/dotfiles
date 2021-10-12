@@ -44,6 +44,11 @@ do_rofi() {
 }
 
 if elisp t >/dev/null; then
+    . ~/.sh.d/environment
+    if $MAC; then
+	find_class emacs
+    fi
+
     result=$(read_input | emacs_dmenu "$prompt")
 elif type rofi >/dev/null; then
     result=$(read_input | do_rofi)

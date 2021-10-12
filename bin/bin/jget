@@ -8,6 +8,7 @@ if [ -z "$*" ]; then
     echo 'jget $key $json'
     echo 'jget -r $key $json'
     echo '<json> | jget [-r] $key $json'
+    exit 1
 fi
 
 trim=false

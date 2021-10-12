@@ -125,8 +125,12 @@ GEM_HOME="$HOME/.gem"
 BUNDLE_PATH="$HOME/.gem"
 GOPATH="$HOME/.go"
 
-if [ -e $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
-  . $HOME/.nix-profile/etc/profile.d/nix.sh;
+pathmunge '/run/current-system/sw/bin'
+
+if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+  if [ -z "$NIX_PROFILES" ]; then
+    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+  fi
 fi
 
 if $MAC; then
