@@ -6,6 +6,8 @@
 # - add a neat display func
 # - some helpers to manage your local music
 
+# todo: some way to keep album song collections together/distinguish them as a mix/keep them together
+
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 current_playlist="${musicdir}/playlist/current"
@@ -23,7 +25,6 @@ usage() {
 }
 
 # is a file longer than 20 min
-# todo: cache this information -- ~20ms per file blows up fast
 is_long() {
   milli=$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')
   if [ -z "$milli" ]; then
@@ -127,12 +128,16 @@ append() { # append some search term to the current playlist
       echo "custom" > "$current_playlist"
   fi
 
-  mpc listall | grep -i $GREP_EXTRA "$*" | mpc add
+  if [ -z "$songs_cached" ]; then
+     songs_cached=$(mpc listall)
+  fi
+
+  grep -i $GREP_EXTRA "$*" <<< "$songs_cached" | mpc add
 }
 
 remove() { # remove some search match from the playlist
   echo remove "$*"
-  mpc playlist -f '%position% %file%' | grep -i "$*" | sed 's/ .*//' | mpc del
+  mpc playlist -f '%position% %file%' | grep -i $GREP_EXTRA "$*" | sed 's/ .*//' | mpc del
 }
 
 now() { # fuzzy search for a song, play it now
@@ -153,28 +158,43 @@ bl() { # blacklist the currently playing song from the current playlist.
 }
 
 artist() { # play songs by an artist
-  artist=$({
-mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq
-cat "${HOME}/Music/playlist/artists"
-} | dmenu)
+  artist=$*
+  if [ -z "$artist" ]; then
+    artist=$({
+	      mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq
+	      cat "${HOME}/Music/playlist/artists"
+	    } | dmenu)
+  fi
 
-  if [ ! -z "$artist" ]; then
+  if [ -z "$artist" ]; then
+    return
+  fi
+
+  echo "artist $artist"
+
+  if [ "$interactive_op" = "artist" ]; then
     echo "$artist" > "$current_playlist"
     mpc clear
+  fi
 
+  {
     append "/${artist} -"
     append "/${artist}-"
     append "/${artist} "
+    append "/${artist}/"
     append "\- ${artist}"
     GREP_EXTRA='-E' append "/${artist} \(.+\)"
+  } >/dev/null
 
-    # correct case for exact matches from the above
-    mpc listall -f '%artist%' | grep -i "^${artist}$" | \
-      while read corrected; do
-	mpc find artist "$corrected" | mpc add
-      done
+  # correct casing for exact matches from the above
+  mpc listall -f '%artist%' | grep -i "^${artist}$" | \
+    while read corrected; do
+      mpc find artist "$corrected" | mpc add
+    done
 
-    clear_duplicates
+  clear_duplicates
+
+  if [ "$interactive_op" = "artist" ]; then
     mpc shuffle
     mpc play
   fi
@@ -190,11 +210,31 @@ playlist() { # select a search term based playlist to play
   fi
 
   mpc clear
+  echo "$target" >"$current_playlist"
+
+  # Check if we can use the cached playlist
+  # <2021-11-22 Mon 10:09> this has been tested and works as expected.
+  mpd_database="$HOME/.config/mpd/database"
+  mpd_playlist="$HOME/.config/mpd/playlists/${target}.m3u"
+  music_playlist="$musicdir/playlist/${target}"
+  if [ -s "$mpd_playlist" ]; then
+    if [ "$mpd_playlist" -nt "$music_playlist" ]; then
+      if [ "$mpd_playlist" -nt "$mpd_database" ]; then
+	echo "loading cached playlist $mpd_playlist"
+	cat "$mpd_playlist" | mpc add
+	# this shuffle is problematic -- how can you know if og playlist wanted it
+	mpc shuffle
+	mpc play
+	return
+      fi
+    fi
+  fi
 
   # let's get really dumb, DSL through character functions
   + () { append "$@"; }
   - () { remove "$@"; }
-  . "$musicdir/playlist/$target"
+  @ () { artist "$@"; }
+  . "$music_playlist"
 
   clear_duplicates
   if ${SHUFFLE:-true}; then
@@ -202,7 +242,6 @@ playlist() { # select a search term based playlist to play
   fi
   mpc play
 
-  echo "$target" >"$current_playlist"
   mpc rm "$target"
   mpc save "$target"
 }
@@ -241,16 +280,6 @@ info() { # display the current audio progress bar and playlist length
   if [ "$(GET=t player.sh)" = "mpc" ]; then
       echo "playlist: $(cat $current_playlist) | $(playlist_length)"
   fi
-}
-
-recent() { # play recently added songs
-  recent_count=10
-
-  grep -E "^\|.*" "$musicdir/import_history.log"  | \
-    awk -F\| '{print "+" $2}' | \
-    tail -n $recent_count > "${musicdir}/playlist/recent"
-
-  playlist recent
 }
 
 interactive_op=${1:-usage}
