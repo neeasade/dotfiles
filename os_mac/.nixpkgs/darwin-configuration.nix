@@ -1,232 +1,165 @@
+
 { config, pkgs, lib, ... }:
 
 let
   darwin_config = import ./darwin.nix;
 
-  nixcfg = {
+  # todo: restore local file overlay reference option
+  circleci-overlay = (import (builtins.fetchGit {
+    url = "https://github.com/circleci/nix-overlay";
+    ref = "main";}));
+
+  # skip management of nix-channels
+  pkgs = import (fetchTarball "https://github.com/nixos/nixpkgs/archive/nixpkgs-21.05-darwin.tar.gz")
+      { config = nixconfig;
+        overlays = [circleci-overlay];};
+
+  edge = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/master.tar.gz") { config = nixconfig; };
+
+  nixconfig = {
     allowUnfree = true;
     oraclejdk.accept_license = true;
   };
 
-  # pkgs = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
-  stable = pkgs; # controlled by root nix-channel entry
-  unstable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
-  edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   # nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
 
-  # https://github.com/NixOS/nixpkgs/blob/8284fc30c84ea47e63209d1a892aca1dfcd6bdf3/pkgs/os-specific/darwin/yabai/default.nix
-  yabai_pin = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/8284fc30c84ea47e63209d1a892aca1dfcd6bdf3.tar.gz ) { config = nixcfg; };
   # using this because everytime you change the definition you need to re-grant SIP
+  yabai_pin = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/8284fc30c84ea47e63209d1a892aca1dfcd6bdf3.tar.gz" ) { config = nixconfig; };
 
-  # todo: check if this is relative to symlink location
-  expr = import ../../nixos/config/expr { inherit pkgs lib unstable edge; };
+  expr = import ../../os_nix/config/expr { inherit pkgs lib edge; };
 
-  # todo: check if this is relative to symlink location
-  # consts = import ../../nixos/shared/consts.nix
 in {
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-    }))
+  nixpkgs.config = nixconfig;
+  # nixpkgs.overlays = [circleci-overlay]
+
+  security.pki.certificateFiles = [
+    "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
   ];
 
-  # todo: cf https://wiki.nikitavoloboev.xyz/package-managers/nix/nix-darwin
-  nixpkgs.config = nixcfg;
-
-  # List packages installed in system profile. To search by name, run:
-  # $ nix-env -qaP | grep wget
   environment.systemPackages =
-    (with stable; [
-      socat
-      kitty
-      # valgrind
+    (with pkgs; [
+      babashka
 
-      # sulami's
-      adoptopenjdk-hotspot-bin-8
+      git
+      pup
 
-      aspell
-      aspellDicts.en
+      aspell aspellDicts.en
+      awscli2
+      cacert
       circleci-cli
       cloc
-      clojure
-      clojure-lsp
       cmake
-      docker
-      docker-compose
-      #emacsMacport 
-      emacs
+      coreutils
+      dep
+      # docker
+      # docker-compose
+      dos2unix
+      emacsMacport
+      # emacs
+      entr
       fd
-      fzf
       fira-code
-      # git
+      fzf
       gnupg
       gnused
+      # go
+      graphviz
       grpcurl
-      isync
-      # iterm2
+      # helm # not supported on darwin
+      htop
+      httpie
+      imagemagick
       jq
-      yq
+      kitty
+      kubernetes kubectl
       leiningen
       miller
+      minikube
+      mitmproxy
       msmtp
       mtr
       netcat
       ngrok
-      nodejs
+      nmap
       nodePackages.typescript
+      nodejs
       notmuch
+      pandoc
+      parallel
       pass
       pinentry_mac
+      pipenv
       poetry
+      pstree
       pv
       racket-minimal
       restic
       ripgrep
-      fd
       rlwrap
-      ruby
+      (lowPrio ruby)
       sbcl
+      shellcheck
       skhd
       slack
+      socat
       stack
       stow
+      terraform
+      tldr
       tmux
       tree
       unrar
       vim
       watch
       wget
-      zsh
-
-      # below from: https://github.com/dcarley/dotfiles/blob/master/Brewfile
-
-      # todo: compare against above
-
-      # not available on darwin
-      # _1password
-      # _1password-gui
-
-      # avrdude
-      # aws-vault
-      awscli2
-      # borkdude/brew/clj-kondo
-
-      # ARST caffeine
-
-      # moreutils
-      dep
-      tldr
-
-      # docker
-      dos2unix
-
-      entr
-      # exercism
-      # git-filter-repo
-      # gnu-sed
-      go
-      # graphviz
-      # helm
-      htop
-      httpie
-      # hub
-      # key-codes
-      # keybase
-      kubernetes kubectl
-      minikube
-      mitmproxy
-      # multimarkdown
-      nmap
-      # p7zip
-      parallel
-      pipenv
-      pstree
-
-# (python27.withPackages(ps: with ps; [
-#       # pip # sometimes we want user level global stuff anyway maybe
-#       # requests
-#       # toml
-#       # dateutil
-#   cryptography
-# pycryptodome
-
-#       # please do the needful
-#       # setuptools
-#       # virtualenv
-#     ]))
-
-      (python37.withPackages(ps: with ps; [
-      pip # sometimes we want user level global stuff anyway maybe
-      requests
-      toml
-      dateutil
-
-      # please do the needful
-      setuptools
-      virtualenv
-    ]))
-      # python37
-
-      # python@3.7
-      # qmk-toolbox
-      shellcheck
-      # spotify
-      # sslscan
-      # note: there are many terraform providers as well
-      # might also consider: terraform-full
-      terraform
-      # versent/taps/saml2aws
-      # visualvm
       wireshark
       yamllint
+      yq
+      zsh
+
+      (python39.withPackages
+        (ps: with ps; [
+          pip
+          setuptools
+          virtualenv
+
+          requests
+          toml
+          dateutil]))
+
       youtube-dl
-      coreutils
-      imagemagick
-
-      pandoc
-    ]) ++ (with unstable; [
-      git
-      cacert
-
+      # graalvm8-ce
+      # go_1_17
     ]) ++ (with edge; [
-    # ]) ++ (with expr; [
+      # go
+      go_1_17
+      # placeholder
+      # graalvm8-ce
+      # clang_12
+    ]) ++ (with expr; [
       # pb-git
+      colort-git
+      pfetch-neeasade
+      prod-tools
+    ]) ++ (with pkgs; [
+      # overlay packages
+      graalvm8-ce
     ]);
-
 
   environment.variables = {
     JAVA_HOME = "/run/current-system/sw";
-    ASPELL_CONF = "dict-dir ${pkgs.aspellDicts.en}/lib/aspell";
+    GIT_SSL_CAINFO="/etc/ssl/certs/ca-certificates.crt";
   };
 
-  # Use a custom configuration.nix location.
-  # $ darwin-rebuild switch -I darwin-config=$HOME/.config/nixpkgs/darwin/configuration.nix
-  # environment.darwinConfig = "$HOME/.config/nixpkgs/darwin/configuration.nix";
+  # programs.zsh.enable = true;  # manage zsh with nix-darwin
 
-  # Auto upgrade nix package and the daemon service.
-  # services.nix-daemon.enable = true;
-  # nix.package = pkgs.nix;
-
-  # Create /etc/bashrc that loads the nix-darwin environment.
-  programs.zsh.enable = true;  # default shell on catalina
-  # programs.fish.enable = true;
-
-  # see above todo
-  # users.users.nathan.name = consts.username;
-  # users.users.nathan.home = consts.home_directory;
-  # networking.computerName = consts.computer_name;
-  # networking.hostName = consts.hostname;
-
-  # launchd.user.agents = import ./launchd.nix {
-  #   pkgs = pkgs;
-  #   # home_directory = consts.home_directory;
-  #   home_directory = "/Users/nathan";
-  # };
+  # environment shim for when the default shell is zsh, but not managing zsh with nix
+  environment.etc."zshenv".text = ''
+      if [ -z "$__NIX_DARWIN_SET_ENVIRONMENT_DONE" ]; then
+        . ${config.system.build.setEnvironment}
+      fi'';
 
   launchd.user.agents = {
-    # pkgs = pkgs;
-    # home_directory = "/Users/nathan";
-
     skhd = {
       command = "${pkgs.skhd}/bin/skhd";
       serviceConfig = {
@@ -238,14 +171,29 @@ in {
 
   services.yabai = {
     enable = true;
-    # 3.3.4 is the unstable version you are currently tracking;
-    # everytime you bump yabai you have to re-give it permissions/sip (annoying)
-    # package = pkgs.yabai;
     package = yabai_pin.yabai;
     enableScriptingAddition = false;
   };
+
+
+  homebrew.enable = true;
+
+  homebrew.taps = [
+    "homebrew/cask"
+    "homebrew/core"
+    "homebrew/services"
+  ];
+
+  homebrew.brews = [];
+
+  homebrew.casks = [
+    # "go"
+    "docker"
+  ];
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
   system.stateVersion = 4;
 }
+
+

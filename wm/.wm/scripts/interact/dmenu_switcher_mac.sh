@@ -17,7 +17,9 @@ add_switch() {
 
 add_windows() {
     while read -r wid title; do
-  add_switch "window: $title" "yaboi window focus $wid"
+      if [ ! "$title" = "zoom.us" ]; then
+          add_switch "window: $title" "yaboi window focus $wid"
+      fi
     done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + .app)')
 }
 
@@ -94,6 +96,7 @@ add_metas() {
     # issue here -- slack title changes a lot -- want to just use one title partial match, 'Slack |'
     # add_switch "meta: slack" "qb_meta_open '$(cache_output $((60 * 60 * 24)) pass slack/url)'"
     add_switch "meta: slack" "find_class slack || (nohup slack &)"
+
     add_switch "meta: linkmarks" "elisp '(linkmark-select)'"
 
     # dmenu_exec() {

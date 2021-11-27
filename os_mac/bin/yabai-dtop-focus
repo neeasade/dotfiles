@@ -6,9 +6,8 @@
 
 space=$1
 
-# skip zoom windows (so they don't steal focus)
-json=$(yaboi query windows | jq '.[] | [select(.app != "zoom.us")]')
-# json="[${json}]"
+# skip zoom windows (so they don't steal focus when switching)
+json=$(yaboi query windows | jq '.[] | [select(.app != "zoom.us" or ."native-fullscreen" == 1)]')
 
 # if anyone is fullscreen, check if there's an index to switch to
 # side note for confused future me: focusing the space instead of the wid allows you to skip the transition animation

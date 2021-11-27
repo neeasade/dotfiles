@@ -14,7 +14,7 @@ if ${MAC:-false}; then
 	fi
 
 	if [ "$app" = kitty ]; then
-	    # catch 'apps' running in terminal (mainly concerned with finding emacs)
+	    # catch 'apps' running in terminal (mainly concerned with finding emacs in terminal mode)
 	    if grep -iq "$search" <<< "$(pstree $pid | awk '{print $4}')"; then
 		yabai -m space --focus $space
 		# yaboi window focus $wid
@@ -22,6 +22,7 @@ if ${MAC:-false}; then
 	    fi
 	fi
 
+	# NB: gui emacs on mac has a bug where the fullscreen window is unseen by yabai
     done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + (.pid|tostring) + " " + (.space|tostring) + " " + .app)')
 else
     for wid in $(bspc query -N -n .window); do

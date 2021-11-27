@@ -42,17 +42,6 @@ get() {
   echo set +a
 }
 
-# call ltheme subset for a named theme
-softload() {
-  name=$1
-  shift
-  [ -z "$name" ] && die softload needs a name.
-  [ ! -f "$theme_dir/$name" ] && die $name not found
-
-  export theme_load="${theme_dir}/${name}"
-  "$HOME/.wm/scripts/theming/ltheme" $*
-}
-
 load() {
   name=$1
   shift

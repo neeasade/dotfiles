@@ -19,12 +19,12 @@ bind() {
     (
     args=("$@")
     for i in $(seq 0 "$(( (${#args[@]} / 2) - 1 ))"); do
-	key=${args[$i]}
+        key=${args[$i]}
 
         val_index=$(( i + (${#args[@]} / 2) ))
         val=${args[$val_index]}
 
-	printf "%s : %s\n" "$key" "$val"
+        printf "%s : %s\n" "$key" "$val"
     done
     )
 }
@@ -55,6 +55,7 @@ bind fn-{1,2,3,4} \
 bind shift+fn-{$i,$o,$u,$y} \
      'yabai -m window --space '{1,2,3,4}
 
+# todo: this should turn off native-fullscreen before switching
 bind shift+fn-{1,2,3,4} \
      'yabai -m window --space '{1,2,3,4}
 

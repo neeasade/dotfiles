@@ -77,6 +77,8 @@ nmap('K', 'search-prev')
 
 # keep autosave session in sync when tabs are closed as well as opened
 # total hack
+# todo: include this hack in the undo action/keybind
+
 d_sync = ';;'.join([
     'tab-close',
     'set messages.timeout 1',
@@ -103,28 +105,29 @@ theme = {
 
     'colors': {
         'bg': {
-            'normal': '#e9eced',
-            'weak': '#d8d9da',
-            'strong': '#cecccd',
-            'focused': '#a9d2ef',
+            'normal': '#f2e9e3',
+            'weak': '#ddd4d3',
+            'strong': '#d1c8cd',
+            'focused': '#e0c4bf',
         },
 
         'fg': {
-            'normal': '#454849',
-            'weak': '#3c3d3e',
-            'strong': '#363435',
-            'focused': '#003855',
+            'normal': '#544b45',
+            'weak': '#473e3d',
+            'strong': '#3f363b',
+            'focused': '#544b45',
 
-            'match': '#006f96', # completion and hints
+            'match': '#916156', # completion and hints
         },
     }
+
 }
 
 
 # import templated theme when file exists
-themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
-if os.path.exists(themefile):
-    exec(open(themefile).read())
+# themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
+# if os.path.exists(themefile):
+#     exec(open(themefile).read())
 
 cssfile = os.environ["HOME"] + '/.config/qutebrowser/settings.css'
 if os.path.exists(cssfile):
@@ -257,6 +260,7 @@ c.hints.radius = 0
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 c.fonts.statusbar = GetSize('completion') + fonts['completion']
 
+nmap('<F9>', 'spawn --userscript jira_refine_copy')
 nmap('<F10>', 'spawn --userscript chrome_open')
 # nmap('W', 'spawn --userscript scrape')
 nmap('<F12>', 'devtools')
@@ -292,8 +296,11 @@ if os.path.exists(adblock_normal_file):
 else:
     adblock_normal_file = 'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts'
 
-if os.path.exists(adblock_file):
-    c.content.host_blocking.lists = [
-        adblock_normal_file,
-        'file://' + adblock_file,
-        ]
+# todo: handle userscript location
+# '/Users/nathan/Library/Application Support/qutebrowser/userscripts', '/Users/nathan/Library/Application Support/qutebrowser/userscripts', '/Users/nathan/.qutebrowser/userscripts'
+
+# if os.path.exists(adblock_file):
+#     c.blocking.hosts.lists = [
+#         adblock_normal_file,
+#         'file://' + adblock_file,
+#         ]

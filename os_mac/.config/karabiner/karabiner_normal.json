@@ -93,7 +93,8 @@
                                 "conditions": [
                                     {
                                         "bundle_identifiers": [
-                                            "^net\\.kovidgoyal\\.kitty$"
+                                            "^net\\.kovidgoyal\\.kitty$",
+                                            "Emacs"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }

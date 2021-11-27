@@ -17,8 +17,7 @@ let
 
   expr = import ./expr { inherit pkgs lib unstable edge; };
 
-  # pkgs = stable;
-  # edge = rolling;
+  # pkgs = stable; # edge = rolling;
   # rolling = stable;
 
   core = (with stable; [

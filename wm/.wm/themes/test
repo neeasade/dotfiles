@@ -67,7 +67,7 @@ settings() {
     # BG_COMMAND="hsetroot -solid $(elisp -r '(-> (tarp/get :assumed) (ct-transform-hsl-l (ct-get-hsl-l (tarp/get :background :weak))))')"
     # BG_COMMAND="feh --bg-tile /tmp/result.png"
 
-    # PROMPT_CHAR='%'
+    PROMPT_CHAR='%'
     # PROMPT_CHAR='♥'
 
     # bspwm
@@ -79,9 +79,8 @@ settings() {
     # b_normal_border_color=$(elisp -r "(ct-shorten (face-attribute 'mode-line-inactive :background))")
     # b_normal_border_color=$(colort -t "$b_normal_border_color")
 
-    b_window_gap=14
-    # b_window_gap=32
-    b_window_width=10
+    b_window_gap=32
+    # b_window_width=10
 
     b_bspwmrc_extend="tag_borders &
 subscription_rules &"
@@ -117,13 +116,15 @@ subscription_rules &"
     p_line=2
     # p_padding=6
 
-    st_font="Go Mono for Powerline-10"
-    st_font_variable="Charter-10"
-    # st_font_variable="Go Mono for Powerline-10"
-    p_font_main="Charter-10"
-    d_font="Charter 10"
+    # st_font="Go Mono for Powerline-14"
 
-    st_font_variable="Equity-10"
+    # st_font="Fira Code 16"
+    st_font="Go Mono 16"
+    # st_font_variable="Charter 14"
+    st_font_variable="Go Mono 16"
+
+    p_font_main="Charter-14"
+    d_font="Charter 12"
 
     p_font_icon="Font Awesome 5 Free Solid-8"
     p_icon_enable=false

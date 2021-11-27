@@ -5,7 +5,6 @@ dbusplaying=false
 dbuspresent=false
 if status=$(playerctl -a status 2>/dev/null); then
   dbusplaying=true
-
   dbuspresent=true
 
   if ! echo "$status" | grep -q "Playing"; then

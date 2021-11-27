@@ -128,7 +128,11 @@ sysinfo() {
 }
 
 bicc() {
-  du -Sa "${1:-$HOME}" | sort -n -r | head -n "${2:-20}" | awk '{"numfmt --to=si "$1"000" | getline size; $1=""; print size $0}'
+  du -Sa "${1:-.}" | sort -n -r | head -n "${2:-20}" | awk '{"numfmt --to=si "$1"000" | getline size; $1=""; print size $0}'
+}
+
+recentf() {
+  ls -t "${1:-.}" | head -n "${2:-1}"
 }
 
 sleepm() {
@@ -463,15 +467,18 @@ qq() {
         rm "$f_status"
         vdo cp "$f_colemak" "$f_status"
         skhdrc-gen laptop > $HOME/.skhdrc
-        # use this when using external qwerty keyboard:
-        # skdhrc-gen > $HOME/.skhdrc
+        # EXTERNAL QWERTY KEYBOARD? UNCOMMENT ME
+        # skhdrc-gen > $HOME/.skhdrc
+
         skhd --reload
+        elisp "(setq mac-control-modifier 'super mac-command-modifier 'control)"
         ;;
       $f_colemak)
         rm "$f_status"
         vdo cp "$f_normal" "$f_status"
         skhdrc-gen > $HOME/.skhdrc
         skhd --reload
+        elisp "(setq mac-control-modifier 'control mac-command-modifier 'super)"
         ;;
       *) echo "existing karabiner.json in unknown state!" >&2 ;;
     esac

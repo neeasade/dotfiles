@@ -124,6 +124,7 @@ succ ".npm-packages/bin"
 GEM_HOME="$HOME/.gem"
 BUNDLE_PATH="$HOME/.gem"
 GOPATH="$HOME/.go"
+pathmunge "$GOPATH/bin"
 
 pathmunge '/run/current-system/sw/bin'
 
@@ -144,6 +145,7 @@ if $MAC; then
   add_macapp iTerm.app
   add_macapp BitBar.app
   add_macapp xbar.app
+  add_macapp MeetingBar.app
 fi
 
 REMOTE=false
@@ -165,4 +167,3 @@ if has qutebrowser; then
 fi
 
 set +a
-

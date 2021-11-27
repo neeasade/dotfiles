@@ -1,10 +1,11 @@
 #!/usr/bin/env elisp
-;; elisp-eval: emacs_batch=true
+;; elisp-eval: emacs_batch=true trim=true
 ;; making this run in batch mode is mega slower.
 ;; that's ok because using it in a panel/dynamic contexts doesn't touch our running emacs.
 
 (ns/util)
 (ns/use-package ct "neeasade/ct.el")
+(require 'ct)
 
 (ns/let-script-args
  (step start end with-ends)

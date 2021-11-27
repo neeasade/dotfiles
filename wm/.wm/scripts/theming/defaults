@@ -129,8 +129,6 @@ st_cursorthickness=2
 # padding
 x_padding=4
 
-GTK_FONT="Droid Sans 10" # GTK font to be used.
-
 # dunst
 d_font="Droid Sans 10" # Font used by dunst on startup
 d_border_color=$b_normal_border_color

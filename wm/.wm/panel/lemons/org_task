@@ -23,6 +23,6 @@ else
     full=$(elisp -r '(-> (tarp/get :assumed) (ct-pastel 20 20))')
     # empty=$(elisp -r '(-> (tarp/get :assumed) (ct-pastel 35 35))')
     empty=$(elisp -r '(-> (tarp/get :background :normal))')
-    echo "$topic $(bs "B$full" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
-    # echo "$topic $(mkb "$percent" 10)"
+    # echo "$topic $(bs "B$full" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
+    echo "$topic $(mkb "$percent" 10)"
 fi

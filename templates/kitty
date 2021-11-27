@@ -1,10 +1,9 @@
-font_family      16
-font_size      {{st_font}}
+font_family      {{st_font}}
+font_size       16
 
 
 clear_all_shortcuts yes
 macos_option_as_alt yes
-
 
 cursor_blink_interval 0
 kitty_mod ctrl+shift
@@ -27,6 +26,7 @@ inactive_tab_background   #{{background}}
 
 active_border_color   #{{foreground}}
 inactive_border_color #{{background}}
+
 bell_border_color     #{{color1}}
 
 color0       #{{color0}}
