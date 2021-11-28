@@ -1,0 +1,218 @@
+# create default, and then themes are about deriving
+# toml extensions we're considering making:
+
+## file inclusions:
+#include colors.toml
+## references:
+# key = '@some.value.ref'
+## environment variables:
+# key = '$HOME/path/to/thing'
+
+# our tool (goat?) will need to be able to:
+## template
+## get individual values
+## export as bash identifiers for flexible use:
+# an equivalent to eval "$(theme get)", where keys are transform like:
+# bspwm.border-width -> bspwm__border_width
+# bspwm__border_width='sanitized value'
+# or:
+# theme get bspwm -> border_width='sanitized value'
+
+[bspwm]
+border-width = 3
+window-gap= 10
+split-ratio = 0.5
+normal-border-color = '@color.0'
+active-border-color = '@color.8'
+focused-border-color = '@color.foreground'
+presel-feedback-color = '@color.8'
+desktop-names = '00 01 10 11'
+
+monocle-window-percent = 0.53
+
+# meant to be used for effects, like pulse or 2bspwm
+bspwmrc-extend = ""
+
+[mkb]
+complete = '-'
+empty = '-'
+sep = '+'
+start = ''
+end = ''
+
+[panel]
+
+# expose variable to lemon:
+# panel.<lemon>.<variable>
+
+# special keys:
+# panel.<lemon>.reload
+# panel.<lemon>.mouse.scroll-up
+# panel.<lemon>.mouse.scroll-down
+# panel.<lemon>.mouse.left
+# panel.<lemon>.mouse.middle
+# panel.<lemon>.mouse.right
+
+# special section is [panel.conf]
+
+# reload values:
+network.reload = 20
+mail.reload = 30
+desktop.reload = "bspc subscribe"
+tags.reload = "-3" # persist
+title.reload = "(xtitle -s & bspc subscribe desktop_layout)"
+weather.reload = 600
+updates.reload = 600
+dropdown.reload = "echo oneshot"
+themeSwitch.reload = "echo oneshot"
+dynamicmpd.reload = 0
+github.reload = 120
+
+
+# oneoff mouse:
+
+# default click actions for panel sections
+themeSwitch.mouse.left="dzen.sh theme"
+
+panel.dropdown.mouse.left="dezen.menu"
+dropdown.mouse.left="dzen.sh menu"
+github.mouse.left="dzen.sh github"
+circe.dms.mouse.left="dzen.sh circe"
+clock.mouse.left="dzen.sh cal"
+
+# saving leftover ideas
+# org-task.mouse.left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
+# org-task.mouse.right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
+
+[panel.conf]
+
+format = "dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
+height = 16                  # Panel height.
+font-main = "Droid Sans-8"   # Panel main font.
+font-icon = "Font Awesome 5 Free-10" # Panel Icon font.
+icon-enable = true           # toggle icon script output
+gap = 4                      # Gaps of panel off screen.
+padding = 4                  # number of pixels to pad panel information (sections/blocks) with
+line = 2 # width of the over/underlines
+launch-cmd = "$HOME/.wm/panel/lemonade" # The command to launch the panel
+
+# todo: re-evaluate these
+bg-normal = "#ff$background"
+bg-middle = "#ff$background"
+fg-normal = "#ff$foreground"
+bg-active = $p-fg-normal
+fg-active = $p-bg-normal
+bg-inactive = $p-bg-normal
+fg-inactive = $p-fg-normal
+
+# icon color - also used in qutebrowser completion, ACYL icons color
+icon = "unset"
+
+window-class = "lemonbar" # window class to use in lemonade's juicer
+position = "top"          # panel position - top|bottom
+
+[panel.desktop]
+display-name=icon       # [icon|name] - display desktop names or DO/DF variables.
+display-format=together # [together|separate] - show desktops in separate blocks or together in one block.
+show-free=true          # option to show nothing for free desktops.
+mode-toggle=false       # monocle/tiling toggle.
+only-active=false       # only show the active desktop name
+
+# Workspace variables
+occupied-label='[-]'
+empty-label='[ ]'
+tiling-label=''
+monocle-label='M'
+
+[panel.volume.mouse]
+scroll-down="ponymix decrease 5"
+scroll-up="ponymix increase 5"
+
+[panel.mpd.mouse]
+left = 'player.sh toggle'
+middle = 'mpc clear'
+right = 'player.sh next'
+scroll-down = 'mpc seek -00:00:02'
+scroll-up = 'mpc seek +00:00:02'
+
+[panel.dynamicmpd.mouse]
+left = '@panel.mpd.mouse.left'
+middle = '@panel.mpd.mouse.middle'
+right = '@panel.mpd.mouse.right'
+scroll-down = '@panel.mpd.mouse.scroll-down'
+scroll-up = '@panel.mpd.mouse.scroll-up'
+
+[st]
+font="Droid Sans Mono-10"
+font_variable="Droid Sans-10"
+
+font="Droid Sans Mono for Powerline-10"
+font_variable="Droid Sans-10"
+
+cursorshape=2
+cursorthickness=2
+
+prompt_char = '$'
+
+[x]
+padding=4
+
+[picom]
+
+frame.opacity = 1.0
+shadow.opacity = 0.4
+shadow.enabled = false
+shadow.radius = 1
+shadow.offset-x = 1
+shadow.offset-y = 1
+shadow.red = 0.0
+shadow.blue = 0.0
+shadow.green = 0.0
+
+fading = false
+fade-in-step = 0.1
+fade-out-step = 0.1
+
+[tmux]
+
+statusbar= """
+setw -g window-status-current-format '▄▄'
+setw -g window-status-format '▄▄'
+setw -g window-status-bg default
+setw -g window-status-fg blue
+setw -g window-status-current-bg default
+setw -g window-status-current-fg white
+setw -g window-status-current-attr bright
+
+set-option -g status-position bottom
+set -g status-bg default
+set -g status-fg default
+set -g status-justify right
+set -g status-left ''
+set -g status-right ''
+"""
+
+[mpd]
+music-dir = "$HOME/Music"
+mpd-dir = "$HOME/.config/mpd"
+
+
+[2bspwm]
+
+# 2bspwm script overrides
+border_width_in_normal=$(( border_width_current/2 ))
+border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
+border_width_in_focused=$border_width_in_normal
+border_width_out_focused=$border_width_out_normal
+
+border_color_out_normal=$b_normal_border_color
+border_color_out_focused=$b_focused_border_color
+
+border_color_in_normal=$color2
+border_color_in_focused=$color3
+
+# uncovered/this sort of thing is not feasible IN the config
+# if type greaten >/dev/null; then
+#     border_color_in_normal=$(elisp_timeout=1 greaten 5 $border_color_out_normal)
+#     border_color_in_focused=$(elisp_timeout=1 greaten 5 $border_color_out_focused)
+# fi
