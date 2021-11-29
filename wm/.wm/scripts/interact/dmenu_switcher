@@ -146,10 +146,15 @@ add_metas() {
 
     add_switch "meta: exec" "dmenu_exec"
 
+    # link mark/book mark translation here would be nice
     add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
     add_switch "meta: telegram" "find_url 'https://web.telegram.org/'"
     add_switch "meta: twitter" "find_url 'https://twitter.com/'"
     add_switch "meta: nixers" "find_url 'https://nixers.net/'"
+    add_switch "meta: texting" "find_url 'https://messages.google.com/web/'"
+
+    # todo: add discord
+    # todo: add telegram
 
     find_steam() {
 	if pgrep steam; then
@@ -174,7 +179,7 @@ add_metas() {
 
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
 
-    for o in now playlist artist del; do
+    for o in now playlist artist del bl 'filter is_long'; do
 	add_switch "meta: music $o" "music $o"
     done
 

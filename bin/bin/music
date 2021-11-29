@@ -24,7 +24,28 @@ usage() {
   exit 1
 }
 
-# is a file longer than 20 min
+count() {
+    printf '%s\n' "$#"
+}
+
+is_album_song() {
+  file=$1
+
+  if [[ $file =~ bandcamp ]]; then
+    return 0
+  fi
+
+  count=$(count "$(dirname "$file")"/*)
+  # these numbers were chosen arbitrarily.
+  if [ $count -lt 15 ]; then
+    if [ $count -gt 4 ]; then
+      return 0
+    fi
+  fi
+
+  return 1
+}
+
 is_long() {
   milli=$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')
   if [ -z "$milli" ]; then
@@ -32,9 +53,10 @@ is_long() {
   fi
 
   seconds=$(( $milli / 1000))
-  if [ $seconds -gt $((60 * 20)) ]; then
+  if [ $seconds -gt $((60 * 15)) ]; then
     return 0
   else
+    # is_album_song
     return 1
   fi
 }
@@ -43,12 +65,12 @@ is_short () {
   ! is_long "$@"
 }
 
-filter() {
+filter() { # filter the current playlist by some shell function acting on music files
   echo "filter $*"
   fn=$1
   mpc playlist -f '%position% %file%' |
     while read -r pos file; do
-      if ! $fn "${musicdir}/$file"; then
+      if ! $fn "${musicdir}/$file" >/dev/null; then
 	echo "$pos"
       fi
     done | mpc del
@@ -160,14 +182,12 @@ bl() { # blacklist the currently playing song from the current playlist.
 artist() { # play songs by an artist
   artist=$*
   if [ -z "$artist" ]; then
-    artist=$({
-	      mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq
-	      cat "${HOME}/Music/playlist/artists"
-	    } | dmenu)
-  fi
-
-  if [ -z "$artist" ]; then
-    return
+    if ! artist=$({
+		   mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq
+		   cat "${HOME}/Music/playlist/artists"
+		 } | dmenu); then
+      return
+    fi
   fi
 
   echo "artist $artist"
@@ -178,12 +198,10 @@ artist() { # play songs by an artist
   fi
 
   {
-    append "/${artist} -"
-    append "/${artist}-"
     append "/${artist} "
     append "/${artist}/"
-    append "\- ${artist}"
-    GREP_EXTRA='-E' append "/${artist} \(.+\)"
+    append "/${artist}[ ]\+[-(]"
+    append "\- ${artist}\(\..*\)\?$"
   } >/dev/null
 
   # correct casing for exact matches from the above
@@ -192,10 +210,11 @@ artist() { # play songs by an artist
       mpc find artist "$corrected" | mpc add
     done
 
-  clear_duplicates
-
   if [ "$interactive_op" = "artist" ]; then
-    mpc shuffle
+    clear_duplicates
+    if ${SHUFFLE:-true}; then
+      mpc shuffle
+    fi
     mpc play
   fi
 }

@@ -20,7 +20,7 @@ check_disk_space() {
 }
 
 (
-    cache_output 500 elisp -r '(ns/export-scheduled-org-headings-past)'
+    cache_output 500 elisp -r '(ns/org-status-outdated)'
 
     check_disk_space
 

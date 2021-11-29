@@ -7,6 +7,9 @@ pid_file           "{{mpd_dir}}/pid"
 state_file         "{{mpd_dir}}/state"
 sticker_file       "{{mpd_dir}}/sticker.sql"
 
+# really long timeout
+connection_timeout	"2000000"
+
 # # Define alsa output so we actually hear something :)
 # audio_output {
 #     type    "alsa"

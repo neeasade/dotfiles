@@ -297,10 +297,20 @@ else:
     adblock_normal_file = 'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts'
 
 # todo: handle userscript location
-# '/Users/nathan/Library/Application Support/qutebrowser/userscripts', '/Users/nathan/Library/Application Support/qutebrowser/userscripts', '/Users/nathan/.qutebrowser/userscripts'
+# '/Users/nathan/Library/Application Support/qutebrowser/userscripts',
+# '/Users/nathan/.qutebrowser/userscripts'
 
 # if os.path.exists(adblock_file):
 #     c.blocking.hosts.lists = [
 #         adblock_normal_file,
 #         'file://' + adblock_file,
 #         ]
+
+# both = both host blocking and brave abp-style blocker
+c.content.blocking.method = "both"
+
+if os.path.exists(adblock_file):
+    c.content.blocking.hosts.lists = [
+        adblock_normal_file,
+        'file://' + adblock_file,
+        ]

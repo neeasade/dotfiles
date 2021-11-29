@@ -12,6 +12,7 @@
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
+  # todo: https://github.com/NixOS/nixpkgs/issues/31260 ?
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/af237de7-fdd4-4cc2-8db3-f8fc33b9a5c6";
       fsType = "ext4";

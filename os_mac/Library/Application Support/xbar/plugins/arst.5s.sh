@@ -1,5 +1,6 @@
 #!/bin/sh
 # this is called at 5 second intervals (from the name of the file)
+# this is the 'work' version of the misc lemon
 
 . "$HOME/.sh.d/environment"
 style="| font=Charter | size=18"
@@ -19,7 +20,10 @@ result=$(
         check_slack_dms
 
         cache_output 30 org_task
-        cache_output 500 elisp -r '(ns/export-scheduled-org-headings-past)'
+        # cache_output 30 org_task
+        cache_output 500 elisp -r '(ns/org-status-outdated)'
+
+        # echo 'memento mori'
     ) | awk NF | tr '\n' '^' | sed 's/.$//' | sed 's/\^/ 🌳 /g')
 
 if [ -z "$result" ]; then

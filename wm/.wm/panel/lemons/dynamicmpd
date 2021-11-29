@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 # scrolling mpd text
 # limitation of this is it only works with monospace fonts.
 # lemonbar support arbitrary stuff
@@ -33,11 +33,11 @@ else
     end="$(bs "B$(colort -70 "$bg")" O${first} +o)$(bs Beef0f3 +o O${second})"
 
     echo "$title" | skroll -r -n $((max_length-1)) -d 0.2 | stdbuf -oL tail -n +2 | \
-    while IFS='\n' read -r out; do
-	if [ "${#out}" -gt 3 ]; then
-	    printf "%-$((max_length-1))s\n" "$(icon $(iif 'mpc | grep -q playing' pause play))$(bs 'A1mpc toggle' ":$out")$end" | sed 's/ /  /g' | season
-	fi
-    done
+	while IFS='\n' read -r out; do
+	    if [ "${#out}" -gt 3 ]; then
+		printf "%-$((max_length-1))s\n" "$(icon $(iif 'mpc | grep -q playing' pause play))$(bs 'A1mpc toggle' ":$out")$end" | sed 's/ /  /g' | season
+	    fi
+	done
 fi
 }
 

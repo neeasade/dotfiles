@@ -1,21 +1,24 @@
 #!/bin/sh
 # narrow symlinker to match stow, but only from ~/.dotfiles
-# idea for here: add an "all" to stowo paths you commonly care about
 
 # todo: this doesn't deal well in replacing files that are currently in stow-created directories
 # (IE, migration from stow -> stowo, if stow created the outline)
 
+default_packages=$(ls "$HOME/.dotfiles/" | grep -vE "(os_|readme.org|templates|windows|i3|bootstrap)" | tr $'\n' ' ')
+
 if [ -z "$*" ]; then
-    echo "give me something to stOwO:"
-    ls "$HOME/.dotfiles/"
-    echo "or use the keyword 'all' to get:"
-    ls "$HOME/.dotfiles/" | grep -vE "(nixos|readme.org|templates|windows|i3|bootstrap)" | tr $'\n' ' '
-    echo
-    exit 0
+    cat<<EOF
+give me something to stOwO:
+$(ls "$HOME/.dotfiles/")
+or use the keyword 'all' to install:
+$default_packages
+
+EOF
+    exit 1
 fi
 
 if [ "$*" = "all" ]; then
-    set -- $(ls "$HOME/.dotfiles/" | grep -vE "(nixos|readme.org|templates|windows|i3|bootstrap)" | tr $'\n' ' ')
+    set -- $default_packages
 fi
 
 while [ ! -z "$1" ]; do
@@ -34,7 +37,6 @@ while [ ! -z "$1" ]; do
 	# hell yeah brother HH
 	prepend=$(echo "$path" | tr -dc '/' | cut -c3- | sed 's#/#../#g')
 	path="$prepend$path"
-
 
 	mkdir -p "$(dirname "$target")"
 

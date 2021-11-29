@@ -90,13 +90,27 @@ if type timeout >/dev/null; then
 fi
 
 if $emacs_batch_window; then
+    # todo: set window class, get result, better handling
     NS_EMACS_BATCH=$lisp emacs -f kill-emacs 2>&1
     exit $?
 elif $emacs_batch; then
-    result=$(NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ " | grep -v "^Starting new Ispell" | grep -v "^Building ")
+    filter_lines() {
+	sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | \
+	while read -r line; do
+	    case "$line" in
+		# ''*) ;;
+		# *...) ;;
+		'Loading '*) ;;
+		'Building '*) ;;
+		*) printf '%s\n' "$line" ;;
+	    esac
+	done
+    }
 
-    # NS_EMACS_BATCH=$lisp emacs --script "${HOME}/.emacs.d/init.el" 2>&1
-    # exit 0
+
+    # todo: see if this gives you color
+    # result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs -nw -l "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ " | grep -v "^Starting new Ispell" | grep -v "^Building ")
+    result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs -nw -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_lines)
 else
     # echo $emacs_timeout $eclient --eval "$lisp"
     if [ -z "$emacs_server_file" ]; then
