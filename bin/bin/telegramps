@@ -1,4 +1,5 @@
 #!/usr/bin/env bb
+;; -*- mode: clojure -*-
 ;; generate telegram themes
 ;; :label "#ffffffAA" (value with optional opacity)
 ;; :label :label (pointer to another value)
