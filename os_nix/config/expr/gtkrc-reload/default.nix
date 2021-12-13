@@ -1,4 +1,4 @@
-{ stdenv, pkgconfig, gtk2 }:
+{ lib, stdenv, pkgconfig, gtk2 }:
 
 stdenv.mkDerivation rec {
   name = "gtkrc-reload-v${version}";
@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
      make install PREFIX=$out
    '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Utility for reloading gtk2 program themes";
     inherit (src.meta) homepage;
     license = licenses.gpl3;

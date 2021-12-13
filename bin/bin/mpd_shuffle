@@ -1,0 +1,35 @@
+#!/usr/bin/env bb
+;; filter to long songs, preserve album order
+;; if any argument is passed, don't filter long, just shuffle with albums in mind
+
+(require '[clojure.java.shell :as shell])
+(require '[clojure.string :as string])
+
+(defn is-long
+  [song]
+  (> (/ (read-string
+         (:out
+          (shell/sh
+           "mediainfo" "--Inform=Audio;%Duration%"
+           (format "/home/neeasade/Music/%s" song))))
+        1000)
+     (* 60 15)))
+
+(->> (string/split (:out (shell/sh "mpc" "playlist" "-f" "%file%")) #"\n")
+     (sort)
+     (group-by
+      (fn [path]
+        (->> (string/split path #"/")
+             (drop-last)
+             (string/join "/"))))
+     (mapcat (fn [[dir songs]]
+               {dir (if (or (string/includes? dir "bandcamp")
+                            (< 4 (count songs) 15))
+                      songs
+                      (if *command-line-args*
+                        songs
+                        (filter is-long songs)))}))
+     (shuffle)
+     (mapcat second)
+     (string/join "\n")
+     (println))

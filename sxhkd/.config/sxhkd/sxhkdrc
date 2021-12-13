@@ -46,6 +46,9 @@ super + {_,shift,alt,ctrl} + {Left,Down,Up,Right}
 super + ctrl + space
     bspc node -p cancel
 
+ctrl + {_,shift} + space
+    dunstctl close{ ,-all}
+
 # insert receptacle, or clear receptacles on current desktop
 super + {_,shift} + r
     {bspc node -i,for win in $(bspc query -N -d -n .leaf.!window); do bspc node $win -k; done}

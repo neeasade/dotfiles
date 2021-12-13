@@ -47,7 +47,9 @@ is_album_song() {
 }
 
 is_long() {
-  milli=$(mediainfo --Inform="Audio;%Duration%" "$*" | sed 's/\..*//')
+  milli=$(mediainfo --Inform="Audio;%Duration%" "$*")
+  milli=${milli%.*}
+
   if [ -z "$milli" ]; then
     return 1
   fi
@@ -57,6 +59,7 @@ is_long() {
     return 0
   else
     # is_album_song
+    # return $!
     return 1
   fi
 }
@@ -95,35 +98,18 @@ add() { # add a url to library, fallback on clipboard content
   mkdir -p "$musicdir/import"
 
   # note: get all of an artists album links example:
-  # url='https://sewerslvt.bandcamp.com/'
-  # curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '${url}#" -e "s/$/'/"
+  # url='https://sewerslvt.bandcamp.com/music'
+  # url='https://fmskyline.bandcamp.com/music'
+  # curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '$(echo "$url" | sed 's/music//')#" -e "s/$/'/"
 
   if [[ $url =~ bandcamp.com ]]; then
     # bandcamp music is organized by album:
-    format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(title)s.%(ext)s"
+    format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(track_number)02d. %(title)s.%(ext)s"
   else
     format="$musicdir/import/%(uploader)s/%(title)s.%(ext)s"
   fi
 
-  # break things out by song url, so we can report statuses individually for later cleanup
-  # this is sort of a wonky way to do things (new process per song url)
-  # TODO: checkout --print-json (download but still print json)
-  youtube-dl -x -i -j -o "$format" "$url" | jq -r '.webpage_url + " " + .title' | \
-    while read narrow_url title; do
-	# remove previous status entries for this url
-	sed -i "\^|${narrow_url}|^d" "$musicdir/import_history.log"
-
-	if youtube-dl -x -i -o "$format" "$narrow_url"; then
-	  result=success
-	else
-	  result=fail
-	fi
-
-	printf "\n|%s|%s|%s|%s|\n" "$narrow_url" "$title" "$(date)" "$result" >> "$musicdir/import_history.log"
-    done
-
-  sed -i '/^$/d' "$musicdir/import_history.log"
-  echo >> "$musicdir/import_history.log"
+  youtube-dl --download-archive  "$musicdir/download_archive.txt" -x -i -o "$format" "$url"
 
   mpc update # re-index
 }
@@ -184,8 +170,9 @@ artist() { # play songs by an artist
   if [ -z "$artist" ]; then
     if ! artist=$({
 		   mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq
-		   cat "${HOME}/Music/playlist/artists"
-		 } | dmenu); then
+		   cat "${musicdir}/playlist/artists"
+		   ls "${musicdir}/import/bandcamp/"
+		 } | sort | uniq | dmenu); then
       return
     fi
   fi
@@ -201,6 +188,7 @@ artist() { # play songs by an artist
     append "/${artist} "
     append "/${artist}/"
     append "/${artist}[ ]\+[-(]"
+    append "\. ${artist}[ ]\+[-(]"
     append "\- ${artist}\(\..*\)\?$"
   } >/dev/null
 
@@ -210,11 +198,15 @@ artist() { # play songs by an artist
       mpc find artist "$corrected" | mpc add
     done
 
+
+  clear_duplicates
+
   if [ "$interactive_op" = "artist" ]; then
-    clear_duplicates
     if ${SHUFFLE:-true}; then
-      mpc shuffle
+      shuffle_preserve_album
+      # mpc shuffle
     fi
+
     mpc play
   fi
 }
@@ -299,6 +291,15 @@ info() { # display the current audio progress bar and playlist length
   if [ "$(GET=t player.sh)" = "mpc" ]; then
       echo "playlist: $(cat $current_playlist) | $(playlist_length)"
   fi
+}
+
+shuffle_preserve_album() {
+  echo shuffle_preserve_album
+
+  clear_duplicates # this clear is important for mpd_shuffle to work (group_by)
+  shuffled=$(mpd_shuffle)
+  mpc clear
+  mpc add <<< "$shuffled"
 }
 
 interactive_op=${1:-usage}

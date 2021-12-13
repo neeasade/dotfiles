@@ -1,4 +1,4 @@
-{ stdenv, pkgconfig, gdk_pixbuf, glib.dev, gtk-engine-murrine, gtk3, sassc}:
+{ lib, stdenv, pkgconfig, gdk_pixbuf, glib.dev, gtk-engine-murrine, gtk3, sassc}:
 # { stdenv, pkgconfig, gtk2 }:
 
 
@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
      make install PREFIX=$out/
    '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Utility for reloading gtk2 program themes";
     inherit (src.meta) homepage;
     license = licenses.gpl3;

@@ -2,7 +2,7 @@
 # get targets for drawing borders on in bspwm
 
 kind=${1:-active}
-shift
+shift 2>/dev/null
 
 case "$kind" in
     active)
