@@ -1,55 +1,32 @@
 #!/usr/bin/env bash
 # Load themes for programs from current theme
 
-# todo: this script should also handle font checking against fc-list
-
 # relative calling
 cd $(dirname $([ -L $0 ] && readlink -f $0 || echo $0))
 export PATH="$PATH:$(pwd)"
 
-# default template targets
-# this allows themes to replace template files with different targets, by defining ${target}_template
-for template in $(ls $HOME/.dotfiles/templates); do
-    eval ${template}_template="$HOME/.dotfiles/templates/${template}"
-done
-
 # todo: should this used the cached theme? then you wouldn't depend
 # on emacs running for eg, panel startup/refresh theme there
-eval "$(theme get)"
+# eval "$(theme get)"
+
 set -a
 
-# util:
-
-# mustache args, cache.
-# usage: margs <template name> <destination>
-# <destination> is relative to $HOME
-margs() {
-    cache=false
-    template=$(eval echo \$${1}_template)
-
-    if [ ! -f "$template" ]; then
-	template=$1
-    fi
-
-    target="$HOME/$2"
-    mkdir -p "${target%/*}"
-
-    if $cache; then
-        cachefile="/tmp/template/$THEME_NAME/$2"
-        if [ ! -f "$cachefile" ]; then
-            mkdir -p "${cachefile%/*}"
-            templum -o "$cachefile" "$template"
-            cp "$cachefile" "$target"
-            return 1
-        fi
-        cp "$cachefile" "$target"
-        return 0
-    fi
-
-    templum -o "$target" "$template"
-    return 1
+render() {
+    template="$HOME/.dotfiles/theming/templates/$1"
+    dest="$HOME/$2"
+    shift
+    shift
+    mkdir -p "$(dirname "$dest")"
+    theme_dir="$HOME/.dotfiles/theming/themes"
+    gott \
+	-l "${theme_dir}/colors.toml" \
+	-l "${theme_dir}/defaults.toml" \
+	-l "${HOME}/.wm_theme" \
+	"$@" \
+	-r "$template" > "$dest"
 }
 
+# util:
 git_ensure() {
     gitdir="$HOME/git"
 
@@ -77,60 +54,31 @@ git_ensure() {
     fi
 }
 
-trim_alphas() {
-    for target in active inactive normal; do
-        eval p_fg_$target=$(eval colort -t "\$p_fg_$target")
-        eval p_bg_$target=$(eval colort -t "\$p_bg_$target")
-    done
-
-    p_icon=$(colort -t "$p_icon")
-}
-
 # loaders:
 load_tmux() {
-    margs tmux .tmux.conf
+    render tmux .tmux.conf -c tmux
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
 load_kitty() {
-    # st_font_size=$(echo "$st_font" | tr -dc '0-9')
-    st_font=$(echo "$st_font" | sed 's/ .*//')
-
-    margs kitty .config/kitty/kitty.conf
-    # pgrep tmux && tmux source-file "$HOME/.tmux.conf"
+    render kitty .config/kitty/kitty.conf -c color.normal
 }
 
 load_picom() {
-    margs picom .config/picom.conf
+    render picom .config/picom.conf -c picom
     systemctl --user restart picom
 }
 
 load_bg() {
-    $BG_COMMAND
+    $(theme getval BG_COMMAND)
 }
 
-# also loads xst
 load_xresources() {
-    trim_alphas
-
-    if ! margs Xresources .Xresources; then
-        # handle any color definitions through 255
-	(
-	    IFS=$'\n'
-	    for i in $(seq 0 255); do
-		eval "[ ! -z \$color$i ] && echo \*.color$i: \#\$color$i >> $HOME/.Xresources"
-	    done
-	)
-
-	if [ ! -z "$cachefile" ]; then
-	    cp "$HOME/.Xresources" "$cachefile"
-	fi
-    fi
+    render Xresources .Xresources -c color.normal
 
     if type xrdb >/dev/null 2>&1; then
-	xrdb $HOME/.Xresources
+	xrdb "$HOME/.Xresources"
     fi
-
     load_xst
 }
 
@@ -141,12 +89,12 @@ load_xst() {
 }
 
 load_bspwm() {
-    if [ "${p_launch_cmd##*/}" = "lemonade" ]; then
-        load_lemonade
-    fi
+    # if [ "${p_launch_cmd##*/}" = "lemonade" ]; then
+    #     load_lemonade
+    # fi
 
     bspwmrc=".config/bspwm/bspwmrc"
-    margs bspwm "$bspwmrc"
+    render bspwm "$bspwmrc" -c bspwm
     chmod +x "$HOME/$bspwmrc"
 
     wait
@@ -154,33 +102,35 @@ load_bspwm() {
 }
 
 load_lemonade() {
-    rm $HOME/.config/i3blocks/config
+    echo TODO: lemonade
+    # rm $HOME/.config/i3blocks/config
 
-    IFS=$'\n'
+    # IFS=$'\n'
 
-    juicer_target=".config/i3blocks/config"
+    # juicer_target=".config/i3blocks/config"
 
-    # note all lemons, generate them.
-    lemons=$(echo $p_format | tr ':|' ' ');
+    # # note all lemons, generate them.
+    # lemons=$(echo $p_format | tr ':|' ' ');
 
-    if ! margs juicer "$juicer_target"; then
+    # if ! margs juicer "$juicer_target"; then
 
-	. ripen
-	IFS=' '
-	parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/$juicer_target
-	IFS=
+    # 	. ripen
+    # 	IFS=' '
+    # 	parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/$juicer_target
+    # 	IFS=
 
-	[ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
-    fi
+    # 	[ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
+    # fi
 
-    if systemctl --user status panel >/dev/null; then
-	systemctl --user restart panel
-    fi
+    # if systemctl --user status panel >/dev/null; then
+    # 	systemctl --user restart panel
+    # fi
 }
 
 # GTK (make theme if it does not exist, then reload)
 load_gtk() {
-    trim_alphas
+    echo GTK: TODO
+    return 0
 
     if ! margs gtkrc .gtkrc-2.0; then
         target="$HOME/.themes/${THEME_NAME}_template"
@@ -205,21 +155,12 @@ load_gtk() {
 
 # qutebrowser
 load_qutebrowser() {
-    trim_alphas
-    git_ensure css
-
-    (
-        # can't use gitdest here, margs is relative to home
-        margs css "git/solarized-everything-css/styl/my.styl"
-
-        cd "${gitdest}"
-        # stylus --include styl --import styl/my.styl -p sites/all-sites.styl > css/all.css
-    )
-
     q_tab_bold=$(iif "echo $p_font_main | grep -q Bold")
     q_tab_bold=${q_tab_bold^}  # bashism, make first letter capital
+
     q_tab_fontsize=$(echo $p_font_main | grep -Eo '[0-9]+')
     q_tab_fontsize_small=$(($q_tab_fontsize - 1))
+
     q_tab_font=$(echo "$p_font_main" | sed 's/-.*//')
 
     # next stable qutebrowser version:
@@ -228,8 +169,8 @@ load_qutebrowser() {
 
     MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
 
-    margs qutebrowser .config/qutebrowser/colors.py
-    margs qute_css .config/qutebrowser/settings.css
+    render qutebrowser .config/qutebrowser/colors.py -c qutebrowser
+    render qute_css .config/qutebrowser/settings.css
 
     if $MAC; then
 	qb_command ':config-source'
@@ -510,7 +451,7 @@ for conf in $targets; do
 done
 IFS=
 
-theme cache
+# theme cache
 
 # leave our children to fate.
 disown

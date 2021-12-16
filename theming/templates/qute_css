@@ -6,6 +6,6 @@
 
 ::selection {
 	/* Set background color for selected text */
-	background: #{{e_background_focused}};
-	color: #{{e_foreground_focused}};
+	background: {{color.focused.background}};
+	color: {{color.focused.foreground}};
 }

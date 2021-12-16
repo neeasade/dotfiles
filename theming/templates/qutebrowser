@@ -2,33 +2,33 @@
 
 theme = {
     'panel': {
-        'height': {{p_height}},
+        'height': {{panel.height}},
     },
 
     'fonts': {
-        'tabbar': '{{q_tab_font}}',
-        'completion': '{{q_tab_font}}',
-        'completion_size': {{q_tab_fontsize_small}},
-        'tab_bold': {{q_tab_bold}},
-        'tab_size': {{q_tab_fontsize}},
-        'status_size': {{q_tab_fontsize_small}},
+        'tabbar': '{{tab.font.family}}',
+        'completion': '{{tab.font.family}}',
+        'completion_size': {{statusbar.font.size}},
+        'tab_bold': {{tab.bold}},
+        'tab_size': {{tab.font.size}},
+        'status_size': {{statusbar.font.size}},
     },
 
     'colors': {
         'bg': {
-            'normal': '#{{e_background_normal}}',
-            'weak': '#{{e_background_weak}}',
-            'strong': '#{{e_background_strong}}',
-            'focused': '#{{e_background_focused}}',
+            'normal': '{{color.normal.background}}',
+            'weak': '{{color.weak.background}}',
+            'strong': '{{color.strong.background}}',
+            'focused': '{{color.focused.background}}',
         },
 
         'fg': {
-            'normal': '#{{e_foreground_normal}}',
-            'weak': '#{{e_foreground_weak}}',
-            'strong': '#{{e_foreground_strong}}',
-            'focused': '#{{e_foreground_focused}}',
+            'normal': '{{color.normal.foreground}}',
+            'weak': '{{color.weak.foreground}}',
+            'strong': '{{color.strong.foreground}}',
+            'focused': '{{color.focused.foreground}}',
 
-            'match': '#{{e_alt_normal}}', # completion and hints
+            'match': '{{color.normal.alt}}', # completion and hints
         },
     }
 }

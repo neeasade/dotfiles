@@ -1,71 +1,39 @@
 #!/bin/sh
 
-theme_dir="$HOME/.wm/themes"
+theme_dir="$HOME/.dotfiles/theming/themes"
 theme_load="${theme_load:-$HOME/.wm_theme}"
-# export elisp_timeout=0.2
 
 die() {
-  echo $*
+  echo "$*"
   exit 1
 }
 
-cache() {
-  # if elisp t >/dev/null; then
-  mkdir -p "$HOME/.cache/rice"
-  timeout 1 notify-send "recache!"
-  bash -c "$(get); declare -px >$HOME/.cache/rice/loaded_theme.sh"
-  # bash -ic "$(get); envv_all | grep -oE '^[A-Z_]+\=' >$HOME/.cache/rice/loaded_theme.sh"
-  # fi
+gottm() {
+  gott \
+      -l "${theme_dir}/colors.toml" \
+      -l "${theme_dir}/defaults.toml" \
+      -l "${theme_load}" \
+      "$@"
 }
 
 getval() {
-    (
-	if [ ! -f $HOME/.cache/rice/loaded_theme.sh ]; then
-	    cache
-	fi
-
-	. $HOME/.cache/rice/loaded_theme.sh
-	eval eval printf \"%s\" '\"\$$1\"'
-    )
+  gottm -q "$@"
 }
 
-# (meant to be eval'd)
 get() {
-  echo unset bg fg line activebg activefg activeline
-  echo set -a
-  echo THEME_NAME=\"$(basename "$(readlink "$theme_load")")\"
-  echo . "$theme_load"
-  echo colors
-  echo . "$HOME/.wm/scripts/theming/defaults"
-  echo settings
-  echo PATH=$PATH:$HOME/.wm/panel/tools
-  echo set +a
+  gottm "$@" -o shell
 }
 
 load() {
   name=$1
   shift
-  [ -z "$name" ] && die load needs a name.
-  [ ! -f "$theme_dir/$name" ] && die $name not found
+  [ -z "$name" ] && die "command 'load' needs a name."
+  [ ! -f "$theme_dir/${name}.toml" ] && die "theme '$name' not found"
 
   rm "$theme_load"
-  ln -s "$theme_dir/$name" "$theme_load"
+  ln -s "$theme_dir/${name}.toml" "$theme_load"
 
-  "$HOME/.wm/scripts/theming/ltheme" $*
-}
-
-edit() {
-  $EDITOR "$theme_load"
-}
-
-new() {
-  name=$*
-  [ -z "$name" ] && die new needs a name.
-  eval "$(get)"
-  cp "$theme_dir/colors/$THEME_NAME" "$theme_dir/colors/$name"
-  echo "#!/bin/sh" > "$theme_dir/$name"
-  load "$name"
-  edit "$name"
+  "$HOME/.wm/scripts/theming/ltheme" "$*"
 }
 
 list() {
@@ -80,5 +48,4 @@ refresh() {
   load "$(theme getval THEME_NAME)" "$@"
 }
 
-# future self: this is done on purpose, shell arg quoting is dumb.
-[ -z "$*" ] && choose || "$@"
+"$@"

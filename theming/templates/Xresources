@@ -2,26 +2,42 @@
 rofi.kb-move-end:
 rofi.kb-row-up: Up,Control+e,ISO_Left_Tab
 rofi.kb-row-down: Down,Control+n
-rofi.font: {{{echo "$st_font" | sed 's/-/ /'}}}
+rofi.font: {{font.mono.spec-space}}
 
 ! State:           'bg',     'fg',     'bgalt',  'hlbg',   'hlfg'
-rofi.color-normal: #{{background}}, #{{foreground}}, #{{background}}, #{{p_bg_active}}, #{{foreground}}
+rofi.color-normal: {{background}}, {{foreground}}, {{background}}, {{color.focused.background}}, {{color.focused.foreground}}
 ! rofi.color-urgent:
 ! rofi.color-active:
 
 ! 'background', 'border', 'separator'
-rofi.color-window: #{{background}}, #{{foreground}}, #{{background}}
+rofi.color-window: {{background}}, {{foreground}}, {{background}}
 
-st.font: {{st_font}}
-st.font_variable: {{st_font_variable}}
+st.font: {{st.font}}
+st.font_variable: {{st.font_variable}}
 st.borderpx: 0
-st.cursorshape: {{st_cursorshape}}
-st.cursorthickness: {{st_cursorthickness}}
+st.cursorshape: {{st.cursorshape}}
+st.cursorthickness: {{st.cursorthickness}}
 st.depth: 24
 
 ! personal/so we can sync p_height and modeline height
-Emacs.doomlineheight: {{p_height}}
+Emacs.doomlineheight: {{panel.height}}
 
-! colors (appended in ltheme script)
-*.background: #{{background}}
-*.foreground: #{{foreground}}
+! colors
+*.background: {{background}}
+*.foreground: {{foreground}}
+*.color0:       {{color.0}}
+*.color1:       {{color.1}}
+*.color2:       {{color.2}}
+*.color3:       {{color.3}}
+*.color4:       {{color.4}}
+*.color5:       {{color.5}}
+*.color6:       {{color.6}}
+*.color7:       {{color.7}}
+*.color8:       {{color.8}}
+*.color9:       {{color.9}}
+*.color10:      {{color.10}}
+*.color11:      {{color.11}}
+*.color12:      {{color.12}}
+*.color13:      {{color.13}}
+*.color14:      {{color.14}}
+*.color15:      {{color.15}}

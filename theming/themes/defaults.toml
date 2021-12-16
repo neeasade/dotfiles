@@ -1,10 +1,6 @@
 # create default, and then themes are about deriving
 # toml extensions we're considering making:
 
-## file inclusions:
-#include colors.toml
-## references:
-
 # key = '@some.value.ref'
 ## environment variables:
 # key = '$HOME/path/to/thing'
@@ -23,22 +19,52 @@
 ## obvious: {{full.path.to.value}}
 ## how to associate namespace?: {{value}}
 
-[conf]
+[_]
+dec = "echo $((% - 1))"
+inc = "echo $((% + 1))"
+
+# really making a slice sort of thing in here might be nice
+# do we really want mods for mods?
+trim = "sed 's/#//'"
+
+[font.mono]
+family = "Droid Sans Mono"
+size = 10
+spec = "@{family}-@{size}"
+spec-space = "@{family} @{size}"
+
+[font.variable]
+family = "Droid Sans-10"
+size = 10
+spec = '@{family}-@{size}'
+spec-space = '@{family} @{size}'
+
+[font.panel]
+
+family = "@{font.variable.family}"
+size = "@{font.variable.size:dec}"
+spec = '@{family}-@{size}'
+spec-space = '@{family} @{size}'
 
 [bspwm]
-border-width = 3
 window-gap= 10
 split-ratio = 0.5
-normal-border-color = '@color.0'
-active-border-color = '@color.8'
-focused-border-color = '@color.foreground'
-presel-feedback-color = '@color.8'
+
 desktop-names = '00 01 10 11'
 
 monocle-window-percent = 0.53
 
 # meant to be used for effects, like pulse or 2bspwm
 bspwmrc-extend = ""
+
+[bspwm.border]
+width = 3
+
+# todo: this better
+normal = '@{color.0}'
+active = '@{color.8}'
+focused = '@{color.7}'
+presel = '@{color.8}'
 
 [mkb]
 complete = '-'
@@ -91,36 +117,30 @@ clock.mouse.left="dzen.sh cal"
 # org-task.mouse.left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
 # org-task.mouse.right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
 
-[panel.conf]
-
 format = "dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
 height = 16                  # Panel height.
+
 font-main = "Droid Sans-8"   # Panel main font.
 font-icon = "Font Awesome 5 Free-10" # Panel Icon font.
+
 icon-enable = true           # toggle icon script output
 gap = 4                      # Gaps of panel off screen.
 padding = 4                  # number of pixels to pad panel information (sections/blocks) with
 line = 2 # width of the over/underlines
 launch-cmd = "$HOME/.wm/panel/lemonade" # The command to launch the panel
 
-# todo: re-evaluate these
-bg-normal = "#ff$background"
-bg-middle = "#ff$background"
-fg-normal = "#ff$foreground"
-bg-active = $p-fg-normal
-fg-active = $p-bg-normal
-bg-inactive = $p-bg-normal
-fg-inactive = $p-fg-normal
-
 # icon color - also used in qutebrowser completion, ACYL icons color
 icon = "unset"
 
 window-class = "lemonbar" # window class to use in lemonade's juicer
+
 position = "top"          # panel position - top|bottom
+flip = 'iif "[ % = "top" ]" bottom top'
+position-flipped = '@{position:flip}'
 
 [panel.desktop]
-display-name=icon       # [icon|name] - display desktop names or DO/DF variables.
-display-format=together # [together|separate] - show desktops in separate blocks or together in one block.
+display-name="icon"       # [icon|name] - display desktop names or DO/DF variables.
+display-format="together" # [together|separate] - show desktops in separate blocks or together in one block.
 show-free=true          # option to show nothing for free desktops.
 mode-toggle=false       # monocle/tiling toggle.
 only-active=false       # only show the active desktop name
@@ -143,26 +163,23 @@ scroll-down = 'mpc seek -00:00:02'
 scroll-up = 'mpc seek +00:00:02'
 
 [panel.dynamicmpd.mouse]
-left = '@panel.mpd.mouse.left'
-middle = '@panel.mpd.mouse.middle'
-right = '@panel.mpd.mouse.right'
-scroll-down = '@panel.mpd.mouse.scroll-down'
-scroll-up = '@panel.mpd.mouse.scroll-up'
+left = '@{panel.mpd.mouse.left}'
+middle = '@{panel.mpd.mouse.middle}'
+right = '@{panel.mpd.mouse.right}'
+scroll-down = '@{panel.mpd.mouse.scroll-down}'
+scroll-up = '@{panel.mpd.mouse.scroll-up}'
 
 [st]
-font="Droid Sans Mono-10"
-font_variable="Droid Sans-10"
+font = "@{font.mono.spec}"
+font_variable = "@{font.variable.spec}"
 
-font="Droid Sans Mono for Powerline-10"
-font_variable="Droid Sans-10"
-
-cursorshape=2
-cursorthickness=2
+cursorshape = 2
+cursorthickness = 2
 
 prompt_char = '$'
 
 [x]
-padding=4
+padding= 4
 
 [picom]
 
@@ -176,9 +193,9 @@ shadow.red = 0.0
 shadow.blue = 0.0
 shadow.green = 0.0
 
-fading = false
-fade-in-step = 0.1
-fade-out-step = 0.1
+fade.enabled = false
+fade.in-step = 0.1
+fade.out-step = 0.1
 
 [tmux]
 
@@ -207,19 +224,27 @@ mpd-dir = "$HOME/.config/mpd"
 [2bspwm]
 
 # 2bspwm script overrides
-border_width_in_normal=$(( border_width_current/2 ))
-border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
-border_width_in_focused=$border_width_in_normal
-border_width_out_focused=$border_width_out_normal
+# border_width_in_normal=$(( border_width_current/2 ))
+# border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
+# border_width_in_focused=$border_width_in_normal
+# border_width_out_focused=$border_width_out_normal
 
-border_color_out_normal=$b_normal_border_color
-border_color_out_focused=$b_focused_border_color
+# border_color_out_normal=$b_normal_border_color
+# border_color_out_focused=$b_focused_border_color
 
-border_color_in_normal=$color2
-border_color_in_focused=$color3
+# border_color_in_normal=$color2
+# border_color_in_focused=$color3
 
-# uncovered/this sort of thing is not feasible IN the config
 # if type greaten >/dev/null; then
 #     border_color_in_normal=$(elisp_timeout=1 greaten 5 $border_color_out_normal)
 #     border_color_in_focused=$(elisp_timeout=1 greaten 5 $border_color_out_focused)
 # fi
+
+[qutebrowser]
+
+bold_state="grep -q Bold && echo True || echo False"
+tab.bold = "@{font.panel.spec:bold_state}"
+
+tab.font.family = '@{font.panel.family}'
+tab.font.size = '@{font.panel.size}'
+statusbar.font.size = "@{qutebrowser.tab.font.size:_.dec}"

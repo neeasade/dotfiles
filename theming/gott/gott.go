@@ -1,5 +1,8 @@
 package main
 
+// todo:
+// "checking" modes/linting modes when rendering
+
 import (
         "flag"
         "fmt"
@@ -36,6 +39,8 @@ func flattenMap (input map[string]interface{}, preamble string, results map[stri
 }
 
 func shConf (command, value string) string {
+	// todo: make this respect the shell variable
+	// todo: render command first, so that you can use toml values in transformers
         if  strings.ContainsRune(command, '%') {
                 shell := strings.ReplaceAll(command, "%", value)
                 out, err := exec.Command("sh", "-c", shell).Output()
@@ -68,9 +73,29 @@ func parent (path, delim string) string {
 	return strings.Join( parts[0:len(parts)-1], delim)
 }
 
+func mustache(config map[string]string, template string) string {
+	// this function is a placeholder for later, when we maybe do
+	// stache templating for real.
+        stacheRe, _ := regexp.Compile("\\{\\{([^{}]+)\\}\\}")
+        matches := stacheRe.FindAllStringSubmatch(template, -1)
+
+        for _, groups := range matches {
+		match := groups[0]
+		ident := groups[1]
+
+                if result, ok := config[ident]; ok {
+			template = strings.ReplaceAll(template, match, result)
+		} else {
+			println("gott: template key not found!: ", ident)
+		}
+	}
+
+	return template
+}
+
 func render(config map[string]string, template string, namespace string) string {
         transformPattern := ":[A-Za-z\\.]+"
-        referencePattern := fmt.Sprintf("[^@]?@\\{([^{}:]+)(%s)*\\}", transformPattern)
+        referencePattern := fmt.Sprintf("[^@]?(@\\{([^{}:]+)(%s)*\\})", transformPattern)
         referenceRe, _ := regexp.Compile(referencePattern)
 
         matches := referenceRe.FindAllStringSubmatch(template, -1)
@@ -79,9 +104,9 @@ func render(config map[string]string, template string, namespace string) string 
         }
 
         for _, groups := range matches {
-                match := groups[0]
-                ident := groups[1]
-                transformers := groups[2:]
+                match := groups[1]
+                ident := groups[2]
+                transformers := groups[3:]
 
                 var result = ""
 
@@ -95,7 +120,6 @@ func render(config map[string]string, template string, namespace string) string 
                 for _, transformer := range transformers {
                         if transformer != "" {
                                 local_ident := namespace + "." + transformer[1:]
-                                // local_ident2 := ident + "." + transformer[1:]
 
                                 if _, ok := config[local_ident]; ok {
                                         local_ident = "@{" + local_ident + "}"
@@ -108,9 +132,10 @@ func render(config map[string]string, template string, namespace string) string 
                         }
                 }
 
+		result = strings.TrimSpace(result)
+		// todo: yell if there's nothing found
                 template = strings.ReplaceAll(template, match, result)
         }
-
         return template
 }
 
@@ -150,34 +175,20 @@ func main() {
 
         flag.Parse()
 
-
-        // nested, ok := tomlFiles.([]string)
-        fmt.Println(tomlFiles)
-        // println([]string(tomlFiles))
-
-        // os.Exit(0)
-
         // other thoughts:
+
         // the panel stuff is insane. need to contextualize env for calling
         // ripen/squeeze from p_format. don't know if we want to get rigid here
         // or have a panel transformer elsewhere.
 
         // also begs the question about mustach templating//other stuff
-
         // what do arrays look like? both in mustache and templating
 
-        // honk -l file -l file -l file -t template -r (reload)
+	// do we use go templates or mustache elsewhere? that would probably be more sane -- keep
+	// the @{} stuff for toml processing only
 
-        // usage (dynamic/query)
-
-        // honk -l file -l file -l file -v path.to.value (cache by default)
-        // honk -l file -l file -l file -E (dump env variables in an eval fashion)
-        // -c context (promote a table to top level)
-
-        // tomlFiles := []string {
-        //         "/Users/nathan/.dotfiles/wm/.wm/themes/font.toml",
-        //                 // "/Users/nathan/.dotfiles/wm/.wm/themes/temp.toml"
-        //         }
+	// not terrible happy with the way we render the full dict every time currently.
+	// we need this for local references (so context can be passed for lookup)
 
         config := map[string]string{}
 
@@ -196,9 +207,7 @@ func main() {
         }
 
         for key, value := range config {
-                var parts = strings.Split(key, ".")
-		var namespace = strings.Join(parts[0:len(parts)-1], ".")
-                config[key] = render(config, value, namespace)
+                config[key] = render(config, value, parent(key, "."))
         }
 
 	for _, context := range contexts {
@@ -208,5 +217,18 @@ func main() {
 	if queryString != "" {
 		queryString =  fmt.Sprintf("@{%s}", queryString)
 		fmt.Println(render(config, queryString, ""))
+	}
+
+	switch action {
+	case "toml" :
+		log.Fatal("toml output not implemented yet.")
+	case "shell":
+		log.Fatal("shell output not implemented yet.")
+	default:
+	}
+
+	for _, file := range renderTargets {
+                fileBytes, _ := os.ReadFile(file)
+		fmt.Println(mustache(config, string(fileBytes)))
 	}
 }

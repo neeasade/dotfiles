@@ -32,8 +32,7 @@ set -g message-bg default
 set -g message-attr bright
 
 # Status Bar
-
-{{tmux_statusbar}}
+{{statusbar}}
 
 # moving between panes with vim movement keys
 is_vim='echo "#{pane_current_command}" | grep -iqE "(^|\/)g?(view|n?vim?x?)(diff)?$"'
