@@ -4,6 +4,7 @@
 ## file inclusions:
 #include colors.toml
 ## references:
+
 # key = '@some.value.ref'
 ## environment variables:
 # key = '$HOME/path/to/thing'
@@ -17,6 +18,12 @@
 # bspwm__border_width='sanitized value'
 # or:
 # theme get bspwm -> border_width='sanitized value'
+
+# templating thoughts:
+## obvious: {{full.path.to.value}}
+## how to associate namespace?: {{value}}
+
+[conf]
 
 [bspwm]
 border-width = 3
@@ -74,7 +81,7 @@ github.reload = 120
 # default click actions for panel sections
 themeSwitch.mouse.left="dzen.sh theme"
 
-panel.dropdown.mouse.left="dezen.menu"
+panel.dropdown.mouse.left="dzen.menu"
 dropdown.mouse.left="dzen.sh menu"
 github.mouse.left="dzen.sh github"
 circe.dms.mouse.left="dzen.sh circe"

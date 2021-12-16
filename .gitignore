@@ -2,20 +2,8 @@ nohup.out
 *.elc
 *.*~
 
-shell/.sh.d/extend
-
 wm/.wm/panel/juicers/
 wm/.wm/panel/logs
-wm/.wm/panel/tools/icon
-wm/.wm/timestamp
-wm/.wm/scripts/theming/theme_perf.txt
-
-mpd/.config/mpd/pid
-mpd/.config/mpd/log
-mpd/.config/mpd/state
-mpd/.config/mpd/sticker.sql
-mpd/.config/mpd/database
-mpd/.config/mpd/mpdcron.pid
 
 ncmpcpp/.config/ncmpcpp/error.log
 

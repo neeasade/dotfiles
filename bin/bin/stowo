@@ -4,7 +4,7 @@
 # todo: this doesn't deal well in replacing files that are currently in stow-created directories
 # (IE, migration from stow -> stowo, if stow created the outline)
 
-default_packages=$(ls "$HOME/.dotfiles/" | grep -vE "(os_|readme.org|templates|windows|i3|bootstrap)" | tr $'\n' ' ')
+default_packages=$(ls "$HOME/.dotfiles/" | grep -vE "(os_|readme.org|theming|bootstrap)" | tr $'\n' ' ')
 
 if [ -z "$*" ]; then
     cat<<EOF

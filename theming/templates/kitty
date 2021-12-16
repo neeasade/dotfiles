@@ -1,3 +1,7 @@
+honk-dest: $HOME/.config/kitty.conf
+honk-contexts: kitty
+honk-reload-cmd: kitty
+
 font_family      {{st_font}}
 font_size       16
 

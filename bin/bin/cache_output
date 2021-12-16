@@ -1,5 +1,6 @@
 #!/bin/sh
 # ref: https://stackoverflow.com/questions/11900239/can-i-cache-the-output-of-a-command-on-linux-from-cli
+# to force eviction: cache_output 0 'command'
 
 VERBOSE=false
 PROG="$(basename $0)"

@@ -2,12 +2,14 @@
 [org_task]
 interval=5
 command=/home/neeasade/.wm/panel/lemons/org_task | season
+
 bg=#86d5e5
 fg=#3f4043
 line=#86d5e5
 activebg=#8fe7d5
 activefg=#ff3f4043
 activeline=#ff3f4043
+
 bg_next=#72C1D1
 
 step=3

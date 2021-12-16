@@ -110,7 +110,6 @@ dzen_cal() {
 
     TODAY=$(expr `date +'%d'` + 0)
 
-    #$p_bg_normal="$(colort )"
     #pFG="$(cut -c4- <<< $pFG)"
     #pBGActiveTab="$(cut -c4- <<< $pBGActiveTab)"
 
