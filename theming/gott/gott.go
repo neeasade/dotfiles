@@ -2,6 +2,7 @@ package main
 
 // todo:
 // "checking" modes/linting modes when rendering
+// tests
 
 import (
         "flag"
@@ -16,41 +17,41 @@ import (
         "github.com/pelletier/go-toml/v2"
 )
 
-func flattenMap (input map[string]interface{}, preamble string, results map[string]string) {
-        if preamble != "" {
-                preamble = preamble + "."
+// stringify nested paths from INPUT as keys in RESULTS (merges/overrides matches)
+func flattenMap (input map[string]interface{}, namespace string, results map[string]string) {
+        if namespace != "" {
+                namespace = namespace + "."
         }
 
         for key, value := range input {
                 nested, is_map := value.(map[string]interface{})
-                arrayVal, is_array := value.([]interface{})
+                _, is_array := value.([]interface{})
                 if is_map {
-                        flattenMap(nested, preamble + key, results)
+                        flattenMap(nested, namespace + key, results)
                 } else if is_array {
-                        newVal := ""
-                        for _, val := range arrayVal {
-                                newVal = newVal + "\n" + fmt.Sprintf("%v", val)
-                        }
-                        results[preamble + key] = newVal
+			// do nothing, for now.
+			// for index, _ := range arrayVal {
+			// 	index_string := fmt.Sprintf("[%i]", index)
+			// 	flattenMap(nested, namespace + key + index_string, results)
+			// }
                 } else {
-                        results[preamble + key] = fmt.Sprintf("%v", value)
+			// todo: consider printing if an override happens
+                        results[namespace + key] = fmt.Sprintf("%v", value)
                 }
         }
 }
 
 func shConf (command, value string) string {
-	// todo: make this respect the shell variable
-	// todo: render command first, so that you can use toml values in transformers
         if  strings.ContainsRune(command, '%') {
                 shell := strings.ReplaceAll(command, "%", value)
-                out, err := exec.Command("sh", "-c", shell).Output()
+                out, err := exec.Command("bash", "-c", shell).Output()
 
                 if err != nil {
                         log.Fatal(err)
                 }
                 return string(out)
         } else {
-                cmd := exec.Command("sh", "-c", command)
+                cmd := exec.Command("bash", "-c", command)
                 stdin, _ := cmd.StdinPipe()
 
                 go func() {
@@ -68,15 +69,15 @@ func shConf (command, value string) string {
         }
 }
 
+// Get the parent of a path using delim.
 func parent (path, delim string) string {
 	parts := strings.Split(path, delim)
-	return strings.Join( parts[0:len(parts)-1], delim)
+	return strings.Join(parts[0:len(parts)-1], delim)
 }
 
+// Do a basic mustache template matcher -- only handles direct matches.
 func mustache(config map[string]string, template string) string {
-	// this function is a placeholder for later, when we maybe do
-	// stache templating for real.
-        stacheRe, _ := regexp.Compile("\\{\\{([^{}]+)\\}\\}")
+        stacheRe := regexp.MustCompile("\\{\\{([^{}]+)\\}\\}")
         matches := stacheRe.FindAllStringSubmatch(template, -1)
 
         for _, groups := range matches {
@@ -93,10 +94,14 @@ func mustache(config map[string]string, template string) string {
 	return template
 }
 
+// Render some string with the templating syntax and a map of strings to strings.
+//
+// @{path.to.value:_.transformer}
+// @{localValue:localTransformer} (context given through namespace)
 func render(config map[string]string, template string, namespace string) string {
-        transformPattern := ":[A-Za-z\\.]+"
+        transformPattern := ":[A-Za-z\\.-_]+"
         referencePattern := fmt.Sprintf("[^@]?(@\\{([^{}:]+)(%s)*\\})", transformPattern)
-        referenceRe, _ := regexp.Compile(referencePattern)
+        referenceRe := regexp.MustCompile(referencePattern)
 
         matches := referenceRe.FindAllStringSubmatch(template, -1)
         if matches == nil {
@@ -112,28 +117,30 @@ func render(config map[string]string, template string, namespace string) string 
 
                 local_ident := namespace + "." + ident
                 if _, ok := config[local_ident]; ok {
-                        result = render(config, config[local_ident], "")
-                } else {
-                        result = render(config, config[ident], "")
+			ident = local_ident
                 }
 
-                for _, transformer := range transformers {
+		result = render(config, config[ident], parent(ident, "."))
+
+		for _, transformer := range transformers {
                         if transformer != "" {
-                                local_ident := namespace + "." + transformer[1:]
+				transformer = transformer[1:]
+                                local_ident := namespace + "." + transformer
 
                                 if _, ok := config[local_ident]; ok {
-                                        local_ident = "@{" + local_ident + "}"
-                                        result = shConf(render(config, local_ident, ""), result)
-                                } else {
-                                        transformer = "@{" + transformer[1:] + "}"
-                                        result = shConf(render(config, transformer, ""), result)
-                                }
+					transformer = local_ident
+				}
 
-                        }
+				transformer_ns := parent(transformer, ".")
+				transformer = "@{" + transformer + "}"
+				result = shConf(render(config, transformer, transformer_ns), result)
+			}
                 }
 
 		result = strings.TrimSpace(result)
-		// todo: yell if there's nothing found
+		if result == "" {
+			println("render resulted in nothing!: ", namespace, match)
+		}
                 template = strings.ReplaceAll(template, match, result)
         }
         return template
@@ -175,48 +182,25 @@ func main() {
 
         flag.Parse()
 
-        // other thoughts:
-
-        // the panel stuff is insane. need to contextualize env for calling
-        // ripen/squeeze from p_format. don't know if we want to get rigid here
-        // or have a panel transformer elsewhere.
-
-        // also begs the question about mustach templating//other stuff
-        // what do arrays look like? both in mustache and templating
-
-	// do we use go templates or mustache elsewhere? that would probably be more sane -- keep
-	// the @{} stuff for toml processing only
-
-	// not terrible happy with the way we render the full dict every time currently.
-	// we need this for local references (so context can be passed for lookup)
-
         config := map[string]string{}
 
-        tomlString := ""
         for _, tomlFile := range tomlFiles {
                 tomlBytes, _ := os.ReadFile(tomlFile)
                 var values map[string]interface{}
 
-                tomlString = tomlString + "\n" + string(tomlBytes)
                 err := toml.Unmarshal(tomlBytes, &values)
                 if err != nil {
                         panic(err)
                 }
-		// nb: this is also a merge
                 flattenMap(values, "", config)
         }
 
-        for key, value := range config {
+	for key, value := range config {
                 config[key] = render(config, value, parent(key, "."))
         }
 
 	for _, context := range contexts {
 		promoteNamespace(config, context)
-	}
-
-	if queryString != "" {
-		queryString =  fmt.Sprintf("@{%s}", queryString)
-		fmt.Println(render(config, queryString, ""))
 	}
 
 	switch action {
@@ -227,8 +211,17 @@ func main() {
 	default:
 	}
 
+	// for k, v := range config {
+	// 	fmt.Printf("%s: %s\n", k, v)
+	// }
+
 	for _, file := range renderTargets {
                 fileBytes, _ := os.ReadFile(file)
 		fmt.Println(mustache(config, string(fileBytes)))
+	}
+
+	if queryString != "" {
+		queryString =  fmt.Sprintf("@{%s}", queryString)
+		fmt.Println(render(config, queryString, ""))
 	}
 }
