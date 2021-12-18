@@ -21,6 +21,7 @@ import (
         "os/exec"
         "strings"
         "regexp"
+        "crypto/md5"
 
         "github.com/pelletier/go-toml/v2"
 )
@@ -195,57 +196,7 @@ func (i *arrayFlag) Set(value string) error {
         return nil
 }
 
-
-func main() {
-	var tomlFiles, promotions, renderTargets, tomlText arrayFlag
-	var action, queryString, narrow string
-
-        flag.Var(&tomlFiles, "t", "Add a toml file to consider")
-        flag.Var(&tomlText, "T", "Add raw toml to consider")
-        flag.Var(&promotions, "p", "Promote a namespace to the top level")
-        flag.Var(&renderTargets, "r", "Render a file")
-        flag.StringVar(&action, "o", "", "Output type <shell|toml>")
-        flag.StringVar(&queryString, "q", "", "Query for a value (implicit surrounding @{})")
-        flag.StringVar(&narrow, "n", "", "Narrow the namespaces to consider")
-
-        flag.Parse()
-
-        config := map[string]string{}
-
-	absorbToml := func(tomltext string) {
-                var values map[string]interface{}
-                err := toml.Unmarshal([]byte(tomltext), &values)
-                if err != nil {
-                        panic(err)
-                }
-                flattenMap(values, "", config)
-	}
-
-	mapFlag := func(flagInput []string, action func(string)) {
-		for _, v := range flagInput {
-			action(v)
-		}
-	}
-
-	mapFlag(tomlFiles,
-		func(tomlFile string) {
-			absorbToml(slurp(tomlFile))
-		})
-
-	mapFlag(tomlText, absorbToml)
-
-	// process our flatmap
-	for key, value := range config {
-                config[key] = render(config, value, parent(key, "."))
-        }
-
-	// I want partial? or maybe just stop trying to mix styles/do it the go way.
-	mapFlag(promotions, func(f string) {promoteNamespace(config, f)})
-
-	if narrow != "" {
-		narrowToNamespace(config, narrow)
-	}
-
+func act(config map[string]string, renderTargets []string, action, queryString string) {
 	switch action {
 	case "toml" :
 		b, err := toml.Marshal(config)
@@ -265,4 +216,92 @@ func main() {
 		queryString =  fmt.Sprintf("@{%s}", queryString)
 		fmt.Println(render(config, queryString, ""))
 	}
+}
+
+func getConfig(tomlFiles, tomlText []string) map[string]string {
+	config := map[string]string{}
+
+	// first, determine if theres a cached toml file. If so just use that.
+	sumStrings := append(tomlFiles, tomlText...)
+	cache_file := os.Getenv("HOME") + "/.cache/gott/"  + fmt.Sprintf("%v", md5.Sum([]byte(strings.Join(sumStrings, ""))))
+
+	cached := true
+
+	cache_bytes, err := os.ReadFile(cache_file)
+	if (err != nil) {
+		cached = false
+	}
+
+	// todo here: check modtime of tomlfiles vs cachefile
+	cached = false
+
+	if cached {
+		err = toml.Unmarshal(cache_bytes, &config)
+		if err != nil {
+			panic(err)
+		} else {
+			return config
+		}
+	}
+
+	// ok, we aren't cached. time to ａｂｓｏｒｂ
+	absorbToml := func(tomlText string) {
+		var values map[string]interface{}
+                err := toml.Unmarshal([]byte(tomlText), &values)
+                if err != nil {
+                        panic(err)
+                }
+                flattenMap(values, "", config)
+	}
+
+	for _, file := range tomlFiles {
+		absorbToml(slurp(file))
+	}
+
+	for _, text := range tomlText {
+		absorbToml(text)
+	}
+
+	for key, value := range config {
+		config[key] = render(config, value, parent(key, "."))
+	}
+
+	// save cache file
+	b, err := toml.Marshal(config)
+	if err != nil {
+		panic(err)
+	}
+
+	var perm os.FileMode = 0o644
+	os.WriteFile(cache_file, b, perm)
+
+	return config
+}
+
+func main() {
+	var tomlFiles, promotions, renderTargets, tomlText arrayFlag
+	var action, queryString, narrow string
+
+        flag.Var(&tomlFiles, "t", "Add a toml file to consider")
+        flag.Var(&tomlText, "T", "Add raw toml to consider")
+        flag.Var(&promotions, "p", "Promote a namespace to the top level")
+        flag.Var(&renderTargets, "r", "Render a file")
+        flag.StringVar(&action, "o", "", "Output type <shell|toml>")
+        flag.StringVar(&queryString, "q", "", "Query for a value (implicit surrounding @{})")
+        flag.StringVar(&narrow, "n", "", "Narrow the namespaces to consider")
+
+        flag.Parse()
+
+	config := getConfig(tomlFiles, tomlText)
+
+	// I want partial? or maybe just stop trying to mix styles/do it the go way.
+	for _, p := range promotions {
+		promoteNamespace(config, p)
+	}
+
+	if narrow != "" {
+		narrowToNamespace(config, narrow)
+	}
+
+	act(config, renderTargets, action, queryString)
 }
