@@ -9,19 +9,24 @@ package main
 // string-string map? and then have functions that act on it for getting
 // individual values, rendering and such?
 
+
 // right now this is very dynamic, and the style doesn't feel like it's "jiving"
 // (but that could also just be my go comfort level)
 
 import (
+	"encoding/binary"
+	"encoding/gob"
+        "bytes"
+        "crypto/md5"
         "flag"
         "fmt"
+        "io"
         "log"
         "os"
-        "io"
         "os/exec"
-        "strings"
         "regexp"
-        "crypto/md5"
+        "strings"
+        "time"
 
         "github.com/pelletier/go-toml/v2"
 )
@@ -167,16 +172,18 @@ func promoteNamespace(config map[string]string, ns string) {
 }
 
 // Filter to values starting with ns
-func narrowToNamespace(config map[string]string, ns string) {
+func narrowToNamespace(config map[string]string, ns string) map[string]string {
+	// it appears mutating iterations are non-deterministic?
+	new_config := map[string]string{}
+
         ns = ns + "."
         for key, value := range config {
 		if strings.Index(key, ns) == 0 {
                         new_key := key[len(ns):len(key)]
-                        config[new_key] = value
+                        new_config[new_key] = value
                 }
-
-		delete(config, key)
         }
+	return new_config
 }
 
 func slurp(f string) string {
@@ -234,28 +241,50 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	config := map[string]string{}
 
 	sumStrings := append(tomlFiles, tomlText...)
-	cache_file := os.Getenv("HOME") + "/.cache/gott/"  + fmt.Sprintf("%v", md5.Sum([]byte(strings.Join(sumStrings, ""))))
-
+	sumBytes := md5.Sum([]byte(strings.Join(sumStrings, "")))
+	sumInt := binary.BigEndian.Uint64(sumBytes[:])
+	cache_file := os.Getenv("HOME") + "/.cache/gott/"  + fmt.Sprintf("%v", sumInt)
 	cached := true
+
+	fetchTime := func(f string) time.Time {
+		info, err := os.Stat(f)
+		if err != nil {
+			println("err on stat file!", f)
+			panic(err)
+		}
+		return info.ModTime()
+	}
 
 	cache_bytes, err := os.ReadFile(cache_file)
 	if (err != nil) {
 		cached = false
 	}
 
-	// todo here: check modtime of tomlfiles vs cachefile
-	cached = false
-
 	if cached {
-		err = toml.Unmarshal(cache_bytes, &config)
-		if err != nil {
-			panic(err)
-		} else {
-			return config
+		cache_modTime := fetchTime(cache_file)
+		for _, f := range tomlFiles {
+			fileTime := fetchTime(f)
+			if fileTime.After(cache_modTime) {
+				cached = false
+			}
 		}
 	}
 
-	// ok, we aren't cached. time to ａｂｓｏｒｂ
+	if cached {
+		d := gob.NewDecoder(bytes.NewReader(cache_bytes))
+
+		// Decoding the serialized data
+		err = d.Decode(&config)
+		if err != nil {
+			panic(err)
+		}
+		return config
+	}
+
+	// ok, we aren't cached. time to:
+	// ａｂｓｏｒｂ
+	// ｒｅｎｄｅｒ
+	// ｃａｃｈｅ
 	absorbToml := func(tomlText string) {
 		var values map[string]interface{}
                 err := toml.Unmarshal([]byte(tomlText), &values)
@@ -266,7 +295,10 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
                 flattenMap(values, "", config)
 	}
 
+
 	for _, file := range tomlFiles {
+		// todo: consider prepending slurps, then unfolding absorbToml func
+		// x = append([]int{1}, x...)
 		absorbToml(slurp(file))
 	}
 
@@ -278,14 +310,15 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 		config[key] = render(config, value, parent(key, "."))
 	}
 
-	// save cache file
-	b, err := toml.Marshal(config)
+	b := new(bytes.Buffer)
+	e := gob.NewEncoder(b)
+	err = e.Encode(config)
 	if err != nil {
 		panic(err)
 	}
 
 	var perm os.FileMode = 0o644
-	os.WriteFile(cache_file, b, perm)
+	os.WriteFile(cache_file, b.Bytes(), perm)
 
 	return config
 }
@@ -311,7 +344,7 @@ func main() {
 	}
 
 	if narrow != "" {
-		narrowToNamespace(config, narrow)
+		config = narrowToNamespace(config, narrow)
 	}
 
 	act(config, renderTargets, action, queryString)

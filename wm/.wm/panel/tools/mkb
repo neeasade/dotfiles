@@ -6,38 +6,38 @@
 progress=$1
 size=$2
 
-# eval "$(theme get)"
-l_complete=$(theme getval l_complete)
-l_empty=$(theme getval l_empty)
-l_sep=$(theme getval l_sep)
-l_start=$(theme getval l_start)
-l_end=$(theme getval l_end)
+complete='-'
+empty='-'
+sep='+'
+start=''
+end=''
 
-# temp, char width for emoji
+eval "$(theme gottm -n mkb -o shell)"
+
+# char width for emoji
 # size=$((size / 2))
-
 
 # defaults
 progress=${progress:-30}
 size=${size:-32}
 
 passed=false
-content="${l_start}"
+content="${start}"
 
 if [ $progress -eq 100 ]; then
-    l_sep=$l_complete
+    sep=$complete
 fi
 
 content="${content}${start}"
 for i in $(seq 1 $size); do
     if [ "$(echo "$i < $progress / 100 * $size" | bc -l)" = 1 ]; then
-        current="$l_complete"
+        current="$complete"
     else
-        $passed && current="$l_empty" || current="$l_sep"
+        $passed && current="$empty" || current="$sep"
         passed=true
     fi
 
     content="${content}${current}"
 done
-content="${content}${l_end}"
+content="${content}${end}"
 echo "$content"

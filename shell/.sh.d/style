@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 
 type theme >/dev/null 2>&1 &&
-    _promptchar=$(timeout 1 theme getval PROMPT_CHAR 2>/dev/null) ||
+    _promptchar=$(theme getval st.prompt_char 2>/dev/null) ||
     _promptchar='%'
 
 # dotfiles have been setup, but we're in a special location/no theme has been loaded:
