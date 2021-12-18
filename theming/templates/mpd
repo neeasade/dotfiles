@@ -1,25 +1,15 @@
 # Required files
-db_file            "{{mpd_dir}}/database"
+db_file            "{{mpd-dir}}/database"
+
 # Optional
-music_directory    "{{music_dir}}"
-playlist_directory "{{mpd_dir}}/playlists"
-pid_file           "{{mpd_dir}}/pid"
-state_file         "{{mpd_dir}}/state"
-sticker_file       "{{mpd_dir}}/sticker.sql"
+music_directory    "{{music-dir}}"
+playlist_directory "{{mpd-dir}}/playlists"
+pid_file           "{{mpd-dir}}/pid"
+state_file         "{{mpd-dir}}/state"
+sticker_file       "{{mpd-dir}}/sticker.sql"
 
 # really long timeout
 connection_timeout	"2000000"
-
-# # Define alsa output so we actually hear something :)
-# audio_output {
-#     type    "alsa"
-#     name    "sound"
-#     mixer_type "software"
-
-#     # https://github.com/MusicPlayerDaemon/MPD/issues/72#issuecomment-339394839
-#     audio_buffer_size "8192"
-#     buffer_before_play "25%"
-# }
 
 audio_output {
     type            "pulse"
@@ -28,5 +18,4 @@ audio_output {
     # https://github.com/MusicPlayerDaemon/MPD/issues/72#issuecomment-339394839
     audio_buffer_size "8192"
     buffer_before_play "25%"
-
 }

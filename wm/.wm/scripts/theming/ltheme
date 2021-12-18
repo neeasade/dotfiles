@@ -5,9 +5,7 @@
 cd $(dirname $([ -L $0 ] && readlink -f $0 || echo $0))
 export PATH="$PATH:$(pwd)"
 
-# todo: should this used the cached theme? then you wouldn't depend
-# on emacs running for eg, panel startup/refresh theme there
-# eval "$(theme get)"
+. "$HOME/.sh.d/environment"
 
 set -a
 
@@ -19,9 +17,9 @@ render() {
     mkdir -p "$(dirname "$dest")"
     theme_dir="$HOME/.dotfiles/theming/themes"
     gott \
-	-l "${theme_dir}/colors.toml" \
-	-l "${theme_dir}/defaults.toml" \
-	-l "${HOME}/.wm_theme" \
+	-t "${theme_dir}/colors.toml" \
+	-t "${theme_dir}/defaults.toml" \
+	-t "${HOME}/.wm_theme" \
 	"$@" \
 	-r "$template" > "$dest"
 }
@@ -56,16 +54,16 @@ git_ensure() {
 
 # loaders:
 load_tmux() {
-    render tmux .tmux.conf -c tmux
+    render tmux .tmux.conf -p tmux
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
 load_kitty() {
-    render kitty .config/kitty/kitty.conf -c color.normal
+    render kitty .config/kitty/kitty.conf -p color.normal
 }
 
 load_picom() {
-    render picom .config/picom.conf -c picom
+    render picom .config/picom.conf -p picom
     systemctl --user restart picom
 }
 
@@ -74,7 +72,7 @@ load_bg() {
 }
 
 load_xresources() {
-    render Xresources .Xresources -c color.normal
+    render Xresources .Xresources -p color.normal
 
     if type xrdb >/dev/null 2>&1; then
 	xrdb "$HOME/.Xresources"
@@ -94,7 +92,7 @@ load_bspwm() {
     # fi
 
     bspwmrc=".config/bspwm/bspwmrc"
-    render bspwm "$bspwmrc" -c bspwm
+    render bspwm "$bspwmrc" -p bspwm
     chmod +x "$HOME/$bspwmrc"
 
     wait
@@ -153,23 +151,8 @@ load_gtk() {
     echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME
 }
 
-# qutebrowser
 load_qutebrowser() {
-    q_tab_bold=$(iif "echo $p_font_main | grep -q Bold")
-    q_tab_bold=${q_tab_bold^}  # bashism, make first letter capital
-
-    q_tab_fontsize=$(echo $p_font_main | grep -Eo '[0-9]+')
-    q_tab_fontsize_small=$(($q_tab_fontsize - 1))
-
-    q_tab_font=$(echo "$p_font_main" | sed 's/-.*//')
-
-    # next stable qutebrowser version:
-    q_tab_font=$(echo "$q_tab_font" | sed 's# #\\\\ #g')
-
-
-    MAC=$(iif "[ ! -z $(uname | awk '$1 ~ /Darwin/ {print $1}') ]")
-
-    render qutebrowser .config/qutebrowser/colors.py -c qutebrowser
+    render qutebrowser .config/qutebrowser/colors.py -p qutebrowser
     render qute_css .config/qutebrowser/settings.css
 
     if $MAC; then
@@ -179,14 +162,15 @@ load_qutebrowser() {
 	bspc config ignore_ewmh_focus true
 	qb_command ':config-source'
 	# qb_command ':reload' # reload current page w/ css
-	bspc config ignore_ewmh_focus $current_conf
+	bspc config ignore_ewmh_focus "$current_conf"
     fi
 
 }
 
-# dunst
 load_dunst() {
-    trim_alphas
+    # dunst recently changed config - will adjust when home
+    echo TODO: dunst
+    return
 
     # geometry will hail from settings at the time this is called re: gap, panel
     pgrep lemonbar || p_height=0
@@ -226,90 +210,65 @@ load_dunst() {
 }
 
 load_mpd() {
-    mkdir -p "$HOME/.config/mpd/playlists"
-
+    extra_toml=""
     if mount | grep "${HOME}/usb"; then
-	music_dir="${HOME}/usb/Music"
-	mpd_dir="$HOME/.config/mpd_portable"
-	mkdir -p "$mpd_dir"
+	extra_toml=$(cat <<EOF
+mpd.music-dir = "${HOME}/usb/Music"
+mpd.mpd-dir = "${HOME}/.config/mpd_portable"
+EOF
+		  )
     fi
 
-    margs mpd .config/mpd/mpd.conf
+    render mpd .config/mpd/mpd.conf -T "$extra_toml" -p mpd
     systemctl --user restart mpd
 }
 
 load_mpd_windows() {
-    margs mpd_windows .config/mpd/mpd.conf
+    render mpd_windows .config/mpd/mpd.conf -p mpd
 }
 
 load_zathura() {
-    trim_alphas
-    margs zathura .config/zathura/zathurarc
+    render zathura .config/zathura/zathurarc -p colors.normal
 }
 
 load_zeal() {
-    margs zeal .config/Zeal/Zeal.conf
+    render zeal .config/Zeal/Zeal.conf
 }
 
 load_mintty() {
-    trim_alphas
-
-    st_font=$(echo $st_font | sed 's/-.*//')
-    st_font_size=$(echo $st_font | tr -dc '0-9')
-
-    # limitation: ttf fonts
-    list_windows_fonts() {
-        powershell '
-        [void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing")
-        $objFonts = New-Object System.Drawing.Text.InstalledFontCollection
-        $objFonts.Families
-        '
-    }
-
-    if ! list_windows_fonts | grep -q "$st_font"; then
-        st_font=Consolas
-    fi
-
-    margs mintty .minttyrc
+    render mintty .minttyrc
 }
 
 # steal pywal templates
 # mostly interested in css template for load_steam
 load_pywal() {
-    # note: this is not comprehensive, does not cover the 'color1.rgb' case and whatever else there might be
+    echo "PYWAL: todo"
+    # need to revisit/see the goal here
 
-    # usually pywal expects colors to have the #
-    for c in color{0..15} background foreground; do
-	echo "$c=\#\$$c"
-	eval export $c=\#\$$c
-    done
-    export cursor="#${cursorColor}"
+    # mkdir -p "${HOME}/.cache/wal/"
+    # git_ensure pywal
 
-    mkdir -p "${HOME}/.cache/wal/"
-    git_ensure pywal
+    # IFS=$'\n'
+    # for f in $(fd . -t f "${gitdest}/pywal/templates/"); do
+    # 	# turn all singles into doubles
+    # 	dest=".cache/wal/$(basename "$f")"
+    # 	template="${HOME}/${dest}.template"
 
-    IFS=$'\n'
-    for f in $(fd . -t f "${gitdest}/pywal/templates/"); do
-	# turn all singles into doubles
-	dest=".cache/wal/$(basename "$f")"
-	template="${HOME}/${dest}.template"
+    # 	cp "$f" "$template"
 
-	cp "$f" "$template"
+    # 	# account for template differences
+    # 	sed -i 's/{/{{/g' "$template"
+    # 	sed -i 's/}/}}/g' "$template"
+    # 	sed -i 's/{{{{/{/g' "$template"
+    # 	sed -i 's/}}}}/}/g' "$template"
 
-	# account for template differences
-	sed -i 's/{/{{/g' "$template"
-	sed -i 's/}/}}/g' "$template"
-	sed -i 's/{{{{/{/g' "$template"
-	sed -i 's/}}}}/}/g' "$template"
+    # 	margs "$template" "$dest"
+    # done
 
-	margs "$template" "$dest"
-    done
-
-    # todo: consider cleaning up the oomox template here (color.strip) and using that
 }
 
-# note -- not sure if this just didn't work or what but it is ugly
 load_steam() {
+    echo TODO: steam
     load_pywal
 
     git_ensure wal_steam
@@ -411,8 +370,7 @@ load_services() {
 }
 
 load_jgmenu() {
-    p_font_main=$(echo "$p_font_main" | sed 's/-.*//')
-    margs jgmenu .config/jgmenu/jgmenurc
+    render jgmenu .config/jgmenu/jgmenurc -p color.normal
 }
 
 load_btag_borders() {
@@ -430,7 +388,6 @@ load_btag_borders() {
   (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
 }
 
-. "$HOME/.sh.d/environment"
 
 if $MAC; then
     targets=${*:-tmux xresources qutebrowser}
@@ -450,8 +407,6 @@ for conf in $targets; do
     ) &
 done
 IFS=
-
-# theme cache
 
 # leave our children to fate.
 disown

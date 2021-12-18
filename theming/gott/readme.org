@@ -51,9 +51,9 @@ As a renderer:
 
 #+begin_src text
 $ cat file.txt
-@{font.family:loud.upper}
+{{font.family}}
 $ gott -l sample.toml -r file.txt
-CHARTER
+Charter
 #+end_src
 
 

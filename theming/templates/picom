@@ -14,7 +14,7 @@ frame-opacity = {{frame.opacity}};
 opacity-rule = [ "40:class_g = 'Bspwm' && class_i = 'presel_feedback'" ];
 
 ## Keep the shadows tight
-shadow = {{shadow}};
+shadow = {{shadow.enabled}};
 shadow-radius = {{shadow.radius}};
 shadow-offset-x = {{shadow.offset.x}};
 shadow-offset-y = {{shadow.offset.y}};

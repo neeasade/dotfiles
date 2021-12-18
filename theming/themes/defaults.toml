@@ -1,34 +1,44 @@
 # create default, and then themes are about deriving
-# toml extensions we're considering making:
 
-# key = '@some.value.ref'
-## environment variables:
-# key = '$HOME/path/to/thing'
+HOME = "$HOME"
 
-# our tool (goat?) will need to be able to:
-## template
-## get individual values
-## export as bash identifiers for flexible use:
-# an equivalent to eval "$(theme get)", where keys are transform like:
-# bspwm.border-width -> bspwm__border_width
-# bspwm__border_width='sanitized value'
-# or:
-# theme get bspwm -> border_width='sanitized value'
-
-# templating thoughts:
-## obvious: {{full.path.to.value}}
-## how to associate namespace?: {{value}}
+[templates]
+dir = "$HOME/.dotfiles/theming/templates/"
+mpd = "@{dir}/mpd"
 
 [_]
 dec = "echo $((% - 1))"
 inc = "echo $((% + 1))"
 
+cat = "cat -"
+
 # really making a slice sort of thing in here might be nice
-# do we really want mods for mods?
+# is what we really want mods for mods?
 trim = "sed 's/#//'"
 
 [font.mono]
-family = "Droid Sans Mono"
+fallback="""
+check-font() {
+    if cache_output 600 fc-list | grep -q "$1"; then
+	echo "$1"
+	exit 0
+    fi
+}
+
+families="%
+Menlo
+Dejavu Sans Mono
+DejaVu Sans Mono
+Lucida Console
+Noto Sans Mono
+Source Code Pro
+Go Mono"
+
+for f in "$families"; do check-font "$f"; done
+"""
+_family = "Droid Sans Mono"
+# family="@{_family:fallback}"
+family="@{_family}"
 size = 10
 spec = "@{family}-@{size}"
 spec-space = "@{family} @{size}"
@@ -40,14 +50,13 @@ spec = '@{family}-@{size}'
 spec-space = '@{family} @{size}'
 
 [font.panel]
-
 family = "@{font.variable.family}"
-size = "@{font.variable.size:dec}"
+size = "@{font.variable.size:_.dec}"
 spec = '@{family}-@{size}'
 spec-space = '@{family} @{size}'
 
 [bspwm]
-window-gap= 10
+window-gap = 10
 split-ratio = 0.5
 
 desktop-names = '00 01 10 11'
@@ -187,8 +196,8 @@ frame.opacity = 1.0
 shadow.opacity = 0.4
 shadow.enabled = false
 shadow.radius = 1
-shadow.offset-x = 1
-shadow.offset-y = 1
+shadow.offset.x = 1
+shadow.offset.y = 1
 shadow.red = 0.0
 shadow.blue = 0.0
 shadow.green = 0.0
@@ -220,7 +229,6 @@ set -g status-right ''
 music-dir = "$HOME/Music"
 mpd-dir = "$HOME/.config/mpd"
 
-
 [2bspwm]
 
 # 2bspwm script overrides
@@ -242,9 +250,12 @@ mpd-dir = "$HOME/.config/mpd"
 
 [qutebrowser]
 
-bold_state="grep -q Bold && echo True || echo False"
-tab.bold = "@{font.panel.spec:bold_state}"
+statusbar.font.size = "@{qutebrowser.tab.font.size:_.dec}"
 
+
+tab.bold_state="grep -q Bold && echo True || echo False"
+
+# todo: reconsider these values
+tab.bold = "@{font.panel.spec:bold_state}"
 tab.font.family = '@{font.panel.family}'
 tab.font.size = '@{font.panel.size}'
-statusbar.font.size = "@{qutebrowser.tab.font.size:_.dec}"

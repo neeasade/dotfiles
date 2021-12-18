@@ -10,9 +10,9 @@ die() {
 
 gottm() {
   gott \
-      -l "${theme_dir}/colors.toml" \
-      -l "${theme_dir}/defaults.toml" \
-      -l "${theme_load}" \
+      -t "${theme_dir}/colors.toml" \
+      -t "${theme_dir}/defaults.toml" \
+      -t "${theme_load}" \
       "$@"
 }
 

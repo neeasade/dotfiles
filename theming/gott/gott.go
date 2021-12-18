@@ -4,6 +4,14 @@ package main
 // "checking" modes/linting modes when rendering
 // tests
 
+// some thoughts...
+// would a more "golang" way of doing things be to build a structure for our
+// string-string map? and then have functions that act on it for getting
+// individual values, rendering and such?
+
+// right now this is very dynamic, and the style doesn't feel like it's "jiving"
+// (but that could also just be my go comfort level)
+
 import (
         "flag"
         "fmt"
@@ -146,16 +154,33 @@ func render(config map[string]string, template string, namespace string) string 
         return template
 }
 
-func promoteNamespace(config map[string]string, ns string) map[string]string {
+// Promote value in config to top level
+func promoteNamespace(config map[string]string, ns string) {
         ns = ns + "."
-        // promote value in config to top level
         for key, value := range config {
                 if strings.Index(key, ns) == 0 {
                         new_key := key[len(ns):len(key)]
                         config[new_key] = value
                 }
         }
-        return config
+}
+
+// Filter to values starting with ns
+func narrowToNamespace(config map[string]string, ns string) {
+        ns = ns + "."
+        for key, _ := range config {
+                if strings.Index(key, ns) != 0 {
+                        delete(config, key)
+                }
+        }
+}
+
+func slurp(f string) string {
+	bytes, err := os.ReadFile(f)
+	if err != nil {
+		panic(err)
+	}
+	return string(bytes)
 }
 
 // add an array type for flag
@@ -170,54 +195,70 @@ func (i *arrayFlag) Set(value string) error {
         return nil
 }
 
-func main() {
-        var tomlFiles, contexts, renderTargets arrayFlag
-	var action, queryString string
 
-        flag.Var(&tomlFiles, "l", "Add a toml file to consider")
-        flag.Var(&contexts, "c", "Promote a namespace to the top level")
+func main() {
+	var tomlFiles, promotions, renderTargets, tomlText arrayFlag
+	var action, queryString, narrow string
+
+        flag.Var(&tomlFiles, "t", "Add a toml file to consider")
+        flag.Var(&tomlText, "T", "Add raw toml to consider")
+        flag.Var(&promotions, "p", "Promote a namespace to the top level")
         flag.Var(&renderTargets, "r", "Render a file")
         flag.StringVar(&action, "o", "", "Output type <shell|toml>")
         flag.StringVar(&queryString, "q", "", "Query for a value (implicit surrounding @{})")
+        flag.StringVar(&narrow, "n", "", "Narrow the namespaces to consider")
 
         flag.Parse()
 
         config := map[string]string{}
 
-        for _, tomlFile := range tomlFiles {
-                tomlBytes, _ := os.ReadFile(tomlFile)
+	absorbToml := func(tomltext string) {
                 var values map[string]interface{}
-
-                err := toml.Unmarshal(tomlBytes, &values)
+                err := toml.Unmarshal([]byte(tomltext), &values)
                 if err != nil {
                         panic(err)
                 }
                 flattenMap(values, "", config)
-        }
+	}
 
+	mapFlag := func(flagInput []string, action func(string)) {
+		for _, v := range flagInput {
+			action(v)
+		}
+	}
+
+	mapFlag(tomlFiles,
+		func(tomlFile string) {
+			absorbToml(slurp(tomlFile))
+		})
+
+	mapFlag(tomlText, absorbToml)
+
+	// process our flatmap
 	for key, value := range config {
                 config[key] = render(config, value, parent(key, "."))
         }
 
-	for _, context := range contexts {
-		promoteNamespace(config, context)
+	// I want partial? or maybe just stop trying to mix styles/do it the go way.
+	mapFlag(promotions, func(f string) {promoteNamespace(config, f)})
+
+	if narrow != "" {
+		narrowToNamespace(config, narrow)
 	}
 
 	switch action {
 	case "toml" :
-		log.Fatal("toml output not implemented yet.")
+		b, err := toml.Marshal(config)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Print(string(b))
 	case "shell":
 		log.Fatal("shell output not implemented yet.")
-	default:
 	}
 
-	// for k, v := range config {
-	// 	fmt.Printf("%s: %s\n", k, v)
-	// }
-
 	for _, file := range renderTargets {
-                fileBytes, _ := os.ReadFile(file)
-		fmt.Println(mustache(config, string(fileBytes)))
+		fmt.Println(mustache(config, slurp(file)))
 	}
 
 	if queryString != "" {

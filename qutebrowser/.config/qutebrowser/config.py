@@ -125,9 +125,9 @@ theme = {
 
 
 # import templated theme when file exists
-# themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
-# if os.path.exists(themefile):
-#     exec(open(themefile).read())
+themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
+if os.path.exists(themefile):
+    exec(open(themefile).read())
 
 cssfile = os.environ["HOME"] + '/.config/qutebrowser/settings.css'
 if os.path.exists(cssfile):
