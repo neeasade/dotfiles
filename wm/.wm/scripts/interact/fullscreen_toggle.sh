@@ -7,9 +7,9 @@
 do_monocle_padded() {
 
   if pgrep picom; then
-    hsetroot -solid "#$(theme getval background)" &
+    hsetroot -solid "$(theme getval color.normal.background)" &
   else
-    xsetroot -solid "#$(theme getval background)" &
+    xsetroot -solid "$(theme getval color.normal.background)" &
   fi
 
   bspc query -N -n focused.fullscreen && \
@@ -34,11 +34,14 @@ Wine'
   if echo "$no_trim_list" | grep "$window_class"; then
     bspc config window_gap 0
   else
-    bspc config window_gap $(theme getval x_padding)
+    bspc config window_gap $(theme getval x.padding)
   fi
 
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
+  bspc config top_monocle_padding 0
+  bspc config bottom_monocle_padding 0
+
   bspc config borderless_monocle true
 }
 
@@ -59,14 +62,14 @@ do_monocle_slim() {
   # bspc config borderless_monocle false
 
   if pgrep lemonbar; then
-    bspc config window_gap $(theme getval b_window_gap)
+    bspc config window_gap $(theme getval bspwm.window-gap)
   else
     bspc config window_gap 0
   fi
 
   mon_width=$(bspc query -T -m | jq .rectangle.width)
   # mon_width=$(i3c -t get_tree | jq .rect.width)
-  percent=$(theme getval b_monocle_window_percent)
+  percent=$(theme getval bspwm.monocle-window-percent)
   window_width=$(echo $percent \* $mon_width | bc -l)
   monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
 

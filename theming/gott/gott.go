@@ -169,10 +169,13 @@ func promoteNamespace(config map[string]string, ns string) {
 // Filter to values starting with ns
 func narrowToNamespace(config map[string]string, ns string) {
         ns = ns + "."
-        for key, _ := range config {
-                if strings.Index(key, ns) != 0 {
-                        delete(config, key)
+        for key, value := range config {
+		if strings.Index(key, ns) == 0 {
+                        new_key := key[len(ns):len(key)]
+                        config[new_key] = value
                 }
+
+		delete(config, key)
         }
 }
 
@@ -204,8 +207,17 @@ func act(config map[string]string, renderTargets []string, action, queryString s
 			panic(err)
 		}
 		fmt.Print(string(b))
+	case "keys" :
+		for k, _ := range config {
+			fmt.Println(k)
+		}
 	case "shell":
-		log.Fatal("shell output not implemented yet.")
+		for k, v := range config {
+			k = strings.ReplaceAll(k, ".", "_")
+			k = strings.ReplaceAll(k, "-", "_")
+			v = strings.ReplaceAll(v, "'", "'\\''")
+			fmt.Printf("%s='%s'\n", k, v)
+		}
 	}
 
 	for _, file := range renderTargets {
@@ -221,7 +233,6 @@ func act(config map[string]string, renderTargets []string, action, queryString s
 func getConfig(tomlFiles, tomlText []string) map[string]string {
 	config := map[string]string{}
 
-	// first, determine if theres a cached toml file. If so just use that.
 	sumStrings := append(tomlFiles, tomlText...)
 	cache_file := os.Getenv("HOME") + "/.cache/gott/"  + fmt.Sprintf("%v", md5.Sum([]byte(strings.Join(sumStrings, ""))))
 
@@ -249,7 +260,8 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 		var values map[string]interface{}
                 err := toml.Unmarshal([]byte(tomlText), &values)
                 if err != nil {
-                        panic(err)
+			println(tomlText)
+			panic(err)
                 }
                 flattenMap(values, "", config)
 	}
@@ -294,7 +306,6 @@ func main() {
 
 	config := getConfig(tomlFiles, tomlText)
 
-	// I want partial? or maybe just stop trying to mix styles/do it the go way.
 	for _, p := range promotions {
 		promoteNamespace(config, p)
 	}

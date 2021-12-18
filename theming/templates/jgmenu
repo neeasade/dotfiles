@@ -6,7 +6,7 @@ menu_padding_bottom = {{x.padding}}
 menu_padding_left = {{x.padding}}
 menu_radius = 0
 hover_delay = 20
-font = {{font.variable.family}}
+font = {{font.variable.spec-space}}
 
 icon_size = 0
 
@@ -17,7 +17,7 @@ color_norm_bg = {{background}} 100
 color_norm_fg = {{foreground}} 100
 color_sel_bg = {{color.focused.background}} 100
 color_sel_fg = {{color.focused.foreground}} 100
-color_sel_border = {{p_bg_active}} 100
+color_sel_border = {{color.focused.background}} 100
 color_sep_fg = {{background}} 100
 color_scroll_ind = #eeeeee 100
 color_title_fg = {{foreground}} 100

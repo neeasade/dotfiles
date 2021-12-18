@@ -11,6 +11,7 @@ dec = "echo $((% - 1))"
 inc = "echo $((% + 1))"
 
 cat = "cat -"
+sh = "sh"
 
 # really making a slice sort of thing in here might be nice
 # is what we really want mods for mods?

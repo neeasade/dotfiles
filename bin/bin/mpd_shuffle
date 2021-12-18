@@ -1,6 +1,7 @@
 #!/usr/bin/env bb
 ;; filter to long songs, preserve album order
 ;; if any argument is passed, don't filter long, just shuffle with albums in mind
+;; todo: this is not right -- shuffle at dir level wrong when keeping short songs
 
 (require '[clojure.java.shell :as shell])
 (require '[clojure.string :as string])
