@@ -1,0 +1,16 @@
+THEME_NAME = "test"
+
+BG_COMMAND="${HOME}/.fehbg"
+# BG_COMMAND="hsetroot -solid @{color.focused.background}"
+
+
+font.variable.family = "Charter"
+
+st.prompt_char='%'
+bspwm.window.gap = 32
+x.padding = 5
+
+font.mono.size = 16
+font.variable.size = 16
+
+picom.shadow.enabled = false

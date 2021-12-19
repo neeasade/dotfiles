@@ -1,7 +1,0 @@
-THEME_NAME = "test"
-
-BG_COMMAND="${HOME}/.fehbg"
-
-PROMPT_CHAR='%'
-
-font.variable.family = "Charter"

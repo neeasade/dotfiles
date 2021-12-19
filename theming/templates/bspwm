@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # neeasade's bspwmrc
-# may take one bool arg: gaps or ungapped
 
 set -a
 
@@ -12,72 +11,66 @@ PATH=$PATH:$HOME/.wm/scripts/visual
 
 relaunch_panel=$(iif "systemctl --user status panel")
 
-bspc config border_width {{border.width}}
-bspc config split_ratio  {{split-ratio}}
+running() {
+    bspc config border_width {{border.width}}
+    bspc config split_ratio  {{split-ratio}}
+    bspc config normal_border_color   "{{border.normal}}"
+    bspc config active_border_color   "{{border.active}}"
+    bspc config focused_border_color  "{{border.focused}}"
+    bspc config presel_feedback_color "{{border.presel}}"
 
-bspc config normal_border_color   "{{border.normal}}"
-bspc config active_border_color   "{{border.active}}"
-bspc config focused_border_color  "{{border.focused}}"
-bspc config presel_feedback_color "{{border.presel}}"
+    # to gap or not to gap
+    bspc config window_gap $(iif $gapped {{window-gap}} -{{border.width}})
 
-bspc config focus_follows_pointer      true
-bspc config ignore_ewmh_focus          true
-bspc config remove_unplugged_monitors  true
-bspc config remove_disabled_monitors   true
-bspc config merge_overlapping_monitors true
+    side_padding=$(iif $gapped 0 {{border.width}})
+    panel_padding=$(iif $relaunch_panel "{{panel.height}}+{{panel.gap}}" 0)
 
-bspc config pointer_modifier mod4
-bspc config removal_adjustment false
+    bspc config {{panel.position}}_padding $((side_padding + panel_padding))
 
-# external rules
-bspc config external_rules_command "$(which external_rules.sh)"
+    for side in right {{panel.position-flipped}}} left; do
+	bspc config ${side}_padding $side_padding
+    done
 
-# to gap or not to gap
-bspc config window_gap $(iif $gapped {{window-gap}} -{{border.width}})
 
-side_padding=$(iif $gapped 0 {{border.width}})
-panel_padding=$(iif $relaunch_panel "{{panel.height}}+{{panel.gap}}" 0)
+    for visual in $HOME/.wm/scripts/visual/*; do
+	pkill -f "$visual" 2>/dev/null
+    done
 
-bspc config {{panel.position}}_padding $((side_padding + panel_padding))
+    # extensions may be defined in themes here:
+    {{bspwmrc-extend}}
+}
 
-for side in right {{panel.position-flipped}}} left; do
-    bspc config ${side}_padding $side_padding
-done
+starting() {
+    bspc config focus_follows_pointer      true
+    bspc config ignore_ewmh_focus          true
+    bspc config remove_unplugged_monitors  true
+    bspc config remove_disabled_monitors   true
+    bspc config merge_overlapping_monitors true
 
-# bspc config borderless_monocle $(iif "! $gapped")
-bspc config borderless_monocle true
-bspc config single_monocle true
+    bspc config pointer_modifier mod4
+    bspc config removal_adjustment false
 
-# multihead option is the custom_monocle script
-mon_width=$(bspc query -T -m | jq .rectangle.width)
-window_width=$(echo {{monocle-window-percent}} \* $mon_width | bc -l)
-monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
-bspc config left_monocle_padding $monocle_pad_width
-bspc config right_monocle_padding $monocle_pad_width
+    bspc config external_rules_command "$(which external_rules.sh)"
 
-# declare desktops per monitor
-for monitor in $(bspc query -M); do
-    bspc monitor $monitor -d {{desktop-names}}
-done
+    mon_width=$(bspc query -T -m | jq .rectangle.width)
+    window_width=$(echo {{monocle-window-percent}} \* $mon_width | bc -l)
+    monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
+    bspc config left_monocle_padding $monocle_pad_width
+    bspc config right_monocle_padding $monocle_pad_width
 
-if $relaunch_panel; then
-    systemctl --user restart panel
-fi
+    for monitor in $(bspc query -M); do
+	bspc monitor $monitor -d {{desktop-names}}
+    done
 
-for visual in $HOME/.wm/scripts/visual/*; do
-    pkill -f "$visual" 2>/dev/null
-done
-
-# extensions may be defined in themes here:
-{{bspwmrc-extend}}
-
-# bspc rule -a Emacs state=tiled
-# bspc rule -a Emacs-27.0.91 state=tiled
-# bspc rule -a Emacs-27.1 state=tiled
-# bspc rule -a Emacs-27.0.90 state=tiled
+    bspc config single_monocle true
+    bspc config borderless_monocle false
+}
 
 # initial wm startup actions ($xstart set in xinitrc)
 if [ $(( $(date +%s) - ${xstart:-0} )) -lt 2 ]; then
+    starting
     setsid $HOME/.wm/startup.sh &
     panelt
 fi
+
+running

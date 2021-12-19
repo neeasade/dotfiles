@@ -12,7 +12,7 @@ sep='+'
 start=''
 end=''
 
-eval "$(theme gottm -n mkb -o shell)"
+eval "$(theme -n mkb -o shell)"
 
 # char width for emoji
 # size=$((size / 2))
@@ -22,14 +22,14 @@ progress=${progress:-30}
 size=${size:-32}
 
 passed=false
-content="${start}"
+content=${start}
 
-if [ $progress -eq 100 ]; then
+if [ "$progress" -eq 100 ]; then
     sep=$complete
 fi
 
 content="${content}${start}"
-for i in $(seq 1 $size); do
+for i in $(seq 1 "$size"); do
     if [ "$(echo "$i < $progress / 100 * $size" | bc -l)" = 1 ]; then
         current="$complete"
     else

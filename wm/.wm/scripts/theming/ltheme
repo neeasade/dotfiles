@@ -7,21 +7,13 @@ export PATH="$PATH:$(pwd)"
 
 . "$HOME/.sh.d/environment"
 
-set -a
-
 render() {
     template="$HOME/.dotfiles/theming/templates/$1"
     dest="$HOME/$2"
     shift
     shift
     mkdir -p "$(dirname "$dest")"
-    theme_dir="$HOME/.dotfiles/theming/themes"
-    gott \
-	-t "${theme_dir}/colors.toml" \
-	-t "${theme_dir}/defaults.toml" \
-	-t "${HOME}/.wm_theme" \
-	"$@" \
-	-r "$template" > "$dest"
+    theme "$@" -r "$template" > "$dest"
 }
 
 # util:
@@ -223,9 +215,7 @@ EOF
     systemctl --user restart mpd
 }
 
-load_mpd_windows() {
-    render mpd_windows .config/mpd/mpd.conf -p mpd
-}
+load_mpd_windows() { render mpd_windows .config/mpd/mpd.conf -p mpd; }
 
 load_zathura() {
     render zathura .config/zathura/zathurarc -p colors.normal
@@ -399,14 +389,10 @@ fi
 
 IFS=" "
 for conf in $targets; do
-    (
-    #time="$((time load_$conf) 2>&1 1>/dev/null | tail -n 3 | head -n 1)"
-    #echo $conf : $time >> theme_perf.txt
-    load_$conf
-    echo $conf done
-    ) &
+    printf '%s: ' load_$conf
+    # NB: hides output from load_calls -- need to capture and dump
+    { time load_$conf > /dev/null 2>&1 ; } 2>&1 | awk 'FNR==2{print $2}'
 done
 IFS=
 
-# leave our children to fate.
-disown
+wait

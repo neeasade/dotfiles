@@ -1,51 +1,11 @@
 #!/bin/sh
+# this is just a wrapper for accessing the current theme through gott
 
 theme_dir="$HOME/.dotfiles/theming/themes"
-theme_load="${theme_load:-$HOME/.wm_theme}"
 
-die() {
-  echo "$*"
-  exit 1
-}
+gott \
+    -t "${theme_dir}/colors.toml" \
+    -t "${theme_dir}/defaults.toml" \
+    -t "${theme_dir}/current.toml" \
+    "$@"
 
-gottm() {
-  gott \
-      -t "${theme_dir}/colors.toml" \
-      -t "${theme_dir}/defaults.toml" \
-      -t "${theme_load}" \
-      "$@"
-}
-
-getval() {
-  gottm -q "$@"
-}
-
-get() {
-  gottm "$@" -o shell
-}
-
-load() {
-  name=$1
-  shift
-  [ -z "$name" ] && die "command 'load' needs a name."
-  [ ! -f "$theme_dir/${name}.toml" ] && die "theme '$name' not found"
-
-  rm "$theme_load"
-  ln -s "$theme_dir/${name}.toml" "$theme_load"
-
-  "$HOME/.wm/scripts/theming/ltheme" "$*"
-}
-
-list() {
-  ls "$theme_dir"
-}
-
-choose() {
-  target=$(list | fzf) && load "$target"
-}
-
-refresh() {
-  load "$(theme getval THEME_NAME)" "$@"
-}
-
-"$@"
