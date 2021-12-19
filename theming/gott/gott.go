@@ -13,91 +13,91 @@ package main
 // (but that could also just be my go comfort level)
 
 import (
+	"bytes"
+	"crypto/md5"
 	"encoding/binary"
 	"encoding/gob"
-        "bytes"
-        "crypto/md5"
-        "flag"
-        "fmt"
-        "io"
-        "log"
-        "os"
-        "os/exec"
-        "regexp"
-        "strings"
-        "time"
+	"flag"
+	"fmt"
+	"io"
+	"log"
+	"os"
+	"os/exec"
+	"regexp"
+	"strings"
+	"time"
 
-        "github.com/pelletier/go-toml/v2"
+	"github.com/pelletier/go-toml/v2"
 )
 
 // stringify nested paths from INPUT as keys in RESULTS (merges/overrides matches)
-func flattenMap (input map[string]interface{}, namespace string, results map[string]string) {
-        if namespace != "" {
-                namespace = namespace + "."
-        }
+func flattenMap(input map[string]interface{}, namespace string, results map[string]string) {
+	if namespace != "" {
+		namespace = namespace + "."
+	}
 
-        for key, value := range input {
-                nested, is_map := value.(map[string]interface{})
-                _, is_array := value.([]interface{})
-                if is_map {
-                        flattenMap(nested, namespace + key, results)
-                } else if is_array {
+	for key, value := range input {
+		nested, is_map := value.(map[string]interface{})
+		_, is_array := value.([]interface{})
+		if is_map {
+			flattenMap(nested, namespace+key, results)
+		} else if is_array {
 			// do nothing, for now.
 			// for index, _ := range arrayVal {
 			// 	index_string := fmt.Sprintf("[%i]", index)
 			// 	flattenMap(nested, namespace + key + index_string, results)
 			// }
-                } else {
+		} else {
 			// todo: consider printing if an override happens
-                        results[namespace + key] = fmt.Sprintf("%v", value)
-                }
-        }
+			results[namespace+key] = fmt.Sprintf("%v", value)
+		}
+	}
 }
 
-func shConf (command, value string) string {
-        if  strings.ContainsRune(command, '%') {
-                shell := strings.ReplaceAll(command, "%", value)
-                out, err := exec.Command("bash", "-c", shell).Output()
+func shConf(command, value string) string {
+	if strings.ContainsRune(command, '%') {
+		shell := strings.ReplaceAll(command, "%", value)
+		out, err := exec.Command("bash", "-c", shell).Output()
 
-                if err != nil {
-                        log.Fatal(err)
-                }
-                return string(out)
-        } else {
-                cmd := exec.Command("bash", "-c", command)
-                stdin, _ := cmd.StdinPipe()
+		if err != nil {
+			log.Fatal(err)
+		}
+		return string(out)
+	} else {
+		cmd := exec.Command("bash", "-c", command)
+		stdin, _ := cmd.StdinPipe()
 
-                go func() {
-                        defer stdin.Close()
-                        io.WriteString(stdin, value)
-                }()
+		go func() {
+			defer stdin.Close()
+			io.WriteString(stdin, value)
+		}()
 
-                out, err := cmd.CombinedOutput()
-                if err != nil {
-                        log.Fatal(command)
-                        log.Fatal(err)
-                }
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Fatal(command)
+			log.Fatal(err)
+		}
 
-                return string(out)
-        }
+		return string(out)
+	}
 }
 
 // Get the parent of a path using delim.
-func parent (path, delim string) string {
+func parent(path, delim string) string {
 	parts := strings.Split(path, delim)
 	return strings.Join(parts[0:len(parts)-1], delim)
 }
 
 // Do a basic mustache template matcher -- only handles direct matches.
 func mustache(config map[string]string, template string) string {
-        stacheRe := regexp.MustCompile("\\{\\{([^{}]+)\\}\\}")
-        matches := stacheRe.FindAllStringSubmatch(template, -1)
+	stacheRe := regexp.MustCompile("\\{\\{([^{}]+)\\}\\}")
+	matches := stacheRe.FindAllStringSubmatch(template, -1)
 
-        for _, groups := range matches {
+	for _, groups := range matches {
 		match := groups[0]
 		ident := groups[1]
 
-                if result, ok := config[ident]; ok {
+		if result, ok := config[ident]; ok {
 			template = strings.ReplaceAll(template, match, result)
 		} else {
 			println("gott: template key not found!: ", ident)
@@ -112,35 +112,35 @@ func mustache(config map[string]string, template string) string {
 // @{path.to.value:_.transformer}
 // @{localValue:localTransformer} (context given through namespace)
 func render(config map[string]string, template string, namespace string) string {
-        transformPattern := ":[A-Za-z\\.-_]+"
-        referencePattern := fmt.Sprintf("[^@]?(@\\{([^{}:]+)(%s)*\\})", transformPattern)
-        referenceRe := regexp.MustCompile(referencePattern)
+	transformPattern := ":[A-Za-z\\.-_]+"
+	referencePattern := fmt.Sprintf("[^@]?(@\\{([^{}:]+)(%s)*\\})", transformPattern)
+	referenceRe := regexp.MustCompile(referencePattern)
 
-        matches := referenceRe.FindAllStringSubmatch(template, -1)
-        if matches == nil {
-                return template
-        }
+	matches := referenceRe.FindAllStringSubmatch(template, -1)
+	if matches == nil {
+		return template
+	}
 
-        for _, groups := range matches {
-                match := groups[1]
-                ident := groups[2]
-                transformers := groups[3:]
+	for _, groups := range matches {
+		match := groups[1]
+		ident := groups[2]
+		transformers := groups[3:]
 
-                var result = ""
+		var result = ""
 
-                local_ident := namespace + "." + ident
-                if _, ok := config[local_ident]; ok {
+		local_ident := namespace + "." + ident
+		if _, ok := config[local_ident]; ok {
 			ident = local_ident
-                }
+		}
 
 		result = render(config, config[ident], parent(ident, "."))
 
 		for _, transformer := range transformers {
-                        if transformer != "" {
+			if transformer != "" {
 				transformer = transformer[1:]
-                                local_ident := namespace + "." + transformer
+				local_ident := namespace + "." + transformer
 
-                                if _, ok := config[local_ident]; ok {
+				if _, ok := config[local_ident]; ok {
 					transformer = local_ident
 				}
 
@@ -148,26 +148,26 @@ func render(config map[string]string, template string, namespace string) string 
 				transformer = "@{" + transformer + "}"
 				result = shConf(render(config, transformer, transformer_ns), result)
 			}
-                }
+		}
 
 		result = strings.TrimSpace(result)
 		if result == "" {
 			println("render resulted in nothing!: ", namespace, match)
 		}
-                template = strings.ReplaceAll(template, match, result)
-        }
-        return template
+		template = strings.ReplaceAll(template, match, result)
+	}
+	return template
 }
 
 // Promote value in config to top level
 func promoteNamespace(config map[string]string, ns string) {
-        ns = ns + "."
-        for key, value := range config {
-                if strings.Index(key, ns) == 0 {
-                        new_key := key[len(ns):len(key)]
-                        config[new_key] = value
-                }
-        }
+	ns = ns + "."
+	for key, value := range config {
+		if strings.Index(key, ns) == 0 {
+			new_key := key[len(ns):len(key)]
+			config[new_key] = value
+		}
+	}
 }
 
 // Filter to values starting with ns
@@ -175,13 +175,13 @@ func narrowToNamespace(config map[string]string, ns string) map[string]string {
 	// it appears mutating iterations are non-deterministic?
 	new_config := map[string]string{}
 
-        ns = ns + "."
-        for key, value := range config {
+	ns = ns + "."
+	for key, value := range config {
 		if strings.Index(key, ns) == 0 {
-                        new_key := key[len(ns):len(key)]
-                        new_config[new_key] = value
-                }
-        }
+			new_key := key[len(ns):len(key)]
+			new_config[new_key] = value
+		}
+	}
 	return new_config
 }
 
@@ -197,23 +197,23 @@ func slurp(f string) string {
 type arrayFlag []string
 
 func (i *arrayFlag) String() string {
-        return "nope"
+	return "nope"
 }
 
 func (i *arrayFlag) Set(value string) error {
-        *i = append(*i, value)
-        return nil
+	*i = append(*i, value)
+	return nil
 }
 
 func act(config map[string]string, renderTargets []string, action, queryString string) {
 	switch action {
-	case "toml" :
+	case "toml":
 		b, err := toml.Marshal(config)
 		if err != nil {
 			panic(err)
 		}
 		fmt.Print(string(b))
-	case "keys" :
+	case "keys":
 		for k, _ := range config {
 			fmt.Println(k)
 		}
@@ -232,7 +232,7 @@ func act(config map[string]string, renderTargets []string, action, queryString s
 	}
 
 	if queryString != "" {
-                if result, ok := config[queryString]; ok {
+		if result, ok := config[queryString]; ok {
 			fmt.Println(result)
 		} else {
 			log.Fatal("query not found")
@@ -246,7 +246,7 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	sumStrings := append(tomlFiles, tomlText...)
 	sumBytes := md5.Sum([]byte(strings.Join(sumStrings, "")))
 	sumInt := binary.BigEndian.Uint64(sumBytes[:])
-	cache_file := os.Getenv("HOME") + "/.cache/gott/"  + fmt.Sprintf("%v", sumInt)
+	cache_file := os.Getenv("HOME") + "/.cache/gott/" + fmt.Sprintf("%v", sumInt)
 	cached := true
 
 	fetchTime := func(f string) time.Time {
@@ -258,7 +258,7 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	}
 
 	cache_bytes, err := os.ReadFile(cache_file)
-	if (err != nil) {
+	if err != nil {
 		cached = false
 	}
 
@@ -322,15 +322,15 @@ func main() {
 	var tomlFiles, promotions, renderTargets, tomlText arrayFlag
 	var action, queryString, narrow string
 
-        flag.Var(&tomlFiles, "t", "Add a toml file to consider")
-        flag.Var(&tomlText, "T", "Add raw toml to consider")
-        flag.Var(&promotions, "p", "Promote a namespace to the top level")
-        flag.Var(&renderTargets, "r", "Render a file")
-        flag.StringVar(&action, "o", "", "Output type <shell|toml>")
-        flag.StringVar(&queryString, "q", "", "Query for a value (implicit surrounding @{})")
-        flag.StringVar(&narrow, "n", "", "Narrow the namespaces to consider")
+	flag.Var(&tomlFiles, "t", "Add a toml file to consider")
+	flag.Var(&tomlText, "T", "Add raw toml to consider")
+	flag.Var(&promotions, "p", "Promote a namespace to the top level")
+	flag.Var(&renderTargets, "r", "Render a file")
+	flag.StringVar(&action, "o", "", "Output type <shell|toml>")
+	flag.StringVar(&queryString, "q", "", "Query for a value (implicit surrounding @{})")
+	flag.StringVar(&narrow, "n", "", "Narrow the namespaces to consider")
 
-        flag.Parse()
+	flag.Parse()
 
 	config := getConfig(tomlFiles, tomlText)
 
