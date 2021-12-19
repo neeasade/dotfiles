@@ -9,7 +9,6 @@ package main
 // string-string map? and then have functions that act on it for getting
 // individual values, rendering and such?
 
-
 // right now this is very dynamic, and the style doesn't feel like it's "jiving"
 // (but that could also just be my go comfort level)
 
@@ -189,7 +188,7 @@ func narrowToNamespace(config map[string]string, ns string) map[string]string {
 func slurp(f string) string {
 	bytes, err := os.ReadFile(f)
 	if err != nil {
-		panic(err)
+		log.Fatalf("file not found: %s", f)
 	}
 	return string(bytes)
 }
@@ -221,6 +220,7 @@ func act(config map[string]string, renderTargets []string, action, queryString s
 	case "shell":
 		for k, v := range config {
 			k = strings.ReplaceAll(k, ".", "_")
+			// meh on this replace value
 			k = strings.ReplaceAll(k, "-", "_")
 			v = strings.ReplaceAll(v, "'", "'\\''")
 			fmt.Printf("%s='%s'\n", k, v)
@@ -232,8 +232,11 @@ func act(config map[string]string, renderTargets []string, action, queryString s
 	}
 
 	if queryString != "" {
-		queryString =  fmt.Sprintf("@{%s}", queryString)
-		fmt.Println(render(config, queryString, ""))
+                if result, ok := config[queryString]; ok {
+			fmt.Println(result)
+		} else {
+			log.Fatal("query not found")
+		}
 	}
 }
 
@@ -249,8 +252,7 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	fetchTime := func(f string) time.Time {
 		info, err := os.Stat(f)
 		if err != nil {
-			println("err on stat file!", f)
-			panic(err)
+			log.Fatalf("err when stating file '%s': %s", f, err)
 		}
 		return info.ModTime()
 	}
@@ -263,8 +265,7 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	if cached {
 		cache_modTime := fetchTime(cache_file)
 		for _, f := range tomlFiles {
-			fileTime := fetchTime(f)
-			if fileTime.After(cache_modTime) {
+			if fetchTime(f).After(cache_modTime) {
 				cached = false
 			}
 		}
@@ -285,25 +286,18 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	// ａｂｓｏｒｂ
 	// ｒｅｎｄｅｒ
 	// ｃａｃｈｅ
-	absorbToml := func(tomlText string) {
-		var values map[string]interface{}
-                err := toml.Unmarshal([]byte(tomlText), &values)
-                if err != nil {
-			println(tomlText)
-			panic(err)
-                }
-                flattenMap(values, "", config)
-	}
-
-
 	for _, file := range tomlFiles {
-		// todo: consider prepending slurps, then unfolding absorbToml func
-		// x = append([]int{1}, x...)
-		absorbToml(slurp(file))
+		// "prepend"
+		tomlText = append([]string{slurp(file)}, tomlText...)
 	}
 
 	for _, text := range tomlText {
-		absorbToml(text)
+		var values map[string]interface{}
+		err := toml.Unmarshal([]byte(text), &values)
+		if err != nil {
+			log.Fatalf("%s\n-----\nerror parsing: %s")
+		}
+		flattenMap(values, "", config)
 	}
 
 	for key, value := range config {
@@ -319,6 +313,7 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 
 	var perm os.FileMode = 0o644
 	os.WriteFile(cache_file, b.Bytes(), perm)
+	// todo: cache eviction/cleanup
 
 	return config
 }
