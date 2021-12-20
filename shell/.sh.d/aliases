@@ -16,7 +16,7 @@ alias pacman="pacman --color=always"
 alias steam-wine='WINEDEBUG=-all wine ~/.wine/drive_c/Program\ Files/Steam/Steam.exe >/dev/null 2>&1 &'
 alias paint="pinta"
 
-alias ref='theme refresh '
+alias ref='ltheme '
 alias pdfgrep='pdfgrep --cache -n '
 
 # the best

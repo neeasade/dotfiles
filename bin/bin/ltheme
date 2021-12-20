@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # Load themes for programs from current theme
 
-# relative calling
-cd $(dirname $([ -L $0 ] && readlink -f $0 || echo $0))
-export PATH="$PATH:$(pwd)"
-
 . "$HOME/.sh.d/environment"
 
 render() {
@@ -44,14 +40,17 @@ git_ensure() {
     fi
 }
 
-# loaders:
+load_bg()          { eval "$(theme getval BG_COMMAND)" ;}
+load_xst()         { load_xresources; pkill -x --signal USR1 xst ;}
+load_kitty()       { render kitty .config/kitty/kitty.conf -p color.normal ;}
+load_mintty()      { render mintty .minttyrc ;}
+load_mpd_windows() { render mpd_windows .config/mpd/mpd.conf -p mpd ;}
+load_zathura()     { render zathura .config/zathura/zathurarc -p colors.normal ;}
+load_zeal()        { render zeal .config/Zeal/Zeal.conf ;}
+
 load_tmux() {
     render tmux .tmux.conf -p tmux
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
-}
-
-load_kitty() {
-    render kitty .config/kitty/kitty.conf -p color.normal
 }
 
 load_picom() {
@@ -59,36 +58,45 @@ load_picom() {
     systemctl --user restart picom
 }
 
-load_bg() {
-    $(theme getval BG_COMMAND)
-}
-
 load_xresources() {
     render Xresources .Xresources -p color.normal
-
-    if type xrdb >/dev/null 2>&1; then
-	xrdb "$HOME/.Xresources"
-    fi
-    load_xst
-}
-
-load_xst() {
-    if type xst >/dev/null 2>&1; then
-	pkill -x --signal USR1 xst
-    fi
+    has xrdb && xrdb "$HOME/.Xresources"
 }
 
 load_bspwm() {
-    # if [ "${p_launch_cmd##*/}" = "lemonade" ]; then
-    #     load_lemonade
-    # fi
-
     bspwmrc=".config/bspwm/bspwmrc"
     render bspwm "$bspwmrc" -p bspwm
     chmod +x "$HOME/$bspwmrc"
 
     wait
     setsid "$HOME/$bspwmrc"
+}
+
+load_mpd() {
+    extra_toml=""
+    if mount | grep "${HOME}/usb"; then
+	extra_toml="mpd.music-dir = \"${HOME}/usb/Music\"
+mpd.mpd-dir = \"${HOME}/.config/mpd_portable\""
+    fi
+
+    render mpd .config/mpd/mpd.conf -T "$extra_toml" -p mpd
+    systemctl --user restart mpd
+}
+
+load_qutebrowser() {
+    render qutebrowser .config/qutebrowser/colors.py -p qutebrowser
+    render qute_css .config/qutebrowser/settings.css
+
+    if $MAC; then
+	qb_command ':config-source'
+    else
+	current_conf=$(bspc config ignore_ewmh_focus)
+	bspc config ignore_ewmh_focus true
+	qb_command ':config-source'
+	# qb_command ':reload' # reload current page w/ css
+	bspc config ignore_ewmh_focus "$current_conf"
+    fi
+
 }
 
 load_lemonade() {
@@ -143,22 +151,6 @@ load_gtk() {
     echo "$THEME_NAME" > $HOME/.themes/ACTIVE_THEME
 }
 
-load_qutebrowser() {
-    render qutebrowser .config/qutebrowser/colors.py -p qutebrowser
-    render qute_css .config/qutebrowser/settings.css
-
-    if $MAC; then
-	qb_command ':config-source'
-    else
-	current_conf=$(bspc config ignore_ewmh_focus)
-	bspc config ignore_ewmh_focus true
-	qb_command ':config-source'
-	# qb_command ':reload' # reload current page w/ css
-	bspc config ignore_ewmh_focus "$current_conf"
-    fi
-
-}
-
 load_dunst() {
     # dunst recently changed config - will adjust when home
     echo TODO: dunst
@@ -199,34 +191,6 @@ load_dunst() {
     systemctl --user stop dunst
     pkill dunst
     systemctl --user start dunst
-}
-
-load_mpd() {
-    extra_toml=""
-    if mount | grep "${HOME}/usb"; then
-	extra_toml=$(cat <<EOF
-mpd.music-dir = "${HOME}/usb/Music"
-mpd.mpd-dir = "${HOME}/.config/mpd_portable"
-EOF
-		  )
-    fi
-
-    render mpd .config/mpd/mpd.conf -T "$extra_toml" -p mpd
-    systemctl --user restart mpd
-}
-
-load_mpd_windows() { render mpd_windows .config/mpd/mpd.conf -p mpd; }
-
-load_zathura() {
-    render zathura .config/zathura/zathurarc -p colors.normal
-}
-
-load_zeal() {
-    render zeal .config/Zeal/Zeal.conf
-}
-
-load_mintty() {
-    render mintty .minttyrc
 }
 
 # steal pywal templates
@@ -378,21 +342,28 @@ load_btag_borders() {
   (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
 }
 
-
-if $MAC; then
-    targets=${*:-tmux xresources qutebrowser}
-elif $LINUX; then
-    targets=${*:-picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu zeal btag_borders}
-elif $WINDOWS; then
-    targets=${*:-mintty mpd_windows tmux}
+if [ -z "$*" ]; then
+    if $MAC; then
+	set -- tmux xresources qutebrowser kitty
+    elif $LINUX; then
+	set -- picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu zeal btag_borders xst
+    elif $WINDOWS; then
+	set -- mintty mpd_windows tmux
+    fi
 fi
 
-IFS=" "
-for conf in $targets; do
-    printf '%s: ' load_$conf
-    # NB: hides output from load_calls -- need to capture and dump
-    { time load_$conf > /dev/null 2>&1 ; } 2>&1 | awk 'FNR==2{print $2}'
+targets=$*
+for conf in "$@"; do
+    (
+	result=$(
+	    tmp=$(mktemp)
+	    printf '::: %s: ' load_$conf
+	    { time load_$conf >"$tmp" 2>&1 ; } 2>&1 | awk 'FNR==2{print $2}'
+	    cat "$tmp"
+	    rm "$tmp")
+	printf '%s\n' "$result"
+    ) &
 done
-IFS=
 
 wait
+echo done!
