@@ -54,6 +54,7 @@ func flattenMap(input map[string]interface{}, namespace string, results map[stri
 	}
 }
 
+// todo: reconsider this whole thing
 func shConf(command, value string) string {
 	if strings.ContainsRune(command, '%') {
 		shell := strings.ReplaceAll(command, "%", value)
@@ -173,6 +174,7 @@ func promoteNamespace(config map[string]string, ns string) {
 // Filter to values starting with ns
 func narrowToNamespace(config map[string]string, ns string) map[string]string {
 	// it appears mutating iterations are non-deterministic?
+	// edit: the issue is insertions mid range: https://go.dev/ref/spec#For_range
 	new_config := map[string]string{}
 
 	ns = ns + "."
@@ -240,6 +242,16 @@ func act(config map[string]string, renderTargets []string, action, queryString s
 	}
 }
 
+func reverse(input []string) []string {
+    var output []string
+
+    for i := len(input) - 1; i >= 0; i-- {
+        output = append(output, input[i])
+    }
+
+    return output
+}
+
 func getConfig(tomlFiles, tomlText []string) map[string]string {
 	config := map[string]string{}
 
@@ -247,46 +259,63 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	sumBytes := md5.Sum([]byte(strings.Join(sumStrings, "")))
 	sumInt := binary.BigEndian.Uint64(sumBytes[:])
 	cache_file := os.Getenv("HOME") + "/.cache/gott/" + fmt.Sprintf("%v", sumInt)
+
 	cached := true
 
-	fetchTime := func(f string) time.Time {
-		info, err := os.Stat(f)
-		if err != nil {
-			log.Fatalf("err when stating file '%s': %s", f, err)
-		}
-		return info.ModTime()
-	}
-
-	cache_bytes, err := os.ReadFile(cache_file)
+	cacheInfo, err := os.Stat(cache_file)
 	if err != nil {
 		cached = false
 	}
 
 	if cached {
-		cache_modTime := fetchTime(cache_file)
-		for _, f := range tomlFiles {
-			if fetchTime(f).After(cache_modTime) {
-				cached = false
+		cache_chan := make(chan map[string]string)
+
+		go func() {
+			decoded_config := map[string]string{}
+			b, err := os.ReadFile(cache_file)
+			d := gob.NewDecoder(bytes.NewReader(b))
+			err = d.Decode(&decoded_config)
+			if err != nil {
+				panic(err)
+			}
+			cache_chan <- decoded_config
+		}()
+
+		checkTime := func(f string, cache_time time.Time) chan bool {
+			c := make(chan bool)
+			go func() {
+				info, err := os.Stat(f)
+				if err != nil {
+					log.Fatalf("err when stating file '%s': %s", f, err)
+				}
+				c <- cache_time.After(info.ModTime())
+			}()
+			return c
+		}
+
+		timeChannels := make([]chan bool, len(tomlFiles))
+		cacheTime := cacheInfo.ModTime()
+		for i, f := range tomlFiles {
+			timeChannels[i] = checkTime(f, cacheTime)
+		}
+
+		for _, c := range timeChannels {
+			cached = cached && <-c
+			if ! cached {
+				break
 			}
 		}
-	}
 
-	if cached {
-		d := gob.NewDecoder(bytes.NewReader(cache_bytes))
-
-		// Decoding the serialized data
-		err = d.Decode(&config)
-		if err != nil {
-			panic(err)
+		if cached {
+			return <-cache_chan
 		}
-		return config
 	}
 
 	// ok, we aren't cached. time to:
 	// ａｂｓｏｒｂ
 	// ｒｅｎｄｅｒ
 	// ｃａｃｈｅ
-	for _, file := range tomlFiles {
+	for _, file := range reverse(tomlFiles) {
 		// "prepend"
 		tomlText = append([]string{slurp(file)}, tomlText...)
 	}
@@ -312,6 +341,10 @@ func getConfig(tomlFiles, tomlText []string) map[string]string {
 	}
 
 	var perm os.FileMode = 0o644
+	// todo: this should be fs/parent
+	os.MkdirAll(parent(cache_file, "/"), 0700)
+
+	// todo: yell on fail
 	os.WriteFile(cache_file, b.Bytes(), perm)
 	// todo: cache eviction/cleanup
 
