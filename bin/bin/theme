@@ -1,11 +1,17 @@
 #!/bin/sh
-# this is just a wrapper for accessing the current theme through gott
+# gott: https://github.com/neeasade/gott
 
-theme_dir="$HOME/.dotfiles/theming/themes"
+theme_dir="$HOME/.dotfiles/theming"
+gott=gott
 
-gott \
+# when iterating:
+# cd $HOME/git/gott
+# go build || exit 1
+# gott=./gott
+
+$gott \
     -t "${theme_dir}/colors.toml" \
-    -t "${theme_dir}/defaults.toml" \
-    -t "${theme_dir}/current.toml" \
+    -t "${theme_dir}/base.toml" \
+    -t "${theme_dir}/scratch.toml" \
     "$@"
 

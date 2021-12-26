@@ -2,59 +2,24 @@
 
 HOME = "$HOME"
 
-[templates]
-dir = "$HOME/.dotfiles/theming/templates/"
-mpd = "@{dir}/mpd"
-
-[_]
-dec = "echo $((% - 1))"
-inc = "echo $((% + 1))"
-
-cat = "cat -"
-sh = "sh"
-
-# really making a slice sort of thing in here might be nice
-# is what we really want mods for mods?
-trim = "sed 's/#//'"
-
 [font.mono]
-fallback="""
-check-font() {
-    if cache_output 600 fc-list | grep -q "$1"; then
-	echo "$1"
-	exit 0
-    fi
-}
 
-families="%
-Menlo
-Dejavu Sans Mono
-DejaVu Sans Mono
-Lucida Console
-Noto Sans Mono
-Source Code Pro
-Go Mono"
-
-for f in "$families"; do check-font "$f"; done
-"""
-_family = "Droid Sans Mono"
-# family="@{_family:fallback}"
-family="@{_family}"
+family="Droid Sans Mono"
 size = 10
-spec = "@{family}-@{size}"
-spec-space = "@{family} @{size}"
+spec = "{{.family}}-{{.size}}"
+spec-space = "{{.family}} {{.size}}"
 
 [font.variable]
-family = "Droid Sans-10"
+family = "Droid Sans"
 size = 10
-spec = '@{family}-@{size}'
-spec-space = '@{family} @{size}'
+spec = '{{.family}}-{{.size}}'
+spec-space = '{{.family}} {{.size}}'
 
 [font.panel]
-family = "@{font.variable.family}"
-size = "@{font.variable.size:_.dec}"
-spec = '@{family}-@{size}'
-spec-space = '@{family} @{size}'
+family = "{{.font.variable.family}}"
+size = "{{.font.variable.size | sub 1}}"
+spec = '{{.family}}-{{.size}}'
+spec-space = '{{.family}} {{.size}}'
 
 [bspwm]
 window-gap = 10
@@ -71,12 +36,13 @@ bspwmrc-extend = ""
 width = 3
 
 # todo: this better
-normal = '@{color.0}'
-active = '@{color.8}'
-focused = '@{color.7}'
-presel = '@{color.8}'
+# normal = '{{.color.0}}'
+# active = '{{.color.8}}'
+# focused = '{{.color.7}}'
+# presel = '{{.color.8}}'
 
 [mkb]
+
 complete = '-'
 empty = '-'
 sep = '+'
@@ -145,8 +111,7 @@ icon = "unset"
 window-class = "lemonbar" # window class to use in lemonade's juicer
 
 position = "top"          # panel position - top|bottom
-flip = 'iif "[ % = "top" ]" bottom top'
-position-flipped = '@{position:flip}'
+position-flipped = '{{if eq .position "top"}}bottom{{else}}top{{end}} | trim'
 
 [panel.desktop]
 display-name="icon"       # [icon|name] - display desktop names or DO/DF variables.
@@ -169,19 +134,19 @@ scroll-up="ponymix increase 5"
 left = 'player.sh toggle'
 middle = 'mpc clear'
 right = 'player.sh next'
-scroll-down = 'mpc seek -00:00:02'
-scroll-up = 'mpc seek +00:00:02'
+scrolldown = 'mpc seek -00:00:02'
+scrollup = 'mpc seek +00:00:02'
 
 [panel.dynamicmpd.mouse]
-left = '@{panel.mpd.mouse.left}'
-middle = '@{panel.mpd.mouse.middle}'
-right = '@{panel.mpd.mouse.right}'
-scroll-down = '@{panel.mpd.mouse.scroll-down}'
-scroll-up = '@{panel.mpd.mouse.scroll-up}'
+left = '{{.panel.mpd.mouse.left}}'
+middle = '{{.panel.mpd.mouse.middle}}'
+right = '{{.panel.mpd.mouse.right}}'
+scrolldown = '{{.panel.mpd.mouse.scrolldown}}'
+scrollup = '{{.panel.mpd.mouse.scrollup}}'
 
 [st]
-font = "@{font.mono.spec}"
-font_variable = "@{font.variable.spec}"
+font = "{{.font.mono.spec}}"
+font_variable = "{{.font.variable.spec}}"
 
 cursorshape = 2
 cursorthickness = 2
@@ -251,12 +216,12 @@ mpd-dir = "$HOME/.config/mpd"
 
 [qutebrowser]
 
-statusbar.font.size = "@{qutebrowser.tab.font.size:_.dec}"
+statusbar.font.size = "{{.qutebrowser.tab.font.size | sub 1}}"
 
 
 tab.bold_state="grep -q Bold && echo True || echo False"
 
 # todo: reconsider these values
-tab.bold = "@{font.panel.spec:bold_state}"
-tab.font.family = '@{font.panel.family}'
-tab.font.size = '@{font.panel.size}'
+# tab.bold = "{{.font.panel.spec:bold_state}}"
+tab.font.family = '{{.font.panel.family}}'
+tab.font.size = '{{.font.panel.size}}'
