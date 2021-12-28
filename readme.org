@@ -8,9 +8,7 @@ blursed computer garden.
 | Panel           | lemonbar, driven by [[https://github.com/vivien/i3blocks][i3blocks]] |
 | Browser         | [[https://www.qutebrowser.org/][qutebrowser]]                  |
 | Editor          | [[https://www.gnu.org/software/emacs/][Emacs]] (as vim)               |
-| Keyboard layout | [[https://colemakmods.github.io/mod-dh/][Colemak Mod-DH]]               |
+| Keyboard layout | [[https://colemakmods.github.io/mod-dh/][Colemak Mod-DHk]]              |
 | colors          | [[https://notes.neeasade.net/tarps.html][tarps]]                        |
 
-Many of my dotfiles are tied to a centralized theme file using [[https://github.com/neeasade/dotfiles/tree/master/templates][templates]]. The default theme values are [[https://github.com/neeasade/dotfiles/tree/master/wm/.wm/scripts/theming/defaults][here]], the theme files can be seen [[https://github.com/neeasade/dotfiles/tree/master/wm/.wm/themes][here]] (these days I only roll [[https://github.com/neeasade/dotfiles/blob/master/wm/.wm/themes/test][test]], and derive colors from emacs), and the [[https://github.com/neeasade/dotfiles/blob/master/wm/.wm/scripts/theming/ltheme][ltheme]] script ties it all together.
-
-Note: over time, the ltheme script has come to represent other dynamic parts of my setup as well, beyond just themes - this includes some user level systemd services. Additionally, as my Emacs usage has increased, my coupling to a running Emacs session with [[https://github.com/neeasade/emacs.d][my emacs config]] has also ramped up.
+Many of my dotfiles are [[https://github.com/toml-lang/toml][toml]] driven template files, backed by [[https://github.com/neeasade/gott][gott]]. See [[https://github.com/neeasade/dotfiles/tree/master/theming][theming/*]], [[https://github.com/neeasade/dotfiles/blob/master/bin/bin/theme][theme]] and [[https://github.com/neeasade/dotfiles/blob/master/bin/bin/ltheme][ltheme]].

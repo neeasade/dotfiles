@@ -1,6 +1,5 @@
-font_family      {{font.mono.family}}
-font_size       {{font.mono.size}}
-
+font_family      {{.font.mono.family}}
+font_size       {{.font.mono.size}}
 
 clear_all_shortcuts yes
 macos_option_as_alt yes
@@ -9,40 +8,26 @@ cursor_blink_interval 0
 kitty_mod ctrl+shift
 window_padding_width 10
 
-
 bold_font        auto
 italic_font      auto
 bold_italic_font auto
 
-foreground         {{foreground}}
-background         {{background}}
+foreground         {{.foreground}}
+background         {{.background}}
 background_opacity 1.0
-cursor             {{color.cursor}}
+cursor             {{.color.cursor}}
 
-active_tab_foreground     {{color.focused.foreground}}
-active_tab_background     {{color.focused.background}}
+active_tab_foreground     {{.color.focused.foreground}}
+active_tab_background     {{.color.focused.background}}
 
-inactive_tab_foreground   {{faded}}
-inactive_tab_background   {{background}}
+inactive_tab_foreground   {{.faded}}
+inactive_tab_background   {{.background}}
 
-active_border_color   {{foreground}}
-inactive_border_color {{background}}
+active_border_color   {{.foreground}}
+inactive_border_color {{.background}}
 
-bell_border_color     {{color.1}}
+bell_border_color     {{.color.focused.foreground}}
 
-color0       {{color.0}}
-color8       {{color.8}}
-color1       {{color.1}}
-color9       {{color.9}}
-color2       {{color.2}}
-color10      {{color.10}}
-color3       {{color.3}}
-color11      {{color.11}}
-color4       {{color.4}}
-color12      {{color.12}}
-color5       {{color.5}}
-color13      {{color.13}}
-color6       {{color.6}}
-color14      {{color.14}}
-color7       {{color.7}}
-color15      {{color.15}}
+{{range $i, $color := .colors}}
+color{{$i}} {{$color}}
+{{- end}}

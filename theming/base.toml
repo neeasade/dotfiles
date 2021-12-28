@@ -110,8 +110,8 @@ icon = "unset"
 
 window-class = "lemonbar" # window class to use in lemonade's juicer
 
-position = "top"          # panel position - top|bottom
-position-flipped = '{{if eq .position "top"}}bottom{{else}}top{{end}} | trim'
+position = "top"
+position-flipped = '{{if eq .position "top"}}bottom{{else}}top{{end}}'
 
 [panel.desktop]
 display-name="icon"       # [icon|name] - display desktop names or DO/DF variables.

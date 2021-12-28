@@ -5,13 +5,16 @@ theme_dir="$HOME/.dotfiles/theming"
 gott=gott
 
 # when iterating:
-# cd $HOME/git/gott
+# cd "$HOME/git/gott"
 # go build || exit 1
 # gott=./gott
 
-$gott \
+timeout 1 $gott \
     -t "${theme_dir}/colors.toml" \
     -t "${theme_dir}/base.toml" \
     -t "${theme_dir}/scratch.toml" \
     "$@"
 
+if [ $? = 124 ]; then
+    notify-send "theme timed out!"
+fi
