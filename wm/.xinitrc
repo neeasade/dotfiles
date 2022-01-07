@@ -2,17 +2,17 @@
 
 . $HOME/.sh.d/environment
 
-if $LINUX; then
-    xrdb -load $HOME/.Xresources
-    wmname LG3D
-    xsetroot -cursor_name left_ptr
-    theme refresh bg
+if ! [ "$(hostname)" = erasmus ]; then
     xbright
 fi
 
+wmname LG3D
+xsetroot -cursor_name left_ptr
 export xstart=$(date +%s)
 
 # launched by display manager bspwm desktop entry.
 # sxhkd -c $HOME/.config/sxhkd/sxhkdrc &
 
-exec $HOME/.wm/wm
+if ${RUNWM:-true}; then
+    exec $HOME/.wm/wm
+fi

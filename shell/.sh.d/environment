@@ -62,18 +62,18 @@ iif() {
 }
 
 set_system () {
-    MAC=false
-    WINDOWS=false
-    LINUX=false
+  MAC=false
+  WINDOWS=false
+  LINUX=false
 
-    export $*=true
+  export $*=true
 }
 
 case "$(uname)" in
-    *MINGW*) set_system WINDOWS ;;
-    *MSYS*) set_system WINDOWS ;;
-    *Darwin*) set_system MAC ;;
-    *) set_system LINUX;;
+  *MINGW*) set_system WINDOWS ;;
+  *MSYS*) set_system WINDOWS ;;
+  *Darwin*) set_system MAC ;;
+  *) set_system LINUX;;
 esac
 
 set_editor() {

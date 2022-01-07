@@ -132,7 +132,8 @@ draw_outerdark() {
 }
 
 draw_outerdark_state() {
-    normal=$(theme getval background)
+    # normal=$(theme getval background)
+    normal=$(theme -q color.normal.background)
 
     state=$(btags state-plain)
     state_sans_active=$state
@@ -179,7 +180,7 @@ draw_outerdark_state() {
 	if info=$(echo "$state" | grep "$wid"); then
 	    echo "$info" | head -n 1 | while read name active color other; do
 		inmost_color=$(colort -l -60 $color)
-		inmost_color=222222
+		# inmost_color=222222
 		outmost_color=$inmost_color
 
 		    # -b 1 -c $inmost_color \

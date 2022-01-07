@@ -26,6 +26,6 @@ Emacs.doomlineheight: {{.panel.height}}
 *.background: {{.background}}
 *.foreground: {{.foreground}}
 
-{{range $i, $color := .colors.s}}
+{{- range $i, $color := .colors}}
 *.color{{$i}}: {{$color}}
 {{- end}}

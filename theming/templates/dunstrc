@@ -6,6 +6,7 @@
     alignment = center
     show_age_threshold = 60
     geometry = "{{p_geometry}}"
+    width =
     idle_threshold = 60
     follow = mouse
     word_wrap = yes
@@ -19,12 +20,6 @@
     # icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
     frame_width = {{b_border_width}}
     frame_color = "{{b_focused_border_color}}"
-
-[shortcuts]
-    close = ctrl+space
-    close_all = ctrl+shift+space
-    history = ctrl+grave
-    context = ctrl+shift+period
 
 [urgency_low]
     background = "#{{p_bg_normal}}"

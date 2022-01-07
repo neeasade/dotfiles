@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # This file is used by display managers, I only want to manage one file.
-# todo: see if this means both files get executed.
 
-eval "$(cat .xinitrc | head -n -1)"
+RUNWM=false
+. "$HOME/.xinitrc"

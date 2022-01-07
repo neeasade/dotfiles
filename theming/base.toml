@@ -17,7 +17,7 @@ spec-space = '{{.family}} {{.size}}'
 
 [font.panel]
 family = "{{.font.variable.family}}"
-size = "{{.font.variable.size | sub 1}}"
+size = "{{sub .font.variable.size 1}}"
 spec = '{{.family}}-{{.size}}'
 spec-space = '{{.family}} {{.size}}'
 
@@ -36,10 +36,10 @@ bspwmrc-extend = ""
 width = 3
 
 # todo: this better
-# normal = '{{.color.0}}'
-# active = '{{.color.8}}'
-# focused = '{{.color.7}}'
-# presel = '{{.color.8}}'
+normal = '{{.colors.0}}'
+active = '{{.colors.8}}'
+focused = '{{.colors.7}}'
+presel = '{{.colors.8}}'
 
 [mkb]
 
@@ -174,21 +174,17 @@ fade.out-step = 0.1
 
 [tmux]
 
-statusbar= """
-setw -g window-status-current-format '▄▄'
-setw -g window-status-format '▄▄'
-setw -g window-status-bg default
-setw -g window-status-fg blue
-setw -g window-status-current-bg default
-setw -g window-status-current-fg white
-setw -g window-status-current-attr bright
+extend= """
+# panes
+set -g pane-border-fg black
+set -g pane-active-border-fg white
 
-set-option -g status-position bottom
-set -g status-bg default
-set -g status-fg default
-set -g status-justify right
-set -g status-left ''
-set -g status-right ''
+# message colors
+set -g message-fg white
+set -g message-bg default
+set -g message-attr bright
+
+set-option -g -q mouse on
 """
 
 [mpd]

@@ -58,12 +58,10 @@ colors() {
 }
 
 settings() {
-    # theme
     # BG_COMMAND="feh --bg-tile /home/neeasade/git/neeasade.net/pattern_125.gif"
-    # BG_COMMAND="${HOME}/.fehbg"
-    # BG_COMMAND="${HOME}/.fehbg"
     # BG_COMMAND="hsetroot -solid $(elisp -r '(tarp/get :background :focused)')"
-    BG_COMMAND="hsetroot -solid #$e_background_focused"
+    # BG_COMMAND="hsetroot -solid #$e_background_focused"
+    BG_COMMAND="${HOME}/.fehbg"
     # BG_COMMAND="hsetroot -solid $(elisp -r '(-> (tarp/get :assumed) (ct-transform-hsl-l (ct-get-hsl-l (tarp/get :background :weak))))')"
     # BG_COMMAND="feh --bg-tile /tmp/result.png"
 
@@ -122,8 +120,10 @@ subscription_rules &"
     st_font="Go Mono 16"
     # st_font_variable="Charter 14"
     st_font_variable="Go Mono 16"
+    st_font_variable="Equity Text B-10"
 
-    p_font_main="Charter-14"
+    p_font_main="Charter-12"
+
     d_font="Charter 12"
 
     p_font_icon="Font Awesome 5 Free Solid-8"

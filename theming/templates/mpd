@@ -1,12 +1,12 @@
 # Required files
-db_file            "{{mpd-dir}}/database"
+db_file            "{{.mpd-dir}}/database"
 
 # Optional
-music_directory    "{{music-dir}}"
-playlist_directory "{{mpd-dir}}/playlists"
-pid_file           "{{mpd-dir}}/pid"
-state_file         "{{mpd-dir}}/state"
-sticker_file       "{{mpd-dir}}/sticker.sql"
+music_directory    "{{.music-dir}}"
+playlist_directory "{{.mpd-dir}}/playlists"
+pid_file           "{{.mpd-dir}}/pid"
+state_file         "{{.mpd-dir}}/state"
+sticker_file       "{{.mpd-dir}}/sticker.sql"
 
 # really long timeout
 connection_timeout	"2000000"

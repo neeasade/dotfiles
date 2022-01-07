@@ -1,17 +1,16 @@
 [Unit]
-Description={{Description}}
+Description={{.env.Description}}
 
 [Service]
-ExecStart={{ExecStart}}
-ExecStop={{{which kill}}} -int $MAINPID
+ExecStart={{.env.ExecStart}}
+ExecStop={{sh "which kill"}} -int $MAINPID
 
 
-Environment=PATH={{PATH}}
-Environment=NODE_PATH={{NODE_PATH}}
-Environment=DISPLAY="{{DISPLAY}}"
-Environment=XAUTHORITY="{{XAUTHORITY}}"
-Environment=WAYLAND_DISPLAY="{{WAYLAND_DISPLAY}}"
-
+Environment=PATH={{.env.PATH}}
+Environment=NODE_PATH={{.env.NODE_PATH}}
+Environment=DISPLAY="{{.env.DISPLAY}}"
+Environment=XAUTHORITY="{{.env.XAUTHORITY}}"
+Environment=WAYLAND_DISPLAY="{{.env.WAYLAND_DISPLAY}}"
 
 [Install]
 WantedBy=default.target

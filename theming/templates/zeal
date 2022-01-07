@@ -16,13 +16,13 @@ disable_ad=false
 external_link_policy=@Variant(\0\0\0\x7f\0\0\0)Zeal::Core::Settings::ExternalLinkPolicy\0\0\0\0\0)
 highlight_on_navigate=true
 minimum_font_size=0
-sans_serif_font_family={{font.variable.spec}}
-serif_font_family={{font.variable.spec}}
-fixed_font_family={{font.mono.spec}}
+sans_serif_font_family={{.font.variable.spec}}
+serif_font_family={{.font.variable.spec}}
+fixed_font_family={{.font.mono.spec}}
 smooth_scrolling=false
 
 [docsets]
-path={{HOME}}/.local/share/Zeal/Zeal/docsets
+path={{.env.HOME}}/.local/share/Zeal/Zeal/docsets
 
 [global_shortcuts]
 show=

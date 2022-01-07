@@ -12,7 +12,6 @@ render() {
     theme "$@" -r "$template" > "$dest"
 }
 
-# util:
 git_ensure() {
     gitdir="$HOME/git"
 
@@ -23,7 +22,6 @@ git_ensure() {
         oomox) gittarget="https://github.com/actionless/oomox-gtk-theme/" ;;
         css) gittarget="https://github.com/neeasade/solarized-everything-css" ;;
         pywal) gittarget="https://github.com/dylanaraps/pywal/" ;;
-	wal_steam) gittarget="https://github.com/Tardog/wal_steam/" ;;
     esac
 
     mkdir -p "$gitdir"
@@ -32,24 +30,21 @@ git_ensure() {
     # echo git clone "$gittarget" "$gitdest"
     if [ ! -d "$gitdest" ]; then
        git clone "$gittarget" "$gitdest"
-       if [ "$1" = "wal_steam" ]; then
-	   cd "$gitdest"
-	   git fetch --all
-	   git checkout -b support-new-library-view
-       fi
     fi
 }
 
-load_bg()          { eval "$(theme getval BG_COMMAND)" ;}
-load_xst()         { load_xresources; pkill -x --signal USR1 xst ;}
-load_kitty()       { render kitty .config/kitty/kitty.conf -p color.normal ;}
-load_mintty()      { render mintty .minttyrc ;}
-load_mpd_windows() { render mpd_windows .config/mpd/mpd.conf -p mpd ;}
-load_zathura()     { render zathura .config/zathura/zathurarc -p colors.normal ;}
-load_zeal()        { render zeal .config/Zeal/Zeal.conf ;}
+load_bg()      { eval "$(theme -q BG_COMMAND)" ;}
+load_xst()     { load_xresources; pkill -x --signal USR1 xst ;}
+load_kitty()   { render kitty .config/kitty/kitty.conf -p color.normal ;}
+load_mintty()  { render mintty .minttyrc ;}
+load_mpd_win() { render mpd_windows .config/mpd/mpd.conf -p mpd ;}
+load_zathura() { render zathura .config/zathura/zathurarc -p colors.normal ;}
+load_zeal()    { render zeal .config/Zeal/Zeal.conf ;}
+load_jgmenu()  { render jgmenu .config/jgmenu/jgmenurc -p color.normal ;}
+load_emacs()   { elisp_timeout=5 elisp "(ns/load-theme '$(theme -q emacs.theme))" ;}
 
 load_tmux() {
-    render tmux .tmux.conf -p tmux
+    render tmux .tmux.conf
     pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
@@ -68,7 +63,7 @@ load_bspwm() {
     render bspwm "$bspwmrc" -p bspwm
     chmod +x "$HOME/$bspwmrc"
 
-    wait
+    wait # wait for lemonbar?
     setsid "$HOME/$bspwmrc"
 }
 
@@ -124,8 +119,6 @@ load_lemonade() {
     # 	systemctl --user restart panel
     # fi
 }
-
-# GTK (make theme if it does not exist, then reload)
 load_gtk() {
     echo GTK: TODO
     return 0
@@ -193,8 +186,6 @@ load_dunst() {
     systemctl --user start dunst
 }
 
-# steal pywal templates
-# mostly interested in css template for load_steam
 load_pywal() {
     echo "PYWAL: todo"
     # need to revisit/see the goal here
@@ -232,6 +223,8 @@ load_steam() {
 }
 
 load_services() {
+    echo TODO: services
+    return
     # clean
     find ${HOME}/.config/systemd/user/ -type f -delete
 
@@ -323,10 +316,6 @@ load_services() {
     systemctl --user disable stalonetray
 }
 
-load_jgmenu() {
-    render jgmenu .config/jgmenu/jgmenurc -p color.normal
-}
-
 load_btag_borders() {
     elisp "(defun ns/make-border-color (label)
   (--> (ht-get tarp/theme label)
@@ -348,7 +337,7 @@ if [ -z "$*" ]; then
     elif $LINUX; then
 	set -- picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu zeal btag_borders xst
     elif $WINDOWS; then
-	set -- mintty mpd_windows tmux
+	set -- mintty mpd_win tmux
     fi
 fi
 
@@ -366,4 +355,3 @@ for conf in "$@"; do
 done
 
 wait
-echo done!

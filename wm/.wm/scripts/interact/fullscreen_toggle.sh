@@ -7,9 +7,9 @@
 do_monocle_padded() {
 
   if pgrep picom; then
-    hsetroot -solid "$(theme getval color.normal.background)" &
+    hsetroot -solid "$(theme -q color.normal.background)" &
   else
-    xsetroot -solid "$(theme getval color.normal.background)" &
+    xsetroot -solid "$(theme -q color.normal.background)" &
   fi
 
   bspc query -N -n focused.fullscreen && \
@@ -34,7 +34,7 @@ Wine'
   if echo "$no_trim_list" | grep "$window_class"; then
     bspc config window_gap 0
   else
-    bspc config window_gap $(theme getval x.padding)
+    bspc config window_gap $(theme -q x.padding)
   fi
 
   bspc config left_monocle_padding 0
@@ -46,9 +46,9 @@ Wine'
 }
 
 do_monocle_slim() {
-  $(theme getval BG_COMMAND) &
+  ltheme bg &
 
-  # hsetroot -solid "#$(theme getval background)" &
+  # hsetroot -solid "#$(theme -q background)" &
 
   bspc config borderless_monocle false
 
@@ -62,14 +62,14 @@ do_monocle_slim() {
   # bspc config borderless_monocle false
 
   if pgrep lemonbar; then
-    bspc config window_gap $(theme getval bspwm.window-gap)
+    bspc config window_gap $(theme -q bspwm.window-gap)
   else
     bspc config window_gap 0
   fi
 
   mon_width=$(bspc query -T -m | jq .rectangle.width)
   # mon_width=$(i3c -t get_tree | jq .rect.width)
-  percent=$(theme getval bspwm.monocle-window-percent)
+  percent=$(theme -q bspwm.monocle-window-percent)
   window_width=$(echo $percent \* $mon_width | bc -l)
   monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
 
@@ -87,14 +87,13 @@ do_fullscreen() {
 }
 
 do_tiled() {
-  # theme refresh bg &
-  $(theme getval BG_COMMAND) &
+  ref bg &
   bspc query -N -n focused.fullscreen \
     && bspc node -t ~fullscreen
 
-  # bspc config focused_border_color \#$(theme getval b_focused_border_color)
+  # bspc config focused_border_color \#$(theme -q b_focused_border_color)
   bspc desktop -l tiled
-  bspc config window_gap $(theme getval b_window_gap)
+  bspc config window_gap $(theme -q b_window_gap)
   bspc config borderless_monocle false
 
   # bspwm_kill_visual
@@ -119,7 +118,7 @@ else
     else
       if [ $(bspc config window_gap) -eq 0 ]; then
         state=monocle_padded
-      elif [ $(bspc config window_gap) -eq $(theme getval x_padding) ]; then
+      elif [ $(bspc config window_gap) -eq $(theme -q x.padding) ]; then
         state=monocle_padded
       fi
     fi
