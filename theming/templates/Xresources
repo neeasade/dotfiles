@@ -12,15 +12,17 @@ rofi.color-normal: {{.background}}, {{.foreground}}, {{.background}}, {{.color.f
 ! 'background', 'border', 'separator'
 rofi.color-window: {{.background}}, {{.foreground}}, {{.background}}
 
+font.monospace: {{.font.mono.spec}}
+font.variable: {{.font.variable.spec}}
+
 st.font: {{.st.font}}
-st.font_variable: {{.st.font_variable}}
 st.borderpx: 0
 st.cursorshape: {{.st.cursorshape}}
 st.cursorthickness: {{.st.cursorthickness}}
 st.depth: 24
 
 ! personal/so we can sync p_height and modeline height
-Emacs.doomlineheight: {{.panel.height}}
+panel.height: {{.panel.height}}
 
 ! colors
 *.background: {{.background}}
