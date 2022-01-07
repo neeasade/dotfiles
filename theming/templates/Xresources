@@ -12,8 +12,10 @@ rofi.color-normal: {{.background}}, {{.foreground}}, {{.background}}, {{.color.f
 ! 'background', 'border', 'separator'
 rofi.color-window: {{.background}}, {{.foreground}}, {{.background}}
 
-font.monospace: {{.font.mono.spec}}
-font.variable: {{.font.variable.spec}}
+! these names match theme, to be used in xrq or theme fallback contexts
+font.mono.spec: {{.font.mono.spec}}
+font.variable.spec: {{.font.variable.spec}}
+panel.height: {{.panel.height}}
 
 st.font: {{.st.font}}
 st.borderpx: 0
@@ -21,8 +23,6 @@ st.cursorshape: {{.st.cursorshape}}
 st.cursorthickness: {{.st.cursorthickness}}
 st.depth: 24
 
-! personal/so we can sync p_height and modeline height
-panel.height: {{.panel.height}}
 
 ! colors
 *.background: {{.background}}
