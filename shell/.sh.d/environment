@@ -2,168 +2,172 @@
 # this script is kind of special -- it may be sourced by outside scripts to get a world bearing.
 # (thus, speed is super important here)
 
-set -a
+if ${NEEASADE_ENV:-true}; then
+  set -a
 
-pathmunge () {
-  if [ -d "$1" ]; then
-    case ":${PATH}:" in
-      *:"$1":*) ;;
-      *) PATH=$1:$PATH
-    esac
-  fi
-}
+  NEEASADE_ENV=false
 
-path_remove() {
-  PATH=${PATH//":$1:"/":"} # middle
-  PATH=${PATH/#"$1:"/}     # beginning
-  PATH=${PATH/%":$1"/}     # end
-}
-
-succ() {
-  pathmunge "$HOME/$*"
-}
-
-XDG_CONFIG_HOME=$HOME/.config
-
-succ bin
-succ .gem/bin
-succ .go/bin
-succ .cargo/bin
-succ .wm/scripts/interact
-succ .wm/scripts/visual
-succ .wm/scripts/services
-succ .wm/panel/lemons
-succ .wm/panel/tools
-# pip --user location
-succ .local/bin
-
-silent() {
-  "$@" >/dev/null 2>&1
-}
-
-has() {
-  silent type "$@"
-}
-
-vdo() {
-    echo "$*"
-    "$@"
-}
-
-# duplication with ~/bin/iif is intentional
-# function call vs script means can use shell functions in condition
-iif() {
-  res=${2-true}
-  if ! eval "$1" >/dev/null; then
-    res=${3-false}
-  fi
-
-  printf '%s' "$res"
-}
-
-set_system () {
-  MAC=false
-  WINDOWS=false
-  LINUX=false
-
-  export $*=true
-}
-
-case "$(uname)" in
-  *MINGW*) set_system WINDOWS ;;
-  *MSYS*) set_system WINDOWS ;;
-  *Darwin*) set_system MAC ;;
-  *) set_system LINUX;;
-esac
-
-set_editor() {
-  export EDITOR="$@"
-  export GIT_EDITOR="$@"
-  export SVN_EDITOR="$@"
-}
-
-set_editor vim
-
-# less status line
-LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
-LESSCHARSET='utf-8'
-
-VIEW_PDF=zathura
-
-if [ -z "$TERMINAL" ]; then
-  for t in git-bash xst urxvt kitty iterm2; do
-    if has $t; then
-      TERMINAL=$t
-      break
+  pathmunge () {
+    if [ -d "$1" ]; then
+      case ":${PATH}:" in
+        *:"$1":*) ;;
+        *) PATH=$1:$PATH
+      esac
     fi
-  done
-fi
-
-GTK_THEME=${GTK_THEME:-adwaita}
-SXHKD_SHELL=sh
-MPDCRON_DIR="$HOME/.config/mpd"
-_JAVA_AWT_WM_NONREPARENTING=1
-LANG="en_US.UTF-8"
-TERMCMD=$TERMINAL
-PAGER=less
-
-# if has npm; then
-#   if has cache_output; then
-#     day=$((60 * 60 * 24))
-#     NODE_PATH=$(cache_output $day npm root -g)
-#     pathmunge "$(cache_output $day npm bin -g)"
-#   else
-#     NODE_PATH=$(npm root -g)
-#     pathmunge "$(npm bin -g)"
-#   fi
-# fi
-
-NODE_PATH="$HOME/.npm-packages/lib/node_modules"
-succ ".npm-packages/bin"
-
-GEM_HOME="$HOME/.gem"
-BUNDLE_PATH="$HOME/.gem"
-GOPATH="$HOME/.go"
-pathmunge "$GOPATH/bin"
-
-pathmunge '/run/current-system/sw/bin'
-
-if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
-  if [ -z "$NIX_PROFILES" ]; then
-    . "$HOME/.nix-profile/etc/profile.d/nix.sh"
-  fi
-fi
-
-if $MAC; then
-  add_macapp() {
-    pathmunge "/run/current-system/Applications/${*}/Contents/MacOS/"
-    pathmunge "/Applications/${*}/contents/MacOS"
   }
 
-  add_macapp Slack.app
-  add_macapp Emacs.app
-  add_macapp iTerm.app
-  add_macapp BitBar.app
-  add_macapp xbar.app
-  add_macapp MeetingBar.app
-fi
+  path_remove() {
+    PATH=${PATH//":$1:"/":"} # middle
+    PATH=${PATH/#"$1:"/}     # beginning
+    PATH=${PATH/%":$1"/}     # end
+  }
 
-REMOTE=false
+  succ() {
+    pathmunge "$HOME/$*"
+  }
 
-if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-  REMOTE=true
-else
-  case $(ps -o comm= -p $PPID) in
-    sshd|*/sshd) REMOTE=true;;
+  XDG_CONFIG_HOME=$HOME/.config
+
+  succ bin
+  succ .gem/bin
+  succ .go/bin
+  succ .cargo/bin
+  succ .wm/scripts/interact
+  succ .wm/scripts/visual
+  succ .wm/scripts/services
+  succ .wm/panel/lemons
+  succ .wm/panel/tools
+  # pip --user location
+  succ .local/bin
+
+  silent() {
+    "$@" >/dev/null 2>&1
+  }
+
+  has() {
+    silent type "$@"
+  }
+
+  vdo() {
+    echo "$*"
+    "$@"
+  }
+
+  # duplication with ~/bin/iif is intentional
+  # function call vs script means can use shell functions in condition
+  iif() {
+    res=${2-true}
+    if ! eval "$1" >/dev/null; then
+      res=${3-false}
+    fi
+
+    printf '%s' "$res"
+  }
+
+  set_system () {
+    MAC=false
+    WINDOWS=false
+    LINUX=false
+
+    export $*=true
+  }
+
+  case "$(uname)" in
+    *MINGW*) set_system WINDOWS ;;
+    *MSYS*) set_system WINDOWS ;;
+    *Darwin*) set_system MAC ;;
+    *) set_system LINUX;;
   esac
-fi
 
-if $MAC && has 'google chrome'; then
-   BROWSER='google chrome'
-fi
+  set_editor() {
+    export EDITOR="$@"
+    export GIT_EDITOR="$@"
+    export SVN_EDITOR="$@"
+  }
 
-if has qutebrowser; then
-  BROWSER=qb_meta_open
-fi
+  set_editor vim
 
-set +a
+  # less status line
+  LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
+  LESSCHARSET='utf-8'
+
+  VIEW_PDF=zathura
+
+  if [ -z "$TERMINAL" ]; then
+    for t in git-bash xst urxvt kitty iterm2; do
+      if has $t; then
+        TERMINAL=$t
+        break
+      fi
+    done
+  fi
+
+  GTK_THEME=${GTK_THEME:-adwaita}
+  SXHKD_SHELL=sh
+  MPDCRON_DIR="$HOME/.config/mpd"
+  _JAVA_AWT_WM_NONREPARENTING=1
+  LANG="en_US.UTF-8"
+  TERMCMD=$TERMINAL
+  PAGER=less
+
+  # if has npm; then
+  #   if has cache_output; then
+  #     day=$((60 * 60 * 24))
+  #     NODE_PATH=$(cache_output $day npm root -g)
+  #     pathmunge "$(cache_output $day npm bin -g)"
+  #   else
+  #     NODE_PATH=$(npm root -g)
+  #     pathmunge "$(npm bin -g)"
+  #   fi
+  # fi
+
+  NODE_PATH="$HOME/.npm-packages/lib/node_modules"
+  succ ".npm-packages/bin"
+
+  GEM_HOME="$HOME/.gem"
+  BUNDLE_PATH="$HOME/.gem"
+  GOPATH="$HOME/.go"
+  pathmunge "$GOPATH/bin"
+
+  pathmunge '/run/current-system/sw/bin'
+
+  if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+    if [ -z "$NIX_PROFILES" ]; then
+      . "$HOME/.nix-profile/etc/profile.d/nix.sh"
+    fi
+  fi
+
+  if $MAC; then
+    add_macapp() {
+      pathmunge "/run/current-system/Applications/${*}/Contents/MacOS/"
+      pathmunge "/Applications/${*}/contents/MacOS"
+    }
+
+    add_macapp Slack.app
+    add_macapp Emacs.app
+    add_macapp iTerm.app
+    add_macapp BitBar.app
+    add_macapp xbar.app
+    add_macapp MeetingBar.app
+  fi
+
+  REMOTE=false
+
+  if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    REMOTE=true
+  else
+    case $(ps -o comm= -p $PPID) in
+      sshd|*/sshd) REMOTE=true;;
+    esac
+  fi
+
+  if $MAC && has 'google chrome'; then
+    BROWSER='google chrome'
+  fi
+
+  if has qutebrowser; then
+    BROWSER=qb_meta_open
+  fi
+
+  set +a
+fi
