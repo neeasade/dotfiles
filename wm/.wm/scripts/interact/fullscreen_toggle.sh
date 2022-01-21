@@ -48,18 +48,10 @@ Wine'
 do_monocle_slim() {
   ltheme bg &
 
-  # hsetroot -solid "#$(theme -q background)" &
-
   bspc config borderless_monocle false
-
-  # bspwm_kill_visual
-  # nohup setsid xpad &
 
   bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
   bspc node -t tiled
-
-  # this issue is for this width you want softer borders, not borderless
-  # bspc config borderless_monocle false
 
   if pgrep lemonbar; then
     bspc config window_gap $(theme -q bspwm.window-gap)
@@ -68,11 +60,10 @@ do_monocle_slim() {
   fi
 
   mon_width=$(bspc query -T -m | jq .rectangle.width)
-  # mon_width=$(i3c -t get_tree | jq .rect.width)
   percent=$(theme -q bspwm.monocle-window-percent)
   window_width=$(echo $percent \* $mon_width | bc -l)
-  monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
 
+  monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
   bspc config left_monocle_padding $monocle_pad_width
   bspc config right_monocle_padding $monocle_pad_width
 
@@ -87,13 +78,13 @@ do_fullscreen() {
 }
 
 do_tiled() {
-  ref bg &
+  ltheme bg &
   bspc query -N -n focused.fullscreen \
     && bspc node -t ~fullscreen
 
   # bspc config focused_border_color \#$(theme -q b_focused_border_color)
   bspc desktop -l tiled
-  bspc config window_gap $(theme -q b_window_gap)
+  bspc config window_gap $(theme -q bspwm.window.gap)
   bspc config borderless_monocle false
 
   # bspwm_kill_visual
