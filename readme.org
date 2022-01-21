@@ -28,7 +28,7 @@
 | Panel           | lemonbar, driven by [[https://github.com/vivien/i3blocks][i3blocks]] |
 | Browser         | [[https://www.qutebrowser.org/][qutebrowser]]                  |
 | Editor          | [[https://www.gnu.org/software/emacs/][Emacs]] (as vim)               |
-| Keyboard layout | [[https://colemakmods.github.io/mod-dh/][Colemak Mod-DHk]]              |
+| Keyboard layout | [[https://colemakmods.github.io/mod-dh/keyboards.html#other-variants][Colemak Mod-DHk ANSI]]         |
 | colors          | [[https://notes.neeasade.net/tarps.html][tarps]]                        |
 
 Many of my dotfiles are [[https://github.com/toml-lang/toml][toml]] driven template files, backed by [[https://github.com/neeasade/gott][gott]]. See [[https://github.com/neeasade/dotfiles/tree/master/theming][theming/*]], [[https://github.com/neeasade/dotfiles/blob/master/bin/bin/theme][theme]] and [[https://github.com/neeasade/dotfiles/blob/master/bin/bin/ltheme][ltheme]].
