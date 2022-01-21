@@ -1,6 +1,26 @@
-** neeasade's dotfiles
 
-blursed computer garden.
+# ascii art source: https://www.asciiart.eu/nature/clouds
+#+begin_src
+              .
+
+              |
+     .               /       neeasade's dotfiles 💫💿
+      \       I
+                  /
+        \  ,g88R_
+          d888(`  ).                   _
+ -  --==  888(     ).=--           .+(`  )`.
+)         Y8P(       '`.          :(   .    )
+        .+(`(      .   )     .--  `.  (    ) )
+       ((    (..__.:'-'   .=(   )   ` _`  ) )
+`.     `(       ) )       (   .  )     (   )  ._
+  )      ` __.:'   )     (   (   ))     `-'.:(`  )
+)  )  ( )       --'       `- __.'         :(      ))
+.-'  (_.'          .')                    `(    )  ))
+                  (_  )                     ` __.:'
+
+--..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-a:f--.
+#+end_src
 
 | [[http://notes.neeasade.net/rice.html][screenshots]]     | [[https://notes.neeasade.net/rice-links.html][rice links]]                   |
 | OS              | [[https://nixos.org/][NixOS]]                        |
