@@ -1,211 +1,78 @@
 #!/usr/bin/env bash
-# draw borders on tags
+# draw borders on windows deriving from window tags
 
 draw() {
-    active=$(bspwindows)
-    state=$(btags state-plain)
-
-    for wid in $active $(bspwindows inactive); do
-	tag=$(echo "$state" | awk -F \| "/$wid/{print \$4}" | head -n 1)
-	if [ -z "$tag" ]; then
-	    if echo "$active" | grep -q "$wid"; then
-		chwbn \
-		    -b $(( b_width-4 )) \
-		    -b $(( 4 )) \
-		    -c 000000 \
-		    -c 666666 \
-		    $wid
-	    else
-		chwbn -b $b_width -c 000000 $wid
-	    fi
-	else
-	    color=$(echo "$state" | awk -F \| "/$wid/{print \$3}" | head -n 1)
-
-	    if echo "$active" | grep -q "$wid"; then
-		chwbn \
-		    -b $(( b_width-4 )) \
-		    -b $(( 4 )) \
-		    -c $color \
-		    -c $(colort -l -40 $color) \
-		    $wid
-	    else
-		chwbn -b $b_width -c $color $wid
-	    fi
-	fi
-    done
-}
-
-draw_banded() {
-    active=$(bspwindows)
-    state=$(btags state-plain)
-
-    normal=$(theme getval b_normal_border_color)
-    normal=$(theme getval background)
-    focused=$(theme getval b_focused_border_color)
-
-    for wid in $active $(bspwindows inactive); do
-	if echo "$active" | grep -q "$wid"; then
-	    border_color=$focused
-	else
-	    border_color=$normal
-	fi
-
-	# wowie
-	# awk sure is the best
-	# args=$(echo "$state" | tac | awk -F\| /${wid}/'{print "-b 2 -c " $3 " -b 0 -c BC"};!'/${wid}/'{print "-b 2 -c BC"'} | \
-	#     tr $'\n' ' ' | \
-	#     sed "s/BC/${border_color}/g")
-
-	# echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
-	# chwbn $args -b 2 -c $border_color $wid
-
-	# note: this is broken/old state
-	colors=$(echo "$state" | awk -F \| /${wid}/'{print "-b W -c " $3}' | tac)
-	count=$(echo "$colors" | wc -l)
-	total_width=8 # total inner width
-	width=$((total_width / count))
-
-	args=$(echo "$colors" | tr $'\n' ' ')
-	if [ $((count * total_width)) -lt $total_width ]; then
-	    args=$(echo "$args" | rev |  sed "s/W/$((total_width - (count * width) + width))/" | rev)
-	fi
-
-	args=$(echo "$args" | sed "s/W/${width}/g")
-
-	# echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
-	chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
-
-	# echo chwbn -b 1 -c $border_color $args -b 1 -c $border_color $wid
-	# chwbn  $args -b 2 -c $border_color $wid
-    done
-}
-
-draw_outerdark() {
-    active=$(bspwindows)
-    state=$(btags state-plain)
-
-    # normal=$(theme getval b_normal_border_color)
-    normal=$(theme getval background)
-    # focused=$(theme getval b_focused_border_color)
-
-    monocle=$(iif 'jget layout "$(bspc query -T -d)" | grep -q monocle')
-    for wid in $active $(bspwindows inactive); do
-	# todo: this breaks spaces in tags
-	color=$(echo "$state" | awk  "/$wid/{print \$3}" | head -n 1)
-	if [ -z "$color" ]; then
-	    color=dddddd
-	fi
-
-	# outer_color=$normal
-	# if $(echo "$state" | awk -F \| "/$wid/{print \$2}" | head -n 1); then
-	if echo "$active" | grep -q "$wid"; then
-	    inmost_color=$(colort -l -60 $color)
-
-	    inmost_color=222222
-	    outmost_color=$inmost_color
-	else
-	    outmost_color=$(colort -l -30 $color)
-	    # outmost_color=$color
-	    # outmost_color=D7CDFF
-	    inmost_color=$normal
-	    # inmost_color=$outmost_color
-	fi
-
-	# echo $monocle
-	if $monocle; then
-	    if ! bspc query -N -n ${wid}.floating; then
-		if [ ! "$color" = dddddd ]; then
-		    outmost_color=$normal
-		    inmost_color=$normal
-		    color=$normal
-		fi
-	    fi
-	fi
-
-	chwbn \
-	    -b 1 -c $outmost_color \
-	    -b $(( b_width-scale-2-1 )) -c $color \
-	    -b 1 -c $inmost_color \
-	    -b $((scale + 1)) -c $normal \
-	    $wid
-    done
-}
-
-draw_outerdark_state() {
-    # normal=$(theme getval background)
-    normal=$(theme -q color.normal.background)
-
     state=$(btags state-plain)
     state_sans_active=$state
 
     for wid in $(bspwindows); do
-	state_sans_active="${state_sans_active//$wid/}"
+	state_sans_active=${state_sans_active//$wid/}
     done
 
+    border() {
+	kind=$1; shift
+	chwbn \
+	    -b $w_outer   -c $c_outer   \
+	    -b $w_border  -c $c_border  \
+	    -b $w_inner   -c $c_inner   \
+	    -b $w_padding -c $c_padding \
+	    "$@" &
+    }
+
     # INACTIVE WINDOWS
-    echo "$state_sans_active" | while read -r name active color wids; do
-	if ! $active; then
+    while read -r name visible color wids; do
+	if ! $visible; then
 	   continue
 	fi
 
-	outmost_color=$(colort -l -30 $color)
-	inmost_color=$normal
+	# this subshell is expensive
+	# c_outer=$(colort -l -30 $color)
+	c_outer=$color
+	c_border=$color
+	c_inner=$c_padding
 
-	chwbn \
-	    -b 1 -c $outmost_color \
-	    -b $(( b_width-scale-2-1 )) -c $color \
-	    -b 1 -c $inmost_color \
-	    -b $((scale + 1)) -c $normal \
-	    $wids &
-    done
+	border inactive $wids
+    done < <(echo "$state_sans_active")
 
     # MONOCLE TILED
     monocle_mod=
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
-	outmost_color=$normal
-	inmost_color=$normal
-	color=$normal
+	c_outer=$c_padding
+	c_inner=$c_padding
+	c_border=$c_padding
 	monocle_mod=.floating
-
-	chwbn \
-	    -b 1 -c $outmost_color \
-	    -b $(( b_width-scale-2-1 )) -c $color \
-	    -b 1 -c $inmost_color \
-	    -b $((scale + 1)) -c $normal \
-	    $(bspc query -N -n .tiled.window) &
+	border monocle $(bspc query -N -n .tiled.window)
     fi
 
     # ACTIVE WINDOWS
     for wid in $(bspwindows active $monocle_mod); do
-	if info=$(echo "$state" | grep "$wid"); then
-	    echo "$info" | head -n 1 | while read name active color other; do
-		inmost_color=$(colort -l -60 $color)
-		# inmost_color=222222
-		outmost_color=$inmost_color
-
-		    # -b 1 -c $inmost_color \
-		chwbn \
-		    -b 1 -c $outmost_color \
-		    -b $(( b_width-scale-2-1+1 )) -c $color \
-		    -b $((scale + 1)) -c $normal \
-		    "$wid" &
-	    done
-	fi
+	while read name active color other; do
+	    c_outer=$focused2
+	    c_inner=$focused
+	    c_border=$color
+	    border active $wid
+	done < <(echo "$state" | grep -m 1 "$wid")
     done
 
     wait
 }
 
-scale=3
-bspc config border_width $(( (scale*2) + 2 ))
-b_width=$(( (scale*2) + 2 ))
-# b_width=$(bspc config border_width)
+w_outer=1
+w_border=3
+w_inner=1
+w_padding=$(theme -q x.padding)
+c_padding=$(theme -q color.normal.background | tr -d \#)
 
-# bspc subscribe node_flag node_state node_geometry node_focus | debounce.sh 0.1 | while read msg; do
+focused=$(theme -q bspwm.border.focused | tr -d \#)
+focused2=$(theme -q color.focused.foreground | tr -d \#)
 
-# time draw_outerdark_state
-# time draw_outerdark
+b_width=$((w_inner + w_border + w_outer + w_padding))
+
+echo bspc config border_width $b_width
+bspc config border_width $b_width
+
+draw
 
 bspc subscribe node_flag node_state node_geometry node_focus | while read msg; do
-    draw_outerdark_state
+    draw
 done
