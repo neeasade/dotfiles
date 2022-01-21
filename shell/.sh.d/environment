@@ -8,10 +8,11 @@ if ${NEEASADE_ENV:-true}; then
   NEEASADE_ENV=false
 
   pathmunge () {
-    if [ -d "$1" ]; then
+    _dir=${1%/}
+    if [ -d "$_dir" ]; then
       case ":${PATH}:" in
-        *:"$1":*) ;;
-        *) PATH=$1:$PATH
+        *:"$_dir":*) ;;
+        *) PATH=$_dir:$PATH
       esac
     fi
   }
@@ -22,23 +23,7 @@ if ${NEEASADE_ENV:-true}; then
     PATH=${PATH/%":$1"/}     # end
   }
 
-  succ() {
-    pathmunge "$HOME/$*"
-  }
-
-  XDG_CONFIG_HOME=$HOME/.config
-
-  succ bin
-  succ .gem/bin
-  succ .go/bin
-  succ .cargo/bin
-  succ .wm/scripts/interact
-  succ .wm/scripts/visual
-  succ .wm/scripts/services
-  succ .wm/panel/lemons
-  succ .wm/panel/tools
-  # pip --user location
-  succ .local/bin
+  XDG_CONFIG_HOME="$HOME/.config"
 
   silent() {
     "$@" >/dev/null 2>&1
@@ -110,24 +95,21 @@ if ${NEEASADE_ENV:-true}; then
   TERMCMD=$TERMINAL
   PAGER=less
 
-  # if has npm; then
-  #   if has cache_output; then
-  #     day=$((60 * 60 * 24))
-  #     NODE_PATH=$(cache_output $day npm root -g)
-  #     pathmunge "$(cache_output $day npm bin -g)"
-  #   else
-  #     NODE_PATH=$(npm root -g)
-  #     pathmunge "$(npm bin -g)"
-  #   fi
-  # fi
-
-  NODE_PATH="$HOME/.npm-packages/lib/node_modules"
-  succ ".npm-packages/bin"
+  NPM_GLOBAL="$HOME/.npm-packages" # nb: arbitrary name and location
+  NODE_PATH="${NPM_GLOBAL}/lib/node_modules"
 
   GEM_HOME="$HOME/.gem"
   BUNDLE_PATH="$HOME/.gem"
   GOPATH="$HOME/.go"
-  pathmunge "$GOPATH/bin"
+
+  # the p is for pain
+  for p in                                \
+      $HOME/.wm/{scripts,panel}/*/        \
+      $HOME/{,.cargo,.local}/bin          \
+      {$GEM_HOME,$GOPATH,$NPM_GLOBAL}/bin \
+    ; do
+    pathmunge "$p"
+  done
 
   pathmunge '/run/current-system/sw/bin'
 
@@ -139,16 +121,13 @@ if ${NEEASADE_ENV:-true}; then
 
   if $MAC; then
     add_macapp() {
-      pathmunge "/run/current-system/Applications/${*}/Contents/MacOS/"
-      pathmunge "/Applications/${*}/contents/MacOS"
+      pathmunge "/run/current-system/Applications/${*}.app/Contents/MacOS/"
+      pathmunge "/Applications/${*}.app/contents/MacOS"
     }
 
-    add_macapp Slack.app
-    add_macapp Emacs.app
-    add_macapp iTerm.app
-    add_macapp BitBar.app
-    add_macapp xbar.app
-    add_macapp MeetingBar.app
+    for a in Slack Emacs iTerm BitBar xbar MeetingBar; do
+      add_macapp "$a"
+    done
   fi
 
   REMOTE=false
