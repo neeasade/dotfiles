@@ -52,6 +52,7 @@ render_smol() {
 		background=$color
 	    fi
 	else
+	    T=1
 	    if [ ! -z "$wids" ]; then
 		tname="${tname}*"
 	    fi
@@ -98,7 +99,7 @@ render_supersmol() {
 	else
 	    if [ ! -z "$wids" ]; then
 		tname="${tname}*"
-		T=2
+		T=1
 	    fi
 	fi
 
@@ -128,7 +129,8 @@ render_supersmol() {
 
 draw() {
     # render
-    render_supersmol
+    render_smol
+    # render_supersmol
 }
 
 draw

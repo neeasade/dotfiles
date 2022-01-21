@@ -16,5 +16,6 @@ timeout 1 $gott \
     "$@"
 
 if [ $? = 124 ]; then
+    echo "theme timed out!" >&2
     notify-send "theme timed out!"
 fi

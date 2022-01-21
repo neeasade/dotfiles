@@ -2,6 +2,9 @@
 
 HOME = "$HOME"
 
+[gtk]
+theme = "Raleigh"
+
 [font.mono]
 
 family="Droid Sans Mono"

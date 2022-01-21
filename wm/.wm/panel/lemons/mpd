@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 # player by player.sh
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
 # todo: consider trimming file extentions

@@ -6,7 +6,7 @@ launch() {
 }
 
 launch qutebrowser
-launch 'emacs-28.0.9'
+launch emacs
 
 # launch $TERMINAL
 # colemak

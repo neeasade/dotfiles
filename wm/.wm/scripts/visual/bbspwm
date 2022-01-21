@@ -15,8 +15,8 @@ border_width=$(( border_width - border_add ))
 border_part=$((border_width/4))
 border_middle=$((border_part * 2 + border_add))
 
-focused=$(bspc config focused_border_color | tr -d \#)
-normal=$(bspc config normal_border_color | tr -d \#)
+focused=$(elisp -r '(tarp/get :primary)' | tr -d \#)
+normal=$(elisp -r '(tarp/get :assumed)' | tr -d \#)
 
 draw() {
     chwbb -i $border_part -o $border_part -m $border_middle -c $normal $(bspwindows inactive)

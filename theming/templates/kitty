@@ -1,7 +1,4 @@
 
-{{template "nohash"}}
-{{}}
-
 font_family      {{.font.mono.family}}
 font_size       {{.font.mono.size}}
 

@@ -1,8 +1,8 @@
 # -*- mode: conf -*-
 
 # TODO:
-# Say I'm playing a game, and toggle the music, but keep running forward (W)
-#   it's easy to fat finger a close window command
+# Say I\'m playing a game, and toggle the music, but keep running forward (W)
+#   it\'s easy to fat finger a close window command
 # Similarly, w and f are right next to each other, so "fullscreen" and "close window" can get fat fingered
 #   both of these are rather unpleasant for games
 
@@ -58,7 +58,7 @@ super + {_,shift} + semicolon
     bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
 
 # focus the node for the given path jump
-# idea: after @parent, check if bspwindows has changed, and if it hasn't, keep going
+# idea: after @parent, check if bspwindows has changed, and if it hasn\'t, keep going
 super + {p,b,comma,period}
     bspc node -f @{parent,brother,first,second}
 
@@ -78,9 +78,9 @@ super + shift + Return
     elisp '(ns/org-capture-popup)'
 
 super + {_,shift,alt} + space
-    action='{switcher,run,pass} '; \
-    export GTK_THEME=$(timeout 1 theme getval GTK_THEME || echo Raleigh); \
-    dmenu_$action "$action"
+    action='{switcher,run,pass}'; \
+    export GTK_THEME=$(theme -q gtk.theme); \
+    dmenu_$action -p "$action"
 
 super + grave
     player.sh toggle
