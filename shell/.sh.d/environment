@@ -94,7 +94,7 @@ if ${NEEASADE_ENV:-true}; then
   VIEW_PDF=zathura
 
   if [ -z "$TERMINAL" ]; then
-    for t in git-bash xst urxvt kitty iterm2; do
+    for t in git-bash kitty xst urxvt iterm2 konsole; do
       if has $t; then
         TERMINAL=$t
         break
