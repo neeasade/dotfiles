@@ -25,7 +25,7 @@ in
     };
 
     xserver = {
-      dpi = 117;
+      # dpi = 117;
       enable = true;
       autorun = true;
       layout = "us";
@@ -50,8 +50,11 @@ in
 
       displayManager.defaultSession = "none+bspwm";
 
+
       displayManager.lightdm = {
         enable = true;
+        autoLogin.user = "neeasade";
+        autoLogin.enable = true;
       };
     };
 

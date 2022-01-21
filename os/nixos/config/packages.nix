@@ -1,5 +1,7 @@
 { config, pkgs, lib, ...}:
 
+;; tarp
+
 let
   nixcfg = {
     allowUnfree = true;
@@ -8,7 +10,7 @@ let
 
   # pkgs = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
   stable = pkgs; # controlled by root nix-channel entry
-  unstable = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-unstable.tar.gz) { config = nixcfg; };
+  unstable = stable;
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   # nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
 
@@ -38,11 +40,11 @@ let
     cdparanoia
     cdrkit
     cdrtools
-    syncthing
+    # syncthing
     nmap pciutils
     mediainfo
     direnv
-    kdeFrameworks.networkmanager-qt
+    # kdeFrameworks.networkmanager-qt
     networkmanager_dmenu
     xorg.xkbcomp
     tldr
@@ -92,7 +94,7 @@ let
     mksh
     mpc_cli
     mpd
-    mpdcron
+    # mpdcron
     mpv
     mu
     mumble
@@ -147,7 +149,6 @@ let
     libGL
 
     gnome3.gnome-terminal
-    kitty
     gnutls # for circe
 
     fd ripgrep
@@ -181,7 +182,7 @@ let
     babashka
 
     lemonbar
-    skroll # todo: maybe zscroll this
+    # skroll # todo: maybe zscroll this
 
     pfetch-neeasade
     colort-git
@@ -197,6 +198,7 @@ let
     wmutils-opt-git
     xdo-git
   ]) ++ (with edge; [
+    kitty
     youtube-dl
   ]);
 
@@ -265,6 +267,19 @@ let
     openmw
     drawpile
     steam
+    steam-run-native
+
+    # (steam.override {
+    # extraPkgs = pkgs: [
+    #   pkgs.openssl_1_1
+    #   pkgs.libnghttp2
+    #   pkgs.libidn2
+    #   pkgs.rtmpdump
+    #   pkgs.libpsl
+    # ];
+    # }
+    # )
+
   ]) ++ (with unstable; [
     # openmw-tes3mp
     # steam
@@ -311,20 +326,23 @@ let
     cargo
     rustc
     rustfmt
-    rustracer
+    # rustracer
 
     # racket
     # janet
 
     python27
-    (python37.withPackages(ps: with ps; [
-      pip # sometimes we want user level global stuff anyway maybe
-      toot
+    python37
 
-      # please do the needful
-      setuptools
-      virtualenv
-    ]))
+    # (python37.withPackages(ps: with ps; [
+    #   pip # sometimes we want user level global stuff anyway maybe
+    #   toot
+    #   beancount
+
+    #   # please do the needful
+    #   setuptools
+    #   virtualenv
+    # ]))
 
     # approach: use pipenv or pyenv to bring in python packages
     # use nix-shell to get the stuff they depend on/reference pip)
@@ -347,7 +365,7 @@ let
     zlib
 
     mono
-    ruby
+    # ruby
   ]) ++ (with edge; [
     # joker
     # chickenPackages_5.chicken
