@@ -1,0 +1,50 @@
+
+# interval meanings:
+# -1 : only at startup
+# undefined: command is ignored
+# positive integer: command in loop
+# environment is passed to command
+
+{{define "align"}}{{end}}
+{{define "align_end"}}{{end}}
+{{define "align_end_inner"}}{{end}}
+
+{{range $i, $block := .lemons}}
+
+[{{$block.name}}
+interval={{if (index .panel $block.name "reload")}}{{index .panel $block.name "reload"}}{{else}}5{{end}}
+command={{.env.HOME}}/.wm/panel/lemons/{{$block.name}} | season
+
+align={{template "align"}}
+align_end={{template "align_end"}}
+align_end_inner={{template "align_end_inner"}}
+
+bg=#86d5e5
+fg=#3f4043
+line=#86d5e5
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#72C1D1
+
+{{end}}
+
+{{- end}}
+
+[org_task]
+interval=5
+command=/home/neeasade/.wm/panel/lemons/org_task | season
+
+bg=#86d5e5
+fg=#3f4043
+line=#86d5e5
+activebg=#8fe7d5
+activefg=#ff3f4043
+activeline=#ff3f4043
+bg_next=#72C1D1
+
+step=3
+align=center
+lemon=org_task
+lemon_end=false
+lemon_end_inner=true

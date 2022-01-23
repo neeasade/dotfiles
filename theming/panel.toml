@@ -1,0 +1,136 @@
+[panel]
+
+# expose variable to lemon:
+# panel.<lemon>.<variable>
+
+# special keys:
+# panel.<lemon>.reload
+# panel.<lemon>.mouse.scroll-up
+# panel.<lemon>.mouse.scroll-down
+# panel.<lemon>.mouse.left
+# panel.<lemon>.mouse.middle
+# panel.<lemon>.mouse.right
+
+# special section is [panel.conf]
+
+# reload values:
+network.reload = 20
+mail.reload = 30
+desktop.reload = "bspc subscribe"
+tags.reload = "-3" # persist
+title.reload = "(xtitle -s & bspc subscribe desktop_layout)"
+weather.reload = 600
+updates.reload = 600
+dropdown.reload = "echo oneshot"
+themeSwitch.reload = "echo oneshot"
+dynamicmpd.reload = 0
+github.reload = 120
+
+
+# oneoff mouse:
+
+# default click actions for panel sections
+themeSwitch.mouse.left="dzen.sh theme"
+
+panel.dropdown.mouse.left="dzen.menu"
+dropdown.mouse.left="dzen.sh menu"
+github.mouse.left="dzen.sh github"
+circe.dms.mouse.left="dzen.sh circe"
+clock.mouse.left="dzen.sh cal"
+
+# saving leftover ideas
+# org-task.mouse.left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
+# org-task.mouse.right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
+
+format = "dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
+height = 16                  # Panel height.
+
+font-main = "Droid Sans-8"   # Panel main font.
+font-icon = "Font Awesome 5 Free-10" # Panel Icon font.
+
+icon-enable = true           # toggle icon script output
+gap = 4                      # Gaps of panel off screen.
+padding = 4                  # number of pixels to pad panel information (sections/blocks) with
+line = 2 # width of the over/underlines
+launch-cmd = "$HOME/.wm/panel/lemonade" # The command to launch the panel
+
+# icon color - also used in qutebrowser completion, ACYL icons color
+icon = "unset"
+
+window-class = "lemonbar" # window class to use in lemonade's juicer
+
+position = "top"
+position-flipped = '{{if eq .position "top"}}bottom{{else}}top{{end}}'
+
+[panel.desktop]
+display-name="icon"       # [icon|name] - display desktop names or DO/DF variables.
+display-format="together" # [together|separate] - show desktops in separate blocks or together in one block.
+show-free=true          # option to show nothing for free desktops.
+mode-toggle=false       # monocle/tiling toggle.
+only-active=false       # only show the active desktop name
+
+# Workspace variables
+occupied-label='[-]'
+empty-label='[ ]'
+tiling-label=''
+monocle-label='M'
+
+[panel.volume.mouse]
+scroll-down="ponymix decrease 5"
+scroll-up="ponymix increase 5"
+
+[panel.mpd.mouse]
+left = 'player.sh toggle'
+middle = 'mpc clear'
+right = 'player.sh next'
+scrolldown = 'mpc seek -00:00:02'
+scrollup = 'mpc seek +00:00:02'
+
+[panel.dynamicmpd.mouse]
+left = '{{.panel.mpd.mouse.left}}'
+middle = '{{.panel.mpd.mouse.middle}}'
+right = '{{.panel.mpd.mouse.right}}'
+scrolldown = '{{.panel.mpd.mouse.scrolldown}}'
+scrollup = '{{.panel.mpd.mouse.scrollup}}'
+
+panel.format = "dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
+
+[lemon.transforms]
+
+# todo: how to call bg with lemon context/attrs
+
+align = """
+lemon=$1
+case '{{.panel.format}}' in
+    *${lemon}*\|*\|*) echo left ;;
+    *\|*${lemon}*\|*) echo center;;
+    *\|*\|*${lemon}*) echo right;;
+    *) echo NA;;
+esac
+"""
+
+align_end = 'lemon=$1; grep -q "^${lemon}\|${lemon}$" <<< "{{.panel.format}}"'
+align_end_inner = 'lemon=$1; grep -qE "${lemon}\||\|${lemon}" <<< "{{.panel.format}}"'
+
+align_next = """
+lemon=$1
+if ! {{.align_end}}; then
+    case {{.align}} in
+    TODO
+	left)) ;;
+	center));;
+	right);;
+    esac
+fi
+"""
+
+[lemon.attrs]
+align = "{{sh .name .lemon.transforms.align}}"
+align_end = "{{sh .name .lemon.transforms.align_end}}"
+align_end_inner = "{{.name | shpipe .lemon.transforms.align_end_inner}}"
+
+bg_next = '{{index . "lemons" .align_next "bg"}}'
+
+[[lemons]]
+name = "org_task"
+interval = 5
