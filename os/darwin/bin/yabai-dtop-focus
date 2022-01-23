@@ -2,7 +2,7 @@
 # expected arg is space index
 # pain point: jq is slowwwwwwww
 
-. ~/.sh.d/environment
+. "$HOME/.sh.d/environment"
 
 space=$1
 
@@ -13,8 +13,8 @@ json=$(yaboi query windows | jq '.[] | [select(.app != "zoom.us" or ."native-ful
 # side note for confused future me: focusing the space instead of the wid allows you to skip the transition animation
 fullscreen_space=$(jq '.[] | select(."native-fullscreen" == 1).space' <<< "$json" | awk "NR==${space}{print \$0}")
 if [ -n "$fullscreen_space" ]; then
-		yabai -m space --focus $fullscreen_space
-    exit $?
+  yabai -m space --focus $fullscreen_space
+  exit $?
 fi
 
 # note: focusing without switching to space will BRING the window to you

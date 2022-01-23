@@ -44,7 +44,7 @@ do_rofi() {
 }
 
 if elisp t >/dev/null; then
-    . ~/.sh.d/environment
+    . $HOME/.sh.d/environment
     if $MAC; then
 	find_class emacs
     fi

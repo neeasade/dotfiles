@@ -1,8 +1,6 @@
 #!/bin/sh
 
-if [ -z "$MAC" ]; then
-    . "${HOME}/.sh.d/environment"
-fi
+. "${HOME}/.sh.d/environment"
 
 if $MAC; then
     session_file="${HOME}/Library/Application Support/qutebrowser/sessions/_autosave.yml"

@@ -46,7 +46,7 @@ Wine'
 }
 
 do_monocle_slim() {
-  ltheme bg &
+  ltheme bg & >/dev/null
 
   bspc config borderless_monocle false
 
@@ -67,8 +67,10 @@ do_monocle_slim() {
   bspc config left_monocle_padding $monocle_pad_width
   bspc config right_monocle_padding $monocle_pad_width
 
-  bspc config top_monocle_padding 0
-  bspc config bottom_monocle_padding 0
+  for c in {top,bottom}_{,monocle_}padding; do
+    echo bspc config $c 0
+    bspc config $c 0
+  done
 
   bspc desktop -l monocle
 }

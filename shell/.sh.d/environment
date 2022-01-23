@@ -25,18 +25,9 @@ if ${NEEASADE_ENV:-true}; then
 
   XDG_CONFIG_HOME="$HOME/.config"
 
-  silent() {
-    "$@" >/dev/null 2>&1
-  }
-
-  has() {
-    silent type "$@"
-  }
-
-  vdo() {
-    echo "$*"
-    "$@"
-  }
+  silent() { "$@" >/dev/null 2>&1; }
+  has()    { silent type "$@"; }
+  vdo()    { echo "$*"; "$@"; }
 
   # duplication with ~/bin/iif is intentional
   # function call vs script means can use shell functions in condition

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ~/.sh.d/environment
+. "$HOME/.sh.d/environment"
 
 # the scripting-addition must be loaded manually if
 # you are running yabai on macOS Big Sur. Uncomment
