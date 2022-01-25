@@ -4,14 +4,14 @@
 cat<<EOF | jgmenu --simple --at-pointer
 
 cancel
+bluetooth,blueman-manager
+switch audio,^checkout(1)
 pavucontrol,SWITCH='meta: pavucontrol' dmenu_switcher
 fullshot,bash -ic 'fullshot'
 stalonetray,bash -ic 'stalonetray'
 steam,SWITCH='meta: steam' dmenu_switcher
 toggle player,player.sh toggle
 dismiss window,dismiss.sh
-
-switch audio,^checkout(1)
 
 ^tag(1)
 $(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
