@@ -1,12 +1,21 @@
 #!/bin/sh
+# FUCK. TIME.
+
+. $HOME/.sh.d/environment
 
 eval "$(date +'today=%F now=%s')"
-midnight=$(date -d "$today 0" +%s)
+start=7 end=23
 
-percent=$(echo "($((now - midnight)) / 86400 * 100)"  | bc -l | sed 's/\..*//')
+if $MAC; then
+    # work
+    start=8 end=16
+fi
 
-"$HOME/.wm/panel/tools/mkb" $percent 18
-# printf "%s %s %s\n" \
-#        past \
-#        $("$HOME/.wm/panel/tools/mkb" $percent 24) \
-#        future
+start_time=$(date -d "$today $start" +%s)
+end_time=$(date -d "$today $end" +%s)
+
+passed=$((now - start_time))
+duration=$((end_time - start_time))
+
+percent=$(echo "($passed / $duration * 100)"  | bc -l | sed 's/\..*//')
+mkb $percent $((end - start))
