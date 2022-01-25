@@ -1,4 +1,4 @@
-
+-----
 # ascii art source: https://www.asciiart.eu/nature/clouds
 #+begin_src
               .
@@ -21,14 +21,4 @@
 
 --..,___.--,--'`,---..-.--+--.,,-,,..._.--..-._.-a:f--.
 #+end_src
-
-| [[http://notes.neeasade.net/rice.html][screenshots]]     | [[https://notes.neeasade.net/rice-links.html][rice links]]                   |
-| OS              | [[https://nixos.org/][NixOS]]                        |
-| WM              | [[https://github.com/baskerville/bspwm][BSPWM]]                        |
-| Panel           | lemonbar, driven by [[https://github.com/vivien/i3blocks][i3blocks]] |
-| Browser         | [[https://www.qutebrowser.org/][qutebrowser]]                  |
-| Editor          | [[https://www.gnu.org/software/emacs/][Emacs]] (as vim)               |
-| Keyboard layout | [[https://colemakmods.github.io/mod-dh/keyboards.html#other-variants][Colemak Mod-DHk ANSI]]         |
-| colors          | [[https://notes.neeasade.net/tarps.html][tarps]]                        |
-
-Many of my dotfiles are [[https://github.com/toml-lang/toml][toml]] driven template files, backed by [[https://github.com/neeasade/gott][gott]]. See [[https://github.com/neeasade/dotfiles/tree/master/theming][theming/*]], [[https://github.com/neeasade/dotfiles/blob/master/bin/bin/theme][theme]] and [[https://github.com/neeasade/dotfiles/blob/master/bin/bin/ltheme][ltheme]].
+-----
