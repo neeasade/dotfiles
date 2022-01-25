@@ -306,7 +306,7 @@
   (->>
    (conj
     (:tags state)
-    {:color "e2e4e7" :name "untagged"
+    {:color "000000" :name "untagged"
      ;; active value doesn't matter for untagged tags
      :active true
      :wids (get-state-untagged)})
