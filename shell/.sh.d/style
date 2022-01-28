@@ -1,8 +1,11 @@
 # -*- mode: sh -*-
 
 type theme >/dev/null 2>&1 &&
-    _promptchar=$(theme getval st.prompt_char 2>/dev/null) ||
+    _promptchar=$(theme -q st.prompt_char 2>/dev/null) ||
     _promptchar='%'
+
+_promptchar=🔵
+_promptchar_err=🔴
 
 # dotfiles have been setup, but we're in a special location/no theme has been loaded:
 if [ -z "$_promptchar" ]; then
@@ -64,14 +67,17 @@ env_prompt() {
     return
   fi
 
-  changed_vars=$(diff \
-                   <(cd; cache_output bash -ic '(set -o posix; set | grep -vE "^(BASH_|COLUMNS|LINES|PWD|OLDPWD|HISTCMD)")') \
-                   <((set -o posix; set) | grep -vE '^(BASH|changed_vars|FUNCNAME|PPID|SHLVL|COLUMNS|LINES|PWD|OLDPWD|HISTCMD)') \
-                   | grep '^> ' | sed 's/> //' )
+  BASH_EPHEMERAL='_ERR|BASH|COLUMNS|LINES|PWD|OLDPWD|HISTCMD|GPG_TTY|FUNCNAME|PPID|HISTCMD|PWD|SHLVL'
 
-  changed_vars_caps=$(grep -oE '^[A-Z_]+\=' <<< "$changed_vars")
+  BASH_CHANGED_VARS=$(diff \
+                        <(cd; cache_output bash -ic "(set -o posix; set | grep -vE '^(${BASH_EPHEMERAL})')") \
+                        <((set -o posix; set) | grep -vE "^(${BASH_EPHEMERAL})") \
+                        | grep '^> ' | sed 's/> //' )
 
-  if [ ! -z "$changed_vars_caps" ]; then
+  BASH_CHANGED_VARS=$(grep -oE '^[a-zA-Z_]+\=' <<< "$BASH_CHANGED_VARS")
+  BASH_CHANGED_CAPS=$(grep -oE '^[A-Z_]+\=' <<< "$BASH_CHANGED_VARS")
+
+  if [ ! -z "$BASH_CHANGED_CAPS" ]; then
     echo "E "
   fi
 }
@@ -79,18 +85,18 @@ env_prompt() {
 envv() {
   # prompt function runs in subshell so we have to get it again
   env_prompt >/dev/null
-
-  for v in $changed_vars_caps; do
-    printf '%s%q\n' $v "$(eval "echo \"\${${v}}\"")"
+  local v
+  for v in $BASH_CHANGED_CAPS; do
+    eval printf "'%s=%s\n'" "'${v%?}'" "\"\${${v%?}}\""
   done
 }
 
 envv_all() {
   # prompt function runs in subshell so we have to get it again
   env_prompt >/dev/null
-
-  for v in $changed_vars; do
-    printf '%s%q\n' $v "$(eval "echo \"\${${v}}\"")"
+  local v
+  for v in $BASH_CHANGED_VARS; do
+    eval printf "'%s=%s\n'" "'${v%?}'" "\"\${${v%?}}\""
   done
 }
 
@@ -126,9 +132,9 @@ prompt() {
     [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
 
     if [ $_ERR -ne 0 ]; then
-       _prompt="${_prompt%?}!"
+       _prompt="${_prompt%?}${_promptchar_err}"
        if [ $_ERR -ne 1 ]; then
-         _prompt="${_prompt%?}!$_ERR"
+         _prompt="${_prompt}$_ERR"
        fi
     fi
 
@@ -150,23 +156,6 @@ prompt() {
       printf "%b%s" "$_prompt "
     fi
 }
-
-# this might be a bad way to go about this
-# at the least, it feels annoyingly verbose
-_prompt_first=${_prompt_first:-true}
-prompt_set_newline() {
-  if $_prompt_first; then
-    _prompt_first=false
-  else
-    _prompt_newline=true
-  fi
-}
-
-if ! echo "$PROMPT_COMMAND"  | grep -q prompt_set_newline; then
-  export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
-fi
-
-# PROMPT_COMMAND=prompt_set_newline
 
 PS1='$(prompt)'
 

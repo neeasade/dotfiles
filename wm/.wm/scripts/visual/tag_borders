@@ -40,6 +40,7 @@ draw() {
 	c_outer=$c_padding
 	c_inner=$c_padding
 	c_border=$c_padding
+
 	monocle_mod=.floating
 	border monocle $(bspc query -N -n .tiled.window)
     fi
@@ -58,9 +59,10 @@ draw() {
 }
 
 w_outer=1
-w_border=3
+w_border=$(theme -q bspwm.border.width)
 w_inner=1
 w_padding=$(theme -q x.padding)
+
 c_padding=$(theme -q color.normal.background | tr -d \#)
 
 focused=$(theme -q bspwm.border.focused | tr -d \#)

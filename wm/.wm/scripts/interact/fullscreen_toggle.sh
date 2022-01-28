@@ -4,8 +4,7 @@
 # todo: this script assumes that gaps are always what you want.
 
 # possible modes
-do_monocle_padded() {
-
+do_monocle_full() {
   if pgrep picom; then
     hsetroot -solid "$(theme -q color.normal.background)" &
   else
@@ -17,7 +16,6 @@ do_monocle_padded() {
 
   bspc node -t tiled
   bspc desktop -l monocle
-
 
   # what are we looking at?
   window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
@@ -110,9 +108,9 @@ else
       state=monocle_slim
     else
       if [ $(bspc config window_gap) -eq 0 ]; then
-        state=monocle_padded
+        state=monocle_full
       elif [ $(bspc config window_gap) -eq $(theme -q x.padding) ]; then
-        state=monocle_padded
+        state=monocle_full
       fi
     fi
   fi
@@ -123,16 +121,16 @@ echo before: $state
 
 if [ -z "$SLIM" ]; then
   case $state in
-    monocle_padded) state=tiled ;;
-    tiled) state=monocle_padded ;;
-    monocle_slim) state=monocle_padded ;;
+    monocle_full) state=tiled ;;
+    tiled) state=monocle_full ;;
+    monocle_slim) state=monocle_full ;;
     # fullscreen) exit 0;;
     fullscreen) state=tiled ;;
   esac
 else
   case $state in
-    # monocle_padded) state=tiled ;;
-    monocle_padded) state=monocle_slim ;;
+    # monocle_full) state=tiled ;;
+    monocle_full) state=monocle_slim ;;
     tiled) state=monocle_slim ;;
     monocle_slim) state=tiled ;;
     # fullscreen) exit 0;;

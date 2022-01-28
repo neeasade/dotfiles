@@ -4,6 +4,9 @@ case "$-" in
     *) return;;
 esac
 
+# tell environment to reload
+NEEASADE_ENV=true
+
 # source everything
 for file in $HOME/.sh.d/*; do
     . $file

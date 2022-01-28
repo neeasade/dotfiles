@@ -1,40 +1,39 @@
 [global]
-    font = {{d_font}}
-    markup = full
-    format = "%s\n%b"
-    sort = yes
-    alignment = center
-    show_age_threshold = 60
-    geometry = "{{p_geometry}}"
-    width =
-    idle_threshold = 60
-    follow = mouse
-    word_wrap = yes
-    history_length = 20
-    separator_height = {{b_border_width}}
-    padding = {{x_padding}}
-    horizontal_padding = {{x_padding}}
-    separator_color = frame
-    browser = {{BROWSER}}
-    icon_position = off
-    # icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
-    frame_width = {{b_border_width}}
-    frame_color = "{{b_focused_border_color}}"
+font = {{.font.variable.spec-space}}
+markup = full
+format = "%s%p\n%b"
+alignment = center
+show_age_threshold = 60
+
+origin = top-center
+notification_limit = 6
+width = {{.env.d_width}}
+offset {{.env.d_offset}}
+
+idle_threshold = 60
+follow = mouse
+history_length = 20
+separator_height = {{.bspwm.border.width}}
+padding = {{.x.padding}}
+horizontal_padding = {{.x.padding}}
+separator_color = frame
+frame_width = {{.bspwm.border.width}}
+frame_color = "{{.bspwm.border.focused}}"
 
 [urgency_low]
-    background = "#{{p_bg_normal}}"
-    foreground = "#{{p_fg_normal}}"
-    timeout = 3
+background = "{{.color.normal.background}}"
+foreground = "{{.color.normal.faded}}"
+timeout = 3
 
 [urgency_normal]
-    background = "#{{p_bg_normal}}"
-    foreground = "#{{p_fg_normal}}"
-    timeout = 0
+background = "{{.color.normal.background}}"
+foreground = "{{.color.normal.foreground}}"
+timeout = 0
 
 [urgency_critical]
-    background = "#{{p_bg_active}}"
-    foreground = "#{{p_fg_active}}"
-    timeout = 0
+background = "{{.color.focused.background}}"
+foreground = "{{.color.focused.foreground}}"
+timeout = 0
 
 # delay notifications when something is fullscreen
 # todo: only do this if the fullscreen is a game or netflix/mpv or something

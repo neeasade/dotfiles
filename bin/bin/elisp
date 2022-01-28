@@ -10,13 +10,14 @@ read_stdin=false
 emacs_batch=false
 emacs_batch_window=false
 
-while getopts qrsbwn: flag; do
+while getopts qrsbwt:n: flag; do
     case $flag in
         q) quiet=true;;
         r) trim=true;;
         s) read_stdin=true;;
         b) emacs_batch=true;;
         n) emacs_server_file=$OPTARG;;
+	t) elisp_timeout=$OPTARG;;
         w) emacs_batch_window=true;;
         *) usage;;
     esac

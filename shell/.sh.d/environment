@@ -29,17 +29,6 @@ if ${NEEASADE_ENV:-true}; then
   has()    { silent type "$@"; }
   vdo()    { echo "$*"; "$@"; }
 
-  # duplication with ~/bin/iif is intentional
-  # function call vs script means can use shell functions in condition
-  iif() {
-    res=${2-true}
-    if ! eval "$1" >/dev/null; then
-      res=${3-false}
-    fi
-
-    printf '%s' "$res"
-  }
-
   set_system () {
     MAC=false
     WINDOWS=false
@@ -92,6 +81,7 @@ if ${NEEASADE_ENV:-true}; then
   GEM_HOME="$HOME/.gem"
   BUNDLE_PATH="$HOME/.gem"
   GOPATH="$HOME/.go"
+  CODEHOME="$HOME/git"
 
   # the p is for pain
   for p in                                \

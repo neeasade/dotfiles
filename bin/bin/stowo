@@ -4,12 +4,13 @@
 # todo: this doesn't deal well in replacing files that are currently in stow-created directories
 # (IE, migration from stow -> stowo, if stow created the outline)
 
-default_packages=$(ls "$HOME/.dotfiles/" | grep -vE "(os_|readme.org|theming|bootstrap)" | tr $'\n' ' ')
+default_packages=$(ls "$HOME/.dotfiles/" | grep -vE "(os|readme.org|theming|bootstrap)" | tr $'\n' ' ')
 
 if [ -z "$*" ]; then
     cat<<EOF
 give me something to stOwO:
 $(ls "$HOME/.dotfiles/")
+
 or use the keyword 'all' to install:
 $default_packages
 

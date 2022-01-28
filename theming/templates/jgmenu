@@ -4,13 +4,16 @@ menu_padding_top = {{.x.padding}}
 menu_padding_right = {{.x.padding}}
 menu_padding_bottom = {{.x.padding}}
 menu_padding_left = {{.x.padding}}
+menu_halign = center
+item_halign = left
 menu_radius = 0
 hover_delay = 20
 font = {{.font.variable.spec-space}}
 
 icon_size = 0
 
-menu_border = 1
+menu_border = 0
+# color_menu_bg = {{.background}} 100
 color_menu_bg = {{.background}} 100
 color_menu_border = {{.foreground}} 100
 color_norm_bg = {{.background}} 100

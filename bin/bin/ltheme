@@ -12,36 +12,16 @@ render() {
     theme "$@" -r "$template" > "$dest"
 }
 
-git_ensure() {
-    gitdir="$HOME/git"
-
-    case "$1" in
-        acyl) gittarget="https://github.com/neeasade/acyl"
-              gitdir="$HOME/.icons/"
-            ;;
-        oomox) gittarget="https://github.com/actionless/oomox-gtk-theme/" ;;
-        css) gittarget="https://github.com/neeasade/solarized-everything-css" ;;
-        pywal) gittarget="https://github.com/dylanaraps/pywal/" ;;
-    esac
-
-    mkdir -p "$gitdir"
-    gitdest="$gitdir/$(basename "$gittarget")"
-
-    # echo git clone "$gittarget" "$gitdest"
-    if [ ! -d "$gitdest" ]; then
-       git clone "$gittarget" "$gitdest"
-    fi
-}
-
 load_bg()      { eval "$(theme -q BG_COMMAND)" ;}
-load_xst()     { load_xresources; pkill -x --signal USR1 xst ;}
+load_emacs()   { elisp -t 5 "(ns/load-theme '$(theme -q emacs.theme))" ;}
+load_jgmenu()  { render jgmenu .config/jgmenu/jgmenurc -p color.normal ;}
 load_kitty()   { render kitty .config/kitty/kitty.conf -p color.normal ;}
 load_mintty()  { render mintty .minttyrc ;}
 load_mpd_win() { render mpd_windows .config/mpd/mpd.conf -p mpd ;}
+load_pywal()   { render pywal .cache/wal/theme.json; }
+load_xst()     { load_xresources; pkill -x --signal USR1 xst ;}
 load_zathura() { render zathura .config/zathura/zathurarc -p colors.normal ;}
 load_zeal()    { render zeal .config/Zeal/Zeal.conf ;}
-load_jgmenu()  { render jgmenu .config/jgmenu/jgmenurc -p color.normal ;}
-load_emacs()   { elisp_timeout=5 elisp "(ns/load-theme '$(theme -q emacs.theme))" ;}
 
 load_tmux() {
     render tmux .tmux.conf
@@ -91,7 +71,6 @@ load_qutebrowser() {
 	# qb_command ':reload' # reload current page w/ css
 	bspc config ignore_ewmh_focus "$current_conf"
     fi
-
 }
 
 load_lemonade() {
@@ -119,6 +98,7 @@ load_lemonade() {
     # 	systemctl --user restart panel
     # fi
 }
+
 load_gtk() {
     echo GTK: TODO
     return 0
@@ -145,81 +125,20 @@ load_gtk() {
 }
 
 load_dunst() {
-    # dunst recently changed config - will adjust when home
-    echo TODO: dunst
-    return
-
-    # geometry will hail from settings at the time this is called re: gap, panel
-    pgrep lemonbar || p_height=0
-
-    # still want it a _little_ in if we are not gapped
-    [ $b_window_gap -le 0 ] && b_window_gap=$x_padding
-
-    [ $b_border_width -gt 4 ] && b_border_width=$(( $b_border_width/2 ))
-    export b_border_width=1
-    export b_focused_border_color=#777777
-    # [ $x_padding -gt 12 ] && x_padding=$(( $x_padding/2 ))
-
-    # WIDTHxHEIGHT+XOFF+YOFF
-    # height is the number of notifications that can be open
-
     mon_width=$(bspc query -T -m | jq .rectangle.width)
-    d_width=$(echo .24 \* $mon_width | bc | sed 's/\..*//')
+    export d_width=$(echo .24 \* $mon_width | bc | sed 's/\..*//')
 
-    # todo: make this a theme option
+    p_height=$(theme -q panel.height)
+    silent pgrep lemonbar || p_height=0
+    export d_offset=$((b_window_gap + p_height))
 
-    # top center
-    mon_width=$(bspc query -T -m | jq -r .rectangle.width)
-    d_x_middle=$(( (mon_width / 2) - (d_width/2) ))
-    p_geometry="${d_width}x6+${d_x_middle}+$((b_window_gap + p_height))"
-
-    # top right
-    # WIDTHxHEIGHT+XOFF+YOFF
-    # p_geometry="${d_width}x6-${b_window_gap}+$((b_window_gap + p_height))"
-
-    margs dunstrc .config/dunst/dunstrc
+    render dunstrc .config/dunst/dunstrc
 
     # pkill dunst
     # dunst will auto-launch on notify-send call
     systemctl --user stop dunst
     pkill dunst
     systemctl --user start dunst
-}
-
-load_pywal() {
-    echo "PYWAL: todo"
-    # need to revisit/see the goal here
-
-    # mkdir -p "${HOME}/.cache/wal/"
-    # git_ensure pywal
-
-    # IFS=$'\n'
-    # for f in $(fd . -t f "${gitdest}/pywal/templates/"); do
-    # 	# turn all singles into doubles
-    # 	dest=".cache/wal/$(basename "$f")"
-    # 	template="${HOME}/${dest}.template"
-
-    # 	cp "$f" "$template"
-
-    # 	# account for template differences
-    # 	sed -i 's/{/{{/g' "$template"
-    # 	sed -i 's/}/}}/g' "$template"
-    # 	sed -i 's/{{{{/{/g' "$template"
-    # 	sed -i 's/}}}}/}/g' "$template"
-
-    # 	margs "$template" "$dest"
-    # done
-
-}
-
-load_steam() {
-    echo TODO: steam
-    load_pywal
-
-    git_ensure wal_steam
-    cd "$gitdest"
-    # todo: -f font
-    ./wal_steam.py -w
 }
 
 load_services() {
@@ -325,7 +244,7 @@ load_btag_borders() {
     (ct-iterate it 'ct-lab-lighten
       (lambda (c) (ct-is-light-p c 75)))))"
 
-    elisp '(->> (list :primary :strings :assumed :faded)
+    elisp '(->> (list :primary :strings :assumed :alt)
   (-map (lambda (l) (ns/make-border-color l)))
   (-map (fn (substring <> 1)))
   (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'

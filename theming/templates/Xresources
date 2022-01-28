@@ -23,7 +23,6 @@ st.cursorshape: {{.st.cursorshape}}
 st.cursorthickness: {{.st.cursorthickness}}
 st.depth: 24
 
-
 ! colors
 *.background: {{.background}}
 *.foreground: {{.foreground}}

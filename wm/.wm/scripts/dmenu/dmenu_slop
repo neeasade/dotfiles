@@ -4,8 +4,8 @@
 
 target=$*
 if [ -z "$target" ]; then
-    target=$(dmenu_path | eval dmenu "$@")
+    target=$(dmenu_path | dmenu "$@")
 fi
 
 bspc rule -a \* -o state=floating rectangle=$(slop -f "%g")
-$target &
+nohup $target &

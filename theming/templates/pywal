@@ -1,0 +1,25 @@
+{
+  "special": {
+    "background": "{{.color.normal.background}}",
+    "foreground": "{{.color.normal.foreground}}",
+    "cursor": "{{.color.cursor}}"
+  },
+  "colors": {
+    "color0": "{{.colors.0}}",
+    "color1": "{{.colors.1}}",
+    "color2": "{{.colors.2}}",
+    "color3": "{{.colors.3}}",
+    "color4": "{{.colors.4}}",
+    "color5": "{{.colors.5}}",
+    "color6": "{{.colors.6}}",
+    "color7": "{{.colors.7}}",
+    "color8": "{{.colors.8}}",
+    "color9": "{{.colors.9}}",
+    "color10": "{{.colors.10}}",
+    "color11": "{{.colors.11}}",
+    "color12": "{{.colors.12}}",
+    "color13": "{{.colors.13}}",
+    "color14": "{{.colors.14}}",
+    "color15": "{{.colors.15}}"
+  }
+}

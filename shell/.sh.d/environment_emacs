@@ -8,10 +8,16 @@ if has direnv; then
 fi
 
 # ESHELL meaning shell-mode in emacs
-ESHELL=$(iif '[ -n "$INSIDE_EMACS" ] && [ "$TERM" = "dumb" ]')
+ESHELL=false
 
-if ! "$ESHELL"; then
-  ESHELL=$(iif '$REMOTE && [ "$TERM" = "dumb" ]')
+if [ -n "$INSIDE_EMACS" ] && [ "$TERM" = "dumb" ]; then
+  ESHELL=true
+fi
+
+if ! $ESHELL; then
+  if $REMOTE && [ "$TERM" = "dumb" ]; then
+    ESHELL=true
+  fi
 fi
 
 if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then

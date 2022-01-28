@@ -123,7 +123,6 @@ theme = {
 
 }
 
-
 # import templated theme when file exists
 themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
 if os.path.exists(themefile):
@@ -187,6 +186,9 @@ targets = {
         'statusbar.url.hover.fg',
         'completion.item.selected',
 
+        'contextmenu.selected.bg',
+        'contextmenu.selected.fg',
+
         'completion.category.border.top',
         'completion.category.border.bottom',
 
@@ -195,20 +197,20 @@ targets = {
 
     ],
 
-    # 'weak': [
-    #     'completion.scrollbar',
-    #     'downloads.start',
-    #     'messages.info',
-    #     'completion.fg',
-    #     'completion.odd.bg',
-    #     'completion.even.bg',
-    # ],
+    'weak': [
+        'contextmenu.menu.bg',
+        'contextmenu.menu.fg',
+    ],
 
     'match': [
         'completion.match.fg',
         'hints.match.fg',
-    ]
+    ],
 }
+
+# todo: fade these:
+# 'contextmenu.disabled.bg'
+# 'contextmenu.disabled.fg'
 
 for colortype in targets:
     for target in targets[colortype]:
@@ -254,6 +256,7 @@ if fonts['tab_bold']:
 # next stable qutebrowser version:
 c.fonts.tabs.selected = tabFont
 c.fonts.tabs.unselected = tabFont
+c.fonts.contextmenu = tabFont
 
 c.hints.radius = 0
 
