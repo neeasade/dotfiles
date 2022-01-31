@@ -67,10 +67,12 @@ env_prompt() {
     return
   fi
 
-  BASH_EPHEMERAL='_ERR|BASH|COLUMNS|LINES|PWD|OLDPWD|HISTCMD|GPG_TTY|FUNCNAME|PPID|HISTCMD|PWD|SHLVL'
+  # these are PREFIXES
+  BASH_EPHEMERAL='_|BASH|COLUMNS|LINES|PWD|HISTCMD|OLDPWD|GPG_TTY|FUNCNAME|PPID|SHLVL'
 
+  # the 'echo $TERM' allows fluid switching between terms/eshell
   BASH_CHANGED_VARS=$(diff \
-                        <(cd; cache_output bash -ic "(set -o posix; set | grep -vE '^(${BASH_EPHEMERAL})')") \
+                        <(cd; cache_output bash -ic "(set -o posix; echo $TERM; set | grep -vE '^(${BASH_EPHEMERAL})')") \
                         <((set -o posix; set) | grep -vE "^(${BASH_EPHEMERAL})") \
                         | grep '^> ' | sed 's/> //' )
 
@@ -146,11 +148,13 @@ prompt() {
       _prompt="$(hostname) $_prompt"
     fi
 
+    line_number=2
     if ${ESHELL:-false}; then
       _prompt="$(tell_emacs_shell_location)$_prompt"
+      line_number=$(elisp '(with-current-buffer (window-buffer (selected-window)) (line-number-at-pos))')
     fi
 
-    if ${_prompt_newline:-false}; then
+    if [ "$line_number" -gt 1 ]; then
       printf "\n%b%s" "$_prompt "
     else
       printf "%b%s" "$_prompt "

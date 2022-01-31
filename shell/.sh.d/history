@@ -12,7 +12,7 @@ case "$cur_shell" in
 
     # note: this causes things to be ignored in interactive history as well
     # but we circumvent that with comint/emacs shells
-    export HISTIGNORE="cd*:ls*:clear:date:pwd"
+    export HISTIGNORE="cd*:ls*:clear:date:pwd:mpv:pfetch:mpc*:music*:ltheme"
 
     shopt -s histappend
     export HISTCONTROL=ignoredups:erasedups:ignorespace
@@ -40,8 +40,4 @@ case "$cur_shell" in
     setopt inc_append_history     # add commands to HISTFILE in order of execution
     setopt share_history          # share command history data
     ;;
-  mksh)
-    HISTFILE=$history_file
-    ;;
 esac
-
