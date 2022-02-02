@@ -33,8 +33,8 @@ not_together() {
     w=$((w-40))
     x=$((x+20))
 
-    w=$((w-4))
-    x=$((x+2))
+    # w=$((w-4))
+    # x=$((x+2))
     h=$((h-2))
 
     read f_x f_y f_w f_h < <(bspc query -T -n $(echo "$wids" | head -n 1) | jq -r '.client.floatingRectangle | "\(.x) \(.y) \(.width) \(.height)"')
