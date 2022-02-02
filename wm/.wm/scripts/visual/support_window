@@ -1,53 +1,47 @@
-#!/bin/sh
-# a window that follows the focused window, always hiding behind it.
-# this is because compton shadows stack, and this creates and effect
-# where the focused window has a darker shadow opacity, a feature not
-# in compton.
+#!/usr/bin/env bash
+# neeasade
+# stack windows to fake weight
 
 key="below"
 
 cleanup() {
-    bspc node $wid -c
+    for wid in $(xdo id -N $key); do
+	bspc node $wid -c
+    done
 }
 
 launch() {
-    xdo id -N $key ||
-        setsid xst -c $key &
+    setsid xst -c $key &
+    setsid xst -c $key &
+    setsid xst -c $key &
+    setsid xst -c $key &
+    # setsid xst -c $key &
 
     sleep 0.5
 
-    wid=$(xdo id -N $key)
-    bspc node $wid -t floating
-    border_width=$(bspc config border_width)
+    wids=$(xdo id -N $key)
+    for wid in $wids; do
+	bspc node $wid -t floating
+    done
 }
 
 not_together() {
     json=$(bspc query -T -n)
-    jget() {
-        echo "$json" | jq -r ".client.$1"
-    }
 
-    state=$(jget state)
-    x=$(jget ${state}Rectangle.x)
-    y=$(jget ${state}Rectangle.y)
-    w=$(jget ${state}Rectangle.width)
-    h=$(jget ${state}Rectangle.height)
+    state=$(jget -r state "$json")
+    read x y w h < <(echo "$json" | jq -r '.client.'${state}'Rectangle | "\(.x) \(.y) \(.width) \(.height)"')
 
-    # xpad compatibility
-    if [ "$border_width" = "0" ]; then
-        b=$(jget borderWidth)
-        h=$((h+b+b))
-        w=$((w+b+b))
-    fi
+    w=$((w-40))
+    x=$((x+20))
 
-    json=$(bspc query -T -n $wid)
-    state=floating
-    f_x=$(jget ${state}Rectangle.x)
-    f_y=$(jget ${state}Rectangle.y)
-    f_w=$(jget ${state}Rectangle.width)
-    f_h=$(jget ${state}Rectangle.height)
+    w=$((w-4))
+    x=$((x+2))
+    h=$((h-2))
+
+    read f_x f_y f_w f_h < <(bspc query -T -n $(echo "$wids" | head -n 1) | jq -r '.client.floatingRectangle | "\(.x) \(.y) \(.width) \(.height)"')
 
     for attr in x y w h; do
+        echo "! [ "\$$attr" = "\$f_$attr" ] && return 1"
         eval "! [ "\$$attr" = "\$f_$attr" ] && return 1"
     done
 
@@ -55,14 +49,21 @@ not_together() {
 }
 
 follow() {
-    xdo move -x $x -y $y $wid
-    xdo resize -w $w -h $h $wid
+    for wid in $wids; do
+	xdo move -x $x -y $y $wid
+	xdo resize -w $w -h $h $wid
+    done
 }
 
 launch
 
 trap 'cleanup' TERM INT
 
-bspc subscribe node_{geometry,focus} | while read msg; do
-    not_together || follow
-done
+border_width=$(bspc config border_width)
+
+while read msg n b acted rest; do
+    if ! echo "$wids" | grep -q "$acted"; then
+	echo checking
+	not_together || follow
+    fi
+done < <(bspc subscribe node_{geometry,focus})
