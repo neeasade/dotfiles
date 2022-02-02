@@ -27,7 +27,6 @@ launch() {
 
 not_together() {
     json=$(bspc query -T -n)
-
     state=$(jget -r state "$json")
     read x y w h < <(echo "$json" | jq -r '.client.'${state}'Rectangle | "\(.x) \(.y) \(.width) \(.height)"')
 
@@ -41,7 +40,6 @@ not_together() {
     read f_x f_y f_w f_h < <(bspc query -T -n $(echo "$wids" | head -n 1) | jq -r '.client.floatingRectangle | "\(.x) \(.y) \(.width) \(.height)"')
 
     for attr in x y w h; do
-        echo "! [ "\$$attr" = "\$f_$attr" ] && return 1"
         eval "! [ "\$$attr" = "\$f_$attr" ] && return 1"
     done
 
@@ -59,10 +57,8 @@ launch
 
 trap 'cleanup' TERM INT
 
-border_width=$(bspc config border_width)
-
 while read msg n b acted rest; do
-    if ! echo "$wids" | grep -q "$acted"; then
+    if ! grep -q "$acted" <<< "$wids"; then
 	echo checking
 	not_together || follow
     fi
