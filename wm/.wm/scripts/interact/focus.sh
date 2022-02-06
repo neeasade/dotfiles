@@ -3,7 +3,7 @@
 dir=$1
 
 node=$(bspc query -N -n)
-target=$(bspc query -N -n $dir.!hidden)
+target=$(bspc query -N -n $dir.!hidden.normal)
 
 # if there are any floating windows, use an edge of that if it overlaps into us
 node_dir=$1
@@ -22,7 +22,7 @@ fi
 
 node=${node^^}
 
-floating_windows=$(bspc query -N -d -n .window.local.floating.!hidden)
+floating_windows=$(bspc query -N -d -n .window.local.floating.!hidden.normal)
 declare -A winmap=();
 while read wid x y w h; do
   wid="${wid^^}"

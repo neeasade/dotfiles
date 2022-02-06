@@ -9,16 +9,6 @@ draw() {
 	state_sans_active=${state_sans_active//$wid/}
     done
 
-    border() {
-	kind=$1; shift
-	chwbn \
-	    -b $w_outer   -c $c_outer   \
-	    -b $w_border  -c $c_border  \
-	    -b $w_inner   -c $c_inner   \
-	    -b $w_padding -c $c_padding \
-	    "$@" &
-    }
-
     # INACTIVE WINDOWS
     while read -r name visible color wids; do
 	if ! $visible; then
@@ -69,6 +59,22 @@ focused=$(theme -q bspwm.border.focused | tr -d \#)
 focused2=$(theme -q color.focused.foreground | tr -d \#)
 
 b_width=$((w_inner + w_border + w_outer + w_padding))
+border() {
+    kind=$1; shift
+    chwbn \
+	-b $w_outer   -c $c_outer   \
+	-b $w_border  -c $c_border  \
+	-b $w_inner   -c $c_inner   \
+	-b $w_padding -c $c_padding \
+	"$@" &
+}
+
+# for rounded/plain
+b_width=$((w_padding))
+border() {
+    chwbn -b $w_padding -c $c_padding "$@" &
+}
+
 
 echo bspc config border_width $b_width
 bspc config border_width $b_width

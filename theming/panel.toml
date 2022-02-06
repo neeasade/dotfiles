@@ -1,17 +1,8 @@
 [panel]
 
-# expose variable to lemon:
-# panel.<lemon>.<variable>
-
-# special keys:
-# panel.<lemon>.reload
-# panel.<lemon>.mouse.scroll-up
-# panel.<lemon>.mouse.scroll-down
-# panel.<lemon>.mouse.left
-# panel.<lemon>.mouse.middle
-# panel.<lemon>.mouse.right
-
-# special section is [panel.conf]
+# saving leftover ideas
+# org-task.mouse.left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
+# org-task.mouse.right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
 
 # reload values:
 network.reload = 20
@@ -38,26 +29,14 @@ github.mouse.left="dzen.sh github"
 circe.dms.mouse.left="dzen.sh circe"
 clock.mouse.left="dzen.sh cal"
 
-# saving leftover ideas
-# org-task.mouse.left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
-# org-task.mouse.right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
-
 format = "dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
-height = 16                  # Panel height.
+height = 16
 
-font-main = "Droid Sans-8"   # Panel main font.
-font-icon = "Font Awesome 5 Free-10" # Panel Icon font.
+gap = 4
+line = 2
 
-icon-enable = true           # toggle icon script output
-gap = 4                      # Gaps of panel off screen.
-padding = 4                  # number of pixels to pad panel information (sections/blocks) with
-line = 2 # width of the over/underlines
-launch-cmd = "$HOME/.wm/panel/lemonade" # The command to launch the panel
-
-# icon color - also used in qutebrowser completion, ACYL icons color
-icon = "unset"
-
-window-class = "lemonbar" # window class to use in lemonade's juicer
+shadowp = false
+class = '{{.shadowp | ternary "lemonade" "noshadow"}}'
 
 position = "top"
 position-flipped = '{{if eq .position "top"}}bottom{{else}}top{{end}}'
@@ -134,3 +113,4 @@ bg_next = '{{index . "lemons" .align_next "bg"}}'
 [[lemons]]
 name = "org_task"
 interval = 5
+- = [ "lemon.attrs" ]

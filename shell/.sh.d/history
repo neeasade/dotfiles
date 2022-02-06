@@ -3,7 +3,7 @@
 history_length=10000
 history_file="$HOME/.${cur_shell}_history"
 
-# cur_shell is from environment.
+# $cur_shell is from ./environment
 case "$cur_shell" in
   bash)
     export HISTFILE=$history_file
