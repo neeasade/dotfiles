@@ -12,7 +12,7 @@ current_playlist="${musicdir}/playlist/current"
 
 ### HELPERS/MAINT
 log() {
-  printf '%s' "$*"
+  printf '%s\n' "$*"
   notify-send -u low "$*"
 }
 
@@ -72,10 +72,11 @@ is_short () {
 
 filter() { # filter the current playlist by some shell function acting on music files
   log "filter $*"
+
   fn=$1
   mpc playlist -f '%position% %file%' |
     while read -r pos file; do
-      if ! $fn "${musicdir}/$file" >/dev/null; then
+      if ! "$fn" "${musicdir}/$file" >/dev/null; then
 	echo "$pos"
       fi
     done | mpc del
@@ -283,40 +284,58 @@ playlist_random() {
   playlist "$a"
 }
 
-infoname() {
-  name=$(player.sh -f '%title% - %artist%' | head -n 1)
+# mpc only
+name_from_pos() {
+  pos=$1
+  name=$(mpc playlist -f '%title% - %artist%' | awk "NR==${pos}")
   if [ "$name" = ' - ' ]; then
-    name=$(basename "$(mpc -f '%file%' | head -n 1)")
+    name=$(basename "$(mpc playlist -f '%file%' | awk "NR==${pos}")")
     name=${name%.*}
   fi
+
+  # ASSUME
+  if grep -qE '\-[0-9a-zA-Z_\-]{11}$' <<< "$name" ; then
+    name=${name::-12}
+  fi
+
+  remove_delim() {
+    name=$(echo "$name" | sed -e "s/${1}[^${1}${2}]*${2}//g")
+  }
+
+  remove_delim '(' ')'
+  remove_delim '[' ']'
+  remove_delim '【' '】'
+  remove_delim '●' '●'
+
   echo "$name"
 }
 
 info() { # display the current audio progress bar and playlist length
-  infoname
-
-  length=$(wc -L <<< "$name")
-  # length=$(wc -c <<< "$name")
-
   if [ "$(GET=t player.sh)" = "playerctl" ]; then
-      # we can't get the percent from playerctl, fake it for the looks
-      # cf https://bytefreaks.net/gnulinux/bash/bash-get-random-number-that-belongs-in-a-range
-      bottom=40
-      top=80
-      range=$((top-bottom+1))
+    name=$(player.sh -f '%title% - %artist%')
+    # we can't get the percent from playerctl, fake it for the looks
+    # cf https://bytefreaks.net/gnulinux/bash/bash-get-random-number-that-belongs-in-a-range
+    bottom=40
+    top=80
 
-      percent=$RANDOM
-      let "percent %= $range"
-      percent=$((percent+bottom))
+    range=$((top-bottom+1))
+    percent=$RANDOM
+    let "percent %= $range"
+    percent=$((percent+bottom))
   else
-      percent=$(mpc | awk 'match($0,/\(([0-9]+)%\)/, groups) {print groups[1]}')
+    pos=$(mpc -f '%position%' | head -n 1)
+    name=$(name_from_pos $pos)
+    percent=$(mpc | awk 'match($0,/\(([0-9]+)%\)/, groups) {print groups[1]}')
   fi
 
-  mkb $percent $length
+  echo "$name"
+  mkb "$percent" $(wc -L <<< "$name")
+  echo "playlist: $(cat $current_playlist) | $(playlist_length)"
+}
 
-  if [ "$(GET=t player.sh)" = "mpc" ]; then
-      echo "playlist: $(cat $current_playlist) | $(playlist_length)"
-  fi
+info2() {
+  echo "  >> playlist: $(cat $current_playlist) | $(playlist_length) <<"
+  context
 }
 
 shuffle_preserve_album() {
@@ -325,8 +344,36 @@ shuffle_preserve_album() {
   clear_duplicates # this clear is important for mpd_shuffle to work (group_by)
   shuffled=$(mpd_shuffle "$@")
   mpc clear --wait
+  sleep 1 # see the SOMEHOW note
   mpc add <<< "$shuffled"
   mpc play
+}
+
+context() {
+  pos=$(mpc -f '%position%' | head -n 1)
+  start=$((pos - 2))
+  if [ $start -lt 1 ]; then
+    start=1
+  fi
+  end=$((pos + 2))
+
+  # todo: this better (multi -q + read)
+  complete=$(theme -q mkb.complete)
+  empty=$(theme -q mkb.empty)
+  sep=$(theme -q mkb.sep)
+
+  mpc playlist -f '%position%' | awk " {
+if (NR>=${start} && NR<=$end)
+    {
+if (NR==${pos})
+{ print \"${sep} \" \$0}
+else if (NR<${pos})
+{ print \"${complete} \" \$0}
+else if (NR>${pos})
+{ print \"${empty} \" \$0}
+    }} " | while read -r prefix pos; do
+  echo "$prefix $(name_from_pos $pos)"
+  done
 }
 
 interactive_op=${1:-usage}
