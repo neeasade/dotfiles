@@ -12,6 +12,7 @@ from qutebrowser.api import interceptor, message
 
 config = config  # type: ConfigAPI # noqa: F821
 c = c  # type: ConfigContainer # noqa: F821
+config.load_autoconfig(False)
 
 # todo: bind cmd-e edit
 # todo: config.load

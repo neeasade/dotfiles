@@ -349,19 +349,19 @@ extract() {      # Handy Extract Program
 }
 
 dotadd() {
-  echo stowo $(iif $MAC os_mac bin)
+  echo stowo $(iif $MAC os/mac bin)
   file=$(find ~/bin | fzf) || return
   file=$(basename "$file")
 
   binpath="$HOME/.dotfiles/bin/bin/"
   if $MAC; then
-    binpath="$HOME/.dotfiles/os_mac/bin/"
+    binpath="$HOME/.dotfiles/os/mac/bin/"
   fi
 
   vdo mv "$HOME/bin/$file" "$binpath/$file"
   (cd "$binpath"; git add "$file")
 
-  echo stowo $(iif $MAC os_mac bin)
+  echo stowo $(iif $MAC os/mac bin)
 }
 
 passadd() {
@@ -445,9 +445,8 @@ paths(scalars) as $p
 
 qq() {
   if $MAC; then
-    f_normal=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_normal.json
-    f_colemak=$HOME/.dotfiles/os_mac/.config/karabiner/karabiner_colemakdhk.json
-
+    f_normal=$HOME/.dotfiles/os/mac/.config/karabiner/karabiner_normal.json
+    f_colemak=$HOME/.dotfiles/os/mac/.config/karabiner/karabiner_colemakdhk.json
     f_status=$HOME/.config/karabiner/karabiner.json
 
     if [ ! -f "$f_status" ]; then

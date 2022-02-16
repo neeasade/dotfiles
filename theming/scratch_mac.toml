@@ -1,0 +1,25 @@
+# where I actively play with things
+
+THEME_NAME = "test"
+
+emacs.theme = "tarp-mcfay"
+
+BG_COMMAND="wallmac tile '{{.env.HOME}}/Downloads/mpv-shot0095.jpg'"
+
+font.mono.family = "Go Mono"
+font.variable.family = "Charter"
+
+# st.prompt_char = '🔵'
+
+mkb.complete = "🌳"
+mkb.sep = "🌻"
+mkb.empty = "🌱"
+
+st.prompt_char='%'
+bspwm.window-gap = 24
+x.padding = 5
+
+font.mono.size = 18
+font.variable.size = 18
+
+bspwm.monocle-window-percent = 0.55

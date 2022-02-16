@@ -1,0 +1,43 @@
+#!/bin/sh
+
+. "$HOME/.sh.d/environment"
+
+c() {
+    yaboi config "$@"
+}
+
+c mouse_follows_focus  off
+c focus_follows_mouse  autofocus
+c window_placement     second_child
+
+c window_topmost       on
+c window_shadow        off
+c window_opacity       off
+
+c split_ratio          0.50
+c auto_balance         off
+
+c mouse_modifier       fn
+c mouse_action1        move
+c mouse_action2        resize
+c mouse_drop_action    swap
+c layout bsp
+
+c window_border                on
+c window_border_width          4
+
+c active_window_border_color   0xff006f96
+c active_window_border_color   0xff4b4e4f
+c normal_window_border_color   0xffcecccd
+c insert_feedback_color        0xff0000dd
+
+# if [ "$(yabai -m query --spaces | jq 'length')" -lt 5 ]; then
+#     for i in $(seq 3); do
+# 	yabai -m space --create
+#     done
+# fi
+
+yabai -m rule --add app=Emacs manage=on
+yabai -m rule --add app='System Preferences' manage=off
+yabai -m rule --add app=choose manage=off
+yabai -m rule --add title=emacs_dmenu_frame manage=off

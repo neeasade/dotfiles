@@ -1,17 +1,10 @@
 #!/bin/sh
 
 PATH=$PATH:$HOME/bin
-
-node_dir=$1
-case $node_dir in
-  east)  emacs_dir=right ;;
-  west)  emacs_dir=left ;;
-  north) emacs_dir=up ;;
-  south) emacs_dir=down ;;
-esac
+dir=$1
 
 try_emacs_dir() {
-  if timeout 0.2 elisp "(evil-window-${emacs_dir} 1) t"; then
+  if timeout 0.2 elisp "(evil-window-${dir} 1) t"; then
     exit 0
   fi
 }
@@ -30,5 +23,5 @@ case $looking_at in
 esac
 
 yabai -m config mouse_follows_focus on
-yabai -m window --focus "$node_dir"
+yabai -m window --focus "$dir"
 yabai -m config mouse_follows_focus off

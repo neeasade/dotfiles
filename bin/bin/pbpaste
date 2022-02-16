@@ -1,0 +1,11 @@
+#!/bin/sh
+# pipe things to me
+
+. "$HOME/.sh.d/environment"
+
+if $MAC; then
+    og pbpaste
+    exit $?
+fi
+
+xclip -o -selection clipboard

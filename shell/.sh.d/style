@@ -42,9 +42,9 @@ git_prompt() {
   git diff-files --quiet --ignore-submodules    || g_append '*' # Check for unstaged changes.
   test -n "$(git ls-files --others --exclude-standard)" && g_append '?' # Check for untracked files.
 
-  g_branch="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
-      git rev-parse --short HEAD 2> /dev/null || \
-      echo 'unknown')"
+  g_branch=$(git symbolic-ref --quiet --short HEAD 2>/dev/null || \
+      git rev-parse --short HEAD 2>/dev/null || \
+      echo 'unknown')
 
   if [ "$g_branch" = "master" ] || [ "$g_branch" = "main" ]; then
     if [ ! -z "${g_status}" ]; then

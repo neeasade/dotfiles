@@ -3,11 +3,10 @@
 # note: yabai query time is really slow compared to bspwm
 
 query() {
-  kind=$1
-  key=$2
+  kind=$1; shift
   # shift; shift;
 
-  if [ -z "$key" ]; then
+  if [ -z "$*" ]; then
     case "$kind" in
       *s) yabai -m query --${kind} ;;
       *) yabai -m query --${kind}s --${kind}
@@ -16,10 +15,16 @@ query() {
     return;
   fi
 
+  # account for dashed keys
+  for k in "$@"; do
+    json="$json | .[\"${k}\"] "
+  done
+  json=${json:2}
+
+  result=$(jq -r "$json" < <(yabai -m query --${kind}s --${kind}))
+
   # return true or false for yabai state in queries
   # (it's a 0 or 1 in yabai's world)
-  result=$(yabai -m query --${kind}s --${kind} | jq -r ".[\"${key}\"]")
-
   case "$result" in
     1) echo true; return 0 ;;
     0) echo false; return 1 ;;
@@ -75,4 +80,5 @@ padding() {
   yabai -m space --padding abs:$1:$1:$1:$1
 }
 
+top_call=$1
 "$@"

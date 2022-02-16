@@ -23,6 +23,7 @@ if [ "$*" = "all" ]; then
 fi
 
 while [ ! -z "$1" ]; do
+    package=$1
     cd "$HOME/.dotfiles/$1"
     # find . -type f | while read -r path; do
     results=$(
@@ -37,6 +38,13 @@ while [ ! -z "$1" ]; do
 
 	# hell yeah brother HH
 	prepend=$(echo "$path" | tr -dc '/' | cut -c3- | sed 's#/#../#g')
+
+	# remove one level (os packages are nested a level)
+	# note: somehow using a case statement breaks here
+	if echo "$package" | grep -q 'os/'; then
+	    prepend=$(echo "$prepend" | cut -c4-)
+	fi
+
 	path="$prepend$path"
 
 	mkdir -p "$(dirname "$target")"

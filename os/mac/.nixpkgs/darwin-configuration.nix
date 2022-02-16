@@ -26,7 +26,7 @@ let
   # using this because everytime you change the definition you need to re-grant SIP
   yabai_pin = import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/8284fc30c84ea47e63209d1a892aca1dfcd6bdf3.tar.gz" ) { config = nixconfig; };
 
-  expr = import ../../os_nix/config/expr { inherit pkgs lib edge; };
+  expr = import ../../nixos/config/expr { inherit pkgs lib edge; };
 
 in {
   nixpkgs.config = nixconfig;
@@ -116,6 +116,7 @@ in {
       yamllint
       yq
       zsh
+      qutebrowser
 
       (python39.withPackages
         (ps: with ps; [

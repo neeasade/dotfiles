@@ -9,10 +9,17 @@ gott=gott
 # go build || exit 1
 # gott=./gott
 
+scratch=scratch
+
+. "$HOME/.sh.d/environment"
+if $MAC; then
+    scratch=scratch_mac
+fi
+
 timeout 1 $gott \
     -t "${theme_dir}/colors.toml" \
     -t "${theme_dir}/base.toml" \
-    -t "${theme_dir}/scratch.toml" \
+    -t "${theme_dir}/${scratch}.toml" \
     "$@"
 
 if [ $? = 124 ]; then

@@ -3,7 +3,7 @@
 # to force eviction: cache_output 0 'command'
 
 VERBOSE=false
-PROG="$(basename $0)"
+PROG=$(basename $0)
 DIR="${HOME}/.cache/${PROG}"
 mkdir -p "${DIR}"
 EXPIRY=600 # default to 10 minutes

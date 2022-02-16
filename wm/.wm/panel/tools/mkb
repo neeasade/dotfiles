@@ -3,7 +3,7 @@
 # port of http://git.z3bra.org/mkb/file/mkb.c.html
 
 # args
-progress=$1
+progress=${1:-0}
 size=$2
 
 complete='-'

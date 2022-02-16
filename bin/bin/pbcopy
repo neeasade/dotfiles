@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. "$HOME/.sh.d/environment"
+if $MAC; then
+    og pbcopy
+    exit $?
+fi
+
+stdin=$(cat -)
+echo "$stdin" | xclip -selection clipboard -i
+echo "$stdin" | xclip -selection primary -i

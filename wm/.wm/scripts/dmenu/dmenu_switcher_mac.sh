@@ -97,7 +97,7 @@ add_metas() {
     # add_switch "meta: slack" "qb_meta_open '$(cache_output $((60 * 60 * 24)) pass slack/url)'"
     add_switch "meta: slack" "find_class slack || (nohup slack &)"
 
-    add_switch "meta: linkmarks" "elisp '(linkmark-select)'"
+    add_switch "meta: linkmarks" "elisp -t 15 '(linkmark-select)'"
 
     # dmenu_exec() {
     #     save_file="$HOME/.dmenu_exec_history"

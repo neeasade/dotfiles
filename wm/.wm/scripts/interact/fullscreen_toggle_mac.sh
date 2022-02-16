@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # enact window modes
 
 # todo future settings:
@@ -15,21 +15,23 @@
 
 # possible modes
 do_monocle_padded() {
+  # future: do the borderless thing
   # yaboi config window_border off
-  yaboi padding $(theme getval x_padding)
+  # yaboi padding $(theme -q x.padding)
+
+  yaboi padding $(theme -q bspwm.window-gap)
   yaboi toggle window zoom-fullscreen true
 }
 
 do_monocle_slim() {
-  mon_width=$(yaboi query display | jq .frame.w)
-  percent=$(theme getval b_monocle_window_percent)
+  percent=$(theme -q bspwm.monocle-window-percent)
   monocle_pad_width=$(bb "(int (Math/floor (/ (- $mon_width (* 0${percent} ${mon_width})) 2)))")
 
-
   # yaboi config window_border off
-  # yabai -m config active_window_border_color   0xff$(theme getval background)
+  # yabai -m config active_window_border_color   0xff$(theme -q background)
+  gap=$(theme -q bspwm.window-gap)
   yaboi toggle window zoom-fullscreen true
-  yabai -m space --padding abs:0:0:${monocle_pad_width}:${monocle_pad_width}
+  yabai -m space --padding abs:$gap:$gap:${monocle_pad_width}:${monocle_pad_width}
 }
 
 do_fullscreen() {
@@ -40,7 +42,7 @@ do_fullscreen() {
 
 do_tiled() {
   yaboi toggle window zoom-fullscreen false
-  gap=$(theme getval b_window_gap)
+  gap=$(theme -q bspwm.window-gap)
   yaboi padding $gap
   yaboi config window_gap $gap
   # yaboi config window_border on
@@ -55,8 +57,8 @@ yaboi toggle window floating false
 zoomed=$(yaboi query window zoom-fullscreen)
 
 # current_padding used this way is only valid when zoomed
-mon_width=$(yaboi query display | jq .frame.w)
-win_width=$(yaboi query window | jq .frame.w)
+mon_width=$(yaboi query display frame w)
+win_width=$(yaboi query window frame w)
 current_padding=$((mon_width - win_width))
 
 if $zoomed && test "$current_padding" -eq "0"; then
