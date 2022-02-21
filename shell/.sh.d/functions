@@ -1,5 +1,10 @@
 # -*- mode: sh -*-
 
+task() {
+  groot
+  og task "$@"
+}
+
 mark() {
   # mark a file to be used in a gui later
   if [ -z "$*" ]; then
