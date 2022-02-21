@@ -1,0 +1,26 @@
+#!/bin/sh
+# solid <color>
+# tile <filepath>
+# bg <filepath>
+
+. $HOME/.sh.d/environment
+
+wallfile="$HOME/wallpaper.png"
+
+bg() {
+    vdo cp "$1" "$wallfile"
+}
+
+tile() {
+    tilefile=$1
+    geom=$(yaboi query display | jq -r '(.frame.w|tostring) + "x" + (.frame.h|tostring)')
+    vdo convert -size "$geom" "tile:$tilefile" "$wallfile"
+}
+
+solid() {
+    color=$1
+    vdo convert -size 100x100 "xc:$color" "$wallfile"
+}
+
+"$@"
+vdo set_wallpaper_mac "$wallfile"

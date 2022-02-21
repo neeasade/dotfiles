@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+# from https://github.com/dylanaraps/pywal/blob/master/pywal/wallpaper.py
+
+import ctypes
+import logging
+import sys
+import os
+import re
+import shutil
+import subprocess
+import urllib.parse
+
+# from pywal
+def set_mac_wallpaper(img):
+    """Set the wallpaper on macOS."""
+    db_path = "/Users/nathan/Library/Application Support/Dock/desktoppicture.db"
+
+    # Put the image path in the database
+    sql = "insert into data values(\"%s\"); " % img
+    subprocess.call(["sqlite3", db_path, sql])
+
+    # Get the index of the new entry
+    sql = "select max(rowid) from data;"
+    new_entry = subprocess.check_output(["sqlite3", db_path, sql])
+    new_entry = new_entry.decode('utf8').strip('\n')
+
+    # Get all picture ids (monitor/space pairs)
+    get_pics_cmd = ['sqlite3', db_path, "select rowid from pictures;"]
+    pictures = subprocess.check_output(get_pics_cmd)
+    pictures = pictures.decode('utf8').split('\n')
+
+    # Clear all existing preferences
+    sql += "delete from preferences; "
+
+    # Write all pictures to the new image
+    for pic in pictures:
+        if pic:
+            sql += 'insert into preferences (key, data_id, picture_id) '
+            sql += 'values(1, %s, %s); ' % (new_entry, pic)
+
+    subprocess.call(["sqlite3", db_path, sql])
+
+    # Kill the dock to fix issues with cached wallpapers.
+    # macOS caches wallpapers and if a wallpaper is set that shares
+    # the filename with a cached wallpaper, the cached wallpaper is
+    # used instead.
+    subprocess.call(["killall", "Dock"])
+
+set_mac_wallpaper(sys.argv[1])
