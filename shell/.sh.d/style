@@ -151,10 +151,10 @@ prompt() {
     line_number=2
     if ${ESHELL:-false}; then
       _prompt="$(tell_emacs_shell_location)$_prompt"
-      line_number=$(elisp '(with-current-buffer (window-buffer (selected-window)) (line-number-at-pos))')
+      line_number=$(elisp '(with-current-buffer (window-buffer (selected-window)) (if (eq major-mode '\''shell-mode) (line-number-at-pos) 1))')
     fi
 
-    if [ "$line_number" -gt 1 ]; then
+    if [ "$line_number" -ne 1 ]; then
       printf "\n%b%s" "$_prompt "
     else
       printf "%b%s" "$_prompt "
