@@ -9,8 +9,9 @@ quiet=false
 read_stdin=false
 emacs_batch=false
 emacs_batch_window=false
+verbose=false
 
-while getopts qrsbwt:n: flag; do
+while getopts qrsbvwt:n: flag; do
     case $flag in
         q) quiet=true;;
         r) trim=true;;
@@ -18,6 +19,7 @@ while getopts qrsbwt:n: flag; do
         b) emacs_batch=true;;
         n) emacs_server_file=$OPTARG;;
 	t) elisp_timeout=$OPTARG;;
+	v) verbose=true;;
         w) emacs_batch_window=true;;
         *) usage;;
     esac
@@ -115,6 +117,9 @@ elif $emacs_batch; then
 else
     # echo $emacs_timeout $eclient --eval "$lisp"
     if [ -z "$emacs_server_file" ]; then
+	if $verbose; then
+	    echo $emacs_timeout $eclient --eval "$lisp"
+	fi
 	result=$($emacs_timeout $eclient --eval "$lisp")
     else
 	result=$($emacs_timeout $eclient --server-file=$emacs_server_file --eval "$lisp")
