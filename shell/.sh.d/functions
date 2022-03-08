@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 
 task() {
-  groot
+  cdu Taskfile.yml
   og task "$@"
 }
 
