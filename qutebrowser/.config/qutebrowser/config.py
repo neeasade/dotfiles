@@ -233,6 +233,9 @@ def makePadding(top, bottom, left, right):
 font_height = 19 # -- measured on a 'ph' qute title in pinta for test theme
 
 surround = round((theme['panel']['height'] - font_height) / 2)
+if surround < 1:
+    surround = 0
+
 c.tabs.padding = makePadding(surround, surround, 8, 8)
 c.tabs.indicator.padding = makePadding(0, 0, 0, 0)
 c.statusbar.padding = makePadding(4, 4, 0, 0)
