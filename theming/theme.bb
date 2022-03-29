@@ -39,7 +39,7 @@
        (get-in m)))
 
 (defn promote [string-path m]
-  (merge m (narrow m string-path)))
+  (merge m (narrow string-path m)))
 
 (defn str->int [str]
   (when (re-matches (re-pattern "\\d+") str)
@@ -112,6 +112,7 @@
                    :mpd-dir "{{env.HOME}}/.config/mpd_portable"}
                   {:music-dir "{{env.HOME}}/Music"
                    :mpd-dir "{{env.HOME}}/.config/mpd"}))
+         :panel {:height 10}
          ;; :qutebrowser {:statusbar
          ;;               :font {:size (fn [conf-tree]
          ;;                              )}
@@ -120,24 +121,38 @@
         env {:env (->> (System/getenv)
                        (map (fn [[k v]] {(keyword k) v}))
                        (into {}))}
-        home-theme {:THEME_NAME "test"
-                    :emacs.theme "tarp-mcfay"
-                    :BG_COMMAND "${HOME}/.fehbg"
-                    ;; :BG_COMMAND "hsetroot -solid '{{.color.focused.background}}'"
-                    :font.mono.family "Triplicate T4c"
-                    :font.variable.family "Equity Text B"
-                    :mkb.bar- "AAH"
-                    :st.prompt_char "%"
-                    :bspwm.window-gap 40
-                    :x.padding 5
-                    :bspwm.monocle-window-percent 0.55
-                    :font.mono.size 12
-                    :font.variable.size 13
-                    :picom.shadow.enabled false
-                    :bspwm.bspwmrc-extend "tag_borders &\n subscription_rules &"}]
+
+        home-theme (when (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
+                     (unflatten-map
+                      {:THEME_NAME "test"
+                       :emacs.theme "tarp-mcfay"
+                       :BG_COMMAND "${HOME}/.fehbg"
+                       ;; :BG_COMMAND "hsetroot -solid '{{.color.focused.background}}'"
+                       :font.mono.family "Triplicate T4c"
+                       :font.variable.family "Equity Text B"
+                       :mkb.bar- "AAH"
+                       :st.prompt_char "%"
+                       :bspwm.window-gap 40
+                       :x.padding 5
+                       :bspwm.monocle-window-percent 0.55
+                       :font.mono.size 12
+                       :font.variable.size 13
+                       :picom.shadow.enabled false
+                       :bspwm.bspwmrc-extend "tag_borders &\n subscription_rules &"}
+                      #"\."))
+
+        work-theme (when (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
+                     (System/getProperty "os.name")
+                     (unflatten-map
+                      {}
+                      #"\."))
+        ]
     (merge-with into
                 base-conf colors env
-                (unflatten-map home-theme #"\."))))
+                home-theme
+                ;; (unflatten-map home-theme #"\.")
+                )))
+
 
 (defn render-nodes-with-siblings [conf-map]
   (prewalk
@@ -227,15 +242,16 @@
 (println
  (reduce
   (fn [theme [k v]]
+    ;; (println ("arg: %s" v))
     (condp = k
       :help (reduced (usage))
       :narrow (narrow v theme)
       :query (narrow v theme)
       :promote (promote v theme)
       :shell (map-to-shell theme)
-      :keys (keys theme)
+      :keys (->> (flatten-map theme ".") keys (map name) (string/join "\n"))
       :render (template/render v theme)
-      :render-file (template/render-file v theme)
+      :render-file (template/render (slurp v) theme)
       theme))
   (process-theme (get-theme))
   (:options (cli/parse-opts *command-line-args* cli-options))))
