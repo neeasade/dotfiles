@@ -1,34 +1,40 @@
 #!/usr/bin/env bb
 ;; -*- mode: clojure -*-
 
-(require '[clojure.java.shell :as shell])
-(require '[clojure.string :as string])
-(require '[clojure.tools.cli :as cli])
-(require '[selmer.parser :as template])
-(require '[clojure.walk :refer [postwalk prewalk walk]])
+(require '[clojure.java.shell :as shell]
+         '[clojure.string :as string]
+         '[clojure.tools.cli :as cli]
+         '[selmer.parser :as template]
+         '[clojure.walk :refer [postwalk prewalk]])
 
 (defn flatten-map
-  ([form separator]
-   (into {} (flatten-map form separator nil)))
-  ([form separator pre]
+  "{:a {:b 1}} -> {:a.b 1}"
+  ([m] (flatten-map m "."))
+  ([m separator]
+   (into {} (flatten-map m separator nil)))
+  ([m separator pre]
    (mapcat (fn [[k v]]
              (let [prefix (if pre (str pre separator (name k)) (name k))]
                (if (map? v)
                  (flatten-map v separator prefix)
                  [[(keyword prefix) v]])))
-           form)))
+           m)))
 
-(defn unflatten-map [m separator-re]
-  (reduce
-   (fn [m [k v]]
-     (let [keyword-path (map keyword (string/split (name k) separator-re))]
-       (assoc-in m keyword-path v)))
-   {} m))
+(defn unflatten-map
+  "{:a.b 1} -> {:a {:b 1}}"
+  ([m] (unflatten-map m #"\."))
+  ([m separator-re]
+   (reduce
+    (fn [m [k v]]
+      (let [keyword-path (map keyword (string/split (name k) separator-re))]
+        (assoc-in m keyword-path v)))
+    {} m)))
 
 (defn map-to-shell [m]
   (->> (flatten-map m "_")
        (map (fn [[k v]]
               (format "%s='%s'"
+                      ;; todo: handle strings with "'"s in them
                       (-> k name (string/replace "-" "_"))
                       v)))
        (string/join "\n")))
@@ -54,13 +60,17 @@
 (selmer.util/set-missing-value-formatter! missing-value-fn)
 ;; (selmer.util/set-missing-value-formatter! retain-value-fn)
 
-;; theme map dsl:
-;; <name>- : don't include in output
+;; theme map dsl (resolved in this order):
 ;; :& [[:path :to :thing]] - paths to merge into current map
 ;; :> map (fn [[k v]]) to all nodes
+;; <name>- : don't include in output
 (defn get-theme []
-  (let [colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
+  (let [home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
+        work? true
+
+        colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
                 :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
+
         base-conf
         {:font {:> (fn [[k v]]
                      {k (merge v
@@ -90,7 +100,9 @@
          :st {:font "{{font.mono.spec}}"
               :cursorshape 2
               :cursorthickness 2
-              :prompt_char "$"}
+              :borderpx 0}
+         :shell {:prompt "$"
+                 :prompt_err "!"}
          :x {:padding 4}
          :picom {:frame {:opacity 1.0}
                  :shadow {:opacity 0.4
@@ -104,14 +116,15 @@
                  :fade {:enabled false
                         :in-step 0.1
                         :out-step 0.1}}
-         :mpd (fn [_]
-                (if (string/includes?
-                     (:out (shell/sh "mount"))
-                     (format "%s/usb" (System/getenv "HOME")))
-                  {:music-dir "{{env.HOME}}/usb/Music"
-                   :mpd-dir "{{env.HOME}}/.config/mpd_portable"}
-                  {:music-dir "{{env.HOME}}/Music"
-                   :mpd-dir "{{env.HOME}}/.config/mpd"}))
+         :mpd (when home?
+                (fn [_]
+                  (if (string/includes?
+                       (:out (shell/sh "mount"))
+                       (format "%s/usb" (System/getenv "HOME")))
+                    {:music-dir "{{env.HOME}}/usb/Music"
+                     :mpd-dir "{{env.HOME}}/.config/mpd_portable"}
+                    {:music-dir "{{env.HOME}}/Music"
+                     :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 10}
          ;; :qutebrowser {:statusbar
          ;;               :font {:size (fn [conf-tree]
@@ -122,7 +135,7 @@
                        (map (fn [[k v]] {(keyword k) v}))
                        (into {}))}
 
-        home-theme (when (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
+        home-theme (when home?
                      (unflatten-map
                       {:THEME_NAME "test"
                        :emacs.theme "tarp-mcfay"
@@ -131,26 +144,36 @@
                        :font.mono.family "Triplicate T4c"
                        :font.variable.family "Equity Text B"
                        :mkb.bar- "AAH"
-                       :st.prompt_char "%"
+                       :shell.prompt "%"
                        :bspwm.window-gap 40
                        :x.padding 5
                        :bspwm.monocle-window-percent 0.55
                        :font.mono.size 12
                        :font.variable.size 13
                        :picom.shadow.enabled false
-                       :bspwm.bspwmrc-extend "tag_borders &\n subscription_rules &"}
-                      #"\."))
+                       :bspwm.bspwmrc-extend "tag_borders &\n subscription_rules &"}))
 
-        work-theme (when (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
-                     (System/getProperty "os.name")
+        work-theme (when work?
                      (unflatten-map
-                      {}
-                      #"\."))
+                      {:THEME_NAME "test"
+                       :emacs.theme "tarp-mcfay"
+                       :BG_COMMAND "wallmac tile '{{env.HOME}}/Downloads/mpv-shot0095.jpg'"
+                       :font.mono.family "Go Mono"
+                       :font.variable.family "Charter"
+                       :mkb.bar- "🌳🌻🌱"
+                       :shell.prompt "🌳"
+                       :shell.prompt_err "😞"
+                       :bspwm.window-gap 24
+                       :x.padding 5
+                       :font.mono.size 18
+                       :font.variable.size 18
+                       :bspwm.monocle-window-percent 0.55}))
         ]
     (merge-with into
-                base-conf colors env
-                home-theme
-                ;; (unflatten-map home-theme #"\.")
+                base-conf
+                colors
+                env
+                home-theme work-theme
                 )))
 
 
@@ -249,7 +272,7 @@
       :query (narrow v theme)
       :promote (promote v theme)
       :shell (map-to-shell theme)
-      :keys (->> (flatten-map theme ".") keys (map name) (string/join "\n"))
+      :keys (->> theme flatten-map keys (map name) (string/join "\n"))
       :render (template/render v theme)
       :render-file (template/render (slurp v) theme)
       theme))

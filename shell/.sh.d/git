@@ -4,6 +4,10 @@ git_current_branch() {
     git rev-parse --abbrev-ref HEAD
 }
 
+gpt() { # git push current branch to <branch>
+  vdo git push origin $(git_current_branch):$1
+}
+
 alias g='git'
 alias ga='git add'
 alias gaa='git add --all'

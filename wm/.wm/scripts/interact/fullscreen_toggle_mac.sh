@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # enact window modes
 
+# this script is soooo sloooowwwww here, yabai query time is killing us
+
 # todo future settings:
 # getopt
 # get the current state
@@ -9,7 +11,8 @@
 # rotate state:
 #   optionally set trim mode rotation
 
-# macos native fullscreen cancels out skhd bindings and generally just acts.. weird -- prefer zoom-fullscreen everywhere.
+# macos native fullscreen cancels out skhd bindings and generally just acts.. weird
+# prefer zoom-fullscreen everywhere.
 
 . $HOME/.sh.d/environment
 
@@ -31,6 +34,7 @@ do_monocle_slim() {
   # yabai -m config active_window_border_color   0xff$(theme -q background)
   gap=$(theme -q bspwm.window-gap)
   yaboi toggle window zoom-fullscreen true
+  echo yabai -m space --padding abs:$gap:$gap:${monocle_pad_width}:${monocle_pad_width}
   yabai -m space --padding abs:$gap:$gap:${monocle_pad_width}:${monocle_pad_width}
 }
 
@@ -58,15 +62,18 @@ zoomed=$(yaboi query window zoom-fullscreen)
 
 # current_padding used this way is only valid when zoomed
 mon_width=$(yaboi query display frame w)
-win_width=$(yaboi query window frame w)
-current_padding=$((mon_width - win_width))
 
-if $zoomed && test "$current_padding" -eq "0"; then
-  state=fullscreen
-elif $zoomed && test "$current_padding" -gt 100; then
-  state=monocle_slim
-elif $zoomed && test "$current_padding" -gt 0; then
-  state=monocle_padded
+if $zoomed; then
+  win_width=$(yaboi query window frame w)
+  current_padding=$((mon_width - win_width))
+
+  if test "$current_padding" -eq "0"; then
+    state=fullscreen
+  elif test "$current_padding" -gt 100; then
+    state=monocle_slim
+  elif test "$current_padding" -gt 0; then
+    state=monocle_padded
+  fi
 else
   state=tiled
 fi
