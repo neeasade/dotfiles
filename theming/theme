@@ -138,8 +138,12 @@
     (read-string str)))
 
 (defn missing-value-fn [tag context-map]
-  (prn context-map)
   (throw (Exception. (str "<Missing value: " (or (:tag-value tag) (:tag-name tag)) ">"))))
+
+(defn complain-value-fn [tag context-map]
+  (binding [*out* *err*]
+    (println (format "! no key: {{%s}}" (:tag-value tag))))
+  (format "{{%s}}" (:tag-value tag)))
 
 (defn retain-value-fn [tag context-map]
   (format "{{%s}}" (:tag-value tag)))
@@ -349,6 +353,10 @@
        (string/join "\n")
        (println)))
 
+(defn render [template theme]
+  (selmer.util/set-missing-value-formatter! complain-value-fn)
+  (template/render template theme))
+
 (println
  (reduce
   (fn [theme [k v]]
@@ -360,8 +368,8 @@
       :promote (promote v theme)
       :shell (map-to-shell theme)
       :keys (->> theme flatten-map keys (map name) (string/join "\n"))
-      :render (template/render v theme)
-      :render-file (template/render (slurp v) theme)
+      :render (render v theme)
+      :render-file (render (slurp v) theme)
       theme))
   (process-theme (get-theme))
   (:options (cli/parse-opts *command-line-args* cli-options))))
