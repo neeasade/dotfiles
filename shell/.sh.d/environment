@@ -93,6 +93,7 @@ if ${NEEASADE_ENV:-true}; then
   done
 
   pathmunge '/run/current-system/sw/bin'
+  pathmunge "$HOME/.dotfiles/theming"
 
   if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     if [ -z "$NIX_PROFILES" ]; then
