@@ -2,36 +2,36 @@
 # todo: steal from noctuid to get a colemak pdf experience
 
 # note font format
-set font                        "{{.font.variable.spec-space}}"
-set default-bg                  "{{.color.normal.background}}" #00
-set default-fg                  "{{.color.normal.foreground}}" #01
+set font                        "{{font.variable.spec-space}}"
+set default-bg                  "{{color.normal.background}}" #00
+set default-fg                  "{{color.normal.foreground}}" #01
 
-set statusbar-fg                "{{.color.normal.foreground}}" #04
-set statusbar-bg                "{{.color.normal.background}}"  #01
+set statusbar-fg                "{{color.normal.foreground}}" #04
+set statusbar-bg                "{{color.normal.background}}"  #01
 
 set inputbar-bg                 "#c5c5c5" #00 currently not used
 set inputbar-fg                 "#586e75" #02
 
-set notification-error-bg       "{{.color.strong.background}}" #08
-set notification-error-fg       "{{.color.strong.foreground}}" #00
+set notification-error-bg       "{{color.strong.background}}" #08
+set notification-error-fg       "{{color.strong.foreground}}" #00
 
-set notification-warning-bg     "{{.color.strong.background}}" #08
-set notification-warning-fg     "{{.color.strong.foreground}}" #00
+set notification-warning-bg     "{{color.strong.background}}" #08
+set notification-warning-fg     "{{color.strong.foreground}}" #00
 
-set notification-bg             "{{.color.weak.background}}" #0B
-set notification-fg             "{{.color.weak.foreground}}" #00
+set notification-bg             "{{color.weak.background}}" #0B
+set notification-fg             "{{color.weak.foreground}}" #00
 
 set highlight-color             "#abaeaf" #0A
 set highlight-active-color      "#586e75" #0D
 
-set completion-highlight-fg     "{{.color.focused.foreground}}" #02
-set completion-highlight-bg     "{{.color.focused.background}}" #0C
+set completion-highlight-fg     "{{color.focused.foreground}}" #02
+set completion-highlight-bg     "{{color.focused.background}}" #0C
 
-set completion-bg               "{{.color.weak.background}}" #02
-set completion-fg               "{{.color.weak.foreground}}" #0C
+set completion-bg               "{{color.weak.background}}" #02
+set completion-fg               "{{color.weak.foreground}}" #0C
 
-set recolor-lightcolor          "{{.color.normal.background}}" #00
-set recolor-darkcolor           "{{.color.normal.foreground}}" #06
+set recolor-lightcolor          "{{color.normal.background}}" #00
+set recolor-darkcolor           "{{color.normal.foreground}}" #06
 set recolor                     "true"
 
 # setting recolor-keep true will keep any color your pdf has.

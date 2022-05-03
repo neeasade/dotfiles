@@ -5,7 +5,6 @@
 # - define music playlists by search terms
 # - add a neat display func
 # - some helpers to manage your local music
-
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 current_playlist="${musicdir}/playlist/current"
@@ -128,13 +127,6 @@ del() { # delete the currently playing song
   rm "$musicdir/$location"
   mpc next
   mpc update
-}
-
-shuffle() { # reshuffle current selection from all
-  mpc clear
-  mpc listall | sort -R | head -n 1000 | mpc add
-  echo "shuffle $*" > "$current_playlist"
-  mpc play
 }
 
 append() { # append some search term to the current playlist

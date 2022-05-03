@@ -1,0 +1,16 @@
+
+old config for reference:
+
+! wiping out control+e
+rofi.kb-move-end:
+rofi.kb-row-up: Up,Control+e,ISO_Left_Tab
+rofi.kb-row-down: Down,Control+n
+rofi.font: {{font.mono.spec-space}}
+
+! State:           'bg',     'fg',     'bgalt',  'hlbg',   'hlfg'
+rofi.color-normal: {{background}}, {{foreground}}, {{background}}, {{color.focused.background}}, {{color.focused.foreground}}
+! rofi.color-urgent:
+! rofi.color-active:
+
+! 'background', 'border', 'separator'
+rofi.color-window: {{background}}, {{foreground}}, {{background}}

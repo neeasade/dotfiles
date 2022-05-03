@@ -3,21 +3,21 @@
 ## initially based on dkeg's 2015 "candy" config.
 
 ## Sometimes a little transparency can soften the edges
-shadow-opacity = {{.shadow.opacity}};
-shadow-red = {{.shadow.red}};
-shadow-green = {{.shadow.green}};
-shadow-blue = {{.shadow.blue}};
+shadow-opacity = {{shadow.opacity}};
+shadow-red = {{shadow.red}};
+shadow-green = {{shadow.green}};
+shadow-blue = {{shadow.blue}};
 
 ## transparent borders are pretty okay
-frame-opacity = {{.frame.opacity}};
+frame-opacity = {{frame.opacity}};
 
 opacity-rule = [ "40:class_g = 'Bspwm' && class_i = 'presel_feedback'" ];
 
 ## Keep the shadows tight
-shadow = {{.shadow.enabled}};
-shadow-radius = {{.shadow.radius}};
-shadow-offset-x = {{.shadow.offset.x}};
-shadow-offset-y = {{.shadow.offset.y}};
+shadow = {{shadow.enabled}};
+shadow-radius = {{shadow.radius}};
+shadow-offset-x = {{shadow.offset-x}};
+shadow-offset-y = {{shadow.offset-y}};
 no-dock-shadow = false;
 no-dnd-shadow = true;
 shadow-exclude = [
@@ -25,9 +25,9 @@ shadow-exclude = [
 ];
 
 ## Soften the window and workspace changes
-fading = {{.fade.enabled}};
-fade-in-step = {{.fade.in-step}};
-fade-out-step = {{.fade.out-step}};
+fading = {{fade.enabled}};
+fade-in-step = {{fade.in-step}};
+fade-out-step = {{fade.out-step}};
 fade-exclude = [ ];
 
 ## Extras

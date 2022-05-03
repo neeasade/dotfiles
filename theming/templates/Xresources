@@ -1,32 +1,8 @@
-! wiping out control+e
-rofi.kb-move-end:
-rofi.kb-row-up: Up,Control+e,ISO_Left_Tab
-rofi.kb-row-down: Down,Control+n
-rofi.font: {{.font.mono.spec-space}}
+*.background: {{background}}
+*.foreground: {{foreground}}
 
-! State:           'bg',     'fg',     'bgalt',  'hlbg',   'hlfg'
-rofi.color-normal: {{.background}}, {{.foreground}}, {{.background}}, {{.color.focused.background}}, {{.color.focused.foreground}}
-! rofi.color-urgent:
-! rofi.color-active:
+{% for color in colors %}
+*.color{{forloop.counter0}}: {{color}}{% endfor %}
 
-! 'background', 'border', 'separator'
-rofi.color-window: {{.background}}, {{.foreground}}, {{.background}}
-
-! these names match theme, to be used in xrq or theme fallback contexts
-font.mono.spec: {{.font.mono.spec}}
-font.variable.spec: {{.font.variable.spec}}
-panel.height: {{.panel.height}}
-
-st.font: {{.st.font}}
-st.borderpx: 0
-st.cursorshape: {{.st.cursorshape}}
-st.cursorthickness: {{.st.cursorthickness}}
-st.depth: 24
-
-! colors
-*.background: {{.background}}
-*.foreground: {{.foreground}}
-
-{{- range $i, $color := .colors}}
-*.color{{$i}}: {{$color}}
-{{- end}}
+{% for k,v in st %}
+st.{{k|name}}: {{v}}{% endfor %}

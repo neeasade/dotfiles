@@ -1,5 +1,5 @@
 [global]
-font = {{.font.variable.spec-space}}
+font = {{font.variable.spec-space}}
 markup = full
 format = "%s%p\n%b"
 alignment = center
@@ -7,32 +7,32 @@ show_age_threshold = 60
 
 origin = top-center
 notification_limit = 6
-width = {{.env.d_width}}
-offset {{.env.d_offset}}
+width = {{env.d_width}}
+offset {{env.d_offset}}
 
 idle_threshold = 60
 follow = mouse
 history_length = 20
-separator_height = {{.bspwm.border.width}}
-padding = {{.x.padding}}
-horizontal_padding = {{.x.padding}}
+separator_height = {{bspwm.border.width}}
+padding = {{x.padding}}
+horizontal_padding = {{x.padding}}
 separator_color = frame
-frame_width = {{.bspwm.border.width}}
-frame_color = "{{.bspwm.border.focused}}"
+frame_width = {{bspwm.border.width}}
+frame_color = "{{bspwm.border.focused}}"
 
 [urgency_low]
-background = "{{.color.normal.background}}"
-foreground = "{{.color.normal.faded}}"
+background = "{{color.normal.background}}"
+foreground = "{{color.normal.faded}}"
 timeout = 3
 
 [urgency_normal]
-background = "{{.color.normal.background}}"
-foreground = "{{.color.normal.foreground}}"
+background = "{{color.normal.background}}"
+foreground = "{{color.normal.foreground}}"
 timeout = 0
 
 [urgency_critical]
-background = "{{.color.focused.background}}"
-foreground = "{{.color.focused.foreground}}"
+background = "{{color.focused.background}}"
+foreground = "{{color.focused.foreground}}"
 timeout = 0
 
 # delay notifications when something is fullscreen

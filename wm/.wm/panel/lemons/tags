@@ -3,7 +3,8 @@
 # ;; OK: underline when inactive but with wids
 # ;; else just background color if active, no background if not turned on
 
-p_bg_inactive=$(theme getval p_bg_inactive)
+p_bg_inactive=$(theme -q color.weak.background)
+# p_bg_inactive=#000000
 
 render() {
     current=$(bspc query -N -n)

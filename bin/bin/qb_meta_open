@@ -2,20 +2,23 @@
 # switch to tab with $url or open $url
 # if no url found, goto or open qutebrowser window
 
+
 url=$1
+
+if test -f "$url"; then
+    url=$(realpath "$url")
+fi
 
 . "${HOME}/.sh.d/environment"
 
 vanilla() {
     if [ -z "$url" ]; then
 	if ! pgrep qutebrowser; then
-	    # wayland, force software render
 	    if [ -z "$WAYLAND_DISPLAY" ]; then
-		qutebrowser
-	    else
-		# this is really only needed with nouveu
-		LIBGL_ALWAYS_SOFTWARE=1 qutebrowser
+		# force software render
+		export LIBGL_ALWAYS_SOFTWARE=1
 	    fi
+	    qutebrowser
 	    exit 0
 	fi
     else
@@ -23,7 +26,6 @@ vanilla() {
 	# qutebrowser "$url"
 	qb_command ":open -t $url"
     fi
-
 
     find_class qutebrowser
     exit 0

@@ -168,12 +168,10 @@
 
 (defn action-focus "<tag> - focus the last wid in the tag"
   [tag]
-
   (let [full-tag (->> (:tags state)
                       (filter #(= (:name %) (tag-ident-to-name tag)))
                       first)
-        last-wid (-> full-tag :wids last)
-        ]
+        last-wid (-> full-tag :wids last)]
     (when (not (:active full-tag))
       (action-toggle tag))
 

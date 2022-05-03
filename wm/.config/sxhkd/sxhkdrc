@@ -85,8 +85,11 @@ super + {_,shift,alt} + space
 super + grave
     player.sh toggle
 
+# note: ensure using bluetooth if available
+# workflow: turn on headphones, bt connect, walk around, toggle
+# we never use these buttons from our keyboard anyway
 XF86Audio{Prev,Next,Play,Pause}
-    player.sh {prev,next,toggle,toggle}
+    check_headphones; player.sh {prev,next,toggle,toggle}
 
 XF86Audio{LowerVolume,RaiseVolume}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase})"
@@ -100,7 +103,7 @@ XF86AudioMute
 
 # pretend +
 super + {minus,equal}
-    notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 5)"
+    notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 4)"
 
 super + shift + {minus,equal}
     xbright {down,up}; notify-send --urgency=low "Brightness: $(cat /tmp/xbrightness)"

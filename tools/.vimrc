@@ -424,7 +424,6 @@ noremap N J
 noremap j e
 noremap J E
 
-
 " tell vim to keep a backup file
 set backup
 silent !mkdir ~/.vim_backup > /dev/null 2>&1

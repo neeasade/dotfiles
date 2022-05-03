@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 # switch between 'things' with a dmenu-like or pie-menu style interface
 
-# idea: use keybinds to narrow the current selection
-
 # auto export
 set -a
 
@@ -152,6 +150,7 @@ add_metas() {
     add_switch "meta: twitter" "find_url 'https://twitter.com/'"
     add_switch "meta: nixers" "find_url 'https://nixers.net/'"
     add_switch "meta: texting" "find_url 'https://messages.google.com/web/'"
+    add_switch "meta: dismiss" "dismiss.sh"
 
     # todo: add discord
     # todo: add telegram

@@ -1,9 +1,5 @@
 [panel]
 
-# saving leftover ideas
-# org-task.mouse.left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
-# org-task.mouse.right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
-
 # reload values:
 network.reload = 20
 mail.reload = 30
@@ -19,15 +15,6 @@ github.reload = 120
 
 
 # oneoff mouse:
-
-# default click actions for panel sections
-themeSwitch.mouse.left="dzen.sh theme"
-
-panel.dropdown.mouse.left="dzen.menu"
-dropdown.mouse.left="dzen.sh menu"
-github.mouse.left="dzen.sh github"
-circe.dms.mouse.left="dzen.sh circe"
-clock.mouse.left="dzen.sh cal"
 
 format = "dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
 height = 16
@@ -54,23 +41,11 @@ empty-label='[ ]'
 tiling-label=''
 monocle-label='M'
 
-[panel.volume.mouse]
-scroll-down="ponymix decrease 5"
-scroll-up="ponymix increase 5"
+# saving leftover ideas
+# org-task.mouse.left="elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
+# org-task.mouse.right="elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
 
-[panel.mpd.mouse]
-left = 'player.sh toggle'
-middle = 'mpc clear'
-right = 'player.sh next'
-scrolldown = 'mpc seek -00:00:02'
-scrollup = 'mpc seek +00:00:02'
-
-[panel.dynamicmpd.mouse]
-left = '{{.panel.mpd.mouse.left}}'
-middle = '{{.panel.mpd.mouse.middle}}'
-right = '{{.panel.mpd.mouse.right}}'
-scrolldown = '{{.panel.mpd.mouse.scrolldown}}'
-scrollup = '{{.panel.mpd.mouse.scrollup}}'
+# default click actions for panel sections
 
 panel.format = "dropdown:desktop:github:title|org_task|dynamicmpd:volume:weather:clock"
 

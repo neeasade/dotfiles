@@ -1,9 +1,9 @@
 # Required files
-db_file            "{{.mpd_dir}}/database"
+db_file            "{{mpd_dir}}/database"
 
 # Optional
-music_directory    "{{.music_dir}}"
-playlist_directory "{{.mpd_dir}}/playlists"
-pid_file           "{{.mpd_dir}}/pid"
-state_file         "{{.mpd_dir}}/state"
-sticker_file       "{{.mpd_dir}}/sticker.sql"
+music_directory    "{{music_dir}}"
+playlist_directory "{{mpd_dir}}/playlists"
+pid_file           "{{mpd_dir}}/pid"
+state_file         "{{mpd_dir}}/state"
+sticker_file       "{{mpd_dir}}/sticker.sql"

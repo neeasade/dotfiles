@@ -6,9 +6,15 @@ theme = "Raleigh"
 [-font.meta]
 spec = '{{.family}}-{{.size}}'
 spec-space = '{{.family}} {{.size}}'
+
 # height='''
 # inkscape --without-gui --query-id=id1 -H <(echo '<svg><text id="id1" font-size="{{.size}}px" font-family="{{.family}}">python</text></svg>') 2>/dev/null
 # '''
+
+[font.icon]
+family = "Font Awesome 5 Free"
+size = 10
+- = ["-font.meta"]
 
 [font.mono]
 family="Droid Sans Mono"
@@ -162,6 +168,7 @@ padding= 4
 [picom]
 
 frame.opacity = 1.0
+
 shadow.opacity = 0.4
 shadow.enabled = false
 shadow.radius = 1
@@ -175,53 +182,18 @@ fade.enabled = false
 fade.in-step = 0.1
 fade.out-step = 0.1
 
-[tmux]
-
-extend= """
-# panes
-set -g pane-border-fg black
-set -g pane-active-border-fg white
-
-# message colors
-set -g message-fg white
-set -g message-bg default
-set -g message-attr bright
-
-set-option -g -q mouse on
-"""
-
 [mpd]
 # portable_enabled = '{{sh "mount | grep "${HOME}/usb""}}'
-music-dir = "{{.env.HOME}}/Music"
-mpd-dir = "{{.env.HOME}}/.config/mpd"
-
-[2bspwm]
-
-# 2bspwm script overrides
-# border_width_in_normal=$(( border_width_current/2 ))
-# border_width_out_normal=$(( (border_width_current/2) + (border_width_current%2) ))
-# border_width_in_focused=$border_width_in_normal
-# border_width_out_focused=$border_width_out_normal
-
-# border_color_out_normal=$b_normal_border_color
-# border_color_out_focused=$b_focused_border_color
-
-# border_color_in_normal=$color2
-# border_color_in_focused=$color3
-
-# if type greaten >/dev/null; then
-#     border_color_in_normal=$(elisp_timeout=1 greaten 5 $border_color_out_normal)
-#     border_color_in_focused=$(elisp_timeout=1 greaten 5 $border_color_out_focused)
-# fi
+# music-dir = "{{.env.HOME}}/Music"
+# mpd-dir = "{{.env.HOME}}/.config/mpd"
 
 [qutebrowser]
 
-statusbar.font.size = "{{.qutebrowser.tab.font.size | sub 1}}"
-
+statusbar.font.size = "{{sub .qutebrowser.tab.font.size 1}}"
 
 tab.bold_state="grep -q Bold && echo True || echo False"
 
 # todo: reconsider these values
-# tab.bold = "{{.font.panel.spec:bold_state}}"
+tab.bold = "{{.font.panel.spec | shpipe .bold_state | trim}}"
 tab.font.family = '{{.font.panel.family}}'
 tab.font.size = '{{.font.panel.size}}'

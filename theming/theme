@@ -7,6 +7,14 @@
          '[selmer.parser :as template]
          '[clojure.walk :refer [postwalk prewalk]])
 
+(defn index-of [coll to-find]
+  (first
+   (keep-indexed
+    (fn [i v]
+      (when (= v to-find)
+        i))
+    coll)))
+
 (defn flatten-map
   "{:a {:b 1}} -> {:a.b 1}"
   ([m] (flatten-map m "."))
@@ -30,11 +38,89 @@
         (assoc-in m keyword-path v)))
     {} m)))
 
-(defn map-to-shell [m]
+(defn panel-format-to-lemons [format]
+  ;; "a:b|c:d|e" -> [{:keys [name step end end-inner]}]
+  (let [parts (string/split format #"\|")
+        all (-> format (string/split #"\||:"))
+        transform (fn [part-fn align]
+                    (->> (-> parts part-fn (string/split #":"))
+                         (map (fn [name] {:name name
+                                          :end false
+                                          :end-inner false
+                                          :align align
+                                          :step (index-of all name)
+                                          }))
+                         (into [])))
+        lemons-left (transform first 'left)
+        lemons-center (transform second 'center)
+        lemons-right (transform #(nth % 2) 'right)]
+    (concat
+     (-> lemons-left
+         (update-in [0] assoc :end true)
+         (update-in [(dec (count lemons-left))] assoc :end-inner true))
+     (-> lemons-center
+         (update-in [0] assoc :end-inner true)
+         (update-in [(dec (count lemons-center))] assoc :end-inner true))
+     (-> lemons-right (update-in [0] assoc :end-inner true)
+         (update-in [(dec (count lemons-right))] assoc :end true)))))
+
+(defn panel-color-lemons
+  "give lemons: bg fg line"
+  [lemons]
+  (let [vanilla (fn [lemon]
+                  (-> lemon
+                      (assoc :bg "#ffffff")
+                      (assoc :fg "#000000")
+                      (assoc :line "#000000")))]
+    (map vanilla lemons)))
+
+(defn panel-lemons-to-i3blocks [lemons]
+  (let [lemon-info {:interval {
+                               :network 20
+                               :mail 30
+                               :desktop "bspc subscribe"
+                               :tags "persist"
+                               :title "persist"
+                               :weather 600
+                               :updates 600
+                               :github 120}
+                    :mouse {
+                            ;; lemon name
+                            :mpd {:left "player.sh toggle"
+                                  :right "player.sh next"
+                                  :scrolldown "mpc seek -00:00:02"
+                                  :scrollup "mpc seek +00:00:02"}
+                            :volume {:scrollup "ponymix decrease 5"
+                                     :scrolldown "ponymix increase 5"}
+                            ;; :org-task {:left "elisp '(org-clock-goto)'; bspc node -f \$(xdotool search --onlyvisible --class Emacs)"
+                            ;;            :right "elisp org-clock-current-task || bspc node -f \$(xdotool search --onlyvisible --class Emacs); elisp '(org-pomodoro)'"
+                            ;;            }
+                            }
+                    }]
+    (->> lemons
+         (map (fn [lemon]
+                (merge
+                 (select-keys lemon [:bg :fg :line :step :align])
+                 {:lemon (:name lemon)
+                  :lemon_end (:end lemon)
+                  :lemon_end_inner (:end-inner lemon)
+                  :interval (or ((-> lemon :name keyword) (:interval lemon-info))
+                                5)}
+                 (flatten-map
+                  {:mouse ((-> lemon :name keyword) (:mouse lemon-info))}
+                  "_"))))
+         (map (fn [lemon]
+                (->> lemon
+                     (remove (comp nil? val))
+                     (into {})))))))
+
+(defn map-to-shell
+  [m]
   (->> (flatten-map m "_")
        (map (fn [[k v]]
               (format "%s='%s'"
                       ;; todo: handle strings with "'"s in them
+                      ;; sed "s#'#\'\\\'\'#g"
                       (-> k name (string/replace "-" "_"))
                       v)))
        (string/join "\n")))
@@ -52,6 +138,7 @@
     (read-string str)))
 
 (defn missing-value-fn [tag context-map]
+  (prn context-map)
   (throw (Exception. (str "<Missing value: " (or (:tag-value tag) (:tag-name tag)) ">"))))
 
 (defn retain-value-fn [tag context-map]
@@ -61,12 +148,11 @@
 ;; (selmer.util/set-missing-value-formatter! retain-value-fn)
 
 ;; theme map dsl (resolved in this order):
-;; :& [[:path :to :thing]] - paths to merge into current map
 ;; :> map (fn [[k v]]) to all nodes
 ;; <name>- : don't include in output
 (defn get-theme []
   (let [home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
-        work? true
+        work? false
 
         colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
                 :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
@@ -79,7 +165,9 @@
                 :variable {:family "Droid Sans" :size 12}
                 :mono {:family "Droid Sans Mono" :size 12}
                 :icon {:family "Font Awesome 5 Free" :size 10}
-                :panel {:family "{{font.variable.family}}" :size "{{font.variable.size}}"}}
+                :panel {:family "{{font.variable.family}}" :size "{{font.variable.size}}"}
+
+                }
          :bspwm {:window-gap 10
                  :split-ratio 0.5
                  :desktop-names "00 01 10 11"
@@ -90,6 +178,7 @@
                           :active "{{colors.8}}"
                           :focused "{{colors.7}}"
                           :presel "{{colors.8}}"}}
+
          :mkb {:bar- "-+-"
                :complete (fn [tree] (-> tree (get-in [:mkb :bar-]) (nth 2) (str)))
                :sep (fn [tree] (-> tree (get-in [:mkb :bar-]) (nth 1) (str)))
@@ -97,10 +186,13 @@
                :start ""
                :end  ""}
          :gtk {:theme "Raleigh"}
+         ;; see: https://github.com/gnotclub/xst/blob/master/.Xresources
          :st {:font "{{font.mono.spec}}"
               :cursorshape 2
               :cursorthickness 2
-              :borderpx 0}
+              :borderpx 0
+              :depth 24}
+
          :shell {:prompt "$"
                  :prompt_err "!"}
          :x {:padding 4}
@@ -125,7 +217,13 @@
                      :mpd-dir "{{env.HOME}}/.config/mpd_portable"}
                     {:music-dir "{{env.HOME}}/Music"
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
-         :panel {:height 10}
+         :panel {:height 10
+                 :lemons (fn [_]
+                           (->> "dropdown:desktop:github:title|org_task|mpd:volume:weather:clock"
+                                (panel-format-to-lemons)
+                                (panel-color-lemons )
+                                (panel-lemons-to-i3blocks)))
+                 }
          ;; :qutebrowser {:statusbar
          ;;               :font {:size (fn [conf-tree]
          ;;                              )}
@@ -160,7 +258,7 @@
                        :BG_COMMAND "wallmac tile '{{env.HOME}}/Downloads/mpv-shot0095.jpg'"
                        :font.mono.family "Go Mono"
                        :font.variable.family "Charter"
-                       :mkb.bar- "🌳🌻🌱"
+                       :mkb.bar- ["🌳" "🌻" "🌱"]
                        :shell.prompt "🌳"
                        :shell.prompt_err "😞"
                        :bspwm.window-gap 24
@@ -170,12 +268,10 @@
                        :bspwm.monocle-window-percent 0.55}))
         ]
     (merge-with into
-                base-conf
-                colors
+                base-conf colors
                 env
                 home-theme work-theme
                 )))
-
 
 (defn render-nodes-with-siblings [conf-map]
   (prewalk
@@ -189,7 +285,7 @@
                          (let [
                                ;; let top level map win conflicts
                                render-conf (merge conf-map (apply dissoc n (keys conf-map)))
-                               render-result (-> v (template/render render-conf))]
+                               render-result (template/render v render-conf)]
                            ;; this is what allows us to make multiple passes:
                            (if (string/includes? render-result "{{")
                              v
@@ -213,16 +309,6 @@
                  (into {}))
             n)))
 
-       ;; merge bois :&
-       (postwalk
-        (fn [n]
-          (if (and (map? n)
-                   (:& n))
-            (let [merge-maps (map (fn [path] (get-in theme-tree path))
-                                  (:& n))]
-              (dissoc (apply merge n merge-maps) :&))
-            n)))
-
        ;; map bois :>
        (postwalk
         (fn [n]
@@ -235,7 +321,7 @@
        (render-nodes-with-siblings)
        (render-nodes-with-siblings)
 
-       ;; remove bois-
+       ;; remove :bois-
        (postwalk
         (fn [n]
           (if (map? n)
@@ -251,6 +337,7 @@
    ["-R" "--render STRING" "render a string as a template"]
    ["-r" "--render-file FILE" "render a file as a template"
     ;; todo
+
     :validate [(fn [s] true) "File doesn't exist"]]
    ["-s" "--shell" "output as shell"]
    ["-k" "--keys" "dump the keys"]

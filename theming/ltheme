@@ -6,31 +6,35 @@
 render() {
     template="$HOME/.dotfiles/theming/templates/$1"
     dest="$HOME/$2"
-    shift
-    shift
+    shift; shift
     mkdir -p "$(dirname "$dest")"
     theme "$@" -r "$template" > "$dest"
 }
 
+# stateful service reload
+refresh() {
+    service=$1
+    always_start_service=${2:-false}
+    if systemctl --user status "$service" >/dev/null || $always_start_service; then
+       systemctl --user restart "$service"
+    fi
+}
+
 load_bg()      { eval "$(theme -q BG_COMMAND)" ;}
 load_emacs()   { elisp -t 5 "(ns/load-theme '$(theme -q emacs.theme))" ;}
-load_jgmenu()  { render jgmenu .config/jgmenu/jgmenurc -p color.normal ;}
+load_jgmenu()  { render jgmenu .config/jgmenu/jgmenurc -p color.weak ;}
 load_kitty()   { render kitty .config/kitty/kitty.conf -p color.normal ;}
 load_mintty()  { render mintty .minttyrc ;}
-load_mpd_win() { render mpd_windows .config/mpd/mpd.conf -p mpd ;}
 load_pywal()   { render pywal .cache/wal/theme.json; }
 load_xst()     { load_xresources; pkill -x --signal USR1 xst ;}
 load_zathura() { render zathura .config/zathura/zathurarc -p colors.normal ;}
 load_zeal()    { render zeal .config/Zeal/Zeal.conf ;}
+load_panel()   { render i3blocks .config/i3blocks/config; refresh panel ;}
+load_picom()   { render picom .config/picom.conf -p picom; refresh picom ;}
 
 load_tmux() {
     render tmux .tmux.conf
-    pgrep tmux && tmux source-file "$HOME/.tmux.conf"
-}
-
-load_picom() {
-    render picom .config/picom.conf -p picom
-    systemctl --user restart picom
+    silent pgrep tmux && tmux source-file "$HOME/.tmux.conf"
 }
 
 load_xresources() {
@@ -50,12 +54,13 @@ load_bspwm() {
 load_mpd() {
     extra_toml=""
     if mount | grep "${HOME}/usb"; then
-	extra_toml="mpd.music-dir = \"${HOME}/usb/Music\"
+	extra_toml="
+mpd.music-dir = \"${HOME}/usb/Music\"
 mpd.mpd-dir = \"${HOME}/.config/mpd_portable\""
     fi
 
     render mpd .config/mpd/mpd.conf -T "$extra_toml" -p mpd
-    systemctl --user restart mpd
+    refresh mpd
 }
 
 load_qutebrowser() {
@@ -73,37 +78,11 @@ load_qutebrowser() {
     fi
 }
 
-load_lemonade() {
-    echo TODO: lemonade
-    # rm $HOME/.config/i3blocks/config
-
-    # IFS=$'\n'
-
-    # juicer_target=".config/i3blocks/config"
-
-    # # note all lemons, generate them.
-    # lemons=$(echo $p_format | tr ':|' ' ');
-
-    # if ! margs juicer "$juicer_target"; then
-
-    # 	. ripen
-    # 	IFS=' '
-    # 	parallel -P 0 "squeeze {}" ::: $lemons >> $HOME/$juicer_target
-    # 	IFS=
-
-    # 	[ ! -z "$cachefile" ] && cp "$HOME/$juicer_target" "$cachefile"
-    # fi
-
-    # if systemctl --user status panel >/dev/null; then
-    # 	systemctl --user restart panel
-    # fi
-}
-
 load_gtk() {
     echo GTK: TODO
     return 0
 
-    if ! margs gtkrc .gtkrc-2.0; then
+    if ! render gtkrc .gtkrc-2.0; then
         target="$HOME/.themes/${THEME_NAME}_template"
         # mustache < $HOME/.dotfiles/templates/oomox > $target
 	templum -o "$target" "$HOME/.dotfiles/templates/oomox"
@@ -115,7 +94,7 @@ load_gtk() {
 
     # icon color (ACYL)
     git_ensure acyl
-    $HOME/.icons/acyl/icon.sh "#$p_icon"
+    # $HOME/.icons/acyl/icon.sh "#$p_icon"
 
     # reload
     gtkrc-reload
@@ -125,6 +104,9 @@ load_gtk() {
 }
 
 load_dunst() {
+    # echo TODO:dunst
+    # return 1
+
     mon_width=$(bspc query -T -m | jq .rectangle.width)
     export d_width=$(echo .24 \* $mon_width | bc | sed 's/\..*//')
 
@@ -134,24 +116,23 @@ load_dunst() {
 
     render dunstrc .config/dunst/dunstrc
 
-    # pkill dunst
-    # dunst will auto-launch on notify-send call
-    systemctl --user stop dunst
+    # always want to kill
     pkill dunst
-    systemctl --user start dunst
+    refresh dunst true
 }
 
 load_services() {
     echo TODO: services
     return
+
     # clean
-    find ${HOME}/.config/systemd/user/ -type f -delete
+    find "${HOME}/.config/systemd/user/" -type f -delete
 
     # running_services=$(systemctl --user list-units | awk '{print $1}' | grep '\.service' | sort)
     running_services=$(systemctl --user list-units  | grep -oE '[a-zA-Z_]+.service' | tr '\n' ' ')
     installed_services=$(systemctl --user list-unit-files | awk '{print $1}' | grep '\.service' | sort)
 
-    # stop the in memory services that have no service files associated
+    # stop the in-memory services that have no service files associated
     for s in $running_services; do
     	if ! grep -q $s <<< "$installed_services"; then
     	    echo systemctl --user stop $s
@@ -161,7 +142,6 @@ load_services() {
 
     made_services=
     # note: service PATH is set to whatever PATH is when you call this script
-    # todo: some sort of validation -- don't make service files for executables you don't have maybe
     make_service() {
 	export service_name=$1
 	export ExecStart=${2:-$1}
@@ -172,7 +152,7 @@ load_services() {
 	target=$(awk '{print $1}' <<< "$ExecStart")
 	export ExecStart="$(which $target) ${args}"
 
-	margs systemd_service .config/systemd/user/${service_name}.service
+	render systemd_service .config/systemd/user/${service_name}.service
 
 	made_services="${made_services} $service_name"
     }
@@ -184,8 +164,15 @@ load_services() {
 	make_service "$1" "$2"
 
 	export Description="Timer for service ${1}"
-	margs systemd_timer ".config/systemd/user/${1}.timer"
+	render systemd_timer ".config/systemd/user/${1}.timer"
     }
+
+    # make_periodic_service() {
+    # 	# todo: consider making this a systemd timer
+    # 	interval=$1
+    # 	shift
+    # 	make_service "$1" "periodically $interval $2" "$3"
+    # }
 
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
     make_periodic_service 30 memory_check "sensor_alert memory" "Notify when the memory pressure is high"
@@ -198,9 +185,7 @@ load_services() {
     fi
 
     if [ "$(hostname)" = "erasmus" ]; then
-	# TODO: this should move to ssh config
-	make_periodic_service 10 vps_connect "periodically -p 10 ssh -tt -R 22222:localhost:22 neeasade@vps.neeasade.net"
-	# ssh -t vps.neeasade.net 'ssh localhost -p 22222'
+	# todo: re-open ssh/vps conn
 
 	make_periodic_service 120 sync_org_schedule sync_org_schedule
     fi
@@ -218,8 +203,7 @@ load_services() {
 
     make_service panel "$HOME/.wm/panel/lemonade"
 
-    # todo: correct lemon mpd naming conflict
-    make_service mpd "/run/current-system/sw/bin/mpd --no-daemon $HOME/.config/mpd/mpd.conf"
+    make_service mpd "og mpd --no-daemon"
 
     # reload units
     systemctl --user daemon-reload
@@ -244,7 +228,7 @@ load_btag_borders() {
     (ct-iterate it 'ct-lab-lighten
       (lambda (c) (ct-is-light-p c 75)))))"
 
-    elisp '(->> (list :primary :strings :assumed :alt)
+    elisp '(->> (list :primary :strings :assumed :faded)
   (-map (lambda (l) (ns/make-border-color l)))
   (-map (fn (substring <> 1)))
   (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
@@ -256,7 +240,7 @@ if [ -z "$*" ]; then
     elif $LINUX; then
 	set -- picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu zeal btag_borders xst
     elif $WINDOWS; then
-	set -- mintty mpd_win tmux
+	set -- mintty tmux
     fi
 fi
 

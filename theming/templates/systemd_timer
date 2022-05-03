@@ -1,12 +1,12 @@
 [Unit]
-Description={{.env.Description}}
+Description={{env.Description}}
 
 [Timer]
 
 # On service manager activation (on login)
 OnStartupSec=0min
 
-OnUnitActiveSec={{.env.interval}}s
+OnUnitActiveSec={{env.interval}}s
 
 [Install]
 WantedBy=timers.target

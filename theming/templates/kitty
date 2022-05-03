@@ -1,6 +1,6 @@
 
-font_family      {{.font.mono.family}}
-font_size       {{.font.mono.size}}
+font_family      {{font.mono.family}}
+font_size       {{font.mono.size}}
 
 clear_all_shortcuts yes
 macos_option_as_alt yes
@@ -13,22 +13,22 @@ bold_font        auto
 italic_font      auto
 bold_italic_font auto
 
-foreground         {{.foreground}}
-background         {{.background}}
+foreground         {{foreground}}
+background         {{background}}
 background_opacity 1.0
-cursor             {{.color.cursor}}
+cursor             {{color.cursor}}
 
-active_tab_foreground     {{.color.focused.foreground}}
-active_tab_background     {{.color.focused.background}}
+active_tab_foreground     {{color.focused.foreground}}
+active_tab_background     {{color.focused.background}}
 
-inactive_tab_foreground   {{.faded}}
-inactive_tab_background   {{.background}}
+inactive_tab_foreground   {{faded}}
+inactive_tab_background   {{background}}
 
-active_border_color   {{.foreground}}
-inactive_border_color {{.background}}
+active_border_color   {{foreground}}
+inactive_border_color {{background}}
 
-bell_border_color     {{.color.focused.foreground}}
+bell_border_color     {{color.focused.foreground}}
 
-{{range $i, $color := .colors}}
-color{{$i}} {{$color}}
-{{- end}}
+
+{% for color in colors %}
+color{{forloop.counter0}} {{color}}{% endfor %}

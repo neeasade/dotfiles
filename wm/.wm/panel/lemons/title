@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+(xtitle -s & bspc subscribe desktop_layout) | \
 while read -r trigger; do
     xtitle -t 25
 done

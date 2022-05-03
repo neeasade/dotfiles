@@ -306,7 +306,6 @@ nq() {
   local CACHE="$HOME/.cache/nq-cache"
 
   if ! ( [ -e $CACHE ] && [ $(stat -c %Y $CACHE) -gt $(( $(date +%s) - 3600 )) ] ); then
-  # if true; then
     echo "update cache"
     nix-env -qa --json > "$CACHE"
   fi
