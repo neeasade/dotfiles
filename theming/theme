@@ -38,6 +38,11 @@
         (assoc-in m keyword-path v)))
     {} m)))
 
+(defn get-env []
+  (->> (System/getenv)
+       (map (fn [[k v]] {(keyword k) v}))
+       (into {})))
+
 (defn panel-format-to-lemons [format]
   ;; "a:b|c:d|e" -> [{:keys [name step end end-inner]}]
   (let [parts (string/split format #"\|")
@@ -138,12 +143,9 @@
     (read-string str)))
 
 (defn missing-value-fn [tag context-map]
+  (clojure.pprint/pprint
+   (flatten-map (dissoc context-map :env)))
   (throw (Exception. (str "<Missing value: " (or (:tag-value tag) (:tag-name tag)) ">"))))
-
-(defn complain-value-fn [tag context-map]
-  (binding [*out* *err*]
-    (println (format "! no key: {{%s}}" (:tag-value tag))))
-  (format "{{%s}}" (:tag-value tag)))
 
 (defn retain-value-fn [tag context-map]
   (format "{{%s}}" (:tag-value tag)))
@@ -169,7 +171,8 @@
                 :variable {:family "Droid Sans" :size 12}
                 :mono {:family "Droid Sans Mono" :size 12}
                 :icon {:family "Font Awesome 5 Free" :size 10}
-                :panel {:family "{{font.variable.family}}" :size "{{font.variable.size}}"}
+                :panel {:family "{{font.variable.family}}"
+                        :size "{{font.variable.size}}"}
 
                 }
          :bspwm {:window-gap 10
@@ -233,9 +236,6 @@
          ;;                              )}
          ;;               }
          }
-        env {:env (->> (System/getenv)
-                       (map (fn [[k v]] {(keyword k) v}))
-                       (into {}))}
 
         home-theme (when home?
                      (unflatten-map
@@ -273,7 +273,6 @@
         ]
     (merge-with into
                 base-conf colors
-                env
                 home-theme work-theme
                 )))
 
@@ -285,17 +284,22 @@
        ;; sibling render pass
        (into {}
              (map (fn [[k v]]
-                    {k (if (string? v)
+                    {k (if (and (string? v)
+                                (string/includes? v "{{"))
                          (let [
                                ;; let top level map win conflicts
-                               render-conf (merge conf-map (apply dissoc n (keys conf-map)))
+                               render-conf (-> conf-map
+                                               (merge (apply dissoc n (keys conf-map)))
+                                               (assoc :env (get-env)))
                                render-result (template/render v render-conf)]
                            ;; this is what allows us to make multiple passes:
                            (if (string/includes? render-result "{{")
                              v
-                             (if-let [x (str->int render-result)]
-                               x
-                               render-result)))
+                             render-result
+                             ;; (if-let [x (str->int render-result)]
+                             ;;   x
+                             ;;   render-result)
+                             ))
                          v)}) n))
        n)) conf-map))
 
@@ -331,8 +335,7 @@
           (if (map? n)
             (apply dissoc n (filter (fn [k] (string/ends-with? (pr-str k) "-"))
                                     (keys n)))
-            n)))
-       ((fn [tree] (dissoc tree :env)))))
+            n)))))
 
 (def cli-options
   [["-q" "--query PATH" "query path"]
@@ -340,9 +343,7 @@
    ["-n" "--narrow PATH" "narrow map to path"]
    ["-R" "--render STRING" "render a string as a template"]
    ["-r" "--render-file FILE" "render a file as a template"
-    ;; todo
-
-    :validate [(fn [s] true) "File doesn't exist"]]
+    :validate [(fn [s] true) "File doesn't exist"]] ;; todo
    ["-s" "--shell" "output as shell"]
    ["-k" "--keys" "dump the keys"]
    ["-h" "--help" "show the usage"]])
@@ -353,9 +354,17 @@
        (string/join "\n")
        (println)))
 
+(def exit-status 0)
+
+(defn complain-value-fn [tag context-map]
+  (def exit-status 1)
+  (binding [*out* *err*]
+    (println (format "! no key: {{%s}}" (:tag-value tag))))
+  (format "{{%s}}" (:tag-value tag)))
+
 (defn render [template theme]
   (selmer.util/set-missing-value-formatter! complain-value-fn)
-  (template/render template theme))
+  (template/render template (assoc theme :env (get-env))))
 
 (println
  (reduce
@@ -373,3 +382,5 @@
       theme))
   (process-theme (get-theme))
   (:options (cli/parse-opts *command-line-args* cli-options))))
+
+(System/exit exit-status)
