@@ -7,13 +7,15 @@
          '[selmer.parser :as template]
          '[clojure.walk :refer [postwalk prewalk]])
 
-(defn index-of [coll to-find]
-  (first
-   (keep-indexed
-    (fn [i v]
-      (when (= v to-find)
-        i))
-    coll)))
+(defn get-env []
+  (->> (System/getenv)
+       (map (fn [[k v]] {(keyword k) v}))
+       (into {})))
+
+(defn deep-merge [a & maps]
+  (if (map? a)
+    (apply merge-with deep-merge a maps)
+    (apply merge-with deep-merge maps)))
 
 (defn flatten-map
   "{:a {:b 1}} -> {:a.b 1}"
@@ -38,13 +40,16 @@
         (assoc-in m keyword-path v)))
     {} m)))
 
-(defn get-env []
-  (->> (System/getenv)
-       (map (fn [[k v]] {(keyword k) v}))
-       (into {})))
+(defn index-of [coll to-find]
+  (first
+   (keep-indexed
+    (fn [i v]
+      (when (= v to-find)
+        i))
+    coll)))
 
 (defn panel-format-to-lemons [format]
-  ;; "a:b|c:d|e" -> [{:keys [name step end end-inner]}]
+  ;; "a:b|c:d|e" -> [{:keys [name step end end-inner align]}]
   (let [parts (string/split format #"\|")
         all (-> format (string/split #"\||:"))
         transform (fn [part-fn align]
@@ -124,10 +129,12 @@
   (->> (flatten-map m "_")
        (map (fn [[k v]]
               (format "%s='%s'"
+                      (-> k name (string/replace "-" "_"))
                       ;; todo: handle strings with "'"s in them
                       ;; sed "s#'#\'\\\'\'#g"
-                      (-> k name (string/replace "-" "_"))
-                      v)))
+                      ;; (string/replace v "'" "\'\\\'\'")
+                      v
+                      )))
        (string/join "\n")))
 
 (defn narrow [string-path m]
@@ -151,30 +158,86 @@
   (format "{{%s}}" (:tag-value tag)))
 
 (selmer.util/set-missing-value-formatter! missing-value-fn)
-;; (selmer.util/set-missing-value-formatter! retain-value-fn)
 
-;; theme map dsl (resolved in this order):
-;; :> map (fn [[k v]]) to all nodes
-;; <name>- : don't include in output
+(defn exec-fns [tree]
+  ;; call things that are functions in a tree
+  (postwalk
+   (fn [n]
+     (if (map? n)
+       (->> n
+            (map (fn [[k v]]
+                   {k (if (fn? v)
+                        (try
+                          (v tree)
+                          (catch Exception _
+                            ;; expected to be failed get-in tree (because of a pending fn render)
+                            v))
+                        v)}))
+            (into {}))
+       n)) tree))
+
+(defn render-leaves-with-siblings [tree]
+  (prewalk
+   (fn [n]
+     (if (and (map? n)
+              (not-any? map? (keys n)))
+       ;; sibling render pass
+       (into {}
+             (map (fn [[k v]]
+                    {k (if (and (string? v)
+                                (string/includes? v "{{"))
+                         (let [
+                               ;; let top level map win conflicts
+                               render-conf (-> tree
+                                               (merge (apply dissoc n (keys tree)))
+                                               (assoc :env (get-env)))
+                               render-result (template/render v render-conf)]
+                           ;; this is what allows us to make multiple passes:
+                           (if (string/includes? render-result "{{")
+                             v
+                             render-result
+                             ;; (if-let [x (str->int render-result)]
+                             ;;   x
+                             ;;   render-result)
+                             ))
+                         v)}) n))
+       n)) tree))
+
+;; theme build is:
+;; resolve fn's in base-conf
+;; deep-merge host themes
+;; render string leaves in tree
+;; remove keys ending in '-' from tree
 (defn get-theme []
-  (let [home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
-        work? false
+  (let [
+        ;; home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
+        home? false
+        work? true
+
+        emacs-colors (let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
+                       (when (= 0  (:exit result))
+                         (read-string (:out result))))
 
         colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
                 :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
 
         base-conf
-        {:font {:> (fn [[k v]]
-                     {k (merge v
-                               {:spec "{{family}}-{{size}}"
-                                :spec-space "{{family}} {{size}}"})})
-                :variable {:family "Droid Sans" :size 12}
-                :mono {:family "Droid Sans Mono" :size 12}
-                :icon {:family "Font Awesome 5 Free" :size 10}
-                :panel {:family "{{font.variable.family}}"
-                        :size "{{font.variable.size}}"}
+        {:meta
+         ;; for panel _and_ compositor
+         {:shadow false}
 
-                }
+         :font (fn [_]
+                 (->> {:variable {:family "Droid Sans" :size 12}
+                       :mono {:family "Droid Sans Mono" :size 12}
+                       :icon {:family "Font Awesome 5 Free" :size 10}
+                       :panel {:family "{{font.variable.family}}"
+                               :size "{{font.variable.size}}"}}
+                      (map (fn [[k v]]
+                             {k (assoc v
+                                       :spec "{{family}}-{{size}}"
+                                       :spec-space "{{family}} {{size}}")}))
+                      (into {})))
+
          :bspwm {:window-gap 10
                  :split-ratio 0.5
                  :desktop-names "00 01 10 11"
@@ -194,7 +257,8 @@
                :end  ""}
          :gtk {:theme "Raleigh"}
          ;; see: https://github.com/gnotclub/xst/blob/master/.Xresources
-         :st {:font "{{font.mono.spec}}"
+         :st {
+              ;; :font "{{font.mono.spec}}"
               :cursorshape 2
               :cursorthickness 2
               :borderpx 0
@@ -225,24 +289,39 @@
                     {:music-dir "{{env.HOME}}/Music"
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 10
-                 :lemons (fn [_]
-                           (->> "dropdown:desktop:github:title|org_task|mpd:volume:weather:clock"
+                 :format  "dropdown:desktop:github:title|org_task|mpd:volume:weather:clock"
+                 :window-class (fn [tree]
+                                 (if (get-in tree [:meta :shadow])
+                                   "lemonbar" "noshadow"))
+                 :gap 4
+                 :top true
+                 :lemons (fn [tree]
+                           (->> (get-in tree [:panel :format])
                                 (panel-format-to-lemons)
                                 (panel-color-lemons )
                                 (panel-lemons-to-i3blocks)))
                  }
-         ;; :qutebrowser {:statusbar
-         ;;               :font {:size (fn [conf-tree]
-         ;;                              )}
-         ;;               }
+         :qutebrowser (unflatten-map
+                       {:statusbar nil
+                        :tab.font.family "{{font.variable.family}}"
+                        :tab.font.size
+                        "{{font.panel.size}}"
+                        ;; will this work?
+                        :statusbar.font.size
+                        ;; "{{qutebrowser.tab.font.size}}"
+                        "{{font.panel.size}}"
+                        :tab.bold (fn [tree]
+                                    (let [panel-font (get-in tree [:font :panel :spec])
+                                          bold? (string/includes? panel-font "Bold")]
+                                      (if bold? "True" "False")))
+                        })
          }
-
         home-theme (when home?
                      (unflatten-map
                       {:THEME_NAME "test"
                        :emacs.theme "tarp-mcfay"
                        :BG_COMMAND "${HOME}/.fehbg"
-                       ;; :BG_COMMAND "hsetroot -solid '{{.color.focused.background}}'"
+                       ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        :font.mono.family "Triplicate T4c"
                        :font.variable.family "Equity Text B"
                        :mkb.bar- "AAH"
@@ -252,7 +331,7 @@
                        :bspwm.monocle-window-percent 0.55
                        :font.mono.size 12
                        :font.variable.size 13
-                       :picom.shadow.enabled false
+                       :picom.shadow.enabled "{{meta.shadow}}"
                        :bspwm.bspwmrc-extend "tag_borders &\n subscription_rules &"}))
 
         work-theme (when work?
@@ -260,82 +339,36 @@
                       {:THEME_NAME "test"
                        :emacs.theme "tarp-mcfay"
                        :BG_COMMAND "wallmac tile '{{env.HOME}}/Downloads/mpv-shot0095.jpg'"
+
                        :font.mono.family "Go Mono"
                        :font.variable.family "Charter"
+                       :font.mono.size 16
+                       :font.variable.size 16
+
                        :mkb.bar- ["🌳" "🌻" "🌱"]
                        :shell.prompt "🌳"
                        :shell.prompt_err "😞"
-                       :bspwm.window-gap 24
+                       :bspwm.window-gap 0
                        :x.padding 5
-                       :font.mono.size 18
-                       :font.variable.size 18
                        :bspwm.monocle-window-percent 0.55}))
-        ]
-    (merge-with into
-                base-conf colors
-                home-theme work-theme
-                )))
+        theme-tree (deep-merge
+                    (-> base-conf exec-fns exec-fns)
+                    (or emacs-colors colors)
+                    home-theme work-theme)]
 
-(defn render-nodes-with-siblings [conf-map]
-  (prewalk
-   (fn [n]
-     (if (and (map? n)
-              (not-any? map? (keys n)))
-       ;; sibling render pass
-       (into {}
-             (map (fn [[k v]]
-                    {k (if (and (string? v)
-                                (string/includes? v "{{"))
-                         (let [
-                               ;; let top level map win conflicts
-                               render-conf (-> conf-map
-                                               (merge (apply dissoc n (keys conf-map)))
-                                               (assoc :env (get-env)))
-                               render-result (template/render v render-conf)]
-                           ;; this is what allows us to make multiple passes:
-                           (if (string/includes? render-result "{{")
-                             v
-                             render-result
-                             ;; (if-let [x (str->int render-result)]
-                             ;;   x
-                             ;;   render-result)
-                             ))
-                         v)}) n))
-       n)) conf-map))
+    (as-> theme-tree tree
 
-(defn process-theme [theme-tree]
-  (->> theme-tree
-       ;; call things that are functions with tree
-       (postwalk
-        (fn [n]
-          (if (map? n)
-            (->> n
-                 (map (fn [[k v]]
-                        {k (if (and (fn? v)
-                                    (not (= k :>)))
-                             (v theme-tree) v)}))
-                 (into {}))
-            n)))
+      ;; unsure how many passes to do
+      (render-leaves-with-siblings tree)
+      (render-leaves-with-siblings tree)
 
-       ;; map bois :>
-       (postwalk
-        (fn [n]
-          (if (and (map? n)
-                   (:> n))
-            (into {} (map (:> n) (dissoc n :>)))
-            n)))
-
-       ;; unsure how many passes to do
-       (render-nodes-with-siblings)
-       (render-nodes-with-siblings)
-
-       ;; remove :bois-
-       (postwalk
-        (fn [n]
-          (if (map? n)
-            (apply dissoc n (filter (fn [k] (string/ends-with? (pr-str k) "-"))
-                                    (keys n)))
-            n)))))
+      ;; remove keys ending in '-'
+      (postwalk
+       (fn [n]
+         (if (map? n)
+           (apply dissoc n (filter (fn [k] (string/ends-with? (pr-str k) "-"))
+                                   (keys n)))
+           n)) tree))))
 
 (def cli-options
   [["-q" "--query PATH" "query path"]
@@ -380,7 +413,7 @@
       :render (render v theme)
       :render-file (render (slurp v) theme)
       theme))
-  (process-theme (get-theme))
+  (get-theme)
   (:options (cli/parse-opts *command-line-args* cli-options))))
 
 (System/exit exit-status)

@@ -25,17 +25,12 @@ load_emacs()   { elisp -t 5 "(ns/load-theme '$(theme -q emacs.theme))" ;}
 load_jgmenu()  { render jgmenu .config/jgmenu/jgmenurc -p color.weak ;}
 load_kitty()   { render kitty .config/kitty/kitty.conf -p color.normal ;}
 load_mintty()  { render mintty .minttyrc ;}
-load_pywal()   { render pywal .cache/wal/theme.json; }
-load_xst()     { load_xresources; pkill -x --signal USR1 xst ;}
-load_zathura() { render zathura .config/zathura/zathurarc -p colors.normal ;}
-load_zeal()    { render zeal .config/Zeal/Zeal.conf ;}
+load_mpd()     { render mpd .config/mpd/mpd.conf -p mpd; refresh mpd ;}
 load_panel()   { render i3blocks .config/i3blocks/config; refresh panel ;}
 load_picom()   { render picom .config/picom.conf -p picom; refresh picom ;}
-
-load_tmux() {
-    render tmux .tmux.conf
-    silent pgrep tmux && tmux source-file "$HOME/.tmux.conf"
-}
+load_pywal()   { render pywal .cache/wal/theme.json; }
+load_zathura() { render zathura .config/zathura/zathurarc -p colors.normal ;}
+load_zeal()    { render zeal .config/Zeal/Zeal.conf ;}
 
 load_xresources() {
     render Xresources .Xresources -p color.normal
@@ -47,20 +42,14 @@ load_bspwm() {
     render bspwm "$bspwmrc" -p bspwm
     chmod +x "$HOME/$bspwmrc"
 
-    wait # wait for lemonbar?
     setsid "$HOME/$bspwmrc"
 }
 
-load_mpd() {
-    extra_toml=""
-    if mount | grep "${HOME}/usb"; then
-	extra_toml="
-mpd.music-dir = \"${HOME}/usb/Music\"
-mpd.mpd-dir = \"${HOME}/.config/mpd_portable\""
-    fi
-
-    render mpd .config/mpd/mpd.conf -T "$extra_toml" -p mpd
-    refresh mpd
+load_btag_borders() {
+    elisp '(->> (list :primary :strings :assumed :faded)
+  (-map (lambda (l) (ns/make-border-color l)))
+  (-map (fn (substring <> 1)))
+  (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
 }
 
 load_qutebrowser() {
@@ -69,13 +58,14 @@ load_qutebrowser() {
 
     if $MAC; then
 	qb_command ':config-source'
-    else
-	current_conf=$(bspc config ignore_ewmh_focus)
-	bspc config ignore_ewmh_focus true
-	qb_command ':config-source'
-	# qb_command ':reload' # reload current page w/ css
-	bspc config ignore_ewmh_focus "$current_conf"
+	return $?
     fi
+
+    current_conf=$(bspc config ignore_ewmh_focus)
+    bspc config ignore_ewmh_focus true
+    qb_command ':config-source'
+    # qb_command ':reload' # reload current page w/ css
+    bspc config ignore_ewmh_focus "$current_conf"
 }
 
 load_gtk() {
@@ -104,15 +94,17 @@ load_gtk() {
 }
 
 load_dunst() {
-    # echo TODO:dunst
-    # return 1
+    b_window_gap=$(theme -q bspwm.window-gap)
+
+    p_height=0
+
+    if silent pgrep lemonbar; then
+	p_height=$(theme -q panel.height)
+    fi
+    export d_offset=$((b_window_gap + p_height))
 
     mon_width=$(bspc query -T -m | jq .rectangle.width)
     export d_width=$(echo .24 \* $mon_width | bc | sed 's/\..*//')
-
-    p_height=$(theme -q panel.height)
-    silent pgrep lemonbar || p_height=0
-    export d_offset=$((b_window_gap + p_height))
 
     render dunstrc .config/dunst/dunstrc
 
@@ -219,32 +211,24 @@ load_services() {
     systemctl --user disable stalonetray
 }
 
-load_btag_borders() {
-    elisp "(defun ns/make-border-color (label)
-  (--> (ht-get tarp/theme label)
-    (ct-iterate it 'ct-pastel
-      (lambda (c)
-        (> (ct-name-distance it c) 20)))
-    (ct-iterate it 'ct-lab-lighten
-      (lambda (c) (ct-is-light-p c 75)))))"
-
-    elisp '(->> (list :primary :strings :assumed :faded)
-  (-map (lambda (l) (ns/make-border-color l)))
-  (-map (fn (substring <> 1)))
-  (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
+load_wm() {
+    # meta package (bspwm and dunst react to panel state)
+    for x in panel bspwm dunst; do
+	echo "> load $x"
+	load_$x
+    done
 }
 
 if [ -z "$*" ]; then
     if $MAC; then
-	set -- tmux xresources qutebrowser kitty
+	set -- xresources qutebrowser kitty
     elif $LINUX; then
-	set -- picom tmux xresources bspwm bg gtk dunst qutebrowser zathura jgmenu zeal btag_borders xst
+	set -- wm xresources picom bg gtk qutebrowser zathura jgmenu zeal btag_borders
     elif $WINDOWS; then
-	set -- mintty tmux
+	set -- mintty
     fi
 fi
 
-targets=$*
 for conf in "$@"; do
     (
 	result=$(

@@ -1,15 +1,13 @@
 # -*- mode: sh -*-
 
-type theme >/dev/null 2>&1 &&
-    _promptchar=$(theme -q st.prompt_char 2>/dev/null) ||
-    _promptchar='%'
+if type theme >/dev/null 2>&1; then
+  _promptchar=$(theme -q shell.prompt)
+  _promptchar_err=$(theme -q shell.prompt_err)
+fi
 
-_promptchar=🔵
-_promptchar_err=🔴
-
-# dotfiles have been setup, but we're in a special location/no theme has been loaded:
 if [ -z "$_promptchar" ]; then
   _promptchar='$'
+  _promptchar_err='!'
 fi
 
 if [ -z "$cur_shell" ]; then
@@ -127,11 +125,17 @@ tell_emacs_shell_location() {
 
 prompt() {
     _ERR=$?
-    [ "$(id -u)" = "0" ] && _promptchar=\#
+
+    if [ "$(id -u)" = "0" ]; then
+       _promptchar='#'
+       _promptchar_err='!'
+    fi
 
     _prompt=$_promptchar
 
-    [ $(jobs | wc -l) -ne 0 ] && _prompt="${_prompt}${_prompt}"
+    if ! test -z "$(jobs)"; then
+      _prompt="${_prompt}${_prompt}"
+    fi
 
     if [ $_ERR -ne 0 ]; then
        _prompt="${_prompt%?}${_promptchar_err}"

@@ -14,7 +14,7 @@
 # macos native fullscreen cancels out skhd bindings and generally just acts.. weird
 # prefer zoom-fullscreen everywhere.
 
-. $HOME/.sh.d/environment
+. "$HOME/.sh.d/environment"
 
 # possible modes
 do_monocle_padded() {

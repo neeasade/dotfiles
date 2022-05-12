@@ -5,7 +5,9 @@ git_current_branch() {
 }
 
 gpt() { # git push current branch to <branch>
-  vdo git push origin $(git_current_branch):$1
+  target_branch=$1
+  shift
+  vdo git push origin $(git_current_branch):$target_branch "$@"
 }
 
 alias g='git'

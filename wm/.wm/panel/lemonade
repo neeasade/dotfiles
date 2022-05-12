@@ -1,28 +1,25 @@
 #!/usr/bin/env bash
 
-# regen i3blocks config:
-# theme refresh lemonade
-
-bspc config top_padding $(theme getval p_height)
+bspc config top_padding $(theme -q panel.height)
 
 geom=$(
-    eval "$(theme get)"
     dim() {
 	bspc query -T -m | jq .rectangle.$1
     }
 
+    p_gap=$(theme -q panel.gap)
     gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
     p_gap=$(iif $gapped $p_gap 0)
-    top=$(iif "[ "$p_position" = "top" ]")
+
+    top=$(theme -q panel.top)
+    # can we do this with a render
     echo "$(( $(dim width)-(p_gap*2) ))x$p_height+$(( $(dim x)+p_gap ))+$(iif $top $p_gap $(($(dim height)-(p_gap+p_height))) )"
 )
 
 # eg desktop:circe_dms:title|org_task|mpd:volume:clock
 # -> $desktop $circe_dms $title %{c}$org_task %{r}mpd $volume $clock
-p_format=$(theme getval p_format)
-# p_format='org_task:title|tags|mpd:weather:clock'
-
-format=$(echo "$p_format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
+format=$(theme -q panel.format)
+format=$(echo "$format" | sed 's/:/$/g' | sed 's/|/%{c}$/' | sed 's/|/%{r}$/' )
 format="\$$format"
 
 # stdbuf -oL all the things.
@@ -37,12 +34,12 @@ stdbuf -oL i3blocks -o j | \
     done | stdbuf -oL debounce.js 30 | \
 	lemonbar -d \
 	    -u 2 \
-	    -n "$(theme getval p_window_class)" \
-	    -B \#00$(theme getval background) \
-	    -F \#ff$(theme getval foreground) \
-	    -f "$(theme getval p_font_main)" \
-	    -f "$(theme getval p_font_main):style=Bold" \
-	    -f "$(theme getval p_font_icon)" \
+	    -n "$(theme -q panel.window-class)" \
+	    -B \#00$(theme -q color.normal.background) \
+	    -F \#ff$(theme -q color.normal.foreground) \
+	    -f "$(theme -q font.panel.spec)" \
+	    -f "$(theme -q font.panel.spec):style=Bold" \
+	    -f "$(theme -q font.icon.spec)" \
 	    -f "DejaVu Sans Mono for Powerline-10" \
 	    -o -1 \
 	    -o -1 \
@@ -51,7 +48,7 @@ stdbuf -oL i3blocks -o j | \
 	    -a 20 \
 	    -g "$geom" | sh &
 
-wid=$(xdo id -m -a "$(theme getval p_window_class)")
+wid=$(xdo id -m -a "$(theme -q panel.window-class)")
 xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$wid"
 
 cleanup() {

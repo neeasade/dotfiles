@@ -4,7 +4,7 @@
 # todo: this doesn't deal well in replacing files that are currently in stow-created directories
 # (IE, migration from stow -> stowo, if stow created the outline)
 
-default_packages=$(ls "$HOME/.dotfiles/" | grep -vE "(os|readme.org|theming|bootstrap)" | tr $'\n' ' ')
+default_packages=$(ls "$HOME/.dotfiles/" | grep -vE "(os|readme.org|theming|bootstrap|LICENSE)" | tr $'\n' ' ')
 
 if [ -z "$*" ]; then
     cat<<EOF
@@ -24,7 +24,12 @@ fi
 
 while [ ! -z "$1" ]; do
     package=$1
-    cd "$HOME/.dotfiles/$1"
+    if ! cd "$HOME/.dotfiles/$1"; then
+	echo "Package failed '${1}', aborting"
+	shift
+	continue
+    fi
+
     # find . -type f | while read -r path; do
     results=$(
     git ls-files | while read -r path; do

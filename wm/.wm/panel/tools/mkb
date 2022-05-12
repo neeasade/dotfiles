@@ -12,7 +12,7 @@ sep='+'
 start=''
 end=''
 
-eval "$(theme -n mkb -o shell)"
+eval "$(theme -n mkb -s)"
 
 # char width for emoji
 # size=$((size / 2))

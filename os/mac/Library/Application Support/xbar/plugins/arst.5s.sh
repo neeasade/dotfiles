@@ -3,9 +3,10 @@
 # this is the 'work' version of the misc lemon
 
 . "$HOME/.sh.d/environment"
-style="| font=Charter | size=18"
 
-delim=🌳
+style="| font=Charter | size=12"
+style=$(theme -R '| font={{font.panel.family}} | size={{font.panel.size}}')
+
 delim=⬜
 
 # want: time to next appt/org ical stuff
@@ -13,7 +14,7 @@ delim=⬜
 
 check_slack_dms() {
   title=$(yaboi query windows | jq -r '.[] | select(.app == "Slack") | .title')
-  if echo "$title" | grep -q \! ; then
+  if echo "$title" | grep -q 'new item' ; then
     echo '🔷Slack🔷'
   fi
 }
@@ -21,17 +22,17 @@ check_slack_dms() {
 result=$(
     (
         check_slack_dms
-        day_progress
+        # cache_output 500 elisp -r '(ns/org-status-outdated)'
+        # day_progress
 
         cache_output 30 org_task
         # cache_output 30 org_task
-        cache_output 500 elisp -r '(ns/org-status-outdated)'
 
     ) | awk NF | tr '\n' '^' | sed 's/.$//' | sed "s/\^/ ${delim} /g")
 
 if [ -z "$result" ]; then
-  echo
-else
-  # printf "- %s - %s\n" "$result" "$style"
-  printf "${delim} %s ${delim} %s\n" "$result" "$style"
+  exit
 fi
+
+# printf "- %s - %s\n" "$result" "$style"
+printf "${delim} %s ${delim} %s\n" "$result" "$style"
