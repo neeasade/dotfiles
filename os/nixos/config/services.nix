@@ -51,10 +51,11 @@ in
       displayManager.defaultSession = "none+bspwm";
 
 
+      displayManager.autoLogin.user = "neeasade";
+      displayManager.autoLogin.enable = true;
+
       displayManager.lightdm = {
         enable = true;
-        autoLogin.user = "neeasade";
-        autoLogin.enable = true;
       };
     };
 

@@ -6,8 +6,8 @@ theme = {
     },
 
     'fonts': {
-        'tabbar': '{{tab.font.family|replace:" ":"\\\\ "}}',
-        'completion': '{{tab.font.family|replace:" ":"\\\\ "}}',
+        'tabbar': '{{tab.font.family|replace:" ":"\\ "}}',
+        'completion': '{{tab.font.family|replace:" ":"\\ "}}',
         'completion_size': {{statusbar.font.size}},
         'tab_bold': {{tab.bold}},
         'tab_size': {{tab.font.size}},

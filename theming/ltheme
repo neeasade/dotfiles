@@ -114,8 +114,7 @@ load_dunst() {
 }
 
 load_services() {
-    echo TODO: services
-    return
+    pathmunge "$HOME/.dotfiles/wm/.wm/services/"
 
     # clean
     find "${HOME}/.config/systemd/user/" -type f -delete
@@ -135,9 +134,13 @@ load_services() {
     made_services=
     # note: service PATH is set to whatever PATH is when you call this script
     make_service() {
+	echo "make_service $*"
 	export service_name=$1
 	export ExecStart=${2:-$1}
 	export Description=${3:-$1}
+
+	export REALKILL=$(which kill)
+	export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}
 
 	# fully qualify executable:
 	args=$(awk '{$1=""; print $0}' <<< "$ExecStart")
@@ -150,7 +153,7 @@ load_services() {
     }
 
     make_periodic_service() {
-	interval=$1
+	export interval=$1
 	shift
 
 	make_service "$1" "$2"

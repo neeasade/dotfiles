@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 # a stack layout for bspwm
 # bspc subscribe node_{remove,add} | while read _; do ./stack_layout.sh; done

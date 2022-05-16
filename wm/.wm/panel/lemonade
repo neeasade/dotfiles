@@ -35,8 +35,8 @@ stdbuf -oL i3blocks -o j | \
 	lemonbar -d \
 	    -u 2 \
 	    -n "$(theme -q panel.window-class)" \
-	    -B \#00$(theme -q color.normal.background) \
-	    -F \#ff$(theme -q color.normal.foreground) \
+	    -B \#00$(theme -R '{{color.normal.background|remove:"#"}}') \
+	    -F \#ff$(theme -R '{{color.normal.foreground|remove:"#"}}') \
 	    -f "$(theme -q font.panel.spec)" \
 	    -f "$(theme -q font.panel.spec):style=Bold" \
 	    -f "$(theme -q font.icon.spec)" \

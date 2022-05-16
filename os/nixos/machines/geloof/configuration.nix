@@ -105,7 +105,6 @@ in
       user = consts.user;
       dataDir = "${consts.home}/.local/share/Syncthing";
 
-      declarative = {
         overrideDevices = true;
         devices = builtins.removeAttrs consts.syncthingDevices [ "geloof" ];
         overrideFolders = true;
@@ -121,7 +120,6 @@ in
           path = "${consts.home}/sync/orgzly";
           devices = [ "trouw" "erasmus" "phone"];
         };
-      };
     };
 
   system.stateVersion = "19.09";

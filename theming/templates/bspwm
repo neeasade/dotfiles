@@ -21,10 +21,10 @@ running() {
     bspc config presel_feedback_color "{{border.presel}}"
 
     # to gap or not to gap
-    bspc config window_gap $(iif $gapped {{window-gap}} -{{.border.width}})
+    bspc config window_gap $(iif $gapped {{window-gap}} -{{border.width}})
 
     side_padding=$(iif $gapped 0 {{border.width}})
-    panel_padding=$(iif $relaunch_panel "{{panel.height}}+{{.panel.gap}}" 0)
+    panel_padding=$(iif $relaunch_panel "{{panel.height}}+{{panel.gap}}" 0)
 
     bspc config {{panel.position}}_padding $((side_padding + panel_padding))
 
@@ -38,7 +38,7 @@ running() {
     done
 
     # extensions may be defined in themes here:
-    {{bspwmrc-extend}}
+    {{bspwmrc-extend|safe}}
 }
 
 starting() {

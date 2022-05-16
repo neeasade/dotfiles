@@ -3,7 +3,7 @@ Description={{env.Description}}
 
 [Service]
 ExecStart={{env.ExecStart}}
-ExecStop={{sh "which kill"}} -int $MAINPID
+ExecStop={{env.REALKILL}} -int $MAINPID
 
 Environment=PATH={{env.PATH}}
 Environment=NODE_PATH={{env.NODE_PATH}}

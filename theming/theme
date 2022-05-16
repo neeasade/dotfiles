@@ -112,6 +112,7 @@
                 (merge
                  (select-keys lemon [:bg :fg :line :step :align])
                  {:lemon (:name lemon)
+                  :command (format "%s/.wm/panel/lemons/%s | season" (System/getenv "HOME") (:name lemon))
                   :lemon_end (:end lemon)
                   :lemon_end_inner (:end-inner lemon)
                   :interval (or ((-> lemon :name keyword) (:interval lemon-info))
@@ -210,9 +211,8 @@
 ;; remove keys ending in '-' from tree
 (defn get-theme []
   (let [
-        ;; home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
-        home? false
-        work? true
+        home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
+        work? false
 
         emacs-colors (let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
                        (when (= 0  (:exit result))
@@ -289,11 +289,13 @@
                     {:music-dir "{{env.HOME}}/Music"
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 10
-                 :format  "dropdown:desktop:github:title|org_task|mpd:volume:weather:clock"
+                 :format  "dropdown:title|org_task:misc|mpd:volume:weather:clock"
                  :window-class (fn [tree]
                                  (if (get-in tree [:meta :shadow])
                                    "lemonbar" "noshadow"))
-                 :gap 4
+                 :gap 0
+                 :position "top"
+                 :position-flipped "bottom"
                  :top true
                  :lemons (fn [tree]
                            (->> (get-in tree [:panel :format])

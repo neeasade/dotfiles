@@ -34,7 +34,7 @@ make() {
 }
 
 stalonetray() {
-  if pgrep stalonetray; then
+  if silent pgrep stalonetray; then
     vdo systemctl --user stop stalonetray
   else
     vdo systemctl --user start stalonetray

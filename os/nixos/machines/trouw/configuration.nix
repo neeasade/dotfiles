@@ -50,7 +50,6 @@ in
     user = "neeasade";
     dataDir = "/home/neeasade/.local/share/Syncthing";
 
-    declarative = {
       overrideDevices = true;
       devices = builtins.removeAttrs consts.syncthingDevices [ "trouw" ];
 
@@ -67,7 +66,6 @@ in
         path = "${consts.home}/sync/orgzly";
         devices = [ "erasmus" "geloof" "phone"];
       };
-    };
   };
 
   # services.postgresql = {

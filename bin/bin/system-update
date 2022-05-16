@@ -23,4 +23,5 @@ echo "channel: $channel"
 # sudo nix-channel --update
 # sudo nixos-rebuild "${*}"
 # the same as the above:
+cd
 sudo nixos-rebuild $* --upgrade --show-trace
