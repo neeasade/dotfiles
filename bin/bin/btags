@@ -1,4 +1,5 @@
 #!/usr/bin/env bb
+;; -*- mode: clojure -*-
 ;; note: bb is https://github.com/borkdude/babashka
 ;; this does not alter tree state at all -- it merely toggles the hidden flags on bspwm nodes
 
