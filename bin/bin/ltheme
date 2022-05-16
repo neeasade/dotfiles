@@ -4,7 +4,7 @@
 . "$HOME/.sh.d/environment"
 
 render() {
-    template="$HOME/.dotfiles/theming/templates/$1"
+    template="$HOME/.dotfiles/wm/.templates/$1"
     dest="$HOME/$2"
     shift; shift
     mkdir -p "$(dirname "$dest")"
@@ -104,13 +104,14 @@ load_dunst() {
     export d_offset=$((b_window_gap + p_height))
 
     mon_width=$(bspc query -T -m | jq .rectangle.width)
-    export d_width=$(echo .24 \* $mon_width | bc | sed 's/\..*//')
+    export d_width=$(echo .22 \* $mon_width | bc | sed 's/\..*//')
 
     render dunstrc .config/dunst/dunstrc
 
     # always want to kill
     pkill dunst
     refresh dunst true
+    notify-send "dunst reloaded"
 }
 
 load_services() {

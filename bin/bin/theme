@@ -76,12 +76,12 @@
 
 (defn panel-color-lemons
   "give lemons: bg fg line"
-  [lemons]
+  [tree lemons]
   (let [vanilla (fn [lemon]
                   (-> lemon
-                      (assoc :bg "#ffffff")
-                      (assoc :fg "#000000")
-                      (assoc :line "#000000")))]
+                      (assoc :bg "{{color.normal.background}}")
+                      (assoc :fg "{{color.normal.foreground}}")
+                      (assoc :line "{{color.normal.foreground}}")))]
     (map vanilla lemons)))
 
 (defn panel-lemons-to-i3blocks [lemons]
@@ -289,7 +289,7 @@
                     {:music-dir "{{env.HOME}}/Music"
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 10
-                 :format  "dropdown:title|org_task:misc|mpd:volume:weather:clock"
+                 :format  "mpd:title|org_task:misc|volume:weather:clock"
                  :window-class (fn [tree]
                                  (if (get-in tree [:meta :shadow])
                                    "lemonbar" "noshadow"))
@@ -300,7 +300,7 @@
                  :lemons (fn [tree]
                            (->> (get-in tree [:panel :format])
                                 (panel-format-to-lemons)
-                                (panel-color-lemons )
+                                (panel-color-lemons tree)
                                 (panel-lemons-to-i3blocks)))
                  }
          :qutebrowser (unflatten-map

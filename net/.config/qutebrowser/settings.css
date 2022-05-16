@@ -1,0 +1,12 @@
+/* -*- mode: css -*- */
+
+* {
+  scroll-behavior: auto !important;
+}
+
+::selection {
+	/* Set background color for selected text */
+	background: #a4cfed;
+	color: #093553;
+}
+

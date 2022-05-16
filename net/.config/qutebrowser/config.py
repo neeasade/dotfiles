@@ -229,7 +229,7 @@ def makePadding(top, bottom, left, right):
 # font_height = {{{txth -f "$q_tab_font" -s $q_tab_fontsize ph}}}
 
 # todo:
-# inkscape --without-gui --query-id=id1 -H <(echo '<svg><text id="id1" font-family="Equity Text B">python</text></svg>') 2>/dev/null
+
 font_height = 19 # -- measured on a 'ph' qute title in pinta for test theme
 
 surround = round((theme['panel']['height'] - font_height) / 2)

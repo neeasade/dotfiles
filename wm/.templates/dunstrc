@@ -17,8 +17,8 @@ separator_height = {{bspwm.border.width}}
 padding = {{x.padding}}
 horizontal_padding = {{x.padding}}
 separator_color = frame
-frame_width = {{bspwm.border.width}}
-frame_color = "{{bspwm.border.focused}}"
+frame_width = 2
+frame_color = "{{color.focused.background}}"
 
 [urgency_low]
 background = "{{color.normal.background}}"

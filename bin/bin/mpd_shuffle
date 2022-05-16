@@ -2,21 +2,33 @@
 ;; filter to long songs, preserve album order
 ;; if any argument is passed, don't filter long, just shuffle with albums in mind
 ;; todo: this is not right -- shuffle at dir level wrong when keeping short songs
+;; (get (System/getProperties) "file.encoding")
 
 (require '[clojure.java.shell :as shell])
 (require '[clojure.string :as string])
 
+
+
 (defn is-long
+
   [song]
-  (> (/ (read-string
-         (:out
-          (shell/sh
-           "mediainfo" "--Inform=Audio;%Duration%"
-           (format "/home/neeasade/Music/%s" song))))
-        1000)
+  (> (/
+      (let [length-str
+            (:out
+             (shell/sh
+              "mediainfo" "--Inform=Audio;%Duration%"
+              (format "/home/neeasade/Music/%s" song)))]
+        (if (string/blank? (string/trim length-str))
+          0
+          (read-string length-str))
+        )
+      1000)
      (* 60 15)))
 
-(->> (string/split (:out (shell/sh "mpc" "playlist" "-f" "%file%")) #"\n")
+(->> (string/split (:out (shell/sh "mpc" "playlist" "-f" "%file%"
+                                   :out-enc "UTF-8"
+                                   )) #"\n")
+     ;; nb: maybe there's a modtime sort to happen here for yt imports or something
      (sort)
      (group-by
       (fn [path]
@@ -25,11 +37,14 @@
              (string/join "/"))))
      (mapcat (fn [[dir songs]]
                {dir (if (or (string/includes? dir "bandcamp")
-                            (< 4 (count songs) 15))
+                            (< 4 (count songs) 17)
+                            )
                       songs
-                      (if *command-line-args*
-                        songs
-                        (filter is-long songs)))}))
+                      (filter is-long songs)
+                      ;; (if *command-line-args*
+                      ;;   songs
+                      ;;   (filter is-long songs))
+                      )}))
      (shuffle)
      (mapcat second)
      (string/join "\n")

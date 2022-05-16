@@ -21,18 +21,18 @@ rand_tile() {
 	# cat /tmp/result_source.txt
 	# echo /tmp/result.png
 
-	# rg --files "$HOME/pngsave"
+	rg --files "$HOME/pngsave"
 	# rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
 
-	# rg --files /media/LIVEWIRE/Archive/other/squid/
-	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
-	# rg --files "$HOME/git/SubtlePatterns/"
-	# rg --files /home/neeasade/git/tiles-and-such
+	rg --files /media/LIVEWIRE/Archive/other/squid/
+	rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+	rg --files "$HOME/git/SubtlePatterns/"
+	rg --files /home/neeasade/git/tiles-and-such
 
-	echo '/home/neeasade/git/SubtlePatterns/leather_1.png'
+	# echo '/home/neeasade/git/SubtlePatterns/leather_1.png'
 
-	# rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump
-	# rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump2
+	rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump
+	rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump2
 	# $(lastshot)
 	# echo '/media/CODERED/git/SubtlePatterns/out.png'
 
@@ -61,12 +61,8 @@ target=$(rand_tile)
 background=$(elisp -r "(tarp/get :primary)")
 foreground=$(elisp -r "(tarp/get :background :focused)")
 
-# foreground=$(lessen 40 "$foreground")
-# background=$(lessen 30 "$background")
-
-# foreground=$(lessen 30 "$foreground")
-# background=$(lessen 30 "$background")
-
+background=$(elisp -r "(tarp/get :background :focused)")
+foreground=$(elisp -r "(ns/make-border-color :alt)")
 
 foreground=$(colort -t "$foreground")
 background=$(colort -t "$background")
@@ -112,7 +108,8 @@ color() {
 # fuzz percentage fg bg
 # color 10 22
 # color 18 30
-color 6 4
+# color 6 4
+color 4 6
 # color 3 3
 
 echo "$target"
