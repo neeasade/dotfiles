@@ -37,8 +37,13 @@ Wine'
 
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
-  bspc config top_monocle_padding 0
   bspc config bottom_monocle_padding 0
+
+  if pgrep lemonbar; then
+    bspc config top_padding $(theme -q panel.height)
+  else
+    bspc config top_monocle_padding 0
+  fi
 
   bspc config borderless_monocle true
 }
