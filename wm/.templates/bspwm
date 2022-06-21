@@ -1,71 +1,33 @@
 #!/usr/bin/env bash
 # neeasade's bspwmrc
 
-set -a
+. "$HOME/.sh.d/environment"
+pathmunge "$HOME/.wm/scripts/visual"
 
-# if none set, keep whatever is open.
-gapped=$1
-[ -z "$gapped" ] && gapped=$(iif "! [ $(bspc config window_gap) -le 0 ]")
+# panel_running=false
+# if silent systemctl --user status panel; then
+#     panel_running=true
+# fi
 
-PATH=$PATH:$HOME/.wm/scripts/visual
+# panel_padding=$(iif $relaunch_panel "{{panel.height}}+{{panel.gap}}" 0)
+# side_padding=$(iif $gapped 0 {{border.width}})
 
-relaunch_panel=$(iif "systemctl --user status panel")
+# bspc config {{panel.position}}_padding $((side_padding + panel_padding))
+# for side in left right {{panel.position-flipped}}; do
+#     bspc config ${side}_padding $side_padding
+# done
 
-running() {
-    bspc config border_width {{border.width}}
-    bspc config split_ratio  {{split-ratio}}
+{% for k,v in bspwm%}
+bspc config {{k|name|replace:"-":"_"}} "{{v}}"{% endfor %}
 
-    bspc config normal_border_color   "{{border.normal}}"
-    bspc config active_border_color   "{{border.active}}"
-    bspc config focused_border_color  "{{border.focused}}"
-    bspc config presel_feedback_color "{{border.presel}}"
+bspwm_kill_visual
 
-    # to gap or not to gap
-    bspc config window_gap $(iif $gapped {{window-gap}} -{{border.width}})
+for monitor in $(bspc query -M); do
+    bspc monitor $monitor -d {{bspwm-meta.desktop-names}}
+done
 
-    side_padding=$(iif $gapped 0 {{border.width}})
-    panel_padding=$(iif $relaunch_panel "{{panel.height}}+{{panel.gap}}" 0)
-
-    bspc config {{panel.position}}_padding $((side_padding + panel_padding))
-
-    for side in right {{panel.position-flipped}} left; do
-	bspc config ${side}_padding $side_padding
-    done
-
-
-    for visual in $HOME/.wm/scripts/visual/*; do
-	pkill -f "$visual" 2>/dev/null
-    done
-
-    # extensions may be defined in themes here:
-    {{bspwmrc-extend|safe}}
-}
-
-starting() {
-    bspc config focus_follows_pointer      true
-    bspc config ignore_ewmh_focus          true
-    bspc config remove_unplugged_monitors  true
-    bspc config remove_disabled_monitors   true
-    bspc config merge_overlapping_monitors true
-
-    bspc config pointer_modifier mod4
-    bspc config removal_adjustment false
-
-    bspc config external_rules_command "$(which external_rules.sh)"
-
-    mon_width=$(bspc query -T -m | jq .rectangle.width)
-    window_width=$(echo {{monocle-window-percent}} \* $mon_width | bc -l)
-    monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
-    bspc config left_monocle_padding $monocle_pad_width
-    bspc config right_monocle_padding $monocle_pad_width
-
-    for monitor in $(bspc query -M); do
-	bspc monitor $monitor -d {{desktop-names}}
-    done
-
-    bspc config single_monocle true
-    bspc config borderless_monocle false
-}
+# extensions may be defined in themes here:
+{{bspwm-meta.bspwmrc-extend|safe}}
 
 # initial wm startup actions ($xstart set in xinitrc)
 if [ $(( $(date +%s) - ${xstart:-0} )) -lt 2 ]; then
@@ -74,5 +36,3 @@ if [ $(( $(date +%s) - ${xstart:-0} )) -lt 2 ]; then
     setsid $HOME/.wm/startup.sh &
     panelt
 fi
-
-running
