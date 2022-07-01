@@ -13,7 +13,7 @@ import urllib.parse
 # from pywal
 def set_mac_wallpaper(img):
     """Set the wallpaper on macOS."""
-    db_path = "/Users/nathan/Library/Application Support/Dock/desktoppicture.db"
+    db_path = os.environ["HOME"] + "/Library/Application Support/Dock/desktoppicture.db"
 
     # Put the image path in the database
     sql = "insert into data values(\"%s\"); " % img

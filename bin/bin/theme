@@ -223,6 +223,10 @@
   (let [home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
         work? (not (= "neeasade" (System/getenv "USER")))
 
+        ;; emacs-colors
+        ;; {:colors ["#F2E9E3" "#916156" "#667400" "#916156" "#2A7783" "#2A7783" "#8F5D7F" "#544B45" "#A35A29" "#916156" "#667400" "#916156" "#2A7783" "#2A7783" "#8F5D7F" "#544B45"]
+        ;;  , :color {:focused {:background "#e1c5c0", :foreground "#544b45", :faded "#a35a29", :primary "#8f5d7f", :assumed "#2a7783", :alt "#916156", :strings "#667400"}, :normal {:background "#f2e9e3", :foreground "#544b45", :faded "#a35a29", :primary "#8f5d7f", :assumed "#2a7783", :alt "#916156", :strings "#667400"}, :weak {:background "#ded5d4", :foreground "#483f3e", :faded "#a93b2f", :primary "#825072", :assumed "#1d6a76", :alt "#845449", :strings "#5b6600"}, :strong {:background "#d2c9ce", :foreground "#40373c", :faded "#a1276b", :primary "#7b496b", :assumed "#15626e", :alt "#7d4d42", :strings "#545f00"}, :cursor "#2a7783"}}
+
         emacs-colors (let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
                        (when (= 0 (:exit result))
                          (read-string (:out result))))
@@ -250,7 +254,8 @@
          :bspwm-meta {:desktop-names "00 01 10 11"
                       :monocle-window-percent 0.52
                       :monocle-pad-width (fn [tree]
-                                           (when-not (string/blank? (shh "which bspc"))
+                                           (if (string/blank? (shh "which bspc"))
+                                             "55"
                                              (let [percent (get-in tree [:bspwm-meta :monocle-window-percent])
                                                    mon-width (-> (shh "bspc query -T -m")
                                                                  (json/parse-string)
@@ -338,17 +343,17 @@
                  :position "top"
                  :position-flipped "bottom"
                  :top true
-                 :lemons (fn [tree]
-                           (->> (get-in tree [:panel :format])
-                                (panel-format-to-lemons)
-                                (panel-color-lemons tree)
-                                (panel-lemons-to-i3blocks)))
+                 :lemons (when home?
+                           (fn [tree]
+                             (->> (get-in tree [:panel :format])
+                                  (panel-format-to-lemons)
+                                  (panel-color-lemons tree)
+                                  (panel-lemons-to-i3blocks))))
                  }
          :qutebrowser (unflatten-map
                        {:statusbar nil
                         :tab.font.family "{{font.variable.family}}"
-                        :tab.font.size
-                        "{{font.panel.size}}"
+                        :tab.font.size "{{font.panel.size}}"
                         ;; will this work?
                         :statusbar.font.size
                         ;; "{{qutebrowser.tab.font.size}}"
@@ -390,7 +395,11 @@
                        :font.mono.size 16
                        :font.variable.size 16
 
-                       :mkb.bar- ["🌳" "🌻" "🌱"]
+                       ;; :mkb.bar- ["🌳" "🌻" "🌱"]
+                       ;; :mkb.bar- ["🌳" "🟦" "🌱"]
+                       ;; :mkb.bar- ["⬛" "🟦" "⬜"]
+                       :mkb.bar- ["⬜" "🟦" "⬛"]
+                       ;; :mkb.bar- "AHH"
                        :shell.prompt "🌳"
                        :shell.prompt_err "😞"
                        :bspwm.window-gap 0
@@ -469,8 +478,6 @@
                 :render-file (render (slurp v) theme)
                 :shell (map-to-shell theme)
                 theme))
-            ;; (spit "/home/neeasade/wow.txt" (pr-str (get-theme)))
-            ;; (read-string (slurp "/home/neeasade/wow.txt"))
             (process-theme theme))
            (println)))
 

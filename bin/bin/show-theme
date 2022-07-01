@@ -9,7 +9,7 @@
 		       (s-pad-right 10 " " (first <>))
 		       (second <>))))
      (append (->> (first custom-enabled-themes)
-		  (pr-string)
+		  (pr-str)
 		  (s-replace "-theme" "")
 		  (s-replace "tarp-" "")
 		  (format ">> %s <<")

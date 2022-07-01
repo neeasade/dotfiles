@@ -22,5 +22,13 @@ solid() {
     vdo convert -size 100x100 "xc:$color" "$wallfile"
 }
 
+if [ -z "$*" ]; then
+  echo "usage"
+  echo "$0 solid '#ffffff'"
+  echo "$0 tile '/path/to/file'"
+  echo "$0 bg '/path/to/file'"
+  exit 1
+fi
+
 "$@"
 vdo set_wallpaper_mac "$wallfile"

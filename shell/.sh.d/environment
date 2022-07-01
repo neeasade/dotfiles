@@ -2,25 +2,33 @@
 # this script is kind of special -- it may be sourced by outside scripts to get a world bearing.
 # (thus, speed is super important here)
 
-if ${NEEASADE_ENV:-true}; then
+# if ${NEEASADE_ENV:-true}; then
+if true; then
   set -a
+
+  # revisit (just noticed nvm shoved this in here)
+  # NVM_DIR="$HOME/.nvm"
+  # if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
+  #   . "/opt/homebrew/opt/nvm/nvm.sh"
+  # fi
 
   NEEASADE_ENV=false
 
+  path_remove() {
+    PATH=${PATH//":$1:"/":"} # middle
+    PATH=${PATH/#"$1:"/}     # beginning
+    PATH=${PATH/%":$1"/}     # end
+  }
+
   pathmunge () {
     _dir=${1%/}
+    path_remove "$_dir"
     if [ -d "$_dir" ]; then
       case ":${PATH}:" in
         *:"$_dir":*) ;;
         *) PATH=$_dir:$PATH
       esac
     fi
-  }
-
-  path_remove() {
-    PATH=${PATH//":$1:"/":"} # middle
-    PATH=${PATH/#"$1:"/}     # beginning
-    PATH=${PATH/%":$1"/}     # end
   }
 
   XDG_CONFIG_HOME="$HOME/.config"
@@ -92,6 +100,10 @@ if ${NEEASADE_ENV:-true}; then
     pathmunge "$p"
   done
 
+
+  # m1 homebrew location
+  pathmunge /opt/homebrew/bin
+
   pathmunge '/run/current-system/sw/bin'
   pathmunge "$HOME/.dotfiles/theming"
 
@@ -127,7 +139,9 @@ if ${NEEASADE_ENV:-true}; then
   fi
 
   if has qutebrowser; then
-    BROWSER=qb_meta_open
+    if has yq; then
+      BROWSER=qb_meta_open
+    fi
   fi
 
   set +a

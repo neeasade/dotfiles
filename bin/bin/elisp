@@ -88,7 +88,7 @@ else
 fi
 
 emacs_timeout=
-if type timeout >/dev/null; then
+if type timeout >/dev/null 2>&1; then
     emacs_timeout="timeout ${elisp_timeout}"
 fi
 
