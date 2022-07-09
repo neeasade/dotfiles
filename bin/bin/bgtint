@@ -1,25 +1,25 @@
 #!/bin/sh
 
-# take a tiled image, tint the colors
+. ~/.sh.d/environment
 
-# most seen color
-most_seen() {
-    # convert "$1" txt:- | awk '{print $3}' | rg -v pixel | sort | uniq -c | sort | head -n 1 | awk '{print $2}' | sed 's/..$//'
-    convert "$1" txt:- | awk '{print $3}' | rg -v pixel | sort | uniq -c | sort | head -n 1 | awk '{print $2}'
-}
+# take a tiled image, tint the colors, set the wallpaper
 
-least_seen() {
-    # convert "$1" txt:- | awk '{print $3}' | rg -v pixel | sort | uniq -c | sort | tail -n 1 | awk '{print $2}' | sed 's/..$//'
-    convert "$1" txt:- | awk '{print $3}' | rg -v pixel | sort | uniq -c | sort | tail -n 1 | awk '{print $2}'
+image_colors() {
+    # todo: improve on this (kmeans or something else)
+    # right now just dumping everything most to least seen
+    # anticipate this being really slow above smol images
+
+    echo "getting colors..." >&2
+    convert "$1" -alpha off txt:- | awk '{print $3}' | rg -v pixel | sort -rn | uniq -c | awk '{print $2}'
+    echo "getting colors... done" >&2
 }
 
 rand_tile() {
     # echo "/media/LIVEWIRE/Archive/other/squidd/pattern_125.gif"
     (
-
-	# echo /home/neeasade/Downloads/upfeathers/out.png
-	# cat /tmp/result_source.txt
-	# echo /tmp/result.png
+	echo /home/neeasade/Downloads/upfeathers/out.png
+	cat /tmp/result_source.txt
+	echo /tmp/result.png
 
 	rg --files "$HOME/pngsave"
 	# rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
@@ -35,82 +35,76 @@ rand_tile() {
 	rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump2
 	# $(lastshot)
 	# echo '/media/CODERED/git/SubtlePatterns/out.png'
-
     ) | sort -R | head -n 1
 }
 
-# check if contrast matches
-matches() {
-    elisp "(eq
-    (ct-is-light-p \"$1\")
-    (ct-is-light-p \"$2\"))" >/dev/null \
-	&& echo true || echo false
-}
-
 target=$(rand_tile)
-# target=$(lastshot)
-# background=D2D2FA
-# background=D2C8FA
+if ! silent identify "$target"; then
+    target=$(rand_tile)
+fi
+if ! silent identify "$target"; then
+    target=$(rand_tile)
+fi
 
+background=$(theme -q color.focused.background)
+foreground=$(theme -q color.normal.assumed)
 
-# target=/home/neeasade/Last_Shot/shot.png
-# target='/media/CODERED/git/SubtlePatterns/out.png'
-# foreground=D7CDFF
-# background=$(theme getval background)
-
-background=$(elisp -r "(tarp/get :primary)")
-foreground=$(elisp -r "(tarp/get :background :focused)")
-
-background=$(elisp -r "(tarp/get :background :focused)")
-foreground=$(elisp -r "(ns/make-border-color :alt)")
-
-foreground=$(colort -t "$foreground")
-background=$(colort -t "$background")
-
-
-
-# background=$(theme getval background)
-
-# try a few times
-# if ! $(matches "$(most_seen "$target")" \#$background); then
-#     target=$(rand_tile)
-#     if ! $(matches "$(most_seen "$target")" \#$background); then
-# 	target=$(rand_tile)
-#     fi
-# fi
+# pastelish
+# background=$(elisp -r "(ns/make-border-color :alt)")
+foreground=$(elisp -r "(ns/make-border-color :assumed)")
+foreground=$(elisp -r "(ns/make-border-color :primary)")
 
 # target='/home/neeasade/git/tiles-and-such/Solaris & CDE/solaris-raw-bitmaps/SolarisLogo.pm'
-# note who we are inheriting from
+
 echo "$target" > /tmp/result_source.txt
 rm /tmp/result.png
 
 # convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
 # convert "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
-
 # foreground=D7CDFF
 # background=D7CDFF
 # background=$(theme getval background)
 
-set -x
-
 cp "$target" /tmp/result.png
+convert /tmp/result.png -resize 120% /tmp/result.png
 
-# convert "$target" -fuzz 3% -fill "#$background" -opaque '#0F1C25' /tmp/result.png
-# convert /tmp/result.png -fuzz 3% -fill "#$foreground" -opaque '#FBFCFE' /tmp/result.png
+colors=$(image_colors "$target")
 
-# convert /tmp/result.png -resize 120% /tmp/result.png
+most_seen=$(echo "$colors" | head -n 1)
+least_seen=$(echo "$colors" | tail -n 1)
 
 color() {
-    convert "/tmp/result.png" -fuzz "${1}%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
-    convert "/tmp/result.png" -fuzz "${2}%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+    echo "fuzz fg: $most_seen -> $foreground at ${1}%"
+    echo "fuzz bg: $least_seen -> $background at ${2}%"
+    convert "/tmp/result.png" -fuzz "${1}%" -fill "$foreground" -opaque "$most_seen" /tmp/result.png
+    convert "/tmp/result.png" -fuzz "${2}%" -fill "$background" -opaque "$least_seen" /tmp/result.png
+}
+
+# if we see a lot of colors, up the fuzz
+distance=$(elisp -r "(round (ct-distance \"${least_seen}\" \"${most_seen}\"))")
+
+echo "colors seen: ${#colors}"
+echo "distance most/least seen: $distance"
+
+auto() {
+    if [ "$distance" -lt 10 ]; then
+       color 2 4
+       return
+    fi
+
+    if [ ${#colors} -gt 50 ]; then
+	color 8 12
+    else
+	color 4 6
+    fi
 }
 
 # fuzz percentage fg bg
 # color 10 22
 # color 18 30
 # color 6 4
-color 4 6
 # color 3 3
+auto
 
 echo "$target"
 feh --bg-tile /tmp/result.png || "$0"
