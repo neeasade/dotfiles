@@ -4,27 +4,14 @@
 . "$HOME/.sh.d/environment"
 pathmunge "$HOME/.wm/scripts/visual"
 
-# panel_running=false
-# if silent systemctl --user status panel; then
-#     panel_running=true
-# fi
-
-# panel_padding=$(iif $relaunch_panel "{{panel.height}}+{{panel.gap}}" 0)
-# side_padding=$(iif $gapped 0 {{border.width}})
-
-# bspc config {{panel.position}}_padding $((side_padding + panel_padding))
-# for side in left right {{panel.position-flipped}}; do
-#     bspc config ${side}_padding $side_padding
-# done
-
 {% for k,v in bspwm%}
 bspc config {{k|name|replace:"-":"_"}} "{{v}}"{% endfor %}
-
-bspwm_kill_visual
 
 for monitor in $(bspc query -M); do
     bspc monitor $monitor -d {{bspwm-meta.desktop-names}}
 done
+
+bspwm_kill_visual
 
 # extensions may be defined in themes here:
 {{bspwm-meta.bspwmrc-extend|safe}}

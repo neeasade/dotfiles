@@ -1,6 +1,7 @@
 #!/bin/sh
 
 for visual in $HOME/.wm/scripts/visual/*; do
-    echo pkill -f $visual
-    pkill -f $visual 2> /dev/null;
+    if pkill -f $visual 2> /dev/null; then
+	echo pkill -f $visual
+    fi
 done

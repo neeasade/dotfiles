@@ -13,7 +13,7 @@ offset {{env.d_offset}}
 idle_threshold = 60
 follow = mouse
 history_length = 20
-separator_height = {{bspwm.border.width}}
+separator_height = {{bspwm.border-width}}
 padding = {{x.padding}}
 horizontal_padding = {{x.padding}}
 separator_color = frame
