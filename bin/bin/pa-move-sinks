@@ -7,8 +7,8 @@ echo pactl set-default-sink $target
 pactl set-default-sink $target
 
 pactl list short sink-inputs | awk '{print $1}' | while read stream; do
-    pactl move-sink-input "$stream" "$target"
     echo pactl move-sink-input "$stream" "$target"
+    pactl move-sink-input "$stream" "$target"
 done
 
 player.sh play

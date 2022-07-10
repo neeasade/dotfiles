@@ -49,7 +49,7 @@ load_btag_borders() {
     elisp '(->> (list :primary :strings :assumed :faded)
   (-map (lambda (l) (ns/make-border-color l)))
   (-map (fn (substring <> 1)))
-  (-map-indexed (fn (ns/shell-exec (format "btags set ^%s color %s" (+ 1 <1>) <2>)))))'
+  (-map-indexed (lambda (i c) (ns/shell-exec (format "btags set ^%s color %s" (+ 1 i) c)))))' 1>/dev/null
 }
 
 load_qutebrowser() {
@@ -218,7 +218,7 @@ load_services() {
 load_wm() {
     # meta package (bspwm and dunst react to panel state)
     for x in panel bspwm dunst; do
-	echo "> load $x"
+	echo ":: load $x"
 	load_$x
     done
 }
