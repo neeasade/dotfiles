@@ -227,7 +227,7 @@
         ;; {:colors ["#F2E9E3" "#916156" "#667400" "#916156" "#2A7783" "#2A7783" "#8F5D7F" "#544B45" "#A35A29" "#916156" "#667400" "#916156" "#2A7783" "#2A7783" "#8F5D7F" "#544B45"]
         ;;  , :color {:focused {:background "#e1c5c0", :foreground "#544b45", :faded "#a35a29", :primary "#8f5d7f", :assumed "#2a7783", :alt "#916156", :strings "#667400"}, :normal {:background "#f2e9e3", :foreground "#544b45", :faded "#a35a29", :primary "#8f5d7f", :assumed "#2a7783", :alt "#916156", :strings "#667400"}, :weak {:background "#ded5d4", :foreground "#483f3e", :faded "#a93b2f", :primary "#825072", :assumed "#1d6a76", :alt "#845449", :strings "#5b6600"}, :strong {:background "#d2c9ce", :foreground "#40373c", :faded "#a1276b", :primary "#7b496b", :assumed "#15626e", :alt "#7d4d42", :strings "#545f00"}, :cursor "#2a7783"}}
 
-        emacs-colors (let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
+        emacs-colors (let [result (shell/sh "elisp" "-t0.1" "-r" "(ns/emacs-to-theme)")]
                        (when (= 0 (:exit result))
                          (read-string (:out result))))
 
@@ -286,16 +286,7 @@
                  :removal-adjustment false
                  :external-rules-command (fn [_] (shh "which external_rules.sh"))
                  :left-monocle-padding "{{bspwm-meta.monocle-pad-width}}"
-                 :right-monocle-padding "{{bspwm-meta.monocle-pad-width}}"
-
-                 ;; :window-gap 10
-                 ;; :split-ratio 0.5
-                 :border {:width 3
-                          :normal "{{colors.0}}"
-                          :active "{{colors.8}}"
-                          :focused "{{colors.7}}"
-                          :presel "{{colors.8}}"}}
-
+                 :right-monocle-padding "{{bspwm-meta.monocle-pad-width}}"}
          :mkb {:bar- "-+-"
                :complete (fn [tree] (-> tree (get-in [:mkb :bar-]) (nth 0) (str)))
                :sep (fn [tree] (-> tree (get-in [:mkb :bar-]) (nth 1) (str)))
@@ -340,8 +331,6 @@
                                  (if (get-in tree [:meta :shadow])
                                    "lemonbar" "noshadow"))
                  :gap 0
-                 :position "top"
-                 :position-flipped "bottom"
                  :top true
                  :lemons (when home?
                            (fn [tree]
@@ -370,19 +359,20 @@
                        :emacs.theme "tarp-mcfay"
                        :BG_COMMAND "${HOME}/.fehbg"
                        ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
-                       :font.mono.family "Triplicate T4c"
+                       ;; :font.mono.family "Triplicate T4c"
+                       :font.mono.family "Go Mono"
                        ;; :font.mono.family "Triplicate C4c"
                        :font.variable.family "Equity Text B"
                        ;; :font.variable.family "Equity Text A"
                        :mkb.bar- "AAH"
                        :shell.prompt "%"
-                       :bspwm.window-gap 40
                        :x.padding 5
-                       :bspwm.monocle-window-percent 0.55
+                       :bspwm.window-gap 40
+                       :bspwm-meta.monocle-window-percent 0.55
+                       :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
                        :font.mono.size 12
                        :font.variable.size 13
-                       :picom.shadow.enabled "{{meta.shadow}}"
-                       :bspwm.bspwmrc-extend "tag_borders &\n subscription_rules &"}))
+                       :picom.shadow.enabled "{{meta.shadow}}"}))
 
         work-theme (when work?
                      (unflatten-map
@@ -473,7 +463,7 @@
                 :keys (->> theme flatten-map keys (map name) (string/join "\n"))
                 :narrow (narrow v theme)
                 :promote (promote v theme)
-                :query (render (format "{{%s}}" v) theme)
+                :query (render (format "{{%s|safe}}" v) theme)
                 :render (render v theme)
                 :render-file (render (slurp v) theme)
                 :shell (map-to-shell theme)
