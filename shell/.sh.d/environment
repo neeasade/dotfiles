@@ -91,6 +91,13 @@ if true; then
   GOPATH="$HOME/.go"
   CODEHOME="$HOME/git"
 
+
+  # m1 homebrew location
+  pathmunge /opt/homebrew/bin
+
+  pathmunge '/run/current-system/sw/bin'
+  pathmunge "$HOME/.dotfiles/theming"
+
   # the p is for pain
   for p in                                \
       $HOME/.wm/{scripts,panel}/*/        \
@@ -101,11 +108,6 @@ if true; then
   done
 
 
-  # m1 homebrew location
-  pathmunge /opt/homebrew/bin
-
-  pathmunge '/run/current-system/sw/bin'
-  pathmunge "$HOME/.dotfiles/theming"
 
   if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     if [ -z "$NIX_PROFILES" ]; then
