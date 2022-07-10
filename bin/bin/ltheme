@@ -233,6 +233,10 @@ if [ -z "$*" ]; then
     fi
 fi
 
+if [ ! "$*" = "bg" ]; then
+    vdo themeq REFRESH
+fi
+
 for conf in "$@"; do
     (
 	result=$(

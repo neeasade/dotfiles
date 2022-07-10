@@ -450,6 +450,17 @@
   (selmer.util/set-missing-value-formatter! complain-value-fn)
   (template/render template (assoc theme :env (get-env))))
 
+(let [[flag arg] *command-line-args*]
+  (when (and
+         (= 2 (count *command-line-args*))
+         (= flag "-q"))
+    (println
+     (shh (format "themeq %s"
+                  (-> arg
+                      (string/replace "-" "_")
+                      (string/replace "." "_")))))
+    (System/exit exit-status)))
+
 (let [options (:options (cli/parse-opts *command-line-args* cli-options))
       theme (get-theme)
       theme (if-let [overrides (:extend options)]
