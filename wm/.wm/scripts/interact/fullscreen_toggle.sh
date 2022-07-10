@@ -3,7 +3,6 @@
 # this is so we can enjoy fake padding in fullscreen things (and account for panel presence)
 # todo: this script assumes that gaps are always what you want.
 
-# possible modes
 do_monocle_full() {
   if pgrep picom; then
     hsetroot -solid "$(theme -q color.normal.background)" &
@@ -15,7 +14,6 @@ do_monocle_full() {
     bspc node -t ~fullscreen
 
   bspc node -t tiled
-  bspc desktop -l monocle
 
   # what are we looking at?
   window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
@@ -29,52 +27,36 @@ dota2
 factorio
 Wine'
 
-  if echo "$no_trim_list" | grep "$window_class"; then
-    bspc config window_gap 0
-  else
-    bspc config window_gap $(theme -q x.padding)
-  fi
-
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
-  bspc config bottom_monocle_padding 0
 
-  if pgrep lemonbar; then
-    bspc config top_padding $(theme -q panel.height)
+  if echo "$no_trim_list" | grep "$window_class"; then
+    gapt true 0
   else
-    bspc config top_monocle_padding 0
+    gapt true $(theme -q x.padding)
   fi
 
   bspc config borderless_monocle true
+  bspc desktop -l monocle
 }
 
 do_monocle_slim() {
-  ltheme bg & >/dev/null
+  ltheme bg &
 
   bspc config borderless_monocle false
 
   bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
   bspc node -t tiled
 
-  if pgrep lemonbar; then
-    bspc config window_gap $(theme -q bspwm.window-gap)
-  else
-    bspc config window_gap 0
-  fi
+  monocle_pad_width=$(theme -q bspwm-meta.monocle-pad-width)
 
-  mon_width=$(bspc query -T -m | jq .rectangle.width)
-  percent=$(theme -q bspwm.monocle-window-percent)
-  window_width=$(echo $percent \* $mon_width | bc -l)
+  # todo: squish in pad-width by gap amount when no gaps (else we have thick monocle_slim)
+  # $(theme -q bspwm.window-gap)
 
-  monocle_pad_width=$(echo "($mon_width - $window_width)/2" | bc -l)
   bspc config left_monocle_padding $monocle_pad_width
   bspc config right_monocle_padding $monocle_pad_width
 
-  for c in {top,bottom}_{,monocle_}padding; do
-    echo bspc config $c 0
-    bspc config $c 0
-  done
-
+  gapt true
   bspc desktop -l monocle
 }
 
@@ -87,15 +69,9 @@ do_tiled() {
   bspc query -N -n focused.fullscreen \
     && bspc node -t ~fullscreen
 
-  # bspc config focused_border_color \#$(theme -q b_focused_border_color)
   bspc desktop -l tiled
-  bspc config window_gap $(theme -q bspwm.window.gap)
+  bspc config window_gap $(theme -q bspwm.window-gap)
   bspc config borderless_monocle false
-
-  # bspwm_kill_visual
-  # nohup setsid tag_borders &
-
-  # $HOME/.config/bspwm/bspwmrc
 }
 
 state=nop
@@ -112,7 +88,7 @@ else
     if [ $(bspc config left_monocle_padding) -gt 0 ]; then
       state=monocle_slim
     else
-      if [ $(bspc config window_gap) -eq 0 ]; then
+      if [ $(bspc config window_gap) -le 0 ]; then
         state=monocle_full
       elif [ $(bspc config window_gap) -eq $(theme -q x.padding) ]; then
         state=monocle_full

@@ -1,4 +1,49 @@
 #!/bin/sh
 # toggle gaps on and off
 
-$HOME/.config/bspwm/bspwmrc $(iif "[ $(bspc config window_gap) -le 0 ]")
+# todo: the amount of subshells to get theme stuff is gross
+# I would like a "take x paths, export as shell"
+# eg theme -q panel.position panel.height -s
+#      -> $panel_position $panel_height
+
+want_gaps=$1
+window_gap=$2
+
+if [ -z "$want_gaps" ]; then
+    want_gaps=false
+    if [ $(bspc config window_gap) -le 0 ]; then
+	want_gaps=true
+    fi
+fi
+
+panel_running=false
+if silent systemctl --user status panel; then
+    panel_running=true
+fi
+
+padding() {
+    pad=$1
+    bspc config left_padding $pad
+    bspc config right_padding $pad
+    bspc config bottom_padding $pad
+
+    if $panel_running; then
+	p_height=$(theme -q panel.height)
+	bspc config top_padding $((pad + p_height))
+    fi
+}
+
+if $want_gaps; then
+    window_gap=${window_gap:-$(theme -q bspwm.window-gap)}
+    bspc config window_gap "$window_gap"
+    padding 0
+else
+    if [ -z "$window_gap" ]; then
+	b_width=$(theme -q bspwm.border-width)
+	bspc config window_gap -$b_width
+	padding ${b_width}
+    else
+	bspc config window_gap "$window_gap"
+	padding 0
+    fi
+fi
