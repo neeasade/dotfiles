@@ -7,13 +7,11 @@
 #      -> $panel_position $panel_height
 
 want_gaps=$1
-window_gap=$2
+pad_px=${2:-0}
 
 if [ -z "$want_gaps" ]; then
-    want_gaps=false
-    if [ $(bspc config window_gap) -le 0 ]; then
-	want_gaps=true
-    fi
+    # opposite of current status
+    want_gaps=$(iif '[ $(bspc config window_gap) -le 0 ]')
 fi
 
 panel_running=false
@@ -23,27 +21,41 @@ fi
 
 padding() {
     pad=$1
+
     bspc config left_padding $pad
     bspc config right_padding $pad
     bspc config bottom_padding $pad
 
+    top_pad=$pad
     if $panel_running; then
 	p_height=$(theme -q panel.height)
-	bspc config top_padding $((pad + p_height))
+	top_pad=$((pad + p_height))
     fi
+
+    bspc config top_padding $top_pad
 }
 
 if $want_gaps; then
-    window_gap=${window_gap:-$(theme -q bspwm.window-gap)}
-    bspc config window_gap "$window_gap"
-    padding 0
+    bspc config borderless_monocle false
+    padding ${pad_px}
+
+    bspc config window_gap "$(theme -q bspwm.window-gap)"
+    ltheme bg
 else
-    if [ -z "$window_gap" ]; then
-	b_width=$(theme -q bspwm.border-width)
-	bspc config window_gap -$b_width
-	padding ${b_width}
-    else
-	bspc config window_gap "$window_gap"
-	padding 0
+
+    if jget layout "$(bspc query -T -d)" | grep -q monocle; then
+	if [ "$(bspc config left_monocle_padding)" = 0 ]; then
+	    bspc config borderless_monocle true
+	    ltheme bg_plain
+	    pad_px=$(theme -q x.padding)
+	fi
     fi
+
+    b_width=$(theme -q bspwm.border-width)
+    bspc config window_gap -$b_width
+    # padding ${b_width}
+    padding $((b_width + pad_px))
+    # padding ${pad_px}
+    # bspc config window_gap 0
 fi
+
