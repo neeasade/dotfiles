@@ -5,6 +5,7 @@
          '[clojure.string :as string]
          '[clojure.tools.cli :as cli]
          '[selmer.parser :as template]
+         '[babashka.fs :as fs]
          '[cheshire.core :as json]
          '[clojure.walk :refer [postwalk prewalk]])
 
@@ -94,8 +95,7 @@
     (map vanilla lemons)))
 
 (defn panel-lemons-to-i3blocks [lemons]
-  (let [lemon-info {:interval {
-                               :network 20
+  (let [lemon-info {:interval {:network 20
                                :mail 30
                                :desktop "bspc subscribe"
                                :tags "persist"
@@ -152,6 +152,12 @@
        (map keyword)
        (get-in m)))
 
+(defn fish [keys theme]
+  (->> keys
+       (map (fn [k] {k (narrow k theme)}))
+       (into {})
+       (unflatten-map)))
+
 (defn promote [string-path m]
   (merge m (narrow string-path m)))
 
@@ -197,8 +203,7 @@
              (map (fn [[k v]]
                     {k (if (and (string? v)
                                 (string/includes? v "{{"))
-                         (let [
-                               ;; let top level map win conflicts
+                         (let [;; let top level map win conflicts
                                render-conf (-> tree
                                                (merge (apply dissoc n (keys tree)))
                                                (assoc :env (get-env)))
@@ -223,16 +228,13 @@
   (let [home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
         work? (not (= "neeasade" (System/getenv "USER")))
 
-        ;; emacs-colors
-        ;; {:colors ["#F2E9E3" "#916156" "#667400" "#916156" "#2A7783" "#2A7783" "#8F5D7F" "#544B45" "#A35A29" "#916156" "#667400" "#916156" "#2A7783" "#2A7783" "#8F5D7F" "#544B45"]
-        ;;  , :color {:focused {:background "#e1c5c0", :foreground "#544b45", :faded "#a35a29", :primary "#8f5d7f", :assumed "#2a7783", :alt "#916156", :strings "#667400"}, :normal {:background "#f2e9e3", :foreground "#544b45", :faded "#a35a29", :primary "#8f5d7f", :assumed "#2a7783", :alt "#916156", :strings "#667400"}, :weak {:background "#ded5d4", :foreground "#483f3e", :faded "#a93b2f", :primary "#825072", :assumed "#1d6a76", :alt "#845449", :strings "#5b6600"}, :strong {:background "#d2c9ce", :foreground "#40373c", :faded "#a1276b", :primary "#7b496b", :assumed "#15626e", :alt "#7d4d42", :strings "#545f00"}, :cursor "#2a7783"}}
-
-        emacs-colors (let [result (shell/sh "elisp" "-t0.1" "-r" "(ns/emacs-to-theme)")]
-                       (when (= 0 (:exit result))
-                         (read-string (:out result))))
-
         colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
                 :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
+
+        ;; emacs-colors colors
+        emacs-colors (let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
+                       (when (= 0 (:exit result))
+                         (read-string (:out result))))
 
         base-conf
         {:meta
@@ -281,6 +283,7 @@
                  :ignore-ewmh-focus          true
                  :remove-unplugged-monitors  true
                  :remove-disabled-monitors   true
+                 :ignore-ewmh-struts         true
                  :merge-overlapping-monitors true
                  :pointer-modifier "mod4"
                  :removal-adjustment false
@@ -326,7 +329,7 @@
                     {:music-dir "{{env.HOME}}/Music"
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 26
-                 :format  "mpd:title|org_task:misc|volume:weather:clock"
+                 :format  "mpd:title|org_task:misc|tags:clock"
                  :window-class (fn [tree]
                                  (if (get-in tree [:meta :shadow])
                                    "lemonbar" "noshadow"))
@@ -366,11 +369,11 @@
                        ;; :font.variable.family "Equity Text A"
                        :mkb.bar- "AAH"
                        :shell.prompt "%"
-                       :x.padding 5
-                       :bspwm.window-gap 40
-                       :bspwm-meta.monocle-window-percent 0.55
+                       :x.padding 10
+                       :bspwm.window-gap 30
+                       :bspwm-meta.monocle-window-percent 0.50
                        :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
-                       :font.mono.size 12
+                       :font.mono.size 11
                        :font.variable.size 13
                        :picom.shadow.enabled "{{meta.shadow}}"}))
 
@@ -424,12 +427,14 @@
 (def cli-options
   [["-e" "--extend STRING" "override base-theme with edn -- pass a flat map {:a.b.c \"value\"}"]
    ["-h" "--help" "show the usage"]
+   ["-c" "--cache" "clear the cache"]
    ["-k" "--keys" "dump the keys"]
    ["-n" "--narrow PATH" "narrow map to path"]
    ["-p" "--promote PATH" "promote path"]
    ["-q" "--query PATH" "query path"]
-   ["-r" "--render-file FILE" "render a file as a template" :validate [(fn [s] true) "File doesn't exist"]] ;; todo
+   ["-r" "--render-file FILE" "render a file as a template" :validate [(fn [f] (fs/exists? f)) "File doesn't exist"]] ;; todo
    ["-R" "--render STRING" "render a string as a template"]
+   ["-f" "--fish KEYS" "fish out comma-delimited keys as a flatmap"]
    ["-s" "--shell" "output as shell"]])
 
 (defn usage []
@@ -450,22 +455,22 @@
   (selmer.util/set-missing-value-formatter! complain-value-fn)
   (template/render template (assoc theme :env (get-env))))
 
-(let [[flag arg] *command-line-args*]
-  (when (and
-         (= 2 (count *command-line-args*))
-         (= flag "-q"))
-    (println
-     (shh (format "themeq %s"
-                  (-> arg
-                      (string/replace "-" "_")
-                      (string/replace "." "_")))))
-    (System/exit exit-status)))
+(defn refresh-cache [cache]
+  (let [fresh (process-theme (get-theme))]
+    (spit cache fresh)
+    fresh))
 
-(let [options (:options (cli/parse-opts *command-line-args* cli-options))
-      theme (get-theme)
+(let [{:keys [options errors]} (cli/parse-opts *command-line-args* cli-options)
+      cache-file (if (fs/exists? "/dev/shm")
+                   (format "/dev/shm/%s-theme-cache" (System/getenv "USER"))
+                   (format "%s/.cache/rice/theme-cache" (System/getenv "HOME")))
+      theme (if (fs/exists? cache-file)
+              (read-string (slurp cache-file))
+              (refresh-cache cache-file))
       theme (if-let [overrides (:extend options)]
               (->> (read-string overrides) (unflatten-map) (deep-merge theme))
               theme)]
+  (doall (map println errors))
   (some->> options
            (reduce
             (fn [theme [k v]]
@@ -473,13 +478,15 @@
                 :help (reduced (usage))
                 :keys (->> theme flatten-map keys (map name) (string/join "\n"))
                 :narrow (narrow v theme)
+                :cache (refresh-cache cache-file)
                 :promote (promote v theme)
                 :query (render (format "{{%s|safe}}" v) theme)
                 :render (render v theme)
                 :render-file (render (slurp v) theme)
+                :fish (fish (string/split v #",") theme)
                 :shell (map-to-shell theme)
                 theme))
-            (process-theme theme))
+            theme)
            (println)))
 
 (System/exit exit-status)

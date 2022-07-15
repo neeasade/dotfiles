@@ -27,7 +27,6 @@ Wine'
   else
     gapt $gapped $(theme -q x.padding)
   fi
-
 }
 
 do_monocle_slim() {
@@ -72,9 +71,7 @@ else
     if [ $(bspc config left_monocle_padding) -gt 0 ]; then
       state=monocle_slim
     else
-      if [ $(bspc config window_gap) -le 0 ]; then
-        state=monocle_full
-      elif [ $(bspc config window_gap) -eq $(theme -q x.padding) ]; then
+      if [ "$(bspc config left_monocle_padding)" = 0 ]; then
         state=monocle_full
       fi
     fi

@@ -241,7 +241,7 @@ if [ -z "$*" ]; then
 fi
 
 if [ ! "$*" = "bg" ]; then
-    vdo themeq REFRESH
+    vdo silent theme -c
 fi
 
 for conf in "$@"; do

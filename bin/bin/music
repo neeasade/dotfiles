@@ -119,7 +119,7 @@ add() { # add a url to library, fallback on clipboard content
 
   youtube-dl --download-archive  "$musicdir/download_archive.txt" -x -i -o "$format" "$url"
 
-  mpc update # re-index
+  mpc update
 }
 
 del() { # delete the currently playing song
@@ -132,17 +132,16 @@ del() { # delete the currently playing song
 append() { # append some search term to the current playlist
   echo append "$*"
 
-  if [ "$interactive_op" = "append" ]; then
-      # we called append at an interative level, therefore we are no longer tied to any playlist
-      echo "custom" > "$current_playlist"
-  fi
-
   if [ -z "$songs_cached" ]; then
      songs_cached=$(mpc listall)
   fi
 
   grep -i $GREP_EXTRA "$*" <<< "$songs_cached" | mpc add --wait
+
   if [ "$interactive_op" = "append" ]; then
+    # we called append at an interactive level, therefore we are no longer tied to any playlist
+    echo "custom" > "$current_playlist"
+
     clear_duplicates
   fi
 }
@@ -173,7 +172,7 @@ artist() { # play songs by an artist
   artist=$*
   if [ -z "$artist" ]; then
     if ! artist=$({
-		   mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]' | sort | uniq
+		   mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]'
 		   cat "${musicdir}/playlist/artists"
 		   ls "${musicdir}/import/bandcamp/"
 		 } | sort | uniq | dmenu); then
@@ -256,7 +255,7 @@ playlist() { # select a search term based playlist to play
   @ () { artist "$@"; }
 
   if $loaded_cached_playlist; then
-    # this lets us preserve SHUFFLE directives
+    # this lets us preserve SHUFFLE directives and other custom junk
     + () { silent; }
     - () { silent; }
     @ () { silent; }
@@ -357,10 +356,7 @@ context() {
   fi
   end=$((pos + 2))
 
-  # todo: this better (multi -q + read)
-  complete=$(theme -q mkb.complete)
-  empty=$(theme -q mkb.empty)
-  sep=$(theme -q mkb.sep)
+  eval "$(theme -n mkb -f "complete,empty,sep" -s)"
 
   mpc playlist -f '%position%' | awk " {
 if (NR>=${start} && NR<=$end)

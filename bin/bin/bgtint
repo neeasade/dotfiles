@@ -46,13 +46,14 @@ if ! silent identify "$target"; then
     target=$(rand_tile)
 fi
 
+theme -c
 background=$(theme -q color.focused.background)
 foreground=$(theme -q color.normal.assumed)
 
 # pastelish
 # background=$(elisp -r "(ns/make-border-color :alt)")
-foreground=$(elisp -r "(ns/make-border-color :assumed)")
-foreground=$(elisp -r "(ns/make-border-color :primary)")
+# foreground=$(elisp -r "(ns/make-border-color :assumed)")
+# foreground=$(elisp -r "(ns/make-border-color :primary)")
 
 # target='/home/neeasade/git/tiles-and-such/Solaris & CDE/solaris-raw-bitmaps/SolarisLogo.pm'
 

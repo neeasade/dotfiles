@@ -1,61 +1,55 @@
 #!/bin/sh
 # toggle gaps on and off
 
-# todo: the amount of subshells to get theme stuff is gross
-# I would like a "take x paths, export as shell"
-# eg theme -q panel.position panel.height -s
-#      -> $panel_position $panel_height
-
 want_gaps=$1
 pad_px=${2:-0}
 
 if [ -z "$want_gaps" ]; then
     # opposite of current status
-    want_gaps=$(iif '[ $(bspc config window_gap) -le 0 ]')
+    if [ $(bspc config window_gap) -le 0 ]; then
+	want_gaps=true
+    else
+	want_gaps=false
+    fi
 fi
 
-panel_running=false
-if silent systemctl --user status panel; then
-    panel_running=true
-fi
+eval "$(theme -f "panel.height,x.padding,bspwm.border-width,bspwm.window-gap" -s)"
+c() {
+    bspc config "$@" &
+}
 
 padding() {
     pad=$1
 
-    bspc config left_padding $pad
-    bspc config right_padding $pad
-    bspc config bottom_padding $pad
+    c left_padding $pad
+    c right_padding $pad
+    c bottom_padding $pad
 
     top_pad=$pad
-    if $panel_running; then
-	p_height=$(theme -q panel.height)
-	top_pad=$((pad + p_height))
+    if silent systemctl --user status panel; then
+	top_pad=$((pad + panel_height))
     fi
 
-    bspc config top_padding $top_pad
+    c top_padding $top_pad
 }
 
 if $want_gaps; then
-    bspc config borderless_monocle false
+    c borderless_monocle false
+    c window_gap "$bspwm_window_gap"
     padding ${pad_px}
 
-    bspc config window_gap "$(theme -q bspwm.window-gap)"
     ltheme bg
 else
-
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	if [ "$(bspc config left_monocle_padding)" = 0 ]; then
-	    bspc config borderless_monocle true
+	    c borderless_monocle true
 	    ltheme bg_plain
-	    pad_px=$(theme -q x.padding)
+	    pad_px=$x_padding
 	fi
     fi
 
-    b_width=$(theme -q bspwm.border-width)
-    bspc config window_gap -$b_width
-    # padding ${b_width}
-    padding $((b_width + pad_px))
-    # padding ${pad_px}
-    # bspc config window_gap 0
+    c window_gap -$bspwm_border_width
+    padding $((bspwm_border_width + pad_px))
 fi
 
+wait
