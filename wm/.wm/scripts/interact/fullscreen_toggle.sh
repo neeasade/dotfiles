@@ -22,10 +22,10 @@ Wine'
   bspc config right_monocle_padding 0
   bspc desktop -l monocle
 
-  if echo "$no_trim_list" | grep "$window_class"; then
+  if echo "$no_trim_list" | grep -q "$window_class"; then
     gapt false 0
   else
-    gapt $gapped $(theme -q x.padding)
+    gapt $gapped
   fi
 }
 
@@ -49,7 +49,6 @@ do_fullscreen() {
 }
 
 do_tiled() {
-  ltheme bg
   bspc query -N -n focused.fullscreen \
     && bspc node -t ~fullscreen
 

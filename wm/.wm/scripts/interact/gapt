@@ -2,7 +2,7 @@
 # toggle gaps on and off
 
 want_gaps=$1
-pad_px=${2:-0}
+pad_px=$2
 
 if [ -z "$want_gaps" ]; then
     # opposite of current status
@@ -43,8 +43,8 @@ else
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	if [ "$(bspc config left_monocle_padding)" = 0 ]; then
 	    c borderless_monocle true
-	    ltheme bg_plain
-	    pad_px=$x_padding
+	    ltheme bg_plain &
+	    pad_px=${pad_px:-$x_padding}
 	fi
     fi
 

@@ -275,7 +275,6 @@
                  :single-monocle true
                  :borderless-monocle false
 
-                 ;; override this to -border width if non-gapped
                  :window-gap 10
 
                  ;; other
@@ -369,7 +368,7 @@
                        ;; :font.variable.family "Equity Text A"
                        :mkb.bar- "AAH"
                        :shell.prompt "%"
-                       :x.padding 10
+                       :x.padding 14
                        :bspwm.window-gap 30
                        :bspwm-meta.monocle-window-percent 0.50
                        :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"

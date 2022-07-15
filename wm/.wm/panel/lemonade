@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
-bspc config top_padding $(theme -q panel.height)
+
+p_height=$(theme -q panel.height)
+current=$(bspc config top_padding)
+bspc config top_padding $((current + p_height))
 
 geom=$(
     dim() {
 	bspc query -T -m | jq .rectangle.$1
     }
 
-    p_height=$(theme -q panel.height)
     p_gap=$(theme -q panel.gap)
     gapped=$(iif "[ ! $(bspc config window_gap) -le 0 ]")
     p_gap=$(iif $gapped $p_gap 0)
@@ -53,7 +55,8 @@ wid=$(xdo id -m -a "$(theme -q panel.window-class)")
 xdo above -t "$(xdo id -N Bspwm -n root | sort | head -n 1)" "$wid"
 
 cleanup() {
-    bspc config top_padding 0
+    current=$(bspc config top_padding)
+    bspc config top_padding $((current - p_height))
 
     trap - TERM; kill 0
 }

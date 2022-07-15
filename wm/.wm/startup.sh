@@ -1,5 +1,8 @@
 #!/bin/sh
 
+panelt
+ltheme bg
+
 launch() {
     echo setsid nohup "$*" &
     setsid nohup "$*" &

@@ -240,9 +240,10 @@ if [ -z "$*" ]; then
     fi
 fi
 
-if [ ! "$*" = "bg" ]; then
-    vdo silent theme -c
-fi
+case "$*" in
+    bg*)  ;;
+    *) vdo silent theme -c
+esac
 
 for conf in "$@"; do
     (
