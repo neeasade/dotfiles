@@ -96,6 +96,7 @@ if true; then
   pathmunge /opt/homebrew/bin
 
   pathmunge '/run/current-system/sw/bin'
+  pathmunge '/run/wrappers/bin/'
   pathmunge "$HOME/.dotfiles/theming"
 
   # the p is for pain

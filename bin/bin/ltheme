@@ -21,11 +21,7 @@ refresh() {
 }
 
 load_bg_plain() {
-  if silent pgrep picom; then
-    hsetroot -solid "$(theme -q color.normal.background)" &
-  else
-    xsetroot -solid "$(theme -q color.normal.background)" &
-  fi
+  $(iif 'pgrep picom' h x)setroot -solid "$(theme -q color.normal.background)"
 }
 load_bg()      { eval "$(theme -q BG_COMMAND)" ;}
 load_emacs()   { elisp -t 5 "(ns/load-theme '$(theme -q emacs.theme))" ;}

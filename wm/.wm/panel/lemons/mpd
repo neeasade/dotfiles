@@ -6,16 +6,16 @@
 maxWinNameLen=${maxWinNameLen:-31}
 
 player.sh | grep -qi playing && playing=true || playing=false
+
 player.sh | grep -qi paused && paused=true || paused=false
 
-if $playing || $paused; then
-    title=$(player.sh -f "%title% - %artist%" | head -n 1)
-    # if title is empty, try file and trim from last / if exists.
-    if [ "$title" = " - " ]; then
-        title=$(player.sh -f "%file%" | head -n 1 | sed 's/.*\///')
 
-        # peel some stuff
-        title=$(echo "$title" | sed 's/【.*】//')
+if $playing || $paused; then
+    if [ "$(GET=t player.sh)" = "mpc" ]; then
+	pos=$(mpc -f '%position%' | head -n 1)
+	music name_from_pos "$pos"
+    else
+      title=$(player.sh -f "%title% - %artist%" | head -n 1)
     fi
 else
   title="Stopped"
@@ -24,6 +24,7 @@ fi
 
 # $playing && icon pause
 # $paused && icon play
+
 
 title=$(echo "$title" | cut -c 1-$maxWinNameLen)
 echo "$title"
