@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. "$HOME/.sh.d/environment"
+
+title=$(cat "$QUTE_HTML" | pup '[data-test-id="issue.views.issue-base.foundation.summary.heading"] text{}')
+ticket=$(cat "$QUTE_HTML" | pup '[data-test-id="issue.views.issue-base.foundation.breadcrumbs.breadcrumb-current-issue-container"] text{}')
+url=$(echo "$QUTE_URL" | sed 's/\?.*//g')
+
+printf '<%s|%s>\n' "$url" "$title" | pbcopy
+
+notify-send "Copied refinement for $ticket"
