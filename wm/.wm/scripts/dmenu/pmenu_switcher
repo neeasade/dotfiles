@@ -1,308 +1,47 @@
 #!/usr/bin/env bash
-# switch between 'things' with a dmenu-like or pie-menu style interface
 
-# auto export
-set -a
 
-declare -A matches_to_actions
-
-add_switch() {
-    if ${ASSOCIATE:-false}; then
-	matches_to_actions["$1"]=$2
-    fi
-
-    echo "$1"
+sound_options() {
+  # echo foo
+  while read -r option; do
+      desc=$(cut -d, -f1 <<< "$option")
+      printf ",%s,%s\n" "$desc" "$(cut -d, -f2 <<< "$option")"
+      # add_switch "meta: sound switch $(cut -d, -f1 <<< "$option")" "$(cut -d, -f2 <<< "$option")"
+  done <<< $(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
+		   <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
 }
 
-add_windows() {
-    reveal_window() {
-	wid=$1
-	bspc node $wid -g hidden=off
-	bspc node -f $wid
-    }
-
-    for wid in $(bspc query -N -n .window); do
-	add_switch "window: $(xtitle $wid)" "reveal_window $wid"
-    done
+pick() {
+  cat<<EOF | sed 's/,/\t/g' | pmenu
+fun
+,discord,discord
+,telegram,find_url web.telegram.org
+,twitter,find_url twitter.com
+sound
+,pavucontrol,find_pavucontrol
+$(sound_options)
+UI
+,panel,panelt
+,layout
+,,tiled,fullscreen_toggle.sh do_tiled
+,,focus,fullscreen_toggle.sh do_monocle_slim
+,,full,fullscreen_toggle.sh do_monocle_full
+,,gaps,gapt
+,stalonetray,bash -ic 'stalonetray'
+Music
+,toggle,player.sh toggle
+EOF
 }
 
+# add screenshots
 
-# this is silly, and intentional.
-add_emacss() {
-    find_emacs_window() {
-	emacs_wid=
-	check_id() {
-	    wid=$1
-	    if [ ! -z "$emacs_wid" ]; then
-		return 0
-	    fi
+systemctl --user stop unclutter
+# pick
 
-	    if xprop WM_CLASS -id $wid | grep Emacs; then
-		emacs_wid=$wid
-		return 0
-	    fi
-	    return 1
-	}
-
-	check_id $(bspc query -N -n)
-	for wid in $(bspc query -N -d focused -n .window); do
-	    check_id $wid && break
-	done
-
-	if [ -z "$emacs_wid" ]; then
-	    elisp '(ns/spawn-terminal)'
-	    check_id $(bspc query -N -n)
-	fi
-
-	bspc node -f $emacs_wid
-    }
-
-    emacs_find_file() {
-	find_emacs_window
-	elisp "(find-file \"${*}\")"
-    }
-
-    emacs_find_buffer() {
-	find_emacs_window
-	elisp "(-> \"${*}\" get-buffer switch-to-buffer)"
-    }
-
-    IFS=$'\n'
-    buffers=$(elisp -r '(->> (ns/jump-file-candidates) (mapcar (function s-clean)) (ns/make-lines))')
-    for buffer in $buffers; do
-	# note: this will break if ever switching to a file with a ' in the name
-	add_switch "emacs: $buffer" "emacs_find_file '$buffer'"
-    done
-
-    buffers=$(elisp -r "(->> (buffer-list) (-filter (fn (not (buffer-file-name <>)))) (mapcar 'buffer-name) (ns/make-lines))")
-    for buffer in $buffers; do
-	add_switch "emacs: $buffer" "emacs_find_buffer '$buffer'"
-    done
-}
-
-# nb: name intentional.
-add_historys() {
-    start_day=$(date --date="7 days ago" +%F)
-    end_day=$(date +%F)
-    start=$(date -d "$start_day 00:00:00" +%s)
-    end=$(date -d "$end_day 23:59:59" +%s)
-    query="select distinct url, title from history where atime > ${start} and atime < ${end}"
-    qutedb="$HOME/.local/share/qutebrowser/history.sqlite"
-
-    while read -r result; do
-	url=$(awk -F\| '{print $1}' <<<"$result")
-	title=$(awk -F\| '{print $2}' <<<"$result")
-	add_switch "history: $title" "$BROWSER '$url'"
-    # done < <(sqlite3 "$qutedb" "$query" | head -n 2)
-    done < <(sqlite3 "$qutedb" "$query" | head -n 300)
-}
-
-add_tabs() {
-    open_titles() {
-	qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
-    }
-
-    # user by add_meta as well
-    qute_switch_to() {
-	title=$*
-	qb_meta_open
-	qb_command ":buffer $title"
-    }
-
-    while read -r url title; do
-	# add_switch "tab: $title $url" "qute_switch_to '$(echo "$url" | sed "s/'//g;s/\"// ")'"
-	add_switch "tab: $title" "qute_switch_to '$(echo "$url" | sed "s/'//g;s/\"// ")'"
-    done <<< "$(open_titles)"
-}
-
-add_tags() {
-    while read -r name; do
-	add_switch "tag: set $name" "btags set-tag-on-wids $name \$(bspwindows)"
-    done < <(btags state-raw | bb -o '(->> *input* :tags (map :name))')
-}
-
-# playing around
-# idea: meta history that opens up new dmenu with qutebrowser browsing history from sqlite
-# idea: find a current window with shell on vps or spawn one
-# idea: org headings
-add_metas() {
-    find_url() {
-	url_match=$*
-	open_urls=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1].url')
-	if echo "$open_urls" | grep "$url_match"; then
-	    qute_switch_to "$url_match"
-	else
-	    $BROWSER "$url_match"
-	fi
-    }
-
-    dmenu_exec() {
-	save_file="$HOME/.dmenu_exec_history"
-	choice=$(cat "$save_file" | sort | uniq | dmenu)
-	echo "$choice" >> "$save_file"
-	sh -c "$choice"
-    }
-
-    add_switch "meta: exec" "dmenu_exec"
-
-    # link mark/book mark translation here would be nice
-    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
-    add_switch "meta: telegram" "find_url 'https://web.telegram.org/'"
-    add_switch "meta: twitter" "find_url 'https://twitter.com/'"
-    add_switch "meta: nixers" "find_url 'https://nixers.net/'"
-    add_switch "meta: texting" "find_url 'https://messages.google.com/web/'"
-    add_switch "meta: dismiss" "dismiss.sh"
-
-    # todo: add discord
-    # todo: add telegram
-
-    find_steam() {
-	if pgrep steam; then
-	    # seems to be constant
-	    select_action "window: Steam"
-	else
-	    steam
-	fi
-    }
-
-    add_switch "meta: steam" "find_steam"
-
-    find_pavucontrol() {
-	find_class pavucontrol || pavucontrol
-    }
-
-    add_switch "meta: pavucontrol" "find_pavucontrol"
-
-    find_last_irc_ping() {
-	echo todo
-    }
-
-    add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
-
-    for o in now playlist artist del bl 'filter is_long' artist_append; do
-	add_switch "meta: music $o" "music $o"
-    done
-
-    add_switch "meta: mpv resume" "mpv_resume"
-
-    netflix() {
-	google-chrome-stable netflix.com
-	find_class "google-chrome"
-    }
-
-    add_switch "meta: netflix" "netflix"
-
-    hulu() {
-	google-chrome-stable hulu.com
-	find_class "google-chrome"
-    }
-
-    add_switch "meta: hulu" "hulu"
-    add_switch "meta: stalonetray" "bash -ic 'stalonetray'"
-
-    while read -r option; do
-	add_switch "meta: sound switch $(cut -d, -f1 <<< "$option")" "$(cut -d, -f2 <<< "$option")"
-    done <<< $(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
-		  <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
-}
-
-select_action() {
-    # maybe consider allow partial match later (turned out accumulating options was really slow/maybe revisit this in keys)
-
-    if [ -z "$*" ]; then
-	echo "no action selected"
-	return
-    fi
-
-    # target=$(echo "$options" | grep "$*" | head -n 1)
-    target=$*
-
-    echo "target: '$target'"
-    echo "match: ${matches_to_actions[${target}]}"
-
-    # echo "${matches_to_actions[${key}]}"
-    eval "${matches_to_actions[${target}]}"
-    # bspc desktop -l monocle
-}
-
-# doing it this way let's us call dmenu right away/just start typing
-enact() {
-    echo FEEDER_PID=$$
-
-    if [ -z "$*" ]; then
-	add_metas
-	add_tags
-	add_windows
-	add_tabs
-	add_emacss
-	# add_historys | sort | uniq
-    else
-	# echo eval add_${*}s
-	eval add_${*}s
-	add_windows
-    fi
-}
-
-
-# todo: this is optimized by single letter -- tab/tag conflict rn
-get_kind() {
-    declare -A kinds=(
-	["w"]="window"
-	# ["t"]="tab"
-	["b"]="buffer"
-	["m"]="meta"
-	["t"]="tag"
-	["h"]="history"
-    )
-
-    selected=$(
-	for kind in "${!kinds[@]}"; do
-	    echo "$kind"
-	done | dmenu "$@")
-    echo "${kinds[$selected]}"
-}
-
-# pie
-# ideas for pie:
-# music operations
-# window operations
-do_narrow_piemenu() {
-    systemctl --stop unclutter
-    type=$(echo tab window meta tag | tr ' ' $'\n' | pmenu)
-    test -z "$type" && exit 0
-
-    # type=tag
-    choice=$(add_${type}s | sed "s/${type}: //" | pmenu)
-    ASSOCIATE=true enact "$type" >/dev/null
-    select_action "$type: $choice"
-    systemctl --start unclutter
-}
-
-do_narrow_dmenu() {
-    type=$(get_kind)
-    test -z "$type" && exit 0
-    choice=$(setsid bash -c "enact $type | dmenu $@")
-    select_action "$choice"
-}
-
-do_broad_dmenu() {
-    choice=$(setsid bash -c "enact | dmenu $@")
-    type=$(awk -F: '{print $1}' <<< "$choice")
-    ASSOCIATE=true enact "$type" >/dev/null
-    select_action "$choice"
-}
-
-if [ ! -z "$SWITCH" ]; then
-    type=$(awk -F: '{print $1}' <<< "$SWITCH")
-    ASSOCIATE=true enact "$type" >/dev/null
-    select_action "$SWITCH"
-    exit $?
-fi
-
-if [ -z "$SWITCH_KIND" ]; then
-    # do_narrow_piemenu
-    # do_narrow_dmenu
-    do_broad_dmenu
-else
-    $SWITCH_KIND
-fi
+a=$(pick)
+PMENU=t
+. "$(which dmenu_switcher)"
+add_metas >/dev/null
+add_tags >/dev/null
+eval "$a"
+systemctl --user start unclutter

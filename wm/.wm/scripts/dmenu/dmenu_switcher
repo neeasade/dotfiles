@@ -145,11 +145,12 @@ add_metas() {
     add_switch "meta: exec" "dmenu_exec"
 
     # link mark/book mark translation here would be nice
-    add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
+    # add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
     add_switch "meta: telegram" "find_url 'https://web.telegram.org/'"
     add_switch "meta: twitter" "find_url 'https://twitter.com/'"
     add_switch "meta: nixers" "find_url 'https://nixers.net/'"
     add_switch "meta: texting" "find_url 'https://messages.google.com/web/'"
+
     add_switch "meta: dismiss" "dismiss.sh"
 
     # todo: add discord
@@ -187,6 +188,11 @@ add_metas() {
     netflix() {
 	google-chrome-stable netflix.com
 	find_class "google-chrome"
+    }
+
+    discord() {
+	setsid Discord
+	find_class "discord"
     }
 
     add_switch "meta: netflix" "netflix"
@@ -243,7 +249,6 @@ enact() {
 }
 
 
-# todo: this is optimized by single letter -- tab/tag conflict rn
 get_kind() {
     declare -A kinds=(
 	["w"]="window"
@@ -261,37 +266,20 @@ get_kind() {
     echo "${kinds[$selected]}"
 }
 
-# circles
-pie_select() {
-    pie_options=$(while read -r line; do
-	echo "$line"
-    done | tr $'\n' '^')
-
-    pie_options=${pie_options%?}
-    pie_options=$(echo "$pie_options" | sed 's|\^|" "|g')
-    pie_options="\"${pie_options}\""
-
-    # todo: this is slow -- there is a python api that allows for better nested options
-    # make a wrapper that creates a nested python script, and calls it
-
-    # to create:
-    # cd /home/neeasade/git/Pye-Menu/
-    # nix-build shell.nix
-    eval $HOME/git/Pye-Menu/result/bin/pye_menu_shell $pie_options
-}
-
 # pie
 # ideas for pie:
 # music operations
 # window operations
 do_narrow_piemenu() {
-    type=$(echo tab window meta tag | tr ' ' $'\n' | pie_select)
+    systemctl --stop unclutter
+    type=$(echo tab window meta tag | tr ' ' $'\n' | pmenu)
     test -z "$type" && exit 0
 
     # type=tag
-    choice=$(add_${type}s | sed "s/${type}: //" | pie_select)
+    choice=$(add_${type}s | sed "s/${type}: //" | pmenu)
     ASSOCIATE=true enact "$type" >/dev/null
     select_action "$type: $choice"
+    systemctl --start unclutter
 }
 
 do_narrow_dmenu() {
@@ -315,10 +303,10 @@ if [ ! -z "$SWITCH" ]; then
     exit $?
 fi
 
-if [ -z "$SWITCH_KIND" ]; then
-    # do_narrow_piemenu
-    # do_narrow_dmenu
-    do_broad_dmenu
-else
-    $SWITCH_KIND
+if [ -z "$PMENU" ]; then
+    if [ -z "$SWITCH_KIND" ]; then
+	do_broad_dmenu
+    else
+	$SWITCH_KIND
+    fi
 fi

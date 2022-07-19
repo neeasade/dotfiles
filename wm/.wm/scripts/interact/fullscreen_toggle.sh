@@ -36,6 +36,7 @@ do_monocle_slim() {
   bspc node -t tiled
 
   monocle_pad_width=$(theme -q bspwm-meta.monocle-pad-width)
+
   bspc config left_monocle_padding $monocle_pad_width
   bspc config right_monocle_padding $monocle_pad_width
 
@@ -75,6 +76,11 @@ else
       fi
     fi
   fi
+fi
+
+if [ ! -z "$*" ]; then
+  "$@"
+  exit $?
 fi
 
 # rotate
