@@ -156,6 +156,14 @@ add_metas() {
     # todo: add discord
     # todo: add telegram
 
+
+    load_theme() {
+	elisp -t 10 "(ns/load-theme '$1)"
+	ltheme
+    }
+    add_switch "meta: theme tarp-mcfay" "load_theme tarp-mcfay"
+    add_switch "meta: theme tarp-struan" "load_theme tarp-struan"
+
     find_steam() {
 	if pgrep steam; then
 	    # seems to be constant
@@ -264,22 +272,6 @@ get_kind() {
 	    echo "$kind"
 	done | dmenu "$@")
     echo "${kinds[$selected]}"
-}
-
-# pie
-# ideas for pie:
-# music operations
-# window operations
-do_narrow_piemenu() {
-    systemctl --stop unclutter
-    type=$(echo tab window meta tag | tr ' ' $'\n' | pmenu)
-    test -z "$type" && exit 0
-
-    # type=tag
-    choice=$(add_${type}s | sed "s/${type}: //" | pmenu)
-    ASSOCIATE=true enact "$type" >/dev/null
-    select_action "$type: $choice"
-    systemctl --start unclutter
 }
 
 do_narrow_dmenu() {

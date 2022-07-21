@@ -50,8 +50,8 @@ load_bspwm() {
 
 load_btag_borders() {
     elisp '(->> (list :primary :strings :assumed :faded)
-  (-map (lambda (l) (ns/make-border-color l)))
-  (-map (fn (substring <> 1)))
+  (--map (ns/make-border-color it))
+  (--map (substring it 1))
   (-map-indexed (lambda (i c) (ns/shell-exec (format "btags set ^%s color %s" (+ 1 i) c)))))' 1>/dev/null
 }
 
@@ -166,12 +166,12 @@ load_services() {
 	render systemd_timer ".config/systemd/user/${1}.timer"
     }
 
-    # make_periodic_service() {
-    # 	# todo: consider making this a systemd timer
-    # 	interval=$1
-    # 	shift
-    # 	make_service "$1" "periodically $interval $2" "$3"
-    # }
+    make_periodic_service() {
+	# todo: consider making this a systemd timer
+	interval=$1
+	shift
+	make_service "$1" "periodically $interval $2" "$3"
+    }
 
     make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
     make_periodic_service 30 memory_check "sensor_alert memory" "Notify when the memory pressure is high"

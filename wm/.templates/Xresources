@@ -1,3 +1,15 @@
+
+pmenu.font: {{font.variable.spec}}
+! pmenu.background: {{font.variable.spec}}
+pmenu.selbackground: {{color.focused.background}}
+pmenu.selforeground: {{color.focused.foreground}}
+pmenu.border: {{color.normal.faded}}
+pmenu.borderWidth: 1
+
+pmenu.background: {{color.weak.background}}
+pmenu.foreground: {{color.weak.foreground}}
+pmenu.diameterWidth: 200
+
 *.background: {{background}}
 *.foreground: {{foreground}}
 

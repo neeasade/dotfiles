@@ -1,35 +1,48 @@
 #!/usr/bin/env bash
 
-
 sound_options() {
   # echo foo
   while read -r option; do
       desc=$(cut -d, -f1 <<< "$option")
+      case "$desc" in
+	  *HDMI*) desc=HDMI;;
+	  *) desc=analog;;
+      esac
       printf ",%s,%s\n" "$desc" "$(cut -d, -f2 <<< "$option")"
       # add_switch "meta: sound switch $(cut -d, -f1 <<< "$option")" "$(cut -d, -f2 <<< "$option")"
   done <<< $(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
 		   <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
 }
 
+with_nodes() {
+  "$@" $(bspwindows)
+}
+
+tag_menu() {
+  action=$*
+  for name in code net chat hole; do
+      echo ",,$name,with_nodes btags $action '$name'"
+  done
+}
+
 pick() {
   cat<<EOF | sed 's/,/\t/g' | pmenu
-fun
-,discord,discord
-,telegram,find_url web.telegram.org
-,twitter,find_url twitter.com
+tag
+,set
+$(tag_menu set-tag-on-wids)
+,show
+$(tag_menu toggle)
 sound
-,pavucontrol,find_pavucontrol
 $(sound_options)
 UI
-,panel,panelt
-,layout
-,,tiled,fullscreen_toggle.sh do_tiled
-,,focus,fullscreen_toggle.sh do_monocle_slim
-,,full,fullscreen_toggle.sh do_monocle_full
-,,gaps,gapt
+,tiled,fullscreen_toggle.sh do_tiled
+,focus,fullscreen_toggle.sh do_monocle_slim
+,full,fullscreen_toggle.sh do_monocle_full
+,gaps,gapt
+Other
+,Music,player.sh toggle
 ,stalonetray,bash -ic 'stalonetray'
-Music
-,toggle,player.sh toggle
+,panel,panelt
 EOF
 }
 
@@ -43,5 +56,6 @@ PMENU=t
 . "$(which dmenu_switcher)"
 add_metas >/dev/null
 add_tags >/dev/null
+echo "$a"
 eval "$a"
 systemctl --user start unclutter

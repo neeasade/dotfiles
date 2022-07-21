@@ -11,7 +11,5 @@ fi
 
 systemctl --user $want panel
 
-# dunst pgrep's for panel
-# commenting this out b/c resetting dunst clears the notification queue
-# sleep 0.3
+# reseting dunst clears the notification queue
 # theme refresh dunst

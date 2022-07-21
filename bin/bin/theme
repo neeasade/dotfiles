@@ -256,15 +256,15 @@
          :bspwm-meta {:desktop-names "00 01 10 11"
                       :monocle-window-percent 0.52
                       :monocle-pad-width (fn [tree]
-                                           (if (string/blank? (shh "which bspc"))
-                                             "55"
-                                             (let [percent (get-in tree [:bspwm-meta :monocle-window-percent])
-                                                   mon-width (-> (shh "bspc query -T -m")
+                                           (let [percent (get-in tree [:bspwm-meta :monocle-window-percent])
+                                                 mon-width (if (string/blank? (shh "which bspc"))
+                                                             "1920"
+                                                             (-> (shh "bspc query -T -m")
                                                                  (json/parse-string)
-                                                                 (get-in ["rectangle" "width"]))
-                                                   window-width (* percent mon-width)
-                                                   side (int (/ (- mon-width window-width) 2))]
-                                               side)))
+                                                                 (get-in ["rectangle" "width"])))
+                                                 window-width (* percent mon-width)
+                                                 side (int (/ (- mon-width window-width) 2))]
+                                             side))
                       :bspwmrc-extend ""}
          :bspwm {:border-width 3
                  :split-ratio 0.5
@@ -359,16 +359,17 @@
                      (unflatten-map
                       {:THEME_NAME "test"
                        :emacs.theme "tarp-mcfay"
-                       :BG_COMMAND "${HOME}/.fehbg"
-                       ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
+                       ;; :BG_COMMAND "${HOME}/.fehbg"
+                       :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :font.mono.family "Triplicate T4c"
                        :font.mono.family "Go Mono"
                        ;; :font.mono.family "Triplicate C4c"
                        :font.variable.family "Equity Text B"
                        ;; :font.variable.family "Equity Text A"
-                       :mkb.bar- "AAH"
+                       ;; :mkb.bar- "AAH"
+                       :mkb.bar- "|/_"
                        :shell.prompt "%"
-                       :x.padding 14
+                       :x.padding 10
                        :bspwm.window-gap 30
                        :bspwm-meta.monocle-window-percent 0.50
                        :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
@@ -456,7 +457,7 @@
 
 (defn refresh-cache [cache]
   (let [fresh (process-theme (get-theme))]
-    (spit cache fresh)
+    (spit cache (pr-str fresh))
     fresh))
 
 (let [{:keys [options errors]} (cli/parse-opts *command-line-args* cli-options)
