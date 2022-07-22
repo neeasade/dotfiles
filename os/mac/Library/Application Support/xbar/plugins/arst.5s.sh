@@ -14,7 +14,11 @@ delim='🌺'
 # with org-jira, maybe dropdown links to tickets here? or in the jump tbh
 
 check_battery() {
-  battery_percent=$(pmset -g batt | awk '-F;' '/%/{print $1}' | awk '{print $NF}' | tr -d '%')
+  info=$(pmset -g batt)
+  if ! echo "$info" | grep -q ' charging;'; then
+    battery_percent=$(echo "$info" | awk '-F;' '/%/{print $1}' | awk '{print $NF}' | tr -d '%')
+  fi
+
   if [ "$battery_percent" -lt 40 ]; then
     echo "bat: $battery_percent"
   fi
