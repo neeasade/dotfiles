@@ -30,6 +30,7 @@
                                    )) #"\n")
      ;; nb: maybe there's a modtime sort to happen here for yt imports or something
      (sort)
+     (distinct)
      (group-by
       (fn [path]
         (->> (string/split path #"/")
@@ -40,11 +41,7 @@
                             (< 4 (count songs) 17)
                             )
                       songs
-                      (filter is-long songs)
-                      ;; (if *command-line-args*
-                      ;;   songs
-                      ;;   (filter is-long songs))
-                      )}))
+                      (filter is-long songs))}))
      (shuffle)
      (mapcat second)
      (string/join "\n")
