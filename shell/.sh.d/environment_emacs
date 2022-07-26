@@ -35,12 +35,6 @@ if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
     epager
   }
 
-  sxhkd() {
-    pgrep sxhkd >/dev/null && pkill sxhkd
-    path_remove "$HOME/.emacs.d/scripts"
-    og sxhkd
-  }
-
   man() {
     elisp "(man \"$*\") (ns/find-or-open \"*Man ${*}*\") (Man-cleanup-manpage)"
 
@@ -73,4 +67,10 @@ if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
   # alias sudo='sudo PS1=$PS1 PAGER=$PAGER'
   # todo: sudo alias that can pass along PAGER var
   # maybe something else if we think of it too
+
+  sxhkd() {
+    pgrep sxhkd >/dev/null && pkill sxhkd
+    path_remove "$HOME/.emacs.d/scripts"
+    og sxhkd
+  }
 fi
