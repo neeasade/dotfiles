@@ -36,7 +36,7 @@ padding() {
 if $want_gaps; then
     c borderless_monocle false
     c window_gap "$bspwm_window_gap"
-    padding ${pad_px}
+    padding 0
 
     ltheme bg
 else

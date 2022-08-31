@@ -46,7 +46,7 @@ is_album_song() {
 }
 
 is_long() {
-  milli=$(mediainfo --Inform="Audio;%Duration%" "$*")
+  milli=$(mediainfo --Inform="Audio;%Duration%" "$1")
   milli=${milli%.*}
 
   if [ -z "$milli" ]; then
@@ -73,7 +73,7 @@ filter() { # filter the current playlist by some shell function acting on music 
   fn=$1
   mpc playlist -f '%position% %file%' |
     while read -r pos file; do
-      if ! "$fn" "${musicdir}/$file" >/dev/null; then
+      if ! "$fn" "${musicdir}/$file" "$pos" >/dev/null; then
 	echo "$pos"
       fi
     done | mpc del
@@ -99,8 +99,8 @@ add() { # add a url to library, fallback on clipboard content
 
   # note: get all of an artists album links example:
   example() {
-  url='https://shigeto.bandcamp.com/music'
-  curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '$(echo "$url" | sed 's/music//')#" -e "s/$/'/"
+    url='https://shigeto.bandcamp.com/music'
+    curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '$(echo "$url" | sed 's/music//')#" -e "s/$/'/"
   }
 
   if [[ $url =~ youtube.com ]]; then
@@ -267,6 +267,13 @@ playlist() { # select a search term based playlist to play
   mpc save "$target"
 }
 
+trim_string() {
+    # ugh
+    : "${1#"${1%%[![:space:]]*}"}"
+    : "${_%"${_##*[![:space:]]}"}"
+    printf '%s\n' "$_"
+}
+
 # mpc only
 name_from_pos() {
   pos=$1
@@ -282,11 +289,13 @@ name_from_pos() {
   fi
 
   remove_delim() {
-    name=$(echo "$name" | sed -e "s/${1}[^${1}${2}]*${2}//g")
+    # maybe
+    # name=$(sed "s/${1}[^${1: -1}${2: -1}]*${2}//g" <<< "$name")
+    name=$(sed "s/${1}\(.*\)${2}//g" <<< "$name")
   }
 
   remove_delim '(' ')'
-  remove_delim '[' ']'
+  remove_delim '\[' '\]'
   remove_delim '【' '】'
   remove_delim '●' '●'
 
@@ -295,7 +304,12 @@ name_from_pos() {
       [0-9][0-9].*) name=${name:4} ;;
   esac
 
-  echo "$name"
+  name=${name/full album}
+  name=${name/  / }
+
+  # todo: remove years
+
+  trim_string "$name"
 }
 
 info() { # display the current audio progress bar and playlist length
@@ -319,8 +333,8 @@ info() { # display the current audio progress bar and playlist length
   echo "$name"
 
   mkb "$percent" $(wc -L <<< "$name")
+  # mkb "$percent" $(wc -m <<< "$name")
 
-  # echo "playlist: $(cat $current_playlist) | $(playlist_length)"
   echo "playlist: $(cat $current_playlist) | $(playlist_length)"
 }
 

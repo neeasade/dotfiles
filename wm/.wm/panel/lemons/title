@@ -2,6 +2,10 @@
 
 (xtitle -s & bspc subscribe desktop_layout) | \
 while read -r trigger; do
-    xtitle -t 25
+  title=$(xtitle -t 25)
+  if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
+    title=${title}\*
+  fi
+  printf '%s\n' "$title"
 done
 

@@ -26,9 +26,7 @@ add_windows() {
     done
 }
 
-
-# this is silly, and intentional.
-add_emacss() {
+add_emacss() { # naming intentional
     find_emacs_window() {
 	emacs_wid=
 	check_id() {
@@ -165,12 +163,7 @@ add_metas() {
     add_switch "meta: theme tarp-struan" "load_theme tarp-struan"
 
     find_steam() {
-	if pgrep steam; then
-	    # seems to be constant
-	    select_action "window: Steam"
-	else
-	    steam
-	fi
+	find_class Steam || steam
     }
 
     add_switch "meta: steam" "find_steam"
@@ -252,7 +245,6 @@ enact() {
     else
 	# echo eval add_${*}s
 	eval add_${*}s
-	add_windows
     fi
 }
 

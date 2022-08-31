@@ -1,17 +1,18 @@
 #!/usr/bin/env elisp
-;; the initial incarnation of this script may be seen here: https://nixers.net/showthread.php?tid=2320
+;; the initial incarnation of this script may be seen in a workflow demo here:
+;; https://nixers.net/showthread.php?tid=2320
 
 (->> '(:background :foreground :faded :primary :assumed :alt :strings )
      (-map (fn (list
 		(s-replace ":" "" (prin1-to-string <>))
-		(tarp/get <>))))
+		(myron-get <>))))
      (-map (fn (format "%s: %s"
 		       (s-pad-right 10 " " (first <>))
 		       (second <>))))
      (append (->> (first custom-enabled-themes)
 		  (pr-str)
 		  (s-replace "-theme" "")
-		  (s-replace "tarp-" "")
+		  (s-replace "myron-" "")
 		  (format ">> %s <<")
 		  (s-center 18)
 		  (list)))

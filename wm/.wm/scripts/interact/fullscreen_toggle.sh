@@ -57,6 +57,10 @@ do_tiled() {
   gapt $gapped
 }
 
+do_same() {
+  do_$state
+}
+
 state=nop
 
 if bspc query -N -n focused.fullscreen; then
