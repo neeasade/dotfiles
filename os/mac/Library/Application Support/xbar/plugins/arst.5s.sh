@@ -32,21 +32,40 @@ check_slack_dms() {
   # fi
 }
 
+pomodoro() {
+  # if silent elisp '(eq org-pomodoro-state :pomodoro)'; then
+  #   return 0
+  # fi
+
+  printf "[%s]\n" "$(pomo status)"
+}
+
 result=$(
     (
         check_slack_dms
         check_battery
+        pomodoro
         cache_output 30 org_task
-        cache_output 500 elisp -r '(ns/org-status-outdated)'
+
+        if ! silent elisp '(eq org-pomodoro-state :pomodoro)'; then
+          cache_output 500 elisp -r '(ns/org-status-outdated)'
+        fi
+
         # day_progress
 
         # echo woo
         # cache_output 30 org_task
     ) | awk NF | tr '\n' '^' | sed 's/.$//' | sed "s/\^/ ${delim} /g")
 
+# result=' '
+
 if [ -z "$result" ]; then
   exit
 fi
 
+
 # printf "- %s - %s\n" "$result" "$style"
-printf "${delim} %s ${delim} %s\n" "$result" "$style"
+# printf "${delim} %s ${delim} %s\n" "$result" "$style"
+
+# xbar doesn't let you have the pipe character in plugin content
+printf "${delim} %s ${delim} %s\n" "$(echo "$result" | sed 's/|/#/g')" "$style"

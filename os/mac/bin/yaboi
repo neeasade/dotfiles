@@ -2,6 +2,10 @@
 # a yabai wrapper that gives me toggle and some sane query responses
 # note: yabai query time is really slow compared to bspwm
 
+if ! type yabai 2>/dev/null 1>&2; then
+  exit 1
+fi
+
 query() {
   kind=$1; shift
   # shift; shift;

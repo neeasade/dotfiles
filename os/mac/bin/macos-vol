@@ -1,0 +1,21 @@
+#!/bin/sh
+
+vol=$(osascript -e 'set ovol to output volume of (get volume settings)')
+
+
+setvol() {
+    osascript -e "set volume output volume $1"
+    notify-send "Volume: $1"
+}
+
+subtract() {
+    delta=$1
+    setvol $((vol - delta))
+}
+
+add() {
+    delta=$1
+    setvol $((vol + delta))
+}
+
+"$@"

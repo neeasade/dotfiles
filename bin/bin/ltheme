@@ -228,6 +228,8 @@ load_wm() {
 
 if [ -z "$*" ]; then
     if $MAC; then
+	# don't load bg by default because it kills dock
+	# (which unminimizes windows)
 	set -- xresources qutebrowser kitty
     elif $LINUX; then
 	set -- wm xresources picom bg gtk qutebrowser zathura jgmenu zeal btag_borders
