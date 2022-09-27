@@ -1,140 +1,49 @@
 #!/usr/bin/env bb
-;; ugh
+;; attempt to gamify pomodoros by unlocking symbols
 
-(def pomo-done 2)
-(def pomo-goal 4)
+(def pomo-done
+  (or (when-let [complete (System/getenv "pomo_done")]
+        (read-string complete))
+      2))
 
-(def alchemy-map
-  (partition
-   2
-   ["🜀" "ALCHEMICAL SYMBOL FOR QUINTESSENCE"
-    "🜁" "ALCHEMICAL SYMBOL FOR AIR"
-    "🜂" "ALCHEMICAL SYMBOL FOR FIRE"
-    "🜃" "ALCHEMICAL SYMBOL FOR EARTH"
-    "🜄" "ALCHEMICAL SYMBOL FOR WATER"
-    "🜅" "ALCHEMICAL SYMBOL FOR AQUAFORTIS"
-    "🜆" "ALCHEMICAL SYMBOL FOR AQUA REGIA"
-    "🜇" "ALCHEMICAL SYMBOL FOR AQUA REGIA-2"
-    "🜈" "ALCHEMICAL SYMBOL FOR AQUA VITAE"
-    "🜉" "ALCHEMICAL SYMBOL FOR AQUA VITAE-2"
-    "🜊" "ALCHEMICAL SYMBOL FOR VINEGAR"
-    "🜋" "ALCHEMICAL SYMBOL FOR VINEGAR-2"
-    "🜌" "ALCHEMICAL SYMBOL FOR VINEGAR-3"
-    "🜍" "ALCHEMICAL SYMBOL FOR SULFUR"
-    "🜎" "ALCHEMICAL SYMBOL FOR PHILOSOPHERS SULFUR"
-    "🜏" "ALCHEMICAL SYMBOL FOR BLACK SULFUR"
-    "🜐" "ALCHEMICAL SYMBOL FOR MERCURY SUBLIMATE"
-    "🜑" "ALCHEMICAL SYMBOL FOR MERCURY SUBLIMATE-2"
-    "🜒" "ALCHEMICAL SYMBOL FOR MERCURY SUBLIMATE-3"
-    "🜓" "ALCHEMICAL SYMBOL FOR CINNABAR"
-    "🜔" "ALCHEMICAL SYMBOL FOR SALT"
-    "🜕" "ALCHEMICAL SYMBOL FOR NITRE"
-    "🜖" "ALCHEMICAL SYMBOL FOR VITRIOL"
-    "🜗" "ALCHEMICAL SYMBOL FOR VITRIOL-2"
-    "🜘" "ALCHEMICAL SYMBOL FOR ROCK SALT"
-    "🜙" "ALCHEMICAL SYMBOL FOR ROCK SALT-2"
-    "🜚" "ALCHEMICAL SYMBOL FOR GOLD"
-    "🜛" "ALCHEMICAL SYMBOL FOR SILVER"
-    "🜜" "ALCHEMICAL SYMBOL FOR IRON ORE"
-    "🜝" "ALCHEMICAL SYMBOL FOR IRON ORE-2"
-    "🜞" "ALCHEMICAL SYMBOL FOR CROCUS OF IRON"
-    "🜟" "ALCHEMICAL SYMBOL FOR REGULUS OF IRON"
-    "🜠" "ALCHEMICAL SYMBOL FOR COPPER ORE"
-    "🜡" "ALCHEMICAL SYMBOL FOR IRON-COPPER ORE"
-    "🜢" "ALCHEMICAL SYMBOL FOR SUBLIMATE OF COPPER"
-    "🜣" "ALCHEMICAL SYMBOL FOR CROCUS OF COPPER"
-    "🜤" "ALCHEMICAL SYMBOL FOR CROCUS OF COPPER-2"
-    "🜥" "ALCHEMICAL SYMBOL FOR COPPER ANTIMONIATE"
-    "🜦" "ALCHEMICAL SYMBOL FOR SALT OF COPPER ANTIMONIATE"
-    "🜧" "ALCHEMICAL SYMBOL FOR SUBLIMATE OF SALT OF COPPER"
-    "🜨" "ALCHEMICAL SYMBOL FOR VERDIGRIS"
-    "🜩" "ALCHEMICAL SYMBOL FOR TIN ORE"
-    "🜪" "ALCHEMICAL SYMBOL FOR LEAD ORE"
-    "🜫" "ALCHEMICAL SYMBOL FOR ANTIMONY ORE"
-    "🜬" "ALCHEMICAL SYMBOL FOR SUBLIMATE OF ANTIMONY"
-    "🜭" "ALCHEMICAL SYMBOL FOR SALT OF ANTIMONY"
-    "🜮" "ALCHEMICAL SYMBOL FOR SUBLIMATE OF SALT OF ANTIMONY"
-    "🜯" "ALCHEMICAL SYMBOL FOR VINEGAR OF ANTIMONY"
-    "🜰" "ALCHEMICAL SYMBOL FOR REGULUS OF ANTIMONY"
-    "🜱" "ALCHEMICAL SYMBOL FOR REGULUS OF ANTIMONY-2"
-    "🜲" "ALCHEMICAL SYMBOL FOR REGULUS"
-    "🜳" "ALCHEMICAL SYMBOL FOR REGULUS-2"
-    "🜴" "ALCHEMICAL SYMBOL FOR REGULUS-3"
-    "🜵" "ALCHEMICAL SYMBOL FOR REGULUS-4"
-    "🜶" "ALCHEMICAL SYMBOL FOR ALKALI"
-    "🜷" "ALCHEMICAL SYMBOL FOR ALKALI-2"
-    "🜸" "ALCHEMICAL SYMBOL FOR MARCASITE"
-    "🜹" "ALCHEMICAL SYMBOL FOR SAL-AMMONIAC"
-    "🜺" "ALCHEMICAL SYMBOL FOR ARSENIC"
-    "🜻" "ALCHEMICAL SYMBOL FOR REALGAR"
-    "🜼" "ALCHEMICAL SYMBOL FOR REALGAR-2"
-    "🜽" "ALCHEMICAL SYMBOL FOR AURIPIGMENT"
-    "🜾" "ALCHEMICAL SYMBOL FOR BISMUTH ORE"
-    "🜿" "ALCHEMICAL SYMBOL FOR TARTAR"
-    "🝀" "ALCHEMICAL SYMBOL FOR TARTAR-2"
-    "🝁" "ALCHEMICAL SYMBOL FOR QUICK LIME"
-    "🝂" "ALCHEMICAL SYMBOL FOR BORAX"
-    "🝃" "ALCHEMICAL SYMBOL FOR BORAX-2"
-    "🝄" "ALCHEMICAL SYMBOL FOR BORAX-3"
-    "🝅" "ALCHEMICAL SYMBOL FOR ALUM"
-    "🝆" "ALCHEMICAL SYMBOL FOR OIL"
-    "🝇" "ALCHEMICAL SYMBOL FOR SPIRIT"
-    "🝈" "ALCHEMICAL SYMBOL FOR TINCTURE"
-    "🝉" "ALCHEMICAL SYMBOL FOR GUM"
-    "🝊" "ALCHEMICAL SYMBOL FOR WAX"
-    "🝋" "ALCHEMICAL SYMBOL FOR POWDER"
-    "🝌" "ALCHEMICAL SYMBOL FOR CALX"
-    "🝍" "ALCHEMICAL SYMBOL FOR TUTTY"
-    "🝎" "ALCHEMICAL SYMBOL FOR CAPUT MORTUUM"
-    "🝏" "ALCHEMICAL SYMBOL FOR SCEPTER OF JOVE"
-    "🝐" "ALCHEMICAL SYMBOL FOR CADUCEUS"
-    "🝑" "ALCHEMICAL SYMBOL FOR TRIDENT"
-    "🝒" "ALCHEMICAL SYMBOL FOR STARRED TRIDENT"
-    "🝓" "ALCHEMICAL SYMBOL FOR LODESTONE"
-    "🝔" "ALCHEMICAL SYMBOL FOR SOAP"
-    "🝕" "ALCHEMICAL SYMBOL FOR URINE"
-    "🝖" "ALCHEMICAL SYMBOL FOR HORSE DUNG"
-    "🝗" "ALCHEMICAL SYMBOL FOR ASHES"
-    "🝘" "ALCHEMICAL SYMBOL FOR POT ASHES"
-    "🝙" "ALCHEMICAL SYMBOL FOR BRICK"
-    "🝚" "ALCHEMICAL SYMBOL FOR POWDERED BRICK"
-    "🝛" "ALCHEMICAL SYMBOL FOR AMALGAM"
-    "🝜" "ALCHEMICAL SYMBOL FOR STRATUM SUPER STRATUM"
-    "🝝" "ALCHEMICAL SYMBOL FOR STRATUM SUPER STRATUM-2"
-    "🝞" "ALCHEMICAL SYMBOL FOR SUBLIMATION"
-    "🝟" "ALCHEMICAL SYMBOL FOR PRECIPITATE"
-    "🝠" "ALCHEMICAL SYMBOL FOR DISTILL"
-    "🝡" "ALCHEMICAL SYMBOL FOR DISSOLVE"
-    "🝢" "ALCHEMICAL SYMBOL FOR DISSOLVE-2"
-    "🝣" "ALCHEMICAL SYMBOL FOR PURIFY"
-    "🝤" "ALCHEMICAL SYMBOL FOR PUTREFACTION"
-    "🝥" "ALCHEMICAL SYMBOL FOR CRUCIBLE"
-    "🝦" "ALCHEMICAL SYMBOL FOR CRUCIBLE-2"
-    "🝧" "ALCHEMICAL SYMBOL FOR CRUCIBLE-3"
-    "🝨" "ALCHEMICAL SYMBOL FOR CRUCIBLE-4"
-    "🝩" "ALCHEMICAL SYMBOL FOR CRUCIBLE-5"
-    "🝪" "ALCHEMICAL SYMBOL FOR ALEMBIC"
-    "🝫" "ALCHEMICAL SYMBOL FOR BATH OF MARY"
-    "🝬" "ALCHEMICAL SYMBOL FOR BATH OF VAPOURS"
-    "🝭" "ALCHEMICAL SYMBOL FOR RETORT"
-    "🝮" "ALCHEMICAL SYMBOL FOR HOUR"
-    "🝯" "ALCHEMICAL SYMBOL FOR NIGHT"
-    "🝰" "ALCHEMICAL SYMBOL FOR DAY-NIGHT"
-    "🝱" "ALCHEMICAL SYMBOL FOR MONTH"
-    "🝲" "ALCHEMICAL SYMBOL FOR HALF DRAM"
-    "🝳" "ALCHEMICAL SYMBOL FOR HALF OUNCE"
-    ]))
-
+(def pomo-goal
+  (or (when-let [complete (System/getenv "pomo_goal")]
+        (read-string complete))
+      4))
 
 (require '[babashka.pods :as pods])
 (pods/load-pod 'org.babashka/buddy "0.1.0")
 
-(require '[pod.babashka.buddy.core.hash :as hash])
-
-(require '[clojure.string :as string])
-
+(require '[pod.babashka.buddy.core.hash :as hash]
+         '[clojure.string :as string]
+         '[clojure.java.shell :as shell])
 (import 'java.time.format.DateTimeFormatter
         'java.time.LocalDateTime)
+
+(def treasure
+  [;; alchemical symbols
+   "🜀🜁🜂🜃🜄🜅🜆🜇🜈🜉🜊🜋🜌🜍🜎🜏🜐🜑🜒🜓🜔🜕🜖🜗🜘🜙🜚🜛🜜🜝🜞🜟🜠🜡🜢🜣🜤🜥🜦🜧🜨🜩🜪🜫🜬🜭🜮🜯🜰🜱🜲🜳🜴🜵🜶🜷🜸🜹🜺🜻🜼🜽🜾🜿🝀🝁🝂🝃🝄🝅🝆🝇🝈🝉🝊🝋🝌🝍🝎🝏🝐🝑🝒🝓🝔🝕🝖🝗🝘🝙🝚🝛🝜🝝🝞🝟🝠🝡🝢🝣🝤🝥🝦🝧🝨🝩🝪🝫🝬🝭🝮🝯🝰🝱🝲🝳"
+   ;; cards
+   "🂠🂡🂢🂣🂤🂥🂦🂧🂨🂩🂪🂫🂬🂭🂮🂱🂲🂳🂴🂵🂶🂷🂸🂹🂺🂻🂼🂽🂾🂿🃁🃂🃃🃄🃅🃆🃇🃈🃉🃊🃋🃌🃍🃎🃏🃑🃒🃓🃔🃕🃖🃗🃘🃙🃚🃛🃜🃝🃞🃟🃠🃡🃢🃣🃤🃥🃦🃧🃨🃩🃪🃫🃬🃭🃮🃯🃰🃱🃲🃳🃴🃵"
+   ;; chess/games
+   "♔♕♖♗♘♙♚♛♜♝♞♟"
+   "🩠🩡🩢🩣🩤🩥🩦🩧🩨🩩🩪🩫🩬🩭"
+   ;; misc symbols block
+   "☀☁☂☃☄★☆☇☈☉☊☋☌☍☎☏☐☑☒☓☔☕☖☗☘☙☚☛☜☝☞☟☠☡☢☣☤☥☦☧☨☩☪☫☬☭☮☯☰☱☲☳☴☵☶☷☸☹☺☻☼☽☾☿♀♁♂♃♄♅♆♇♈♉♊♋♌♍♎♏♐♑♒♓♔♕♖♗♘♙♚♛♜♝♞♟♠♡♢♣♤♥♦♧♨♩♪♫♬♭♮♯♰♱♲♳♴♵♶♷♸♹♺♻♼♽♾♿⚀⚁⚂⚃⚄⚅⚆⚇⚈⚉⚊⚋⚌⚍⚎⚏⚐⚑⚒⚓⚔⚕⚖⚗⚘⚙⚚⚛⚜⚝⚞⚟⚠⚡⚢⚣⚤⚥⚦⚧⚨⚩⚪⚫⚬⚭⚮⚯⚰⚱⚲⚳⚴⚵⚶⚷⚸⚹⚺⚻⚼⚽⚾⚿⛀⛁⛂⛃⛄⛅⛆⛇⛈⛉⛊⛋⛌⛍⛎⛏⛐⛑⛒⛓⛔⛕⛖⛗⛘⛙⛚⛛⛜⛝⛞⛟⛠⛡⛢⛣⛤⛥⛦⛧⛨⛩⛪⛫⛬⛭⛮⛯⛰⛱⛲⛳⛴⛵⛶⛷⛸⛹⛺⛻⛼⛽⛾⛿"
+   ;; geometric shapes
+   "■□U▢▣▤▥▦▧▨▩▪▫▬▭▮▯▰▱▲△▴▵▶▷▸▹►▻▼▽▾▿◀◁◂◃◄◅◆◇◈◉◊○◌◍◎●◐◑◒◓◔◕◖◗◘◙◚◛◜◝◞◟◠◡◢◣◤◥◦◧◨◩◪◫◬◭◮◯◰◱◲◳◴◵◶◷◸◹◺◻◼◽◾◿"
+   ;; greek alphabet
+   "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ"
+   ;; egyptian hieroglyphs
+   "𓀀𓀁𓀂𓀃𓀄𓀅𓀆𓀇𓀈𓀉𓀊𓀋𓀌𓀍𓀎𓀏𓀐𓀑𓀒𓀓𓀔𓀕𓀖𓀗𓀘𓀙𓀚𓀛𓀜𓀝𓀞𓀟𓀠𓀡𓀢𓀣𓀤𓀥𓀦𓀧𓀨𓀩𓀪𓀫𓀬𓀭𓀮𓀯𓀰𓀱𓀲𓀳𓀴𓀵𓀶𓀷𓀸𓀹𓀺𓀻𓀼𓀽𓀾𓀿𓁀𓁁𓁂𓁃𓁄𓁅𓁆𓁇𓁈𓁉𓁊𓁋𓁌𓁍𓁎𓁏𓁐𓁑𓁒𓁓𓁔𓁕𓁖𓁗𓁘𓁙𓁚𓁛𓁜𓁝𓁞𓁟𓁠𓁡𓁢𓁣𓁤𓁥𓁦𓁧𓁨𓁩𓁪𓁫𓁬𓁭𓁮𓁯𓁰𓁱𓁲𓁳𓁴𓁵𓁶𓁷𓁸𓁹𓁺𓁻𓁼𓁽𓁾𓁿𓂀𓂁𓂂𓂃𓂄𓂅𓂆𓂇𓂈𓂉𓂊𓂋𓂌𓂍𓂎𓂏𓂐𓂑𓂒𓂓𓂔𓂕𓂖𓂗𓂘𓂙𓂚𓂛𓂜𓂝𓂞𓂟𓂠𓂡𓂢𓂣𓂤𓂥𓂦𓂧𓂨𓂩𓂪𓂫𓂬𓂭𓂮𓂯𓂰𓂱𓂲𓂳𓂴𓂵𓂶𓂷𓂸𓂹𓂺𓂻𓂼𓂽𓂾𓂿𓃀𓃁𓃂𓃃𓃄𓃅𓃆𓃇𓃈𓃉𓃊𓃋𓃌𓃍𓃎𓃏𓃐𓃑𓃒𓃓𓃔𓃕𓃖𓃗𓃘𓃙𓃚𓃛𓃜𓃝𓃞𓃟𓃠𓃡𓃢𓃣𓃤𓃥𓃦𓃧𓃨𓃩𓃪𓃫𓃬𓃭𓃮𓃯𓃰𓃱𓃲𓃳𓃴𓃵𓃶𓃷𓃸𓃹𓃺𓃻𓃼𓃽𓃾𓃿𓄀𓄁𓄂𓄃𓄄𓄅𓄆𓄇𓄈𓄉𓄊𓄋𓄌𓄍𓄎𓄏𓄐𓄑𓄒𓄓𓄔𓄕𓄖𓄗𓄘𓄙𓄚𓄛𓄜𓄝𓄞𓄟𓄠𓄡𓄢𓄣𓄤𓄥𓄦𓄧𓄨𓄩𓄪𓄫𓄬𓄭𓄮𓄯𓄰𓄱𓄲𓄳𓄴𓄵𓄶𓄷𓄸𓄹𓄺𓄻𓄼𓄽𓄾𓄿𓅀𓅁𓅂𓅃𓅄𓅅𓅆𓅇𓅈𓅉𓅊𓅋𓅌𓅍𓅎𓅏𓅐𓅑𓅒𓅓𓅔𓅕𓅖𓅗𓅘𓅙𓅚𓅛𓅜𓅝𓅞𓅟𓅠𓅡𓅢𓅣𓅤𓅥𓅦𓅧𓅨𓅩𓅪𓅫𓅬𓅭𓅮𓅯𓅰𓅱𓅲𓅳𓅴𓅵𓅶𓅷𓅸𓅹𓅺𓅻𓅼𓅽𓅾𓅿𓆀𓆁𓆂𓆃𓆄𓆅𓆆𓆇𓆈𓆉𓆊𓆋𓆌𓆍𓆎𓆏𓆐𓆑𓆒𓆓𓆔𓆕𓆖𓆗𓆘𓆙𓆚𓆛𓆜𓆝𓆞𓆟𓆠𓆡𓆢𓆣𓆤𓆥𓆦𓆧𓆨𓆩𓆪𓆫𓆬𓆭𓆮𓆯𓆰𓆱𓆲𓆳𓆴𓆵𓆶𓆷𓆸𓆹𓆺𓆻𓆼𓆽𓆾𓆿𓇀𓇁𓇂𓇃𓇄𓇅𓇆𓇇𓇈𓇉𓇊𓇋𓇌𓇍𓇎𓇏𓇐𓇑𓇒𓇓𓇔𓇕𓇖𓇗𓇘𓇙𓇚𓇛𓇜𓇝𓇞𓇟𓇠𓇡𓇢𓇣𓇤𓇥𓇦𓇧𓇨𓇩𓇪𓇫𓇬𓇭𓇮𓇯𓇰𓇱𓇲𓇳𓇴𓇵𓇶𓇷𓇸𓇹𓇺𓇻𓇼𓇽𓇾𓇿𓈀𓈁𓈂𓈃𓈄𓈅𓈆𓈇𓈈𓈉𓈊𓈋𓈌𓈍𓈎𓈏𓈐𓈑𓈒𓈓𓈔𓈕𓈖𓈗𓈘𓈙𓈚𓈛𓈜𓈝𓈞𓈟𓈠𓈡𓈢𓈣𓈤𓈥𓈦𓈧𓈨𓈩𓈪𓈫𓈬𓈭𓈮𓈯𓈰𓈱𓈲𓈳𓈴𓈵𓈶𓈷𓈸𓈹𓈺𓈻𓈼𓈽𓈾𓈿𓉀𓉁𓉂𓉃𓉄𓉅𓉆𓉇𓉈𓉉𓉊𓉋𓉌𓉍𓉎𓉏𓉐𓉑𓉒𓉓𓉔𓉕𓉖𓉗𓉘𓉙𓉚𓉛𓉜𓉝𓉞𓉟𓉠𓉡𓉢𓉣𓉤𓉥𓉦𓉧𓉨𓉩𓉪𓉫𓉬𓉭𓉮𓉯𓉰𓉱𓉲𓉳𓉴𓉵𓉶𓉷𓉸𓉹𓉺𓉻𓉼𓉽𓉾𓉿𓊀𓊁𓊂𓊃𓊄𓊅𓊆𓊇𓊈𓊉𓊊𓊋𓊌𓊍𓊎𓊏𓊐𓊑𓊒𓊓𓊔𓊕𓊖𓊗𓊘𓊙𓊚𓊛𓊜𓊝𓊞𓊟𓊠𓊡𓊢𓊣𓊤𓊥𓊦𓊧𓊨𓊩𓊪𓊫𓊬𓊭𓊮𓊯𓊰𓊱𓊲𓊳𓊴𓊵𓊶𓊷𓊸𓊹𓊺𓊻𓊼𓊽𓊾𓊿𓋀𓋁𓋂𓋃𓋄𓋅𓋆𓋇𓋈𓋉𓋊𓋋𓋌𓋍𓋎𓋏𓋐𓋑𓋒𓋓𓋔𓋕𓋖𓋗𓋘𓋙𓋚𓋛𓋜𓋝𓋞𓋟𓋠𓋡𓋢𓋣𓋤𓋥𓋦𓋧𓋨𓋩𓋪𓋫𓋬𓋭𓋮𓋯𓋰𓋱𓋲𓋳𓋴𓋵𓋶𓋷𓋸𓋹𓋺𓋻𓋼𓋽𓋾𓋿𓌀𓌁𓌂𓌃𓌄𓌅𓌆𓌇𓌈𓌉𓌊𓌋𓌌𓌍𓌎𓌏𓌐𓌑𓌒𓌓𓌔𓌕𓌖𓌗𓌘𓌙𓌚𓌛𓌜𓌝𓌞𓌟𓌠𓌡𓌢𓌣𓌤𓌥𓌦𓌧𓌨𓌩𓌪𓌫𓌬𓌭𓌮𓌯𓌰𓌱𓌲𓌳𓌴𓌵𓌶𓌷𓌸𓌹𓌺𓌻𓌼𓌽𓌾𓌿𓍀𓍁𓍂𓍃𓍄𓍅𓍆𓍇𓍈𓍉𓍊𓍋𓍌𓍍𓍎𓍏𓍐𓍑𓍒𓍓𓍔𓍕𓍖𓍗𓍘𓍙𓍚𓍛𓍜𓍝𓍞𓍟𓍠𓍡𓍢𓍣𓍤𓍥𓍦𓍧𓍨𓍩𓍪𓍫𓍬𓍭𓍮𓍯𓍰𓍱𓍲𓍳𓍴𓍵𓍶𓍷𓍸𓍹𓍺𓍻𓍼𓍽𓍾𓍿𓎀𓎁𓎂𓎃𓎄𓎅𓎆𓎇𓎈𓎉𓎊𓎋𓎌𓎍𓎎𓎏𓎐𓎑𓎒𓎓𓎔𓎕𓎖𓎗𓎘𓎙𓎚𓎛𓎜𓎝𓎞𓎟𓎠𓎡𓎢𓎣𓎤𓎥𓎦𓎧𓎨𓎩𓎪𓎫𓎬𓎭𓎮𓎯𓎰𓎱𓎲𓎳𓎴𓎵𓎶𓎷𓎸𓎹𓎺𓎻𓎼𓎽𓎾𓎿𓏀𓏁𓏂𓏃𓏄𓏅𓏆𓏇𓏈𓏉𓏊𓏋𓏌𓏍𓏎𓏏𓏐𓏑𓏒𓏓𓏔𓏕𓏖𓏗𓏘𓏙𓏚𓏛𓏜𓏝𓏞𓏟𓏠𓏡𓏢𓏣𓏤𓏥𓏦𓏧𓏨𓏩𓏪𓏫𓏬𓏭𓏮𓏯𓏰𓏱𓏲𓏳𓏴𓏵𓏶𓏷𓏸𓏹𓏺𓏻𓏼𓏽𓏾𓏿𓐀𓐁𓐂𓐃𓐄𓐅𓐆𓐇𓐈𓐉𓐊𓐋𓐌𓐍𓐎𓐏𓐐𓐑𓐒𓐓𓐔𓐕𓐖𓐗𓐘𓐙𓐚𓐛𓐜𓐝𓐞𓐟𓐠𓐡𓐢𓐣𓐤𓐥𓐦𓐧𓐨𓐩𓐪𓐫𓐬𓐭"
+   ;; runes
+   "ᚠᚡᚢᚣᚤᚥᚦᚧᚨᚩᚪᚫᚬᚭᚮᚯᚰᚱᚲᚳᚴᚵᚶᚷᚸᚹᚺᚻᚼᚽᚾᚿᛀᛁᛂᛃᛄᛅᛆᛇᛈᛉᛊᛋᛌᛍᛎᛏᛐᛑᛒᛓᛔᛕᛖᛗᛘᛙᛚᛛᛜᛝᛞᛟᛠᛡᛢᛣᛤᛥᛦᛧᛨᛩᛪ᛫᛬᛭ᛮᛯᛰᛱᛲᛳᛴᛵᛶᛷᛸ"
+   ])
+
+(defn elisp-char-name [char]
+  (if (= char "꩜")
+    " ‽‽‽UNKNOWN‽‽‽"
+    (string/trim (:out (shell/sh "elisp" "-r" (format "(get-char-code-property ?%s 'name)" char))))))
 
 (defn bytes-to-int
   ([bytes]
@@ -149,32 +58,35 @@
                                     shift)))
                 (range 0 4)))))
 
-(defn string-to-symbol [s]
-  (nth alchemy-map
-       (-> s
-           (hash/md5)
-           (bytes-to-int)
-           (mod (count alchemy-map)))))
+(defn loot [s]
+  ;; in the future, we might do something like a treasure-theme with the day
+  ;; (like today -> treasure index)
+  ;; for now just sticking to the first collection, alchemy
+  (let [treasure (first treasure)
+        treasure (map first (re-seq #"(U?)." treasure))]
+    (-> s
+        (hash/md5)
+        (bytes-to-int)
+        (mod (count treasure))
+        (->> (nth treasure)))))
 
 (let [date (LocalDateTime/now)
       formatter (DateTimeFormatter/ofPattern "yyyy-MM-dd")
       today (.format date formatter)
-      done-symbols (->> (range pomo-done)
-                        (map (fn [i] (format "%s-%s" today (inc i))))
-                        (map string-to-symbol))
-
-      done-symbols (concat done-symbols
-                           (repeat (- pomo-goal pomo-done)
-                                   ["꩜" " ‽‽‽UNKNOWN‽‽‽"]))]
+      symbols (->> (range pomo-done)
+                   (map (fn [i] (format "%s %s-%s"
+                                        (.. java.net.InetAddress getLocalHost getHostName)
+                                        today (inc i))))
+                   (map loot))
+      symbols (concat symbols (repeat (- pomo-goal pomo-done) "꩜"))]
   (if (= (first *command-line-args*) "status")
-    (println
-     (string/join
-      (map first done-symbols)))
+    (println (string/join symbols))
 
     ;; cli
     (do
       (println (format "symbols for %s" today))
-      (->> done-symbols
+      (->> symbols
+           (map (juxt identity elisp-char-name))
            (map (partial apply format "%s %s"))
            (map println)
            (doall)))))
