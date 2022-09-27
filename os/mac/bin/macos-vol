@@ -2,10 +2,13 @@
 
 vol=$(osascript -e 'set ovol to output volume of (get volume settings)')
 
-
 setvol() {
     osascript -e "set volume output volume $1"
     notify-send "Volume: $1"
+}
+
+get() {
+  echo "$vol"
 }
 
 subtract() {
