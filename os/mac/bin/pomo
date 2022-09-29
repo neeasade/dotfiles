@@ -1,16 +1,6 @@
 #!/usr/bin/env bb
 ;; attempt to gamify pomodoros by unlocking symbols
 
-(def pomo-done
-  (or (when-let [complete (System/getenv "pomo_done")]
-        (read-string complete))
-      2))
-
-(def pomo-goal
-  (or (when-let [complete (System/getenv "pomo_goal")]
-        (read-string complete))
-      4))
-
 (require '[babashka.pods :as pods])
 (pods/load-pod 'org.babashka/buddy "0.1.0")
 
@@ -70,25 +60,62 @@
         (mod (count treasure))
         (->> (nth treasure)))))
 
-(let [date (LocalDateTime/now)
-      formatter (DateTimeFormatter/ofPattern "yyyy-MM-dd")
-      today (.format date formatter)
-      symbols (->> (range pomo-done)
-                   (map (fn [i] (format "%s %s-%s"
-                                        (.. java.net.InetAddress getLocalHost getHostName)
-                                        today (inc i))))
-                   (map loot))
-      symbols (concat symbols (repeat (- pomo-goal pomo-done) "꩜"))]
-  (if (= (first *command-line-args*) "status")
-    (println (string/join symbols))
+(def state-file "/tmp/pomo-state")
+(def state {})
+(def today (.format (LocalDateTime/now) (DateTimeFormatter/ofPattern "yyyy-MM-dd")))
 
-    ;; cli
-    (do
-      (println (format "symbols for %s" today))
-      (->> symbols
-           (map (juxt identity elisp-char-name))
-           (map (partial apply format "%s %s"))
-           (map println)
-           (doall)))))
+(defn load-state []
+  (def state
+    (when (.exists (io/file state-file))
+      (-> state-file slurp read-string)))
+  (let [date (:date state)]
+    (when-not (= date today)
+      ;; reset!
+      (def state
+        {:date today
+         :done 0
+         :goal 4}))))
+
+(defn save-state []
+  (->> state pr-str (spit state-file)))
+
+(defn state-to-symbols []
+  (let [done (:done state)
+        goal (:goal state)]
+    (->> (range done)
+         (map (fn [i] (format "%s %s-%s"
+                              (.. java.net.InetAddress getLocalHost getHostName)
+                              today (inc i))))
+         (map loot)
+         (#(concat % (repeat (- goal done) "꩜"))))))
+
+(defn summary []
+  (println (format "symbols for %s" today))
+  (->> (state-to-symbols)
+       (map (juxt identity elisp-char-name))
+       (map (partial apply format "%s %s"))
+       (string/join "\n")
+       (println)))
+
+(defn status []
+  (println (string/join (state-to-symbols))))
+
+(defn done []
+  (def state (update-in state [:done] inc))
+  (println "You completed a pomodoro ")
+  (summary)
+  (save-state))
+
+(defn goal [new-goal]
+  (def state (assoc state :goal (read-string new-goal)))
+  (println "Updated goal!")
+  (summary)
+  (save-state))
+
+(load-state)
+
+(let [[cmd & args] *command-line-args*
+      cmd (some-> cmd read-string resolve)]
+  (apply (or cmd summary) args))
 
 (System/exit 0)
