@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# this is by far my favorite script to tinker with
 # https://notes.neeasade.net/search-term-playlists.html
 # duties:
 # - wrap the importing of music from the internet
@@ -16,33 +17,8 @@ log() {
 }
 
 usage() {
-  # todo: this all in awk
   echo "music options:"
-  grep -E "^[A-Za-z_]+\(\) {.*#" "$0" | sed 's/() {//' | sort | \
-    awk -F \# '{ printf "%-9s:%s\n", $1, $2 }'
-  exit 1
-}
-
-count() {
-    printf '%s\n' "$#"
-}
-
-is_album_song() {
-  file=$1
-
-  if [[ $file =~ bandcamp ]]; then
-    return 0
-  fi
-
-  count=$(count "$(dirname "$file")"/*)
-  # these numbers were chosen arbitrarily.
-  if [ $count -lt 15 ]; then
-    if [ $count -gt 4 ]; then
-      return 0
-    fi
-  fi
-
-  return 1
+  awk -F \# '{ if (match($0, /([a-z]+)\(\) {.*#/, line)) { printf "%-9s:%s\n", line[1], $2 }}' "$0" | sort
 }
 
 is_long() {
@@ -57,8 +33,6 @@ is_long() {
   if [ $seconds -gt $((60 * 15)) ]; then
     return 0
   else
-    # is_album_song "$*"
-    # return $!
     return 1
   fi
 }
@@ -249,9 +223,9 @@ playlist() { # select a search term based playlist to play
 
   if $loaded_cached_playlist; then
     # this lets us preserve SHUFFLE directives and other custom junk
-    + () { silent; }
-    - () { silent; }
-    @ () { silent; }
+    append () { silent; }
+    remove () { silent; }
+    artist () { silent; }
     filter() { silent; }
   fi
 
@@ -304,10 +278,12 @@ name_from_pos() {
       [0-9][0-9].*) name=${name:4} ;;
   esac
 
-  name=${name/full album}
-  name=${name/  / }
+  # todo: this better? want ^[0-9]{4} $
+  # name=${name// [0-9][0-9][0-9][0-9] / }
 
-  # todo: remove years
+  name=${name/full album}
+  name=${name//_/ }
+  name=${name//  / }
 
   trim_string "$name"
 }
@@ -330,12 +306,22 @@ info() { # display the current audio progress bar and playlist length
     percent=$(mpc | awk 'match($0,/\(([0-9]+)%\)/, groups) {print groups[1]}')
   fi
 
-  echo "$name"
+  bottom_line=$(printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)")
 
-  mkb "$percent" $(wc -L <<< "$name")
-  # mkb "$percent" $(wc -m <<< "$name")
 
-  echo "playlist: $(cat $current_playlist) | $(playlist_length)"
+  pad_left=''
+  if [ ${#bottom_line} -gt ${#name} ]; then
+    pad_left=$(( ( ${#bottom_line} / 2 ) + ( ${#name} / 2) ))
+  fi
+
+  printf "%${pad_left}s\n" "$name"
+  # printf "%${pad_left}s\n" "$(mkb "$percent" $(wc -L <<< "${name}"))"
+  printf "%${pad_left}s\n" "$(mkb "$percent" $(wc -L <<< "${bottom_line}"))"
+  printf "%s\n" "$bottom_line"
+
+  # echo "$name"
+  # mkb "$percent" $(wc -L <<< "$name")
+  # printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)"
 }
 
 info2() {
@@ -364,8 +350,7 @@ context() {
 
   mpc playlist -f '%position%' | awk " {
 if (NR>=${start} && NR<=$end)
-    {
-if (NR==${pos})
+    {if (NR==${pos})
 { print \"${sep} \" \$0}
 else if (NR<${pos})
 { print \"${complete} \" \$0}
