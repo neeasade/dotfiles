@@ -330,12 +330,11 @@ info() { # display the current audio progress bar and playlist length
   bottom_line=$(printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)")
 
   w_progress=${#name}
-  pad_left=$(( ( ${#name} / 2 ) + ( ${#bottom_line} / 2) ))
-  if [ ${#bottom_line} -gt ${#name} ]; then
-    pad_left=$(( ( ${#bottom_line} / 2 ) + ( ${#name} / 2) ))
+  if (( ${#bottom_line} > ${#name})); then
     w_progress=${#bottom_line}
   fi
 
+  pad_left=$(( ${#name} / 2 + ${#bottom_line} / 2 ))
   align_print() {
     line=$*
     add=$(( $(wc -c <<< "$line") - ${#line} ))
