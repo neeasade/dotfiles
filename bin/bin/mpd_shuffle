@@ -7,10 +7,7 @@
 (require '[clojure.java.shell :as shell])
 (require '[clojure.string :as string])
 
-
-
 (defn is-long
-
   [song]
   (> (/
       (let [length-str
@@ -20,8 +17,7 @@
               (format "/home/neeasade/Music/%s" song)))]
         (if (string/blank? (string/trim length-str))
           0
-          (read-string length-str))
-        )
+          (read-string length-str)))
       1000)
      (* 60 15)))
 
@@ -38,8 +34,7 @@
              (string/join "/"))))
      (mapcat (fn [[dir songs]]
                {dir (if (or (string/includes? dir "bandcamp")
-                            (< 4 (count songs) 17)
-                            )
+                            (< 4 (count songs) 17))
                       songs
                       (filter is-long songs))}))
      (shuffle)

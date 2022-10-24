@@ -46,9 +46,18 @@ render_smol() {
 	tag_name=$tname
 	background=$p_bg_inactive
 
+	if [ -z "$wids" ]; then
+	    continue
+	fi
+
+	if [ "$tname" = "hole" ]; then
+	    continue
+	fi
+
 	T=1
 	if $active; then
 	    T=2
+	    T=1
 	    if [ ! -z "$wids" ]; then
 		background=$color
 	    fi
@@ -62,8 +71,9 @@ render_smol() {
 	border=
 
 	if echo "$wids" | grep -q $current; then
+	    T=2
 	    border=$(colort -l -40 $color)
-	    tname="${tname}!"
+	    # tname="${tname}!"
 	fi
 
 	# height of the under/over determined from bar itself

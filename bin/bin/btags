@@ -1,15 +1,18 @@
 #!/usr/bin/env bb
 ;; -*- mode: clojure -*-
 ;; note: bb is https://github.com/borkdude/babashka
-;; this does not alter tree state at all -- it merely toggles the hidden flags on bspwm nodes
 
-(require '[clojure.core :as core])
-(require '[clojure.string :as str])
-(require '[clojure.set :as set])
-(require '[clojure.java.io :as io])
-(require '[clojure.java.shell :as shell])
+;; tag management for bspwm
+;; windows may only have one tag
 
-(defn sh [command] (:out (apply shell/sh (str/split command #" "))))
+(require '[clojure.core :as core]
+         '[clojure.string :as str]
+         '[clojure.set :as set]
+         '[clojure.java.io :as io]
+         '[clojure.java.shell :as shell])
+
+(defn sh [command]
+  (:out (apply shell/sh (str/split command #" "))))
 
 (def state-file "/tmp/btags-state")
 (def state-lockfile "/tmp/btags-state-lock")
@@ -44,8 +47,7 @@
        }))
 
   ;; note the currently focused node
-  (update-state-focus-wid (-> "bspc query -N -n" sh str/trim-newline))
-  )
+  (update-state-focus-wid (-> "bspc query -N -n" sh str/trim-newline)))
 
 (defn save-state []
   (->> state pr-str (spit state-file))
@@ -57,8 +59,8 @@
                 ;; bad (read-string vs parse int)
                 ;; am inferring not a thing in joker
                 ;; cf https://github.com/candid82/joker/blob/9dcaacdeb4d80e37ec2273a299c562dc97e6fdbc/tests/eval/tools_cli.joke#L114
-                (- (read-string (apply str (rest ident)))
-                   1))
+                (-
+                 (read-string (apply str (rest ident))) 1))
            ;; we tried to use an index on a tag that doesn't exist, just use the current timestamp to name it
            ;; note: this will call date all the time to resolve the default tag name when index is used..
            (sh "date +%s"))
@@ -324,7 +326,8 @@
 
 (when *command-line-args*
   (if (contains?
-       ;; stateful - focus might not be stateful really
+       ;; stateful actions, ones needing the lock
+       ;; note: focus might not be stateful really
        #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids" "add" "remove"}
        (first *command-line-args*))
 
@@ -333,7 +336,6 @@
 
       ;; get the lock
       (sh (format "touch %s" state-lockfile))
-      ;; (println (sh (format "echo touch %s" state-lockfile)))
 
       (load-state)
       (cleanup-state)
@@ -342,13 +344,15 @@
         (apply
          (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
          (rest *command-line-args*))
-        (catch Exception e (println (str "caught exception: \n" (ex-message e))))
-        )
+        (catch Exception e
+          (println (str "caught exception: \n" (ex-message e)))
+          ;; todo: notify
+          ;; (string/split (ex-message e))
+          ))
 
       ;; (sh (format "notify-send doing_%s" (->> *command-line-args* first)))
       (save-state)
-      (render-state)
-      )
+      (render-state))
 
     (do
       (load-state)

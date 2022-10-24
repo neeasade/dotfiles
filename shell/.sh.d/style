@@ -144,8 +144,8 @@ prompt() {
        fi
     fi
 
-    _prompt="$(git_prompt)$(env_prompt)$_prompt"
-    # _prompt="$(git_prompt)$_prompt"
+    # _prompt="$(git_prompt)$(env_prompt)$_prompt"
+    _prompt="$(git_prompt)$_prompt"
     # _prompt="$_prompt"
 
     if ${REMOTE:-false}; then

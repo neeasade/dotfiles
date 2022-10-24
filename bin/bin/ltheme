@@ -43,8 +43,8 @@ load_xresources() {
 load_bspwm() {
     bspwmrc=".config/bspwm/bspwmrc"
     render bspwm "$bspwmrc" -p bspwm
-    chmod +x "$HOME/$bspwmrc"
 
+    chmod +x "$HOME/$bspwmrc"
     setsid "$HOME/$bspwmrc"
 }
 

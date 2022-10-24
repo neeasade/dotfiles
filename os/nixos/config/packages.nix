@@ -1,7 +1,5 @@
 { config, pkgs, lib, ...}:
 
-;; tarp
-
 let
   nixcfg = {
     allowUnfree = true;
@@ -91,7 +89,6 @@ let
     lm_sensors
     lxappearance
     maim
-    mksh
     mpc_cli
     mpd
     # mpdcron
@@ -106,7 +103,8 @@ let
 
     ntfs3g
     openssl
-    telnet
+    # telnet
+    inetutils
     p7zip
     parallel
     pass
@@ -179,7 +177,8 @@ let
     # drawterm
     # oomox
     # foliate
-    babashka
+    # babashka
+    picom-git
 
     lemonbar
     # skroll # todo: maybe zscroll this
@@ -198,6 +197,14 @@ let
     wmutils-opt-git
     xdo-git
   ]) ++ (with edge; [
+    (pmenu.overrideAttrs(old: {
+      src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master"; };
+    }))
+
+    # pmenu
+
+    # pmenu
+    babashka
     kitty
     youtube-dl
   ]);
@@ -231,7 +238,7 @@ let
     graphviz
     audacity
     bfg-repo-cleaner
-    picom
+    # picom
     deluge
     firefox
     fzf
@@ -258,16 +265,18 @@ let
     # jstest
     qjoypad
 
-    # wine
+    wine
+    # support 64-bit only
+    # (wine.override { wineBuild = "wine64"; })
     # wineStaging
     # wineUnstable
-    (wine.override { wineBuild = "wineWow"; })
+    # (wine.override { wineBuild = "wineWow"; })
 
     minecraft
     openmw
-    drawpile
-    steam
-    steam-run-native
+    # drawpile
+    # steam
+    # steam-run-native
 
     # (steam.override {
     # extraPkgs = pkgs: [
@@ -284,6 +293,9 @@ let
     # openmw-tes3mp
     # steam
   ]) ++ (with edge; [
+    # (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; })
+    steam
+    # ()
     discord
   ]);
 
@@ -382,8 +394,12 @@ let
     # tewi-font siji
     # fira fira-code
     twemoji-color-font
-    font-awesome-ttf
+    # font-awesome-ttf
+    font-awesome
     noto-fonts # todo: noto-emoji?
+    noto-fonts-cjk
+    noto-fonts-emoji
+    symbola
     powerline-fonts # includes a 'Go Mono for powerline'
   ]);
 

@@ -28,8 +28,10 @@ tag_menu() {
 pick() {
   cat<<EOF | sed 's/,/\t/g' | pmenu
 tag
+, ,echo nope
 ,set
 $(tag_menu set-tag-on-wids)
+, ,echo nope
 ,show
 $(tag_menu toggle)
 sound

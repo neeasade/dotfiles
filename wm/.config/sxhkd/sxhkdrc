@@ -31,6 +31,7 @@ super + s
     bspc node -f; \
     bspc config pointer_follows_focus false
 
+# todo: this could be better re: modes (if in fullscreen monocle, ignore floating windows, for example)
 alt + {_,shift} + Tab
     bspc node -f {next,prev}.local.normal.!hidden
 
@@ -89,7 +90,7 @@ super + grave
 # workflow: turn on headphones, bt connect, walk around, toggle
 # we never use these buttons from our keyboard anyway
 XF86Audio{Prev,Next,Play,Pause}
-    check_headphones; player.sh {prev,next,toggle,toggle}
+    check_headphones || player.sh {prev,next,toggle,toggle}
 
 XF86Audio{LowerVolume,RaiseVolume}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase})"
@@ -124,8 +125,9 @@ F8
 
 # idea for these: screenshot buttons - or a popup menu
 @button8
-    pointer_menu
+    pmenu_switcher
     # SWITCH_KIND=do_narrow_piemenu dmenu_switcher switcher
+    # pointer_menu
     # notify-send "you pressed mouse8"
 
 button9
@@ -134,8 +136,8 @@ button9
 
 # window management
 
-super + y
-    dismiss.sh
+# super + y
+#     dismiss.sh
 
 super + {1-9}
     btags focus ^{1-9}
@@ -143,8 +145,8 @@ super + {1-9}
 super + shift + {1-9}
     btags set-tag-on-wids ^{1-9} $(bspwindows)
 
-super + {i,o,u}
-    btags focus ^{1,2,3}
+super + {i,o,u,y}
+    btags focus ^{1,2,3,4}
 
 super + shift + {i,o,u,y}
     btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)
@@ -165,8 +167,8 @@ super + shift + {i,o,u,y}
 # super + shift + {1-9}
 #     bspc node -d focused:^{1-9}
 
-# super + {i,o,u}
-#     btags focus ^{1,2,3}
+# super + {i,o,u,y}
+#     bspc desktop -f focused:^{1,2,3,4}
 
 # super + shift + {i,o,u,y}
-#     btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)
+#     bspc node -d focused:^{1,2,3,4}

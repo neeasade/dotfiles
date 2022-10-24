@@ -287,8 +287,9 @@
                  :pointer-modifier "mod4"
                  :removal-adjustment false
                  :external-rules-command (fn [_] (shh "which external_rules.sh"))
-                 :left-monocle-padding "{{bspwm-meta.monocle-pad-width}}"
-                 :right-monocle-padding "{{bspwm-meta.monocle-pad-width}}"}
+                 ;; :left-monocle-padding "{{bspwm-meta.monocle-pad-width}}"
+                 ;; :right-monocle-padding "{{bspwm-meta.monocle-pad-width}}"
+                 }
          :mkb {:bar- "-+-"
                :complete (fn [tree] (-> tree (get-in [:mkb :bar-]) (nth 0) (str)))
                :sep (fn [tree] (-> tree (get-in [:mkb :bar-]) (nth 1) (str)))
@@ -359,22 +360,24 @@
                      (unflatten-map
                       {:THEME_NAME "test"
                        :emacs.theme "tarp-mcfay"
-                       ;; :BG_COMMAND "${HOME}/.fehbg"
-                       :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
+                       :BG_COMMAND "${HOME}/.fehbg"
+                       ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :font.mono.family "Triplicate T4c"
                        :font.mono.family "Go Mono"
+
                        ;; :font.mono.family "Triplicate C4c"
-                       :font.variable.family "Equity Text B"
+                       ;; :font.variable.family "Equity Text B"
+                       :font.variable.family "Charter"
+                       :font.variable.size 14
                        ;; :font.variable.family "Equity Text A"
                        ;; :mkb.bar- "AAH"
                        :mkb.bar- "|/_"
                        :shell.prompt "%"
                        :x.padding 10
                        :bspwm.window-gap 30
-                       :bspwm-meta.monocle-window-percent 0.50
+                       :bspwm-meta.monocle-window-percent 0.46
                        :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
-                       :font.mono.size 11
-                       :font.variable.size 13
+                       :font.mono.size 12
                        :picom.shadow.enabled "{{meta.shadow}}"}))
 
         work-theme (when work?
@@ -465,12 +468,14 @@
                    (format "/dev/shm/%s-theme-cache" (System/getenv "USER"))
                    (format "%s/.cache/rice/theme-cache" (System/getenv "HOME")))
       theme (if (fs/exists? cache-file)
-              (read-string (slurp cache-file))
+              ;; (read-string (slurp cache-file))
+              (try (read-string (slurp cache-file)) (catch Exception e (refresh-cache cache-file)))
               (refresh-cache cache-file))
       theme (if-let [overrides (:extend options)]
               (->> (read-string overrides) (unflatten-map) (deep-merge theme))
               theme)]
   (doall (map println errors))
+  ;; (println "fuck")
   (some->> options
            (reduce
             (fn [theme [k v]]
@@ -487,6 +492,7 @@
                 :shell (map-to-shell theme)
                 theme))
             theme)
-           (println)))
+           (println))
+  )
 
 (System/exit exit-status)

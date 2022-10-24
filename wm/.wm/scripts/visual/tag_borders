@@ -9,6 +9,8 @@ draw() {
 	state_sans_active=${state_sans_active//$wid/}
     done
 
+    # todo: special case -- one window open and floating? make it borderless
+
     # INACTIVE WINDOWS
     while read -r name visible color wids; do
 	if ! $visible; then
@@ -49,13 +51,13 @@ draw() {
 }
 
 w_outer=1
-w_border=$(theme -q bspwm.border.width)
+w_border=$(theme -q bspwm.border-width)
 w_inner=1
 w_padding=$(theme -q x.padding)
 
 c_padding=$(theme -q color.normal.background | tr -d \#)
 
-focused=$(theme -q bspwm.border.focused | tr -d \#)
+focused=$(theme -q bspwm.focused-border-color | tr -d \#)
 focused2=$(theme -q color.focused.foreground | tr -d \#)
 
 b_width=$((w_inner + w_border + w_outer + w_padding))
@@ -70,11 +72,10 @@ border() {
 }
 
 # for rounded/plain
-b_width=$((w_padding))
-border() {
-    chwbn -b $w_padding -c $c_padding "$@" &
-}
-
+# b_width=$((w_padding))
+# border() {
+#     kind=$1; shift; chwbn -b $w_padding -c $c_padding "$@" &
+# }
 
 echo bspc config border_width $b_width
 bspc config border_width $b_width

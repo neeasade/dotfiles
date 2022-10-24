@@ -18,6 +18,7 @@ in
       ../../config/services.nix
     ];
 
+  programs.steam.enable = true;
   programs.gnupg.agent.enable = true;
   programs.gnupg.agent.pinentryFlavor  = "qt";
 
@@ -42,7 +43,8 @@ in
     '';
   };
 
-  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
+  services.xserver.videoDrivers = ["nvidia"];
 
   services.openssh.enable = true;
   services.openssh.passwordAuthentication = true;
@@ -83,6 +85,7 @@ in
     pulseaudio.enable = true;
     opengl.driSupport32Bit = true;
     pulseaudio.support32Bit = true;
+    opengl.enable = true;
 
     #bumblebee.enable = true;
     # nvidia testing pls
@@ -131,7 +134,6 @@ in
       user = consts.user;
       dataDir = "${consts.home}/.local/share/Syncthing";
 
-      declarative = {
         overrideDevices = true;
         devices = builtins.removeAttrs consts.syncthingDevices [ "erasmus" ];
 
@@ -148,7 +150,6 @@ in
           path = "${consts.home}/sync/orgzly";
           devices = [ "trouw" "geloof" "phone"];
         };
-      };
     };
 
 

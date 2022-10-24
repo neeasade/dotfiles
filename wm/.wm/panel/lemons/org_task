@@ -2,7 +2,12 @@
 # show status of org-pomodoro in a progress bar.
 # tied to mpd, toggles on when working, off on break
 
-WIDTH=60
+# if ! "$HOME/.wm/panel/lemons/org_task_elisp"; then
+#     echo "Start emacs!"
+#     exit
+# fi
+
+WIDTH=200
 if ! org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH); then
     echo "Start emacs!"
     exit
@@ -10,19 +15,14 @@ fi
 
 topic=$(echo "$org_task_status" | awk -F \^ '{print $1}')
 percent=$(echo "$org_task_status" | awk -F \^ '{print $2}')
+color=$(echo "$org_task_status" | awk -F \^ '{print $3}')
 
 if [ -z "$percent" ]; then
     echo "${topic:-Failed to get org task!}"
 else
-    # echo "$topic $((percent / WIDTH))%"
-    # todo: status bar colors
-    # echo "$topic $(bs "B$(colort -l -40 "$bg")" O$(( percent )) +o)$(bs Beef0f3 +o O$(($WIDTH - percent)) )"
+    empty=$(elisp -r '(-> (myron-get :background :weak))')
 
     # XXX: you will need to tweak ./org_task_elisp as well
-    # empty=$(elisp -r '(tarp/get :background :normal)')
-    full=$(elisp -r '(-> (tarp/get :assumed) (ct-pastel 20 20))')
-    # empty=$(elisp -r '(-> (tarp/get :assumed) (ct-pastel 35 35))')
-    empty=$(elisp -r '(-> (tarp/get :background :normal))')
-    # echo "$topic $(bs "B$full" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
-    echo "$topic $(mkb "$percent" 10)"
+    echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
+    # echo "$topic $(mkb "$percent" 10)"
 fi

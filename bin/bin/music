@@ -6,6 +6,7 @@
 # - define music playlists by search terms
 # - add a neat display func
 # - some helpers to manage your local music
+
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 current_playlist="${musicdir}/playlist/current"
@@ -66,6 +67,18 @@ clear_duplicates() {
 
 ### ACTIONS
 
+stay() { # do some action, but keep the current song and position
+  test -z "$*" && return
+  state_song=$(mpc -f "%file%" | head -n 1)
+  state_progress=$(mpc -f '%file%' | awk -F '[ /]*' '/playing/{print $4}')
+  "$@"
+  now "$state_song"
+  cur_pos=$(mpc -f "%position%" | head -n 1)
+  mpc mv $cur_pos $((cur_pos - 1))
+  mpc prev
+  mpc seek "+$state_progress"
+}
+
 add() { # add a url to library, fallback on clipboard content
   url=$*
   [ -z "$url" ] && url=$(xclip -o -selection clipboard)
@@ -119,12 +132,18 @@ remove() { # remove some search match from the playlist
 }
 
 now() { # fuzzy search for a song, play it now
-  if song=$(mpc listall | dmenu "song"); then
-    mpc insert "$song"
-    mpc next
-    mpc play
-    # echo "custom" > "$current_playlist"
+  if [ -z "$*" ]; then
+    if ! song=$(mpc listall | dmenu "song"); then
+       return
+    fi
+  else
+    song=$*
   fi
+
+  mpc insert "$song"
+  mpc next
+  mpc play
+  # echo "custom" > "$current_playlist"
 }
 
 bl() { # blacklist the currently playing song from the current playlist.
@@ -251,10 +270,12 @@ trim_string() {
 # mpc only
 name_from_pos() {
   pos=$1
-  name=$(mpc playlist -f '%title% - %artist%' | awk "NR==${pos}")
-  if [ "$name" = ' - ' ]; then
+  IFS=^ read title artist < <(mpc playlist -f '%title%^%artist%' | awk "NR==${pos}")
+  if test -z "$title" || test -z "$artist"; then
     name=$(basename "$(mpc playlist -f '%file%' | awk "NR==${pos}")")
     name=${name%.*}
+  else
+    name="$title - $artist"
   fi
 
   # ASSUME
@@ -308,20 +329,22 @@ info() { # display the current audio progress bar and playlist length
 
   bottom_line=$(printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)")
 
-
-  pad_left=''
+  w_progress=${#name}
+  pad_left=$(( ( ${#name} / 2 ) + ( ${#bottom_line} / 2) ))
   if [ ${#bottom_line} -gt ${#name} ]; then
     pad_left=$(( ( ${#bottom_line} / 2 ) + ( ${#name} / 2) ))
+    w_progress=${#bottom_line}
   fi
 
-  printf "%${pad_left}s\n" "$name"
-  # printf "%${pad_left}s\n" "$(mkb "$percent" $(wc -L <<< "${name}"))"
-  printf "%${pad_left}s\n" "$(mkb "$percent" $(wc -L <<< "${bottom_line}"))"
-  printf "%s\n" "$bottom_line"
+  align_print() {
+    line=$*
+    add=$(( $(wc -c <<< "$line") - ${#line} ))
+    printf "%$((pad_left + add))s\n" "$line"
+  }
 
-  # echo "$name"
-  # mkb "$percent" $(wc -L <<< "$name")
-  # printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)"
+  align_print "$name"
+  mkb "$percent" $w_progress
+  align_print "$bottom_line"
 }
 
 info2() {

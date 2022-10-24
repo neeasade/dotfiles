@@ -16,6 +16,8 @@ bspwm_kill_visual
 # extensions may be defined in themes here:
 {{bspwm-meta.bspwmrc-extend|safe}}
 
+fullscreen_toggle.sh do_same
+
 # initial wm startup actions ($xstart set in xinitrc)
 if [ $(( $(date +%s) - ${xstart:-0} )) -lt 2 ]; then
     echo starting

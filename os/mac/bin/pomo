@@ -60,62 +60,72 @@
         (mod (count treasure))
         (->> (nth treasure)))))
 
+
 (def state-file "/tmp/pomo-state")
+
 (def state {})
-(def today (.format (LocalDateTime/now) (DateTimeFormatter/ofPattern "yyyy-MM-dd")))
+
+(def today
+  (.format (LocalDateTime/now)
+           (DateTimeFormatter/ofPattern "yyyy-MM-dd")))
 
 (defn load-state []
   (def state
-    (when (.exists (io/file state-file))
-      (-> state-file slurp read-string)))
+    (if (.exists (io/file state-file))
+      (-> state-file slurp read-string)
+      {:date (today)})))
+
+(defn clean-state [state]
   (let [date (:date state)]
-    (when-not (= date today)
-      ;; reset!
-      (def state
-        {:date today
-         :done 0
-         :goal 4}))))
+    (def state
+      (if (= today date)
+        state
+        ;; reset
+        (-> date
+            (assoc :date today)
+            (assoc :done 0)
+            (assoc :goal 4))))))
 
 (defn save-state []
   (->> state pr-str (spit state-file)))
 
-(defn state-to-symbols []
-  (let [done (:done state)
-        goal (:goal state)]
-    (->> (range done)
-         (map (fn [i] (format "%s %s-%s"
-                              (.. java.net.InetAddress getLocalHost getHostName)
-                              today (inc i))))
-         (map loot)
-         (#(concat % (repeat (- goal done) "꩜"))))))
-
-(defn summary []
-  (println (format "symbols for %s" today))
-  (->> (state-to-symbols)
-       (map (juxt identity elisp-char-name))
-       (map (partial apply format "%s %s"))
-       (string/join "\n")
-       (println)))
-
-(defn status []
-  (println (string/join (state-to-symbols))))
-
-(defn done []
-  (def state (update-in state [:done] inc))
-  (println "You completed a pomodoro ")
-  (summary)
-  (save-state))
-
-(defn goal [new-goal]
-  (def state (assoc state :goal (read-string new-goal)))
-  (println "Updated goal!")
-  (summary)
-  (save-state))
-
 (load-state)
+(clean-state)
 
-(let [[cmd & args] *command-line-args*
-      cmd (some-> cmd read-string resolve)]
-  (apply (or cmd summary) args))
+
+(let [[cmd & args]
+      ;; *command-line-args*
+      nil
+      ]
+  (condp = cmd
+    nil
+    "goal"
+    "cock"
+
+    "nope"
+    )
+  )
+
+
+*command-line-args*
+
+(let [symbols (->> (range pomo-done)
+                   (map (fn [i] (format "%s %s-%s"
+                                        (.. java.net.InetAddress getLocalHost getHostName)
+                                        today (inc i))))
+                   (map loot))
+      symbols (concat symbols (repeat (- pomo-goal pomo-done) "꩜"))]
+
+  (if (= (first *command-line-args*) "status")
+    (println (string/join symbols))
+
+    ;; cli
+    (do
+      (println (format "symbols for %s" today))
+      (->> symbols
+           (map (juxt identity elisp-char-name))
+           (map (partial apply format "%s %s"))
+           (map println)
+           (doall)))))
 
 (System/exit 0)

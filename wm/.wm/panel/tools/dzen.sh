@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # dzen dropdown functions
+# this script exists for eww inspo now
 
 # This function echos dzen dimensions at the panel centered to click
 # along with options from current theme(font)

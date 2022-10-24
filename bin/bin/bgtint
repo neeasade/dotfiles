@@ -16,37 +16,37 @@ image_colors() {
 
 rand_tile() {
     # echo "/media/LIVEWIRE/Archive/other/squidd/pattern_125.gif"
+
+    # echo /home/neeasade/Downloads/upfeathers/out.png
     (
-	echo /home/neeasade/Downloads/upfeathers/out.png
-	cat /tmp/result_source.txt
-	echo /tmp/result.png
+	# cat /tmp/result_source.txt
 
 	rg --files "$HOME/pngsave"
-	# rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
 
 	rg --files /media/LIVEWIRE/Archive/other/squid/
 	rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+
 	rg --files "$HOME/git/SubtlePatterns/"
+
 	rg --files /home/neeasade/git/tiles-and-such
+	# rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
 
-	# echo '/home/neeasade/git/SubtlePatterns/leather_1.png'
-
-	rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump
-	rg --files /home/neeasade/git/neeasade.github.io/site/assets/posts/ca_dump2
-	# $(lastshot)
-	# echo '/media/CODERED/git/SubtlePatterns/out.png'
+	rg --files /home/neeasade/git/neeasade.github.io/published/assets/posts/ca_dump
+	rg --files /home/neeasade/git/neeasade.github.io/published/assets/posts/ca_dump2
     ) | sort -R | head -n 1
+
 }
 
 target=$(rand_tile)
-if ! silent identify "$target"; then
-    target=$(rand_tile)
-fi
-if ! silent identify "$target"; then
-    target=$(rand_tile)
-fi
 
-theme -c
+# if ! silent identify "$target"; then
+#     target=$(rand_tile)
+# fi
+# if ! silent identify "$target"; then
+#     target=$(rand_tile)
+# fi
+
+silent theme -c
 background=$(theme -q color.focused.background)
 foreground=$(theme -q color.normal.assumed)
 
@@ -67,7 +67,6 @@ rm /tmp/result.png
 # background=$(theme getval background)
 
 cp "$target" /tmp/result.png
-convert /tmp/result.png -resize 120% /tmp/result.png
 
 colors=$(image_colors "$target")
 
@@ -106,6 +105,8 @@ auto() {
 # color 6 4
 # color 3 3
 auto
+
+convert /tmp/result.png -resize 120% /tmp/result.png
 
 echo "$target"
 feh --bg-tile /tmp/result.png || "$0"
