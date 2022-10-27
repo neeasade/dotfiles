@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # I want one toggle for all my media
+# this script needs some more love
 
 dbusplaying=false
 dbuspresent=false
@@ -33,25 +34,12 @@ if [ "$target" = "playerctl" ]; then
   if [ "$*" = "toggle" ]; then
     set -- play-pause
   elif [ "$1" = "-f" ]; then
-    # chrome xesam:album
-    # chrome xesam:artist              Vapor Memory
-    # chrome xesam:title               haircuts for men : когда зло господствует
-    metadata=$(playerctl metadata)
-    artist=$(echo "$metadata" | awk '/xesam:artist/{$1=$2=""; print $0}')
-    title=$(echo "$metadata" | awk '/xesam:title/{$1=$2=""; print $0}')
-
-    for char in \| \- \: \— ; do
-      if [ $(echo "$title" | awk -F${char} '{print NF-1}') -eq 1 ]; then
-        artist=$(echo "$title" | awk -F${char} '{print $1}')
-        title=$(echo "$title" | awk -F${char} '{print $2}')
-        break
-      fi
+    fstring=$2
+    # from playerctl(1) format strings
+    for i in title album artist status volume position playerName; do
+      fstring=${fstring/\%${i}%/{{${i}\}\}}
     done
-
-    title=$(echo "$title" | awk '{$1=$1;print}')
-    artist=$(echo "$artist" | awk '{$1=$1;print}')
-    echo "$title - $artist"
-    exit 0
+    set -- metadata -f "$fstring"
   fi
 fi
 
