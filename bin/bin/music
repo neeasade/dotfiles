@@ -260,16 +260,13 @@ playlist() { # select a search term based playlist to play
   mpc save "$target"
 }
 
-trim_string() {
-    # ugh
-    : "${1#"${1%%[![:space:]]*}"}"
-    : "${_%"${_##*[![:space:]]}"}"
-    printf '%s\n' "$_"
-}
-
 # mpc only
 name_from_pos() {
   pos=$1
+  if [ -z "$pos" ]; then
+    pos=$(mpc -f '%position%' | head -n 1)
+  fi
+
   IFS=^ read title artist < <(mpc playlist -f '%title%^%artist%' | awk "NR==${pos}")
   if test -z "$title" || test -z "$artist"; then
     name=$(basename "$(mpc playlist -f '%file%' | awk "NR==${pos}")")
@@ -283,6 +280,11 @@ name_from_pos() {
     name=${name::-12}
   fi
 
+  clean_name
+}
+
+clean_name() {
+  # operates on an already set $name var
   remove_delim() {
     # maybe
     # name=$(sed "s/${1}[^${1: -1}${2: -1}]*${2}//g" <<< "$name")
@@ -305,29 +307,55 @@ name_from_pos() {
   name=${name/full album}
   name=${name//_/ }
   name=${name//  / }
+  name=${name//  / }
+  name=${name/|/-}
+  name=${name/▶︎ /}
+  name=${name%% - }
+
+  trim_string() {
+    # ugh
+    : "${1#"${1%%[![:space:]]*}"}"
+    : "${_%"${_##*[![:space:]]}"}"
+    printf '%s\n' "$_"
+  }
 
   trim_string "$name"
 }
 
-info() { # display the current audio progress bar and playlist length
-  if [ "$(GET=t player.sh)" = "playerctl" ]; then
-    name=$(player.sh -f '%title% - %artist%')
-    # we can't get the percent from playerctl, fake it for the looks
-    # cf https://bytefreaks.net/gnulinux/bash/bash-get-random-number-that-belongs-in-a-range
-    bottom=40
-    top=80
+gather_playerctl_info() {
+  percent=$((RANDOM%100))
 
-    range=$((top-bottom+1))
-    percent=$RANDOM
-    let "percent %= $range"
-    percent=$((percent+bottom))
-  else
-    pos=$(mpc -f '%position%' | head -n 1)
-    name=$(name_from_pos $pos)
-    percent=$(mpc | awk 'match($0,/\(([0-9]+)%\)/, groups) {print groups[1]}')
+  IFS=^ read length name from < <(player.sh -f '{{mpris:length}}^%title%^%artist%')
+  case "$name" in
+      # bandcamp specific thingy for artists under a label:
+      "▶︎ "*|*|*)
+	  IFS=\| read title artist from < <(echo "$name")
+	  name="${title} - ${artist}"
+	  ;;
+  esac
+
+  if ! test -z "$length"; then
+    p_position=$(playerctl position)
+    percent=$(bc <<< "($p_position * 100) / ($length / 1000000)")
+  fi
+  if ! test -z "$from"; then
+    if ! grep -qi "$from" <<< "$name"; then
+      from=$(name=$from clean_name)
+      bottom_line="from: $from"
+    fi
   fi
 
-  bottom_line=$(printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)")
+  name=$(clean_name)
+}
+
+info() { # display the current audio progress bar and playlist length
+  if [ "$(GET=t player.sh)" = "playerctl" ]; then
+    gather_playerctl_info
+  else
+    name=$(name_from_pos)
+    percent=$(mpc | awk -F '[(%]' 'NR==2{print $2}')
+    bottom_line=$(printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)")
+  fi
 
   w_progress=${#name}
   if (( ${#bottom_line} > ${#name})); then
@@ -342,8 +370,8 @@ info() { # display the current audio progress bar and playlist length
   }
 
   align_print "$name"
-  mkb "$percent" $w_progress
-  align_print "$bottom_line"
+  mkb "${percent/.*/}" $w_progress
+  test -z "$bottom_line" || align_print "$bottom_line"
 }
 
 info2() {
