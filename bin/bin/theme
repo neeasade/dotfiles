@@ -359,7 +359,7 @@
         home-theme (when home?
                      (unflatten-map
                       {:THEME_NAME "test"
-                       :emacs.theme "tarp-mcfay"
+                       :emacs.theme "myron-mcfay"
                        :BG_COMMAND "${HOME}/.fehbg"
                        ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :font.mono.family "Triplicate T4c"
