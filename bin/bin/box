@@ -4,17 +4,12 @@
 
 (defn conf-to-border [conf]
   (let [[side-conf corner-conf] (string/split conf #" ")
-        sides (if (= 1 (count side-conf))
-                (apply str (repeat 4 side-conf))
-                side-conf)
-        corners (if (= 1 (count corner-conf))
-                  (apply str (repeat 4 corner-conf))
-                  corner-conf)]
-    (->> `[~@sides ~@corners]
-         (interleave [:top :right :bottom :left :top-left :top-right  :bottom-right :bottom-left])
-         (partition 2)
-         (map vec)
-         (into {}))))
+        expand #(if (= 1 (count %))
+                  (str % % % %)
+                  %)]
+    (zipmap [:top :right :bottom :left :top-left :top-right  :bottom-right :bottom-left]
+            (str (expand side-conf)
+                 (expand corner-conf)))))
 
 (def border (conf-to-border "-|-| /\\/\\"))
 
@@ -23,6 +18,7 @@
     (def border (conf-to-border conf))))
 
 (let [lines (string/split (slurp *in*) #"\n")
+      lines (map (fn [line] (str " " line " ")) lines)
       width (->> lines
                  (sort-by count)
                  (last)
@@ -30,13 +26,9 @@
       {:keys [right left top bottom top-left bottom-left top-right bottom-right ]} border
       top-line (apply str `(~top-left ~@(repeat width top) ~top-right))
       bottom-line (apply str `(~bottom-left ~@(repeat width bottom) ~bottom-right))]
-  (println
-   (string/join "\n"
-                `(~top-line
-                  ~@(map
-                     (fn [line]
-                       (let [padded-line (format (format "%%-%ss" width)
-                                                 line)]
-                         (str left padded-line right)))
-                     lines)
-                  ~bottom-line))))
+
+  (println top-line)
+  (->> lines
+       (map (partial format (format "%s%%-%ss%s" left width right)))
+       (run! println))
+  (println bottom-line))
