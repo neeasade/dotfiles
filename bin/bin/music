@@ -67,16 +67,16 @@ clear_duplicates() {
 
 ### ACTIONS
 
-stay() { # do some action, but keep the current song and position
-  test -z "$*" && return
+restore() {
+  IFS=^ read restore_song restore_place <<< "$*"
+  now "$restore_song"
+  mpc seek "+$restore_place"
+}
+
+place() { # print a command to take you to the current place
   state_song=$(mpc -f "%file%" | head -n 1)
   state_progress=$(mpc -f '%file%' | awk -F '[ /]*' '/playing/{print $4}')
-  "$@"
-  now "$state_song"
-  cur_pos=$(mpc -f "%position%" | head -n 1)
-  mpc mv $cur_pos $((cur_pos - 1))
-  mpc prev
-  mpc seek "+$state_progress"
+  printf "music restore '%s^%s'\n" "${state_song}" "${state_progress}"
 }
 
 add() { # add a url to library, fallback on clipboard content
@@ -90,6 +90,8 @@ add() { # add a url to library, fallback on clipboard content
     curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '$(echo "$url" | sed 's/music//')#" -e "s/$/'/"
   }
 
+  # todo: this should handle unknown sources better
+  # known one: soundcloud (eminence)
   if [[ $url =~ youtube.com ]]; then
     format="$musicdir/import/%(uploader)s/%(title)s.%(ext)s"
   else
@@ -357,15 +359,23 @@ info() { # display the current audio progress bar and playlist length
     bottom_line=$(printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)")
   fi
 
-  w_progress=${#name}
-  if (( ${#bottom_line} > ${#name})); then
-    w_progress=${#bottom_line}
+  # name_length=$(wc -m <<< "$name")
+  # bottom_line_length=$(wc -m <<< "$bottom_line")
+
+  name_length=${#name}
+  bottom_line_length=${#bottom_line}
+
+  w_progress=$name_length
+  if (( bottom_line_length > name_length )); then
+    w_progress=$bottom_line_length
   fi
 
-  pad_left=$(( ${#name} / 2 + ${#bottom_line} / 2 ))
+  pad_left=$(( name_length / 2 + bottom_line_length / 2 ))
   align_print() {
     line=$*
-    add=$(( $(wc -c <<< "$line") - ${#line} ))
+    line_length=${#line}
+    # line_length=$(wc -m <<< "$line")
+    add=$(( $(wc -c <<< "$line") - ${line_length} ))
     printf "%$((pad_left + add))s\n" "$line"
   }
 
@@ -398,15 +408,17 @@ context() {
 
   eval "$(theme -n mkb -f "complete,empty,sep" -s)"
 
+  # supressing warnings for this one:
+  # awk: cmd. line:8: warning: escape sequence `\_' treated as plain `_'
   mpc playlist -f '%position%' | awk " {
 if (NR>=${start} && NR<=$end)
     {if (NR==${pos})
-{ print \"${sep} \" \$0}
+{ print \"\\${sep} \" \$0}
 else if (NR<${pos})
-{ print \"${complete} \" \$0}
+{ print \"\\${complete} \" \$0}
 else if (NR>${pos})
-{ print \"${empty} \" \$0}
-    }} " | while read -r prefix pos; do
+{ print \"\\${empty} \" \$0}
+    }} " 2>/dev/null | while read -r prefix pos; do
   echo "$prefix $(name_from_pos $pos)"
   done
 }

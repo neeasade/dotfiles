@@ -159,8 +159,8 @@ add_metas() {
 	elisp -t 10 "(ns/load-theme '$1)"
 	ltheme
     }
-    add_switch "meta: theme tarp-mcfay" "load_theme tarp-mcfay"
-    add_switch "meta: theme tarp-struan" "load_theme tarp-struan"
+    add_switch "meta: theme myron-mcfay" "load_theme myron-mcfay"
+    add_switch "meta: theme myron-struan" "load_theme myron-struan"
 
     find_steam() {
 	find_class Steam || steam

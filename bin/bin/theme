@@ -142,7 +142,11 @@
                       (-> k name (string/replace "-" "_"))
                       ;; todo: handle strings with "'"s in them
                       ;; sed "s#'#\'\\\'\'#g"
+
+                      ;; why are we not doing this?
                       ;; (string/replace v "'" "\'\\\'\'")
+                      ;; (-> v (string/replace "\\" "\\\\"))
+                      ;; (string)
                       v
                       )))
        (string/join "\n")))
@@ -366,12 +370,16 @@
                        :font.mono.family "Go Mono"
 
                        ;; :font.mono.family "Triplicate C4c"
-                       ;; :font.variable.family "Equity Text B"
-                       :font.variable.family "Charter"
+                       :font.variable.family "Equity Text B"
+                       ;; :font.variable.family "Charter"
                        :font.variable.size 14
                        ;; :font.variable.family "Equity Text A"
                        ;; :mkb.bar- "AAH"
-                       :mkb.bar- "|/_"
+                       ;; :mkb.bar- "|/_"
+                       ;; :mkb.bar- "/-_"
+                       ;; :mkb.bar- "[-]"
+                       :mkb.bar- "/\\_"
+                       ;; :mkb.bar- "██▁"
                        :shell.prompt "%"
                        :x.padding 10
                        :bspwm.window-gap 30
@@ -383,7 +391,7 @@
         work-theme (when work?
                      (unflatten-map
                       {:THEME_NAME "test"
-                       :emacs.theme "tarp-mcfay"
+                       :emacs.theme "myron-mcfay"
                        :BG_COMMAND "wallmac tile '{{env.HOME}}/Downloads/mpv-shot0095.jpg'"
 
                        :font.mono.family "Go Mono"

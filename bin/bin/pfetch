@@ -2,7 +2,73 @@
 #
 # pfetch - Simple POSIX sh fetch script.
 
+pad_right() {
+    line=$1
+    length=$2
+    plain_line=$(echo "$line" | sed 's/\[[0-9]*m//g')
+
+    while [ ${#plain_line} -lt $length ]; do
+        line="$line "
+        plain_line="$plain_line "
+    done
+
+    printf "%s" "$line"
+}
+
 log() {
+    # The 'log()' function handles the printing of information.
+    # In 'pfetch' (and 'neofetch'!) the printing of the ascii art and info
+    # happen independently of each other.
+    #
+    # The size of the ascii art is stored and the ascii is printed first.
+    # Once the ascii is printed, the cursor is located right below the art
+    # (See marker $[1]).
+    #
+    # Using the stored ascii size, the cursor is then moved to marker $[2].
+    # This is simply a cursor up escape sequence using the "height" of the
+    # ascii art.
+    #
+    # 'log()' then moves the cursor to the right the "width" of the ascii art
+    # with an additional amount of padding to add a gap between the art and
+    # the information (See marker $[3]).
+    #
+    # When 'log()' has executed, the cursor is then located at marker $[4].
+    # When 'log()' is run a second time, the next line of information is
+    # printed, moving the cursor to marker $[5].
+    #
+    # Markers $[4] and $[5] repeat all the way down through the ascii art
+    # until there is no more information left to print.
+    #
+    # Every time 'log()' is called the script keeps track of how many lines
+    # were printed. When printing is complete the cursor is then manually
+    # placed below the information and the art according to the "heights"
+    # of both.
+    #
+    # The math is simple: move cursor down $((ascii_height - info_height)).
+    # If the aim is to move the cursor from marker $[5] to marker $[6],
+    # plus the ascii height is 8 while the info height is 2 it'd be a move
+    # of 6 lines downwards.
+    #
+    # However, if the information printed is "taller" (takes up more lines)
+    # than the ascii art, the cursor isn't moved at all!
+    #
+    # Once the cursor is at marker $[6], the script exits. This is the gist
+    # of how this "dynamic" printing and layout works.
+    #
+    # This method allows ascii art to be stored without markers for info
+    # and it allows for easy swapping of info order and amount.
+    #
+    # $[2] ___      $[3] goldie@KISS
+    # $[4](.· |     $[5] os KISS Linux
+    #     (<> |
+    #    / __  \
+    #   ( /  \ /|
+    #  _/\ __)/_)
+    #  \/-____\/
+    # $[1]
+    #
+    # $[6] /home/goldie $
+
     # End here if no data was found.
     [ "$2" ] || return
 
@@ -22,9 +88,13 @@ log() {
         info=$*
     }
 
-    align=$(printf '%*.s' "$((${#name}-info_length))" "")
+    # Print the info name and color the text.
+    name_part=$(printf '[3%sm[1m%s[m' "${PF_COL1-4}" "$name")
+    info_part=$(printf '[3%sm%s[m' "${PF_COL2-7}" "$info")
 
-    out="[3${PF_COL1-4};1m${name}[m${PF_SEP}${align}[3${PF_COL2-7}m${info}[m"
+    printf "%s%s\n" \
+           "$(pad_right "$name_part$PF_SEP" "${PF_ALIGN-$info_length}")" \
+           "$info_part"
 }
 
 get_title() {
@@ -41,7 +111,7 @@ get_title() {
     # shellcheck disable=SC2039
     hostname=${HOSTNAME:-${hostname:-$(hostname)}}
 
-    log "[3${PF_COL3:-1}m${user}${c7}@[3${PF_COL3:-1}m${hostname}" " "
+    log "[3${PF_COL3:-1}m${user}${c7}@[3${PF_COL3:-1}m${hostname}" " " >&6
 }
 
 get_os() {
@@ -52,7 +122,7 @@ get_os() {
     # On first run, this function displays _nothing_, only on the second
     # invocation is 'log()' called.
     [ "$distro" ] && {
-        log os "$distro"
+        log os "$distro" >&6
         return
     }
 
@@ -212,7 +282,7 @@ get_kernel() {
 
         *)
             # '$kernel' is the cached output of 'uname -r'.
-            log kernel "$kernel"
+            log kernel "$kernel" >&6
         ;;
    esac
 }
@@ -283,7 +353,7 @@ get_host() {
     done
 
     # '$arch' is the cached output from 'uname -m'.
-    log host "${host:-$arch}"
+    log host "${host:-$arch}" >&6
 }
 
 get_uptime() {
@@ -338,7 +408,7 @@ get_uptime() {
     [ "$h" = 0 ] || uptime="${uptime}${h}h "
     [ "$m" = 0 ] || uptime="${uptime}${m}m "
 
-    log uptime "${uptime:-0m}"
+    log uptime "${uptime:-0m}" >&6
 }
 
 get_pkgs() {
@@ -438,7 +508,7 @@ get_pkgs() {
         esac | wc -l
     `
 
-    [ "$packages" -gt 1 ] && log pkgs "$packages"
+    [ "$packages" -gt 1 ] && log pkgs "$packages" >&6
 }
 
 get_memory() {
@@ -620,7 +690,7 @@ get_memory() {
         ;;
     esac
 
-    log memory "${mem_used:-?}M / ${mem_full:-?}M"
+    log memory "${mem_used:-?}M / ${mem_full:-?}M" >&6
 }
 
 get_wm() {
@@ -749,7 +819,7 @@ get_wm() {
         ;;
     esac
 
-    log wm "$wm"
+    log wm "$wm" >&6
 }
 
 
@@ -760,25 +830,18 @@ get_de() {
     #
     # Display the value of '$XDG_CURRENT_DESKTOP', if it's empty,
     # display the value of '$DESKTOP_SESSION'.
-    log de "${XDG_CURRENT_DESKTOP:-$DESKTOP_SESSION}"
-}
-
-get_browser() {
-    log net qutebrowser
-}
-
-get_term() {
-    log term "M-x shell"
+    log de "${XDG_CURRENT_DESKTOP:-$DESKTOP_SESSION}" >&6
 }
 
 get_shell() {
-    log shell "${SHELL##*/}"
+    # Display the basename of the '$SHELL' environment variable.
+    log shell "${SHELL##*/}" >&6
 }
 
 get_editor() {
     # Display the value of '$VISUAL', if it's empty, display the
     # value of '$EDITOR'.
-    log editor "${VISUAL:-$EDITOR}"
+    log editor "${VISUAL:-$EDITOR}" >&6
 }
 
 get_palette() {
@@ -821,7 +884,6 @@ get_ascii() {
             ascii="$ascii$line
 "
         done
-	ascii=${ascii:0:${#ascii}-2}
     }
 
     # This checks for ascii art in the following order:
@@ -1039,7 +1101,7 @@ get_ascii() {
         [Ll]inux*)
             read_ascii 4 <<-EOF
 				${c4}    ___
-				   (${c7}.. ${c4}|
+				   (${c7}.· ${c4}|
 				   (${c5}<> ${c4}|
 				  / ${c7}__  ${c4}\\
 				 ( ${c7}/  \\ ${c4}/|
@@ -1261,6 +1323,8 @@ get_ascii() {
     # information. The 'sed' is used to strip '[3Xm' color codes from
     # the ascii art so they don't affect the width variable.
     while read -r line; do
+        ascii_height=$((${ascii_height:-0} + 1))
+
         # This was a ternary operation but they aren't supported in
         # Minix's shell.
         [ "${#line}" -gt "${ascii_width:-0}" ] &&
@@ -1276,6 +1340,13 @@ get_ascii() {
 
     # Add a gap between the ascii art and the information.
     ascii_width=$((ascii_width + 4))
+
+    # Print the ascii art.
+    # '[1m':   Print the ascii in bold.
+    # '[m':    Clear bold.
+    if [ -z "$QUIET" ]; then
+        printf '[1m%s[m' "$ascii" >&6
+    fi
 }
 
 main() {
@@ -1285,7 +1356,8 @@ main() {
 
     # Hide 'stdout' and selectively print to it using '>&6'.
     # This gives full control over what it displayed on the screen.
-    exec 6>&1 >/dev/null
+    # exec 6>&1 >/dev/null
+    exec 6>&1
 
     # Ensure that the 'TMPDIR' is writable as heredocs use it and
     # fail without the write permission. This was found to be the
@@ -1340,11 +1412,7 @@ main() {
         # Disable globbing and set the positional parameters to the
         # contents of 'PF_INFO'.
         set -f
-        set +f ${PF_INFO-ascii title os uptime pkgs wm term browser}
-
-        # Grab the ascii art if the user has enabled it. This simply
-        # populates the '$ascii' variable.
-        case $@ in *ascii*) get_ascii; shift; esac
+        set +f ${PF_INFO-ascii title os host kernel uptime pkgs memory}
 
         # Iterate over the info functions to determine the lengths of the
         # "info names" for output alignment. The option names and subtitles
@@ -1361,17 +1429,27 @@ main() {
         # Add an additional space of length to act as a gap.
         info_length=$((info_length + 1))
 
-        while IFS= read -r line || [ "$1" ]; do
-            "get_$1"
-            shift "$(($# ? 1 : 0))"
-			ascii_color=$(printf "$ascii" | sed 1q | sed 's/^\(\[3.m\).*$/\1/')
-			line_literal=$(printf %s "$line" | sed 's/\[[0-9]*m//g')
-			printf '%s%s%*s\n' "${ascii_color}" "$line" "$((${#out} + ascii_width - ${#line_literal}))" "$out" >&6
+        if echo "$*" | grep "ascii" >/dev/null; then
+            set +f $(echo "$*" | sed 's/ascii//')
+            QUIET=t get_ascii
 
-			out=
-        done <<-EOF
-			$ascii[m
-		EOF
+            # cheat: assume that the first color char is something we want to use on all the ascii lines.
+            ascii_color=$(printf "$ascii" | sed 1q | sed 's/^\(\[3.m\).*$/\1/')
+
+            while IFS=$'\n' read -r ascii_line; do
+                printf "${ascii_color}%s" "$(pad_right "$ascii_line" ${ascii_width})"
+
+                if [ ! -z "$1" ]; then
+                    get_$1
+                    shift
+                fi
+            done<<EOF
+$ascii
+EOF
+        else
+            for info; do "get_$info"; done
+        fi
+        printf "\n"
     }
 }
 

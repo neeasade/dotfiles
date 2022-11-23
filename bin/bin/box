@@ -3,13 +3,16 @@
 (require '[clojure.string :as string])
 
 (defn conf-to-border [conf]
-  (let [[side-conf corner-conf] (string/split conf #" ")
+  (let [confs (string/split conf #" ")
+        [side-conf corner-conf] (map (fn [s] (map first (re-seq #"(U?)." s)))
+                                     confs)
         expand #(if (= 1 (count %))
-                  (str % % % %)
+                  (repeat 4 (first %))
                   %)]
     (zipmap [:top :right :bottom :left :top-left :top-right  :bottom-right :bottom-left]
-            (str (expand side-conf)
-                 (expand corner-conf)))))
+            (concat
+             (expand side-conf)
+             (expand corner-conf)))))
 
 (def border (conf-to-border "-|-| /\\/\\"))
 
@@ -17,15 +20,22 @@
   (if-not (string/blank? conf)
     (def border (conf-to-border conf))))
 
-(let [lines (string/split (slurp *in*) #"\n")
+(let [{:keys [right left top bottom top-left bottom-left top-right bottom-right ]} border
+      lines (string/split (slurp *in*) #"\n")
       lines (map (fn [line] (str " " line " ")) lines)
-      width (->> lines
+      width (->> (conj lines)
                  (sort-by count)
                  (last)
                  (count))
-      {:keys [right left top bottom top-left bottom-left top-right bottom-right ]} border
-      top-line (apply str `(~top-left ~@(repeat width top) ~top-right))
-      bottom-line (apply str `(~bottom-left ~@(repeat width bottom) ~bottom-right))]
+      top-middle (repeat (- (/ width (count top))
+                            ;; (dec (count top-left))
+                            (dec (count top-right)))
+                         top)
+      top-line (apply str `(~top-left ~@top-middle ~top-right))
+      bottom-line (apply str `(~bottom-left ~@(repeat (/  width (count bottom)) bottom) ~bottom-right))
+
+      ;; width (+ width (+ (* 2 (dec (count top-left)))))
+      ]
 
   (println top-line)
   (->> lines
