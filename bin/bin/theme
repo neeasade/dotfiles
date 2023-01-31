@@ -382,7 +382,7 @@
                        ;; :mkb.bar- "██▁"
                        :shell.prompt "%"
                        :x.padding 10
-                       :bspwm.window-gap 30
+                       :bspwm.window-gap 40
                        :bspwm-meta.monocle-window-percent 0.46
                        :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
                        :font.mono.size 12
@@ -483,7 +483,6 @@
               (->> (read-string overrides) (unflatten-map) (deep-merge theme))
               theme)]
   (doall (map println errors))
-  ;; (println "fuck")
   (some->> options
            (reduce
             (fn [theme [k v]]
@@ -500,7 +499,6 @@
                 :shell (map-to-shell theme)
                 theme))
             theme)
-           (println))
-  )
+           (println)))
 
 (System/exit exit-status)

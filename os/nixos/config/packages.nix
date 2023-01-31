@@ -21,6 +21,7 @@ let
   # rolling = stable;
 
   core = (with stable; [
+    picom
     dos2unix
     lsof
     redshift
@@ -178,7 +179,6 @@ let
     # oomox
     # foliate
     # babashka
-    picom-git
 
     lemonbar
     # skroll # todo: maybe zscroll this
@@ -289,12 +289,14 @@ let
     # }
     # )
 
+    steam
+
   ]) ++ (with unstable; [
     # openmw-tes3mp
     # steam
   ]) ++ (with edge; [
     # (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; })
-    steam
+    # steam
     # ()
     discord
   ]);
@@ -371,6 +373,7 @@ let
     # ]))
 
     # other
+    emacs
     docker
     sqlite
     zeal
@@ -420,7 +423,7 @@ in
     extra ++
     development ++
     games ++
-    [pkgs.emacsUnstable] ++
+    # [pkgs.emacsUnstable] ++
     [];
 
   fonts.fonts =

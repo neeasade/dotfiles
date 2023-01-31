@@ -53,10 +53,6 @@
         };
       };
 
-      picom-git = (pkgs.picom.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/yshui/picom"; ref = "next"; };
-      }));
-
       xst-git = (pkgs.xst.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
       }));

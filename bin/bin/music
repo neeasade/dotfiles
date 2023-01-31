@@ -351,6 +351,7 @@ gather_playerctl_info() {
 }
 
 info() { # display the current audio progress bar and playlist length
+  (
   if [ "$(GET=t player.sh)" = "playerctl" ]; then
     gather_playerctl_info
   else
@@ -382,6 +383,7 @@ info() { # display the current audio progress bar and playlist length
   align_print "$name"
   mkb "${percent/.*/}" $w_progress
   test -z "$bottom_line" || align_print "$bottom_line"
+  ) | BORDER='╌¦╌¦ ┭┮┶┵' box
 }
 
 info2() {

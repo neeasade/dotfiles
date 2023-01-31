@@ -30,7 +30,7 @@ Wine'
 }
 
 do_monocle_slim() {
-  ltheme bg
+  ltheme bg &
 
   bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
   bspc node -t tiled
