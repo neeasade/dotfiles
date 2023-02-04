@@ -134,16 +134,12 @@ button9
     bash -ic ". $HOME/.profile; shot"
     # notify-send "you pressed mouse9"
 
-# window management
+########
+# tags #
+########
 
-# super + y
-#     dismiss.sh
-
-super + {1-9}
-    btags focus ^{1-9}
-
-super + shift + {1-9}
-    btags set-tag-on-wids ^{1-9} $(bspwindows)
+super + d
+    dismiss.sh
 
 super + {i,o,u,y}
     btags focus ^{1,2,3,4}
@@ -151,21 +147,28 @@ super + {i,o,u,y}
 super + shift + {i,o,u,y}
     btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)
 
+super + control + {i,o,u,y}
+    btags show-only ^{1,2,3,4}
 
-# workspaces:
-#########################
+# ----
+super + {1-4}
+    btags focus ^{1-4}
 
-# super + y
-#     dismiss.sh
+super + shift + {1-4}
+    btags set-tag-on-wids ^{1-4} $(bspwindows)
+
+##############
+# workspaces #
+##############
 
 # super + y
 #     bspc node -f older
 
-# super + {1-9}
-#     bspc desktop -f focused:^{1-9}
+# super + {1-4}
+#     bspc desktop -f focused:^{1-4}
 
-# super + shift + {1-9}
-#     bspc node -d focused:^{1-9}
+# super + shift + {1-4}
+#     bspc node -d focused:^{1-4}
 
 # super + {i,o,u,y}
 #     bspc desktop -f focused:^{1,2,3,4}

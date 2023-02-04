@@ -166,24 +166,21 @@
   (->> (:tags state)
        (filter (fn [old-tag] (contains? (set tags) (:name old-tag))))
        (filter #(:active %))
-       (run! #(update-state-focus-wid (last (:wids %))))
-       ))
+       (run! #(update-state-focus-wid (last (:wids %))))))
 
 (defn action-focus "<tag> - focus the last wid in the tag"
   [tag]
   (let [full-tag (->> (:tags state)
                       (filter #(= (:name %) (tag-ident-to-name tag)))
                       first)
-        last-wid (-> full-tag :wids last)]
-    (when (not (:active full-tag))
+        switchable-wids (remove #{(:focus-wid state)} (:wids full-tag))]
+    (prn (:focus-wid state))
+
+    (when-not (:active full-tag)
       (action-toggle tag))
 
     (update-state-focus-wid
-     (if (= (:focus-wid state) last-wid)
-       (if (> (count (:wids full-tag)) 1)
-         (nth (-> full-tag :wids) 1))
-       last-wid
-       ))))
+     (first switchable-wids))))
 
 (defn action-names
   "get all the tag names"
@@ -210,8 +207,21 @@
        (filter #(contains? (set (map tag-ident-to-name tags)) (:name %)))
        (map :wids)
        (apply set/union)
-       (map println) doall
-       ))
+       (map println)
+       doall))
+
+(defn action-show-only [tag]
+  (let [tag-name (tag-ident-to-name tag)]
+    (run!
+     (fn [{:keys [name active]}]
+       (let [activate? (= name tag-name)]
+         (prn name activate?)
+         (prn
+          (cond
+            (and (not active) activate?) (action-toggle name)
+            (and active (not activate?)) (action-toggle name)
+            :else "oops"))))
+     (:tags state))))
 
 ;; this function is for a dynamic flow/many tags on one window -- didn't turn out to be that intuitive
 (defn action-toggle-wids
@@ -227,8 +237,7 @@
                  ;; new (old filter for not in new?)
                  (set (filter #(not (contains? old-wids %)) wids)))
 
-                old-wids
-                ))))
+                old-wids))))
 
   (update-tags update-wids))
 
@@ -328,7 +337,7 @@
   (if (contains?
        ;; stateful actions, ones needing the lock
        ;; note: focus might not be stateful really
-       #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids" "add" "remove"}
+       #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids" "add" "remove" "show-only"}
        (first *command-line-args*))
 
     (do
