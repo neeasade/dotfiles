@@ -6,102 +6,79 @@
 ;; windows may only have one tag
 
 (require '[clojure.core :as core]
-         '[clojure.string :as str]
+         '[clojure.string :as string]
          '[clojure.set :as set]
          '[clojure.java.io :as io]
          '[clojure.java.shell :as shell])
 
-(defn sh [command]
-  (:out (apply shell/sh (str/split command #" "))))
+(defn sh [cmd & fstrings]
+  (->> (string/split (apply format cmd fstrings) #" ")
+       (apply shell/sh)
+       (:out)
+       (string/split-lines)))
 
-(def state-file "/tmp/btags-state")
-(def state-lockfile "/tmp/btags-state-lock")
-
-(defn wait-for-lock []
-  ;; todo: if we're ever here for like a full second,
-  ;; assume we're stuck/remove it
-  (while (.exists (io/file state-lockfile))
-    ;; (println "waiting for lock!")
-    (Thread/sleep 10)                   ; ms
-    ))
-
-(defn update-state-focus-wid [wid]
-  (when wid
-    ;; (sh (format "notify-send focus_%s" wid))
-    (->> wid
-         (fn [_])
-         (update state :focus-wid)
-         (def state))))
+(def state-file "/tmp/bspt-state")
+(def state-lockfile "/tmp/bspt-state-lock")
 
 (defn load-state []
-  (def state
-    (if (.exists (io/file state-file))
-      (-> state-file slurp read-string)
-      ;; default
-      {:tags
-       [{:name "code" :wids #{} :active true :color "c2c6e3"}
-        {:name "net" :wids #{} :active true :color "e4815d"}
-        {:name "chat" :wids #{} :active true :color "c6dc93"}
-        {:name "hole" :wids #{} :active true :color "E2E3E5"}]
-       :focus-wid ""
-       }))
+  (let [default {:tags [{:name "code" :wids #{} :active? true :color "c2c6e3"}
+                        {:name "net" :wids #{} :active? true :color "e4815d"}
+                        {:name "chat" :wids #{} :active? true :color "c6dc93"}
+                        {:name "hole" :wids #{} :active? true :color "E2E3E5"}]
+                 :focus ""}
+        state (if (.exists (io/file state-file))
+                (-> state-file slurp read-string)
+                default)]
+    (assoc state :focus (first (sh "bspc query -N -n")))))
 
-  ;; note the currently focused node
-  (update-state-focus-wid (-> "bspc query -N -n" sh str/trim-newline)))
+(def state (load-state))
 
-(defn save-state []
-  (->> state pr-str (spit state-file))
-  (sh (format "rm %s" state-lockfile)))
-
-(defn tag-ident-to-name [ident]
-  (if (str/starts-with? ident "^")
-    (:name (nth (:tags state)
-                ;; bad (read-string vs parse int)
-                ;; am inferring not a thing in joker
-                ;; cf https://github.com/candid82/joker/blob/9dcaacdeb4d80e37ec2273a299c562dc97e6fdbc/tests/eval/tools_cli.joke#L114
-                (-
-                 (read-string (apply str (rest ident))) 1))
-           ;; we tried to use an index on a tag that doesn't exist, just use the current timestamp to name it
-           ;; note: this will call date all the time to resolve the default tag name when index is used..
-           (sh "date +%s"))
-    ident))
-
-(defn render-wid [wid show]
-  (when (empty? (sh (format "bspc query -N -n %s.%shidden" wid (if show "\\!" ""))))
-    (sh (format "bspc node %s -g hidden=%s" wid (if show "off" "on")))))
+(defn parse-tag-index [ident]
+  (if (string/starts-with? ident "^")
+    (dec (Integer/parseInt (subs ident 1)))
+    (first (keep-indexed (fn [index t]
+                           (when (= ident (:name t)) index))
+                         (:tags state)))))
 
 (defn render-state []
-  ;; show/hide status
-  (let [show-wids
-        (->> (:tags state)
-             (filter #(:active %))
-             (map :wids)
-             (apply set/union))
+  (let [should-show-wids (->> (:tags state)
+                              (filter :active?)
+                              (map :wids)
+                              (apply set/union))
+        should-hide-wids (->> (:tags state)
+                              (remove :active?)
+                              (map :wids)
+                              (apply set/union))
+        hidden-wids (set (sh "bspc query -N -n .hidden"))]
+    (run! (fn [wid]
+            (when (hidden-wids wid)
+              (sh "bspc node %s -g hidden=off" wid)))
+          should-show-wids)
+    (run! (fn [wid]
+            (when-not (hidden-wids wid)
+              (sh "bspc node %s -g hidden=on" wid)))
+          should-hide-wids))
 
-        hide-wids ;; all the wids - the show-ids we just calculated
-        (set/difference
-         (->> (:tags state)
-              (map :wids)
-              (apply set/union))
-         show-wids)
-        ]
-
-    (run! #(render-wid % true) show-wids)
-    (run! #(render-wid % false) hide-wids))
-
-  ;; refocus who we had if they exist
-  (when (and
-         (not (= (:focus-wid state) ""))
-         ;; (not (= (:focus-wid state)
-         ;;         (-> "bspc query -N -n" sh str/trim-newline)
-         ;;         ))
-         )
-    ;; (sh "sleep 1")
-    (sh "bspc config pointer_follows_focus true")
-    (sh (core/format "bspc node %s -f" (:focus-wid state)))
-    (sh "bspc config pointer_follows_focus false")))
+  ;; render the focus wid
+  (sh "bspc config pointer_follows_focus true")
+  (sh "bspc node %s -f" (:focus state))
+  (sh "bspc config pointer_follows_focus false"))
 
 (defn action-render "call to force a state render" [] (render-state))
+
+(defn cleanup-state []
+  ;; remove killed windows from tags
+  (let [all-wids (sh "bspc query -N -n .leaf")
+        clean-tags (map (fn [tag]
+                          (assoc tag :wids (set/intersection (set all-wids) (:wids tag))))
+                        (:tags state))
+
+        ;; ensure no duplicate tag names:
+        dedup-tags (->> (group-by :name clean-tags)
+                        (vals)
+                        (map first)
+                        (into []))]
+    (assoc state :tags dedup-tags)))
 
 (defn update-tags
   "update all tags with a transform function"
@@ -109,89 +86,59 @@
   (def state
     (update state :tags
             (fn [old-tags]
-              (vec (doall (map transform-func old-tags)))
-              ))))
+              (vec (doall (map transform-func old-tags)))))))
 
-(defn cleanup-state
-  "cleanup state"
-  []
-  ;; remove killed windows from tags
-  (let [all-wids (-> "bspc query -N -n .leaf" sh (str/trim-newline) (str/split #"\n") set)]
-    (update-tags
-     (fn [old-tag]
-       (update old-tag :wids (fn [old-wids]
-                               (set (filter #(contains? all-wids %) old-wids)))))))
+(defn action-set "[tag setting value] - set [name|color] value on tag"
+  [tag setting value]
+  (assoc-in state [:tags (parse-tag-index tag) (keyword setting)] value))
 
-  ;; make sure there are no duplicate tag names
-  (def state
+(defn action-add "[tag color] - create a new tag with an associated color"
+  [tag color]
+  (let [new-tag {:active? true :name tag :color color :wids #{}}]
+    (update state :tags (fn [tags] (conj tags new-tag)))))
+
+(defn action-remove "[tag] - remove tag name from the tags list"
+  [tag]
+  (let [tag-index (parse-tag-index tag)]
     (update state :tags
-            (fn [old-tags]
-              (mapv #(-> % second first)
-                    (group-by :name old-tags)))))
-  )
-
-(defn action-set "<tag> <setting> <value> - set [name|color] value on tag"
-  [tag-name setting new-value]
-  (update-tags
-   (fn [old-tag]
-     (update old-tag (keyword setting)
-             #(if (= (:name old-tag) (tag-ident-to-name tag-name))
-                new-value %)))))
-
-(defn action-add "<tag-name> <color> - create a new tag with an associated color"
-  [tag-name color]
-  (def state
-    (update state :tags
-            (fn [tags] (conj tags {:active true :name tag-name :color color :wids #{}})))))
-
-(defn action-remove "<tag-name> - remove tag name from the tags list"
-  [tag-name]
-  (def state
-    (update state :tags
-            (fn [tags] (filterv #(not (= (:name %)
-                                         (tag-ident-to-name tag-name)))
-                                tags)))))
+            (fn [tags]
+              (concat
+               (take tag-index tags)
+               (drop (inc tag-index) tags))))))
 
 (defn action-toggle
-  "<tags> -- toggle visibility of tags"
-  [& tags]
-
-  (defn update-active [old-tag]
-    (update old-tag :active
-            (fn [_] (if (contains? (set (map tag-ident-to-name tags)) (:name old-tag)) (not _) _))))
-
-  (update-tags update-active)
-
-  ;; if we toggled some tag and it's now active, make it the focused window
-  (->> (:tags state)
-       (filter (fn [old-tag] (contains? (set tags) (:name old-tag))))
-       (filter #(:active %))
-       (run! #(update-state-focus-wid (last (:wids %))))))
+  "[tag] -- toggle visibility of a tag"
+  [tag]
+  (let [tag-index (parse-tag-index tag)
+        new-state (update-in state [:tags tag-index]
+                             (fn [t] (assoc t :active? (not (:active? t)))))
+        newly-active? (get-in new-state [:tags tag-index :active?])]
+    (if newly-active?
+      (assoc new-state :focus (first (get-in state [:tags tag-index :wids])))
+      new-state)))
 
 (defn action-focus "<tag> - focus the last wid in the tag"
   [tag]
-  (let [full-tag (->> (:tags state)
-                      (filter #(= (:name %) (tag-ident-to-name tag)))
-                      first)
-        switchable-wids (remove #{(:focus-wid state)} (:wids full-tag))]
-    (prn (:focus-wid state))
+  (let [wids (get-in state [:tags (parse-tag-index tag) :wids])
+        ;; wids (remove #{(:focus state)} (:wids full-tag))
+        wids `[~@wids ~(first wids)]
+        focused-index (.indexOf wids (:focus state))
+        focus-wid (if (= focused-index -1)
+                    (first wids)
+                    (nth wids (inc focused-index)))]
 
-    (when-not (:active full-tag)
-      (action-toggle tag))
-
-    (update-state-focus-wid
-     (first switchable-wids))))
+    (-> state
+        (assoc-in [:tags (parse-tag-index tag) :active?] true)
+        (assoc :focus focus-wid))))
 
 (defn action-names
   "get all the tag names"
   [] (->> state :tags (map :name) (map println) doall))
 
 (defn get-state-untagged []
-  (let [all-wids (-> "bspc query -N -n .leaf.window" sh (str/trim-newline) (str/split #"\n") set)]
-    all-wids
-    (set/difference
-     (set all-wids)
-     (->> state :tags (map :wids) (apply set/union)))))
+  (set/difference
+   (set (sh "bspc query -N -n .leaf.window"))
+   (->> state :tags (map :wids) (apply set/union))))
 
 (defn action-untagged
   "list untagged wids"
@@ -199,66 +146,55 @@
   (->> (get-state-untagged) (map println) doall))
 
 (defn action-wids
-  "<tags> -- get all wids in a tag or tags"
-  [& tags]
-  (->> (:tags state)
-       ;; (contains?) is weird -- is index on seqs, no value
-       ;; and on sets can be value since they are the same thing
-       (filter #(contains? (set (map tag-ident-to-name tags)) (:name %)))
-       (map :wids)
-       (apply set/union)
-       (map println)
-       doall))
+  "<tag> -- get all wids in a tag"
+  [tag]
+  (string/join "\n" (get-in state [:tags (parse-tag-index tag) :wids])))
 
 (defn action-show-only [tag]
-  (let [tag-name (tag-ident-to-name tag)]
-    (run!
-     (fn [{:keys [name active]}]
-       (let [activate? (= name tag-name)]
-         (prn name activate?)
-         (prn
-          (cond
-            (and (not active) activate?) (action-toggle name)
-            (and active (not activate?)) (action-toggle name)
-            :else "oops"))))
-     (:tags state))))
+  (update-in state [:tags]
+             (fn [old-tags]
+               (map-indexed
+                (fn [i t]
+                  (if (= i (parse-tag-index tag))
+                    (assoc t :active? true)
+                    (assoc t :active? false)))
+                old-tags)))
 
-;; this function is for a dynamic flow/many tags on one window -- didn't turn out to be that intuitive
-(defn action-toggle-wids
-  "<tag> <wids> -- toggle wids being in a tag"
-  [tag & wids]
-  (defn update-wids [old-tag]
-    (update old-tag :wids
-            (fn [old-wids]
-              (if (= (tag-ident-to-name tag) (:name old-tag))
-                (set/union
-                 ;; existing minus toggles
-                 (set/difference old-wids wids)
-                 ;; new (old filter for not in new?)
-                 (set (filter #(not (contains? old-wids %)) wids)))
 
-                old-wids))))
-
-  (update-tags update-wids))
+  ;; (let [tag-name (get-in state [:tags (parse-tag-index tag) :name])]
+  ;;   (run!
+  ;;    (fn [{:keys [name active]}]
+  ;;      (let [activate? (= name tag-name)]
+  ;;        (cond
+  ;;          (and (not active) activate?) (def state (action-toggle name))
+  ;;          (and active (not activate?)) (def state (action-toggle name))
+  ;;          :else "oops")))
+  ;;    (:tags state))
+  ;;   state)
+  )
 
 (defn action-set-tag-on-wids
   "<tag> <wids> -- set wids to be member of one tag"
   [tag & wids]
+  ;; gross
+  (update-in state [:tags]
+             (fn [old-tags]
+               (map-indexed
+                (fn [i t]
+                  (if (= i (parse-tag-index tag))
+                    (assoc t :wids (set/union (set wids) (:wids t) ))
+                    (assoc t :wids (set (remove (set wids) (:wids t))))))
+                old-tags)))
 
-  ;; add tag if it doesn't exist
-  (when (not (contains? (set (map :name (:tags state))) (tag-ident-to-name tag)))
-    (action-add (tag-ident-to-name tag) "444444"))
-
-  (defn update-wids-set [old-tag]
-    (update old-tag :wids
-            (fn [old-wids]
-              (if (= (tag-ident-to-name tag) (:name old-tag))
-                (set/union old-wids (set wids))
-                (set/difference old-wids (set wids))
-                ))))
-
-  (update-tags update-wids-set)
+  ;; (update-in state [:tags (parse-tag-index tag) :wids]
+  ;;            (fn [current-wids] (set/union current-wids (set wids))))
   )
+
+(defn action-toggle-wids
+  "<tag> <wids> -- deprecated alias for set-tag-on-wids"
+  [tag & wids]
+  ;; this function previously held logic for appending a tag to a wid rather than one tag per wid
+  (apply action-set-tag-on-wids tag wids))
 
 ;; ref: WMDVI-D-0:O00:o01:f10:f11:LM:TT:G
 (defn action-state
@@ -267,20 +203,20 @@
   (defn tag-to-print-section [tag]
     (let [char (-> (:wids tag) empty? (if "f" "o"))]
       (format "%s%s"
-              (if (:active tag) (str/upper-case char) char)
+              (if (:active? tag) (string/upper-case char) char)
               (:name tag))))
 
   (println
-   (str/join ":" (concat
-                  (list (apply str (concat "WM" (-> "bspc query -M -m --names" sh str/trim-newline))))
-                  (map #'tag-to-print-section (:tags state))
-                  '("LT" "TT" "G")))))
+   (string/join ":" (concat
+                     (list (apply str (concat "WM" (-> "bspc query -M -m --names" sh string/trim-newline))))
+                     (map #'tag-to-print-section (:tags state))
+                     '("LT" "TT" "G")))))
 
 (defn action-subscribe "analogous to bspc subscribe, but depends on `inotifywait`" []
   (action-state)
   (while true
-    (sh (format "inotifywait -e close_write %s" state-file))
-    (load-state)
+    (sh "inotifywait -e close_write %s" state-file)
+    (def state (load-state))
     (action-state)))
 
 (defn usage
@@ -289,7 +225,7 @@
   (->> (ns-map *ns*)
        keys
        (map str)
-       (filter #(str/starts-with? % "action-"))
+       (filter #(string/starts-with? % "action-"))
        (sort)
        (map #(format "%12s: %s"
                      (subs % (count "action-"))
@@ -298,11 +234,10 @@
        (cons "commands: ")
        (run! println))
   (println)
-  (println "NB: <tag> in the above may be an index EG ^1 or the name of the tag")
-  )
+  (println "NB: 'tag' in the above may be an index EG ^1 or the name of the tag"))
 
-(defn action-get-tags
-  "<wid> - get the tags a wid is in"
+(defn action-get-tag
+  "<wid> - get the tag a wid is in"
   [wid]
   (->> state :tags
        (filter #(contains? (set (:wids %)) wid))
@@ -313,22 +248,45 @@
   (-> state pr-str println))
 
 (defn action-state-plain "get a plaintext representation of tags" []
-  (->>
-   (conj
-    (:tags state)
-    {:color "000000" :name "untagged"
-     ;; active value doesn't matter for untagged tags
-     :active true
-     :wids (get-state-untagged)})
+  (->> (conj
+        (:tags state)
+        {:color "000000" :name "untagged"
+         ;; active value doesn't matter for untagged tags
+         :active? true
+         :wids (get-state-untagged)})
 
-   (map #(format "%s %s %s %s"
-                 (:name %)
-                 (if (:active %) "true" "false")
-                 (:color %)
-                 (str/join " " (:wids %))))
-   (run! println)))
+       (map (juxt :name :active? :color (fn [tag] (string/join " " (:wids tag)))))
+       (map (partial apply format "%s %s %s %s"))
+       (run! println)))
 
 (defn action--h "usage" [] (usage))
+
+(defn with-state
+  "do a stateful action, render state after, in a sync fashion"
+  [action-fn]
+  (let [start (System/currentTimeMillis)]
+    (while (.exists (io/file state-lockfile))
+      (Thread/sleep 10)
+      (when (> (- (System/currentTimeMillis) start)
+               3000)
+        ;; assume broken, take it
+        (sh "rm %s" state-lockfile))))
+
+  (sh "touch %s" state-lockfile)
+
+  ;; note: action function is expected to return new state
+  (let [result (action-fn)]
+    ;; assume exception happened
+    (when (not (nil? result))
+      ;; (def state result)
+
+      (prn result)
+      (def state result)
+      (def state (cleanup-state))
+      (prn state)
+      (->> state pr-str (spit state-file))
+      (render-state))
+    (sh "rm %s" state-lockfile)))
 
 ;; and.. action:
 (when (not *command-line-args*) (usage))
@@ -340,33 +298,20 @@
        #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids" "add" "remove" "show-only"}
        (first *command-line-args*))
 
-    (do
-      (wait-for-lock)
+    (with-state
+      (fn []
+        (try
+          (apply
+           (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+           (rest *command-line-args*))
+          (catch Exception e
+            (println (str "caught exception: \n" (ex-message e)))
+            ;; todo: notify
+            ;; (string/split (ex-message e))
+            ))))
 
-      ;; get the lock
-      (sh (format "touch %s" state-lockfile))
-
-      (load-state)
-      (cleanup-state)
-
-      (try
-        (apply
-         (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-         (rest *command-line-args*))
-        (catch Exception e
-          (println (str "caught exception: \n" (ex-message e)))
-          ;; todo: notify
-          ;; (string/split (ex-message e))
-          ))
-
-      ;; (sh (format "notify-send doing_%s" (->> *command-line-args* first)))
-      (save-state)
-      (render-state))
-
-    (do
-      (load-state)
-      (apply (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-             (rest *command-line-args*)))))
+    (apply (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+           (rest *command-line-args*))))
 
 ;; calling this here means bb won't just print the last sexp value
 (System/exit 0)
