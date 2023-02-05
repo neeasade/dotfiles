@@ -48,16 +48,12 @@
         should-hide-wids (->> (:tags state)
                               (remove :active?)
                               (map :wids)
-                              (apply set/union))
-        hidden-wids (set (sh "bspc query -N -n .hidden"))]
+                              (apply set/union))]
     (run! (fn [wid]
-            (when (hidden-wids wid)
-              (sh "bspc node %s -g hidden=off" wid)))
-          should-show-wids)
-    (run! (fn [wid]
-            (when-not (hidden-wids wid)
-              (sh "bspc node %s -g hidden=on" wid)))
-          should-hide-wids))
+            (let [show? (should-show-wids wid)]
+              (sh "bspc node %s -g hidden=%s" wid
+                  (if show? "off" "on"))))
+          (set/union should-hide-wids should-show-wids)))
 
   ;; render the focus wid
   (sh "bspc config pointer_follows_focus true")
@@ -156,14 +152,15 @@
   "<tag> <wids> -- set wids to be member of one tag"
   [tag & wids]
   ;; gross
-  (update-in state [:tags]
-             (fn [old-tags]
-               (map-indexed
-                (fn [i t]
-                  (if (= i (parse-tag-index tag))
-                    (assoc t :wids (set/union (set wids) (:wids t) ))
-                    (assoc t :wids (set (remove (set wids) (:wids t))))))
-                old-tags))))
+  (let [tag-index (parse-tag-index tag)]
+    (update-in state [:tags]
+               (fn [old-tags]
+                 (map-indexed
+                  (fn [i t]
+                    (if (= i tag-index)
+                      (assoc t :wids (set/union (set wids) (:wids t)))
+                      (assoc t :wids (set (remove (set wids) (:wids t))))))
+                  old-tags)))))
 
 (defn action-toggle-wids
   "<tag> <wids> -- deprecated alias for set-tag-on-wids"
@@ -183,7 +180,7 @@
 
   (println
    (string/join ":" (concat
-                     (list (apply str (concat "WM" (-> "bspc query -M -m --names" sh string/trim-newline))))
+                     (list (format "WM%s" (first (sh "bspc query -M -m --names"))))
                      (map #'tag-to-print-section (:tags state))
                      '("LT" "TT" "G")))))
 
@@ -212,7 +209,7 @@
   (println "NB: 'tag' in the above may be an index EG ^1 or the name of the tag"))
 
 (defn action-get-tag
-  "<wid> - get the tag a wid is in"
+  "[wid] - get the tag a wid is in"
   [wid]
   (->> state :tags
        (filter #(contains? (set (:wids %)) wid))
