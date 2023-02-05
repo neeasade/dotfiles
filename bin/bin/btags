@@ -80,14 +80,6 @@
                         (into []))]
     (assoc state :tags dedup-tags)))
 
-(defn update-tags
-  "update all tags with a transform function"
-  [transform-func]
-  (def state
-    (update state :tags
-            (fn [old-tags]
-              (vec (doall (map transform-func old-tags)))))))
-
 (defn action-set "[tag setting value] - set [name|color] value on tag"
   [tag setting value]
   (assoc-in state [:tags (parse-tag-index tag) (keyword setting)] value))
@@ -158,20 +150,7 @@
                   (if (= i (parse-tag-index tag))
                     (assoc t :active? true)
                     (assoc t :active? false)))
-                old-tags)))
-
-
-  ;; (let [tag-name (get-in state [:tags (parse-tag-index tag) :name])]
-  ;;   (run!
-  ;;    (fn [{:keys [name active]}]
-  ;;      (let [activate? (= name tag-name)]
-  ;;        (cond
-  ;;          (and (not active) activate?) (def state (action-toggle name))
-  ;;          (and active (not activate?)) (def state (action-toggle name))
-  ;;          :else "oops")))
-  ;;    (:tags state))
-  ;;   state)
-  )
+                old-tags))))
 
 (defn action-set-tag-on-wids
   "<tag> <wids> -- set wids to be member of one tag"
@@ -184,11 +163,7 @@
                   (if (= i (parse-tag-index tag))
                     (assoc t :wids (set/union (set wids) (:wids t) ))
                     (assoc t :wids (set (remove (set wids) (:wids t))))))
-                old-tags)))
-
-  ;; (update-in state [:tags (parse-tag-index tag) :wids]
-  ;;            (fn [current-wids] (set/union current-wids (set wids))))
-  )
+                old-tags))))
 
 (defn action-toggle-wids
   "<tag> <wids> -- deprecated alias for set-tag-on-wids"
@@ -278,12 +253,8 @@
   (let [result (action-fn)]
     ;; assume exception happened
     (when (not (nil? result))
-      ;; (def state result)
-
-      (prn result)
       (def state result)
       (def state (cleanup-state))
-      (prn state)
       (->> state pr-str (spit state-file))
       (render-state))
     (sh "rm %s" state-lockfile)))
