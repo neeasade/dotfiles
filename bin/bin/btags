@@ -76,16 +76,16 @@
                         (into []))]
     (assoc state :tags dedup-tags)))
 
-(defn action-set "[tag setting value] - set [name|color] value on tag"
+(defn action-set "set a setting (name|color) value on tag"
   [tag setting value]
   (assoc-in state [:tags (parse-tag-index tag) (keyword setting)] value))
 
-(defn action-add "[tag color] - create a new tag with an associated color"
+(defn action-add "create a new tag with an associated color"
   [tag color]
   (let [new-tag {:active? true :name tag :color color :wids #{}}]
     (update state :tags (fn [tags] (conj tags new-tag)))))
 
-(defn action-remove "[tag] - remove tag name from the tags list"
+(defn action-remove "remove tag name from the tags list"
   [tag]
   (let [tag-index (parse-tag-index tag)]
     (update state :tags
@@ -95,7 +95,7 @@
                (drop (inc tag-index) tags))))))
 
 (defn action-toggle
-  "[tag] -- toggle visibility of a tag"
+  "toggle visibility of a tag"
   [tag]
   (let [tag-index (parse-tag-index tag)
         new-state (update-in state [:tags tag-index]
@@ -105,7 +105,7 @@
       (assoc new-state :focus (first (get-in state [:tags tag-index :wids])))
       new-state)))
 
-(defn action-focus "<tag> - focus the last wid in the tag"
+(defn action-focus "focus the last wid in the tag"
   [tag]
   (let [wids (get-in state [:tags (parse-tag-index tag) :wids])
         ;; wids (remove #{(:focus state)} (:wids full-tag))
@@ -134,11 +134,13 @@
   (->> (get-state-untagged) (map println) doall))
 
 (defn action-wids
-  "<tag> -- get all wids in a tag"
+  "get all wids in a tag"
   [tag]
   (string/join "\n" (get-in state [:tags (parse-tag-index tag) :wids])))
 
-(defn action-show-only [tag]
+(defn action-show-only
+  "show only wids with a certain tag"
+  [tag]
   (update-in state [:tags]
              (fn [old-tags]
                (map-indexed
@@ -149,7 +151,7 @@
                 old-tags))))
 
 (defn action-set-tag-on-wids
-  "<tag> <wids> -- set wids to be member of one tag"
+  "set wids to be member of one tag"
   [tag & wids]
   ;; gross
   (let [tag-index (parse-tag-index tag)]
@@ -163,7 +165,7 @@
                   old-tags)))))
 
 (defn action-toggle-wids
-  "<tag> <wids> -- deprecated alias for set-tag-on-wids"
+  "deprecated alias for set-tag-on-wids"
   [tag & wids]
   ;; this function previously held logic for appending a tag to a wid rather than one tag per wid
   (apply action-set-tag-on-wids tag wids))
@@ -199,17 +201,21 @@
        (map str)
        (filter #(string/starts-with? % "action-"))
        (sort)
-       (map #(format "%12s: %s"
+       (map #(format "%12s: %s%s"
                      (subs % (count "action-"))
                      ;; so hot
+                     (let [args (-> % symbol resolve meta :arglists first)]
+                       (if (empty? args) "" (format "%s " args)))
                      (-> % symbol resolve meta :doc)))
+
+
        (cons "commands: ")
        (run! println))
   (println)
   (println "NB: 'tag' in the above may be an index EG ^1 or the name of the tag"))
 
 (defn action-get-tag
-  "[wid] - get the tag a wid is in"
+  "get the tag a wid is in"
   [wid]
   (->> state :tags
        (filter #(contains? (set (:wids %)) wid))
