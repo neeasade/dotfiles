@@ -13,6 +13,7 @@ if [ -z "$state" ]; then
 fi
 
 if echo "$state" | grep -q " true "; then
+  # it's in a tag, turn it off
   btags toggle "$(echo "$state" | awk '{print $1}')"
 else
   # todo: maybe force tag render state here instead

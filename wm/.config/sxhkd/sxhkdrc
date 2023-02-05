@@ -134,6 +134,10 @@ button9
     bash -ic ". $HOME/.profile; shot"
     # notify-send "you pressed mouse9"
 
+
+super + 9
+    SWITCH='meta: twitter' dmenu_switcher
+
 ########
 # tags #
 ########
@@ -141,21 +145,11 @@ button9
 super + d
     dismiss.sh
 
-super + {i,o,u,y}
-    btags focus ^{1,2,3,4}
+super + {_,shift,control} + {i,o,u,y}
+    btags {focus,set-tag-on-wids,show-only} ^{1,2,3,4}
 
-super + shift + {i,o,u,y}
-    btags set-tag-on-wids ^{1,2,3,4} $(bspwindows)
-
-super + control + {i,o,u,y}
-    btags show-only ^{1,2,3,4}
-
-# ----
-super + {1-4}
-    btags focus ^{1-4}
-
-super + shift + {1-4}
-    btags set-tag-on-wids ^{1-4} $(bspwindows)
+super + {_,shift,control} + {1-4}
+    btags {focus,set-tag-on-wids,show-only} ^{1-4}
 
 ##############
 # workspaces #

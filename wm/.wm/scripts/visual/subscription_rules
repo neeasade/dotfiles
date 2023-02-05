@@ -32,7 +32,7 @@ bspc subscribe node_add | while read -r event m d i wid; do
 	fi
     fi
 
-    current_tag=$(btags get-tags "$(bspc query -N -n last)" | head -n 1)
+    current_tag=$(btags get-tag "$(bspc query -N -n last)")
     if [ ! -z "$current_tag" ]; then
 	btags set-tag-on-wids "$current_tag" $wid
     fi

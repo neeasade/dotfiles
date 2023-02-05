@@ -4,7 +4,6 @@
 
 ;; tag management for bspwm
 ;; windows may only have one tag
-
 (require '[clojure.core :as core]
          '[clojure.string :as string]
          '[clojure.set :as set]
@@ -55,7 +54,6 @@
                   (if show? "off" "on"))))
           (set/union should-hide-wids should-show-wids)))
 
-  ;; render the focus wid
   (sh "bspc config pointer_follows_focus true")
   (sh "bspc node %s -f" (:focus state))
   (sh "bspc config pointer_follows_focus false"))
@@ -105,10 +103,9 @@
       (assoc new-state :focus (first (get-in state [:tags tag-index :wids])))
       new-state)))
 
-(defn action-focus "focus the last wid in the tag"
+(defn action-focus "cyclical focus of wids in a tag"
   [tag]
   (let [wids (get-in state [:tags (parse-tag-index tag) :wids])
-        ;; wids (remove #{(:focus state)} (:wids full-tag))
         wids `[~@wids ~(first wids)]
         focused-index (.indexOf wids (:focus state))
         focus-wid (if (= focused-index -1)
@@ -153,8 +150,8 @@
 (defn action-set-tag-on-wids
   "set wids to be member of one tag"
   [tag & wids]
-  ;; gross
-  (let [tag-index (parse-tag-index tag)]
+  (let [tag-index (parse-tag-index tag)
+        wids (or wids (sh "bspwindows"))]
     (update-in state [:tags]
                (fn [old-tags]
                  (map-indexed
@@ -207,7 +204,6 @@
                      (let [args (-> % symbol resolve meta :arglists first)]
                        (if (empty? args) "" (format "%s " args)))
                      (-> % symbol resolve meta :doc)))
-
 
        (cons "commands: ")
        (run! println))
