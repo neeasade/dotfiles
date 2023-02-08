@@ -1,4 +1,3 @@
 #!/bin/sh
 
-cd "$HOME/Downloads"
-ls -t | head -n 1
+echo "${HOME}/Last_Shot/last_download_*"

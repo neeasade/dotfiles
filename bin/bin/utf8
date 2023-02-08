@@ -5,8 +5,7 @@ utf8db="$HOME/bin/utf8db"
 if line=$(grep -v '^#' "$utf8db"| grep -v '^$'| dmenu); then
     char=${line##* }
 
-    echo -n "$char" | xclip -selection clipboard -i
-    echo -n "$char" | xclip -selection primary -i
+    printf '%s' "$char" | pbcopy
 
     # paste it
     xdotool key shift+Insert

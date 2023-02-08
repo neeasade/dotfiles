@@ -1,0 +1,3 @@
+#!/bin/sh
+
+qb_command ":spawn --userscript $@"

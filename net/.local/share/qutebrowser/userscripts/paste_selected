@@ -1,0 +1,25 @@
+#!/bin/sh
+
+before=$(pbpaste)
+content=$QUTE_SELECTED_TEXT
+
+if [ -z "$content" ]; then
+    notify-send "qutebrowser: nothing selected!"
+    exit 1
+fi
+
+printf '%s' "$content" | pbcopy
+
+. "$HOME/.sh.d/environment"
+
+if $MAC; then
+    echo "todo: mac paste"
+    # to test on macos later
+    # tell application "System Events" to keystroke (the clipboard as text)
+else
+    # paste it
+    xdotool key shift+Insert
+fi
+
+# restore
+printf '%s' "$before" | pbcopy

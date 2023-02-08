@@ -26,7 +26,7 @@ add_windows() {
     done
 }
 
-add_emacss() { # naming intentional
+add_emacss() { # name intentional
     find_emacs_window() {
 	emacs_wid=
 	check_id() {
@@ -78,8 +78,7 @@ add_emacss() { # naming intentional
     done
 }
 
-# nb: name intentional.
-add_historys() {
+add_historys() { # name intentional
     start_day=$(date --date="7 days ago" +%F)
     end_day=$(date +%F)
     start=$(date -d "$start_day 00:00:00" +%s)
@@ -95,16 +94,16 @@ add_historys() {
     done < <(sqlite3 "$qutedb" "$query" | head -n 300)
 }
 
+# used by tabs and meta
+qute_switch_to() {
+    title=$*
+    qb_meta_open
+    qb_command ":tab-select $title"
+}
+
 add_tabs() {
     open_titles() {
 	qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | (.url + " " + .title)'
-    }
-
-    # user by add_meta as well
-    qute_switch_to() {
-	title=$*
-	qb_meta_open
-	qb_command ":buffer $title"
     }
 
     while read -r url title; do

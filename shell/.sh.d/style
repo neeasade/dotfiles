@@ -36,6 +36,7 @@ git_prompt() {
     g_status="${g_status}${1}"
   }
 
+  git var GIT_AUTHOR_IDENT 2>/dev/null >&2 || g_append '@'      # is there a commit author set?
   git diff --quiet --ignore-submodules --cached || g_append '+' # Check for uncommitted changes in the index.
   git diff-files --quiet --ignore-submodules    || g_append '*' # Check for unstaged changes.
   test -n "$(git ls-files --others --exclude-standard)" && g_append '?' # Check for untracked files.
@@ -134,7 +135,7 @@ prompt() {
     _prompt=$_promptchar
 
     if ! test -z "$(jobs)"; then
-      _prompt="${_prompt}${_prompt}"
+      _prompt="${_prompt}&"
     fi
 
     if [ $_ERR -ne 0 ]; then

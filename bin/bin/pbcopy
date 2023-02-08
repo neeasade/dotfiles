@@ -1,11 +1,14 @@
 #!/bin/sh
 
 . "$HOME/.sh.d/environment"
+
 if $MAC; then
     og pbcopy
     exit $?
 fi
 
-stdin=$(cat -)
-echo "$stdin" | xclip -selection clipboard -i
-echo "$stdin" | xclip -selection primary -i
+stdin=$(cat /dev/stdin)
+
+# :set clipboard=unnamedplus is the only way to be
+printf '%s' "$stdin" | xclip -selection clipboard -i
+printf '%s' "$stdin" | xclip -selection primary -i
