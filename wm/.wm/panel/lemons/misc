@@ -20,7 +20,9 @@ check_disk_space() {
 }
 
 (
-    cache_output 500 elisp -r '(ns/org-status-outdated)'
+    if ! silent elisp '(eq org-pomodoro-state :pomodoro)'; then
+	cache_output 500 elisp -r '(ns/org-status-outdated)'
+    fi
 
     check_disk_space
 

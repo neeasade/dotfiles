@@ -4,7 +4,10 @@
 while read -r trigger; do
   title=$(xtitle -t 25)
   if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
-    title=${title}\*
+    count=$(wc -l < <(bspc query -N -n '.leaf.!hidden'))
+    if [ "$count" -gt 1 ]; then
+      title=${title}\*
+    fi
   fi
   printf '%s\n' "$title"
 done

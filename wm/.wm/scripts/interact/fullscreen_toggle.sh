@@ -95,7 +95,6 @@ if [ -z "$SLIM" ]; then
     monocle_full) state=tiled ;;
     tiled) state=monocle_full ;;
     monocle_slim) state=monocle_full ;;
-    # fullscreen) exit 0;;
     fullscreen) state=tiled ;;
   esac
 else
@@ -104,7 +103,6 @@ else
     monocle_full) state=monocle_slim ;;
     tiled) state=monocle_slim ;;
     monocle_slim) state=tiled ;;
-    # fullscreen) exit 0;;
     fullscreen) state=tiled ;;
   esac
 fi

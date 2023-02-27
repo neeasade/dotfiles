@@ -50,6 +50,16 @@ add_stdin() {
     cat - > "$stdin_file"
 }
 
+quit() {
+    if [ ! -z "$stdin_file" ]; then
+	if [ -f "$stdin_file" ]; then
+	    rm "$stdin_file"
+	fi
+    fi
+
+    exit ${*:-1}
+}
+
 if [ -z "$script_name" ]; then
     elisp_timeout=${elisp_timeout:-1}
     lisp="(progn $@)"
@@ -125,16 +135,6 @@ else
 	result=$($emacs_timeout $eclient --server-file=$emacs_server_file --eval "$lisp")
     fi
 fi
-
-quit() {
-    if [ ! -z "$stdin_file" ]; then
-	if [ -f "$stdin_file" ]; then
-	    rm "$stdin_file"
-	fi
-    fi
-
-    exit ${*:-1}
-}
 
 if [ $? -eq 1 ]; then
     # we could not reach emacs, or we timed out.

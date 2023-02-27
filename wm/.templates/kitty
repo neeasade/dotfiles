@@ -2,6 +2,10 @@
 font_family      {{font.mono.family}}
 font_size       {{font.mono.size}}
 
+confirm_os_window_close 0
+allow_remote_control yes
+clipboard_control write-clipboard write-primary read-clipboard read-primary
+
 clear_all_shortcuts yes
 macos_option_as_alt yes
 

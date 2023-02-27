@@ -17,13 +17,14 @@
        (string/split-lines)))
 
 (def state-file "/tmp/bspt-state")
+
 (def state-lockfile "/tmp/bspt-state-lock")
 
 (defn load-state []
-  (let [default {:tags [{:name "code" :wids #{} :active? true :color "c2c6e3"}
-                        {:name "net" :wids #{} :active? true :color "e4815d"}
-                        {:name "chat" :wids #{} :active? true :color "c6dc93"}
-                        {:name "hole" :wids #{} :active? true :color "E2E3E5"}]
+  (let [default {:tags [{:name "code" :wids [] :active? true :color "c2c6e3"}
+                        {:name "net" :wids [] :active? true :color "e4815d"}
+                        {:name "chat" :wids [] :active? true :color "c6dc93"}
+                        {:name "hole" :wids [] :active? true :color "E2E3E5"}]
                  :focus ""}
         state (if (.exists (io/file state-file))
                 (-> state-file slurp read-string)
@@ -42,12 +43,12 @@
 (defn render-state []
   (let [should-show-wids (->> (:tags state)
                               (filter :active?)
-                              (map :wids)
-                              (apply set/union))
+                              (mapcat :wids)
+                              (into #{}))
         should-hide-wids (->> (:tags state)
                               (remove :active?)
-                              (map :wids)
-                              (apply set/union))]
+                              (mapcat :wids)
+                              (into #{}))]
     (run! (fn [wid]
             (let [show? (should-show-wids wid)]
               (sh "bspc node %s -g hidden=%s" wid
@@ -61,10 +62,14 @@
 (defn action-render "call to force a state render" [] (render-state))
 
 (defn cleanup-state []
-  ;; remove killed windows from tags
   (let [all-wids (sh "bspc query -N -n .leaf")
+
+        ;; remove killed windows from tags
         clean-tags (map (fn [tag]
-                          (assoc tag :wids (set/intersection (set all-wids) (:wids tag))))
+                          (assoc tag :wids
+                                 (into [] (filter (set all-wids) (:wids tag)))
+                                 ;; (set/intersection (set all-wids) (:wids tag))
+                                 ))
                         (:tags state))
 
         ;; ensure no duplicate tag names:
@@ -80,7 +85,7 @@
 
 (defn action-add "create a new tag with an associated color"
   [tag color]
-  (let [new-tag {:active? true :name tag :color color :wids #{}}]
+  (let [new-tag {:active? true :name tag :color color :wids []}]
     (update state :tags (fn [tags] (conj tags new-tag)))))
 
 (defn action-remove "remove tag name from the tags list"
@@ -106,15 +111,14 @@
 (defn action-focus "cyclical focus of wids in a tag"
   [tag]
   (let [wids (get-in state [:tags (parse-tag-index tag) :wids])
-        wids `[~@wids ~(first wids)]
-        focused-index (.indexOf wids (:focus state))
-        focus-wid (if (= focused-index -1)
-                    (first wids)
-                    (nth wids (inc focused-index)))]
-
+        new-wids (if (= (:focus state) (first wids))
+                   `[~@(drop 1 wids) ~(first wids)]
+                   wids)]
+    (prn new-wids)
     (-> state
         (assoc-in [:tags (parse-tag-index tag) :active?] true)
-        (assoc :focus focus-wid))))
+        (assoc-in [:tags (parse-tag-index tag) :wids] new-wids)
+        (assoc :focus (first new-wids)))))
 
 (defn action-names
   "get all the tag names"
@@ -157,8 +161,10 @@
                  (map-indexed
                   (fn [i t]
                     (if (= i tag-index)
-                      (assoc t :wids (set/union (set wids) (:wids t)))
-                      (assoc t :wids (set (remove (set wids) (:wids t))))))
+                      (assoc t :wids (into wids (:wids t)))
+                      (assoc t :wids (into [] (remove (set wids) (:wids t))))
+                      ;; (assoc t :wids (set (remove (set wids) (:wids t))))
+                      ))
                   old-tags)))))
 
 (defn action-toggle-wids
@@ -190,6 +196,29 @@
     (def state (load-state))
     (action-state)))
 
+(defn action-get-tag
+  "get the tag a wid is in"
+  [wid]
+  (->> state :tags
+       (filter #((set (:wids %)) wid))
+       (map :name)
+       (run! println)))
+
+(defn action-state-raw "get raw edn state" []
+  (-> state pr-str println))
+
+(defn action-state-plain "get a plaintext representation of tags" []
+  (->> (conj
+        (:tags state)
+        {:color "000000" :name "untagged"
+         ;; active value doesn't matter for untagged tags
+         :active? true
+         :wids (get-state-untagged)})
+
+       (map (juxt :name :active? :color (fn [tag] (string/join " " (:wids tag)))))
+       (map (partial apply format "%s %s %s %s"))
+       (run! println)))
+
 (defn usage
   "generate usage from docstring of action-* functions"
   []
@@ -209,29 +238,6 @@
        (run! println))
   (println)
   (println "NB: 'tag' in the above may be an index EG ^1 or the name of the tag"))
-
-(defn action-get-tag
-  "get the tag a wid is in"
-  [wid]
-  (->> state :tags
-       (filter #(contains? (set (:wids %)) wid))
-       (map :name)
-       (run! println)))
-
-(defn action-state-raw "get raw edn state" []
-  (-> state pr-str println))
-
-(defn action-state-plain "get a plaintext representation of tags" []
-  (->> (conj
-        (:tags state)
-        {:color "000000" :name "untagged"
-         ;; active value doesn't matter for untagged tags
-         :active? true
-         :wids (get-state-untagged)})
-
-       (map (juxt :name :active? :color (fn [tag] (string/join " " (:wids tag)))))
-       (map (partial apply format "%s %s %s %s"))
-       (run! println)))
 
 (defn action--h "usage" [] (usage))
 
@@ -261,27 +267,27 @@
 ;; and.. action:
 (when (not *command-line-args*) (usage))
 
-(when *command-line-args*
-  (if (contains?
-       ;; stateful actions, ones needing the lock
-       ;; note: focus might not be stateful really
-       #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids" "add" "remove" "show-only"}
-       (first *command-line-args*))
+  (when *command-line-args*
+    (if (contains?
+         ;; stateful actions, ones needing the lock
+         ;; note: focus might not be stateful really
+         #{"toggle" "toggle-wids" "focus" "set" "set-tag-on-wids" "add" "remove" "show-only"}
+         (first *command-line-args*))
 
-    (with-state
-      (fn []
-        (try
-          (apply
-           (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-           (rest *command-line-args*))
-          (catch Exception e
-            (println (str "caught exception: \n" (ex-message e)))
-            ;; todo: notify
-            ;; (string/split (ex-message e))
-            ))))
+      (with-state
+        (fn []
+          (try
+            (apply
+             (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+             (rest *command-line-args*))
+            (catch Exception e
+              (println (str "caught exception: \n" (ex-message e)))
+              ;; todo: notify
+              ;; (string/split (ex-message e))
+              ))))
 
-    (apply (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
-           (rest *command-line-args*))))
+      (apply (->> *command-line-args* first (concat "action-") (apply str) symbol resolve)
+             (rest *command-line-args*))))
 
-;; calling this here means bb won't just print the last sexp value
+  ;; calling this here means bb won't just print the last sexp value
 (System/exit 0)

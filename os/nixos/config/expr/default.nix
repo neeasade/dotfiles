@@ -79,7 +79,10 @@
       }));
 
       bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/neeasade/bspwm"; ref = "master"; };
+        src = builtins.fetchGit {
+	    url = "https://github.com/neeasade/bspwm";
+	    ref = "master";
+	};
       }));
 
       pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {

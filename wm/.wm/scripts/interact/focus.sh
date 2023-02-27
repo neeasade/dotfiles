@@ -14,11 +14,24 @@ case $node_dir in
   south) dir=y; sign=-lt; emacs_dir=down ;;
 esac
 
-if xprop WM_CLASS -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
-  if timeout 0.2 elisp "(evil-window-$emacs_dir 1) t"; then
+try_emacs_dir() {
+  if timeout 0.2 elisp "(evil-window-${node_dir} 1) t"; then
     exit 0
   fi
-fi
+}
+
+looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
+
+case "$looking_at" in
+  Emacs*) try_emacs_dir ;;
+  kitty) try_emacs_dir ;;
+esac
+
+# if xprop WM_CLASS -id "$node" | grep -E "^WM_CLASS.*Emacs"; then
+#   if timeout 0.2 elisp "(evil-window-$emacs_dir 1) t"; then
+#     exit 0
+#   fi
+# fi
 
 node=${node^^}
 

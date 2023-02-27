@@ -380,9 +380,14 @@ info() { # display the current audio progress bar and playlist length
     printf "%$((pad_left + add))s\n" "$line"
   }
 
+  # doesn't take into account song lengths
+  playlist_percent=$(mpc | awk '/#/{print substr($2, 2) " * 100"}' | bc -l)
+
   align_print "$name"
   mkb "${percent/.*/}" $w_progress
+  mkb "${playlist_percent/.*/}" $w_progress
   test -z "$bottom_line" || align_print "$bottom_line"
+  # ) | BORDER='═║═║ ╔╗╝╚' box
   ) | BORDER='╌¦╌¦ ┭┮┶┵' box
 }
 

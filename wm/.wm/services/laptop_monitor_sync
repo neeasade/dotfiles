@@ -129,7 +129,6 @@ if $did_something; then
     # "$HOME/.config/bspwm/bspwmrc"
 
     echo "did something, updating theme stuff"
-    # theme refresh dmenu_options
     theme refresh dunst
 
     # todo: handle potential sxhkd switching

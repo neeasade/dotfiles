@@ -39,7 +39,7 @@ add_emacss() {
     buffers=$(elisp -r '(ns/make-lines (append (ns/jump-file-candidates) (ns/jump-file-candidates :buffers-without-files)))')
     for buffer in $buffers; do
   # note: this will break if ever switching to a file with a ' in the name
-  add_switch "emacs: $buffer" "emacs_find_file '$buffer'"
+      add_switch "emacs: $buffer" "emacs_find_file '$buffer'"
     done
 
     buffers=$(elisp -r '(ns/make-lines (ns/jump-file-candidates :buffers-without-files))')

@@ -17,12 +17,10 @@ rec {
   syncthingDevices = {
     geloof = {
       id = "5TSVINF-TJQWJOR-4UBDHAH-J3EQ2YU-OY5C5AF-3P25BH5-UKXTMJE-PLSP6QO";
-      introducer = true;
     };
 
     erasmus = {
       id = "4MS4KGQ-X6RBE6E-XX6AOPH-VJXFZ7P-VJ7JC53-35PHBDS-NJK4JRO-LPWHPAN";
-      introducer = true;
     };
 
     trouw.id = "NGZND66-ZLQFRIH-M6W77CS-FTHYQWT-EGYGD6S-V6MGTS2-K7JUCWC-W4DTTAL";

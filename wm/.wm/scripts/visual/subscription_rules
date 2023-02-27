@@ -14,7 +14,7 @@ bspc subscribe node_add | while read -r event m d i wid; do
        continue
     fi
 
-    # if "$current-class" | grep Steam; then
+    # if "$current_class" | grep Steam; then
     # 	btags toggle-wids ^3 $wid
     # 	continue
     # fi
