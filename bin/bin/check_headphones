@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+want=${*:-WH-1000XM3}
+
+sink_map=$(paste -d' ' \
+		 <(pactl list short sinks) \
+		 <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g'))
+
+stopped=$(awk "/SUSPENDED.*${want}/{print $1}" <<< "$sink_map")
+
+if [ ! -z "$stopped" ]; then
+    SWITCH="meta: sound switch $want" dmenu_switcher
+    exit 0
+fi
+
+exit 1

@@ -127,7 +127,7 @@
 (defn get-state-untagged []
   (set/difference
    (set (sh "bspc query -N -n .leaf.window"))
-   (->> state :tags (map :wids) (apply set/union))))
+   (->> state :tags (mapcat :wids) (set))))
 
 (defn action-untagged
   "list untagged wids"

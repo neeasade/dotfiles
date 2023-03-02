@@ -90,7 +90,7 @@ super + grave
 # workflow: turn on headphones, bt connect, walk around, toggle
 # we never use these buttons from our keyboard anyway
 XF86Audio{Prev,Next,Play,Pause}
-    check_headphones || player.sh {prev,next,toggle,toggle}
+    check_headphones; player.sh {prev,next,toggle,toggle}
 
 XF86Audio{LowerVolume,RaiseVolume}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase})"
