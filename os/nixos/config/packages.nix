@@ -289,14 +289,14 @@ let
     # }
     # )
 
-    steam
+    # steam
 
   ]) ++ (with unstable; [
     # openmw-tes3mp
     # steam
   ]) ++ (with edge; [
     # (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; })
-    # steam
+    steam
     # ()
     discord
   ]);
@@ -395,7 +395,7 @@ let
   extrafonts = (with pkgs; [
     # roboto roboto-mono
     # tewi-font siji
-    # fira fira-code
+    fira fira-code
     twemoji-color-font
     # font-awesome-ttf
     font-awesome

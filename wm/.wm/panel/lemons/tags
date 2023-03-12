@@ -48,9 +48,9 @@ render_smol() {
 
 	if [ -z "$wids" ]; then
 	    continue
-	fi
-
-	if [ "$tname" = "hole" ]; then
+	elif [ "$tname" = "hole" ]; then
+	    continue
+	elif [ "$tname" = "untagged" ]; then
 	    continue
 	fi
 

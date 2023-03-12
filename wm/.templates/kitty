@@ -11,7 +11,11 @@ macos_option_as_alt yes
 
 cursor_blink_interval 0
 kitty_mod ctrl+shift
-window_padding_width 10
+
+# todo: use x.padding if not at work
+# window_padding_width {% if condition %}yes!{% else %}no!{% endif %}
+window_padding_width 0
+
 
 bold_font        auto
 italic_font      auto
