@@ -13,6 +13,7 @@ do_monocle_full() {
   no_trim_list='.openmw-wrapped
 Civ5XP
 mpv
+steam_app_242920
 Google-chrome
 dota2
 factorio

@@ -2,7 +2,6 @@
 # switch to tab with $url or open $url
 # if no url found, goto or open qutebrowser window
 
-
 url=$1
 
 if test -f "$url"; then
@@ -30,6 +29,10 @@ vanilla() {
     find_class qutebrowser
     exit 0
 }
+
+if ! has yq; then
+    vanilla
+fi
 
 if ! pgrep qutebrowser; then
     vanilla

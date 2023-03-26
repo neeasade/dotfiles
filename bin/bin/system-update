@@ -1,5 +1,7 @@
 #!/bin/sh
 
+. ~/.sh.d/environment
+
 usage() {
     echo "$0 [test|switch]"
     exit 1
@@ -8,12 +10,12 @@ usage() {
 sudo echo yeet >/dev/null # so we and all our subshells get it
 
 if ${MAC:-false}; then
-    brew upgrade
-    brew upgrade --cask
+    vdo brew upgrade
+    vdo brew upgrade --cask
 
-    nix-channel --update
-    darwin-rebuild changelog
-    darwin-rebuild --show-trace switch
+    vdo nix-channel --update
+    vdo darwin-rebuild changelog
+    vdo darwin-rebuild --show-trace switch
     exit $?
 fi
 
@@ -24,4 +26,5 @@ echo "channel: $channel"
 # sudo nixos-rebuild "${*}"
 # the same as the above:
 cd
-sudo nixos-rebuild $* --upgrade --show-trace
+vdo sudo nixos-rebuild $* --upgrade --show-trace
+vdo nix-env -u

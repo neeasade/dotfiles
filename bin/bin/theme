@@ -334,6 +334,7 @@
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 26
                  :format  "mpd:title|org_task:misc|tags:clock"
+                 ;; :format  "mpd:title|misc|tags:clock"
                  :window-class (fn [tree]
                                  (if (get-in tree [:meta :shadow])
                                    "lemonbar" "noshadow"))

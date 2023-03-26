@@ -168,4 +168,4 @@ prompt() {
 
 PS1='$(prompt)'
 
-$ESHELL || cursorStyle block
+$ESHELL || cursorStyle underline
