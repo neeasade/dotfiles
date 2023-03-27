@@ -65,7 +65,7 @@ in
       host.enable = false;
     };
     docker = {
-      enable = true;
+      enable = false;
     };
   };
 

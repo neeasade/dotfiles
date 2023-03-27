@@ -32,8 +32,10 @@ stdbuf -oL i3blocks -o j | \
     stdbuf -oL sed -n 's/^,//;s/^\[//;s/\]$//;/^{/p' | \
     stdbuf -oL jq -r '.name + " " + .full_text' | \
     while IFS=$'\n' read -r event; do
-	export "${event%% *}=${event#* }"
-	eval "printf '%s\n' \"$format\""
+	if [ ! "$event" = " " ]; then
+	    export "${event%% *}=${event#* }"
+	    eval "printf '%s\n' \"$format\""
+	fi
     done | stdbuf -oL debounce.js 30 | \
 	lemonbar -d \
 	    -u 2 \

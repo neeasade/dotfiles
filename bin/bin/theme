@@ -97,6 +97,7 @@
 (defn panel-lemons-to-i3blocks [lemons]
   (let [lemon-info {:interval {:network 20
                                :mail 30
+                               :misc 30
                                :desktop "bspc subscribe"
                                :tags "persist"
                                :title "persist"

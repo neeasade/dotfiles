@@ -26,5 +26,6 @@ echo "channel: $channel"
 # sudo nixos-rebuild "${*}"
 # the same as the above:
 cd
-vdo sudo nixos-rebuild $* --upgrade --show-trace
-vdo nix-env -u
+if vdo sudo nixos-rebuild $* --upgrade --show-trace; then
+    vdo nix-env -u
+fi

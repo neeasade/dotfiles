@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # this lemon is meant to have temporary things that may popup, show front and center
 
 check_disk_space() {
@@ -20,18 +20,19 @@ check_disk_space() {
 }
 
 (
-    if ! silent elisp '(eq org-pomodoro-state :pomodoro)'; then
-	cache_output 500 elisp -r '(ns/org-status-outdated)'
+    if ! elisp -q '(eq org-pomodoro-state :pomodoro)'; then
+	# this takes awhile b/c batch (~3 secs)
+	elisp -br "(ns/conf-core) (ns/org-status-outdated)"
     fi
+
+    elisp -r '(when-let (unread-dms (ns/circe-unread-query-buffers))
+	(format "DMs: %s" (length unread-dms)))'
 
     check_disk_space
 
     if pgrep obs >/dev/null; then
 	echo "OBS OPEN"
     fi
-
-    elisp -r '(when-let (unread-dms (ns/circe-unread-query-buffers))
-	(format "DMs: %s" (length unread-dms)))'
 
     # cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'
 ) | awk NF | tr '\n' '^' | sed 's/.$//' | sed 's/\^/ • /g'

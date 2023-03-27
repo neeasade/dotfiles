@@ -113,6 +113,7 @@ elif $emacs_batch; then
 	    case "$line" in
 		# ''*) ;;
 		# *...) ;;
+		:*) ;;
 		'Loading '*) ;;
 		'Building '*) ;;
 		*) printf '%s\n' "$line" ;;
@@ -123,7 +124,12 @@ elif $emacs_batch; then
 
     # todo: see if this gives you color
     # result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs -nw -l "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ " | grep -v "^Starting new Ispell" | grep -v "^Building ")
-    result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs -nw -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_lines)
+    # result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs -nw -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_lines)
+    result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs --batch -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_lines)
+
+    if $trim; then
+	result=$(printf '%s' "$result" | tail -n 1)
+    fi
 else
     # echo $emacs_timeout $eclient --eval "$lisp"
     if [ -z "$emacs_server_file" ]; then
