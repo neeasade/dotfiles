@@ -157,27 +157,27 @@ if [ $? -eq 1 ]; then
     quit 1
 fi
 
-if ! $quiet; then
-    if [ "$result" = "nil" ]; then
-	result=
-    fi
+if [ "$result" = "nil" ]; then
+    result=
+fi
 
-    if $trim; then
-	case "$result" in
-	    # (1 2 3) -> # 1 2 3
-	    "("*) result=${result:1:${#result}-2}; echo "$result";;
-	    # "\"~/.dotfiles/bin/bin/elisp\n~/.emacs.d/recentf\""
-	    #     -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
-	    '"'*) result=${result:1:${#result}-2}
-		  result=$(echo "$result" | sed 's/%/%%/g')
-		  # replace
-		  printf "$result"
-		  echo
-		  ;;
-	    # just print it
-	    *) echo "$result" ;;
-	esac
-    else
+if $trim; then
+    case "$result" in
+	# (1 2 3) -> # 1 2 3
+	"("*) result=${result:1:${#result}-2}; echo "$result";;
+	# "\"~/.dotfiles/bin/bin/elisp\n~/.emacs.d/recentf\""
+	#     -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
+	'"'*) result=${result:1:${#result}-2}
+		result=$(echo "$result" | sed 's/%/%%/g')
+		# replace
+		printf "$result"
+		echo
+		;;
+	# just print it
+	*) echo "$result" ;;
+    esac
+else
+    if ! $quiet; then
 	echo "$result"
     fi
 fi
