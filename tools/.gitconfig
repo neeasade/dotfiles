@@ -3,3 +3,6 @@
 
 [credential]
 	helper = cache --timeout 36000
+[user]
+	name = neeasade
+	email = neeasade@users.noreply.github.com

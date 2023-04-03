@@ -4,6 +4,10 @@
 # adhoc code (ie elisp '(message "uwu")')
 # note: when args are passed to a shebang, they are available with the variable 'ns-args' as a list
 
+if [ ! -z "$CALLED_FROM_EMACS" ]; then
+    exit 1
+fi
+
 trim=false  # note: we always set trim in script mode
 quiet=false
 read_stdin=false

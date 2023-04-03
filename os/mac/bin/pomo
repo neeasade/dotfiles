@@ -11,10 +11,15 @@
         'java.time.LocalDateTime)
 
 (def treasure
-  [;; alchemical symbols
+  [ ;; alchemical symbols
    "🜀🜁🜂🜃🜄🜅🜆🜇🜈🜉🜊🜋🜌🜍🜎🜏🜐🜑🜒🜓🜔🜕🜖🜗🜘🜙🜚🜛🜜🜝🜞🜟🜠🜡🜢🜣🜤🜥🜦🜧🜨🜩🜪🜫🜬🜭🜮🜯🜰🜱🜲🜳🜴🜵🜶🜷🜸🜹🜺🜻🜼🜽🜾🜿🝀🝁🝂🝃🝄🝅🝆🝇🝈🝉🝊🝋🝌🝍🝎🝏🝐🝑🝒🝓🝔🝕🝖🝗🝘🝙🝚🝛🝜🝝🝞🝟🝠🝡🝢🝣🝤🝥🝦🝧🝨🝩🝪🝫🝬🝭🝮🝯🝰🝱🝲🝳"
+   ;; growing stuff?
+   "🌱🪴🌲🌳🌴🌵🌾🌿️🍀🍓"
    ;; cards
-   "🂠🂡🂢🂣🂤🂥🂦🂧🂨🂩🂪🂫🂬🂭🂮🂱🂲🂳🂴🂵🂶🂷🂸🂹🂺🂻🂼🂽🂾🂿🃁🃂🃃🃄🃅🃆🃇🃈🃉🃊🃋🃌🃍🃎🃏🃑🃒🃓🃔🃕🃖🃗🃘🃙🃚🃛🃜🃝🃞🃟🃠🃡🃢🃣🃤🃥🃦🃧🃨🃩🃪🃫🃬🃭🃮🃯🃰🃱🃲🃳🃴🃵"
+   "🂠🂡🂢🂣🂤🂥🂦🂧🂨🂩🂪🂫🂬🂭🂮🂱🂲🂳🂴🂵🂶🂷🂸🂹🂺🂻🂼🂽🂾🂿🃁🃂🃃🃄🃅🃆🃇🃈🃉🃊🃋🃌🃍🃎🃏🃑🃒🃓🃔🃕🃖🃗🃘🃙🃚🃛🃜🃝🃞🃟"
+
+   ;; what are these lol
+   "🃠🃡🃢🃣🃤🃥🃦🃧🃨🃩🃪🃫🃬🃭🃮🃯🃰🃱🃲🃳🃴🃵"
    ;; chess/games
    "♔♕♖♗♘♙♚♛♜♝♞♟"
    "🩠🩡🩢🩣🩤🩥🩦🩧🩨🩩🩪🩫🩬🩭"
@@ -31,9 +36,13 @@
    ])
 
 (defn elisp-char-name [char]
-  (if (= char "꩜")
-    " ‽‽‽UNKNOWN‽‽‽"
-    (string/trim (:out (shell/sh "elisp" "-r" (format "(get-char-code-property ?%s 'name)" char))))))
+  ;; (->> (re-seq #"(U?)." "abc") (map first) (into #{}))
+  (let [treasure (first treasure)
+        treasure (into #{} (map first (re-seq #"(U?)." treasure)))]
+    (if (not (treasure char))
+      ;; " ‽‽‽UNKNOWN‽‽‽"
+      "UNKNOWN"
+      (string/trim (:out (shell/sh "elisp" "-r" (format "(get-char-code-property ?%s 'name)" char)))))))
 
 (defn bytes-to-int
   ([bytes]
@@ -48,84 +57,82 @@
                                     shift)))
                 (range 0 4)))))
 
-(defn loot [s]
-  ;; in the future, we might do something like a treasure-theme with the day
-  ;; (like today -> treasure index)
-  ;; for now just sticking to the first collection, alchemy
-  (let [treasure (first treasure)
+(defn loot
+  "string -> treasure icon"
+  [s]
+  (let [treasure (first treasure)       ; alchemy
         treasure (map first (re-seq #"(U?)." treasure))]
     (-> s
         (hash/md5)
         (bytes-to-int)
         (mod (count treasure))
         (->> (nth treasure)))))
-
-
-(def state-file "/tmp/pomo-state")
-
-(def state {})
-
 (def today
   (.format (LocalDateTime/now)
            (DateTimeFormatter/ofPattern "yyyy-MM-dd")))
 
-(defn load-state []
-  (def state
-    (if (.exists (io/file state-file))
-      (-> state-file slurp read-string)
-      {:date (today)})))
+(def state-file "/tmp/pomo-state")
 
-(defn clean-state [state]
-  (let [date (:date state)]
-    (def state
-      (if (= today date)
-        state
-        ;; reset
-        (-> date
-            (assoc :date today)
-            (assoc :done 0)
-            (assoc :goal 4))))))
+(defn load-state []
+  (let [clean-slate {:date today :done 0 :goal 4}]
+    (if-let [saved-state (and (.exists (io/file state-file))
+                              (-> state-file slurp read-string))]
+      (if (= today (:date saved-state))
+        saved-state clean-slate)
+      clean-slate)))
+
+(def state (load-state))
 
 (defn save-state []
   (->> state pr-str (spit state-file)))
 
-(load-state)
-(clean-state)
+(defn state-to-symbols []
+  (let [done (:done state)
+        goal (:goal state)
+        ;; unknown-sym (if (= "true" (System/getenv "NS_INTERACTIVE")) "‽" "꩜")
+        unknown-sym "_"
+        revealed-treasure (->> (range done)
+                               ;; seed for treasure
+                               (map (partial format "%s %s-%s" (.. java.net.InetAddress getLocalHost getHostName) today))
+                               (map loot))]
 
+    (concat revealed-treasure (repeat (- goal done) unknown-sym))))
 
-(let [[cmd & args]
-      ;; *command-line-args*
-      nil
-      ]
-  (condp = cmd
-    nil
-    "goal"
-    "cock"
+(defn summary []
+  (println (format "symbols for %s" today))
+  (->> (state-to-symbols)
+       (map (juxt identity elisp-char-name))
+       (map (partial apply format "%s %s"))
+       (string/join "\n")
+       (println)))
 
-    "nope"
-    )
-  )
+(defn status []
+  (println (string/join (state-to-symbols))))
 
+(defn status-long []
+  (println (string/join
+            "//"
+            (map
+             #(apply str (repeat 10 (format "%s " %)))
+             (state-to-symbols)))))
 
-*command-line-args*
+(defn done []
+  (def state (update state :done inc))
+  (println "!!❇ You completed a pomodoro ❇!!")
+  (println (format "You unlocked.... %s %s !\n"
+                   (nth (state-to-symbols) (dec (:done state)))
+                   (elisp-char-name (nth (state-to-symbols) (dec (:done state))))))
+  (summary)
+  (save-state))
 
-(let [symbols (->> (range pomo-done)
-                   (map (fn [i] (format "%s %s-%s"
-                                        (.. java.net.InetAddress getLocalHost getHostName)
-                                        today (inc i))))
-                   (map loot))
-      symbols (concat symbols (repeat (- pomo-goal pomo-done) "꩜"))]
+(defn goal [new-goal]
+  (def state (assoc state :goal (read-string new-goal)))
+  (println "Updated goal to %s!" new-goal)
+  (summary)
+  (save-state))
 
-  (if (= (first *command-line-args*) "status")
-    (println (string/join symbols))
-
-    ;; cli
-    (do
-      (println (format "symbols for %s" today))
-      (->> symbols
-           (map (juxt identity elisp-char-name))
-           (map (partial apply format "%s %s"))
-           (map println)
-           (doall)))))
+(apply (-> (or (first *command-line-args*) "summary")
+                  symbol resolve)
+             (rest *command-line-args*))
 
 (System/exit 0)

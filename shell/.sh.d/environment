@@ -2,11 +2,16 @@
 # this script is kind of special -- it may be sourced by outside scripts to get a world bearing.
 # (thus, speed is super important here)
 
-# if ${NEEASADE_ENV:-true}; then
-if true; then
+if ${NEEASADE_ENV:-true}; then
   set -a
 
-  # revisit (just noticed nvm shoved this in here)
+  # todo: better name?
+  NS_INTERACTIVE=false
+  case "$-" in
+    *i*) NS_INTERACTIVE=true;;
+  esac
+
+  # todo revisit (just noticed nvm shoved this in here)
   # NVM_DIR="$HOME/.nvm"
   # if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
   #   . "/opt/homebrew/opt/nvm/nvm.sh"
@@ -67,7 +72,7 @@ if true; then
   VIEW_PDF=zathura
 
   if [ -z "$TERMINAL" ]; then
-    for t in git-bash kitty xst urxvt iterm2 konsole; do
+    for t in kitty xst urxvt iterm2 konsole git-bash; do
       if has $t; then
         TERMINAL=$t
         break
@@ -95,6 +100,8 @@ if true; then
   # m1 homebrew location
   pathmunge /opt/homebrew/bin
 
+  pathmunge "/opt/homebrew/opt/findutils/libexec/gnubin"
+
   pathmunge '/run/current-system/sw/bin'
   pathmunge '/run/wrappers/bin/'
   pathmunge "$HOME/.dotfiles/theming"
@@ -107,8 +114,6 @@ if true; then
     ; do
     pathmunge "$p"
   done
-
-
 
   if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     if [ -z "$NIX_PROFILES" ]; then
