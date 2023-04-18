@@ -13,11 +13,9 @@
 
 	 (target-frame
 	  (if existing-frame
-	      (progn
-		(ns/shell-exec-dontcare
-		 (format "popup_window.sh -w %s -n" (frame-parameter existing-frame 'outer-window-id)))
-		existing-frame)
-	    (progn (ns/shell-exec-dontcare "popup_window.sh -r")
+	      (progn (sh "popup_window.sh -w %s -n" (frame-parameter existing-frame 'outer-window-id))
+		     existing-frame)
+	    (progn (sh "popup_window.sh -r")
 		   (make-frame '((minibuffer . only) (name . "emacs_dmenu_frame"))))))
 
 	 (_ (select-frame-set-input-focus target-frame))
@@ -29,14 +27,12 @@
 
 	 ;; do the thing
 	 (option (condition-case ()
-		     (ivy-read (concat prompt " ") (->> *stdin-file* f-read (s-split "\n"))
-			       :action (fn <>))
+		     (ns/pick (concat prompt " ") (->> *stdin-file* f-read (s-split "\n")))
 		   ;; if we quit out of the ivy-read just return nothing
 		   (quit nil))))
 
-    (->> (frame-parameter target-frame 'outer-window-id)
-	 (format "bspc node %s -g hidden=true")
-	 (ns/shell-exec-dontcare))
+    (sh "bspc node %s -g hidden=true"
+	(frame-parameter target-frame 'outer-window-id))
 
     ;; de-select mini-buffer on emacs
     (select-window (next-window))
@@ -47,8 +43,7 @@
 (defun ns/dmenu-inplace ()
   (let* ((prompt (ns/let-script-args (prompt-string) prompt-string)))
     (condition-case ()
-	(ivy-read (concat prompt " ") (->> *stdin-file* f-read (s-split "\n"))
-		  :action (fn <>))
+	(ns/pick (concat prompt " ") (->> *stdin-file* f-read (s-split "\n")))
       ;; if we quit out of the ivy-read just return nothing
       (quit nil))))
 

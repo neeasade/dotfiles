@@ -45,7 +45,7 @@ stdbuf -oL i3blocks -o j | \
 	    -f "$(theme -q font.panel.spec)" \
 	    -f "$(theme -q font.panel.spec):style=Bold" \
 	    -f "$(theme -q font.icon.spec)" \
-	    -f "DejaVu Sans Mono for Powerline-10" \
+	    -f "Symbola-10" \
 	    -o -1 \
 	    -o -1 \
 	    -o -4 \

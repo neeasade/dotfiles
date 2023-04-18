@@ -42,7 +42,12 @@ load_xresources() {
 
 load_bspwm() {
     bspwmrc=".config/bspwm/bspwmrc"
-    render bspwm "$bspwmrc" -p bspwm
+
+    if [ $(bspc config window_gap) -le 0 ]; then
+	render bspwm "$bspwmrc" -p bspwm -e '{:bspwm.window-gap 0}'
+    else
+	render bspwm "$bspwmrc" -p bspwm
+    fi
 
     chmod +x "$HOME/$bspwmrc"
     setsid "$HOME/$bspwmrc"
@@ -52,7 +57,7 @@ load_btag_borders() {
     elisp '(->> (list :primary :strings :assumed :faded)
   (--map (ns/make-border-color it))
   (--map (substring it 1))
-  (-map-indexed (lambda (i c) (ns/shell-exec (format "btags set ^%s color %s" (+ 1 i) c)))))' 1>/dev/null
+  (-map-indexed (lambda (i c) (sh (format "btags set ^%s color %s" (+ 1 i) c)))))' 1>/dev/null
 }
 
 load_qutebrowser() {
@@ -114,7 +119,7 @@ load_dunst() {
     # always want to kill
     pkill dunst
     refresh dunst true
-    notify-send "dunst reloaded"
+    # notify-send "dunst reloaded"
 }
 
 load_services() {
@@ -232,7 +237,7 @@ if [ -z "$*" ]; then
 	# (which unminimizes windows)
 	set -- xresources qutebrowser kitty
     elif $LINUX; then
-	set -- wm xresources picom bg gtk qutebrowser zathura jgmenu zeal btag_borders
+	set -- wm xresources picom bg gtk qutebrowser zathura jgmenu zeal btag_borders kitty
     elif $WINDOWS; then
 	set -- mintty
     fi

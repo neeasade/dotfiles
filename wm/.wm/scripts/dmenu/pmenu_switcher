@@ -6,7 +6,8 @@ sound_options() {
       desc=$(cut -d, -f1 <<< "$option")
       case "$desc" in
 	  *HDMI*) desc=HDMI;;
-	  *) desc=analog;;
+	  *Analog*) desc=analog;;
+	  *) desc=$desc;;
       esac
       printf ",%s,%s\n" "$desc" "$(cut -d, -f2 <<< "$option")"
       # add_switch "meta: sound switch $(cut -d, -f1 <<< "$option")" "$(cut -d, -f2 <<< "$option")"
@@ -48,12 +49,24 @@ Other
 EOF
 }
 
+pick2() {
+  cat<<EOF | sed 's/,/\t/g' | pmenu
+bt,SWITCH="meta: toggle bluetooth" dmenu_switcher
+sound
+$(sound_options)
+(c)misc,elisp '(ns/org-clock-into)'
+Other
+,stalonetray,bash -ic 'stalonetray'
+,screenshot,bash -ic 'fullshot'
+EOF
+}
+
 # add screenshots
 
 systemctl --user stop unclutter
 # pick
 
-a=$(pick)
+a=$(pick2)
 PMENU=t
 . "$(which dmenu_switcher)"
 add_metas >/dev/null

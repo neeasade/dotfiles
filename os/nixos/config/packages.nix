@@ -379,7 +379,7 @@ let
     zeal
     zlib
 
-    mono
+    # mono
     # ruby
   ]) ++ (with edge; [
     # joker

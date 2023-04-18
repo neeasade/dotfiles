@@ -44,6 +44,12 @@ do_monocle_slim() {
   bspc config borderless_monocle false
   bspc desktop -l monocle
   gapt $gapped
+
+
+  looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
+  case "$looking_at" in
+    Emacs*) elisp '(delete-other-windows)' ;;
+  esac
 }
 
 do_fullscreen() {

@@ -433,3 +433,7 @@ else if (NR>${pos})
 interactive_op=${1:-usage}
 shift
 $interactive_op "$@"
+
+# Local Variables:
+# sh-shell: sh
+# End:

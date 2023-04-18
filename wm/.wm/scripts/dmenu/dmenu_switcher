@@ -150,10 +150,6 @@ add_metas() {
 
     add_switch "meta: dismiss" "dismiss.sh"
 
-    # todo: add discord
-    # todo: add telegram
-
-
     load_theme() {
 	elisp -t 10 "(ns/load-theme '$1)"
 	ltheme
@@ -162,25 +158,31 @@ add_metas() {
     add_switch "meta: theme myron-mcfay" "load_theme myron-mcfay"
     add_switch "meta: theme myron-struan" "load_theme myron-struan"
 
-    find_steam() {
-	find_class Steam || steam
-    }
+    find_discord() { find_class discord || Discord ;}
+    find_steam() { find_class Steam || steam ;}
+    find_pavucontrol() { find_class pavucontrol || pavucontrol ;}
 
+    add_switch "meta: discord" "find_discord"
     add_switch "meta: steam" "find_steam"
-
-    find_pavucontrol() {
-	find_class pavucontrol || pavucontrol
-    }
-
     add_switch "meta: pavucontrol" "find_pavucontrol"
 
     find_last_irc_ping() {
 	echo todo
     }
 
+    toggle_bluetooth() {
+	if pacmd list-sinks | grep description | grep -q WH-1000XM3; then
+	    bluetoothctl disconnect 14:3F:A6:90:E2:34
+	else
+	    bluetoothctl connect 14:3F:A6:90:E2:34 &
+	    sleep 2
+	    check_headphones
+	fi
+    }
+
     add_switch "meta: connect bluetooth" "bluetoothctl connect 14:3F:A6:90:E2:34; sleep 2 && check_headphones"
     add_switch "meta: disconnect bluetooth" "bluetoothctl disconnect 14:3F:A6:90:E2:34"
-
+    add_switch "meta: toggle bluetooth" "toggle_bluetooth"
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
 
     for o in now playlist artist del bl 'filter is_long' artist_append; do
@@ -192,11 +194,6 @@ add_metas() {
     netflix() {
 	google-chrome-stable netflix.com
 	find_class "google-chrome"
-    }
-
-    discord() {
-	setsid Discord
-	find_class "discord"
     }
 
     add_switch "meta: netflix" "netflix"

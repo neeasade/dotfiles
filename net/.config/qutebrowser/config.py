@@ -17,7 +17,6 @@ config.load_autoconfig(False)
 # todo: bind cmd-e edit
 # todo: config.load
 
-
 # https://github.com/noctuid/dotfiles/blob/master/browsing/.config/qutebrowser/config.py
 def nmap(key, command):
     """Bind key to command in normal mode."""

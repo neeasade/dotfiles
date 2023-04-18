@@ -23,7 +23,7 @@ vanilla() {
     else
 	# this is faster than
 	# qutebrowser "$url"
-	qb_command ":open -t $url"
+	qb_command ":open -r -t $url"
     fi
 
     find_class qutebrowser
