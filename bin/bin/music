@@ -360,11 +360,14 @@ info() { # display the current audio progress bar and playlist length
     bottom_line=$(printf "playlist: %s | %s" "$(cat "$current_playlist")" "$(playlist_length)")
   fi
 
-  # name_length=$(wc -m <<< "$name")
-  # bottom_line_length=$(wc -m <<< "$bottom_line")
+  name_length=$(wc -c <<< "$name")
+  bottom_line_length=$(wc -c <<< "$bottom_line")
 
   name_length=${#name}
   bottom_line_length=${#bottom_line}
+
+  name_length=$(wc -L <<< "$name")
+  bottom_line_length=$(wc -L <<< "$bottom_line")
 
   w_progress=$name_length
   if (( bottom_line_length > name_length )); then
@@ -385,10 +388,12 @@ info() { # display the current audio progress bar and playlist length
 
   align_print "$name"
   mkb "${percent/.*/}" $w_progress
-  mkb "${playlist_percent/.*/}" $w_progress
+  # mkb "${playlist_percent/.*/}" $w_progress
   test -z "$bottom_line" || align_print "$bottom_line"
-  # ) | BORDER='═║═║ ╔╗╝╚' box
-  ) | BORDER='╌¦╌¦ ┭┮┶┵' box
+  ) | BORDER='═║═║ ╔╗╝╚' box
+  # ) | BORDER='╌¦╌¦ ┭┮┶┵' box
+  # ) | BORDER='─│─│ ╭╮╯╰' box
+  # ▄ # ▞
 }
 
 info2() {

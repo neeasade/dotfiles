@@ -106,6 +106,7 @@
                                :github 120}
                     :mouse {
                             ;; lemon name
+                            :network {:left "bash -ic stalonetray"}
                             :mpd {:left "player.sh toggle"
                                   :right "player.sh next"
                                   :scrolldown "mpc seek -00:00:02"
@@ -367,6 +368,7 @@
                       {:THEME_NAME "test"
                        :emacs.theme "myron-mcfay"
                        :BG_COMMAND "${HOME}/.fehbg"
+                       ;; :BG_COMMAND "bgtint"
                        ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :font.mono.family "Triplicate T4c"
                        :font.mono.family "Go Mono"
@@ -384,7 +386,7 @@
                        ;; :mkb.bar- "██▁"
                        :shell.prompt "%"
                        :x.padding 10
-                       :bspwm.window-gap 40
+                       :bspwm.window-gap 60
                        :bspwm-meta.monocle-window-percent 0.46
                        :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
                        :font.mono.size 12

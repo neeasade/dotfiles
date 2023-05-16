@@ -20,25 +20,18 @@
 
 	 (_ (select-frame-set-input-focus target-frame))
 
-	 ;; set the stuff
-	 (ivy-fixed-height-minibuffer nil)
-	 (ivy-add-newline-after-prompt nil)
-	 (ivy-height-alist '((t lambda (_caller) (frame-height))))
-
 	 ;; do the thing
 	 (option (condition-case ()
-		     (ns/pick (concat prompt " ") (->> *stdin-file* f-read (s-split "\n")))
-		   ;; if we quit out of the ivy-read just return nothing
+		     (cl-letf (((symbol-function 'ns/set-vertico-count)
+				(fn (setq vertico-count (frame-height)))))
+		       (ns/pick (concat prompt " ") (->> *stdin-file* f-read (s-split "\n"))))
+		   ;; if we quit just return nothing
 		   (quit nil))))
 
     (sh "bspc node %s -g hidden=true"
 	(frame-parameter target-frame 'outer-window-id))
 
-    ;; de-select mini-buffer on emacs
-    (select-window (next-window))
-
     option))
-
 
 (defun ns/dmenu-inplace ()
   (let* ((prompt (ns/let-script-args (prompt-string) prompt-string)))

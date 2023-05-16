@@ -10,6 +10,15 @@ gpt() { # git push current branch to <branch>
   vdo git push origin $(git_current_branch):$target_branch "$@"
 }
 
+gall() {
+  for name in $(find -maxdepth 3 -type d -name '.git'|sed 's|^./||g;s|/.git$||'); do
+    (
+      cd "$name" || exit 1
+      git -c color.status=always "$@"
+    )|sed "s|^|$(printf "\033[1;36m% 32s\033[0m" "${name}"): |"
+  done
+}
+
 alias g='git'
 alias ga='git add'
 alias gaa='git add --all'
@@ -64,48 +73,6 @@ alias gfa='git fetch --all --prune'
 alias gfo='git fetch origin'
 alias gg='git gui citool'
 alias gga='git gui citool --amend'
-
-# flow:
-
-# you have unstaged changes in files that were changed remote
-# offer to stash, pull rebase (if rebase conflicts, exit), pop
-# if no, pull rebase -- ask if there are conflicts in merge
-
-gtest() {
-  git fetch --all
-
-  branch=$(git_current_branch)
-  merge_base="$(git merge-base HEAD origin/${branch})"
-
-  unstaged_diff="$(git diff --name-only)"
-  committed_and_unstaged_diff="$(git diff --name-only $merge_base)"
-  origin_committed_diff="$(git diff --name-only $merge_base origin/$(git_current_branch))"
-
-  overlapping() {
-    return test -z "$(echo "${1}\n${2}" | sort | uniq -d)"
-  }
-
-  # verbose
-  vgit() {
-    echo git "$@"
-    git "$@"
-  }
-
-  if overlapping "$origin_committed_diff" "$unstaged_diff"; then
-    echo -n "local changes - stash and rebase? [Y/n]"
-    read r
-    if [ -z "$r" ]; then
-      vgit stash
-      vgit rebase "origin/${branch}"
-      vgit stash pop
-      return
-    fi
-  fi
-
-  if overlapping "$committed_and_unstaged_diff" "$origin_committed_diff"; then
-    echo -n "remote conflict - rebase? [Y/n]"
-  fi
-}
 
 alias ggpull='vdo git pull origin $(git_current_branch)'
 

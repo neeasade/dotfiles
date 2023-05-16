@@ -14,7 +14,7 @@ toggle player,player.sh toggle
 dismiss window,dismiss.sh
 
 ^tag(1)
-$(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
+$(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2 " " $3}' | sed 's/"//g') \
       <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
 
 # windows,^checkout(2)

@@ -6,6 +6,7 @@ pad_right() {
     line=$1
     length=$2
     plain_line=$(echo "$line" | sed 's/\[[0-9]*m//g')
+    # plain_line=$(echo "$line" | strip-color)
 
     while [ ${#plain_line} -lt $length ]; do
         line="$line "
@@ -112,6 +113,17 @@ get_title() {
     hostname=${HOSTNAME:-${hostname:-$(hostname)}}
 
     log "[3${PF_COL3:-1}m${user}${c7}@[3${PF_COL3:-1}m${hostname}" " " >&6
+}
+
+
+get_blank() {
+    log " " " " >&6
+}
+
+get_theme() {
+
+    theme=$(elisp -r '(->> (first custom-enabled-themes) (ns/str) (s-replace "-theme" "") (s-replace "myron-" "")) ')
+    log "theme" "$theme" >&6
 }
 
 get_os() {
@@ -693,7 +705,18 @@ get_memory() {
     log memory "${mem_used:-?}M / ${mem_full:-?}M" >&6
 }
 
+
+get_weather() {
+    log weather warm >&6
+}
+
+get_heart() {
+    log heart full >&6
+}
+
 get_wm() {
+    log wm "𝔟𝔰𝔭𝔴𝔪" >&6
+    return 0
     case $os in
         # Don't display window manager on macOS.
         Darwin*) ;;
@@ -835,7 +858,9 @@ get_de() {
 
 get_shell() {
     # Display the basename of the '$SHELL' environment variable.
-    log shell "${SHELL##*/}" >&6
+    # log shell "${SHELL##*/}" >&6
+    log shell "M-x shell-mode" >&6
+    # log shell "M-x shell-mode" >&6
 }
 
 get_editor() {
@@ -1184,15 +1209,29 @@ get_ascii() {
         ;;
 
         [Nn]ix[Oo][Ss]*)
+
             read_ascii 4 <<-EOF
-				${c4}  \\\\  \\\\ //
-				 ==\\\\__\\\\/ //
-				   //   \\\\//
-				==//     //==
-				 //\\\\___//
-				// /\\\\  \\\\==
-				  // \\\\  \\\\
-			EOF
+${c4}  ,           ,
+ /             \\
+((__-^^-,-^^-__))
+ \`-_---' \`---_-'
+  \`--|o\` 'o|--'
+     \  \`  /
+      ): :(
+      :o_o:
+       "-"
+EOF
+
+
+            # read_ascii 4 <<-EOF
+	    # 			${c4}  \\\\  \\\\ //
+	    # 			 ==\\\\__\\\\/ //
+	    # 			   //   \\\\//
+	    # 			==//     //==
+	    # 			 //\\\\___//
+	    # 			// /\\\\  \\\\==
+	    # 			  // \\\\  \\\\
+	    # 		EOF
         ;;
 
         [Oo]pen[Bb][Ss][Dd]*)
@@ -1412,7 +1451,8 @@ main() {
         # Disable globbing and set the positional parameters to the
         # contents of 'PF_INFO'.
         set -f
-        set +f ${PF_INFO-ascii title os host kernel uptime pkgs memory}
+        # set +f ${PF_INFO-ascii title theme host kernel uptime pkgs memory}
+        set +f ${PF_INFO-ascii blank title theme shell wm weather heart blank}
 
         # Iterate over the info functions to determine the lengths of the
         # "info names" for output alignment. The option names and subtitles
@@ -1449,7 +1489,9 @@ EOF
         else
             for info; do "get_$info"; done
         fi
-        printf "\n"
+        printf "\033[0m" # restore default fg
+	# echo -e ""
+	printf '\n'
     }
 }
 

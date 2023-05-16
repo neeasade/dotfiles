@@ -65,6 +65,13 @@ if ${NEEASADE_ENV:-true}; then
 
   set_editor vim
 
+  # m1 homebrew location
+  pathmunge /opt/homebrew/bin
+
+  pathmunge '/run/current-system/sw/bin'
+  pathmunge '/run/wrappers/bin/'
+  pathmunge "$HOME/.dotfiles/theming"
+
   # less status line
   LESS='-R -f -X -i -P ?f%f:(stdin). ?lb%lb?L/%L.. [?eEOF:?pb%pb\%..]'
   LESSCHARSET='utf-8'

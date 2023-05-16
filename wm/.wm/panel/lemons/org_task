@@ -7,6 +7,8 @@
 #     exit
 # fi
 
+exit 0
+
 WIDTH=200
 if ! org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH); then
     echo "Start emacs!"

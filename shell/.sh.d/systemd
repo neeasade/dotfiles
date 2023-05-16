@@ -24,5 +24,4 @@ alias scu-enable-now="scu-enable --now"
 alias scu-disable-now="scu-disable --now"
 alias scu-mask-now="scu-mask --now"
 
-# todo: more journal?
 alias jc-f='journalctl -fu'

@@ -21,15 +21,15 @@ rand_tile() {
     (
 	# cat /tmp/result_source.txt
 
-	rg --files "$HOME/pngsave"
+	# rg --files "$HOME/pngsave"
 
-	rg --files /media/LIVEWIRE/Archive/other/squid/
-	rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+	# rg --files /media/LIVEWIRE/Archive/other/squid/
+	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
 
-	rg --files "$HOME/git/SubtlePatterns/"
+	# rg --files "$HOME/git/SubtlePatterns/"
 
-	rg --files /home/neeasade/git/tiles-and-such
-	# rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
+	# rg --files /home/neeasade/git/tiles-and-such
+	# # rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
 
 	rg --files /home/neeasade/git/neeasade.github.io/published/assets/posts/ca_dump
 	rg --files /home/neeasade/git/neeasade.github.io/published/assets/posts/ca_dump2
@@ -50,6 +50,10 @@ silent theme -c
 background=$(theme -q color.focused.background)
 foreground=$(theme -q color.normal.assumed)
 
+foreground=$(theme -q color.normal.background)
+background=$(elisp -r "(ns/make-border-color :assumed)")
+# background=$(theme -q color.normal.assumed)
+
 # pastelish
 # background=$(elisp -r "(ns/make-border-color :alt)")
 # foreground=$(elisp -r "(ns/make-border-color :assumed)")
@@ -57,7 +61,12 @@ foreground=$(theme -q color.normal.assumed)
 
 # target='/home/neeasade/git/tiles-and-such/Solaris & CDE/solaris-raw-bitmaps/SolarisLogo.pm'
 
-echo "$target" > /tmp/result_source.txt
+cat<<EOF > /tmp/result_source.txt
+$target
+background: $background
+foreground: $foreground
+EOF
+
 rm /tmp/result.png
 
 # convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
@@ -103,10 +112,11 @@ auto() {
 # color 10 22
 # color 18 30
 # color 6 4
-# color 3 3
+# color 2 2
 auto
 
-convert /tmp/result.png -resize 120% /tmp/result.png
+
+vdo convert /tmp/result.png -resize 120% /tmp/result.png
 
 echo "$target"
 feh --bg-tile /tmp/result.png || "$0"
