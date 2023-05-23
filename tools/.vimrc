@@ -434,4 +434,10 @@ set backupdir=~/.vim_backup
 " tell vim where to put swap files
 set dir=~/.vim_backup
 
+" some colors
+highlight Visual ctermbg=10
+" nb: StatusLine is reverse fg bg
+highlight StatusLine ctermfg=15
+highlight StatusLine ctermbg=7
+
 " vim:set ft=vim et sw=2:

@@ -74,7 +74,8 @@ alias gfo='git fetch origin'
 alias gg='git gui citool'
 alias gga='git gui citool --amend'
 
-alias ggpull='vdo git pull origin $(git_current_branch)'
+# alias ggpull='vdo git pull origin $(git_current_branch)'
+alias ggpull='vdo git pull origin $(git_current_branch) --autostash'
 
 alias ggpush='vdo git push origin $(git_current_branch)'
 alias ggsup='git branch --set-upstream-to=origin/$(git_current_branch)'

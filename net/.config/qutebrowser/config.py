@@ -117,7 +117,8 @@ theme = {
             'strong': '#3f363b',
             'focused': '#544b45',
 
-            'match': '#916156', # completion and hints
+            'match': '#916156', # completion and hints (rename this alt?)
+            'faded': '#67625f', # unfocused tabs
         },
     }
 
@@ -163,8 +164,8 @@ targets = {
         'downloads.bar.bg',
         'completion.category',
 
-        'tabs.even',
-        'tabs.odd',
+        'tabs.even.bg',
+        'tabs.odd.bg',
 
         # prev: weak
         'completion.scrollbar',
@@ -186,8 +187,7 @@ targets = {
         'statusbar.url.hover.fg',
         'completion.item.selected',
 
-        'contextmenu.selected.bg',
-        'contextmenu.selected.fg',
+        'contextmenu.selected',
 
         'completion.category.border.top',
         'completion.category.border.bottom',
@@ -198,14 +198,18 @@ targets = {
     ],
 
     'weak': [
-        'contextmenu.menu.bg',
-        'contextmenu.menu.fg',
+        'contextmenu.menu',
     ],
 
     'match': [
         'completion.match.fg',
         'hints.match.fg',
     ],
+
+    'faded': [
+        'tabs.even.fg',
+        'tabs.odd.fg',
+    ]
 }
 
 # todo: fade these:

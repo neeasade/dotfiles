@@ -27,7 +27,7 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   services.postgresql = {
-    enable = true;
+    enable = false;
     package = pkgs.postgresql_12;
     enableTCPIP = true;
 

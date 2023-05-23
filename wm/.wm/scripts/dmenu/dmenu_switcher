@@ -72,10 +72,10 @@ add_emacss() { # name intentional
 	add_switch "emacs: $buffer" "emacs_find_file '$buffer'"
     done
 
-    buffers=$(elisp -r "(->> (buffer-list) (-filter (fn (not (buffer-file-name <>)))) (mapcar 'buffer-name) (ns/make-lines))")
-    for buffer in $buffers; do
-	add_switch "emacs: $buffer" "emacs_find_buffer '$buffer'"
-    done
+    # buffers=$(elisp -r "(->> (buffer-list) (-filter (fn (not (buffer-file-name <>)))) (mapcar 'buffer-name) (ns/make-lines))")
+    # for buffer in $buffers; do
+    # 	add_switch "emacs: $buffer" "emacs_find_buffer '$buffer'"
+    # done
 }
 
 add_historys() { # name intentional

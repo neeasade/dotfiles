@@ -35,7 +35,6 @@ inactive_tab_background   {{background}}
 active_border_color   {{foreground}}
 inactive_border_color {{background}}
 
-bell_border_color     {{color.focused.foreground}}
 
 
 {% for color in colors %}
