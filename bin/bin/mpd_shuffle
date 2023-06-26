@@ -25,6 +25,7 @@
                                    :out-enc "UTF-8"
                                    )) #"\n")
      ;; nb: maybe there's a modtime sort to happen here for yt imports or something
+     ;; todo: do a shuffle instead of sort if son'gs don't start with numbers
      (sort)
      (distinct)
      (group-by
@@ -33,11 +34,22 @@
              (drop-last)
              (string/join "/"))))
      (mapcat (fn [[dir songs]]
-               {dir (if (or (string/includes? dir "bandcamp")
-                            (< 4 (count songs) 17))
-                      songs
-                      (filter is-long songs))}))
+               (if (or (string/includes? dir "bandcamp")
+                       ;; (< 4 (count songs) 17)
+                       )
+                 ;; songs
+                 ;; (filter is-long songs)
+                 [[dir songs]]
+                 (let [albums (filter is-long songs)]
+                   (into []
+                         (map
+                          (fn [n]
+                            [(str dir n)
+                             [(nth albums n)]])
+                          (range (count albums))))))))
      (shuffle)
      (mapcat second)
+     ;; (map second)
      (string/join "\n")
-     (println))
+     (println)
+     )
