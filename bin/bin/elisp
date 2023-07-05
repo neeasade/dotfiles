@@ -173,8 +173,7 @@ if $trim; then
 	#     -> "~/.dotfiles/bin/bin/elisp$'\n'~/.emacs.d/recentf"
 	'"'*) result=${result:1:${#result}-2}
 		result=$(echo "$result" | sed 's/%/%%/g')
-		# replace
-		printf "$result"
+		printf -- "$result"
 		echo
 		;;
 	# just print it
