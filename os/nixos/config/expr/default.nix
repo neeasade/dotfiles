@@ -55,6 +55,7 @@
 
       xst-git = (pkgs.xst.overrideAttrs(old: {
         src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
+        # src = /home/neeasade/git/xst;
       }));
 
       lemonbar= (pkgs.lemonbar-xft.overrideAttrs(old: {
