@@ -30,12 +30,13 @@ in
       autorun = true;
       layout = "us";
 
-      synaptics = {
-        enable = true;
-        twoFingerScroll = true;
-        tapButtons = false;
-        palmDetect = true;
-      };
+      # todo: this only for laptop
+      # synaptics = {
+        # enable = true;
+        # twoFingerScroll = true;
+        # tapButtons = false;
+        # palmDetect = true;
+      # };
 
       windowManager = {
         bspwm = {

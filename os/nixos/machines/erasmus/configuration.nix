@@ -86,13 +86,6 @@ in
     opengl.driSupport32Bit = true;
     pulseaudio.support32Bit = true;
     opengl.enable = true;
-
-    #bumblebee.enable = true;
-    # nvidia testing pls
-    # nvidiaOptimus.disable = true;
-    # install nvidia drivers in addition to intel one
-    # opengl.extraPackages = [ nvidia.out ];
-    # opengl.extraPackages32 = [ nvidia32.out ];
   };
 
   environment.extraInit = ''
