@@ -406,6 +406,10 @@ shuffle_preserve_album() {
   SHUFFLE=false # prevent playlists with this in their definition from shuffling
   shuffled=$(mpd_shuffle)
   mpc clear
+  if [ -z "$shuffled" ]; then
+    echo "shuffle_preserve_album: removed everything!" >&2
+    return 1
+  fi
   mpc add <<< "$shuffled"
   mpc play
 }

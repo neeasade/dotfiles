@@ -79,6 +79,7 @@ nmap('K', 'search-prev')
 # total hack
 # todo: include this hack in the undo action/keybind
 
+# todo: this on undo, maybe url change? could be smoother for sure
 d_sync = ';;'.join([
     'tab-close',
     'set messages.timeout 1',

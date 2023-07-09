@@ -23,11 +23,11 @@
       fsType = "vfat";
     };
 
-  fileSystems."/media/LIVEWIRE" =
-    { device = "/dev/disk/by-uuid/2cf891b0-4adf-4fa0-bd80-e335303a1b13";
-      fsType = "btrfs";
-      options = [ "nofail" ];
-    };
+  # fileSystems."/media/LIVEWIRE" =
+  #   { device = "/dev/disk/by-uuid/2cf891b0-4adf-4fa0-bd80-e335303a1b13";
+  #     fsType = "btrfs";
+  #     options = [ "nofail" ];
+  #   };
 
   # fileSystems."/media/CODERED" =
   #   { device = "/dev/disk/by-uuid/8c484b3d-b026-41f9-9cbe-dd551d1aead3";
@@ -40,11 +40,12 @@
       options = [ "nofail" ];
     };
 
-  fileSystems."/media/KICKSTART" =
-    { device = "/dev/disk/by-uuid/84894ed7-8e80-49a5-8951-ac61c23a6564";
-      fsType = "btrfs";
-      options = [ "nofail" ];
-    };
+  # fileSystems."/media/KICKSTART" =
+  #   { device = "/dev/disk/by-uuid/84894ed7-8e80-49a5-8951-ac61c23a6564";
+  #     fsType = "btrfs";
+  #     options = [ "nofail" ];
+  #   };
+
   swapDevices =
     [ { device = "/dev/disk/by-uuid/8d5ee437-0eed-4723-8692-8c85305058f0"; }
     ];

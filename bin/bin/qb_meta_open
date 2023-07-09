@@ -6,6 +6,7 @@ url=$1
 
 if test -f "$url"; then
     url=$(realpath "$url")
+    url="file://${url}"
 fi
 
 . "${HOME}/.sh.d/environment"

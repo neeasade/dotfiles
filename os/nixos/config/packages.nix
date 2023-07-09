@@ -43,7 +43,7 @@ let
     nmap pciutils
     mediainfo
     direnv
-    # kdeFrameworks.networkmanager-qt
+    plasma5Packages.networkmanager-qt
     networkmanager_dmenu
     xorg.xkbcomp
     tldr
@@ -345,9 +345,17 @@ let
     # racket
     # janet
 
-    # python27
-    # python37
-    python
+    # marked insecure/EOL - later option:
+    # nixpkgs.config.permittedInsecurePackages
+            # {
+            #   nixpkgs.config.permittedInsecurePackages = [
+            #     "python-2.7.18.6"
+            #   ];
+            # }
+    # python
+
+    # python = stable python 3
+    python3
 
     # (python37.withPackages(ps: with ps; [
     #   pip # sometimes we want user level global stuff anyway maybe
@@ -403,7 +411,7 @@ let
     noto-fonts # todo: noto-emoji?
     noto-fonts-cjk
     noto-fonts-emoji
-    symbola
+    # symbola
     powerline-fonts # includes a 'Go Mono for powerline'
   ]);
 
@@ -416,7 +424,7 @@ in
   ];
 
   # "just give me something pls"
-  # environment.systemPackages = core ++ [pkgs.emacsUnstable];
+  # environment.systemPackages = core ++ [pkgs.emacs-unstable];
   # fonts.fonts = basefonts;
 
   environment.systemPackages =
@@ -424,7 +432,7 @@ in
     extra ++
     development ++
     games ++
-    # [pkgs.emacsUnstable] ++
+    # [pkgs.emacs-unstable] ++
     [];
 
   fonts.fonts =

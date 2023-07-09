@@ -47,7 +47,7 @@ in
   services.xserver.videoDrivers = ["nvidia"];
 
   services.openssh.enable = true;
-  services.openssh.passwordAuthentication = true;
+  services.openssh.settings.PasswordAuthentication = true;
 
   # boot.initrd.kernelModules = [ "wl" ];
   # boot.kernelModules = [ "kvm-intel" "wl" ];
