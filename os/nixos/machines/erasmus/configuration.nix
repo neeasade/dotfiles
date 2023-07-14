@@ -52,7 +52,6 @@ in
   # boot.initrd.kernelModules = [ "wl" ];
   # boot.kernelModules = [ "kvm-intel" "wl" ];
   # boot.extraModulePackages = [ config.boot.kernelPackages.broadcom_sta ];
-
   # boot.kernelPackages = edge.linuxPackages_zen;
 
   networking.hostName = "erasmus";

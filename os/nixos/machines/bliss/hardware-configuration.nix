@@ -19,6 +19,12 @@
       options = [ "subvol=@" ];
     };
 
+  fileSystems."/media/sidecar" =
+    { device = "/dev/disk/by-uuid/72ecafb6-26bb-4d1e-b730-838d47833339";
+      fsType = "btrfs";
+      options = [ "nofail" ];
+    };
+
   fileSystems."/boot" =
     { device = "/dev/disk/by-uuid/0FE1-4C01";
       fsType = "vfat";

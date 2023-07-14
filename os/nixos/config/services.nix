@@ -15,7 +15,6 @@ in
   ];
 
   services = {
-
     blueman = {
       enable = true;
     };
@@ -50,19 +49,19 @@ in
       };
 
       displayManager.defaultSession = "none+bspwm";
-
-
       displayManager.autoLogin.user = "neeasade";
       displayManager.autoLogin.enable = true;
 
       displayManager.lightdm = {
         enable = true;
+        greeter.enable = false;
       };
     };
 
     printing = {
       enable = true;
-      drivers = (with pkgs; [ gutenprint splix ]);
+      drivers = [ expr.hl2350 ];
+      # drivers = (with pkgs; [ gutenprint ]);
     };
 
     acpid.enable = true;

@@ -7,10 +7,9 @@
   in
     rec {
       gtkrc-reload = callPackage ./gtkrc-reload {};
+      hl2350 = callPackage ./HLL2350DW {};
 
       clj-find-usage = callPackage ./clj-find-usage {};
-
-      prod-tools = callPackage "/Users/nathan/git/nix-overlay/nix/prod-tools.nix" {};
 
      # note: won't work for ARM oof
       babashka = stdenv.mkDerivation rec {
@@ -40,6 +39,22 @@
 
         nativeBuildInputs = (with pkgs; [gcc-unwrapped.lib zlib unzip]);
       };
+
+
+      proton-ge-custom = stdenv.mkDerivation rec {
+        pname = "proton-ge-custom";
+        version = "GE-Proton8-6";
+
+        src = fetchurl {
+          url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${version}/${version}.tar.gz";
+          sha512 = "e92dcfe60b24c552a10e3218d42ef19006f388840b0df9363a6884b90356e34def6dc315862979f9192de6b27ab14725080b583043602cccd9daa498888207db";
+        };
+
+        installPhase = ''
+            mkdir -p $out
+            mv * $out/
+        '';
+        };
 
       pb-git = stdenv.mkDerivation rec {
         pname = "pb";

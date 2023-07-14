@@ -93,9 +93,9 @@ blog_add_asset() {
     return
   fi
 
-  echo cp "$2" "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
-  cp "$2" "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
-  echo "${HOME}/git/neeasade.github.io/site/assets/posts/$1"
+  echo cp "$2" "${HOME}/code/neeasade.github.io/site/assets/posts/$1"
+  cp "$2" "${HOME}/code/neeasade.github.io/site/assets/posts/$1"
+  echo "${HOME}/code/neeasade.github.io/site/assets/posts/$1"
   echo ""
 }
 
@@ -108,7 +108,7 @@ blog_add_dtop() {
   url=$1
   date=$2
 
-  git_dir="${HOME}/git/neeasade.github.io/"
+  git_dir="${HOME}/code/neeasade.github.io/"
   if [ ! -d "$git_dir" ]; then
     git clone https://github.com/neeasade/neeasade.github.io "$git_dir"
   fi

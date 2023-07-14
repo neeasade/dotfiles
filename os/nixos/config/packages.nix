@@ -37,7 +37,7 @@ let
     entr
     rofi
     cdparanoia
-    cdrkit
+    # cdrkit
     cdrtools
     # syncthing
     nmap pciutils
@@ -179,6 +179,7 @@ let
     # oomox
     # foliate
     # babashka
+    proton-ge-custom
 
     lemonbar
     # skroll # todo: maybe zscroll this
@@ -318,10 +319,10 @@ let
     lispPackages.quicklisp
     guile
 
-    lua
+    # lua
     luarocks
 
-    clang
+    # clang
     gcc
 
     # ghc
@@ -411,7 +412,7 @@ let
     noto-fonts # todo: noto-emoji?
     noto-fonts-cjk
     noto-fonts-emoji
-    # symbola
+    symbola # how to use symbola minus emojis??
     powerline-fonts # includes a 'Go Mono for powerline'
   ]);
 
@@ -426,6 +427,8 @@ in
   # "just give me something pls"
   # environment.systemPackages = core ++ [pkgs.emacs-unstable];
   # fonts.fonts = basefonts;
+
+  environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
 
   environment.systemPackages =
     core ++

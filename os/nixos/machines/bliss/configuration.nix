@@ -1,7 +1,21 @@
-# named for the galaxian women in the latter foundation series
+# named for the galaxian woman in the latter foundation series
 
 { config, pkgs, ... }:
 
+let
+  nixcfg = {
+    allowUnfree = true;
+    oraclejdk.accept_license = true;
+  };
+
+  # for bleeding edge nvidia drivers
+  nixos-edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
+  # nixos-edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) { config = nixcfg; };
+  edge-packages = nixos-edge.linuxPackages_latest;
+  # edge-packages = nixos-edge.linuxPackages_6_1;
+
+  consts = import ../../shared/consts.nix;
+in
 {
   imports =
     [ 
@@ -10,6 +24,32 @@
       ../../config/services.nix
     ];
 
+  nixpkgs.config.packageOverrides = pkgs: {
+    # swap out all of the linux packages
+    linuxPackages_latest = edge-packages;
+    nvidia_x11 = nixos-edge.nvidia_x11;
+  };
+  # line up your kernel packages at boot
+  boot.kernelPackages = edge-packages;
+
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.nvidia = {
+    # Modesetting is needed for most wayland compositors
+    modesetting.enable = false;
+    # Use the open source version of the kernel module (only if using 515.43.04+)
+    open = false;
+    nvidiaSettings = true; # provide nvidia-settings gui
+
+    # Optionally, you may need to select the appropriate driver version for your specific GPU.
+    # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    # package = config.boot.kernelPackages.nvidiaPackages.production;
+  };
+
+
+  programs.gnupg.agent.enable = true;
+  programs.gnupg.agent.pinentryFlavor  = "qt";
 
   programs.steam.enable = true;
 
@@ -45,35 +85,38 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the XFCE Desktop Environment.
-  # services.xserver.displayManager.lightdm.enable = true;
-  # services.xserver.desktopManager.xfce.enable = true;
-
   # Configure keymap in X11
   services.xserver = {
     layout = "us";
     xkbVariant = "";
   };
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
   # Enable sound with pipewire.
   sound.enable = true;
-  hardware.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
+  hardware.pulseaudio.enable = true;
+  hardware.bluetooth.enable = true;
 
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
+  security.rtkit.enable = true;
+
+  hardware.opengl = {
+    enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
   };
+
+
+  # services.pipewire = {
+  #   enable = true;
+  #   alsa.enable = true;
+  #   alsa.support32Bit = true;
+  #   pulse.enable = true;
+  #   # If you want to use JACK applications, uncomment this
+  #   #jack.enable = true;
+
+  #   # use the example session manager (no others are packaged yet so this is enabled by default,
+  #   # no need to redefine it in your config for now)
+  #   #media-session.enable = true;
+  # };
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -84,8 +127,7 @@
     extraGroups= [
       "video" "wheel" "disk" "audio" "networkmanager" "systemd-journal" "vboxusers" "cdrom" "docker"
     ];
-    home="/home/neeasade";
-    # home = consts.home;
+    home = consts.home;
     shell="/run/current-system/sw/bin/bash";
     initialPassword="password";
   };
@@ -105,9 +147,32 @@
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
+  services.syncthing = {
+      enable = true;
+      openDefaultPorts = true;
+      guiAddress = "127.0.0.1:8385";
 
-  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
-  services.xserver.videoDrivers = ["nvidia"];
+      # Run as local user
+      user = consts.user;
+      dataDir = "${consts.home}/.local/share/Syncthing";
+
+        overrideDevices = true;
+        devices = builtins.removeAttrs consts.syncthingDevices [ "bliss" ];
+
+        overrideFolders = true;
+
+        folders.main = {
+          enable = true;
+          path = "${consts.home}/sync/main";
+          devices = [ "trouw" "geloof" ];
+        };
+
+        folders.orgzly = {
+          enable = true;
+          path = "${consts.home}/sync/orgzly";
+          devices = [ "trouw" "geloof" "phone"];
+        };
+    };
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
