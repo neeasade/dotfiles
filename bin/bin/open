@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+
+. ~/.sh.d/environment
+. ~/.sh.d/environment_emacs
+
+log() {
+    silent printf '%s' "$*"
+    # printf '%s\n' "$*"
+}
+
+# text/html: part1, part2. handle differently, prefer part2, it's more specific:
+declare -A part1_rules=(
+	# ["image"]="meh,${BROWSER}"
+	["image"]="meh"
+	["text"]="$EDITOR"
+)
+
+declare -A part2_rules=(
+	["html"]="$BROWSER"
+	["pdf"]="okular,zathura,preview,${BROWSER}"
+)
+
+declare -A remaps=(
+	# for collapsing into targets
+	["message/rfc822"]="text/html" # mhtml
+)
+
+real_open() {
+    if "$MAC"; then
+	og open "$1"
+    else
+	xdg-open "$1"
+    fi
+}
+
+act() {
+    target=$1
+    target_type=$(file --mime-type -b "$target")
+
+    if [ ! -f "$target" ]; then
+	echo "not found! $target" >&2
+    fi
+
+    if [ -n "${remaps["$target_type"]}" ]; then
+	log "remapping type: $target_type to ${remaps["$target_type"]} "
+	target_type=${remaps["$target_type"]}
+    fi
+
+    log "type: $target_type"
+    IFS='/' read -r P1 P2 <<< "$target_type"
+
+    if [ -n "${part2_rules["$P2"]}" ]; then
+	mapfile -td \, potential_openers < <(printf "%s\0" "${part2_rules["$P2"]}")
+    elif [ -n "${part1_rules["$P1"]}" ]; then
+	mapfile -td \, potential_openers < <(printf "%s\0" "${part1_rules["$P1"]}")
+    fi
+
+    for bin in "${potential_openers[@]}" real_open; do
+	if has "$bin"; then
+	    "$bin" "$target"
+	    exit 0
+	fi
+    done
+}
+
+if [ "$*" = last ]; then
+    set -- "$(ls -t 1)"
+fi
+
+for f in "$@"; do
+    act "$f"
+done
+
+# later: as type
+# # the ':' in front means the flag takes an arg
+# while getopts a:reh flag; do
+#     case $flag in
+#         w) mimetype=$OPTARG;;
+#         r) some_thing;;
+#         e) print_env;;
+#         h) usage;;
+#         *) usage;;
+#     esac
+# done
+
+# this shift at the end is to reset the args to the env of getopts parsing
+# shift $((OPTIND-1))
+
+# if "$MAC"; then
+#     og open "$@"
+#     exit $?
+# fi
