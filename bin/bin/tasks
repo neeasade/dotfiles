@@ -1,0 +1,13 @@
+#!/usr/bin/env elisp
+
+(llet [nodes (->> (ns/get-notes-nodes 'ns/org-scheduled-past-todo 'ns/org-scheduled-today)
+		  (-sort 'ns/org-outdated-sort-node)
+		  ;; (-sort (lambda (&rest nodes)
+		  ;;          (llet [(d1 d2) (-map 'ns/headline-date nodes)]
+		  ;;                (ts< d1 d2))))
+		  )]
+
+      (->> nodes
+           (--map (-> it org-ml-headline-get-path -last-item))
+           (--map (format "- %s" it))
+           (ns/make-lines)))
