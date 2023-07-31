@@ -17,7 +17,8 @@ steam_app_242920
 Google-chrome
 dota2
 factorio
-Wine'
+Wine
+Dolphin'
 
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
@@ -33,6 +34,13 @@ Wine'
 do_monocle_slim() {
   ltheme bg &
 
+  (
+    looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
+    case "$looking_at" in
+      Emacs*) elisp '(delete-other-windows)' ;;
+    esac
+  ) &
+
   bspc query -N -n focused.fullscreen && bspc node -t ~fullscreen
   bspc node -t tiled
 
@@ -44,12 +52,6 @@ do_monocle_slim() {
   bspc config borderless_monocle false
   bspc desktop -l monocle
   gapt $gapped
-
-
-  looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
-  case "$looking_at" in
-    Emacs*) elisp '(delete-other-windows)' ;;
-  esac
 }
 
 do_fullscreen() {

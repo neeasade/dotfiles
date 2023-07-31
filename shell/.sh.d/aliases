@@ -5,6 +5,8 @@
 # let's see if this is too generic
 # alias open='xdg-open'
 
+alias mimetype='file --mime-type -b'
+
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
 alias grep="grep --color=auto"
 alias java='java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'

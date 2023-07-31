@@ -11,7 +11,9 @@ if [ "$(hostname)" = bliss ]; then
     # https://wiki.archlinux.org/title/NVIDIA/Troubleshooting#Avoid_screen_tearing
     nvidia-settings --assign CurrentMetaMode="nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }"
 
-    xrandr --output DP-0 --mode 3840x2160 --rate 120.00
+    if xrandr | grep -q 'DP-0 connected'; then
+	xrandr --output DP-0 --mode 3840x2160 --rate 120.00
+    fi
 
     # don't go to sleep pls
     xset -dpms

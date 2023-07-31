@@ -1,4 +1,4 @@
-~nix~ is pretty neat.
+~nix~ is pretty neat. It's the best worst thing.
 
 ** Setup
 
@@ -19,12 +19,11 @@ sudo ln -s $(readlink -f ./machines/$(hostname)/configuration.nix) /etc/nixos/co
 
 ... and many others
 
-** Machine Naming Scheme
+** Machine mapish
 
-Ships from [[https://en.wikipedia.org/wiki/William_Adams_(sailor,_born_1564)#Expedition_to_the_Far_East][this expedition]], interest stemming from Erasmus as described in the book Shogun.
-
-| erasmus (named for the Desiderius Erasmus) | desktop                     |
-| trouw (Loyalty/Faithful)                   | vps                         |
-| geloof (Faith)                             | laptop                      |
-| hoope (hope)                               | (unused) future ARM laptop? |
-| boodschap (message/tiding)                 | (unused)                    |
+| name    | type                 |
+|---------+----------------------|
+| bliss   | daily driver desktop |
+| erasmus | old desktop (rip)    |
+| trouw   | vps                  |
+| geloof  | laptop               |

@@ -3,10 +3,22 @@
 . "$HOME/.sh.d/environment"
 
 launch() {
-    vdo setsid nohup "$*" &
+    vdo setsid nohup "$@" &
 }
 
-panelt
+if ! lsusb | grep -q Keyboard; then
+  systemctl --user disable dunst
+  systemctl --user stop dunst
+  systemctl --user disable panel
+  systemctl --user stop panel
+  # launch steam -bigpicture
+  gapt false 0
+
+  pegasus-fe
+  exit 0
+fi
+
+panelt true
 ltheme bg
 launch emacs
 
@@ -23,3 +35,4 @@ done
 
 # launch $TERMINAL
 # colemak
+
