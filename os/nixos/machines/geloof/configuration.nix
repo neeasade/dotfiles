@@ -95,7 +95,6 @@ in
   # todo: was there a reason for exposing these here
   networking.firewall.allowedTCPPorts = [ 22 80 ];
 
-
   services.syncthing = {
       enable = true;
       openDefaultPorts = true;

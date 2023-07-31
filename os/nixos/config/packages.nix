@@ -1,24 +1,7 @@
-{ config, pkgs, lib, ...}:
+{ pkgs, edge, expr, ...}:
 
 let
-  nixcfg = {
-    allowUnfree = true;
-    oraclejdk.accept_license = true;
-  };
-
-  # pkgs = import (fetchTarball https://github.com/nixos/nixpkgs-channels/archive/nixos-19.09.tar.gz) { config = nixcfg; };
   stable = pkgs; # controlled by root nix-channel entry
-  unstable = stable;
-  edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
-  # nur = import (builtins.fetchTarball "https://github.com/nix-community/NUR/archive/master.tar.gz") {inherit pkgs;};
-
-  # unstable = pkgs;
-  # edge = pkgs;
-
-  expr = import ./expr { inherit pkgs lib unstable edge; };
-
-  # pkgs = stable; # edge = rolling;
-  # rolling = stable;
 
   core = (with stable; [
     picom
@@ -26,7 +9,7 @@ let
     lsof
     redshift
 
-    nix-direnv # note: depends on nixpkgs >20.03
+    nix-direnv
 
     pinentry_qt5
 
@@ -34,12 +17,15 @@ let
 
     leiningen clojure
 
+    dmenu
+
     entr
     rofi
+
     cdparanoia
     # cdrkit
     cdrtools
-    # syncthing
+
     nmap pciutils
     mediainfo
     direnv
@@ -159,9 +145,6 @@ let
     blueman
     pasystray
     pdftk
-  ]) ++ (with unstable; [
-  # ]) ++ (
-    qutebrowser
     zoom-us
 
     dunst dzen2
@@ -187,11 +170,9 @@ let
     pfetch-neeasade
     colort-git
 
-    pb-git
-    mpvc-git
+    pb
+    # mpvc-git
     xst-git
-    dmenu
-    gtkrc-reload
     neeasade-opt
     txth
     wmutils-core-git
@@ -201,6 +182,7 @@ let
     (pmenu.overrideAttrs(old: {
       src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master"; };
     }))
+    pegasus-frontend
 
     # pmenu
 
@@ -252,6 +234,7 @@ let
     neovim
     pcmanfm
     texlive.combined.scheme-full
+    discord
   ]);
 
   games = (with stable; [
@@ -291,15 +274,7 @@ let
     # )
 
     # steam
-
-  ]) ++ (with unstable; [
-    # openmw-tes3mp
-    # steam
   ]) ++ (with edge; [
-    # (steam.override { extraProfile = ''unset VK_ICD_FILENAMES''; })
-    steam
-    # ()
-    discord
   ]);
 
   development = (with stable; [
@@ -343,16 +318,17 @@ let
     rustfmt
     # rustracer
 
-    # racket
-    # janet
+    racket
+    janet
 
     # marked insecure/EOL - later option:
     # nixpkgs.config.permittedInsecurePackages
-            # {
-            #   nixpkgs.config.permittedInsecurePackages = [
-            #     "python-2.7.18.6"
-            #   ];
-            # }
+    # {
+    #   nixpkgs.config.permittedInsecurePackages = [
+    #     "python-2.7.18.6"
+    #   ];
+    # }
+
     # python
 
     # python = stable python 3
@@ -409,10 +385,10 @@ let
     twemoji-color-font
     # font-awesome-ttf
     font-awesome
-    noto-fonts # todo: noto-emoji?
+    noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    symbola # how to use symbola minus emojis??
+    symbola
     powerline-fonts # includes a 'Go Mono for powerline'
   ]);
 
@@ -435,7 +411,7 @@ in
     extra ++
     development ++
     games ++
-    # [pkgs.emacs-unstable] ++
+    [pkgs.emacs-unstable] ++
     [];
 
   fonts.fonts =

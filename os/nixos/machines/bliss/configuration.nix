@@ -9,25 +9,29 @@ let
   };
 
   # for bleeding edge nvidia drivers
-  nixos-edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
+  # nixos-edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/d6412390c2b9405db4e9d0fe43677f60a0a5b1a6.tar.gz) { config = nixcfg; };
+  edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
+  # nixos-edge = import (fetchTarball https://github.com/neeasade/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   # nixos-edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) { config = nixcfg; };
-  edge-packages = nixos-edge.linuxPackages_latest;
+
+  edge-packages = edge.linuxPackages_latest;
   # edge-packages = nixos-edge.linuxPackages_6_1;
 
+  expr = import ../../config/expr/default.nix {inherit pkgs edge;};
   consts = import ../../shared/consts.nix;
 in
 {
   imports =
     [ 
       ./hardware-configuration.nix
-      ../../config/packages.nix
-      ../../config/services.nix
+      (import ../../config/packages.nix {inherit pkgs edge expr;})
+      (import ../../config/services.nix {inherit pkgs expr;})
     ];
 
   nixpkgs.config.packageOverrides = pkgs: {
     # swap out all of the linux packages
     linuxPackages_latest = edge-packages;
-    nvidia_x11 = nixos-edge.nvidia_x11;
+    nvidia_x11 = edge.nvidia_x11;
   };
   # line up your kernel packages at boot
   boot.kernelPackages = edge-packages;
@@ -43,7 +47,7 @@ in
 
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
-    package = config.boot.kernelPackages.nvidiaPackages.beta;
+    package = config.boot.kernelPackages.nvidiaPackages.latest;
     # package = config.boot.kernelPackages.nvidiaPackages.production;
   };
 

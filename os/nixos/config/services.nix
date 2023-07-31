@@ -1,8 +1,5 @@
-{ config, pkgs, ...}:
+{ pkgs, expr, ...}:
 
-let
-  expr = import ./expr { inherit pkgs; };
-in
 {
   # for nix-direnv:
   nix.extraOptions = ''

@@ -1,131 +1,81 @@
-{ pkgs ? import <nixpkgs> {},
-  edge ? import <nixpkgs>, ... }: with pkgs;
-  let
-    # todo: no let
-    _ = "_";
-    # edge_graal =
-  in
-    rec {
-      gtkrc-reload = callPackage ./gtkrc-reload {};
-      hl2350 = callPackage ./HLL2350DW {};
+{ edge, pkgs, ... }: with pkgs;
+rec {
+  hl2350 = callPackage ./HLL2350DW {};
 
-      clj-find-usage = callPackage ./clj-find-usage {};
+  proton-ge-custom = stdenv.mkDerivation rec {
+    pname = "proton-ge-custom";
+    version = "GE-Proton8-9";
 
-     # note: won't work for ARM oof
-      babashka = stdenv.mkDerivation rec {
-        name = "babashka";
+    src = fetchurl {
+      url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${version}/${version}.tar.gz";
+      sha512 = "b017f55fcfb8f5245c3f025eefdf5797ca5b8131eb892c5470baddd3639abaa189b8c9b46ea1f56c4a5683028d0c8f4840ae5fc845462e1ddecfc4a086c3d46b";
+    };
 
-        # NB: regenerate with nix-prefetch-url <zip url>
-        src = (fetchurl {
-          url = "https://github.com/babashka/babashka/releases/download/v0.2.10/babashka-0.2.10-linux-amd64.zip";
-          sha256 = "0s24jzmh7qdcc9kdfd4lhcdh9ihgvb32wy8rbh9xdmg2izvwnrpa";
-        });
+    installPhase = ''mkdir -p $out; mv * $out/ '';
+  };
 
-        unpackPhase = "unzip $src";
+  mpvc-git = stdenv.mkDerivation rec {
+    pname = "mpvc";
+    version = "git";
 
-        # note: the chmod is only needed when using direct path to local executable
-        patchPhase = ''
-            patchelf --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" ./bb
-            new_rpath=$(echo "$NIX_LDFLAGS" | tr ' ' $'\n' | grep "^-L" | sed -E 's/^-L/:/' | tr -d $'\n')
-            patchelf --set-rpath "$new_rpath" ./bb
-        '';
+    src = builtins.fetchGit {url = "https://github.com/lwillets/mpvc/"; ref = "master"; };
+    installPhase = ''PREFIX="$out" extras/mpvc-installer install'';
+  };
 
-        dontBuild = true;
+  pb = stdenv.mkDerivation rec {
+    pname = "pb";
+    version = "1.0.0";
+    meta.description = "a nice pastebin script";
 
-        installPhase = ''
-            mkdir -p $out/bin
-            cp bb $out/bin
-        '';
-
-        nativeBuildInputs = (with pkgs; [gcc-unwrapped.lib zlib unzip]);
-      };
+    src = builtins.fetchGit {url = "https://github.com/syntax-samurai/pb/"; ref = "master"; };
+    installPhase = ''install -D -m +rx ./pb $out/bin/pb'';
+  };
 
 
-      proton-ge-custom = stdenv.mkDerivation rec {
-        pname = "proton-ge-custom";
-        version = "GE-Proton8-6";
+  xst-git = (pkgs.xst.overrideAttrs(old: {
+    # src = /home/neeasade/code/xst;
+    src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
+  }));
 
-        src = fetchurl {
-          url = "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/${version}/${version}.tar.gz";
-          sha512 = "e92dcfe60b24c552a10e3218d42ef19006f388840b0df9363a6884b90356e34def6dc315862979f9192de6b27ab14725080b583043602cccd9daa498888207db";
-        };
+  lemonbar = (pkgs.lemonbar-xft.overrideAttrs(old: {
+    src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc"; };
+  }));
 
-        installPhase = ''
-            mkdir -p $out
-            mv * $out/
-        '';
-        };
+  colort-git = (pkgs.colort.overrideAttrs(old: {
+    src = builtins.fetchGit { url = "https://github.com/neeasade/colort"; ref = "master"; };
+  }));
 
-      pb-git = stdenv.mkDerivation rec {
-        pname = "pb";
-        version = "1.0.0";
+  txth = (pkgs.txtw.overrideAttrs(old: {
+    src = builtins.fetchGit { url = "https://github.com/neeasade/txth"; ref = "master"; };
+  }));
 
-        src = builtins.fetchGit {url = "https://github.com/syntax-samurai/pb/"; ref = "master"; };
-        installPhase = ''install -D -m +rx ./pb $out/bin/pb'';
+  bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
+    src = builtins.fetchGit {url = "https://github.com/neeasade/bspwm"; ref = "master";};
+  }));
 
-        meta = {
-          description = "a nice pastebin script";
-        };
-      };
+  pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
+    src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };
+  }));
 
-      xst-git = (pkgs.xst.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
-        # src = /home/neeasade/git/xst;
-      }));
+  qutebrowser-git = (pkgs.qutebrowser.overrideAttrs(old: {
+    src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "master"; };
+  }));
 
-      lemonbar= (pkgs.lemonbar-xft.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc"; };
-      }));
+  wmutils-opt-git = (pkgs.wmutils-opt.overrideAttrs(old: {
+    buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
+    src = builtins.fetchGit {url = "https://github.com/wmutils/opt"; ref = "master"; };
+  }));
 
-      colort-git = (pkgs.colort.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/neeasade/colort"; ref = "master"; };
-      }));
+  wmutils-core-git = (pkgs.wmutils-core.overrideAttrs(old: {
+    src = builtins.fetchGit {url = "https://github.com/wmutils/core"; ref = "master"; };
+  }));
 
-      mpvc-git = (pkgs.mpvc.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/lwilletts/mpvc"; ref = "master"; };
-      }));
+  neeasade-opt = (pkgs.wmutils-opt.overrideAttrs(old: {
+    buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
+    src = builtins.fetchGit {url = "https://github.com/neeasade/opt"; ref = "master"; };
+  }));
 
-      txth = (pkgs.txtw.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/neeasade/txth"; ref = "master"; };
-      }));
-
-      dmenu = (pkgs.dmenu.overrideAttrs(old: {
-        patches = [];
-        src = builtins.fetchGit {url = "https://github.com/neeasade/dmenu"; ref = "master"; };
-      }));
-
-      bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
-        src = builtins.fetchGit {
-	    url = "https://github.com/neeasade/bspwm";
-	    ref = "master";
-	};
-      }));
-
-      pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };
-      }));
-
-      qutebrowser-git = (pkgs.qutebrowser.overrideAttrs(old: {
-        src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "master"; };
-      }));
-
-      wmutils-opt-git = (pkgs.wmutils-opt.overrideAttrs(old: {
-        buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
-        src = builtins.fetchGit {url = "https://github.com/wmutils/opt"; ref = "master"; };
-      }));
-
-      wmutils-core-git = (pkgs.wmutils-opt.overrideAttrs(old: {
-        buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil pkgs.xcb-util-cursor ];
-        src = builtins.fetchGit {url = "https://github.com/wmutils/core"; ref = "master"; };
-      }));
-
-      neeasade-opt = (pkgs.wmutils-opt.overrideAttrs(old: {
-        buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
-        src = builtins.fetchGit {url = "https://github.com/neeasade/opt"; ref = "master"; };
-      }));
-
-      xdo-git = (
-        pkgs.xdo.overrideAttrs(old: {
-          src = builtins.fetchGit {url = "https://github.com/baskerville/xdo"; ref = "master"; };
-        }));
-    }
+  xdo-git = (pkgs.xdo.overrideAttrs(old: {
+    src = builtins.fetchGit {url = "https://github.com/baskerville/xdo"; ref = "master"; };
+  }));
+}
