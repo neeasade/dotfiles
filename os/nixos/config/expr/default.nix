@@ -31,22 +31,8 @@ rec {
     installPhase = ''install -D -m +rx ./pb $out/bin/pb'';
   };
 
-
-  xst-git = (pkgs.xst.overrideAttrs(old: {
-    # src = /home/neeasade/code/xst;
-    src = builtins.fetchGit {url = "https://github.com/neeasade/xst"; ref = "master"; };
-  }));
-
-  lemonbar = (pkgs.lemonbar-xft.overrideAttrs(old: {
-    src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc"; };
-  }));
-
   colort-git = (pkgs.colort.overrideAttrs(old: {
     src = builtins.fetchGit { url = "https://github.com/neeasade/colort"; ref = "master"; };
-  }));
-
-  txth = (pkgs.txtw.overrideAttrs(old: {
-    src = builtins.fetchGit { url = "https://github.com/neeasade/txth"; ref = "master"; };
   }));
 
   bspwm-git = (pkgs.bspwm.overrideAttrs(old: {
@@ -55,10 +41,6 @@ rec {
 
   pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
     src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };
-  }));
-
-  qutebrowser-git = (pkgs.qutebrowser.overrideAttrs(old: {
-    src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "master"; };
   }));
 
   wmutils-opt-git = (pkgs.wmutils-opt.overrideAttrs(old: {
@@ -75,7 +57,10 @@ rec {
     src = builtins.fetchGit {url = "https://github.com/neeasade/opt"; ref = "master"; };
   }));
 
-  xdo-git = (pkgs.xdo.overrideAttrs(old: {
-    src = builtins.fetchGit {url = "https://github.com/baskerville/xdo"; ref = "master"; };
-  }));
+  # TODO oomox
+  # gdk_pixbuf
+  # glib.dev
+  # gtk-engine-murrine
+  # gtk3
+  # sassc
 }

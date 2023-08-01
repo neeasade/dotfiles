@@ -1,287 +1,173 @@
 { pkgs, edge, expr, ...}:
 
 let
-  stable = pkgs; # controlled by root nix-channel entry
-
-  core = (with stable; [
-    picom
-    dos2unix
-    lsof
-    redshift
-
-    nix-direnv
-
-    pinentry_qt5
-
-    nodejs # see repo:debounce.js
-
-    leiningen clojure
-
-    dmenu
-
-    entr
-    rofi
-
-    cdparanoia
-    # cdrkit
-    cdrtools
-
-    nmap pciutils
-    mediainfo
-    direnv
-    plasma5Packages.networkmanager-qt
-    networkmanager_dmenu
-    xorg.xkbcomp
-    tldr
-    toilet
-    cowsay
-    fortune
-    cmatrix
-    cava
-    inotify-tools
+  # eg a vps
+  bare = (with pkgs; [
+    bc
+    curl
+    file
+    gitAndTools.gitFull
+    hfsprogs
+    htop
     irssi
-    glxinfo
-    xorg.xdpyinfo
-    gnupg
+    jq
+    lsof
+    nmap
+    ntfs3g
+    p7zip
+    parallel
+    screen
+    tmux
+    unrar
+    unzip
+    vim
+    wget
+  ]);
+
+  # stuff I would be annoyed at missing when I reached for it
+  cli = bare ++ (with pkgs; [
+    babashka
+    bfg-repo-cleaner
+    cron
+    dash
+    direnv
+    dos2unix
+    entr
+    expect
+    fd
+    ffmpeg
+    fzf
+    graphviz
+    imagemagick
+    inetutils
+    inotify-tools
+    libnotify
+    lm_sensors
+    lsof
+    mediainfo
+    nix-direnv
+    nix-prefetch-scripts
+    openssl
+    pandoc
+    pass
+    patchelf
+    pciutils
+    # perf
+    pkgconfig
+    playerctl
+    ponymix
+    psmisc
+    pup
+    ripgrep
+    socat
+    sqlite
+    stow
+    tldr
+    tree
+    xurls
+    yq
+    zip
+    zsh
+  ]);
+
+  # Desktop setup
+  ui = cli ++ (with pkgs; [
     arandr
     aspell
-    stalonetray
-    networkmanagerapplet
     aspellDicts.en
     bash-completion
-    bc
+    blueman
+    deluge
+    dmenu
+    dunst
+    dzen2
+    feh
+    firefox
+    glxinfo
+    gnupg
+    gnutls # for circe
+    go-mtpfs
+    google-chrome
+    gparted
+    hsetroot
     i3blocks
+    i3lock
+    jgmenu
+    kitty
+    libreoffice
+    lxappearance
+    maim
+    meh
+    mpc_cli
+    mpd
+    mpv
+    mumble
+    networkmanager_dmenu
+    networkmanagerapplet
+    nodejs # see repo:debounce.js
+    okular
+    pasystray
+    pavucontrol
+    picom
+    pinentry_qt5
+    plasma5Packages.networkmanager-qt
+    redshift
+    rofi
+    slop
+    stalonetray
+    sxhkd
+    unclutter
+    usbutils
+    vlc
+    wesnoth
+    wmname
+    x11idle
+    xclip
+    xdotool
+    xfce.thunar
+    xfontsel
+    xorg.xdpyinfo
+    xorg.xev
+    xorg.xkbcomp
+    xorg.xkbcomp
+    xorg.xmodmap
+    xorg.xprop
+    xorg.xwininfo
+    xdo
+    xtitle
+    (lemonbar-xft.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc"; };}))
+    (qutebrowser.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "main"; };}))
+  ]) ++ (with expr; [
+    pfetch-neeasade
+    neeasade-opt
+    wmutils-core-git
+    wmutils-opt-git
+    pb
+  ]);
+
+  # anything else
+  fat = ui ++ (with pkgs; [
+    ### GAMES
+    runelite
+    nethack
+    dolphinEmu
+    # jstest
+    qjoypad
+    wine
+    minecraft
+    openmw
+
+    ### DEV
 
     # covered by gcc(?)
     # there were a few collisions between the two
     binutils
     sharutils
 
-    cron
-    curl
-    dash
-    expect
-    feh
-    file
-    gitAndTools.gitFull
-
-    go-mtpfs
-    gparted
-    hfsprogs
-    hsetroot
-    htop
-    imagemagick
-    jq
-    libnotify
-    lm_sensors
-    lxappearance
-    maim
-    mpc_cli
-    mpd
-    # mpdcron
-    mpv
-    mu
-    mumble
-    nix-prefetch-scripts
-
-    wayland
-    wlroots
-    wayland-protocols
-
-    ntfs3g
-    openssl
-    # telnet
-    inetutils
-    p7zip
-    parallel
-    pass
-    patchelf
-    pavucontrol
-    pkgconfig
-    ponymix
-    psmisc
-    screen
-    slop
-    socat
-    stow
-    tmux
-    tree
-    unclutter
-    unrar
-    unzip
-    zip
-    usbutils
-    vim
-    vlc
-    wget
-    wmname
-    xclip
-    xorg.xev
-    xorg.xkbcomp
-    xorg.xmodmap
-    xfontsel
-    xurls
-
-    zathura
-
-    calibre
-
-    zsh
-
-    playerctl
-
-    mesa_drivers
-    libGL
-
-    gnome3.gnome-terminal
-    gnutls # for circe
-
-    fd ripgrep
-    google-chrome
-    rxvt_unicode
-
-    yq
-
-    blueman
-    pasystray
-    pdftk
-    zoom-us
-
-    dunst dzen2
-    ffmpeg
-    i3lock meh
-    sxhkd txtw
-    x11idle xdotool
-    xfce.thunar
-    xorg.xprop
-    xorg.xwininfo
-    xtitle
-    pinta
-  ]) ++ ( with expr; [
-    # drawterm
-    # oomox
-    # foliate
-    # babashka
-    proton-ge-custom
-
-    lemonbar
-    # skroll # todo: maybe zscroll this
-
-    pfetch-neeasade
-    colort-git
-
-    pb
-    # mpvc-git
-    xst-git
-    neeasade-opt
-    txth
-    wmutils-core-git
-    wmutils-opt-git
-    xdo-git
-  ]) ++ (with edge; [
-    (pmenu.overrideAttrs(old: {
-      src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master"; };
-    }))
-    pegasus-frontend
-
-    # pmenu
-
-    # pmenu
-    babashka
-    kitty
-    youtube-dl
-  ]);
-
-  extra = (with stable; [
-    jgmenu
-    mediainfo
-    okular
-    oil
-
-    tiled love_11 luajit
-    filezilla
-
-    sqlitebrowser
-    pup jo
-    screenkey
-    byzanz
-
-    # oomox
-    # gdk_pixbuf
-    # glib.dev
-    # gtk-engine-murrine
-    # gtk3
-    # sassc
-
-    # obs
-    cloc
-
-    pandoc
-    imagemagick
-    graphviz
-    audacity
-    bfg-repo-cleaner
-    # picom
-    deluge
-    firefox
-    fzf
-    gimp
-    gnome3.gedit
-    inkscape
-    leafpad
-    libreoffice
-    libtiff
-    neovim
-    pcmanfm
-    texlive.combined.scheme-full
-    discord
-  ]);
-
-  games = (with stable; [
-    runelite
-    nethack
-    wesnoth
-    dolphinEmu
-
-    mesa_drivers
-    mesa_glu
-
-    # jstest
-    qjoypad
-
-    wine
-    # support 64-bit only
-    # (wine.override { wineBuild = "wine64"; })
-    # wineStaging
-    # wineUnstable
-    # (wine.override { wineBuild = "wineWow"; })
-
-    minecraft
-    openmw
-    # drawpile
-    # steam
-    # steam-run-native
-
-    # (steam.override {
-    # extraPkgs = pkgs: [
-    #   pkgs.openssl_1_1
-    #   pkgs.libnghttp2
-    #   pkgs.libidn2
-    #   pkgs.rtmpdump
-    #   pkgs.libpsl
-    # ];
-    # }
-    # )
-
-    # steam
-  ]) ++ (with edge; [
-  ]);
-
-  development = (with stable; [
+    leiningen
+    clojure
     # perf
     circleci-cli
-
-    # build tools
     meson
     cmake
     ninja
@@ -289,49 +175,29 @@ let
     automake
     gnumake
 
-    # lisps
     sbcl
     lispPackages.quicklisp
     guile
 
-    # lua
     luarocks
 
-    # clang
     gcc
 
     # ghc
     go
 
-    rpm
-
-    # JVM
     gradle
     maven
     jdk8
     stack
-    boot
 
-    # rust
     cargo
     rustc
     rustfmt
-    # rustracer
-
     racket
     janet
 
-    # marked insecure/EOL - later option:
-    # nixpkgs.config.permittedInsecurePackages
-    # {
-    #   nixpkgs.config.permittedInsecurePackages = [
-    #     "python-2.7.18.6"
-    #   ];
-    # }
-
-    # python
-
-    # python = stable python 3
+    # python = pkgs python 3
     python3
 
     # (python37.withPackages(ps: with ps; [
@@ -344,8 +210,12 @@ let
     #   virtualenv
     # ]))
 
-    # approach: use pipenv or pyenv to bring in python packages
-    # use nix-shell to get the stuff they depend on/reference pip)
+    # nixpkgs.config.permittedInsecurePackages
+    # {
+    #   nixpkgs.config.permittedInsecurePackages = [
+    #     "python-2.7.18.6"
+    #   ];
+    # }
 
     # python27
     # (python35.withPackages(ps: with ps; [
@@ -358,64 +228,81 @@ let
     #   # pyqt5
     # ]))
 
-    # other
-    emacs
+    ### WHATEVER
+    (xst.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/gnotclub/xst"; ref = "master"; };}))
+    audacity
+    byzanz
+    cava
+    cdparanoia
+    # cdrkit
+    cdrtools
+    cloc
+    cmatrix
+    cowsay
+    discord
     docker
-    sqlite
+    filezilla
+    fortune
+    gimp
+    gnome3.gedit
+    gnome3.gnome-terminal
+    inkscape
+    jo
+    leafpad
+    libtiff
+    love_11
+    luajit
+    neovim
+    obs-studio
+    oil
+    pinta
+    rpm
+    rxvt_unicode
+    screenkey
+    sqlitebrowser
+    texlive.combined.scheme-full
+    tiled
+    toilet
+    wayland
+    wayland-protocols
+    wlroots
+    zathura
     zeal
     zlib
-
-    # mono
-    # ruby
-  ]) ++ (with edge; [
-    # joker
-    # chickenPackages_5.chicken
-    # chickenPackages_5.egg2nix
+    zoom-us
   ]);
 
-  basefonts = (with pkgs; [
-    dejavu_fonts
-    corefonts
-  ]);
+  fonts-core = (with pkgs; [dejavu_fonts corefonts symbola]);
 
-  extrafonts = (with pkgs; [
-    # roboto roboto-mono
-    # tewi-font siji
-    fira fira-code
-    twemoji-color-font
-    # font-awesome-ttf
+  fonts-all = fonts-core ++ (with pkgs; [
+    fira
+    fira-code
     font-awesome
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
-    symbola
     powerline-fonts # includes a 'Go Mono for powerline'
+    roboto-mono
+    siji
+    tewi-font
+    twemoji-color-font
+    roboto
   ]);
 
+  #   # mpvc-git
+  # ]) ++ (with edge; [
+  #   (pmenu.overrideAttrs(old: {
+  #     src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master"; };
+  #   }))
+  #   pegasus-frontend
+  #   youtube-dl
+  # ]);
 in
 {
-  nixpkgs.overlays = [
-    (import (builtins.fetchTarball {
-      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
-    }))
-  ];
-
-  # "just give me something pls"
-  # environment.systemPackages = core ++ [pkgs.emacs-unstable];
-  # fonts.fonts = basefonts;
-
-  environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
-
-  environment.systemPackages =
-    core ++
-    extra ++
-    development ++
-    games ++
-    [pkgs.emacs-unstable] ++
-    [];
-
-  fonts.fonts =
-    basefonts ++
-    extrafonts ++
-    [];
+  bare = bare;
+  ui = ui;
+  cli = cli;
+  fat = fat;
+  fonts-all = fonts-all;
+  fonts-core = fonts-core;
 }

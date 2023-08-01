@@ -1,6 +1,5 @@
 # named for the galaxian woman in the latter foundation series
-
-{ config, pkgs, ... }:
+{ lib, config, pkgs, ... }:
 
 let
   nixcfg = {
@@ -19,20 +18,30 @@ let
 
   expr = import ../../config/expr/default.nix {inherit pkgs edge;};
   consts = import ../../shared/consts.nix;
+  sets = import ../../config/packages.nix {inherit pkgs edge expr;};
 in
 {
   imports =
     [ 
       ./hardware-configuration.nix
-      (import ../../config/packages.nix {inherit pkgs edge expr;})
       (import ../../config/services.nix {inherit pkgs expr;})
     ];
+
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/emacs-overlay/archive/master.tar.gz;
+    }))
+  ];
+
+  environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable];
+  fonts.fonts = sets.fonts-all;
 
   nixpkgs.config.packageOverrides = pkgs: {
     # swap out all of the linux packages
     linuxPackages_latest = edge-packages;
     nvidia_x11 = edge.nvidia_x11;
   };
+
   # line up your kernel packages at boot
   boot.kernelPackages = edge-packages;
 
@@ -51,6 +60,7 @@ in
     # package = config.boot.kernelPackages.nvidiaPackages.production;
   };
 
+  environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
 
   programs.gnupg.agent.enable = true;
   programs.gnupg.agent.pinentryFlavor  = "qt";
@@ -95,7 +105,6 @@ in
     xkbVariant = "";
   };
 
-  # Enable sound with pipewire.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
   hardware.bluetooth.enable = true;
@@ -107,7 +116,6 @@ in
     driSupport = true;
     driSupport32Bit = true;
   };
-
 
   # services.pipewire = {
   #   enable = true;
