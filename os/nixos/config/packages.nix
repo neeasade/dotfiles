@@ -136,7 +136,8 @@ let
     xdo
     xtitle
     (lemonbar-xft.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc"; };}))
-    (qutebrowser.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "main"; };}))
+    qutebrowser-qt6
+    # (qutebrowser-qt6.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "main"; };}))
   ]) ++ (with expr; [
     pfetch-neeasade
     neeasade-opt
