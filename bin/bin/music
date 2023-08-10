@@ -219,7 +219,7 @@ playlist() { # select a search term based playlist to play
     target=$*
   fi
 
-  mpc clear
+  mpc -q clear
   echo "$target" >"$current_playlist"
   loaded_cached_playlist=false
 
@@ -231,8 +231,8 @@ playlist() { # select a search term based playlist to play
   if [ -s "$mpd_playlist" ]; then
     if [ "$mpd_playlist" -nt "$music_playlist" ]; then
       if [ "$mpd_playlist" -nt "$mpd_database" ]; then
-	echo "loading cached playlist $mpd_playlist"
-	cat "$mpd_playlist" | mpc add
+	echo "found cached playlist!"
+	cat "$mpd_playlist" | mpc -q add
 	loaded_cached_playlist=true
       fi
     fi
@@ -254,18 +254,21 @@ playlist() { # select a search term based playlist to play
   . "$music_playlist"
 
   # perma mods rn:
-  remove chloe
-  remove dream.dance
+  remove chloe >/dev/null
+  remove dream.dance >/dev/null
 
   clear_duplicates
   if ${SHUFFLE:-true}; then
-    mpc shuffle
+    mpc -q shuffle
   fi
-  mpc play
+  mpc -q play
 
-  mpc rm "$target"
-  mpc save "$target"
-  info
+  if [ -f "$mpd_playlist" ]; then
+    mpc -q rm "$target"
+  fi
+  mpc -q save "$target"
+
+  echo; info
 }
 
 # mpc only
@@ -408,16 +411,16 @@ info2() {
 }
 
 shuffler() { # shuffle with the mpd_shuffle script
-  log shuffle_preserve_album
   SHUFFLE=false # prevent playlists with this in their definition from shuffling
+  log calling mpd_shuffle
   shuffled=$(mpd_shuffle)
-  mpc clear
+  mpc -q clear
   if [ -z "$shuffled" ]; then
     echo "shuffle_preserve_album: removed everything!" >&2
     return 1
   fi
-  mpc add <<< "$shuffled"
-  mpc play
+  mpc -q add <<< "$shuffled"
+  mpc -q play
 }
 
 context() {
