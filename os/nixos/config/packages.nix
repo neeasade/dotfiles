@@ -135,9 +135,12 @@ let
     xorg.xwininfo
     xdo
     xtitle
-    (lemonbar-xft.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc"; };}))
+    telegram-desktop
+    signal-desktop
+    (lemonbar-xft.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc";};}))
     qutebrowser-qt6
     # (qutebrowser-qt6.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "main"; };}))
+    (pmenu.overrideAttrs(old: { src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master";};}))
   ]) ++ (with expr; [
     pfetch-neeasade
     neeasade-opt
@@ -271,7 +274,7 @@ let
     zeal
     zlib
     zoom-us
-  ]);
+  ]) ++ ([edge.steam edge.pegasus-frontend pkgs.gamemode]);
 
   fonts-core = (with pkgs; [dejavu_fonts corefonts symbola]);
 
@@ -292,10 +295,6 @@ let
 
   #   # mpvc-git
   # ]) ++ (with edge; [
-  #   (pmenu.overrideAttrs(old: {
-  #     src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master"; };
-  #   }))
-  #   pegasus-frontend
   #   youtube-dl
   # ]);
 in

@@ -11,7 +11,8 @@ let
   # edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) { config = nixcfg; };
 
   edge-packages = edge.linuxPackages_latest;
-  # edge-packages = nixos-edge.linuxPackages_6_1;
+  # edge-packages = edge.linuxPackages_5_15;
+  # edge-packages = edge.linuxPackages_6_1;
 
   expr = import ../../config/expr/default.nix {inherit pkgs edge;};
   sets = import ../../config/packages.nix {inherit pkgs edge expr;};
@@ -29,7 +30,13 @@ in
     }))
   ];
 
-  environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable];
+  services.tailscale.enable = true;
+
+  environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable]
+                               ++ (with pkgs; [
+                                 tailscale
+                               ]);
+
   fonts.fonts = sets.fonts-all;
 
   nixpkgs.config.packageOverrides = pkgs: {
@@ -47,9 +54,10 @@ in
     # Modesetting is needed for most wayland compositors
     modesetting.enable = false;
     # Use the open source version of the kernel module (only if using 515.43.04+)
-    open = true;
+    open = false;
     nvidiaSettings = true; # provide nvidia-settings gui
     package = config.boot.kernelPackages.nvidiaPackages.latest;
+    # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
   };
 
   environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
@@ -61,7 +69,13 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = hostname;
-  networking.networkmanager.enable = true;  
+  networking.networkmanager.enable = true;
+
+  networking.firewall.allowedTCPPorts = [
+
+    # mpd
+    8000 6600
+  ];
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
