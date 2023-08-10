@@ -1,31 +1,27 @@
 #!/usr/bin/env bb
-;; filter to long songs, preserve album order
-;; if any argument is passed, don't filter long, just shuffle with albums in mind
-;; todo: this is not right -- shuffle at dir level wrong when keeping short songs
-;; (get (System/getProperties) "file.encoding")
+;; shuffle by album
 
-(require '[clojure.java.shell :as shell])
-(require '[clojure.string :as string])
+(require '[clojure.java.shell :as shell]
+         '[clojure.string :as string]
+         '[babashka.fs :as fs])
+
+(def music-dir "/home/neeasade/Music")
 
 (defn is-long
   [song]
-  (> (/
-      (let [length-str
-            (:out
-             (shell/sh
-              "mediainfo" "--Inform=Audio;%Duration%"
-              (format "/home/neeasade/Music/%s" song)))]
-        (if (string/blank? (string/trim length-str))
-          0
-          (read-string length-str)))
-      1000)
-     (* 60 15)))
+  (let [length-str (:out
+                    (shell/sh "mediainfo" "--Inform=Audio;%Duration%"
+                              (str music-dir "/" song)))
+        length-ms (if (string/blank? (string/trim length-str))
+                    ;; (do (prn "oops!") 0)
+                    0
+                    (read-string length-str))]
+    (> (/ length-ms 1000)
+       (* 60 15))))
 
 (->> (string/split (:out (shell/sh "mpc" "playlist" "-f" "%file%"
                                    :out-enc "UTF-8"
                                    )) #"\n")
-     ;; nb: maybe there's a modtime sort to happen here for yt imports or something
-     ;; todo: do a shuffle instead of sort if son'gs don't start with numbers
      (sort)
      (distinct)
      (group-by
@@ -34,22 +30,17 @@
              (drop-last)
              (string/join "/"))))
      (mapcat (fn [[dir songs]]
-               (if (or (string/includes? dir "bandcamp")
-                       ;; (< 4 (count songs) 17)
-                       )
-                 ;; songs
-                 ;; (filter is-long songs)
-                 [[dir songs]]
-                 (let [albums (filter is-long songs)]
-                   (into []
-                         (map
-                          (fn [n]
-                            [(str dir n)
-                             [(nth albums n)]])
-                          (range (count albums))))))))
+               (let [is-indexed-album? (every? #(re-matches #"[0-9].+" (fs/file-name %)) songs)
+                     is-misc-album? (and ; idk man
+                                     (< 4 (count songs) 17)
+                                     (every? (complement is-long) songs))]
+                 (cond
+                   is-indexed-album? [[dir songs]]
+                   is-misc-album? [[dir (into [] (sort-by #(fs/last-modified-time (str music-dir "/" %)) songs))]]
+                   :else
+                   (map (fn [album] [dir [album]])
+                        (filter is-long songs))))))
      (shuffle)
      (mapcat second)
-     ;; (map second)
      (string/join "\n")
-     (println)
-     )
+     (println))

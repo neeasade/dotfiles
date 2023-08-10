@@ -19,7 +19,8 @@ log() {
 
 usage() {
   echo "music options:"
-  awk -F \# '{ if (match($0, /([a-z]+)\(\) {.*#/, line)) { printf "%-9s:%s\n", line[1], $2 }}' "$0" | sort
+  # todo: dynamic length for printf align
+  awk -F \# '{ if (match($0, /([a-z_]+)\(\) {.*#/, line)) { printf "%-9s:%s\n", line[1], $2 }}' "$0" | sort
 }
 
 is_long() {
@@ -39,7 +40,7 @@ is_long() {
 }
 
 is_short () {
-  ! is_long "$@"
+   ! is_long "$@"
 }
 
 filter() { # filter the current playlist by some shell function acting on music files
@@ -64,6 +65,8 @@ clear_duplicates() {
     mpc del --wait <<< "$duplicates"
   done
 }
+
+shuffle_preserve_album() { shuffler; } # compat
 
 ### ACTIONS
 
@@ -148,7 +151,7 @@ now() { # fuzzy search for a song, play it now
   # echo "custom" > "$current_playlist"
 }
 
-bl() { # blacklist the currently playing song from the current playlist.
+bl() { # blacklist the currently playing song from the current playlist
   playlist=$(cat "$current_playlist")
   songname=$(basename "$(mpc -f '%file%' | head -n 1)")
   songname=$(sed "s#'#\'\\\\\'\'#g" <<< "$songname")
@@ -225,14 +228,12 @@ playlist() { # select a search term based playlist to play
   mpd_database="$HOME/.config/mpd/database"
   mpd_playlist="$HOME/.config/mpd/playlists/${target}.m3u"
   music_playlist="$musicdir/playlist/${target}"
-  if ! grep -i shuffle "$music_playlist"; then
-    if [ -s "$mpd_playlist" ]; then
-      if [ "$mpd_playlist" -nt "$music_playlist" ]; then
-	if [ "$mpd_playlist" -nt "$mpd_database" ]; then
-	  echo "loading cached playlist $mpd_playlist"
-	  cat "$mpd_playlist" | mpc add
-	  loaded_cached_playlist=true
-	fi
+  if [ -s "$mpd_playlist" ]; then
+    if [ "$mpd_playlist" -nt "$music_playlist" ]; then
+      if [ "$mpd_playlist" -nt "$mpd_database" ]; then
+	echo "loading cached playlist $mpd_playlist"
+	cat "$mpd_playlist" | mpc add
+	loaded_cached_playlist=true
       fi
     fi
   fi
@@ -244,13 +245,17 @@ playlist() { # select a search term based playlist to play
 
   if $loaded_cached_playlist; then
     # this lets us preserve SHUFFLE directives and other custom junk
-    append () { silent; }
-    remove () { silent; }
-    artist () { silent; }
-    filter() { silent; }
+    append () { :; }
+    remove () { :; }
+    artist () { :; }
+    filter() { :; }
   fi
 
   . "$music_playlist"
+
+  # perma mods rn:
+  remove chloe
+  remove dream.dance
 
   clear_duplicates
   if ${SHUFFLE:-true}; then
@@ -260,6 +265,7 @@ playlist() { # select a search term based playlist to play
 
   mpc rm "$target"
   mpc save "$target"
+  info
 }
 
 # mpc only
@@ -401,7 +407,7 @@ info2() {
   context
 }
 
-shuffle_preserve_album() {
+shuffler() { # shuffle with the mpd_shuffle script
   log shuffle_preserve_album
   SHUFFLE=false # prevent playlists with this in their definition from shuffling
   shuffled=$(mpd_shuffle)
