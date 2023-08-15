@@ -54,10 +54,7 @@ load_bspwm() {
 }
 
 load_btag_borders() {
-    elisp '(->> (list :primary :strings :assumed :faded)
-  (--map (ns/make-border-color it))
-  (--map (substring it 1))
-  (-map-indexed (lambda (i c) (sh (format "btags set ^%s color %s" (+ 1 i) c)))))' 1>/dev/null
+    elisp '(ns/set-btag-colors)'
 }
 
 load_qutebrowser() {
@@ -178,7 +175,7 @@ load_services() {
 	make_service "$1" "periodically $interval $2" "$3"
     }
 
-    make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
+    # make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
     make_periodic_service 30 memory_check "sensor_alert memory" "Notify when the memory pressure is high"
     make_periodic_service $((60 * 60 * 24)) update_adblock update_adblock
 
@@ -188,11 +185,15 @@ load_services() {
 	make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
     fi
 
-    if [ "$(hostname)" = "erasmus" ]; then
-	# todo: re-open ssh/vps conn
-
-	make_periodic_service 120 sync_org_schedule sync_org_schedule
+    if [ "$(hostname)" = "bliss" ]; then
+	make_service temps
     fi
+
+    # if [ "$(hostname)" = "erasmus" ]; then
+    # 	# todo: re-open ssh/vps conn
+
+    # 	make_periodic_service 120 sync_org_schedule sync_org_schedule
+    # fi
 
     make_service unclutter 'unclutter -idle 1'
     make_service dunst

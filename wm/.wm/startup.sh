@@ -14,6 +14,8 @@ if ! lsusb | grep -q Keyboard; then
   # launch steam -bigpicture
   gapt false 0
 
+  bash -ic 'scu-restart unclutter' &
+
   pegasus-fe
   exit 0
 fi

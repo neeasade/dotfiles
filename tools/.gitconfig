@@ -6,3 +6,5 @@
 [user]
 	name = neeasade
 	email = neeasade@users.noreply.github.com
+[init]
+	defaultBranch = main

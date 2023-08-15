@@ -230,21 +230,27 @@
 ;; deep-merge host themes
 ;; render string leaves in tree
 ;; remove keys ending in '-' from tree
+
 (defn get-theme []
-  (let [home? (= "erasmus" (.. java.net.InetAddress getLocalHost getHostName))
-        work? (not (= "neeasade" (System/getenv "USER")))
+  (let [;; home? (= "bliss" (.. java.net.InetAddress getLocalHost getHostName))
+        home? (= "neeasade" (System/getenv "USER"))
+        work? (not home?)
 
-        colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
-                :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
+        backup-colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
+                       :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
 
-        ;; emacs-colors colors
-        emacs-colors (let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
-                       (when (= 0 (:exit result))
-                         (read-string (:out result))))
+        colors (some #(%) (list         ; lol. lmao
+                           #(let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
+                              (when (= 0 (:exit result))
+                                (read-string (:out result))))
+                           #(let [f (format "%s/.cache/rice/emacs-theme-cache" (System/getenv "HOME"))]
+                              (when (fs/exists? f)
+                                (read-string (slurp f))))
+                           (constantly backup-colors)))
 
         base-conf
         {:meta
-         ;; for panel _and_ compositor
+         ;; for panel and compositor
          {:shadow false}
 
          :font (fn [_]
@@ -352,7 +358,7 @@
          :qutebrowser (unflatten-map
                        {:statusbar nil
                         :tab.font.family "{{font.variable.family}}"
-                        :tab.font.size "{{font.panel.size}}"
+                        :tab.font.size "{{font.variable.size}}"
                         ;; will this work?
                         :statusbar.font.size
                         ;; "{{qutebrowser.tab.font.size}}"
@@ -366,7 +372,7 @@
         home-theme (when home?
                      (unflatten-map
                       {:THEME_NAME "test"
-                       :emacs.theme "myron-mcfay"
+                       :emacs.theme "myron-kobo"
                        :BG_COMMAND "${HOME}/.fehbg"
                        ;; :BG_COMMAND "bgtint"
                        ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
@@ -386,7 +392,7 @@
                        ;; :mkb.bar- "██▁"
                        :shell.prompt "%"
                        :x.padding 10
-                       :bspwm.window-gap 60
+                       :bspwm.window-gap 100
                        :bspwm-meta.monocle-window-percent 0.46
                        :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
                        :font.mono.size 12
@@ -419,7 +425,7 @@
     ;; this allows us to merge theme things that are USED in fns first
     ;; and then stomp anything that was rendered by merging again after
     (-> base-conf
-        (deep-merge (or emacs-colors colors))
+        (deep-merge colors)
         (deep-merge home-theme work-theme)
         exec-fns exec-fns
         (deep-merge home-theme work-theme))))
@@ -481,7 +487,10 @@
                    (format "%s/.cache/rice/theme-cache" (System/getenv "HOME")))
       theme (if (fs/exists? cache-file)
               ;; (read-string (slurp cache-file))
-              (try (read-string (slurp cache-file)) (catch Exception e (refresh-cache cache-file)))
+              (try (read-string (slurp cache-file))
+                   (catch Exception e
+                     (.println *err* "Error loading cache, refreshing")
+                     (refresh-cache cache-file)))
               (refresh-cache cache-file))
       theme (if-let [overrides (:extend options)]
               (->> (read-string overrides) (unflatten-map) (deep-merge theme))

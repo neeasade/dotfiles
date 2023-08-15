@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
+# open stuff
 
 . ~/.sh.d/environment
 . ~/.sh.d/environment_emacs
 
 log() {
-    silent printf '%s' "$*"
-    # printf '%s\n' "$*"
+    # silent printf '%s' "$*"
+    printf '%s\n' "$*"
 }
+
+# todo: zipfiles/extractions
+# todo: schemes/urls?
 
 # text/html: part1, part2. handle differently, prefer part2, it's more specific:
 declare -A part1_rules=(
 	# ["image"]="meh,${BROWSER}"
-	["image"]="meh"
+	["image"]="feh"
 	["text"]="$EDITOR"
+	["video"]="mpv,vlc"
+	["audio"]="vlc"
 )
 
 declare -A part2_rules=(
@@ -34,7 +40,7 @@ real_open() {
 }
 
 act() {
-    target=$1
+    target=$(realpath "$1")
     target_type=$(file --mime-type -b "$target")
 
     if [ ! -f "$target" ]; then
@@ -57,6 +63,7 @@ act() {
 
     for bin in "${potential_openers[@]}" real_open; do
 	if has "$bin"; then
+	    log "$bin" "$target"
 	    "$bin" "$target"
 	    exit 0
 	fi
@@ -64,29 +71,13 @@ act() {
 }
 
 if [ "$*" = last ]; then
-    set -- "$(ls -t 1)"
+    set -- "$(ls . -t | head -n 1)"
 fi
 
-for f in "$@"; do
-    act "$f"
-done
-
-# later: as type
-# # the ':' in front means the flag takes an arg
-# while getopts a:reh flag; do
-#     case $flag in
-#         w) mimetype=$OPTARG;;
-#         r) some_thing;;
-#         e) print_env;;
-#         h) usage;;
-#         *) usage;;
-#     esac
-# done
-
-# this shift at the end is to reset the args to the env of getopts parsing
-# shift $((OPTIND-1))
-
-# if "$MAC"; then
-#     og open "$@"
-#     exit $?
-# fi
+if [ -f "$*" ]; then
+    act "$*"
+else
+    for f in "$@"; do
+	act "$f"
+    done
+fi
