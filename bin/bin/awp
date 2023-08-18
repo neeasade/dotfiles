@@ -1,0 +1,64 @@
+#!/usr/bin/env elisp
+;; automata wallpaper
+;; see github.com/neeasade/automata (a fork of camille's)
+
+(defun ns/random-list (list)
+  "pick random item from list"
+  (nth (random (length list)) list))
+
+(defun ns/random-range (min max)
+  (+ min (random (- (+ 1 max) min))))
+
+(defun ns/awp-color-env (colors)
+  (->> colors
+       (-map 'ct-get-rgb)
+       (-map (-lambda (parts) (--map (round (* it 2.55)) parts)))
+       (-map-indexed
+	(lambda (i parts)
+	  (apply 'format "COLOR%s='%03d %03d %03d'" i parts)))
+       (-reduce-from (-lambda (env new) (cons new env)) process-environment)))
+
+(defun ns/awp-cmd ()
+  (format "%s -w %s -h %s -i %s"
+	  (ns/random-list
+	   (list (~ "code/automata/c/rps/bin/rps")
+		 (~ "code/automata/c/disease/bin/disease")
+		 (~ "code/automata/c/disease/bin/disease")))
+	  (ns/random-range 0 800)
+	  (ns/random-range 0 800)
+	  (ns/random-range 30 300)))
+
+(defun ns/awp (colors &optional output-file set-bg?)
+  (llet [cmd (ns/awp-cmd)
+	     process-environment (ns/awp-color-env colors)
+	     output-file (or output-file "/tmp/result.png")
+	     set-bg? (or set-bg? t)]
+	(when (f-exists-p output-file)
+	  (f-delete output-file))
+	(sh "%s | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-file)
+	(when set-bg? (sh "feh --bg-tile \"%s\"" output-file))))
+
+(ns/awp
+ (list
+  (myron-get :background)
+  ;; (myron-get :background :weak)
+  ;; (ns/make-border-color (myron-get :primary))
+  (ct-pastel (myron-get :primary))
+  (myron-get :background :focused))
+ )
+
+
+
+;; (ns/awp
+;;  ;; (ct-rotation-hsluv "#f88ff8" 120)
+
+;;  (->>
+;;   '(
+;;     "#f78ff7"
+;;     "#d3b237"
+;;     "#3cc8c3"
+;;     )
+;;   (-map 'ct-pastel)
+;;   )
+
+;;  )
