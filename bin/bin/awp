@@ -1,6 +1,6 @@
 #!/usr/bin/env elisp
-;; automata wallpaper
-;; see github.com/neeasade/automata (a fork of camille's)
+;; automata wallpapers
+;; see github.com/neeasade/automata (a fork of camille's tailored to wp generation)
 
 (defun ns/random-list (list)
   "pick random item from list"
@@ -18,33 +18,43 @@
 	  (apply 'format "COLOR%s='%03d %03d %03d'" i parts)))
        (-reduce-from (-lambda (env new) (cons new env)) process-environment)))
 
-(defun ns/awp-cmd ()
-  (format "%s -w %s -h %s -i %s"
-	  (ns/random-list
-	   (list (~ "code/automata/c/rps/bin/rps")
-		 (~ "code/automata/c/disease/bin/disease")
-		 (~ "code/automata/c/disease/bin/disease")))
-	  (ns/random-range 0 800)
-	  (ns/random-range 0 800)
-	  (ns/random-range 30 300)))
+(defun ns/awp-cmd (kind)
+  (llet [kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
+	      bin (format (~ "code/automata/c/%s/bin/%s") kind kind)]
+	(if (string= kind "elementary")
+	    (format "%s %s %s" bin
+		    (ns/random-range 0 255)
+		    (s-join "" (--map (ns/str (random 2))
+				      (-iota (display-pixel-width)))))
+	  (format "%s -w %s -h %s -i %s"
+		  bin
+		  (ns/random-range 0 800)
+		  (ns/random-range 0 800)
+		  (ns/random-range 30 300)))))
 
-(defun ns/awp (colors &optional output-file set-bg?)
-  (llet [cmd (ns/awp-cmd)
+(defun ns/awp (colors &optional kind output-file set-bg?)
+  (llet [cmd (ns/awp-cmd kind)
 	     process-environment (ns/awp-color-env colors)
 	     output-file (or output-file "/tmp/result.png")
 	     set-bg? (or set-bg? t)]
 	(when (f-exists-p output-file)
 	  (f-delete output-file))
+	;; (sh "%s > \"%s\"" cmd "/tmp/wow.pbm")
+
 	(sh "%s | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-file)
+	;; (sh "%s | convert -  \"%s\"" cmd output-file) ; doesn't work/looks wrong
 	(when set-bg? (sh "feh --bg-tile \"%s\"" output-file))))
 
 (ns/awp
  (list
   (myron-get :background)
+  (ct-pastel (myron-get :primary))
   ;; (myron-get :background :weak)
   ;; (ns/make-border-color (myron-get :primary))
-  (ct-pastel (myron-get :primary))
-  (myron-get :background :focused))
+  (myron-get :background :focused)
+  )
+ ;; "elementary"
+ ;; "elementary"
  )
 
 
