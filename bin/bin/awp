@@ -18,57 +18,67 @@
 	  (apply 'format "COLOR%s='%03d %03d %03d'" i parts)))
        (-reduce-from (-lambda (env new) (cons new env)) process-environment)))
 
-(defun ns/awp-cmd (kind)
-  (llet [kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
-	      bin (format (~ "code/automata/c/%s/bin/%s") kind kind)]
-	(if (string= kind "elementary")
-	    (format "%s %s %s" bin
-		    (ns/random-range 0 255)
-		    (s-join "" (--map (ns/str (random 2))
-				      (-iota (display-pixel-width)))))
-	  (format "%s -w %s -h %s -i %s"
-		  bin
-		  (ns/random-range 0 800)
-		  (ns/random-range 0 800)
-		  (ns/random-range 30 300)))))
+(defun ns/awp-cmd (kind colors)
+  (llet [(c1 c2 c3) colors
+	 kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
+	 bin (format (~ "code/automata/c/%s/bin/%s") kind kind)]
+	(list
+	 (if (string= kind "elementary")
+	     (format "%s %s %s" bin
+		     (ns/random-range 0 255)
+		     (s-join "" (--map (ns/str (random 2))
+				       (-iota (display-pixel-width)))))
+	   (format "%s -w %s -h %s -i %s"
+		   bin
+		   (ns/random-range 0 800)
+		   (ns/random-range 0 800)
+		   (ns/random-range 30 300)))
+	 (cond
+	   ((string= kind "pinwheels") (list c2 c3 c1))
+	   (t colors)))))
 
 (defun ns/awp (colors &optional kind output-file set-bg?)
-  (llet [cmd (ns/awp-cmd kind)
-	     process-environment (ns/awp-color-env colors)
-	     output-file (or output-file "/tmp/result.png")
-	     set-bg? (or set-bg? t)]
+  (llet [(cmd colors) (ns/awp-cmd kind colors)
+	 (c1 c2 c3) colors
+	 kind (f-base (first (s-split " " cmd)))
+	 process-environment (ns/awp-color-env colors)
+	 output-file (or output-file "/tmp/result.png")
+	 set-bg? (or set-bg? t)]
+
 	(when (f-exists-p output-file)
 	  (f-delete output-file))
-	;; (sh "%s > \"%s\"" cmd "/tmp/wow.pbm")
+
+	;; (sh "%s > /dev/shm/temp.pbm" cmd)
+	;; (sh "ffmpeg -i /dev/shm/temp.pbm -ss 00:00:00 -frames:v 1 \"%s\"" output-file)
 
 	(sh "%s | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-file)
-	;; (sh "%s | convert -  \"%s\"" cmd output-file) ; doesn't work/looks wrong
-	(when set-bg? (sh "feh --bg-tile \"%s\"" output-file))))
+
+	(when (or (string= kind "elementary")
+		  (string= kind "life"))
+	  ;; note to future self
+	  ;; this was faster than making these scripts output p3 format in first place (at least for like elementary @ 4k)
+	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c1 "#ffffff" output-file)
+	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c2 "#000000" output-file))
+
+	(when (string= kind "elementary")
+	  ;; crop top bit to get rid of setup
+	  (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file))
+
+	(when set-bg? (sh "feh --bg-tile \"%s\"" output-file))
+	kind))
 
 (ns/awp
- (list
-  (myron-get :background)
-  (ct-pastel (myron-get :primary))
-  ;; (myron-get :background :weak)
-  ;; (ns/make-border-color (myron-get :primary))
-  (myron-get :background :focused)
+ (->>
+  (list
+
+   (myron-get :background)
+   (ct-pastel (myron-get :primary))
+   ;; (myron-get :background :weak)
+   ;; (ns/make-border-color (myron-get :primary))
+   (myron-get :background :focused)
+   )
+  ;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
+  ;; (--map (ct-edit-lch-c it 60))
   )
- ;; "elementary"
- ;; "elementary"
+ "elementary"
  )
-
-
-
-;; (ns/awp
-;;  ;; (ct-rotation-hsluv "#f88ff8" 120)
-
-;;  (->>
-;;   '(
-;;     "#f78ff7"
-;;     "#d3b237"
-;;     "#3cc8c3"
-;;     )
-;;   (-map 'ct-pastel)
-;;   )
-
-;;  )
