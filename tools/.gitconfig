@@ -8,3 +8,4 @@
 	email = neeasade@users.noreply.github.com
 [init]
 	defaultBranch = main
+	signingkey = ~/.ssh/id_rsa.pub

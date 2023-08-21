@@ -1,28 +1,16 @@
 # -*- mode: sh -*-
-# this script is kind of special -- it may be sourced by outside scripts to get a world bearing.
-# (thus, speed is super important here)
+
+NEEASADE_ENV=true
 
 if ${NEEASADE_ENV:-true}; then
   set -a
 
-  # todo: better name?
-  NS_INTERACTIVE=false
-  case "$-" in
-    *i*) NS_INTERACTIVE=true;;
-  esac
-
-  # todo revisit (just noticed nvm shoved this in here)
-  # NVM_DIR="$HOME/.nvm"
-  # if [ -s "/opt/homebrew/opt/nvm/nvm.sh" ]; then
-  #   . "/opt/homebrew/opt/nvm/nvm.sh"
-  # fi
-
   NEEASADE_ENV=false
 
   path_remove() {
-    PATH=${PATH//":$1:"/":"} # middle
-    PATH=${PATH/#"$1:"/}     # beginning
-    PATH=${PATH/%":$1"/}     # end
+    export PATH=${PATH//":$1:"/":"} # middle
+    export PATH=${PATH/#"$1:"/}     # beginning
+    export PATH=${PATH/%":$1"/}     # end
   }
 
   pathmunge () {
@@ -31,7 +19,7 @@ if ${NEEASADE_ENV:-true}; then
     if [ -d "$_dir" ]; then
       case ":${PATH}:" in
         *:"$_dir":*) ;;
-        *) PATH=$_dir:$PATH
+        *) export PATH=$_dir:$PATH
       esac
     fi
   }
@@ -65,8 +53,11 @@ if ${NEEASADE_ENV:-true}; then
 
   set_editor vim
 
-  # m1 homebrew location
-  pathmunge /opt/homebrew/bin
+  msource() { # maybe source (if file exists)
+    if [ -e "$*" ]; then
+      . "$*"
+    fi
+  }
 
   pathmunge '/run/current-system/sw/bin'
   pathmunge '/run/wrappers/bin/'
@@ -103,11 +94,13 @@ if ${NEEASADE_ENV:-true}; then
   GOPATH="$HOME/.go"
   CODEHOME="$HOME/git"
 
+  HOMEBREW_PREFIX='/opt/homebrew/'
 
-  # m1 homebrew location
-  pathmunge /opt/homebrew/bin
+  NVM_DIR="$HOME/.nvm"
+  msource "$HOMEBREW_PREFIX/opt/nvm/nvm.sh"
+  msource "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
 
-  pathmunge "/opt/homebrew/opt/findutils/libexec/gnubin"
+  pathmunge "${HOMEBREW_PREFIX}/opt/findutils/libexec/gnubin"
 
   pathmunge '/run/current-system/sw/bin'
   pathmunge '/run/wrappers/bin/'
@@ -117,11 +110,13 @@ if ${NEEASADE_ENV:-true}; then
   for p in                                \
       $HOME/.wm/{scripts,panel}/*/        \
       $HOME/{,.cargo,.local}/bin          \
-      {$GEM_HOME,$GOPATH,$NPM_GLOBAL}/bin \
+      {$GEM_HOME,$GOPATH,$NPM_GLOBAL,$HOMEBREW_PREFIX}/bin \
     ; do
     pathmunge "$p"
   done
 
+
+  # msource "$HOME/.nix-profile/etc/profile.d/nix.sh"
   if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
     if [ -z "$NIX_PROFILES" ]; then
       . "$HOME/.nix-profile/etc/profile.d/nix.sh"
@@ -132,9 +127,10 @@ if ${NEEASADE_ENV:-true}; then
     add_macapp() {
       pathmunge "/run/current-system/Applications/${*}.app/Contents/MacOS/"
       pathmunge "/Applications/${*}.app/contents/MacOS"
+      pathmunge "/System/Applications/${*}.app/Contents/MacOS/"
     }
 
-    for a in Slack Emacs iTerm BitBar xbar MeetingBar; do
+    for a in Preview Slack Emacs iTerm BitBar xbar MeetingBar; do
       add_macapp "$a"
     done
   fi
@@ -154,7 +150,8 @@ if ${NEEASADE_ENV:-true}; then
   fi
 
   if has qutebrowser; then
-    if has yq; then
+    BROWSER=qutebrowser
+    if has yq && has socat; then
       BROWSER=qb_meta_open
     fi
   fi
