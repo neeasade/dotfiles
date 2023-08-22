@@ -30,11 +30,14 @@ in
     }))
   ];
 
+  services.udisks2.enable = true;
+
   services.tailscale.enable = true;
 
   environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable]
                                ++ (with pkgs; [
                                  tailscale
+                                 udiskie
                                ]);
 
   fonts.fonts = sets.fonts-all;

@@ -366,6 +366,7 @@ dotadd() {
   (cd "$binpath"; git add "$file")
 
   echo stowo $(iif $MAC os/mac bin)
+  stowo $(iif $MAC os/mac bin)
 }
 
 passadd() {

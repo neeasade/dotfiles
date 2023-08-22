@@ -1,4 +1,5 @@
 #!/usr/bin/env elisp
+;; -*- emacs-lisp -*-
 ;; automata wallpapers
 ;; see github.com/neeasade/automata (a fork of camille's tailored to wp generation)
 

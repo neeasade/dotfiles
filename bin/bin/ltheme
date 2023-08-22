@@ -186,6 +186,7 @@ load_services() {
     fi
 
     if [ "$(hostname)" = "bliss" ]; then
+	make_periodic_service 5 kobo_sync kobo_sync
 	make_service temps
     fi
 
@@ -205,6 +206,7 @@ load_services() {
     make_service pasystray
     make_service stalonetray
     make_service blueman-applet
+    make_service udiskie
 
     make_service panel "$HOME/.wm/panel/lemonade"
 

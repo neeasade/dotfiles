@@ -1,0 +1,16 @@
+#!/bin/sh
+
+kobo='/run/media/neeasade/KOBOeReader'
+
+if ! mount | grep -q "$kobo"; then
+    exit 0
+fi
+
+library='/media/sidecar/library/'
+
+notify-send -u low "Syncing kobo library"
+
+echo rsync -a -v --checksum --delete "${library}" "${kobo}/library/books/"
+rsync -a -v --size-only --delete "${library}" "${kobo}/library/books/"
+udiskie-umount "$kobo"
+notify-send "Finished syncing kobo library"

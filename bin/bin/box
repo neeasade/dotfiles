@@ -14,7 +14,13 @@
              (expand side-conf)
              (expand corner-conf)))))
 
+
+;; BORDER='╌¦╌╴ ╾╼╼╾'
+;; BORDER='╌¦╌¦ ┭┮┶┵'
+;; BORDER='─│─│ ╭╮╯╰'
+
 (def border (conf-to-border "-|-| /\\/\\"))
+(def border (conf-to-border "═║═║ ╔╗╝╚"))
 
 (when-let [conf (System/getenv "BORDER")]
   (if-not (string/blank? conf)

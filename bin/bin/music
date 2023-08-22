@@ -66,7 +66,7 @@ clear_duplicates() {
   done
 }
 
-shuffle_preserve_album() { shuffler; } # compat
+shuffle_preserve_album() { shuffler; }
 
 ### ACTIONS
 
@@ -121,7 +121,7 @@ append() { # append some search term to the current playlist
      songs_cached=$(mpc listall)
   fi
 
-  grep -i $GREP_EXTRA "$*" <<< "$songs_cached" | mpc add --wait
+  grep -i "$*" <<< "$songs_cached" | mpc add --wait
 
   if [ "$interactive_op" = "append" ]; then
     # we called append at an interactive level, therefore we are no longer tied to any playlist
@@ -132,8 +132,8 @@ append() { # append some search term to the current playlist
 }
 
 remove() { # remove some search match from the playlist
-  echo remove "$*"
-  mpc playlist -f '%position% %file%' | grep -i $GREP_EXTRA "$*" | sed 's/ .*//' | mpc del
+  # echo remove "$*"
+  mpc playlist -f '%position% %file%' | grep -F -i "$*" | sed 's/ .*//' | mpc del
 }
 
 now() { # fuzzy search for a song, play it now
@@ -196,8 +196,7 @@ artist() { # play songs by an artist
     clear_duplicates
 
     if ${SHUFFLE:-true}; then
-      # shuffle_preserve_album
-      # no_long_filter
+      # shuffler
       mpc shuffle
     fi
 
@@ -248,7 +247,7 @@ playlist() { # select a search term based playlist to play
     append () { :; }
     remove () { :; }
     artist () { :; }
-    filter() { :; }
+    filter () { :; }
   fi
 
   . "$music_playlist"
@@ -268,10 +267,25 @@ playlist() { # select a search term based playlist to play
   fi
   mpc -q save "$target"
 
-  echo; info
+  echo
+  info
 }
 
-# mpc only
+shuffler() { # shuffle with the mpd_shuffle script
+  SHUFFLE=false # prevent playlists with this in their definition from shuffling
+  log calling mpd_shuffle
+  shuffled=$(mpd_shuffle)
+  mpc -q clear
+  if [ -z "$shuffled" ]; then
+    echo "shuffler: removed everything!" >&2
+    return 1
+  fi
+  mpc -q add <<< "$shuffled"
+  mpc -q play
+}
+
+### DISPLAY FUN
+
 name_from_pos() {
   pos=$1
   if [ -z "$pos" ]; then
@@ -408,19 +422,6 @@ info() { # display the current audio progress bar and playlist length
 info2() {
   echo "  >> playlist: $(cat $current_playlist) | $(playlist_length) <<"
   context
-}
-
-shuffler() { # shuffle with the mpd_shuffle script
-  SHUFFLE=false # prevent playlists with this in their definition from shuffling
-  log calling mpd_shuffle
-  shuffled=$(mpd_shuffle)
-  mpc -q clear
-  if [ -z "$shuffled" ]; then
-    echo "shuffle_preserve_album: removed everything!" >&2
-    return 1
-  fi
-  mpc -q add <<< "$shuffled"
-  mpc -q play
 }
 
 context() {
