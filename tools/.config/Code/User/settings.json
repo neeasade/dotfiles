@@ -1,0 +1,5 @@
+{
+    "workbench.colorTheme": "Default High Contrast Light",
+    "vim.vimrc.path": "$HOME/.vsvimrc",
+    "vim.vimrc.enable": true
+}

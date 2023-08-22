@@ -1,0 +1,16 @@
+" my colemak-dhk mappings for vscode vim extension
+
+imap tn <ESC>
+vmap tn <ESC>
+
+noremap e k
+noremap E K
+
+noremap k n
+noremap K N
+
+noremap n j
+noremap N J
+
+noremap j e
+noremap J E
