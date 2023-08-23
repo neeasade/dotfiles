@@ -1,5 +1,6 @@
 #!/usr/bin/env bb
 ;; shuffle by album
+;; todo: better cue file support
 
 (require '[clojure.java.shell :as shell]
          '[clojure.string :as string]
@@ -30,7 +31,8 @@
              (drop-last)
              (string/join "/"))))
      (mapcat (fn [[dir songs]]
-               (let [is-indexed-album? (every? #(re-matches #"[0-9].+" (fs/file-name %)) songs)
+               (let [is-indexed-album-strict? false ; todo: do all the numbers go up continuously
+                     is-indexed-album? (every? #(re-matches #"[0-9].+" (fs/file-name %)) songs)
                      is-misc-album? (and ; idk man
                                      (< 4 (count songs) 17)
                                      (every? (complement is-long) songs))]

@@ -9,7 +9,7 @@ new() {
     fi
 
     # border_side=$(bs O1 B$border U$border +o +u)
-    content=$(echo " $line" | bs "B$bg" "F$fg" "U$border" +u)
+    content=$(bs "B$bg" "F$fg" "U$border" +u <<< "$line")
     # content="$content$(bs "B$bg" "F$fg" "U$border" +u ': ')"
     content="$content$(bs "B$bg" "F$fg" "U$border" +u ':  ')"
 
@@ -57,7 +57,9 @@ new() {
     printf '%s\n' "$content"
 }
 
+
 spaced_buttons() {
+
     border=${border:-#777777}
     # border="111111"
     border_side=$(bs O1 B$border U00ffffff +u)
@@ -86,6 +88,8 @@ give_clickables() {
     done
 }
 
+
+border="$(elisp -r '(ct-pastel (myron-get :primary))')"
 while read -d $'\n' -r line; do
     if [ -z "$line" ]; then
 	# blank it out

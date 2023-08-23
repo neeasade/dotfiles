@@ -22,7 +22,8 @@ check_disk_space() {
 (
     if ! elisp -q '(eq org-pomodoro-state :pomodoro)'; then
 	# this takes awhile b/c batch (~3 secs)
-	elisp -br "(ns/conf-core) (ns/org-status-outdated)"
+	elisp -br "(ns/conf-core) (ns/make-lines (-filter 'stringp (list (ns/org-status-outdated) (ns/org-status-scheduled))))"
+	# echo
     fi
 
     elisp -r '(when-let (unread-dms (ns/circe-unread-query-buffers))

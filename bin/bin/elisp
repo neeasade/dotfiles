@@ -132,7 +132,8 @@ elif $emacs_batch; then
     result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs --batch -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_lines)
 
     if $trim; then
-	result=$(printf '%s' "$result" | tail -n 1)
+	result=$(printf '%s' "$result" | sed -n '/COOL_DELIMITER/,$p' | tail -n +2)
+	# result=$(printf '%s' "$result" | grep -A5000 COOL_DELIMITER)
     fi
 else
     # echo $emacs_timeout $eclient --eval "$lisp"

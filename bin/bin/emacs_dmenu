@@ -1,5 +1,6 @@
 #!/usr/bin/env elisp
 ;; elisp-eval: read_stdin=true
+;; -*- emacs-lisp -*-
 ;; dmenu in emacs
 ;; takes one arg, the prompt string
 ;; style/placement is handled by popup_window.sh
