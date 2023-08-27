@@ -2,6 +2,7 @@
 ;; -*- emacs-lisp -*-
 ;; automata wallpapers
 ;; see github.com/neeasade/automata (a fork of camille's tailored to wp generation)
+;;
 
 (defun ns/random-list (list)
   "pick random item from list"
@@ -66,20 +67,22 @@
 	  (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file))
 
 	(when set-bg? (sh "feh --bg-tile \"%s\"" output-file))
-	kind))
+	(s-truncate 50 (format "%s%s" kind (-last-item (s-split kind cmd))))))
 
-(ns/awp
- (->>
-  (list
+(apply 'ns/awp
+       (->>
+		(list
+		 (myron-get :background)
+		 ;; (ct-pastel (myron-get :primary))
+		 (myron-get :primary)
+		 ;; (myron-get :background :weak)
+		 ;; (ns/make-border-color (myron-get :primary))
+		 (myron-get :background :focused)
+		 )
 
-   (myron-get :background)
-   (ct-pastel (myron-get :primary))
-   ;; (myron-get :background :weak)
-   ;; (ns/make-border-color (myron-get :primary))
-   (myron-get :background :focused)
-   )
-  ;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
-  ;; (--map (ct-edit-lch-c it 60))
-  )
- "elementary"
- )
+		;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
+		;; (--map (ct-edit-lch-c it 60))
+		)
+
+       (when (boundp 'ns-args)
+		 ns-args))
