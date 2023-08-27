@@ -2,7 +2,6 @@
 ;; -*- emacs-lisp -*-
 ;; automata wallpapers
 ;; see github.com/neeasade/automata (a fork of camille's tailored to wp generation)
-;;
 
 (defun ns/random-list (list)
   "pick random item from list"
@@ -21,35 +20,40 @@
        (-reduce-from (-lambda (env new) (cons new env)) process-environment)))
 
 (defun ns/awp-cmd (kind colors)
-  (llet [(c1 c2 c3) colors
-	 kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
-	 bin (format (~ "code/automata/c/%s/bin/%s") kind kind)]
-	(list
-	 (if (string= kind "elementary")
-	     (format "%s %s %s" bin
-		     (ns/random-range 0 255)
-		     (s-join "" (--map (ns/str (random 2))
-				       (-iota (display-pixel-width)))))
-	   (format "%s -w %s -h %s -i %s"
-		   bin
-		   (ns/random-range 0 800)
-		   (ns/random-range 0 800)
-		   (ns/random-range 30 300)))
-	 (cond
-	   ((string= kind "pinwheels") (list c2 c3 c1))
-	   (t colors)))))
+  (if (and kind (f-exists-p kind))
+      ;; assume it's data, self invoked (only used for elementary save case, they generate bigger files)
+      (read (second (s-lines (slurp kind))))
+    ;; nominal case:
+    (llet [(c1 c2 c3) colors
+	   kind (if (string= kind "nil") nil kind)
+	   kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
+	   bin (format (~ "code/automata/c/%s/bin/%s") kind kind)]
+	  (list
+	   (if (string= kind "elementary")
+	       (format "%s %s %s" bin
+		       (ns/random-range 0 255)
+		       (s-join "" (--map (ns/str (random 2))
+					 (-iota (display-pixel-width)))))
+	     (format "%s -w %s -h %s -i %s"
+		     bin
+		     (ns/random-range 0 800)
+		     (ns/random-range 0 800)
+		     (ns/random-range 30 300)))
+	   (cond
+	     ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
+	     (t colors))))))
 
-(defun ns/awp (colors &optional kind output-file set-bg?)
-  (llet [(cmd colors) (ns/awp-cmd kind colors)
-	 (c1 c2 c3) colors
+(defun ns/awp (colors &optional kind output-file)
+  (llet [(cmd (c1 c2 c3)) (ns/awp-cmd kind colors)
 	 kind (f-base (first (s-split " " cmd)))
 	 process-environment (ns/awp-color-env colors)
-	 output-file (or output-file "/tmp/result.png")
-	 set-bg? (or set-bg? t)]
+	 set-bg? (not output-file)
+	 output-file (or output-file "/tmp/result.png")]
 
 	(when (f-exists-p output-file)
 	  (f-delete output-file))
 
+	;; when debugging:
 	;; (sh "%s > /dev/shm/temp.pbm" cmd)
 	;; (sh "ffmpeg -i /dev/shm/temp.pbm -ss 00:00:00 -frames:v 1 \"%s\"" output-file)
 
@@ -66,23 +70,28 @@
 	  ;; crop top bit to get rid of setup
 	  (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file))
 
-	(when set-bg? (sh "feh --bg-tile \"%s\"" output-file))
+	(when set-bg?
+	  (sh "feh --bg-tile \"%s\"" output-file)
+	  (spit (ns/str output-file ".sh")
+		(format "#!/usr/bin/env awp\n%s" (pr-str (list cmd colors)))))
 	(s-truncate 50 (format "%s%s" kind (-last-item (s-split kind cmd))))))
 
+;; play here:
 (apply 'ns/awp
        (->>
-		(list
-		 (myron-get :background)
-		 ;; (ct-pastel (myron-get :primary))
-		 (myron-get :primary)
-		 ;; (myron-get :background :weak)
-		 ;; (ns/make-border-color (myron-get :primary))
-		 (myron-get :background :focused)
-		 )
+	(list
+	 (myron-get :background)
+	 ;; (ct-pastel (myron-get :primary))
+	 (ct-pastel (myron-get :assumed))
+	 ;; (myron-get :primary)
+	 ;; (myron-get :background :weak)
+	 ;; (ns/make-border-color (myron-get :primary))
+	 (myron-get :background :focused)
+	 )
 
-		;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
-		;; (--map (ct-edit-lch-c it 60))
-		)
+	;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
+	;; (--map (ct-edit-lch-c it 60))
+	)
 
        (when (boundp 'ns-args)
-		 ns-args))
+	 ns-args))
