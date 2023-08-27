@@ -9,25 +9,19 @@ do_monocle_full() {
   # what are we looking at?
   window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
 
-  # Wine is for eve
-  no_trim_list='.openmw-wrapped
-Civ5XP
-mpv
-steam_app_242920
-Google-chrome
-dota2
-factorio
-Wine
-Dolphin'
+  pad_list='Emacs
+qutebrowser
+libreoffice
+kitty'
 
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
   bspc desktop -l monocle
 
-  if echo "$no_trim_list" | grep -q "$window_class"; then
-    gapt false 0
-  else
+  if echo "$pad_list" | grep -q "$window_class"; then
     gapt $gapped
+  else
+    gapt false 0
   fi
 }
 
