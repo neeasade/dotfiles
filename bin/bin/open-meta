@@ -1,0 +1,62 @@
+#!/usr/bin/env bb
+;; mimetype preferences
+
+(require '[clojure.string :as string]
+         '[babashka.fs :as fs]
+         '[clojure.java.shell :as jshell])
+
+(require '[babashka.process :refer [shell process exec]])
+
+;; todo: archives, folders - dired/unzip tempdir
+(def BROWSER (System/getenv "BROWSER"))
+(def EDITOR (System/getenv "EDITOR"))
+
+(def part1_rules
+  {"image" "feh"
+   "text"  EDITOR
+   "video" ["mpv" "vlc"]
+   "audio" "vlc"})
+
+(def part2_rules
+  {"html" BROWSER
+   "directory" "thunar"
+   "rfc822" BROWSER               ; mhtml
+   "java-archive" "java -jar"
+   "pdf" ["okular" "zathura" "preview" BROWSER]})
+
+(defn act [opener file]
+  (if (fn? opener)
+    (opener file)
+    (let [opener (str (or opener
+                          (last (fs/which-all "xdg-open"))
+                          (last (fs/which-all "open"))))]
+      (println opener file)
+      (process opener file))))
+
+(defn open-file [file]
+  (let [mimetype (string/trim-newline (:out (jshell/sh "file" "--mime-type" "-b" (str (fs/real-path file)))))
+        [part1 part2] (string/split mimetype #"/")
+        opener (some->> (list (part2_rules part2) (part1_rules part1))
+                        (remove nil?)
+                        (flatten)
+                        (filter (fn [exec]
+                                  (or (fn? exec)
+                                      (fs/which (first (string/split exec #" "))))))
+                        first
+                        (str))]
+    (act opener file)))
+
+(defn open-scheme [arg]
+  (let [[_ scheme value] (first (re-seq #"([a-zA-Z]+)://(.*)" arg))]
+    (println "scheme: " scheme)
+    (condp = scheme
+      "file" (open-file value)
+      "https" (process BROWSER value)
+      "http" (process BROWSER value)
+      (act nil value))))
+
+(let [arg (string/join " " *command-line-args*)]
+  (cond
+    (fs/exists? arg) (open-file arg)
+    (re-seq #"([a-zA-Z]+)://(.*)" arg) (open-scheme arg)
+    :else (act nil arg)))

@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/sh
+
+# notify-send "xdg-open called! $*"
 
 . ~/.sh.d/environment
 . ~/.sh.d/environment_emacs
