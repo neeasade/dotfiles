@@ -22,7 +22,10 @@
 (defun ns/awp-cmd (kind colors)
   (if (and kind (f-exists-p kind))
       ;; assume it's data, self invoked (only used for elementary save case, they generate bigger files)
-      (read (second (s-lines (slurp kind))))
+      (llet [(rcmd rcolors) (read (second (s-lines (slurp kind))))]
+	    ;; (list rcmd colors)
+	    (list rcmd rcolors)
+	    )
     ;; nominal case:
     (llet [(c1 c2 c3) colors
 	   kind (if (string= kind "nil") nil kind)
@@ -32,8 +35,22 @@
 	   (if (string= kind "elementary")
 	       (format "%s %s %s" bin
 		       (ns/random-range 0 255)
-		       (s-join "" (--map (ns/str (random 2))
-					 (-iota (display-pixel-width)))))
+		       ;; 57
+		       ;; 99
+
+		       (llet [probs
+			      (--map (ns/random-list '(50 1 1 1)) (-iota
+								   ;; (/ (display-pixel-width) 10)
+								   5
+								   ))
+			      probs '(50 50 1 1 20)
+			      ]
+			     (->> probs
+				  (-mapcat (lambda (prob)
+					     (--map (if (> prob (random 100)) "1" "0")
+						    (-iota (/ (display-pixel-width)
+							      (length probs))))))
+				  (s-join ""))))
 	     (format "%s -w %s -h %s -i %s"
 		     bin
 		     (ns/random-range 0 800)
@@ -43,10 +60,10 @@
 	     ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
 	     (t colors))))))
 
-(defun ns/awp (colors &optional kind output-file)
-  (llet [(cmd (c1 c2 c3)) (ns/awp-cmd kind colors)
+(defun ns/awp (colors-in &optional kind output-file)
+  (llet [(cmd (c1 c2 c3)) (ns/awp-cmd kind colors-in)
 	 kind (f-base (first (s-split " " cmd)))
-	 process-environment (ns/awp-color-env colors)
+	 process-environment (ns/awp-color-env colors-in)
 	 set-bg? (not output-file)
 	 output-file (or output-file "/tmp/result.png")]
 
@@ -59,21 +76,19 @@
 
 	(sh "%s | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-file)
 
-	(when (or (string= kind "elementary")
-		  (string= kind "life"))
-	  ;; note to future self
-	  ;; this was faster than making these scripts output p3 format in first place (at least for like elementary @ 4k)
+	(when (or (string= kind "elementary"))
 	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c1 "#ffffff" output-file)
-	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c2 "#000000" output-file))
+	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c2 "#000000" output-file)
 
-	(when (string= kind "elementary")
 	  ;; crop top bit to get rid of setup
-	  (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file))
+	  (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file)
 
-	(when set-bg?
-	  (sh "feh --bg-tile \"%s\"" output-file)
-	  (spit (ns/str output-file ".sh")
-		(format "#!/usr/bin/env awp\n%s" (pr-str (list cmd colors)))))
+	  (spit (ns/str output-file ".awp")
+		(format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3))))))
+
+	(when (and ns/enable-linux-p set-bg?)
+	  (sh "feh --bg-tile \"%s\"" output-file))
+
 	(s-truncate 50 (format "%s%s" kind (-last-item (s-split kind cmd))))))
 
 ;; play here:
@@ -81,8 +96,11 @@
        (->>
 	(list
 	 (myron-get :background)
-	 ;; (ct-pastel (myron-get :primary))
+	 ;; ;; (myron-get :background :weak)
+	 ;; (myron-get :background :focused)
 	 (ct-pastel (myron-get :assumed))
+	 ;; (ct-pastel (myron-get :primary))
+	 ;; (ct-pastel (myron-get :alt))
 	 ;; (myron-get :primary)
 	 ;; (myron-get :background :weak)
 	 ;; (ns/make-border-color (myron-get :primary))

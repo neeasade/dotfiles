@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# notify-send "open called! $*"
+
+. ~/.sh.d/environment
+. ~/.sh.d/environment_emacs
+
+open-meta "$@"
