@@ -22,6 +22,7 @@ in
     [ 
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
+      (import ../../config/factorio.nix {inherit hostname shared pkgs expr;})
     ];
 
   nixpkgs.overlays = [
@@ -38,6 +39,8 @@ in
                                ++ (with pkgs; [
                                  tailscale
                                  udiskie
+                                 bitwarden
+                                 bitwarden-cli
                                ]);
 
   fonts.fonts = sets.fonts-all;

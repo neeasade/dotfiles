@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-. ~/.sh.d/environment
-. ~/.sh.d/environment_emacs
-
-open-meta "$@"
