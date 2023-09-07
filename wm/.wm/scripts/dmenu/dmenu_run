@@ -1,3 +1,5 @@
 #!/bin/sh
 
+. ~/.sh.d/environment
+
 eval "$(dmenu_path | dmenu "$@")"

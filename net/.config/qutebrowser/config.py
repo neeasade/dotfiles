@@ -277,7 +277,6 @@ nmap('<F10>', 'spawn --userscript chrome_open')
 nmap('<F12>', 'devtools')
 
 REDIRECT_MAP = {
-    # note: the redirect stuff needs a newish version of qb (at least, newer than nixpkgs stable)
     "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
     "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
 }
@@ -296,8 +295,7 @@ def redirect_intercept(info):
         info.redirect(url)
 
 # idea here: you could have an interceptor that does the url note check for emacs
-if initial_start:
-    interceptor.register(redirect_intercept)
+interceptor.register(redirect_intercept)
 
 adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock.txt'
 adblock_normal_file = os.environ["HOME"] + '/.config/qutebrowser/adblock_internet.txt'

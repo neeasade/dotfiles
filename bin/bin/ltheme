@@ -125,16 +125,11 @@ load_services() {
     # clean
     find "${HOME}/.config/systemd/user/" -type f -delete
 
-    # running_services=$(systemctl --user list-units | awk '{print $1}' | grep '\.service' | sort)
-    running_services=$(systemctl --user list-units  | grep -oE '[a-zA-Z_]+.service' | tr '\n' ' ')
-    installed_services=$(systemctl --user list-unit-files | awk '{print $1}' | grep '\.service' | sort)
+    not_found_services=$(systemctl --user list-units  | grep ' not-found ' | awk '{print $2}')
 
     # stop the in-memory services that have no service files associated
-    for s in $running_services; do
-    	if ! grep -q $s <<< "$installed_services"; then
-    	    echo systemctl --user stop $s
-    	    systemctl --user stop $s
-    	fi
+    for s in $not_found_services; do
+	vdo timeout 2 systemctl --user stop $s
     done
 
     made_services=
@@ -187,6 +182,7 @@ load_services() {
 
     if [ "$(hostname)" = "bliss" ]; then
 	make_periodic_service 5 kobo_sync kobo_sync
+	make_periodic_service 3600 update-duckdns
 	make_service temps
     fi
 
@@ -213,11 +209,11 @@ load_services() {
     make_service mpd "og mpd --no-daemon"
 
     # reload units
-    systemctl --user daemon-reload
+    vdo systemctl --user daemon-reload
 
     # start and enable our units
     for s in $made_services; do
-	systemctl --user start $s
+	vdo timeout 2 systemctl --user restart $s
 	systemctl --user enable $s
     done
 
@@ -251,16 +247,20 @@ case "$*" in
     *) vdo silent theme -c
 esac
 
-for conf in "$@"; do
-    (
-	result=$(
-	    tmp=$(mktemp)
-	    printf '::: %s: ' load_$conf
-	    { time load_$conf >"$tmp" 2>&1 ; } 2>&1 | awk 'FNR==2{print $2}'
-	    cat "$tmp"
-	    rm "$tmp")
-	printf '%s\n' "$result"
-    ) &
-done
+if [ "$*" = "services" ]; then
+    load_$*
+else
+    for conf in "$@"; do
+	(
+	    result=$(
+		tmp=$(mktemp)
+		printf '::: %s: ' load_$conf
+		{ time load_$conf >"$tmp" 2>&1 ; } 2>&1 | awk 'FNR==2{print $2}'
+		cat "$tmp"
+		rm "$tmp")
+	    printf '%s\n' "$result"
+	) &
+    done
+fi
 
 wait

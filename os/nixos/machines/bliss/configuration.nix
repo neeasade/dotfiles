@@ -22,8 +22,11 @@ in
     [ 
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
-      (import ../../config/factorio.nix {inherit hostname shared pkgs expr;})
+      (import ../../config/factorio.nix {inherit hostname shared pkgs expr lib;})
     ];
+
+  # https://github.com/NixOS/nixpkgs/issues/180175
+  systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {

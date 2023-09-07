@@ -156,5 +156,32 @@ if ${NEEASADE_ENV:-true}; then
     fi
   fi
 
+  # why did I do this
+  # replace eval
+  reval() {
+    template=$1
+    shift
+
+    i=0
+    while [[ ! -z "$*" ]]; do
+      current=$1
+      shift
+      i=$((i+1))
+      template=${template//%$i/${current}}
+    done
+    eval "$template"
+  }
+
+  for service in picom stalonetray; do
+  reval \
+    '%1() {
+    if silent pgrep %1; then
+      vdo systemctl --user stop %1
+    else
+      vdo systemctl --user start %1
+    fi
+  }' $service
+  done
+
   set +a
 fi

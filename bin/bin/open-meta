@@ -3,9 +3,25 @@
 
 (require '[clojure.string :as string]
          '[babashka.fs :as fs]
-         '[clojure.java.shell :as jshell])
+         '[clojure.java.shell :as shell])
 
-(require '[babashka.process :refer [shell process exec]])
+(require '[babashka.process :refer [process]])
+
+(defn act [opener file]
+  (if (fn? opener)
+    (opener file)
+    (let [opener (str (or opener
+                          (last (fs/which-all "open"))
+                          (last (fs/which-all "xdg-open"))))]
+      (println opener file)
+      (process opener file))))
+
+(defn open-archive [archive]
+  (let [
+        arst ;; shasum archive dir?
+        (fs/exists? (str (System/getenv "HOME") "/archives"))
+        ]
+    ))
 
 ;; todo: archives, folders - dired/unzip tempdir
 (def BROWSER (System/getenv "BROWSER"))
@@ -19,22 +35,18 @@
 
 (def part2_rules
   {"html" BROWSER
-   "directory" "thunar"
-   "rfc822" BROWSER               ; mhtml
+   "directory" [EDITOR "thunar"]
+   "rfc822" BROWSER                     ; mhtml
    "java-archive" "java -jar"
-   "pdf" ["okular" "zathura" "preview" BROWSER]})
+   "pdf" ["okular" "zathura" "preview" BROWSER]
 
-(defn act [opener file]
-  (if (fn? opener)
-    (opener file)
-    (let [opener (str (or opener
-                          (last (fs/which-all "xdg-open"))
-                          (last (fs/which-all "open"))))]
-      (println opener file)
-      (process opener file))))
+   "zip" open-archive
+   "x-7z-compressed" open-archive
+   "gzip" open-archive
+   })
 
 (defn open-file [file]
-  (let [mimetype (string/trim-newline (:out (jshell/sh "file" "--mime-type" "-b" (str (fs/real-path file)))))
+  (let [mimetype (string/trim-newline (:out (shell/sh "file" "--mime-type" "-b" (str (fs/real-path file)))))
         [part1 part2] (string/split mimetype #"/")
         opener (some->> (list (part2_rules part2) (part1_rules part1))
                         (remove nil?)
@@ -43,7 +55,7 @@
                                   (or (fn? exec)
                                       (fs/which (first (string/split exec #" "))))))
                         first
-                        (str))]
+                        str)]
     (act opener file)))
 
 (defn open-scheme [arg]

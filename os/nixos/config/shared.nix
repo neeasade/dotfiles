@@ -7,7 +7,7 @@ rec {
   };
 
   user     = "neeasade";
-  home     = "/home/${user}";
+  home     = "/home/${user}/";
   dotfiles = "${home}/.dotfiles";
 
   defaultUser = {
