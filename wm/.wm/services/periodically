@@ -2,6 +2,7 @@
 # 2lazy
 
 persist=false
+
 if [ "$1" = "-p" ]; then
     persist=true
     shift
@@ -12,7 +13,9 @@ shift
 
 while true; do
     if [ -z "$*" ]; then
-	notify-send "invalid periodic script!"
+	notify-send "invalid periodic script! $*"
+	echo "invalid periodic script! $*"
+	exit 1
     fi
 
     echo "calling $*"

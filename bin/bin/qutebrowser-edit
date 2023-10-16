@@ -10,5 +10,4 @@ while getopts c:l:f: flag; do
 	*) usage;;
     esac
 done
-
-emacsclient -c "+${line:-0}:${column:-0}" "${file}"
+emacsclient -c -n "+${line:-0}:${column:-0}" "${file:-$*}"

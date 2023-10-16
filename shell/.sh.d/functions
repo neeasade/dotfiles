@@ -137,6 +137,8 @@ bicc() {
 }
 
 recentf() {
+  # todo: make this smarter - I would also like to do: recentf -s '<2023-09-14 Thu 17:34>'
+  # (files since x date)
   ls -t "${1:-.}" | head -n "${2:-1}"
 }
 

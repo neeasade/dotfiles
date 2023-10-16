@@ -22,8 +22,13 @@ in
     [ 
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
-      (import ../../config/factorio.nix {inherit hostname shared pkgs expr lib;})
     ];
+
+  services.plex = {
+    enable = true;
+    openFirewall = true;
+    package = edge.plex;
+  };
 
   # https://github.com/NixOS/nixpkgs/issues/180175
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
@@ -81,7 +86,6 @@ in
   networking.networkmanager.enable = true;
 
   networking.firewall.allowedTCPPorts = [
-
     # mpd
     8000 6600
   ];

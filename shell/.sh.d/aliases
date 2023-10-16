@@ -5,6 +5,13 @@
 # let's see if this is too generic
 # alias open='xdg-open'
 
+aawp() {
+  # saved wallpapes
+  cd ~/walls
+  vdo ./$(ls *.awp | shuf | head -n 1)
+  cd -
+}
+
 alias mimetype='file --mime-type -b'
 
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"

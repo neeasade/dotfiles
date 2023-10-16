@@ -183,5 +183,9 @@ if ${NEEASADE_ENV:-true}; then
   }' $service
   done
 
+  if ! has open; then
+    alias open=' xdg-open'
+  fi
+
   set +a
 fi

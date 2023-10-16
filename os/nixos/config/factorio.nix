@@ -13,7 +13,7 @@ in {
     enable = true;
     description = game;
     game-name = game;
-    saveName = game; # nb: save game location is /var/lib/factorio/saves
+    saveName = game; # nb: save game location is /var/lib/factorio/saves/<saveName>.zip
 
     # admins = lib.splitString "\n" (builtins.readFile (shared.home + "factorio.admins"));
     admins = [ ];

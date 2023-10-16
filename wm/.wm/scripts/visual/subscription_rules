@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/usr/bin/env bash
+
+. ~/.sh.d/environment
 
 # fun ideas for later
 # what if you could have groups of windows associated with a project
@@ -19,15 +21,16 @@ bspc subscribe node_add | while read -r event m d i wid; do
     # 	continue
     # fi
 
-    if echo "$current_class" | grep qutebrowser; then
-	btags set-tag-on-wids net $wid
+    if echo "$current_class" | grep -q qutebrowser; then
+	vdo btags set-tag-on-wids ^2 $wid
 	continue
     fi
 
     if echo "$last_class" | grep qutebrowser; then
 	# if we are making an emacs window from browser assume it should be in code for now
-	if echo "$current_class" | grep Emacs; then
-	    btags set-tag-on-wids code $wid
+	if echo "$current_class" | grep -v Emacs; then
+	    # todo: only set if code visible
+	    vdo btags set-tag-on-wids ^1 $wid
 	    continue
 	fi
     fi

@@ -182,7 +182,7 @@ load_services() {
 
     if [ "$(hostname)" = "bliss" ]; then
 	make_periodic_service 5 kobo_sync kobo_sync
-	make_periodic_service 3600 update-duckdns
+	make_periodic_service 3600 update_duckdns update-duckdns
 	make_service temps
     fi
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env elisp
 ;; -*- emacs-lisp -*-
 ;; automata wallpapers
-;; see github.com/neeasade/automata (a fork of camille's tailored to wp generation)
+;; see https://github.com/neeasade/automata (a fork of camille's tailored to wp generation)
 
 (defun ns/random-list (list)
   "pick random item from list"
@@ -19,13 +19,35 @@
 	  (apply 'format "COLOR%s='%03d %03d %03d'" i parts)))
        (-reduce-from (-lambda (env new) (cons new env)) process-environment)))
 
+(defun ns/awp-elementary-cmd ()
+  (format "%s %s %s" bin
+	  ;; from: https://en.wikipedia.org/wiki/Elementary_cellular_automaton
+	  (ns/random-list '(0 1 10 104 105 106 108 11 110 12 122 126 128 13 130
+			    132 134 136 138 14 140 142 146 15 150 152 154 156
+			    160 162 164 168 170 172 178 18 184 19 2 200 204 22
+			    23 232 24 25 26 27 28 29 3 30 32 33 34 35 36 37 38 4
+			    40 41 42 43 44 45 46 5 50 51 54 56 57 58 6 60 62 7
+			    72 73 74 76 77 78 8 9 90 94))
+
+	  (llet [probs (--map (ns/random-list '(50 1 1 1))
+			      (-iota
+			       (ns/random-range 2 10)
+			       ;; 5
+			       ))
+		       ;; probs (-shuffle '(50 50 1 1 20))
+		       ]
+		(->> probs
+		     (-mapcat (lambda (prob)
+				(--map (if (> prob (random 100)) "1" "0")
+				       (-iota (/ (display-pixel-width)
+						 (length probs))))))
+		     (s-join "")))))
+
 (defun ns/awp-cmd (kind colors)
   (if (and kind (f-exists-p kind))
-      ;; assume it's data, self invoked (only used for elementary save case, they generate bigger files)
+      ;; we got an awp file! the format is (command (colors))
       (llet [(rcmd rcolors) (read (second (s-lines (slurp kind))))]
-	    ;; (list rcmd colors)
-	    (list rcmd rcolors)
-	    )
+	    (list rcmd rcolors))
     ;; nominal case:
     (llet [(c1 c2 c3) colors
 	   kind (if (string= kind "nil") nil kind)
@@ -33,24 +55,7 @@
 	   bin (format (~ "code/automata/c/%s/bin/%s") kind kind)]
 	  (list
 	   (if (string= kind "elementary")
-	       (format "%s %s %s" bin
-		       (ns/random-range 0 255)
-		       ;; 57
-		       ;; 99
-
-		       (llet [probs
-			      (--map (ns/random-list '(50 1 1 1)) (-iota
-								   ;; (/ (display-pixel-width) 10)
-								   5
-								   ))
-			      probs '(50 50 1 1 20)
-			      ]
-			     (->> probs
-				  (-mapcat (lambda (prob)
-					     (--map (if (> prob (random 100)) "1" "0")
-						    (-iota (/ (display-pixel-width)
-							      (length probs))))))
-				  (s-join ""))))
+	       (ns/awp-elementary-cmd)
 	     (format "%s -w %s -h %s -i %s"
 		     bin
 		     (ns/random-range 0 800)
@@ -65,31 +70,36 @@
 	 kind (f-base (first (s-split " " cmd)))
 	 process-environment (ns/awp-color-env colors-in)
 	 set-bg? (not output-file)
-	 output-file (or output-file "/tmp/result.png")]
+	 output-file (or output-file "/tmp/result.png")
+	 output-name (f-join (f-parent output-file) (f-base output-file))]
 
 	(when (f-exists-p output-file)
 	  (f-delete output-file))
 
-	;; when debugging:
-	;; (sh "%s > /dev/shm/temp.pbm" cmd)
-	;; (sh "ffmpeg -i /dev/shm/temp.pbm -ss 00:00:00 -frames:v 1 \"%s\"" output-file)
+	(sh "%s | tee %s.pbm | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-name output-file)
 
-	(sh "%s | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-file)
+	(sh "zip %s.zip %s" output-name output-file)
+	(spit (ns/str output-name ".ratio")
+	      (number-to-string
+	       (/ (float (f-size (format "%s.zip" output-name)))
+		  (f-size output-file))))
 
-	(when (or (string= kind "elementary"))
+	(when (string= kind "elementary")
 	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c1 "#ffffff" output-file)
 	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c2 "#000000" output-file)
 
 	  ;; crop top bit to get rid of setup
 	  (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file)
 
-	  (spit (ns/str output-file ".awp")
-		(format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3))))))
+	  (spit (ns/str output-name ".awp")
+		(format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3)))))
+	  (sh "chmod +x %s" (ns/str output-name ".awp")))
 
 	(when (and ns/enable-linux-p set-bg?)
 	  (sh "feh --bg-tile \"%s\"" output-file))
 
 	(s-truncate 50 (format "%s%s" kind (-last-item (s-split kind cmd))))))
+
 
 ;; play here:
 (apply 'ns/awp
