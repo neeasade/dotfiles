@@ -1,0 +1,114 @@
+#!/usr/bin/env bb
+;; do things with mpd
+;; todo: better cue file support
+;; todo: auto refresh is-long cache? (right now I just ran it once manually)
+;; todo: more data per song? update seconds compare instead of boolean
+
+(require '[clojure.java.shell :as shell]
+         '[clojure.string :as string]
+         '[babashka.fs :as fs])
+
+(def music-dir "/home/neeasade/Music")
+
+;; right now, cache is simply {"/song-path" <int> duration}
+(def cache-file (fs/file (fs/xdg-cache-home) "mpd-info"))
+
+(def cache-map (when (fs/exists? cache-file)
+                 (read-string (slurp cache-file))))
+
+;; (def cache-map {})
+
+(defn song-length [song]
+  (let [length-str (:out (shell/sh "mediainfo" "--Inform=Audio;%Duration%" (str music-dir "/" song)))
+        length-ms (if (string/blank? (string/trim length-str))
+                    ;; (do (prn "oops!") 0)
+                    0
+                    (read-string length-str))]
+    (/ length-ms 1000)))
+
+(defn is-long [song]
+  (let [duration (or (get cache-map song)
+                     (song-length song))]
+    (> duration (* 60 15))))
+
+;; nb: this takes awhile (2 minutes ish?)
+(defn refresh-cache []
+  (->> (-> (shell/sh "mpc" "listall")
+           (:out)
+           (string/split #"\n"))
+       (map (fn [song] {song (song-length song)}))
+       (into {})
+       (pr-str)
+       (spit (str cache-file)))
+  nil)
+
+(defn pomodoro-song-now []
+  (shell/sh "mpc" "clear")
+  (->> (filter
+        (fn [[k v]]
+          (< (* 60 23) v (* 60 28)))
+        is-long)
+       ;; (map first)
+       ;; (string/join "\n")
+       ;; (println)
+       ;; (count)
+       (shuffle)
+       (first)
+       (first)
+       (shell/sh "music" "now")))
+
+(defn filter-meta [filter-fn]
+  (let [delete-positions (->> (string/split (:out (shell/sh "mpc" "playlist" "-f" "%position% %file%"
+                                                            :out-enc "UTF-8"
+                                                            )) #"\n")
+                              (keep (fn [line]
+                                      (let [[_ pos song] (first (re-seq #"([0-9]+) (.*)" line))]
+                                        (when-not (filter-fn song)
+                                          pos)))))]
+    (shell/sh "mpc" "del" :in (string/join "\n" delete-positions))))
+
+(defn filter-is-long [] (filter-meta is-long))
+(defn filter-is-short [] (filter-meta (complement is-long)))
+
+(defn shuffle-by-album []
+  (->> (string/split (:out (shell/sh "mpc" "playlist" "-f" "%file%"
+                                     :out-enc "UTF-8"
+                                     )) #"\n")
+       (sort)
+       (distinct)
+       (group-by
+        (fn [path]
+          (->> (string/split path #"/")
+               (drop-last)
+               (string/join "/"))))
+       ;; todo: bug: if a song is added but not an album, it will still be counted as one (we don't always add whole dirs)
+       (mapcat (fn [[dir songs]]
+                 (let [ ;; songs (filter )
+                       is-indexed-album-strict? false
+                       is-indexed-album? (and
+                                          ;; todo: do all the numbers go up continuously/increment by one
+                                          ;; (< 3 (count songs))
+                                          (every? (complement is-long) songs) ; does this matter?
+                                          (every? #(re-matches #"[0-9].+" (fs/file-name %)) songs)
+                                          )
+                       is-misc-album? (and ; idk man
+                                       (< 4 (count songs) 17)
+                                       (every? (complement is-long) songs))]
+                   ;; todo: a way to toggle these from caller
+                   (cond
+                     is-indexed-album? [[dir songs]]
+                     ;; is-misc-album? [[dir (into [] (sort-by #(fs/last-modified-time (str music-dir "/" %)) songs))]]
+                     :else
+                     (map (fn [album] [dir [album]])
+                          (filter is-long songs))))))
+       (shuffle)
+       (mapcat second)
+       (string/join "\n")
+       (println)))
+
+(apply
+ (->> (or *command-line-args* ["shuffle-by-album"])
+      first
+      symbol
+      resolve)
+ [])

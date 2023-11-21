@@ -19,39 +19,27 @@ log() {
 
 usage() {
   echo "music options:"
-  # todo: dynamic length for printf align
-  awk -F \# '{ if (match($0, /([a-z_]+)\(\) {.*#/, line)) { printf "%-9s:%s\n", line[1], $2 }}' "$0" | sort
-}
-
-is_long() {
-  milli=$(mediainfo --Inform="Audio;%Duration%" "$1")
-  milli=${milli%.*}
-
-  if [ -z "$milli" ]; then
-    return 1
-  fi
-
-  seconds=$(( $milli / 1000))
-  if [ $seconds -gt $((60 * 15)) ]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-is_short () {
-   ! is_long "$@"
+  # todo: this better
+  longest=$(awk -F \# '{ if (match($0, /([a-z_]+)\(\) {.*#/, line)) { printf "%s\n", line[1] }}' "$0" | wc -L)
+  script='{ if (match($0, /([a-z_]+)\(\) {.*#/, line)) { printf "%-LONGESTs:%s\n", line[1], $2 }}'
+  script=$(sed "s/LONGEST/$((longest + 1))/" <<< "$script")
+  awk -F \# "$script" "$0" | sort
 }
 
 filter() { # filter the current playlist by some shell function acting on music files
   log "filter $*"
 
-  fn=$1
+  case "$1" in
+      is_long)  mpd-mixer filter-is-long ; return $?;;
+      is_short) mpd-mixer filter-is-short; return $?;;
+      *) fn=$1
+  esac
+
   mpc playlist -f '%position% %file%' |
     while read -r pos file; do
-      if ! "$fn" "${musicdir}/$file" "$pos" >/dev/null; then
-	echo "$pos"
-      fi
+    if ! "$fn" "${musicdir}/$file" "$pos" >/dev/null; then
+      echo "$pos"
+    fi
     done | mpc del
 }
 
@@ -102,7 +90,7 @@ add() { # add a url to library, fallback on clipboard content
     format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(track_number)02d. %(title)s.%(ext)s"
   fi
 
-  youtube-dl --download-archive  "$musicdir/download_archive.txt" -x -i -o "$format" "$url"
+  yt-dlp --download-archive  "$musicdir/download_archive.txt" -x -i -o "$format" "$url"
 
   mpc update
 }
@@ -159,9 +147,15 @@ bl() { # blacklist the currently playing song from the current playlist
   mpc next
 }
 
+artist_album_sort() {
+  artist
+  shuffler
+}
+
 artist() { # play songs by an artist
   artist=$*
   if [ -z "$artist" ]; then
+    # todo idea: artist alias? eg win96/windows96/windows 96
     if ! artist=$({
 		   mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]'
 		   cat "${musicdir}/playlist/artists"
@@ -271,13 +265,12 @@ playlist() { # select a search term based playlist to play
   info
 }
 
-shuffler() { # shuffle with the mpd_shuffle script
+shuffler() { # shuffle by album using mpd-mixer
   SHUFFLE=false # prevent playlists with this in their definition from shuffling
-  log calling mpd_shuffle
-  shuffled=$(mpd_shuffle)
+  shuffled=$(mpd-mixer shuffle-by-album)
   mpc -q clear
   if [ -z "$shuffled" ]; then
-    echo "shuffler: removed everything!" >&2
+    echo "mpd-mixer : removed everything!" >&2
     return 1
   fi
   mpc -q add <<< "$shuffled"

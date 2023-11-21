@@ -26,13 +26,13 @@ rand_tile() {
 	# rg --files /media/LIVEWIRE/Archive/other/squid/
 	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
 
-	# rg --files "$HOME/git/SubtlePatterns/"
+	# rg --files "$HOME/code/SubtlePatterns/"
 
-	# rg --files /home/neeasade/git/tiles-and-such
-	# # rg --files "/home/neeasade/git/tiles-and-such/[J] Retro Patterns/"
+	# rg --files /home/neeasade/code/tiles-and-such
+	# # rg --files "/home/neeasade/code/tiles-and-such/[J] Retro Patterns/"
 
-	rg --files /home/neeasade/git/neeasade.github.io/published/assets/posts/ca_dump
-	rg --files /home/neeasade/git/neeasade.github.io/published/assets/posts/ca_dump2
+	rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump
+	rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump2
     ) | sort -R | head -n 1
 
 }

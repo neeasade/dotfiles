@@ -5,7 +5,7 @@
 
 (defun ns/random-list (list)
   "pick random item from list"
-  (nth (random (length list)) list))
+  (first (-shuffle list)))
 
 (defun ns/random-range (min max)
   (+ min (random (- (+ 1 max) min))))
