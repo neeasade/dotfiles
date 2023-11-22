@@ -27,7 +27,7 @@ mount_diskfile() {
   # mountpath=${2:-./$(basename "$diskfile" | sed 's/\..*//')}
   mountpath=${2:-/media/filemount/$(basename "$diskfile" | sed 's/\..*//')}
 
-  mkdir -p "$mountpath"
+  sudo mkdir -p "$mountpath"
 
   echo sudo mount "$diskfile" "$mountpath" -o loop
   sudo mount "$diskfile" "$mountpath" -o loop

@@ -5,4 +5,9 @@
 . ~/.sh.d/environment
 . ~/.sh.d/environment_emacs
 
+if [ "$1" = "last" ]; then
+    last=$(ls -t "." | head -n 1)
+    set -- "$last"
+fi
+
 open-meta "$@"

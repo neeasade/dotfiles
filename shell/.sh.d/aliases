@@ -12,6 +12,10 @@ aawp() {
   cd -
 }
 
+nst() {
+  elisp -r "(ns/t $1)"
+}
+
 alias mimetype='file --mime-type -b'
 
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"

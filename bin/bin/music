@@ -28,19 +28,12 @@ usage() {
 
 filter() { # filter the current playlist by some shell function acting on music files
   log "filter $*"
-
+  # compat
   case "$1" in
-      is_long)  mpd-mixer filter-is-long ; return $?;;
-      is_short) mpd-mixer filter-is-short; return $?;;
-      *) fn=$1
+      is_long)  mpd-mixer filter-is-long;;
+      is_short) mpd-mixer filter-is-short;;
+      *) echo "unknown filter! $*" ;;
   esac
-
-  mpc playlist -f '%position% %file%' |
-    while read -r pos file; do
-    if ! "$fn" "${musicdir}/$file" "$pos" >/dev/null; then
-      echo "$pos"
-    fi
-    done | mpc del
 }
 
 clear_duplicates() {
@@ -266,6 +259,7 @@ playlist() { # select a search term based playlist to play
 }
 
 shuffler() { # shuffle by album using mpd-mixer
+  echo "calling shuffler"
   SHUFFLE=false # prevent playlists with this in their definition from shuffling
   shuffled=$(mpd-mixer shuffle-by-album)
   mpc -q clear
