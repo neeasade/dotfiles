@@ -32,6 +32,7 @@ filter() { # filter the current playlist by some shell function acting on music 
   case "$1" in
       is_long)  mpd-mixer filter-is-long;;
       is_short) mpd-mixer filter-is-short;;
+      # todo restore this? used in at least one playlist
       *) echo "unknown filter! $*" ;;
   esac
 }
@@ -70,7 +71,8 @@ add() { # add a url to library, fallback on clipboard content
 
   # note: get all of an artists album links example:
   example() {
-    url='https://shigeto.bandcamp.com/music'
+    url='https://purityfilter.bandcamp.com/music'
+    url='https://golemm.bandcamp.com/music'
     curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '$(echo "$url" | sed 's/music//')#" -e "s/$/'/"
   }
 
@@ -140,20 +142,26 @@ bl() { # blacklist the currently playing song from the current playlist
   mpc next
 }
 
-artist_album_sort() {
+artist_no_sort() {
+  # shuffle but not with mpd-mixer
+  SHUFFLE=false
   artist
-  shuffler
+  mpc shuffle
+}
+
+known_artists() {
+  {
+    mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]'
+    cat "${musicdir}/playlist/artists"
+    ls "${musicdir}/import/bandcamp/"
+  } | sort | uniq
 }
 
 artist() { # play songs by an artist
   artist=$*
   if [ -z "$artist" ]; then
-    # todo idea: artist alias? eg win96/windows96/windows 96
-    if ! artist=$({
-		   mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]'
-		   cat "${musicdir}/playlist/artists"
-		   ls "${musicdir}/import/bandcamp/"
-		 } | sort | uniq | dmenu); then
+    # todo idea: artist aliases? eg win96/windows96/windows 96
+    if ! artist=$(known_artists | dmenu); then
       return
     fi
   fi
@@ -161,7 +169,7 @@ artist() { # play songs by an artist
   log "artist $artist"
 
   if [ "$interactive_op" = "artist" ]; then
-    echo "$artist" > "$current_playlist"
+    echo "@$artist" > "$current_playlist"
     mpc clear
   fi
 
@@ -183,8 +191,7 @@ artist() { # play songs by an artist
     clear_duplicates
 
     if ${SHUFFLE:-true}; then
-      # shuffler
-      mpc shuffle
+      shuffler
     fi
 
     mpc play
@@ -261,7 +268,7 @@ playlist() { # select a search term based playlist to play
 shuffler() { # shuffle by album using mpd-mixer
   echo "calling shuffler"
   SHUFFLE=false # prevent playlists with this in their definition from shuffling
-  shuffled=$(mpd-mixer shuffle-by-album)
+  shuffled=$(mpd-mixer ${*:-shuffle-by-album})
   mpc -q clear
   if [ -z "$shuffled" ]; then
     echo "mpd-mixer : removed everything!" >&2
@@ -298,15 +305,19 @@ name_from_pos() {
 clean_name() {
   # operates on an already set $name var
   remove_delim() {
-    # maybe
-    # name=$(sed "s/${1}[^${1: -1}${2: -1}]*${2}//g" <<< "$name")
-    name=$(sed "s/${1}\(.*\)${2}//g" <<< "$name")
+    name=$(sed "s/${1}[^${2: -1}]*${2}//g" <<< "$name")
+
+    # don't use this one, it's greedy, eg:
+    # Hiroshi Yoshimura (吉村弘) - 静けさの本 (Static) (1988) [Full Album].opus
+    # -> Hiroshi Yoshimura [Full Album].opus
+    # name=$(sed "s/${1}\(.*\)${2}//g" <<< "$name")
   }
 
   remove_delim '(' ')'
   remove_delim '\[' '\]'
   remove_delim '【' '】'
   remove_delim '●' '●'
+  remove_delim '～' '～'
 
   case "$name" in
       # track index
