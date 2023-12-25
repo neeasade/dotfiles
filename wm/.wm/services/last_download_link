@@ -4,6 +4,8 @@
 
 inotifywait -m "${HOME}/Downloads" -e create -e moved_to | debounce.js 30 | \
     while read dir action file; do
+	mimetype_ext=$(file --mime-type -b "${HOME}/Downloads/$file" | awk -F'/' '{print $2}')
+
 	vdo rm "${HOME}/Last_Shot/last_download_"*
-	vdo ln -s "${dir}/${file}" "${HOME}/Last_Shot/last_download_${file}"
+	vdo ln -s "${dir}/${file}" "${HOME}/Last_Shot/last_download_${file}.${mimetype_ext}"
     done

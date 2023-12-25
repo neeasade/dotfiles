@@ -5,6 +5,11 @@ task() {
   og task "$@"
 }
 
+lein() {
+  cdu project.clj
+  og lein "$@"
+}
+
 mark() {
   # mark a file to be used in a gui later
   if [ -z "$*" ]; then
@@ -246,21 +251,7 @@ cursorStyle() {
   printf "%b%s" "\e[${index} q"
 }
 
-# Change to root of git repo
-# todo: this should probably print the where we are
-# (or be implemented in terms of cdu?)
-groot() {
-  if git status &> /dev/null; then
-    cd $(git rev-parse --show-toplevel)
-    pwd
-  else
-    echo "Error: Not a git repository"
-    return 128
-  fi
-}
-
-# go up until you find something
-cdu() {
+cdu() { # go up until you find something
   start=$PWD
   look=${*:-project.clj}
   while ! (test -f "$look" || test -d "$look"); do
@@ -275,6 +266,10 @@ cdu() {
 
   pwd
   return 0
+}
+
+groot() {
+  cdu .git
 }
 
 kondo() {

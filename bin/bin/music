@@ -422,6 +422,17 @@ info2() {
   context
 }
 
+contextall() {
+  # playlist list but nice
+  # pos=$(mpc -f '%position%' | head -n 1)
+  start=0
+  end=$(mpc playlist | wc -l)
+
+  while read -r pos; do
+    name_from_pos $pos
+  done < <(mpc playlist -f '%position%')
+}
+
 context() {
   pos=$(mpc -f '%position%' | head -n 1)
   start=$((pos - 2))

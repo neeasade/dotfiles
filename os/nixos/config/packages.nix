@@ -53,7 +53,7 @@ let
     patchelf
     pciutils
     # perf
-    pkgconfig
+    pkg-config
     playerctl
     ponymix
     psmisc
@@ -138,7 +138,7 @@ let
     telegram-desktop
     signal-desktop
     (lemonbar-xft.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc";};}))
-    qutebrowser-qt6
+    qutebrowser
     # (qutebrowser-qt6.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "main"; };}))
     (pmenu.overrideAttrs(old: { src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master";};}))
   ]) ++ (with expr; [

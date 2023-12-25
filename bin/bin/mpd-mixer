@@ -6,8 +6,6 @@
          '[clojure.string :as string]
          '[babashka.fs :as fs])
 
-(def music-dir "/home/neeasade/Music")
-
 (def cache-map
   (->> (string/split (slurp "/home/neeasade/.config/mpd/database")
                      #"song_begin:")
