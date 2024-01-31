@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# c-x c-z, then run this to sync border bg
+bg_color=$(cat "$HOME/.emacs_background")
+kitty @ set-colors "background=${bg_color}"
