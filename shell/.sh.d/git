@@ -15,6 +15,10 @@ gdrb() { # git delete remote branch
   fi
 }
 
+
+alias gst='git status'
+alias grv='git remote -v'
+
 gpt() { # git push current branch to origin/<branch>
   target_branch=$1
   shift
