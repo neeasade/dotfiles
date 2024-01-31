@@ -7,9 +7,7 @@
 #     exit
 # fi
 
-exit 0
-
-WIDTH=200
+WIDTH=10
 if ! org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH); then
     echo "Start emacs!"
     exit
@@ -25,6 +23,6 @@ else
     empty=$(elisp -r '(-> (myron-get :background :weak))')
 
     # XXX: you will need to tweak ./org_task_elisp as well
-    echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
-    # echo "$topic $(mkb "$percent" 10)"
+    # echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
+    printf "%s [%s]" "$topic" "$(mkb "$percent" "$WIDTH")"
 fi

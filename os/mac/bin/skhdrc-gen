@@ -46,8 +46,11 @@ EOF
 bind {,shift+,alt+}fn-{$h,$n,$e,$l} \
     ~/.wm/scripts/interact/{focus,move,resize}_mac.sh\ {west,south,north,east}
 
+# bind fn-{$i,$o,$u,$y} \
+#     ~/bin/yabai-dtop-focus\ {1,2,3,4}
+
 bind fn-{$i,$o,$u,$y} \
-    ~/bin/yabai-dtop-focus\ {1,2,3,4}
+     ~/bin/focus_app_mac.sh\ {kitty,qutebrowser,Slack,Chrome}
 
 bind fn-{1,2,3,4} \
     ~/bin/yabai-dtop-focus\ {1,2,3,4}

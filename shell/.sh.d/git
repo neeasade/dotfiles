@@ -1,7 +1,18 @@
 # -*- mode: sh -*-
 
 git_current_branch() {
-    git rev-parse --abbrev-ref HEAD
+  git rev-parse --abbrev-ref HEAD
+}
+
+gdrb() { # git delete remote branch
+  echo "git push origin --delete $*"
+  printf "run the above command to DELETE remote branch? (y to confirm):"
+  read -r gdrb_resp
+  if [ "$gdrb_resp" = y ]; then
+    vdo git push origin --delete "$@"
+  else
+    echo "Not running command"
+  fi
 }
 
 gpt() { # git push current branch to origin/<branch>

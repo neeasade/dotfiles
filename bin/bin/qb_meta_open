@@ -31,10 +31,6 @@ vanilla() {
     exit 0
 }
 
-if ! has yq; then
-    vanilla
-fi
-
 if ! pgrep qutebrowser; then
     vanilla
 fi

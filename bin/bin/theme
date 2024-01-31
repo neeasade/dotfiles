@@ -378,7 +378,6 @@
                        ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :font.mono.family "Triplicate T4c"
                        :font.mono.family "Go Mono"
-
                        ;; :font.mono.family "Triplicate C4c"
                        :font.variable.family "Equity Text B"
                        ;; :font.variable.family "Charter"
@@ -403,17 +402,16 @@
                      (unflatten-map
                       {:THEME_NAME "test"
                        :emacs.theme "myron-mcfay"
-                       :BG_COMMAND "wallmac tile '{{env.HOME}}/Downloads/mpv-shot0095.jpg'"
+                       :BG_COMMAND "wallmac solid '{{color.focused.background}}'"
 
                        :font.mono.family "Go Mono"
-                       :font.variable.family "Charter"
-                       :font.mono.size 16
-                       :font.variable.size 16
+                       ;; :font.variable.family "Go Mono"
 
-                       ;; :mkb.bar- ["🌳" "🌻" "🌱"]
-                       ;; :mkb.bar- ["🌳" "🟦" "🌱"]
-                       ;; :mkb.bar- ["⬛" "🟦" "⬜"]
-                       :mkb.bar- ["⬜" "🟦" "⬛"]
+                       :font.variable.family "Charter"
+                       ;; :font.variable.family "Georgia"
+                       :font.mono.size 22
+                       :font.variable.size 24
+                       :mkb.bar- "##_"
                        ;; :mkb.bar- "AHH"
                        :shell.prompt "🌳"
                        :shell.prompt_err "😞"
@@ -478,7 +476,9 @@
   (template/render template (assoc theme :env (get-env))))
 
 (defn refresh-cache [cache]
-  (let [fresh (process-theme (get-theme))]
+  (let [fresh (process-theme (get-theme))
+        ;; remove fns as they are not readable from cache (#object tag)
+        fresh (postwalk (fn [n] (if (fn? n) nil n)) fresh)]
     (spit cache (pr-str fresh))
     fresh))
 
@@ -491,6 +491,7 @@
               (try (read-string (slurp cache-file))
                    (catch Exception e
                      (.println *err* "Error loading cache, refreshing")
+                     (.println *err* (pr-str (Throwable->map e)))
                      (refresh-cache cache-file)))
               (refresh-cache cache-file))
       theme (if-let [overrides (:extend options)]
