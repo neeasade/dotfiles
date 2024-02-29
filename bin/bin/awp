@@ -3,9 +3,10 @@
 ;; automata wallpapers
 ;; see https://github.com/neeasade/automata (a fork of camille's tailored to wp generation)
 
-(defun ns/random-list (list)
-  "pick random item from list"
-  (first (-shuffle list)))
+;; options for later - main thing is getting colors from currently loaded emacs
+;; elisp-eval: emacs_batch=true trim=false
+;; (ns/conf-core)
+;; (ns/conf-style)
 
 (defun ns/random-range (min max)
   (+ min (random (- (+ 1 max) min))))
@@ -30,10 +31,9 @@
 			    72 73 74 76 77 78 8 9 90 94))
 
 	  (llet [probs (--map (ns/random-list '(50 1 1 1))
-			      (-iota
-			       (ns/random-range 2 10)
-			       ;; 5
-			       ))
+			      (-iota (ns/random-range 2 10)
+				     ;; 5
+				     ))
 		       ;; probs (-shuffle '(50 50 1 1 20))
 		       ]
 		(->> probs
@@ -47,7 +47,7 @@
   (if (and kind (f-exists-p kind))
       ;; we got an awp file! the format is (command (colors))
       (llet [(rcmd rcolors) (read (second (s-lines (slurp kind))))]
-	    (list rcmd rcolors))
+	    (list rcmd colors))
     ;; nominal case:
     (llet [(c1 c2 c3) colors
 	   kind (if (string= kind "nil") nil kind)
