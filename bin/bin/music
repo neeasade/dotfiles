@@ -7,6 +7,11 @@
 # - add a neat display func
 # - some helpers to manage your local music
 
+# todo: interactive options: comma -> filter or disable shuffler options
+# eg:
+# music artist late night alumni, noshuffle
+# music artist deadmau5, long
+
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 current_playlist="${musicdir}/playlist/current"
@@ -30,8 +35,8 @@ filter() { # filter the current playlist by some shell function acting on music 
   log "filter $*"
   # compat
   case "$1" in
-      is_long)  mpd-mixer filter-is-long;;
-      is_short) mpd-mixer filter-is-short;;
+      long|is_long)  mpd-mixer filter-is-long;;
+      short|is_short) mpd-mixer filter-is-short;;
       # todo restore this? used in at least one playlist
       *) echo "unknown filter! $*" ;;
   esac
@@ -39,7 +44,8 @@ filter() { # filter the current playlist by some shell function acting on music 
 
 clear_duplicates() {
   duplicates_exist() {
-    duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | tac | uniq -f1 -d | sed 's/ .*//')
+    # duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | tac | uniq -f1 -d | sed 's/ .*//')
+    duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | uniq -f1 -d | sed 's/ .*//')
     ! test -z "$duplicates"
   }
 
@@ -85,6 +91,13 @@ add() { # add a url to library, fallback on clipboard content
     format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(track_number)02d. %(title)s.%(ext)s"
   fi
 
+  # when adding youtube album playlists:
+  # format="$musicdir/import/%(uploader)s/%(title)s.%(ext)s"
+
+
+  # playlist_index
+  # format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(track_number)02d. %(title)s.%(ext)s"
+
   yt-dlp --download-archive  "$musicdir/download_archive.txt" -x -i -o "$format" "$url"
 
   mpc update
@@ -119,6 +132,10 @@ remove() { # remove some search match from the playlist
   mpc playlist -f '%position% %file%' | grep -F -i "$*" | sed 's/ .*//' | mpc del
 }
 
+rm() {
+  remove "$@"
+}
+
 now() { # fuzzy search for a song, play it now
   if [ -z "$*" ]; then
     if ! song=$(mpc listall | dmenu "song"); then
@@ -131,6 +148,9 @@ now() { # fuzzy search for a song, play it now
   mpc insert "$song"
   mpc next
   mpc play
+
+  # removing duplicates here means we can "promote" songs in the playlist rather than duplicate
+  clear_duplicates
   # echo "custom" > "$current_playlist"
 }
 
@@ -154,6 +174,7 @@ known_artists() {
     mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]'
     cat "${musicdir}/playlist/artists"
     ls "${musicdir}/import/bandcamp/"
+    ls "${musicdir}/import/" | awk -F/ '{print $NF}'
   } | sort | uniq
 }
 
@@ -181,7 +202,6 @@ artist() { # play songs by an artist
     append "\- ${artist}\(\..*\)\?$"
   } >/dev/null
 
-  # correct casing for exact matches from the above
   mpc listall -f '%artist%' | grep -i "^${artist}$" | \
     while read corrected; do
       mpc find artist "$corrected" | mpc add --wait
@@ -235,6 +255,7 @@ playlist() { # select a search term based playlist to play
   + () { append "$@"; }
   - () { remove "$@"; }
   @ () { artist "$@"; }
+  , () { filter "$@"; }
 
   if $loaded_cached_playlist; then
     # this lets us preserve SHUFFLE directives and other custom junk
@@ -252,6 +273,7 @@ playlist() { # select a search term based playlist to play
 
   clear_duplicates
   if ${SHUFFLE:-true}; then
+    echo mpc -q shuffle
     mpc -q shuffle
   fi
   mpc -q play
@@ -271,7 +293,7 @@ shuffler() { # shuffle by album using mpd-mixer
   shuffled=$(mpd-mixer ${*:-shuffle-by-album})
   mpc -q clear
   if [ -z "$shuffled" ]; then
-    echo "mpd-mixer : removed everything!" >&2
+    log "mpd-mixer : removed everything!"
     return 1
   fi
   mpc -q add <<< "$shuffled"
@@ -411,7 +433,8 @@ info() { # display the current audio progress bar and playlist length
   mkb "${percent/.*/}" $w_progress
   # mkb "${playlist_percent/.*/}" $w_progress
   test -z "$bottom_line" || align_print "$bottom_line"
-  ) | BORDER='═║═║ ╔╗╝╚' box
+  # ) | BORDER='═║═║ ╔╗╝╚' box
+  ) |  box
   # ) | BORDER='╌¦╌¦ ┭┮┶┵' box
   # ) | BORDER='─│─│ ╭╮╯╰' box
   # ▄ # ▞

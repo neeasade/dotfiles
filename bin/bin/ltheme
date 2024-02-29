@@ -207,6 +207,7 @@ load_services() {
     make_service panel "$HOME/.wm/panel/lemonade"
 
     make_service mpd "og mpd --no-daemon"
+    make_service clubskip # has to happen after mpd
 
     # reload units
     vdo systemctl --user daemon-reload
