@@ -6,7 +6,7 @@ mpc idleloop | while read -r line; do
 	if grep -i 'club life' <<< "$state"; then
 	    if grep '0:00' <<< "$state"; then
 		# skip intro
-		mpc seek +30
+		mpc seek +25
 	    fi
 	fi
     fi

@@ -29,6 +29,9 @@ alias gco='git checkout'
 alias gaa='git add --all'
 alias gfa='git fetch --all --prune'
 
+alias grv='git remote -v'
+alias gst='git status'
+
 gall() {
   for name in $(find -maxdepth 3 -type d -name '.git'|sed 's|^./||g;s|/.git$||'); do
     (

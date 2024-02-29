@@ -15,9 +15,9 @@ if [ "$(hostname)" = bliss ]; then
 	xrandr --output DP-0 --mode 3840x2160 --rate 120.00
     fi
 
-    # don't go to sleep pls
-    xset -dpms
-    xset s off
+    # to prevent sleep/monitor shut off:
+    # xset -dpms
+    # xset s off
 fi
 
 wmname LG3D

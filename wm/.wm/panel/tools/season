@@ -88,8 +88,12 @@ give_clickables() {
     done
 }
 
+# nb. this was just to match awp color for a sense of blending
 
-border="$(elisp -r '(ct-pastel (myron-get :primary))')"
+# border="$(elisp -r '(second (second (read (second (s-lines (slurp "/tmp/result.png.sh"))))))')"
+# todo: find out how to lift this, discourage elisp calls in panel
+border='#7099c1'
+
 while read -d $'\n' -r line; do
     if [ -z "$line" ]; then
 	# blank it out

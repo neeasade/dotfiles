@@ -3,9 +3,17 @@
 
 (require '[clojure.string :as string]
          '[babashka.fs :as fs]
-         '[clojure.java.shell :as shell])
+         '[clojure.java.shell :as shell]
+         '[babashka.process :as process])
 
-(require '[babashka.process :refer [process]])
+;; (:out (deref (process/process {:out :string} "echo" "a" ">/dev/null" "2>&1")))
+
+;; ugh. this will not work on macos, need to find a generic "fork off" method
+;; nohup process holds. why?
+(defn exec [opener & args]
+  (apply process/shell "setsid" "--fork"
+         (concat (string/split opener #" ")
+                 args)))
 
 (defn act [opener file]
   (if (fn? opener)
@@ -14,18 +22,16 @@
                           (last (fs/which-all "open"))
                           (last (fs/which-all "xdg-open"))))]
       (println opener file)
-      (process opener file))))
-
-(defn open-archive [archive]
-  (let [
-        arst ;; shasum archive dir?
-        (fs/exists? (str (System/getenv "HOME") "/archives"))
-        ]
-    ))
+      (exec opener file))))
 
 ;; todo: archives, folders - dired/unzip tempdir
 (def BROWSER (System/getenv "BROWSER"))
 (def EDITOR (System/getenv "EDITOR"))
+
+(defn open-archive []
+  (println "archive: not implemented")
+  ;; todo
+  )
 
 (def part1_rules
   {"image" "feh"
@@ -37,6 +43,7 @@
   {"html" BROWSER
    "directory" [EDITOR "thunar"]
    "rfc822" BROWSER                     ; mhtml
+   ;; todo: make fn open-jar so we don't need to string split elsewhere
    "java-archive" "java -jar"
    "pdf" ["okular" "zathura" "preview" BROWSER]
 
@@ -46,6 +53,7 @@
    })
 
 (defn open-file [file]
+  ;; todo: check file exists first, complain
   (let [mimetype (string/trim-newline (:out (shell/sh "file" "--mime-type" "-b" (str (fs/real-path file)))))
         [part1 part2] (string/split mimetype #"/")
         opener (some->> (list (part2_rules part2) (part1_rules part1))
@@ -63,8 +71,8 @@
     (println "scheme: " scheme)
     (condp = scheme
       "file" (open-file value)
-      "https" (process BROWSER value)
-      "http" (process BROWSER value)
+      "https" (exec BROWSER value)
+      "http" (exec BROWSER value)
       (act nil value))))
 
 (let [arg (string/join " " *command-line-args*)]

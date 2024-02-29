@@ -2,16 +2,11 @@
 # show status of org-pomodoro in a progress bar.
 # tied to mpd, toggles on when working, off on break
 
-# if ! "$HOME/.wm/panel/lemons/org_task_elisp"; then
-#     echo "Start emacs!"
-#     exit
-# fi
-
-exit 0
+# exit 0
 
 WIDTH=200
 if ! org_task_status=$("$HOME/.wm/panel/lemons/org_task_elisp" $WIDTH); then
-    echo "Start emacs!"
+    # echo "Start emacs!"
     exit
 fi
 

@@ -142,6 +142,7 @@ let
     # (qutebrowser-qt6.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "main"; };}))
     (pmenu.overrideAttrs(old: { src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master";};}))
   ]) ++ (with expr; [
+    # mpvc-git
     pfetch-neeasade
     neeasade-opt
     wmutils-core-git
@@ -182,6 +183,7 @@ let
     sbcl
     lispPackages.quicklisp
     guile
+    ruby
 
     luarocks
 
@@ -293,7 +295,7 @@ let
     roboto
   ]);
 
-  #   # mpvc-git
+    # mpvc-git
   # ]) ++ (with edge; [
   #   youtube-dl
   # ]);

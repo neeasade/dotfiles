@@ -1,10 +1,13 @@
 # -*- mode: conf -*-
 
+
 # TODO:
 # Say I\'m playing a game, and toggle the music, but keep running forward (W)
 #   it\'s easy to fat finger a close window command
 # Similarly, w and f are right next to each other, so "fullscreen" and "close window" can get fat fingered
 #   both of these are rather unpleasant for games
+
+# todo: make alt the goto, config toggle
 
 super + shift + w
     notify-send "todo: new force kill binding"
@@ -107,10 +110,10 @@ super + {minus,equal}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 4)"
 
 super + shift + {minus,equal}
-    xbright {down,up}; notify-send --urgency=low "Brightness: $(cat /tmp/xbrightness)"
+    xbright {down,up}
 
 XF86MonBrightness{Down,Up}
-    xbright {down,up}; notify-send --urgency=low "Brightness: $(cat /tmp/xbrightness)"
+    xbright {down,up}
 
 # you are already using comma and period for window children lol
 # < > `
@@ -122,6 +125,9 @@ XF86MonBrightness{Down,Up}
 
 F8
     utf8
+
+# F9
+#     factorio
 
 # idea for these: screenshot buttons - or a popup menu
 @button8

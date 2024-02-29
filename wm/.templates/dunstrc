@@ -6,7 +6,7 @@ alignment = center
 show_age_threshold = 60
 
 origin = top-center
-notification_limit = 6
+notification_limit = 15
 width = {{env.d_width}}
 offset {{env.d_offset}}
 

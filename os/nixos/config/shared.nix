@@ -3,6 +3,7 @@
 rec {
   nixcfg = {
     allowUnfree = true;
+    cudaSupport = true;
     oraclejdk.accept_license = true;
   };
 

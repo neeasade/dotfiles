@@ -14,6 +14,7 @@ if ${NEEASADE_ENV:-true}; then
   }
 
   pathmunge () {
+    # todo later: cleanup / handling - some vals have //
     _dir=${1%/}
     path_remove "$_dir"
     if [ -d "$_dir" ]; then

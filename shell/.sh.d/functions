@@ -210,21 +210,6 @@ upshot() {
   pb 0x0 "$(lastshot)"
 }
 
-# current monitor only - bspwm specific
-monshot() {
-  json=$(bspc query -T -m)
-  jget() {
-    echo "$json" | jq .rectangle.$1
-  }
-
-  w=$(jget width)
-  h=$(jget height)
-  x=$(jget x)
-  y=$(jget y)
-
-  maim -u -g ${w}x${h}+${x}+${y} "$(shot_location)"
-}
-
 settitle() {
   $ESHELL && return
   printf "%b" "\033]0;$*\a"

@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# lap_screen='LVDS-1 connected primary 1600x900+0+0'
+lap_screen='LVDS-1 connected primary 1600x900+0+0'
 
-# if ! xrandr | grep -q "$lap_screen";  then
-#     exit 1
-# fi
+if ! xrandr | grep -q "$lap_screen";  then
+    notify-send --urgency=low "Not updating brightness"
+    exit 1
+fi
 
 # this should be another way -- a repl that you echo up/down into
-
 current=$(cat /tmp/xbrightness)
 current=${current:-60}
 
@@ -20,3 +20,4 @@ echo xrandr --output LVDS-1 --brightness 0$(echo "$current / 100" | bc -l | cut 
 xrandr --output LVDS-1 --brightness 0$(echo "$current / 100" | bc -l | cut -c -3)
 
 echo $current >/tmp/xbrightness
+notify-send --urgency=low "Brightness: $current"

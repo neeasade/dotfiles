@@ -9,6 +9,8 @@ clipboard_control write-clipboard write-primary read-clipboard read-primary
 clear_all_shortcuts yes
 macos_option_as_alt yes
 
+update_check_interval 0
+
 cursor_blink_interval 0
 kitty_mod ctrl+shift
 
