@@ -128,6 +128,7 @@ if ${NEEASADE_ENV:-true}; then
     add_macapp() {
       pathmunge "/run/current-system/Applications/${*}.app/Contents/MacOS/"
       pathmunge "/Applications/${*}.app/contents/MacOS"
+      pathmunge "/Applications/${*}.app/contents/MacOS/bin"
       pathmunge "/System/Applications/${*}.app/Contents/MacOS/"
     }
 
