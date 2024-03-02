@@ -1,5 +1,43 @@
 {
-    "workbench.colorTheme": "Default High Contrast Light",
+    // How to extension:
+    // $ code --list-extensions > extensions
+    // $ cat extensions | xargs code --install-extension
+
+    "workbench.colorTheme": "Base16 Light Atelier Lakeside",
     "vim.vimrc.path": "$HOME/.vsvimrc",
-    "vim.vimrc.enable": true
+    "vim.vimrc.enable": true,
+    "editor.fontFamily": "Go Mono, Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 16,
+    "editor.minimap.enabled": false,
+    "editor.tabSize": 4,
+    // "editor.rulers": [
+    //   69,
+    //   79
+    // ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+
+    "editor.inlineSuggest.enabled": true,
+    "editor.accessibilitySupport": "off",
+    "editor.formatOnSave": true,
+    "window.commandCenter": true,
+    "window.autoDetectColorScheme": true,
+    // "workbench.iconTheme": "material-icon-theme",
+    // "workbench.colorTheme": "Default Light Modern",
+    "explorer.confirmDragAndDrop": false,
+    "breadcrumbs.enabled": true,
+    "files.insertFinalNewline": true,
+    "files.autoSave": "afterDelay",
+    "files.trimTrailingWhitespace": true,
+    "files.associations": {
+        "*.el": "lisp"
+    },
+    // todo: what do these settings do
+    "editor.suggestSelection": "first",
+    "git.mergeEditor": true,
+    "editor.renderLineHighlight": "none",
+    "vim.normalModeKeyBindings": [],
+    "vim.useSystemClipboard": true,
+    // "window.nativeTabs": true, // not compatible with commandCenter
 }

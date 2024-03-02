@@ -11,7 +11,7 @@ if [ -z "$_promptchar" ]; then
 fi
 
 if [ -z "$cur_shell" ]; then
-  cur_shell=$(ps | grep $$ |  sed 's/^.* //')
+  cur_shell=$(ps | grep $$ | head -n 1 | awk  '{print $4}')
   cur_shell=${cur_shell##*/}
 fi
 

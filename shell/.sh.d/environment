@@ -1,5 +1,6 @@
 # -*- mode: sh -*-
 
+# correctness
 NEEASADE_ENV=true
 
 if ${NEEASADE_ENV:-true}; then
@@ -16,11 +17,11 @@ if ${NEEASADE_ENV:-true}; then
   pathmunge () {
     # todo later: cleanup / handling - some vals have //
     _dir=${1%/}
-    path_remove "$_dir"
+    path_remove "$_dir" # promote passed dir at time of pathmunge
     if [ -d "$_dir" ]; then
       case ":${PATH}:" in
         *:"$_dir":*) ;;
-        *) export PATH=$_dir:$PATH
+        *) export PATH="$_dir:$PATH"
       esac
     fi
   }
@@ -102,6 +103,9 @@ if ${NEEASADE_ENV:-true}; then
   msource "$HOMEBREW_PREFIX/opt/nvm/etc/bash_completion.d/nvm"
 
   pathmunge "${HOMEBREW_PREFIX}/opt/findutils/libexec/gnubin"
+
+  # weird
+  pathmunge "${HOMEBREW_PREFIX}/opt/libpq/bin/"
 
   pathmunge '/run/current-system/sw/bin'
   pathmunge '/run/wrappers/bin/'

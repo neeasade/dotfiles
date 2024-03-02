@@ -1,5 +1,7 @@
 # note: this will be run with python 3
 
+# todo unblock rollbar
+
 import os
 import socket
 import operator
@@ -157,6 +159,7 @@ def colorSync(colortype, setting):
 # normal, weak, strong, focused
 targets = {
     'normal' : [
+        'statusbar.url.fg',
         'statusbar.normal',
         'statusbar.command',
         'statusbar.url.success.http.fg',

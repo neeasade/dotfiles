@@ -1,0 +1,3 @@
+#!/bin/sh
+
+kitty @ set-font-size "$*"

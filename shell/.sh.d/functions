@@ -1,8 +1,20 @@
 # -*- mode: sh -*-
 
 task() {
-  cdu Taskfile.yml
-  og task "$@"
+  if cdu Taskfile.yml; then
+    og task "$@"
+  fi
+}
+
+lint() {
+  # dwim please
+  if task | grep -q '* lint:'; then
+    task lint
+  else
+    if cdu .clj-kondo; then
+      vdo clj-kondo --config .clj-kondo/config.edn --lint .
+    fi
+  fi
 }
 
 lein() {
@@ -37,12 +49,6 @@ mount_diskfile() {
   echo sudo mount "$diskfile" "$mountpath" -o loop
   sudo mount "$diskfile" "$mountpath" -o loop
   echo "$mountpath"
-}
-
-prepend() {
-  tmpfile=$(mktemp)
-  cat <(echo "$1") "$2" >$tmpfile
-  mv $tmpfile "$2"
 }
 
 windowshot() {
@@ -238,9 +244,12 @@ cursorStyle() {
 
 cdu() { # go up until you find something
   start=$PWD
-  look=${*:-project.clj}
+  relative_dir=.
+  # look=${*:-project.clj}
+  look=${*:-go.mod}
   while ! (test -f "$look" || test -d "$look"); do
     cd ..
+    relative_dir="${relative_dir}/.."
     if [ "$PWD" = "/" ]; then
       echo "not found, reached /" >&2
       cd "$start"
@@ -265,7 +274,8 @@ kondo() {
       return
     fi
 
-    vdo clj-kondo --config .clj-kondo/config.edn --lint "$start"
+    # vdo clj-kondo --config .clj-kondo/config.edn --lint "$start"
+    vdo clj-kondo --config .clj-kondo/config.edn --lint .
 
     # echo
 
@@ -466,17 +476,14 @@ qq() {
         skhd --reload
         elisp "(setq mac-control-modifier 'control mac-command-modifier 'super)"
         ;;
-      *) echo "existing karabiner.json in unknown state!" >&2 ;;
+      *)
+        echo "existing karabiner.json in unknown state!" >&2
+        echo "$f_status" >&2
+        ;;
     esac
   else
     colemak
   fi
-}
-
-# kitty escc testing
-escc() {
-  # printf "\e\[=1u" >/dev/tty
-  printf "%b" "\033]${*}u" >/dev/tty
 }
 
 if $MAC && ! has update_terminal_cwd; then
@@ -495,3 +502,16 @@ if $MAC && ! has update_terminal_cwd; then
     printf '\e]7;%s\a' "$PWD_URL"
   }
 fi
+
+barstuff() {
+  barlaunch() {
+    if ! pgrep "$*"; then
+      vdo nohup "$*" &
+    fi
+  }
+
+  barlaunch MeetingBar
+  barlaunch xbar
+  barlaunch skhd
+  barlaunch stayon
+}
