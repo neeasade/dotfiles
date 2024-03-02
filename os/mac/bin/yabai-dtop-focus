@@ -4,6 +4,10 @@
 
 . "$HOME/.sh.d/environment"
 
+if ! has yabai; then
+  exit 1
+fi
+
 space=$1
 
 # skip zoom windows (so they don't steal focus when switching)
