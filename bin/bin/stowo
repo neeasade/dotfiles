@@ -44,6 +44,8 @@ while [ ! -z "$1" ]; do
 	# hell yeah brother HH
 	prepend=$(echo "$path" | tr -dc '/' | cut -c3- | sed 's#/#../#g')
 
+	# todo?: os -> prefix
+
 	# remove one level (os packages are nested a level)
 	# note: somehow using a case statement breaks here
 	if echo "$package" | grep -q 'os/'; then

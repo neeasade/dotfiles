@@ -503,6 +503,23 @@ if $MAC && ! has update_terminal_cwd; then
   }
 fi
 
+elispf() {
+  f=$1
+  shift
+  args=
+  for a in "$@"; do
+    case "$a" in
+      ''|*[!0-9]*)
+        args="${args} \\\"${a}\\\""
+        ;;
+      *)
+        args="${args} ${a}"
+        ;;
+    esac
+  done
+  vdo elisp "($f ${args})"
+}
+
 barstuff() {
   barlaunch() {
     if ! pgrep "$*"; then

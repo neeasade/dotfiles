@@ -25,6 +25,7 @@
       (exec opener file))))
 
 ;; todo: archives, folders - dired/unzip tempdir
+;; todo: if it's youtube, open in chrome? sponsorblock
 (def BROWSER (System/getenv "BROWSER"))
 (def EDITOR (System/getenv "EDITOR"))
 
@@ -41,7 +42,7 @@
 
 (def part2_rules
   {"html" BROWSER
-   "directory" [EDITOR "thunar"]
+   "directory" ["thunar"]
    "rfc822" BROWSER                     ; mhtml
    ;; todo: make fn open-jar so we don't need to string split elsewhere
    "java-archive" "java -jar"
