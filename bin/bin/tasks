@@ -1,6 +1,7 @@
 #!/usr/bin/env elisp
 
-(llet [nodes (->> (ns/get-notes-nodes 'ns/org-scheduled-past-todo 'ns/org-scheduled-today)
+
+(llet [nodes (->> (ns/get-notes-nodes '(and (scheduled :to today) (not (todo "DONE"))))
 		  (-sort 'ns/org-outdated-sort-node)
 		  ;; (-sort (lambda (&rest nodes)
 		  ;;          (llet [(d1 d2) (-map 'ns/headline-date nodes)]
