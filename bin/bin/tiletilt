@@ -1,0 +1,22 @@
+#!/bin/sh
+# view a tiled wallpaper at odd angles
+
+# angle=$(elisp -r '(mod (first (-shuffle (-iota 360 0 3))) 360)')
+# tile=$(rg --files ${HOME}/tiles | shuf  | head -n 1)
+
+tile=$1
+angle=${2:-$(($RANDOM % 360))}
+
+# 4k
+w=3840
+h=2160
+
+file=/tmp/tiletilt.png
+
+echo "angle: $angle"
+echo "tile: $tile"
+
+convert -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
+	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage "$file"
+
+feh --bg-fill "$file"
