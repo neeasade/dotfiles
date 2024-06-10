@@ -8,7 +8,7 @@ rec {
   };
 
   user     = "neeasade";
-  home     = "/home/${user}/";
+  home     = "/home/${user}"; # do not add a trailing slash, this sets $HOME (/etc/password)
   dotfiles = "${home}/.dotfiles";
 
   defaultUser = {
