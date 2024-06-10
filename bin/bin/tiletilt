@@ -4,14 +4,10 @@
 tile=${1:-$(rg --files ${HOME}/tiles | shuf | head -n 1)}
 angle=${2:-$((RANDOM % 360))}
 
-printf 'tiletilt %s %s\n' "$tile" "$angle"
+printf 'tiletilt "%s" %s\n' "$tile" "$angle"
 
-# 4k
-w=3840
-h=2160
+read w h <<< $(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')
 
-file=/tmp/tiletilt.png
 convert -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
-	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage "$file"
-
-feh --bg-fill "$file"
+	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage "/tmp/tiletilt.png"
+feh --bg-fill "/tmp/tiletilt.png"
