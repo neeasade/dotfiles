@@ -4,10 +4,24 @@
 tile=${1:-$(rg --files ${HOME}/tiles | shuf | head -n 1)}
 angle=${2:-$((RANDOM % 360))}
 
+if ! test -f "$tile"; then
+    echo "no tiling image found! $file" >&2
+    echo "usage: tiletilt <path/to/tiled/image> [angle]" >&2
+    exit 1
+fi
+
+if type xdpyinfo >/dev/null &2>&1; then
+    read w h <<< $(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')
+else
+    # 1080p default
+    w=1920
+    h=1080
+fi
+
 printf 'tiletilt "%s" %s\n' "$tile" "$angle"
 
-read w h <<< $(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')
-
+file=/tmp/tiletilt.png
 convert -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
-	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage "/tmp/tiletilt.png"
-feh --bg-fill "/tmp/tiletilt.png"
+	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage \
+	"$file"
+feh --bg-fill "$file"
