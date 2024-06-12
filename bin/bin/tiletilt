@@ -1,38 +1,16 @@
 #!/usr/bin/env bash
 # view a tiled wallpaper at odd angles
 
-die() {
-    echo "$*" >&2
-    echo "usage: tiletilt <path/to/tiled/image> [angle]" >&2
-    exit 1
-}
-
-tile=$1
+tile=${1:-$(find "${HOME}/tiles" | shuf | head -n 1)}
 angle=${2:-$((RANDOM % 360))}
-
-if test -z "$tile" && test -d "${HOME}/tiles"; then
-    tile=$(find "${HOME}/tiles" | shuf | head -n 1)
-fi
-
-if [[ $tile == http* ]]; then
-    curl -s -L "$tile" >/tmp/download.png
-    if ! file --mime-type -b /tmp/download.png | grep image; then
-	die "Received url to non image!"
-    fi
-    tile=/tmp/download.png
-fi
-
-test -f "$tile" || die "no tiling image found! $file"
-
 w=1920
 h=1080
-
-type xdpyinfo >/dev/null &2>&1 && \
-    read w h <<< $(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')
+file=/tmp/tiletilt.png
 
 printf 'tiletilt "%s" %s\n' "$tile" "$angle"
 
-file=/tmp/tiletilt.png
+type xdpyinfo >/dev/null &2>&1 && \
+    read w h <<< $(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')
 
 convert -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
 	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage \
