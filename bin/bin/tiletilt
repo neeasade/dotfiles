@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # view a tiled wallpaper at odd angles
 
-tile=${1:-$(find "${HOME}/tiles" | shuf | head -n 1)}
+tile=${1:-$(find "${HOME}/tiles" -type f | shuf | head -n 1)}
 angle=${2:-$((RANDOM % 360))}
 w=1920
 h=1080
@@ -9,8 +9,8 @@ file=/tmp/tiletilt.png
 
 printf 'tiletilt "%s" %s\n' "$tile" "$angle"
 
-type xdpyinfo >/dev/null &2>&1 && \
-    read w h <<< $(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')
+type xdpyinfo >/dev/null 2>&1 && \
+    read -r w h <<< "$(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')"
 
 convert -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
 	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage \
