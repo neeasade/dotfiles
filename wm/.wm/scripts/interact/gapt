@@ -15,6 +15,7 @@ fi
 
 eval "$(theme -f "panel.height,x.padding,bspwm.border-width,bspwm.window-gap" -s)"
 c() {
+    echo bspc config "$@"
     bspc config "$@" &
 }
 
@@ -34,22 +35,29 @@ padding() {
 }
 
 if $want_gaps; then
-    c borderless_monocle false
     c window_gap "$bspwm_window_gap"
     padding 0
-
-    ltheme bg
+    c borderless_monocle false
 else
+    set_monocle=false
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	if [ "$(bspc config left_monocle_padding)" = 0 ]; then
-	    c borderless_monocle true
-	    ltheme bg_plain &
+	    set_monocle=true
 	    pad_px=${pad_px:-$x_padding}
 	fi
     fi
 
     c window_gap -$bspwm_border_width
-    padding $((bspwm_border_width + pad_px))
+
+    pad_amount=$((bspwm_border_width + pad_px))
+    padding $pad_amount
+
+    if $set_monocle; then
+	c borderless_monocle true
+	ltheme bg_plain
+    fi
 fi
 
 wait
+
+$want_gaps && ltheme bg >/dev/null &
