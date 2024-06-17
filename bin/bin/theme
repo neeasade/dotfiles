@@ -1,13 +1,13 @@
 #!/usr/bin/env bb
 ;; -*- mode: clojure -*-
 
-(require '[clojure.java.shell :as shell]
+(require '[babashka.fs :as fs]
+         '[cheshire.core :as json]
+         '[clojure.java.shell :as shell]
          '[clojure.string :as string]
          '[clojure.tools.cli :as cli]
-         '[selmer.parser :as template]
-         '[babashka.fs :as fs]
-         '[cheshire.core :as json]
-         '[clojure.walk :refer [postwalk prewalk]])
+         '[clojure.walk :refer [postwalk prewalk]]
+         '[selmer.parser :as template])
 
 (defn get-env []
   (->> (System/getenv)
@@ -251,7 +251,13 @@
         base-conf
         {:meta
          ;; for panel and compositor
-         {:shadow false}
+         {:shadow false
+          :mon-width (if (string/blank? (shh "which bspc"))
+                       "1920"
+                       (-> (shh "bspc query -T -m")
+                           (json/parse-string)
+                           (get-in ["rectangle" "width"])))
+          }
 
          :font (fn [_]
                  (->> {:variable {:family "Droid Sans" :size 12}
@@ -269,11 +275,7 @@
                       :monocle-window-percent 0.52
                       :monocle-pad-width (fn [tree]
                                            (let [percent (get-in tree [:bspwm-meta :monocle-window-percent])
-                                                 mon-width (if (string/blank? (shh "which bspc"))
-                                                             "1920"
-                                                             (-> (shh "bspc query -T -m")
-                                                                 (json/parse-string)
-                                                                 (get-in ["rectangle" "width"])))
+                                                 mon-width (get-in tree [:meta :mon-width])
                                                  window-width (* percent mon-width)
                                                  side (int (/ (- mon-width window-width) 2))]
                                              side))
@@ -390,7 +392,7 @@
                        :mkb.bar- "/\\_"
                        ;; :mkb.bar- "██▁"
                        :shell.prompt "%"
-                       :x.padding 20
+                       :x.padding 14
                        ;; :bspwm.window-gap 30
                        :bspwm.window-gap 88
                        :bspwm-meta.monocle-window-percent 0.46
