@@ -31,17 +31,6 @@ usage() {
   awk -F \# "$script" "$0" | sort
 }
 
-filter() { # filter the current playlist by some shell function acting on music files
-  log "filter $*"
-  # compat
-  case "$1" in
-      long|is_long)  mpd-mixer filter-is-long;;
-      short|is_short) mpd-mixer filter-is-short;;
-      # todo restore this? used in at least one playlist
-      *) echo "unknown filter! $*" ;;
-  esac
-}
-
 clear_duplicates() {
   duplicates_exist() {
     # duplicates=$(mpc playlist -f '%position% %file%' | sort -k2 | tac | uniq -f1 -d | sed 's/ .*//')
@@ -52,6 +41,18 @@ clear_duplicates() {
   while duplicates_exist; do
     mpc del --wait <<< "$duplicates"
   done
+}
+
+filter() { # filter the current playlist by some shell function acting on music files
+  log "filter $*"
+  # compat
+  case "$1" in
+      long|is_long)  mpd-mixer filter-is-long;;
+      short|is_short) mpd-mixer filter-is-short;;
+      contains) shift; mpd-mixer filter-contains "$*";;
+      # todo restore this? used in at least one playlist
+      *) echo "unknown filter! $*" ;;
+  esac
 }
 
 shuffle_preserve_album() { shuffler; }
@@ -66,8 +67,8 @@ restore() {
 
 place() { # print a command to take you to the current place
   state_song=$(mpc -f "%file%" | head -n 1)
-  state_progress=$(mpc -f '%file%' | awk -F '[ /]*' '/playing/{print $4}')
-  printf "music restore '%s^%s'\n" "${state_song}" "${state_progress}"
+  state_progress=$(mpc -f '%file%' | awk -F '[ /]*' 'NR==2{print $4}')
+  printf "music restore \"%s^%s\"\n" "${state_song}" "${state_progress}"
 }
 
 add() { # add a url to library, fallback on clipboard content
@@ -179,6 +180,7 @@ known_artists() {
 }
 
 artist() { # play songs by an artist
+  # todo: idea, move this into mpd-mixer (lots of subshells)
   artist=$*
   if [ -z "$artist" ]; then
     # todo idea: artist aliases? eg win96/windows96/windows 96

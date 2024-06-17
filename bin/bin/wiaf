@@ -7,11 +7,9 @@ echo_c() {
   printf "%"$((l+(w-l)/2))"s\n" "$1"   # print string padded to proper width (%Ws)
 }
 
-echo ""
 echo_c "BORN TO RICE"
 echo_c "WORLD IS A FUCK"
 echo_c " 鬼神 Rice Em All 1989"
 # echo_c "Rice Em All 1989"
 echo_c "I am nix man"
 echo_c "410,757,864,530 DEAD HAL CLONES"
-echo ""

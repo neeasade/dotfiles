@@ -6,6 +6,19 @@ task() {
   fi
 }
 
+lein() {
+  cdu project.clj
+  og lein "$@"
+}
+
+remind() {
+  sleepm "$1"
+  shift
+  # todo: there should be a sound with this
+  notify-send "$*"
+  boop
+}
+
 lint() {
   # dwim please
   if task | grep -q '* lint:'; then
@@ -15,11 +28,6 @@ lint() {
       vdo clj-kondo --config .clj-kondo/config.edn --lint .
     fi
   fi
-}
-
-lein() {
-  cdu project.clj
-  og lein "$@"
 }
 
 mark() {
@@ -178,15 +186,12 @@ shot_location() {
   echo "$HOME/Last_Shot/shot.png"
 }
 
-
-# todo: -c option
-# cat $(shot) | xclip -selection clipboard -t image/png
-# maybe also consider just putting it in the clipboard by default
 shot() {
   # eval $(slop)
   g=$(slop -p ${1:-0})
   dest=$(shot_location)
   maim -u -g ${g} "$dest"
+  xclip -selection clipboard -target image/png -i "$dest"
   echo "$dest"
 }
 
@@ -197,9 +202,10 @@ shellshot() {
 }
 
 fullshot() {
-  [ ! -z "$1" ] && sleep $1
+  sleep "${1:-0}"
   dest=$(shot_location)
   maim -u "$dest"
+  xclip -selection clipboard -target image/png -i "$dest"
   echo "$dest"
 }
 
@@ -323,8 +329,8 @@ hex2dec() {
 }
 
 extract() {      # Handy Extract Program
-  if [ -f $1 ] ; then
-    case $1 in
+  if [ -f "$1" ]; then
+    case "$1" in
       *.tar.bz2)   tar xvjf "$1"     ;;
       *.tar.gz)    tar xvzf "$1"     ;;
       *.bz2)       bunzip2 "$1"      ;;
@@ -531,4 +537,19 @@ barstuff() {
   barlaunch xbar
   barlaunch skhd
   barlaunch stayon
+}
+
+aawp() {
+  (
+  cd ~/walls
+  case "$1" in
+    "") echo "options: wall|list|<rule>" ;;
+    wall) vdo ./$(ls *.awp | shuf | head -n 1) ;;
+    list) # list rules
+      awk 1 *.awp | grep -v env | awk '{print $2}' | sort | uniq -c | sort -nr | column
+      ;;
+    *) # assume it's a number
+      vdo ./$(grep -l " $1 " * | shuf | head -n 1) ;;
+    esac
+  )
 }
