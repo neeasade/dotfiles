@@ -1,7 +1,19 @@
-#!/bin/sh
-
+#!/usr/bin/env bash
+# this sort of a layout script
+# modes: tiled, monocle, monocle_slim, fullscreen
 
 gapped=$(iif '[ $(bspc config window_gap) -gt 0 ]')
+
+handle_bd() {
+  if bspc query -N -n '.floating.!hidden'; then
+    bspc config left_padding "$(( $(bspc config left_padding) + 450 ))"
+    read X Y W H <<< "20 100 390 800"
+
+    wid=$(bspc query -N -n '.floating.!hidden' | head -n 1)
+    xdotool windowmove $wid $X $Y
+    xdotool windowsize $wid $W $H
+  fi
+}
 
 do_monocle_full() {
   bspc query -N -n focused.fullscreen && \
@@ -33,10 +45,7 @@ kitty'
   fi
 
   if [ "$before" = "monocle_slim" ]; then
-    if bspc query -N -n '.floating.!hidden'; then
-      bspc config left_padding "$(( $(bspc config left_padding) + 450 ))"
-      # bspc config left_monocle_padding "$(( $(bspc config left_monocle_padding) + 450 ))"
-    fi
+    handle_bd
   fi
 }
 
@@ -75,9 +84,7 @@ do_tiled() {
   bspc desktop -l tiled
   gapt $gapped
 
-  if bspc query -N -n '.floating.!hidden'; then
-    bspc config left_padding "$(( $(bspc config left_padding) + 450 ))"
-  fi
+  handle_bd
 }
 
 do_same() {
