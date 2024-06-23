@@ -9,7 +9,7 @@
     '';
 
   programs.gnupg.agent.enable = true;
-  programs.gnupg.agent.pinentryFlavor  = "qt";
+  programs.gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
 
   services.printing = {
     enable = true;
@@ -19,7 +19,10 @@
 
   sound.enable = true;
   hardware.pulseaudio.enable = true;
+
   hardware.bluetooth.enable = true;
+  # hardware.bluetooth.hsphfpd.enable = true;
+
   hardware.opengl = {
     enable = true;
     driSupport = true;

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 . ~/.sh.d/environment
 
@@ -19,39 +19,45 @@ rand_tile() {
 
     # echo /home/neeasade/Downloads/upfeathers/out.png
     (
-	# cat /tmp/result_source.txt
+
+	# echo /media/sidecar/Archive/other/squid/pattern_133.gif
+	# head -n 1 /tmp/result_source.txt
 
 	# rg --files "$HOME/pngsave"
 
-	# rg --files /media/LIVEWIRE/Archive/other/squid/
-	# rg --files /media/LIVEWIRE/Archive/other/bgrepeat/
+	rg --files /media/sidecar/Archive/other/squid/
+	rg --files /media/sidecar/Archive/other/bgrepeat/
 
-	# rg --files "$HOME/code/SubtlePatterns/"
+	rg --files "/home/neeasade/code/sketch-subtlepatterns/SubtlePatterns"
 
 	# rg --files /home/neeasade/code/tiles-and-such
-	# # rg --files "/home/neeasade/code/tiles-and-such/[J] Retro Patterns/"
+	# rg --files "/home/neeasade/code/tiles-and-such/[J] Retro Patterns/"
 
-	rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump
-	rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump2
+	# rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump
+	rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump3
+	# rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump2
     ) | sort -R | head -n 1
 
 }
 
 target=$(rand_tile)
 
-# if ! silent identify "$target"; then
-#     target=$(rand_tile)
-# fi
-# if ! silent identify "$target"; then
-#     target=$(rand_tile)
-# fi
+target=$(echo $HOME/Downloads/448298200_398413232509761_1954156540203881355_n.jpg)
+
+if ! silent identify "$target"; then
+    target=$(rand_tile)
+fi
+if ! silent identify "$target"; then
+    target=$(rand_tile)
+fi
 
 silent theme -c
-background=$(theme -q color.focused.background)
-foreground=$(theme -q color.normal.assumed)
+foreground=$(theme -q color.focused.background)
+background=$(theme -q color.normal.alt)
 
-foreground=$(theme -q color.normal.background)
-background=$(elisp -r "(ns/make-border-color :assumed)")
+# foreground=$(theme -q color.normal.background)
+# background=$(elisp -r "(ns/make-border-color (myron-get :focused))")
+
 # background=$(theme -q color.normal.assumed)
 
 # pastelish
@@ -59,7 +65,7 @@ background=$(elisp -r "(ns/make-border-color :assumed)")
 # foreground=$(elisp -r "(ns/make-border-color :assumed)")
 # foreground=$(elisp -r "(ns/make-border-color :primary)")
 
-# target='/home/neeasade/git/tiles-and-such/Solaris & CDE/solaris-raw-bitmaps/SolarisLogo.pm'
+# target='/home/neeasade/code/tiles-and-such/Solaris & CDE/solaris-raw-bitmaps/SolarisLogo.pm'
 
 cat<<EOF > /tmp/result_source.txt
 $target
@@ -113,10 +119,26 @@ auto() {
 # color 18 30
 # color 6 4
 # color 2 2
-auto
+# auto
 
-
-vdo convert /tmp/result.png -resize 120% /tmp/result.png
 
 echo "$target"
-feh --bg-tile /tmp/result.png || "$0"
+
+# read w <<< $(mediainfo /tmp/result.png | awk '/Width/{print $3}')
+# if [[ "$w" -lt  75 ]]; then
+#     vdo convert /tmp/result.png -resize 200% /tmp/result.png
+# fi
+
+    vdo convert /tmp/result.png -resize 25% /tmp/result.png
+
+# if grep -q squid <<< "$target"; then
+#     vdo convert /tmp/result.png -resize 200% /tmp/result.png
+# fi
+
+# if grep -q 'tiles-and-such' <<< "$target"; then
+#     vdo convert /tmp/result.png -resize 200% /tmp/result.png
+# fi
+
+# vdo convert /tmp/result.png -resize 150% /tmp/result.png
+
+tiletilt "/tmp/result.png"

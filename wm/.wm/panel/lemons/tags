@@ -93,6 +93,15 @@ render_supersmol() {
     current=$(bspc query -N -n)
 
     result=$(btags state-plain | while read tname active color wids; do
+
+	if [ -z "$wids" ]; then
+	    continue
+	elif [ "$tname" = "hole" ]; then
+	    continue
+	elif [ "$tname" = "untagged" ]; then
+	    continue
+	fi
+
 	tag_name=$tname
 	# foreground=$(colort -50 "$bg")
 	foreground=$fg
@@ -109,7 +118,7 @@ render_supersmol() {
 	    fi
 	else
 	    if [ ! -z "$wids" ]; then
-		tname="${tname}*"
+		# tname="${tname}*"
 		T=1
 	    fi
 	fi
@@ -118,7 +127,9 @@ render_supersmol() {
 	if echo "$wids" | grep -q $current; then
 	    border=$(colort -l -20 $color)
 	    # tname="${tname}!"
-	    tname="[${tname}]"
+	    # tname="[${tname}]"
+	    tname="${tname}*"
+	    # tname="%{T1}[%{T-}${tname}%{T1}]%{T-}"
 	    # tname="「${tname}」"
 	fi
 
@@ -140,8 +151,8 @@ render_supersmol() {
 
 draw() {
     # render
-    render_smol
-    # render_supersmol
+    # render_smol
+    render_supersmol
 }
 
 draw

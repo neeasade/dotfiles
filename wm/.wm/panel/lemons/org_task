@@ -19,6 +19,6 @@ else
     empty=$(elisp -r '(-> (myron-get :background :weak))')
 
     # XXX: you will need to tweak ./org_task_elisp as well
-    # echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
-    printf "%s [%s]" "$topic" "$(mkb "$percent" "$WIDTH")"
+    echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
+    # printf "%s [%s]" "$topic" "$(mkb "$percent" "$WIDTH")"
 fi

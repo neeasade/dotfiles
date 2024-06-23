@@ -42,4 +42,8 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  # arbitrary
+  # see https://serverfault.com/questions/997055/nixos-rebuild-switch-fails-with-no-space-left-on-device
+  boot.loader.grub.configurationLimit = 20;
 }

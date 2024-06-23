@@ -55,7 +55,8 @@ if which("qutebrowser-edit"):
 
 c.auto_save.session = True
 
-nmap('b', 'set-cmd-text --space :tab-select')
+# nmap('b', 'set-cmd-text --space :tab-select')
+nmap('b', 'cmd-set-text --space :tab-select')
 
 # trying to match to 's' avy hinting in emacs
 config.unbind('sf');
@@ -274,14 +275,17 @@ c.hints.radius = 0
 c.fonts.completion.entry = GetSize('completion') + fonts['completion']
 c.fonts.statusbar = GetSize('completion') + fonts['completion']
 
-nmap('<F9>', 'spawn --userscript jira_refine_copy')
+# nmap('<F9>', 'spawn --userscript jira_refine_copy')
 nmap('<F10>', 'spawn --userscript chrome_open')
-# nmap('W', 'spawn --userscript scrape')
+nmap('<F9>', 'spawn --userscript scrape')
 nmap('<F12>', 'devtools')
 
 REDIRECT_MAP = {
-    "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
-    "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
+    # "i.reddit.com": operator.methodcaller('setHost', 'i.reddit.com'),
+    # "preview.reddit.com": operator.methodcaller('setHost', 'reddit.com'),
+
+    # "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
+    # "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
 }
 
 def redirect_intercept(info):

@@ -9,43 +9,42 @@
        (* 100)
        (floor)))
 
-(if (eq org-pomodoro-state :none)
-    (if (org-clocking-p)
-	(format "🕒 %s" org-clock-heading)
-      (let* ((top-headline (ns/with-notes (org-ml-parse-headline-at (ns/org-get-active-point))))
-	     (top-headline-text (-> top-headline org-ml-headline-get-path -last-item)))
-	(if (and
-	     (s-matches-p org-element--timestamp-regexp top-headline-text)
-	     (not (s-contains-p
-		   (concat "<" (format-time-string "%Y-%m-%d"))
-		   top-headline-text)))
-	    "Set up a dated headline"
-	  (concat "Resume: "
-		  (or (-> top-headline ns/notes-current-standup-task org-ml-headline-get-path last first)
-		      top-headline-text)))))
-  (let ((percent
-	 (ns/org-pomo-progress
-	  (alist-get
-	   org-pomodoro-state
-	   `((:short-break . ,org-pomodoro-short-break-length)
-	     (:long-break . ,org-pomodoro-long-break-length)
-	     (:pomodoro . ,org-pomodoro-length)))))
-	(color (-> (myron-get (if (eq org-pomodoro-state :pomodoro)
-				  :primary :strings))
-		   (ct-pastel)))
+(when-not (eq org-pomodoro-state :none)
+	  ;; (if (org-clocking-p)
+	  ;; 	(format "🕒 %s" org-clock-heading)
+	  ;;   (let* ((top-headline (ns/with-notes (org-ml-parse-headline-at (ns/org-get-active-point))))
+	  ;; 	     (top-headline-text (-> top-headline org-ml-headline-get-path -last-item)))
+	  ;; 	(if (and
+	  ;; 	     (s-matches-p org-element--timestamp-regexp top-headline-text)
+	  ;; 	     (not (s-contains-p
+	  ;; 		   (concat "<" (format-time-string "%Y-%m-%d"))
+	  ;; 		   top-headline-text)))
+	  ;; 	    "Set up a dated headline"
+	  ;; 	  (concat "Resume: "
+	  ;; 		  (or (-> top-headline ns/notes-current-standup-task org-ml-headline-get-path last first)
+	  ;; 		      top-headline-text)))))
+	  (let ((percent
+		 (ns/org-pomo-progress
+		  (alist-get
+		   org-pomodoro-state
+		   `((:short-break . ,org-pomodoro-short-break-length)
+		     (:long-break . ,org-pomodoro-long-break-length)
+		     (:pomodoro . ,org-pomodoro-length)))))
+		(color (-> (myron-get (if (eq org-pomodoro-state :pomodoro)
+					  :primary :strings))
+			   (ct-pastel)))
 
-	(topic (or (s-clean org-clock-current-task)
-		   (-> org-pomodoro-state
-		       prin1-to-string
-		       (substring 1)))))
+		(topic (or (s-clean org-clock-current-task)
+			   (-> org-pomodoro-state
+			       prin1-to-string
+			       (substring 1)))))
 
-    (format "%s^%s^%s"
-	    topic
+	    (format "%s^%s^%s"
+		    topic
 
-	    ;; progress bar/mkb:
-	    (ns/let-script-args (width) (floor (* (string-to-number (or width "100")) (/ percent 100.0))))
-	    ;; 100
-	    ;; percent
+		    ;; progress bar/mkb:
+		    (ns/let-script-args (width) (floor (* (string-to-number (or width "100")) (/ percent 100.0))))
+		    ;; percent
 
-	    color
-	    )))
+		    color
+		    )))

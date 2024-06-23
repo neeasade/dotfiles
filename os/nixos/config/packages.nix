@@ -30,7 +30,8 @@ let
     bfg-repo-cleaner
     cron
     dash
-    direnv
+    # direnv
+    # nix-direnv
     dos2unix
     entr
     expect
@@ -45,7 +46,6 @@ let
     lm_sensors
     lsof
     mediainfo
-    nix-direnv
     nix-prefetch-scripts
     openssl
     pandoc
@@ -159,7 +159,7 @@ let
     # jstest
     qjoypad
     wine
-    minecraft
+    # minecraft
     openmw
 
     ### DEV
@@ -181,7 +181,7 @@ let
     gnumake
 
     sbcl
-    lispPackages.quicklisp
+    # lispPackages.quicklisp
     guile
     ruby
 
@@ -245,12 +245,15 @@ let
     cloc
     cmatrix
     cowsay
-    discord
+
+    # discord
+
     docker
     filezilla
     fortune
     gimp
-    gnome3.gedit
+    # gnome3.gedit
+    gedit
     gnome3.gnome-terminal
     inkscape
     jo
@@ -259,7 +262,7 @@ let
     love_11
     luajit
     neovim
-    obs-studio
+    # obs-studio
     oil
     pinta
     rpm

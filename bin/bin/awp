@@ -1,5 +1,4 @@
 #!/usr/bin/env elisp
-;; -*- emacs-lisp -*-
 ;; automata wallpapers
 ;; see https://github.com/neeasade/automata (a fork of camille's tailored to wp generation)
 
@@ -29,19 +28,18 @@
 			    23 232 24 25 26 27 28 29 3 30 32 33 34 35 36 37 38 4
 			    40 41 42 43 44 45 46 5 50 51 54 56 57 58 6 60 62 7
 			    72 73 74 76 77 78 8 9 90 94))
-
-	  (llet [probs (--map (ns/random-list '(50 1 1 1))
-			      (-iota (ns/random-range 2 10)
-				     ;; 5
-				     ))
-		       ;; probs (-shuffle '(50 50 1 1 20))
-		       ]
+	  (llet [probs-section (ns/random-list
+				'((50 1 1 1)
+				  (1 50 50 50)))
+		 probs (--map (ns/random-list probs-section)
+			      (-iota (ns/random-range 2 10)))]
 		(->> probs
 		     (-mapcat (lambda (prob)
 				(--map (if (> prob (random 100)) "1" "0")
 				       (-iota (/ (display-pixel-width)
 						 (length probs))))))
-		     (s-join "")))))
+		     (s-join "")
+		     (s-pad-right (display-pixel-width) "0")))))
 
 (defun ns/awp-cmd (kind colors)
   (if (and kind (f-exists-p kind))
@@ -52,15 +50,28 @@
     (llet [(c1 c2 c3) colors
 	   kind (if (string= kind "nil") nil kind)
 	   kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
-	   bin (format (~ "code/automata/c/%s/bin/%s") kind kind)]
+	   bin (format (~ "code/automata/c/%s/bin/%s") kind kind)
+
+	   w (ns/random-range 0 800)
+	   h (ns/random-range 0 800)
+
+	   o (ns/random-list '(32 64 96 128 256))
+	   ;; o 96
+	   w o h o
+	   ]
 	  (list
 	   (if (string= kind "elementary")
 	       (ns/awp-elementary-cmd)
+	     ;; "disease -w 668 -h 780 -i 118 -r 1718203365"
 	     (format "%s -w %s -h %s -i %s"
-		     bin
-		     (ns/random-range 0 800)
-		     (ns/random-range 0 800)
-		     (ns/random-range 30 300)))
+		     bin w h
+		     (ns/random-range 30 300)
+		     ;; (ns/random-range 30 60)
+		     ;; (floor (ts-unix (ts-now)))
+		     1718203365
+
+		     )
+	     )
 	   (cond
 	     ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
 	     (t colors))))))
@@ -68,7 +79,9 @@
 (defun ns/awp (colors-in &optional kind output-file)
   (llet [(cmd (c1 c2 c3)) (ns/awp-cmd kind colors-in)
 	 kind (f-base (first (s-split " " cmd)))
+
 	 process-environment (ns/awp-color-env colors-in)
+
 	 set-bg? (not output-file)
 	 output-file (or output-file "/tmp/result.png")
 	 output-name (f-join (f-parent output-file) (f-base output-file))]
@@ -78,28 +91,41 @@
 
 	(sh "%s | tee %s.pbm | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-name output-file)
 
-	(sh "zip %s.zip %s" output-name output-file)
-	(spit (ns/str output-name ".ratio")
-	      (number-to-string
-	       (/ (float (f-size (format "%s.zip" output-name)))
-		  (f-size output-file))))
+	;; (sh "zip %s.zip %s" output-name output-file)
+	;; (spit (ns/str output-name ".ratio")
+	;;       (number-to-string
+	;;        (/ (float (f-size (format "%s.zip" output-name)))
+	;; 	  (f-size output-file))))
 
 	(when (string= kind "elementary")
 	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c1 "#ffffff" output-file)
 	  (sh "convert '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c2 "#000000" output-file)
 
 	  ;; crop top bit to get rid of setup
-	  (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file)
+
+	  ;; (sh "convert %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file)
+	  (sh "convert %s -crop +0+300 +repage %s" output-file output-file)
 
 	  (spit (ns/str output-name ".awp")
 		(format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3)))))
 	  (sh "chmod +x %s" (ns/str output-name ".awp")))
 
-	(when (and ns/enable-linux-p set-bg?)
-	  (sh "feh --bg-tile \"%s\"" output-file))
 
-	(s-truncate 50 (format "%s%s" kind (-last-item (s-split kind cmd))))))
-
+	(ns/make-lines
+	 (list
+	  (s-truncate 50 (format "%s%s" kind (-last-item (s-split kind cmd))))
+	  (and ns/enable-linux-p set-bg?
+	       (if (string= kind "elementary")
+		   (progn
+		     ;; (sh "convert \"%s\" -resize 200%% \"%s\"" output-file output-file)
+		     (sh "feh --bg-tile \"%s\"" output-file)
+		     ;; (sh "tiletilt \"%s\"" output-file)
+		     )
+		 ;; (sh "tiletilt \"%s\"" output-file)
+		 ;; (sh "tiletilt \"%s\" 45" output-file)
+		 (sh "tiletilt \"%s\" 315" output-file)
+		 ;; (sh "feh --bg-tile \"%s\"" output-file)
+		 ))))))
 
 ;; play here:
 (apply 'ns/awp

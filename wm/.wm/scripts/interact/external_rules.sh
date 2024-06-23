@@ -70,8 +70,4 @@ fi
 
 echo split_dir=$split_dir
 
-if echo "$class_name" | grep -E "^Emacs" >/dev/null; then
-      echo state=tiled
-fi
-
-
+# echo state=tiled

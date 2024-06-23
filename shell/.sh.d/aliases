@@ -5,13 +5,6 @@
 # let's see if this is too generic
 # alias open='xdg-open'
 
-aawp() {
-  # saved wallpapes
-  cd ~/walls
-  vdo ./$(ls *.awp | shuf | head -n 1)
-  cd -
-}
-
 nst() {
   elisp -r "(ns/t $1)"
 }
@@ -26,6 +19,16 @@ ps() { # wonder if I'll regret this one later
 }
 
 alias mimetype='file --mime-type -b'
+
+soff() { # screen off
+  pkill steam
+  pkill telegram-desktop
+  pkill Discord
+
+  sleep 0.5
+
+  xset dpms force off
+}
 
 alias getip="curl -s checkip.dyndns.org | sed -e 's/.*Current IP Address: //' -e 's/<.*$//'"
 alias grep="grep --color=auto"

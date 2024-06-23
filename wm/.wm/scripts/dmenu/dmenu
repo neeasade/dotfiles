@@ -32,7 +32,12 @@ read_input() {
 do_rofi() {
     eval "$(popup_window.sh -e)"
 
-    rofi -sort -columns 1 -l $LINES -yoffset $Y -width $W -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit -location 2 "$(theme getval p_font_main | sed 's/-/ /')" |
+    rofi -columns 1 -l $LINES \
+	 -yoffset $Y \
+	 -width $W \
+	 -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit \
+	 -no-sort -cache-dir "$HOME/.cache/rofi/" -no-disable-history \
+	 -location 2 | \
 	while IFS=$'\n' read -r rofi_line; do
 	    echo "$rofi_line"
 	    if [ ! -z "$FEEDER_PID" ]; then
@@ -43,18 +48,20 @@ do_rofi() {
 	done
 }
 
-if elisp t >/dev/null; then
-    . $HOME/.sh.d/environment
-    if $MAC; then
-	find_class emacs
-    fi
+# if elisp t >/dev/null; then
+#     . $HOME/.sh.d/environment
+#     if $MAC; then
+# 	find_class emacs
+#     fi
 
-    result=$(read_input | emacs_dmenu "$prompt")
-elif type rofi >/dev/null; then
-    result=$(read_input | do_rofi)
-else
-    result=$(read_input | og dmenu -p "$prompt")
-fi
+#     result=$(read_input | emacs_dmenu "$prompt")
+# elif type rofi >/dev/null; then
+#     result=$(read_input | do_rofi)
+# else
+#     result=$(read_input | og dmenu -p "$prompt")
+# fi
+
+result=$(read_input | do_rofi)
 
 if [ -z "$result" ]; then
     echo

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# this sort of a layout script
+# this is sort of a layout script
 # modes: tiled, monocle, monocle_slim, fullscreen
 
 gapped=$(iif '[ $(bspc config window_gap) -gt 0 ]')

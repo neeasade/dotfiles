@@ -8,9 +8,13 @@ let
   # for bleeding edge nvidia drivers
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = shared.nixcfg; };
   # edge = import (fetchTarball https://github.com/neeasade/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
-  # edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/22.11.tar.gz) { config = nixcfg; };
+  # edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/23.11.tar.gz) { config = shared.nixcfg; };
 
   edge-packages = edge.linuxPackages_latest;
+
+  # edge-packages = pkgs.linuxPackages_latest;
+
+  # rollback
   # edge-packages = edge.linuxPackages_5_15;
   # edge-packages = edge.linuxPackages_6_1;
 
@@ -22,16 +26,22 @@ in
     [ 
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
+      (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
     ];
 
+  virtualisation.docker.enable = true;
+  virtualisation.docker.storageDriver = "btrfs";
+
   services.plex = {
-    enable = true;
+    enable = false;
     openFirewall = true;
     package = edge.plex;
   };
 
   # https://github.com/NixOS/nixpkgs/issues/180175
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
+
+# networking.extraHosts = '''';
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
@@ -41,17 +51,43 @@ in
 
   services.udisks2.enable = true;
 
-  services.tailscale.enable = true;
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+    package = edge.tailscale;
+  };
+
+  # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
+  networking.firewall.checkReversePath = "loose";
+
 
   environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable]
                                ++ (with pkgs; [
-                                 tailscale
                                  udiskie
+                                 lyrebird
+                                 protontricks
+                                 (sox.overrideAttrs(old: { enableLame = true;}))
+                                 xcolor
+                                 renpy
+                                 logseq
+
+                                 ardour
+                                 sass
+                                 simplescreenrecorder
+                                 anki-bin
+                               ]) ++ (with edge; [
+
+                                 discord
+                                 obs-studio
+                                 tailscale
                                  bitwarden
                                  bitwarden-cli
                                ]);
 
-  fonts.fonts = sets.fonts-all;
+
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  fonts.packages = sets.fonts-all;
 
   nixpkgs.config.packageOverrides = pkgs: {
     # swap out all of the linux packages
@@ -62,13 +98,14 @@ in
   # line up your kernel packages at boot
   boot.kernelPackages = edge-packages;
 
+  # comment out to use nouvea
   services.xserver.videoDrivers = ["nvidia"];
 
   hardware.nvidia = {
     # Modesetting is needed for most wayland compositors
     modesetting.enable = false;
     # Use the open source version of the kernel module (only if using 515.43.04+)
-    open = false;
+    open = true;
     nvidiaSettings = true; # provide nvidia-settings gui
     package = config.boot.kernelPackages.nvidiaPackages.latest;
     # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
@@ -88,6 +125,10 @@ in
   networking.firewall.allowedTCPPorts = [
     # mpd
     8000 6600
+  ];
+
+  networking.firewall.allowedUDPPorts = [
+    2456 2457 # valheim
   ];
 
   # Configure network proxy if necessary
@@ -134,6 +175,14 @@ in
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
+
+  networking.extraHosts =
+    ''
+    # 127.0.0.1 twitter.com
+    # 127.0.0.1 www.twitter.com
+    # 127.0.0.1 www.youtube.com
+    # 127.0.0.1 youtube.com
+  '';
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

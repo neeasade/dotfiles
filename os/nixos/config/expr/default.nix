@@ -16,9 +16,17 @@ rec {
 
   mpvc-git = stdenv.mkDerivation rec {
     pname = "mpvc";
-    version = "git";
+    version = "1.5-version";
 
-    src = builtins.fetchGit {url = "https://github.com/lwillets/mpvc/"; ref = "master"; };
+    # src = builtins.fetchGit {url = "https://github.com/lwillets/mpvc/"; ref = "master"; };
+
+    src = fetchFromGitHub {
+      owner = "lwilletts";
+      repo = "mpvc";
+      rev = version;
+      sha256 = "sha256-kodHy9DV/bih3Fpy0H64m30/+TdvQ26cxyWJizG1cL0=";
+    };
+
     installPhase = ''PREFIX="$out" extras/mpvc-installer install'';
   };
 
