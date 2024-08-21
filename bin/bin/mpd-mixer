@@ -141,9 +141,7 @@
                     (map (fn [album] [dir [album]])
                          (filter is-long songs)))))
         (shuffle)
-        (mapcat second)
-        (string/join "\n")
-        (println))))
+        (mapcat second))))
 
 (defn shuffle-by-album-force []
   (shuffle-by-album (constantly true)))
@@ -244,7 +242,7 @@
                             set)
 
         all-songs (set (mpc "listall"))]
-    (println (string/join "\n" (set/difference all-songs playlist-songs)))))
+    (set/difference all-songs playlist-songs)))
 
 ;; (System/setOut (java.io.PrintStream. System/out true "UTF-8"))
 
@@ -253,4 +251,4 @@
                     (rest cmd))]
   (cond
     (string? result) (println result)
-    (seq? result) (run! println result)))
+    (seqable? result) (run! println result)))
