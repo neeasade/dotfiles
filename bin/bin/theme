@@ -516,6 +516,9 @@
                 :shell (map-to-shell theme)
                 theme))
             theme)
-           (println)))
+           ((fn [out]
+              (if (string? out)
+                (println out)
+                (prn out))))))
 
 (System/exit exit-status)
