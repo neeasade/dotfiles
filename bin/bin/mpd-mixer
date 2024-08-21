@@ -64,7 +64,7 @@
                         (keep (fn [[song pairs]]
                                 (when (> (count pairs) 1)
                                   (->> pairs
-                                       (map first )
+                                       (map first)
                                        (remove #(= current %))))))
                         (map (fn [positions]
                                ;; complexity from the current position case
@@ -77,8 +77,7 @@
       (mpc "del" "--wait" :in (string/join "\n" duplicates)))))
 
 (defn is-long [song]
-  (let [song-name (last (string/split song #"/"))
-        duration (or (get cache-map song-name) 0)]
+  (let [duration (or (get cache-map (fs/file-name song)) 0)]
     (> duration (* 60 15))))
 
 (defn pomodoro-song-now []
@@ -149,19 +148,92 @@
 (defn shuffle-by-album-force []
   (shuffle-by-album (constantly true)))
 
-(defn context []
-  (let [complete "/"
-        ;; (read-string (:out (apply shell/sh (string/split "theme -n mkb -f complete,empty,sep" #" "))))
-        empty "_"
-        sep "\\"]
+(defn remove-pairs [s]
+  (reduce
+   (fn [s [a b]]
+     (string/replace s
+                     (re-pattern (format "%s[^%s]+%s"
+                                         a
+                                         (str (last b))
+                                         b))
+                     ""))
+   s
+   [["【" "】"]
+    ["●" "●"]
+    ["～" "～"]
+    ["\\(" "\\)"]
+    ["\\[" "\\]"]]))
 
-    (Integer/parseInt (first (mpc "-f" "%position%")))
+(defn track-names [scope]
+  ;; scope is {listall, playlist, or nil for only currently playing track}
+  (->> (if scope
+         (mpc scope "-f" "%artist%^%title%^%file%")
+         (take 1 (mpc "-f" "%artist%^%title%^%file%")))
+       (map #(string/split % #"\^"))
+       (map (fn [[artist title filepath]]
+              (cond
+                (and (not (string/blank? artist))
+                     (not (string/blank? title))) (if (string/includes? title artist)
+                                                    title
+                                                    (str artist " - " title))
+                (not (string/blank? title)) title
+                :else (-> filepath
+                          (fs/file-name)
+                          (fs/strip-ext)))))
+       (map #(-> %
+                 (remove-pairs)
+                 (string/replace #"\-[0-9a-zA-Z_\-]{11}$" "")
+                 (string/replace #"^[0-9]+\. " "")
+                 (string/replace #"_" " ")
+                 (string/replace "|" "-")
+                 (string/replace "full album" "")
+                 (string/replace " Full " "")
+                 ;; (string/replace #"[^0-9a-zA-Z()]+$" "")
+                 (string/replace #"[ ]+" " ")
+                 (string/trim)
+                 (string/replace #" -$" "")))))
 
-    )
+(defn display-context []
+  (let [{:keys [complete empty sep]} (read-string (:out (apply shell/sh (string/split "theme -n mkb -f complete,empty,sep" #" "))))
+        current (Integer/parseInt (first (mpc "-f" "%position%")))
+        current (dec current)
+        playlist (track-names "playlist")]
+    (->> [-2 -1 0 1 2]
+         (map (partial + current))
+         (filter #(> % -1))
+         (map (fn [index]
+                (str (cond (> current index) complete
+                           (< current index) empty
+                           (= current index) sep)
+                     " "
+                     (nth playlist index)))))))
 
-  ;; theme -n mkb -f "complete,empty,sep"
+(defn format-length [length]
+  (-> (list (int (-> length (/ 60) (/ 60)))
+            (int (-> length (/ 60) (mod 60)))
+            (int (mod length 60)))
+      (interleave ["h " "m " "s"])
+      (->> (apply str))))
 
-  )
+(defn display-info []
+  (->> (let [top (first (track-names nil))
+             bottom (format "playlist: %s | %s"
+                            (string/trim (slurp "/home/neeasade/Music/playlist/current"))
+                            (->> (mpc "playlist")
+                                 (map #(get cache-map (fs/file-name %)))
+                                 (apply +)
+                                 (format-length)))
+             percent (second (re-find #"([0-9]+)%" (second (mpc))))
+             middle (:out (shell/sh "mkb" percent (->> (list top bottom)
+                                                       (map count)
+                                                       (sort)
+                                                       (first)
+                                                       (str))))]
+         [top middle bottom])
+       (map string/trim)
+       (string/join "\n")
+       (shell/sh "box" :in)
+       (:out)))
 
 (defn unused-songs []
   (let [playlist-songs (->> (fs/list-dir "/home/neeasade/.config/mpd/playlists" "*.m3u")
@@ -170,12 +242,15 @@
                             (string/join "\n")
                             string/split-lines
                             set)
+
         all-songs (set (mpc "listall"))]
     (println (string/join "\n" (set/difference all-songs playlist-songs)))))
 
 ;; (System/setOut (java.io.PrintStream. System/out true "UTF-8"))
 
-((->> (or *command-line-args* ["shuffle-by-album"])
-      first
-      symbol
-      resolve))
+(let [cmd (or *command-line-args* ["shuffle-by-album"])
+      result (apply (-> cmd first symbol resolve)
+                    (rest cmd))]
+  (cond
+    (string? result) (println result)
+    (seq? result) (run! println result)))

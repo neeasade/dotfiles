@@ -2,6 +2,21 @@
 
 (require '[clojure.string :as string])
 
+(defn txtw [s]
+  ;; if in kitty don't mult
+  (int
+   (+ (* 1.5 (count (filter #(< 255 (int %)) s)))
+      (* 1 (count (filter #(> 255 (int %)) s))))))
+
+(defn repeat-str [s n] (apply str (repeat n s)))
+(defn spaces [n] (repeat-str \space n))
+
+(defn center [s len]
+  (let [slen (txtw s)
+        lpad (int (/ (- len slen) 2))
+        rpad (- len slen lpad)]
+    (str (spaces lpad) s (spaces rpad))))
+
 (defn conf-to-border [conf]
   (let [confs (string/split conf #" ")
         [side-conf corner-conf] (map (fn [s] (map first (re-seq #"(U?)." s)))
@@ -14,13 +29,13 @@
              (expand side-conf)
              (expand corner-conf)))))
 
-
-;; BORDER='╌¦╌╴ ╾╼╼╾'
-;; BORDER='╌¦╌¦ ┭┮┶┵'
-;; BORDER='─│─│ ╭╮╯╰'
-
-(def border (conf-to-border "-|-| /\\/\\"))
-(def border (conf-to-border "═║═║ ╔╗╝╚"))
+(def border (conf-to-border
+             ;; "╌¦╌╴ ╾╼╼╾"
+             ;; "╌¦╌¦ ┭┮┶┵"
+             ;; "─│─│ ╭╮╯╰"
+             ;; "-|-| /\\/\\"
+             "═║═║ ╔╗╝╚"
+             ))
 
 (when-let [conf (System/getenv "BORDER")]
   (if-not (string/blank? conf)
@@ -29,22 +44,25 @@
 (let [{:keys [right left top bottom top-left bottom-left top-right bottom-right ]} border
       lines (string/split (slurp *in*) #"\n")
       lines (map (fn [line] (str " " line " ")) lines)
-      width (->> (conj lines)
-                 (sort-by count)
+      width (->> lines
+                 (sort-by txtw)
                  (last)
-                 (count))
+                 txtw)
       top-middle (repeat (- (/ width (count top))
                             ;; (dec (count top-left))
                             (dec (count top-right)))
                          top)
       top-line (apply str `(~top-left ~@top-middle ~top-right))
-      bottom-line (apply str `(~bottom-left ~@(repeat (/  width (count bottom)) bottom) ~bottom-right))
+      bottom-line (apply str `(~bottom-left ~@(repeat (/ width (count bottom)) bottom) ~bottom-right))
 
       ;; width (+ width (+ (* 2 (dec (count top-left)))))
       ]
 
   (println top-line)
   (->> lines
-       (map (partial format (format "%s%%-%ss%s" left width right)))
+       (map (fn [s]
+              (str left (center s (- width (- (txtw s) (count s)))) right)
+              ;; (format (format "%s%%-%ss%s" left (- width (- (txtw s) (count s))) right) s)
+              ))
        (run! println))
   (println bottom-line))
