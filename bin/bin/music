@@ -329,11 +329,7 @@ interactive_op=${1:-usage}
 shift
 $interactive_op "$@"
 
-if [ "$interactive_op" = "playlist" ]; then
-  sleep 0.5
-fi
-
-mpd-mixer clear-duplicates
+mpd-mixer clear-duplicates "$interactive_op"
 
 # Local Variables:
 # sh-shell: sh

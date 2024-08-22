@@ -56,25 +56,27 @@
        (map (fn [[k v]] (first v)))
        (run! println)))
 
-(defn clear-duplicates []
-  (let [current (first (mpc "-f" "%position%"))
-        duplicates (->> (mpc "playlist" "-f" "%position% %file%")
-                        (map #(string/split % #" " 2))
-                        (group-by second)
-                        (keep (fn [[song pairs]]
-                                (when (> (count pairs) 1)
-                                  (->> pairs
-                                       (map first)
-                                       (remove #(= current %))))))
-                        (map (fn [positions]
-                               ;; complexity from the current position case
-                               (if (= 1 (count positions))
-                                 positions
-                                 (rest positions))))
-                        (flatten))]
-    (when-not (empty? duplicates)
-      (println "clearing duplicates:" (string/join " " duplicates))
-      (mpc "del" "--wait" :in (string/join "\n" duplicates)))))
+(defn clear-duplicates
+  ([] (clear-duplicates "manual"))
+  ([op] (when (some #(= % op) ["artist" "playlist" "append" "manual"])
+          (let [current (first (mpc "-f" "%position%"))
+                duplicates (->> (mpc "playlist" "-f" "%position% %file%")
+                                (map #(string/split % #" " 2))
+                                (group-by second)
+                                (keep (fn [[song pairs]]
+                                        (when (> (count pairs) 1)
+                                          (->> pairs
+                                               (map first)
+                                               (remove #(= current %))))))
+                                (map (fn [positions]
+                                       ;; complexity from the current position case
+                                       (if (= 1 (count positions))
+                                         positions
+                                         (rest positions))))
+                                (flatten))]
+            (when-not (empty? duplicates)
+              (println "clearing duplicates:" (string/join " " duplicates))
+              (mpc "del" "--wait" :in (string/join "\n" duplicates)))))))
 
 (defn is-long [song]
   (let [duration (or (get cache-map (fs/file-name song)) 0)]
@@ -218,13 +220,14 @@
              bottom (format "playlist: %s | %s"
                             (string/trim (slurp "/home/neeasade/Music/playlist/current"))
                             (->> (mpc "playlist")
-                                 (map #(get cache-map (fs/file-name %)))
+                                 (map #(or (get cache-map (fs/file-name %)) 0))
                                  (apply +)
                                  (format-length)))
              percent (second (re-find #"([0-9]+)%" (second (mpc))))
              middle (:out (shell/sh "mkb" percent (->> (list top bottom)
                                                        (map count)
                                                        (sort)
+                                                       (reverse)
                                                        (first)
                                                        (str))))]
          [top middle bottom])
@@ -244,11 +247,9 @@
         all-songs (set (mpc "listall"))]
     (set/difference all-songs playlist-songs)))
 
-;; (System/setOut (java.io.PrintStream. System/out true "UTF-8"))
-
 (let [cmd (or *command-line-args* ["shuffle-by-album"])
       result (apply (-> cmd first symbol resolve)
                     (rest cmd))]
   (cond
-    (string? result) (println result)
-    (seqable? result) (run! println result)))
+    (string? result) (print result)
+    (and result (seqable? result)) (run! println result)))
