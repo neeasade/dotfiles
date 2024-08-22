@@ -312,13 +312,13 @@ gather_playerctl_info() {
   name=$(clean_name)
 }
 
-info() { # display the current audio progress bar and playlist length
-  mpd-mixer display-info
-}
-
 info2() {
   echo "  >> playlist: $(cat $current_playlist) | $(playlist_length) <<"
   context
+}
+
+info() { # display the current audio progress bar and playlist length
+  mpd-mixer display-info
 }
 
 contextall() { mpd-mixer track-names playlist; }

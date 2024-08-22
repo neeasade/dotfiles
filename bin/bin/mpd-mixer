@@ -88,6 +88,7 @@
   ;; or maybe could make it from cache somehow (sum lengths)
   (mpc "clear")
   (->> (mpc "listall")
+       (map fs/filename)
        (map (fn [song]
               {song (or (get cache-map song) 0)}))
        (into {})
@@ -184,14 +185,18 @@
                  (remove-pairs)
                  (string/replace #"\-[0-9a-zA-Z_\-]{11}$" "")
                  (string/replace #"^[0-9]+\. " "")
+                 (string/replace "＂" "\"")
                  (string/replace #"_" " ")
                  (string/replace "|" "-")
                  (string/replace "full album" "")
                  (string/replace " Full " "")
-                 ;; (string/replace #"[^0-9a-zA-Z()]+$" "")
                  (string/replace #"[ ]+" " ")
                  (string/trim)
-                 (string/replace #" -$" "")))))
+                 ((fn [s]
+                    (if (and (not (Character/isLetter (last s)))
+                             (= \space (first (take-last 2 s))))
+                      (string/trim (apply str (drop-last 2 s)))
+                      s)))))))
 
 (defn display-context []
   (let [{:keys [complete empty sep]} (read-string (:out (apply shell/sh (string/split "theme -n mkb -f complete,empty,sep" #" "))))
