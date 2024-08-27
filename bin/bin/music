@@ -58,7 +58,7 @@ restore() {
 place() { # print a command to take you to the current place
   state_song=$(mpc -f "%file%" | head -n 1)
   state_progress=$(mpc -f '%file%' | awk -F '[ /]*' 'NR==2{print $4}')
-  printf "music restore \"%s^%s\"\n" "${state_song}" "${state_progress}"
+  printf "music restore '%s^%s'\n" "${state_song}" "${state_progress}"
 }
 
 add() { # add a url to library, fallback on clipboard content
@@ -166,8 +166,9 @@ artist_no_sort() {
 
 known_artists() {
   {
+    mpd-mixer list-artists
     mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]'
-    mpc listall | grep '/Vapor Memory/' | grep ： | awk -F '[：/&]' '{print $3}' | uniq | awk '{$1=$1};1'
+    # mpc listall | grep '/Vapor Memory/' | grep ： | awk -F '[：/&]' '{print $3}' | uniq | awk '{$1=$1};1'
     cat "${musicdir}/playlist/artists"
     ls "${musicdir}/import/bandcamp/"
     ls "${musicdir}/import/" | awk -F/ '{print $NF}'

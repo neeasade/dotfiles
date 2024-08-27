@@ -58,7 +58,7 @@
 
 (defn clear-duplicates
   ([] (clear-duplicates "manual"))
-  ([op] (when (some #(= % op) ["artist" "playlist" "append" "manual"])
+  ([op] (when (some #(= % op) ["artist" "playlist" "append" "now" "manual"])
           (let [current (first (mpc "-f" "%position%"))
                 duplicates (->> (mpc "playlist" "-f" "%position% %file%")
                                 (map #(string/split % #" " 2))
@@ -88,7 +88,7 @@
   ;; or maybe could make it from cache somehow (sum lengths)
   (mpc "clear")
   (->> (mpc "listall")
-       (map fs/filename)
+       (map fs/file-name)
        (map (fn [song]
               {song (or (get cache-map song) 0)}))
        (into {})
@@ -185,27 +185,81 @@
                  (remove-pairs)
                  (string/replace #"\-[0-9a-zA-Z_\-]{11}$" "")
                  (string/replace #"^[0-9]+\. " "")
-                 (string/replace "＂" "\"")
-                 (string/replace #"_" " ")
-                 (string/replace "|" "-")
                  (string/replace "full album" "")
+                 (string/replace "|" "-")
+                 (string/replace #"_" " ")
                  (string/replace " Full " "")
                  (string/replace #"[ ]+" " ")
-                 (string/trim)
+                 (string/replace "＂" "\"")
+                 (string/replace #",.*$" "")
+                 (string/replace "：" " - ")
                  ((fn [s]
                     (if (and (not (Character/isLetter (last s)))
+                             (not (Character/isDigit (last s)))
                              (= \space (first (take-last 2 s))))
                       (string/trim (apply str (drop-last 2 s)))
                       s)))))))
+
+(defn list-artists []
+  (->> (track-names "listall")
+       (filter #(string/includes? % " - " ) )
+       (map #(string/split % #" - "))
+       (map first)
+       (map string/trim)
+       (distinct)))
+
+(defn re-quote [s]
+  ;; from https://stackoverflow.com/questions/11976210/javas-pattern-quote-equivalent-in-clojurescript
+  (let [special (set ".?*+^$[]\\(){}|")
+        escfn #(if (special %) (str \\ %) %)]
+    (apply str (map escfn s))))
+
+
+
+(comment
+  ;; wip
+
+  (reduce
+   (fn [[result all-songs] artist]
+     )
+   )
+
+  (defn list-artists-long []
+    (let [all
+          (count
+           (mpc "listall"))
+
+          ]
+      (->> (list-artists)
+           (filter (fn [artist]
+                     (>
+                      (->> all
+                           ;; (pmap (partial re-seq (re-pattern (format "[^a-zA-Z]%s[^a-zA-Z]" (re-quote artist)))))
+                           (pmap #(when (string/includes? % artist)
+                                    %
+                                    ))
+                           (remove nil?)
+                           (count)
+                           ;; (map fs/file-name)
+                           ;; (map #(or (get cache-map %) 0))
+                           ;; (apply +)
+                           )
+                      5
+                      ;; (* 60 60 2)           ; 2 hours
+                      )
+                     )
+                   )
+           ))
+
+    ))
 
 (defn display-context []
   (let [{:keys [complete empty sep]} (read-string (:out (apply shell/sh (string/split "theme -n mkb -f complete,empty,sep" #" "))))
         current (Integer/parseInt (first (mpc "-f" "%position%")))
         current (dec current)
         playlist (track-names "playlist")]
-    (->> [-2 -1 0 1 2]
-         (map (partial + current))
-         (filter #(> % -1))
+    (->> (range (- current 3) (+ current 3))
+         (remove neg?)
          (map (fn [index]
                 (str (cond (> current index) complete
                            (< current index) empty
