@@ -72,9 +72,11 @@ super + shift + q
     systemctl --user stop panel; \
     zenity --question "Quit wm?" && bspc quit
 
-# toggle panel or gaps.
-super + {_,shift} + slash
-    {gap,panel}t
+super + shift + slash
+    panelt
+
+super + slash
+    gapt; fullscreen_toggle.sh handle_bd
 
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
