@@ -3,6 +3,7 @@
 
 tile=${1:-$(find "${HOME}/tiles" -type f | shuf | head -n 1)}
 angle=${2:-$((RANDOM % 360))}
+
 w=1920
 h=1080
 file=/tmp/tiletilt.png
@@ -10,9 +11,14 @@ file=/tmp/tiletilt.png
 printf 'tiletilt "%s" %s\n' "$tile" "$angle"
 
 type xdpyinfo >/dev/null 2>&1 && \
-    read -r w h <<< "$(xdpyinfo | grep dimensions:  | awk -F'[ x]+' '{print $3 " " $4}')"
+    read -r w h <<< "$(xdpyinfo | awk -F'[ x]+' '/dimensions/{print $3 " " $4}')"
 
-convert -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
+# to play with later: make rotated tile image instead of full bg
+# read -r wi hi <<< "$(file "$tile" | awk -F: '{print $2}' | grep -oE '[0-9]+' | head -n 2 | tr $'\n' ' ')"
+
+magick -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
 	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage \
 	"$file"
+
 feh --bg-fill "$file"
+# feh --bg-tile "$file"
