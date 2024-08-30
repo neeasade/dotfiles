@@ -1,5 +1,6 @@
 #!/usr/bin/env bb
 ;; do things with mpd
+;; a companion script to `music`
 ;; todo: better cue file support
 ;; todo: remove by hash for there be duplicates
 
@@ -17,8 +18,11 @@
          '[pod.babashka.buddy.hash :as hash]
          '[pod.babashka.buddy.codecs :as c])
 
+(def HOME (System/getenv "HOME"))
+
+;; todo: memoize?
 (def cache-map
-  (->> (string/split (slurp "/home/neeasade/.config/mpd/database")
+  (->> (string/split (slurp (str HOME "/.config/mpd/database"))
                      #"song_begin:")
        (remove nil?)
        (remove #(= "" (string/trim %)))
@@ -51,10 +55,88 @@
 
 (defn file-hashdedup []
   (->> (mpc "playlist" "-f" "%file%")
-       (map (partial str "/home/neeasade/Music/"))
+       (map (partial str HOME "/Music/"))
        (group-by file-hash)
        (map (fn [[k v]] (first v)))
        (run! println)))
+
+
+(defn remove-pairs [s]
+  (reduce
+   (fn [s [a b]]
+     (string/replace s
+                     (re-pattern (format "%s[^%s]+%s"
+                                         a
+                                         (str (last b))
+                                         b))
+                     ""))
+   s
+   [["【" "】"]
+    ["●" "●"]
+    ["～" "～"]
+    ["\\(" "\\)"]
+    ["\\[" "\\]"]]))
+
+(defn track-names [scope]
+  ;; scope is {listall, playlist, or nil for only currently playing track}
+  (->> (if scope
+         (mpc scope "-f" "%artist%^%title%^%file%")
+         (take 1 (mpc "-f" "%artist%^%title%^%file%")))
+       (map #(string/split % #"\^"))
+       (map (fn [[artist title filepath]]
+              (cond
+                (and (not (string/blank? artist))
+                     (not (string/blank? title))) (if (string/includes? title artist)
+                                                    title
+                                                    (str artist " - " title))
+                (not (string/blank? title)) title
+                :else (-> filepath
+                          (fs/file-name)
+                          (fs/strip-ext)))))
+       (map (fn [song] (-> song
+                           (remove-pairs)
+                           ((fn [s]
+                              (reduce (fn [sd pattern] (string/replace sd pattern " "))
+                                      s
+                                      [#"\-[0-9a-zA-Z_\-]{11}$"
+                                       #"^[0-9]+\. "
+                                       "full album"
+                                       " Full "
+                                       #"_"
+                                       #",.*$"])))
+                           (string/replace "|" "-")
+                           (string/replace " | " "-")
+                           (string/replace "：" " - ")
+                           (string/replace #"[ ]+" " ")
+                           (string/trim)
+                           ((fn [s]
+                              (if (and (not (Character/isLetter (last s)))
+                                       (not (Character/isDigit (last s)))
+                                       (= \space (first (take-last 2 s))))
+                                (string/trim (apply str (drop-last 2 s)))
+                                s))))))))
+
+(defn name-dedup []
+  (let [position (dec (Integer/parseInt (first (mpc "-f" "%position%"))))
+        duplicates (->> (track-names "playlist")
+                        (map-indexed (fn [i name] [i name]))
+                        (group-by second)
+                        (keep (fn [[song pairs]]
+                                (when (> (count pairs) 1)
+                                  (->> pairs
+                                       (map first)
+                                       (remove #(= position %))))))
+                        (map (fn [positions]
+                               ;; complexity from the current position case
+                               (if (= 1 (count positions))
+                                 positions
+                                 (rest positions))))
+                        (flatten)
+                        ;; (remove (partial = position))
+                        (map inc))]
+    (when-not (empty? duplicates)
+      (println "clearing duplicates (name):" (string/join " " duplicates))
+      (mpc "del" "--wait" :in (string/join "\n" duplicates)))))
 
 (defn clear-duplicates
   ([] (clear-duplicates "manual"))
@@ -75,8 +157,10 @@
                                          (rest positions))))
                                 (flatten))]
             (when-not (empty? duplicates)
-              (println "clearing duplicates:" (string/join " " duplicates))
-              (mpc "del" "--wait" :in (string/join "\n" duplicates)))))))
+              (println "clearing duplicates (file):" (string/join " " duplicates))
+              (mpc "del" "--wait" :in (string/join "\n" duplicates)))
+            ;; (name-dedup)
+            ))))
 
 (defn is-long [song]
   (let [duration (or (get cache-map (fs/file-name song)) 0)]
@@ -86,21 +170,22 @@
   ;; todo: a way to do album length would be nice as well
   ;; would infer an album cache structure somewhere?
   ;; or maybe could make it from cache somehow (sum lengths)
-  (mpc "clear")
+  ;; (mpc "clear")
   (->> (mpc "listall")
-       (map fs/file-name)
+       ;; (map fs/file-name)
        (map (fn [song]
-              {song (or (get cache-map song) 0)}))
-       (into {})
-       (filter (fn [[k v]]
-                 ;; (< (* 60 23) v (* 60 28))
-                 (< (* 60 23) v (* 60 25))))
+              (list song (or (get cache-map (fs/file-name song)) 0))))
+       (keep (fn [[song duration]]
+               ;; (< (* 60 23) v (* 60 28))
+               (when (< (* 60 23) duration (* 60 27))
+                 song)))
        (shuffle)
-       (first)
-       (first)
-       (shell/sh "music" "now")
-       (:out)
-       (println)))
+       ;; (first)
+       ;; (first)
+       ;; (shell/sh "music" "now")
+       ;; (:out)
+       ;; (println)
+       ))
 
 (defn filter-meta [filter-fn]
   (let [delete-positions (->> (mpc "playlist" "-f" "%position% %file%")
@@ -149,57 +234,6 @@
 (defn shuffle-by-album-force []
   (shuffle-by-album (constantly true)))
 
-(defn remove-pairs [s]
-  (reduce
-   (fn [s [a b]]
-     (string/replace s
-                     (re-pattern (format "%s[^%s]+%s"
-                                         a
-                                         (str (last b))
-                                         b))
-                     ""))
-   s
-   [["【" "】"]
-    ["●" "●"]
-    ["～" "～"]
-    ["\\(" "\\)"]
-    ["\\[" "\\]"]]))
-
-(defn track-names [scope]
-  ;; scope is {listall, playlist, or nil for only currently playing track}
-  (->> (if scope
-         (mpc scope "-f" "%artist%^%title%^%file%")
-         (take 1 (mpc "-f" "%artist%^%title%^%file%")))
-       (map #(string/split % #"\^"))
-       (map (fn [[artist title filepath]]
-              (cond
-                (and (not (string/blank? artist))
-                     (not (string/blank? title))) (if (string/includes? title artist)
-                                                    title
-                                                    (str artist " - " title))
-                (not (string/blank? title)) title
-                :else (-> filepath
-                          (fs/file-name)
-                          (fs/strip-ext)))))
-       (map #(-> %
-                 (remove-pairs)
-                 (string/replace #"\-[0-9a-zA-Z_\-]{11}$" "")
-                 (string/replace #"^[0-9]+\. " "")
-                 (string/replace "full album" "")
-                 (string/replace "|" "-")
-                 (string/replace #"_" " ")
-                 (string/replace " Full " "")
-                 (string/replace #"[ ]+" " ")
-                 (string/replace "＂" "\"")
-                 (string/replace #",.*$" "")
-                 (string/replace "：" " - ")
-                 ((fn [s]
-                    (if (and (not (Character/isLetter (last s)))
-                             (not (Character/isDigit (last s)))
-                             (= \space (first (take-last 2 s))))
-                      (string/trim (apply str (drop-last 2 s)))
-                      s)))))))
-
 (defn list-artists []
   (->> (track-names "listall")
        (filter #(string/includes? % " - " ) )
@@ -208,13 +242,26 @@
        (map string/trim)
        (distinct)))
 
+(defn list-artists-content []
+  (->> (track-names "listall")
+       (filter #(string/includes? % " - " ) )
+       (map #(string/split % #" - "))
+       (map first)
+       (map string/trim)
+       (frequencies)
+       (keep (fn [[artist count]]
+               (when (> count 3)
+                 artist)))
+       ;; (distinct)
+       )
+
+  )
+
 (defn re-quote [s]
   ;; from https://stackoverflow.com/questions/11976210/javas-pattern-quote-equivalent-in-clojurescript
   (let [special (set ".?*+^$[]\\(){}|")
         escfn #(if (special %) (str \\ %) %)]
     (apply str (map escfn s))))
-
-
 
 (comment
   ;; wip
@@ -275,13 +322,16 @@
       (->> (apply str))))
 
 (defn display-info []
+  ;; todo: show album name if inferred (bandcamp/album dir etc)
   (->> (let [top (first (track-names nil))
-             bottom (format "playlist: %s | %s"
-                            (string/trim (slurp "/home/neeasade/Music/playlist/current"))
-                            (->> (mpc "playlist")
-                                 (map #(or (get cache-map (fs/file-name %)) 0))
-                                 (apply +)
-                                 (format-length)))
+             bottom (format
+                     ;; "playlist: %s | %s"
+                     "%s, %s"
+                     (string/trim (slurp (str HOME "/Music/playlist/current")))
+                     (->> (mpc "playlist")
+                          (map #(or (get cache-map (fs/file-name %)) 0))
+                          (apply +)
+                          (format-length)))
              percent (second (re-find #"([0-9]+)%" (second (mpc))))
              middle (:out (shell/sh "mkb" percent (->> (list top bottom)
                                                        (map count)
@@ -296,13 +346,12 @@
        (:out)))
 
 (defn unused-songs []
-  (let [playlist-songs (->> (fs/list-dir "/home/neeasade/.config/mpd/playlists" "*.m3u")
+  (let [playlist-songs (->> (fs/list-dir (str HOME "/.config/mpd/playlists") "*.m3u")
                             (map str)
                             (map slurp)
                             (string/join "\n")
                             string/split-lines
                             set)
-
         all-songs (set (mpc "listall"))]
     (set/difference all-songs playlist-songs)))
 
