@@ -238,7 +238,7 @@ if [ -z "$*" ]; then
 	# (which unminimizes windows)
 	set -- xresources qutebrowser kitty
     elif $LINUX; then
-	set -- wm xresources picom bg gtk qutebrowser zathura jgmenu zeal btag_borders kitty
+	set -- wm xresources picom bg gtk qutebrowser zathura jgmenu zeal btag_borders kitty rofi
     elif $WINDOWS; then
 	set -- mintty
     fi

@@ -32,7 +32,9 @@
 		     (:pomodoro . ,org-pomodoro-length)))))
 		(color (-> (myron-get (if (eq org-pomodoro-state :pomodoro)
 					  :primary :strings))
-			   (ct-pastel)))
+			   ;; (ct-pastel)
+			   (ns/make-border-color)
+			   ))
 
 		(topic (or (s-clean org-clock-current-task)
 			   (-> org-pomodoro-state

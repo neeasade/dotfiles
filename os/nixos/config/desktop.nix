@@ -36,10 +36,14 @@
     openssh.enable = true;
   };
 
+  services.displayManager.autoLogin.enable = true;
+
   services.xserver = {
     enable = true;
     autorun = true;
     layout = "us";
+
+    displayManager.autoLogin.user = shared.user;
 
     windowManager.bspwm = {
       enable = true;
@@ -51,8 +55,6 @@
     };
 
     displayManager.defaultSession = "none+bspwm";
-    displayManager.autoLogin.user = shared.user;
-    displayManager.autoLogin.enable = true;
 
     displayManager.lightdm = {
       enable = true;

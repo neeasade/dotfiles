@@ -1,44 +1,21 @@
-#!/bin/sh
-# usage: mkb <percent> <size>
-# port of http://git.z3bra.org/mkb/file/mkb.c.html
+#!/usr/bin/env bb
+;; usage: mkb <percent> <size>
+;; inspo: http://git.z3bra.org/mkb/file/mkb.c.html
 
-# args
-progress=${1:-0}
-size=$2
+(require '[babashka.fs :as fs]
+         '[clojure.java.io :as io]
+         '[clojure.java.shell :as shell]
+         '[clojure.string :as string])
 
-complete='-'
-empty='-'
-sep='+'
-start=''
-end=''
-
-eval "$(theme -n mkb -s)"
-
-# approx correction for char width of emoji
-# todo: detect emoji?
-size=$((size / 2))
-
-# defaults
-progress=${progress:-30}
-size=${size:-32}
-
-passed=false
-content=${start}
-
-if [ "$progress" -eq 100 ]; then
-    sep=$complete
-fi
-
-# content="${content}${start}"
-for i in $(seq 1 "$size"); do
-    if [ "$(echo "$i < $progress / 100 * $size" | bc -l)" = 1 ]; then
-        current="$complete"
-    else
-        $passed && current="$empty" || current="$sep"
-        passed=true
-    fi
-
-    content="${content}${current}"
-done
-content="${content}${end}"
-echo "$content"
+(let [[percent size] (map #(Integer/parseInt %) *command-line-args*)
+      size-complete (int (* (/ percent 100) size))
+      {:keys [start end complete empty sep]}
+      (read-string (:out (apply shell/sh (string/split "theme -n mkb" #" "))))]
+  (->> (list start
+             (repeat size-complete complete)
+             sep
+             (repeat (dec (- size size-complete)) empty)
+             end)
+       (flatten)
+       (apply str)
+       (println)))

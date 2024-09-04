@@ -4,9 +4,17 @@
 NEEASADE_ENV=true
 
 if ${NEEASADE_ENV:-true}; then
-  set -a
-
   NEEASADE_ENV=false
+
+  msource() { # maybe source (if file exists)
+    if [ -e "$*" ]; then
+      . "$*"
+    fi
+  }
+
+  msource /etc/set-environment
+
+  set -a
 
   path_remove() {
     export PATH=${PATH//":$1:"/":"} # middle
@@ -29,7 +37,7 @@ if ${NEEASADE_ENV:-true}; then
   XDG_CONFIG_HOME="$HOME/.config"
 
   silent() { "$@" >/dev/null 2>&1; }
-  has()    { silent type "$@"; }
+  has()    { silent type -f "$@"; }
   vdo()    { echo "$*"; "$@"; }
 
   set_system () {
@@ -54,12 +62,6 @@ if ${NEEASADE_ENV:-true}; then
   }
 
   set_editor vim
-
-  msource() { # maybe source (if file exists)
-    if [ -e "$*" ]; then
-      . "$*"
-    fi
-  }
 
   pathmunge '/run/current-system/sw/bin'
   pathmunge '/run/wrappers/bin/'

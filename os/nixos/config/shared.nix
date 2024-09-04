@@ -45,8 +45,10 @@ rec {
     # lil box in the closet
     portal.id = "TAKON4Z-4BDB3HJ-LBRGYCJ-7YLMAFT-P7YYF45-VQRPWJL-TTEWBPF-JBTXRA5";
 
-    # hmmmm. one of these is the thinkpad
+    # thinkpad
     geloof.id = "5TSVINF-TJQWJOR-4UBDHAH-J3EQ2YU-OY5C5AF-3P25BH5-UKXTMJE-PLSP6QO";
+
+    # vps
     trouw.id = "NGZND66-ZLQFRIH-M6W77CS-FTHYQWT-EGYGD6S-V6MGTS2-K7JUCWC-W4DTTAL";
 
     phone = {
@@ -67,16 +69,18 @@ rec {
     dataDir = "${home}/.local/share/Syncthing";
 
     overrideDevices = true;
-    devices = (builtins.removeAttrs syncthingDevices [ hostname ]);
+
+    settings.devices = (builtins.removeAttrs syncthingDevices [ hostname ]);
+
     overrideFolders = true;
 
-    folders.main = {
+    settings.folders.main = {
       enable = true;
       path = "${home}/sync/main";
       devices = builtins.attrNames (builtins.removeAttrs syncthingDevices [ hostname "phone" ]);
     };
 
-    folders.orgzly = {
+    settings.folders.orgzly = {
       enable = true;
       path = "${home}/sync/orgzly";
       devices = builtins.attrNames (builtins.removeAttrs syncthingDevices [ hostname ]);

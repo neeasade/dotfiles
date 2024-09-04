@@ -5,14 +5,28 @@
 gapped=$(iif '[ $(bspc config window_gap) -gt 0 ]')
 
 handle_bd() {
-  if bspc query -N -n '.floating.!hidden'; then
-    bspc config left_padding "$(( $(bspc config left_padding) + 450 ))"
-    read X Y W H <<< "20 100 390 800"
+  # new thinking: floating at the side
+  # should be a little column of floaters
+  if ! bspc query -N -n '.floating.!hidden'; then
+    return;
+  fi
 
-    wid=$(bspc query -N -n '.floating.!hidden' | head -n 1)
+  if ! xprop WM_CLASS -id "$(bspc query -N -n '.floating.!hidden')" | grep -q discord; then
+    return;
+  fi
+
+  p=$(bspc config left_padding)
+  bspc config left_padding "$(( $(bspc config left_padding) + 450 ))"
+
+
+  read X Y W H <<< "20 100 390 800"
+  wid=$(bspc query -N -n '.floating.!hidden' | head -n 1)
+
+  # if [ "$(bspc query -T -n 'any.floating.!hidden' | jq .client.floatingRectangle.width)" -lt $W ]; then
+    # notify-send "hit!"
     xdotool windowmove $wid $X $Y
     xdotool windowsize $wid $W $H
-  fi
+  # fi
 }
 
 do_monocle_full() {
@@ -112,14 +126,15 @@ else
   fi
 fi
 
+echo before: $state
+before=$state
+
 if [ ! -z "$*" ]; then
   "$@"
   exit $?
 fi
 
 # rotate
-echo before: $state
-before=$state
 
 if [ -z "$SLIM" ]; then
   case $state in

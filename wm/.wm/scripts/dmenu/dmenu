@@ -32,11 +32,12 @@ read_input() {
 do_rofi() {
     eval "$(popup_window.sh -e)"
 
-    rofi -columns 1 -l $LINES \
-	 -yoffset $Y \
-	 -width $W \
-	 -dmenu -i -async-pre-read 0 -p "$prompt" -no-click-to-exit \
-	 -no-sort -cache-dir "$HOME/.cache/rofi/" -no-disable-history \
+    # -yoffset $Y \
+    # 	 -width $W \
+    rofi -l $LINES \
+	 -sorting-menu fzf \
+	 -dmenu -i -p "$prompt" -no-click-to-exit \
+	 -cache-dir "$HOME/.cache/rofi/" -no-disable-history \
 	 -location 2 | \
 	while IFS=$'\n' read -r rofi_line; do
 	    echo "$rofi_line"

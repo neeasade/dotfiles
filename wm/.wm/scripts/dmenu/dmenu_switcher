@@ -144,7 +144,10 @@ add_metas() {
 
     # link mark/book mark translation here would be nice
     # add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
-    add_switch "meta: telegram" "find_url 'https://web.telegram.org/'"
+
+    find_telegram() { find_class TelegramDesktop || telegram-desktop ;}
+    # add_switch "meta: telegram" "find_url 'https://web.telegram.org/'"
+    add_switch "meta: telegram" "find_telegram"
     add_switch "meta: twitter" "find_url 'https://twitter.com/'"
     add_switch "meta: nixers" "find_url 'https://nixers.net/'"
     add_switch "meta: texting" "find_url 'https://messages.google.com/web/'"
@@ -189,7 +192,7 @@ add_metas() {
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
     add_switch "meta: short break" "elisp '(ns/org-pomodoro-short-break)'"
 
-    for o in now playlist artist_album_sort artist del bl 'filter is_long' artist_append; do
+    for o in now playlist shuffler artist del bl 'filter is_long' artist_append; do
 	add_switch "meta: music $o" "music $o"
     done
 

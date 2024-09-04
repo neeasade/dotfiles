@@ -36,6 +36,8 @@ check_disk_space() {
 	echo "OBS OPEN"
     fi
 
+    . ~/.panel_extra
+
     # cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'
 ) | awk NF | tr '\n' '^' | sed 's/.$//' | sed 's/\^/ • /g'
 echo

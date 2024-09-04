@@ -29,19 +29,19 @@ in
       (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
     ];
 
+  programs.noisetorch.enable = true;
+
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
 
   services.plex = {
-    enable = false;
+    enable = true;
     openFirewall = true;
     package = edge.plex;
   };
 
   # https://github.com/NixOS/nixpkgs/issues/180175
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
-
-# networking.extraHosts = '''';
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
@@ -61,8 +61,10 @@ in
   networking.firewall.checkReversePath = "loose";
 
 
+  environment.wordlist.enable = true;
   environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable]
                                ++ (with pkgs; [
+                                 obs-studio
                                  udiskie
                                  lyrebird
                                  protontricks
@@ -75,13 +77,12 @@ in
                                  sass
                                  simplescreenrecorder
                                  anki-bin
-                               ]) ++ (with edge; [
 
-                                 discord
-                                 obs-studio
-                                 tailscale
                                  bitwarden
                                  bitwarden-cli
+                               ]) ++ (with edge; [
+                                 discord
+                                 tailscale
                                ]);
 
 
@@ -89,14 +90,13 @@ in
 
   fonts.packages = sets.fonts-all;
 
-  nixpkgs.config.packageOverrides = pkgs: {
-    # swap out all of the linux packages
-    linuxPackages_latest = edge-packages;
-    nvidia_x11 = edge.nvidia_x11;
-  };
-
-  # line up your kernel packages at boot
-  boot.kernelPackages = edge-packages;
+  # bleeding edge
+  # boot.kernelPackages = edge-packages;
+  # nixpkgs.config.packageOverrides = pkgs: {
+  #   # swap out all of the linux packages
+  #   linuxPackages_latest = edge-packages;
+  #   nvidia_x11 = edge.nvidia_x11;
+  # };
 
   # comment out to use nouvea
   services.xserver.videoDrivers = ["nvidia"];
@@ -114,6 +114,14 @@ in
   environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
 
   programs.steam.enable = true;
+
+  # programs.steam.package = (pkgs.steam.override {
+  #   extraPkgs = (pkgs:  [ pkgs.openssl_1_1 ]);
+  # });
+
+  # nixpkgs.config.permittedInsecurePackages = [
+  #   "openssl-1.1.1w"
+  # ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -154,9 +162,9 @@ in
   };
 
   # Configure keymap in X11
-  services.xserver = {
+  services.xserver.xkb = {
     layout = "us";
-    xkbVariant = "";
+    variant = "";
   };
 
   security.rtkit.enable = true;

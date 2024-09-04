@@ -279,7 +279,7 @@ let
     zeal
     zlib
     zoom-us
-  ]) ++ ([edge.steam edge.pegasus-frontend pkgs.gamemode]);
+  ]) ++ ([edge.pegasus-frontend pkgs.gamemode]);
 
   fonts-core = (with pkgs; [dejavu_fonts corefonts symbola]);
 
@@ -304,10 +304,10 @@ let
   # ]);
 in
 {
-  bare = bare;
-  ui = ui;
-  cli = cli;
-  fat = fat;
-  fonts-all = fonts-all;
+  bare       = bare;
+  ui         = ui;
+  cli        = cli;
+  fat        = fat;
+  fonts-all  = fonts-all;
   fonts-core = fonts-core;
 }

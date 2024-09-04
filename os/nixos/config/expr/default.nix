@@ -35,7 +35,7 @@ rec {
     version = "1.0.0";
     meta.description = "a nice pastebin script";
 
-    src = builtins.fetchGit {url = "https://github.com/syntax-samurai/pb/"; ref = "master"; };
+    src = builtins.fetchGit {url = "https://github.com/syntax-samurai/pb/"; ref = "main"; };
     installPhase = ''install -D -m +rx ./pb $out/bin/pb'';
   };
 
