@@ -61,6 +61,12 @@ place() { # print a command to take you to the current place
   printf "music restore '%s^%s'\n" "${state_song}" "${state_progress}"
 }
 
+playlist_modify() { # modify the playlist but retain current song and place
+  where=$(place)
+  music "$(echo playlist artist | tr ' ' $'\n' | dmenu)"
+  eval "$where"
+}
+
 add() { # add a url to library, fallback on clipboard content
   url=$*
   [ -z "$url" ] && url=$(xclip -o -selection clipboard)
@@ -129,7 +135,7 @@ remove() { # remove some search match from the playlist
   mpc playlist -f '%position% %file%' | grep -F -i "$*" | sed 's/ .*//' | mpc del
 }
 
-now() { # fuzzy search for a song, play it now
+now() { # search for a song, play it now
   song=$*
   if [ -z "$song" ]; then
     if ! song=$(mpc listall | dmenu "song"); then
@@ -137,11 +143,16 @@ now() { # fuzzy search for a song, play it now
     fi
   fi
 
-  # todo: if pos is 0, insert at start and swap
-  # for eg restore feels
+  pos=$(mpc -f '%position%' | head -n 1)
+  if [ $pos -eq 1 ]; then
+    mpc --wait -q insert "$(mpc | head -n 1)"
+    mpc --wait -q insert "$song"
+    mpc del <<< 1
+  else
+    mpc --wait -q insert "$song"
+    mpc -q next
+  fi
 
-  mpc --wait -q insert "$song"
-  mpc -q next
   mpc -q play
 }
 
