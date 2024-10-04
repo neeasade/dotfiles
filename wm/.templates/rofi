@@ -17,7 +17,7 @@
 /*****----- Configuration -----*****/
 configuration {
     kb-move-end: "";
-    kb-row-up: "Control+e";
+    kb-row-up: "Up,Control+e";
     kb-row-down: "Down,Control+n";
 
     /* combi-modi: "window,drun,ssh,Project:~/.config/rofi/project.sh"; */

@@ -224,6 +224,7 @@ upshot() {
 
 settitle() {
   $ESHELL && return
+  [ "$TERM" = "dumb" ] && return
   printf "%b" "\033]0;$*\a"
 }
 
@@ -237,6 +238,7 @@ linewrap() {
 
 cursorStyle() {
   [ "$TERM" = "linux" ] && return
+  [ "$TERM" = "dumb" ] && return
   $ESHELL && return
 
   case "$1" in

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# skip intros
 
 # init: wait for mpd to start up
 sleep 10
@@ -6,9 +7,12 @@ sleep 10
 mpc idleloop | while read -r line; do
     if [ "$line" = "player" ]; then
 	state=$(mpc)
-	if grep -i 'club life' <<< "$state"; then
-	    if grep '0:00/' <<< "$state"; then
-		# skip intro
+	if grep '0:00/' <<< "$state"; then
+	    if grep '\- ASOT' <<< "$state"; then
+		mpc seek +45
+	    fi
+
+	    if grep -i 'club life' <<< "$state"; then
 		mpc seek +25
 	    fi
 	fi

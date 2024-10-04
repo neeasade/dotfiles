@@ -73,8 +73,9 @@ let
   # Desktop setup
   ui = cli ++ (with pkgs; [
     arandr
-    aspell
-    aspellDicts.en
+    (aspellWithDicts (ds: with ds; [ en en-science en-computers ]))
+    # aspell
+    # aspellDicts.en
     bash-completion
     blueman
     deluge
@@ -104,7 +105,7 @@ let
     mumble
     networkmanager_dmenu
     networkmanagerapplet
-    nodejs # see repo:debounce.js
+    # nodejs # see repo:debounce.js
     okular
     pasystray
     pavucontrol

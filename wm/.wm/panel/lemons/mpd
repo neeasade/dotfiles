@@ -2,6 +2,7 @@
 # player by player.sh
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
 
+
 maxWinNameLen=${maxWinNameLen:-31}
 
 player.sh | grep -qi playing && playing=true || playing=false
@@ -9,7 +10,7 @@ player.sh | grep -qi paused && paused=true || paused=false
 
 if $playing || $paused; then
     if [ "$(GET=t player.sh)" = "mpc" ]; then
-      title=$(music name_from_pos)
+      mpd-mixer display-status
     else
       title=$(player.sh -f "%title% - %artist%" | head -n 1)
     fi

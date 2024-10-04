@@ -9,6 +9,7 @@
 
 (let [[percent size] (map #(Integer/parseInt %) *command-line-args*)
       size-complete (int (* (/ percent 100) size))
+      ;; todo: a way to override mkb vars here
       {:keys [start end complete empty sep]}
       (read-string (:out (apply shell/sh (string/split "theme -n mkb" #" "))))]
   (->> (list start

@@ -75,7 +75,7 @@ add() { # add a url to library, fallback on clipboard content
   # note: get all of an artists album links example:
   example() {
     url='https://purityfilter.bandcamp.com/music'
-    url='https://golemm.bandcamp.com/music'
+    url='https://filmmaker.bandcamp.com/music'
     curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '$(echo "$url" | sed 's/music//')#" -e "s/$/'/"
   }
 
@@ -173,9 +173,8 @@ artist_no_sort() {
 
 known_artists() {
   {
-    mpd-mixer list-artists
+    mpd-mixer list-artists-content
     mpc listall -f '%artist%' | grep -v '^$' | tr '[:upper:]' '[:lower:]'
-    # mpc listall | grep '/Vapor Memory/' | grep ： | awk -F '[：/&]' '{print $3}' | uniq | awk '{$1=$1};1'
     cat "${musicdir}/playlist/artists"
     ls "${musicdir}/import/bandcamp/"
     ls "${musicdir}/import/" | awk -F/ '{print $NF}'
@@ -197,7 +196,9 @@ artist() { # play songs by an artist
   fi
 
   append "[^a-z]${artist}[^a-z]" >/dev/null
-  mpc listall -f ' %artist% ' | grep -i "[^a-z]${artist}[^a-z]" | uniq | \
+
+  # this is because artist might not always be in file path
+  mpc listall -f ' %artist% ' | grep -i "[^a-z]${artist}[^a-z]" | sort -u | \
     while read -r corrected; do
       mpc find artist "$corrected" | mpc add --wait
     done

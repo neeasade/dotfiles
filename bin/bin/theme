@@ -375,9 +375,10 @@
                      (unflatten-map
                       {:THEME_NAME "test"
                        :emacs.theme "myron-room"
-                       :BG_COMMAND "${HOME}/.fehbg"
+                       ;; todo: just make an alias to feh solid color bg later
+                       ;; :BG_COMMAND "${HOME}/.fehbg"
+                       :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :BG_COMMAND "bgtint"
-                       ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :font.mono.family "Triplicate T4c"
                        :font.mono.family "Go Mono"
                        ;; :font.mono.family "Triplicate C4c"

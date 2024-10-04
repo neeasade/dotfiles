@@ -245,7 +245,7 @@ if [ -z "$*" ]; then
 fi
 
 case "$*" in
-    bg*)  ;;
+    bg*) ;;
     *) vdo silent theme -c
 esac
 

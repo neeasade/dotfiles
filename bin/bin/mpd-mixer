@@ -7,6 +7,7 @@
 ;; todo idea: mpd-stats: generate stats for songs and artists
 ;; - print artists with n minutes of content
 
+
 (require '[babashka.pods :as pods])
 
 (pods/load-pod 'org.babashka/buddy "0.3.4")
@@ -108,6 +109,7 @@
                            (string/replace " | " "-")
                            (string/replace "：" " - ")
                            (string/replace #"[ ]+" " ")
+                           (string/replace #"- Album" "")
                            (string/trim)
                            ((fn [s]
                               (if (and (not (Character/isLetter (last s)))
@@ -117,50 +119,51 @@
                                 s))))))))
 
 (defn name-dedup []
-  (let [position (dec (Integer/parseInt (first (mpc "-f" "%position%"))))
-        duplicates (->> (track-names "playlist")
-                        (map-indexed (fn [i name] [i name]))
-                        (group-by second)
-                        (keep (fn [[song pairs]]
-                                (when (> (count pairs) 1)
-                                  (->> pairs
-                                       (map first)
-                                       (remove #(= position %))))))
-                        (map (fn [positions]
-                               ;; complexity from the current position case
-                               (if (= 1 (count positions))
-                                 positions
-                                 (rest positions))))
-                        (flatten)
-                        ;; (remove (partial = position))
-                        (map inc))]
-    (when-not (empty? duplicates)
-      (println "clearing duplicates (name):" (string/join " " duplicates))
-      (mpc "del" "--wait" :in (string/join "\n" duplicates)))))
+  (let [position (dec (Integer/parseInt (first (mpc "-f" "%position%"))))]
+    (->> (track-names "playlist")
+         (map-indexed (fn [i name] [i name]))
+         (group-by second)
+         (keep (fn [[song pairs]]
+                 (when (> (count pairs) 1)
+                   (->> pairs
+                        (map first)
+                        (remove #(= position %))))))
+         (map (fn [positions]
+                ;; complexity from the current position case
+                (if (= 1 (count positions))
+                  positions
+                  (rest positions))))
+         (flatten)
+         (map inc))))
+
+(defn filepath-dedup []
+  (let [position (first (mpc "-f" "%position%"))]
+    (->> (mpc "playlist" "-f" "%position% %file%")
+         (map #(string/split % #" " 2))
+         (group-by second)
+         (keep (fn [[song pairs]]
+                 (when (> (count pairs) 1)
+                   (->> pairs
+                        (map first)
+                        (remove #(= position %))))))
+         (map (fn [positions]
+                ;; complexity from the position position case
+                (if (= 1 (count positions))
+                  positions
+                  (rest positions))))
+         (flatten))))
 
 (defn clear-duplicates
   ([] (clear-duplicates "manual"))
-  ([op] (when (some #(= % op) ["artist" "playlist" "append" "now" "manual"])
-          (let [current (first (mpc "-f" "%position%"))
-                duplicates (->> (mpc "playlist" "-f" "%position% %file%")
-                                (map #(string/split % #" " 2))
-                                (group-by second)
-                                (keep (fn [[song pairs]]
-                                        (when (> (count pairs) 1)
-                                          (->> pairs
-                                               (map first)
-                                               (remove #(= current %))))))
-                                (map (fn [positions]
-                                       ;; complexity from the current position case
-                                       (if (= 1 (count positions))
-                                         positions
-                                         (rest positions))))
-                                (flatten))]
-            (when-not (empty? duplicates)
-              (println "clearing duplicates (file):" (string/join " " duplicates))
-              (mpc "del" "--wait" :in (string/join "\n" duplicates)))
-            ;; (name-dedup)
-            ))))
+  ([op]
+   (when (some #(= % op) ["artist" "playlist" "append" "restore" "now" "manual"])
+     (let [
+           duplicates
+           (name-dedup)
+           ]
+       (when-not (empty? duplicates)
+         (println "clearing duplicates (file):" (string/join " " duplicates))
+         (mpc "del" "--wait" :in (string/join "\n" duplicates)))))))
 
 (defn is-long [song]
   (let [duration (or (get cache-map (fs/file-name song)) 0)]
@@ -251,11 +254,7 @@
        (frequencies)
        (keep (fn [[artist count]]
                (when (> count 3)
-                 artist)))
-       ;; (distinct)
-       )
-
-  )
+                 artist)))))
 
 (defn re-quote [s]
   ;; from https://stackoverflow.com/questions/11976210/javas-pattern-quote-equivalent-in-clojurescript
@@ -321,29 +320,44 @@
       (interleave ["h " "m " "s"])
       (->> (apply str))))
 
+
+(defn display-status []
+  ;; todo: show album name if inferred (bandcamp/album dir etc)
+  (when-not (= (mpc "playlist") [""])
+    (let [song (first (track-names nil))
+          song (if (clojure.string/includes? song " - ")
+                 (second (string/split song #" - "))
+                 song)
+          percent (second (re-find #"([0-9]+)%" (second (mpc))))
+          ]
+
+      (str song " " (:out (shell/sh "mkb" percent (str 10))))
+      )))
+
 (defn display-info []
   ;; todo: show album name if inferred (bandcamp/album dir etc)
-  (->> (let [top (first (track-names nil))
-             bottom (format
-                     ;; "playlist: %s | %s"
-                     "%s, %s"
-                     (string/trim (slurp (str HOME "/Music/playlist/current")))
-                     (->> (mpc "playlist")
-                          (map #(or (get cache-map (fs/file-name %)) 0))
-                          (apply +)
-                          (format-length)))
-             percent (second (re-find #"([0-9]+)%" (second (mpc))))
-             middle (:out (shell/sh "mkb" percent (->> (list top bottom)
-                                                       (map count)
-                                                       (sort)
-                                                       (reverse)
-                                                       (first)
-                                                       (str))))]
-         [top middle bottom])
-       (map string/trim)
-       (string/join "\n")
-       (shell/sh "box" :in)
-       (:out)))
+  (when-not (= (mpc "playlist") [""])
+    (->> (let [top (first (track-names nil))
+               bottom (format
+                       ;; "playlist: %s | %s"
+                       "%s, %s"
+                       (string/trim (slurp (str HOME "/Music/playlist/current")))
+                       (->> (mpc "playlist")
+                            (map #(or (get cache-map (fs/file-name %)) 0))
+                            (apply +)
+                            (format-length)))
+               percent (second (re-find #"([0-9]+)%" (second (mpc))))
+               middle (:out (shell/sh "mkb" percent (->> (list top bottom)
+                                                         (map count)
+                                                         (sort)
+                                                         (reverse)
+                                                         (first)
+                                                         (str))))]
+           [top middle bottom])
+         (map string/trim)
+         (string/join "\n")
+         (shell/sh "box" :in)
+         (:out))))
 
 (defn unused-songs []
   (let [playlist-songs (->> (fs/list-dir (str HOME "/.config/mpd/playlists") "*.m3u")

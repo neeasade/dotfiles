@@ -8,14 +8,14 @@ target=$(bspc query -N -n $dir.!hidden.normal)
 # if there are any floating windows, use an edge of that if it overlaps into us
 node_dir=$1
 case $node_dir in
-  east)  dir=x; sign=-lt; emacs_dir=right ;;
-  west)  dir=x; sign=-gt; emacs_dir=left ;;
-  north) dir=y; sign=-gt; emacs_dir=up ;;
-  south) dir=y; sign=-lt; emacs_dir=down ;;
+  east)  dir=x; sign=-lt;;
+  west)  dir=x; sign=-gt;;
+  north) dir=y; sign=-gt;;
+  south) dir=y; sign=-lt;;
 esac
 
 try_emacs_dir() {
-  if timeout 0.2 elisp "(evil-window-${node_dir} 1) t"; then
+  if timeout 0.2 elisp "(not (condition-case nil (evil-window-${node_dir} 1) (error t)))"; then
     exit 0
   fi
 }

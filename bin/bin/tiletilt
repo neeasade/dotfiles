@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
-# view a tiled wallpaper at odd angles
+# view a tiled wallpaper at an angles
+# I've toyed with this script for hours to try and make it faster, only to come
+# to the conclusion simple+slow is worth it here at the moment
 
 tile=${1:-$(find "${HOME}/tiles" -type f | shuf | head -n 1)}
 angle=${2:-$((RANDOM % 360))}
 
 w=1920
 h=1080
-file=/tmp/tiletilt.png
+file=/dev/shm/tiletilt.png
 
-printf 'tiletilt "%s" %s\n' "$tile" "$angle"
+printf "tiletilt '%s' %s\n" "$tile" "$angle"
 
 type xdpyinfo >/dev/null 2>&1 && \
     read -r w h <<< "$(xdpyinfo | awk -F'[ x]+' '/dimensions/{print $3 " " $4}')"
 
-# to play with later: make rotated tile image instead of full bg
+# image w and h
 # read -r wi hi <<< "$(file "$tile" | awk -F: '{print $2}' | grep -oE '[0-9]+' | head -n 2 | tr $'\n' ' ')"
 
-magick -size "$((w * 2))x$((w * 2))" "tile:$tile" -rotate "$angle" \
+cat "$tile" | magick -size "$((w * 2))x$((w * 2))" "tile:-" -rotate "$angle" \
 	-gravity center -crop "${w}x${h}-$((w / 2))-$((h / 2))" +repage \
 	"$file"
 
 feh --bg-fill "$file"
-# feh --bg-tile "$file"

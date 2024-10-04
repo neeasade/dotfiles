@@ -64,7 +64,7 @@ in
   environment.wordlist.enable = true;
   environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable]
                                ++ (with pkgs; [
-                                 obs-studio
+                                 netpbm
                                  udiskie
                                  lyrebird
                                  protontricks
@@ -80,8 +80,10 @@ in
 
                                  bitwarden
                                  bitwarden-cli
+                                 obs-studio
                                ]) ++ (with edge; [
                                  discord
+                                 nodejs
                                  tailscale
                                ]);
 
@@ -108,6 +110,7 @@ in
     open = true;
     nvidiaSettings = true; # provide nvidia-settings gui
     package = config.boot.kernelPackages.nvidiaPackages.latest;
+    # package = config.boot.kernelPackages.nvidiaPackages.production;
     # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
   };
 
@@ -119,9 +122,10 @@ in
   #   extraPkgs = (pkgs:  [ pkgs.openssl_1_1 ]);
   # });
 
-  # nixpkgs.config.permittedInsecurePackages = [
+  nixpkgs.config.permittedInsecurePackages = [
+                "electron-27.3.11"
   #   "openssl-1.1.1w"
-  # ];
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -186,10 +190,10 @@ in
 
   networking.extraHosts =
     ''
-    # 127.0.0.1 twitter.com
-    # 127.0.0.1 www.twitter.com
-    # 127.0.0.1 www.youtube.com
-    # 127.0.0.1 youtube.com
+    127.0.0.1 x.com
+    127.0.0.1 www.x.com
+    127.0.0.1 www.youtube.com
+    127.0.0.1 youtube.com
   '';
 
   # Open ports in the firewall.
@@ -198,5 +202,11 @@ in
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  system.stateVersion = "23.05"; 
+  nix.gc = {
+    automatic = true;
+    randomizedDelaySec = "14m";
+    options = "--delete-older-than 30d";
+  };
+
+  system.stateVersion = "23.05";
 }
