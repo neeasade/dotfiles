@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# todo: it would be nice if hovering over this section told us what the characters were
+
+. ~/.sh.d/environment
+
+add() {
+    items="$items$*"
+}
+
+items=
+
+silent pgrep steam && add "S"
+silent pgrep obs && add "O"
+silent pgrep deluge && add "T"
+silent pgrep Discord && add "D"
+
+if [ ! -z "$items" ]; then
+    echo "[${items}]"
+else
+    echo
+fi
