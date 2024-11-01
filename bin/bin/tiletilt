@@ -13,6 +13,13 @@ printf "tiletilt '%s' %s\n" "$tile" "$angle"
 type xdpyinfo >/dev/null 2>&1 && \
     read -r w h <<< "$(xdpyinfo | awk -F'[ x]+' '/dimensions/{print $3 " " $4}')"
 
+# polyfill
+if ! type ffeh >/dev/null; then
+    ffeh() {
+	tee "$1" | feh --bg-tile -
+    }
+fi
+
 magick "$tile" -set option:distort:viewport "${w}x${h}" \
     -virtual-pixel tile -filter point \
     -distort SRT "$angle" \
