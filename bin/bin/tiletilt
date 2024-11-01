@@ -17,6 +17,4 @@ magick "$tile" -set option:distort:viewport "${w}x${h}" \
     -virtual-pixel tile -filter point \
     -distort SRT "$angle" \
     -gravity center -crop "${w}x${h}+0+0" +repage \
-    "PNG:-" | tee "$file" | feh --bg-fill "-"
-
-feh --bg-fill "$file"
+    "PNG:-" | ffeh "$file"

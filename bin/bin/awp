@@ -1,5 +1,6 @@
 #!/usr/bin/env elisp
 ;; automata wallpapers
+
 ;; see https://github.com/neeasade/automata (a fork of camille's tailored to wp generation)
 
 ;; options for later - main thing is getting colors from currently loaded emacs
@@ -15,167 +16,156 @@
        (-map 'ct-get-rgb)
        (-map (-lambda (parts) (--map (round (* it 2.55)) parts)))
        (-map-indexed
-	(lambda (i parts)
-	  (apply 'format "COLOR%s='%03d %03d %03d'" i parts)))
+        (lambda (i parts)
+          ;; (message (apply 'format "COLOR%s=%03d %03d %03d" i parts))
+          (apply 'format "COLOR%s=%03d %03d %03d" i parts)))
        (-reduce-from (-lambda (env new) (cons new env)) process-environment)))
 
 (defun ns/awp-elementary-cmd ()
   (format "%s %s %s" bin
-	  ;; from: https://en.wikipedia.org/wiki/Elementary_cellular_automaton
-	  (ns/random-list '(0 1 10 104 105 106 108 11 110 12 122 126 128 13 130
-			    132 134 136 138 14 140 142 146 15 150 152 154 156
-			    160 162 164 168 170 172 178 18 184 19 2 200 204 22
-			    23 232 24 25 26 27 28 29 3 30 32 33 34 35 36 37 38 4
-			    40 41 42 43 44 45 46 5 50 51 54 56 57 58 6 60 62 7
-			    72 73 74 76 77 78 8 9 90 94))
-	  (llet [probs-section (ns/random-list
-				'((50 1 1 1)
-				  (1 50 50 50)))
-		 probs (--map (ns/random-list probs-section)
-			      (-iota (ns/random-range 2 10)))]
-		(->> probs
-		     (-mapcat (lambda (prob)
-				(--map (if (> prob (random 100)) "1" "0")
-				       (-iota (/ (display-pixel-width)
-						 (length probs))))))
-		     (s-join "")
-		     (s-pad-right (display-pixel-width) "0")))))
+          ;; from: https://en.wikipedia.org/wiki/Elementary_cellular_automaton
+          (ns/random-list '(0 1 10 104 105 106 108 11 110 12 122 126 128 13 130
+                            132 134 136 138 14 140 142 146 15 150 152 154 156
+                            160 162 164 168 170 172 178 18 184 19 2 200 204 22
+                            23 232 24 25 26 27 28 29 3 30 32 33 34 35 36 37 38 4
+                            40 41 42 43 44 45 46 5 50 51 54 56 57 58 6 60 62 7
+                            72 73 74 76 77 78 8 9 90 94))
+
+          (llet [probs-section (ns/random-list '((50 1 1 1) (1 50 50 50)))
+                               probs (--map (ns/random-list probs-section)
+                                            (-iota (ns/random-range 2 10)))]
+                (->> probs
+                     (-mapcat (lambda (prob)
+                                (--map (if (> prob (random 100)) "1" "0")
+                                       (-iota (/ (display-pixel-width)
+                                                 (length probs))))))
+                     (s-join "")
+                     (s-pad-right (display-pixel-width) "0")))))
+
 
 (defun ns/awp-cmd (kind colors)
   (if (and kind (f-exists-p kind))
       ;; we got an awp file! the format is (command (colors))
       (llet [(rcmd rcolors) (read (second (s-lines (slurp kind))))]
-	    (list rcmd colors))
+            (list rcmd colors))
     ;; nominal case:
     (llet [(c1 c2 c3) colors
-	   kind (if (string= kind "nil") nil kind)
-	   kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
-	   bin (format (~ "code/automata/c/%s/bin/%s") kind kind)
+           kind (if (string= kind "nil") nil kind)
+           kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
+           bin (format (~ "code/automata/c/%s/bin/%s") kind kind)
 
-	   w (ns/random-range 10 800)
-	   h (ns/random-range 10 800)
+           f (ns/random-list '(10 25 50 100))
+           top (ns/random-list '(100 200 300 400 500 600 700 800))
+           g (lambda () (round (* f (round (/ (ns/random-range f top) (float f))))))
+           w (funcall g)
+           h (funcall g)
 
-	   ;; o (ns/random-list '(32 64 96 128 256))
-	   ;; w o h o  ; woho!!!
-	   ]
-	  (list
-	   (if (string= kind "elementary")
-	       (ns/awp-elementary-cmd)
-	     ;; "disease -w 668 -h 780 -i 118 -r 1718203365"
-	     (format "%s -w %s -h %s -i %s"
-		     bin w h
-		     (ns/random-range 30 300)
-		     ;; (ns/random-range 30 60)
-		     ;; (floor (ts-unix (ts-now)))
-		     1718203365
+           ;; o (ns/random-list '(32 64 96 128 256))
+           ;; w o h o                   ; woho!!!
+           i (ns/random-range 30 550)
+           seed (floor (ts-unix (ts-now)))
+           angle (mod (random) 360)]
 
-		     )
-	     )
-	   colors
-	   ;; (cond
-	   ;;   ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
-	   ;;   (t colors))
-	   ))))
+          (list
+           (if (string= kind "elementary")
+               (format "%s | ffeh /tmp/awp.png" (ns/awp-elementary-cmd))
+             (s-lex-format "${bin} -w ${w} -h ${h} -i ${i} -r ${seed} | tiletilt - ${angle}")
+             ;; (s-lex-format "${bin} -w ${w} -h ${h} -i ${i} -r ${seed} | ffeh /tmp/awp.png")
+             )
 
-(defun ns/awp (colors-in &optional kind output-file)
+           colors
+           ;; (cond
+           ;;   ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
+           ;;   (t colors))
+           ))))
+
+(defun ns/awp (colors-in &optional kind)
   (llet [(cmd (c1 c2 c3)) (ns/awp-cmd kind colors-in)
-	 kind (f-base (first (s-split " " cmd)))
+         process-environment (ns/awp-color-env colors-in)
+         awp-file "/tmp/awp.awp"]
 
-	 process-environment (ns/awp-color-env colors-in)
+        (if (string= kind "save")
+            (f-copy awp-file (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp")) )
 
-	 set-bg? (not output-file)
-	 output-file (or output-file "/tmp/result.png")
-	 output-name (f-join (f-parent output-file) (f-base output-file))]
+          (if (s-contains-p "|" cmd)    ; hack
+              (sh cmd)
+            (sh (concat cmd "| ffeh /tmp/awp.png")))
+          (spit awp-file (format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3)))))
+          (sh "chmod +x %s" awp-file)
 
-	(when (f-exists-p output-file)
-	  (f-delete output-file))
+          (ns/make-lines (list (s-truncate 80 (s-replace (format (~ "code/automata/c/%s/bin/") kind) "" cmd)))))))
 
-	(sh "%s | tee %s.pbm | ffmpeg -i - -ss 00:00:00 -frames:v 1 \"%s\"" cmd output-name output-file)
+(defmacro swag (f items)
+  `(-snoc (-list ,items)
+          (llet [it (-last-item (-list ,items))]
+                ,f)))
 
-	;; (sh "zip %s.zip %s" output-name output-file)
-	;; (spit (ns/str output-name ".ratio")
-	;;       (number-to-string
-	;;        (/ (float (f-size (format "%s.zip" output-name)))
-	;; 	  (f-size output-file))))
+(defun ns/approach (i target percent)
+  (+ i (* (/ percent 100.0)
+          (- target i))))
 
-	(when (string= kind "elementary")
-	  (sh "magick '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c1 "#ffffff" output-file)
-	  (sh "magick '%s' -colorspace sRGB -fill '%s' -opaque '%s' '%s'" output-file c2 "#000000" output-file)
+(comment
+ (->> "#000000"
+      (swag (ct-edit-rgb-b it 100))
+      (swag (ct-edit-rgb-r it 100)))
 
-	  ;; crop top bit to get rid of setup
+ ("#f0f0f0" "#ffb1ea" "#ffa83c")
 
-	  ;; (sh "magick %s -crop %sx%s+0+300 +repage %s" output-file (display-pixel-width) (display-pixel-height) output-file)
-	  (sh "magick %s -crop +0+300 +repage %s" output-file output-file)
+ )
 
-	  (spit (ns/str output-name ".awp")
-		(format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3)))))
-	  (sh "chmod +x %s" (ns/str output-name ".awp")))
+(defun awp-colors ()
+  ;; (llet [h (mod (random) 360)
+  ;;          s (ns/random-range 60 80)
+  ;;          v (ns/random-range 50 90)
+  ;;          ]
+  ;;       (->> (list h s v
+  ;;                  h (ns/approach s 100 50) (ns/approach v 100 50)
+  ;;                  h 100 100
+  ;;                  ;; h (ns/approach s 100 50) v
+  ;;                  ;; h s (ns/approach v 100 50)
+  ;;                  )
+  ;;            (-partition 3)
+  ;;            (-map (-applify 'ct-make-hsv)))
+  ;;       ;; (list
+  ;;       ;;  (ct-make-hsv h s v)
+  ;;       ;;  (ns/make-border-color (ct-make-hsv (- 180 h) s v))
+  ;;       ;;  (ct-make-hsv (- 180 h) s v))
+  ;;       )
 
 
-	(ns/make-lines
-	 (list
-	  (s-truncate 50 (format "%s%s" kind (-last-item (s-split kind cmd))))
-	  (and ns/enable-linux-p set-bg?
-	       (if (string= kind "elementary")
-		   (progn
-		     ;; (sh "magick \"%s\" -resize 200%% \"%s\"" output-file output-file)
-		     (sh "feh --bg-tile \"%s\"" output-file)
-		     ;; (sh "tiletilt \"%s\"" output-file)
-		     )
-		 (sh "tiletilt \"%s\"" output-file)
-		 ;; (sh "tiletilt \"%s\" 45" output-file)
-		 ;; (sh "tiletilt \"%s\" 315" output-file)
-		 ;; (sh "feh --bg-tile \"%s\"" output-file)
-		 ))))))
+  (->>
+   (list
+    (myron-get :background)
+    ;; ;; (myron-get :background :weak)
+    ;; (myron-get :background :focused)
+    (ct-pastel (myron-get :assumed))
 
-(defun ns/add (f items)
-  (-snoc (-list items)
-	 (funcall f (-last-item
-		     (-list items)))))
+    ;; (ct-pastel (myron-get :primary))
+    ;; (ct-pastel (myron-get :alt))
+    ;; (myron-get :primary)
+    (myron-get :background :weak)
+    ;; (ns/make-border-color (myron-get :primary))
+    ;; (myron-get :background :focused)
+    )
+
+   ;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
+   ;; (--map (ct-edit-lch-c it 60))
+   )
+
+  ;; (->>
+  ;;  ;; (myron-get :background)
+  ;;  (ct-pastel (myron-get :primary))
+  ;;  (swag (ct-edit-oklab-a-dec it 20))
+  ;;  ;; (myron-get :background)
+  ;;  (swag (ct-edit-oklab-b-dec it 20))
+  ;;  )
+
+
+
+  )
 
 ;; play here:
 (apply 'ns/awp
-
-       ;; (llet [h (mod (random) 360)
-       ;; 		s (ns/random-range 40 80)
-       ;; 		v (ns/random-range 50 90)
-       ;; 		vi (/ (- 100 v) 2)
-       ;; 		si (/ v 2)
-       ;; 		]
-       ;; 	     (->>
-       ;; 	      (list h s v
-       ;; 		    h (- s si) (+ v vi)
-       ;; 		    h (- s si) 95 ;; (- (+ v vi vi) 10)
-       ;; 		    )
-       ;; 	      (-partition 3)
-       ;; 	      (-map (-applify 'ct-make-hsv))
-       ;; 	      )
-       ;; 	     (list
-       ;; 	      (ct-make-hsv h s v)
-       ;; 	      ;; (ct-make-hsv (- 180 h) s v)
-       ;; 	      (ns/make-border-color (ct-make-hsv (- 180 h) s v))
-       ;; 	      (ct-make-hsv h s v)
-       ;; 	      )
-       ;; 	     )
-
-
-       (->>
-	(list
-	 (myron-get :background)
-	 ;; ;; (myron-get :background :weak)
-	 ;; (myron-get :background :focused)
-	 (ct-pastel (myron-get :assumed))
-	 ;; (ct-pastel (myron-get :primary))
-	 ;; (ct-pastel (myron-get :alt))
-	 ;; (myron-get :primary)
-	 (myron-get :background :weak)
-	 ;; (ns/make-border-color (myron-get :primary))
-	 ;; (myron-get :background :focused)
-	 )
-
-	;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
-	;; (--map (ct-edit-lch-c it 60))
-	)
-
+       (awp-colors)
        (when (boundp 'ns-args)
-	 ns-args))
+         ns-args))
