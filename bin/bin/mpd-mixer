@@ -101,12 +101,14 @@
                                       s
                                       [#"\-[0-9a-zA-Z_\-]{11}$"
                                        #"^[0-9]+\. "
-                                       "full album"
+                                       "[fF]ull [aA]lbum"
                                        " Full "
+                                       "Album"
                                        #"_"
                                        #",.*$"])))
                            (string/replace "|" "-")
                            (string/replace " | " "-")
+                           (string/replace "--" "-")
                            (string/replace "：" " - ")
                            (string/replace #"[ ]+" " ")
                            (string/replace #"- Album" "")
@@ -157,12 +159,9 @@
   ([] (clear-duplicates "manual"))
   ([op]
    (when (some #(= % op) ["artist" "playlist" "append" "restore" "now" "manual"])
-     (let [
-           duplicates
-           (name-dedup)
-           ]
+     (let [duplicates (name-dedup)]
        (when-not (empty? duplicates)
-         (println "clearing duplicates (file):" (string/join " " duplicates))
+         (println "clearing duplicates:" (string/join " " duplicates))
          (mpc "del" "--wait" :in (string/join "\n" duplicates)))))))
 
 (defn is-long [song]
