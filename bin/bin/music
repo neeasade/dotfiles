@@ -12,8 +12,6 @@
 # music artist late night alumni, noshuffle
 # music artist deadmau5, long
 
-# todo: clear duplicates not called on playlist loading?
-
 # musicdir="$HOME/Music"
 musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
 current_playlist="${musicdir}/playlist/current"
@@ -62,8 +60,10 @@ place() { # print a command to take you to the current place
 }
 
 playlist_modify() { # modify the playlist but retain current song and place
+  # common modification: change to current artist playlist
+  option=$(echo playlist artist | tr ' ' $'\n' | dmenu)
   where=$(place)
-  music "$(echo playlist artist | tr ' ' $'\n' | dmenu)"
+  music "$option"
   eval "$where"
 }
 
@@ -275,6 +275,7 @@ playlist() { # select a search term based playlist to play
   fi
   mpc -q save "$target"
 
+  # nb: racy
   echo
   info
 }

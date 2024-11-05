@@ -255,6 +255,8 @@
           :mon-width (if (string/blank? (shh "which bspc"))
                        "1920"
                        (-> (shh "bspc query -T -m")
+                           ;; https://github.com/baskerville/bspwm/issues/941
+                           (string/replace ":-nan," ":0.5,")
                            (json/parse-string)
                            (get-in ["rectangle" "width"])))
           }
@@ -343,7 +345,8 @@
                     {:music-dir "{{env.HOME}}/Music"
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 36
-                 :format  "mpd:title|org_task:misc|tags:clock"
+                 ;; :format  "mpd:title|org_task:misc|tags:clock"
+                 :format  "day_progress:tags:title|org_task:misc|running:clock"
                  ;; :format  "mpd:title|misc|tags:clock"
                  :window-class (fn [tree]
                                  (if (get-in tree [:meta :shadow])

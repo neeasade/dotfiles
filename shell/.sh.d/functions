@@ -555,3 +555,8 @@ aawp() {
     esac
   )
 }
+
+bplain() {
+  magick -size 100x100 "xc:$(theme -q color.focused.background)" /tmp/plain.png
+  feh --bg-tile /tmp/plain.png
+}

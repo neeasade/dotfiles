@@ -108,6 +108,7 @@
                                        #",.*$"])))
                            (string/replace "|" "-")
                            (string/replace " | " "-")
+                           (string/replace "⧸" "/")
                            (string/replace "--" "-")
                            (string/replace "：" " - ")
                            (string/replace #"[ ]+" " ")

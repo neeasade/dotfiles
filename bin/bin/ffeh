@@ -4,9 +4,6 @@ test -z "$1" && exit 1
 
 name=$1
 
-tee "${name}.tmp" | feh --bg-tile -
-
-magick "${name}.tmp" "${name}"
-rm "${name}.tmp"
+tee "${name}" | feh --bg-tile -
 
 feh --bg-tile "$name"
