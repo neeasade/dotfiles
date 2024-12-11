@@ -89,6 +89,8 @@ super + {_,shift,alt} + space
     export GTK_THEME=$(theme -q gtk.theme); \
     dmenu_$action -p "$action"
 
+# todo: you want a keybind to target mpc specifically - comes up often enough
+# that you "queue" media but want music atm
 super + grave
     player.sh toggle
 

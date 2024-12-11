@@ -1,21 +1,15 @@
-#!/bin/sh
-# FUCK. TIME.
+#!/usr/bin/env bb
+;; FUCK. TIME.
 
-. $HOME/.sh.d/environment
+(let [start 7
+      end 22
 
-eval "$(date +'today=%F now=%s')"
-start=7 end=23
+      now (java.time.LocalDateTime/now)
+      current-hour (parse-long (.format (java.time.format.DateTimeFormatter/ofPattern "HH") now))
+      current-min (parse-long (.format (java.time.format.DateTimeFormatter/ofPattern "mm") now))
+      total (- end start)
+      progress (+ (/ current-min 60) (- current-hour start))
+      percent (Math/round (double (* 100 (/ progress total))))]
 
-if $MAC; then
-    # work
-    start=8 end=16
-fi
-
-start_time=$(date -d "$today $start" +%s)
-end_time=$(date -d "$today $end" +%s)
-
-passed=$((now - start_time))
-duration=$((end_time - start_time))
-
-percent=$(echo "($passed / $duration * 100)"  | bc -l | sed 's/\..*//')
-mkb $percent $((end - start))
+  (println (:out (shell/sh "lemon_progress" (str percent) "200")))
+  )

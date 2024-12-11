@@ -8,4 +8,9 @@ inotifywait -m "${HOME}/Downloads" -e create -e moved_to | debounce.js 30 | \
 
 	vdo rm "${HOME}/Last_Shot/last_download_"*
 	vdo ln -s "${dir}/${file}" "${HOME}/Last_Shot/last_download_${file}.${mimetype_ext}"
+
+	if [ "$mimetype_ext" = "png" ]; then
+	    notify-send -u low "copied downloaded image to clipboard!"
+	    xclip -selection clipboard -target image/png -i "${dir}/${file}"
+	fi
     done

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+percent=${1:-25}
+width=${2:-60}
+full=#000000
+empty=#ffffff
+
+read left right < <(bb --eval "(let [[p w] [${percent} ${width}] p (/ p 100)]
+    (println (Math/round (double (* p w)))
+             (Math/round (double (- w (* p w))))))")
+
+printf '%s%s' "$(bs B$full O$left)" "$(bs B$empty O$right)"

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+file="$HOME/sync/main/notes/pomodoro.org"
+date=$(date +%Y-%m-%d)
+
+count=$(grep 'CLOCK.*=>  0:2[3-7]' "$file" | grep "$date" | wc -l)
+
+for i in {1..4}; do
+    if [ $i -le "$count" ]; then
+	printf '☒'
+    else
+	printf '☐'
+    fi
+done
+
+echo

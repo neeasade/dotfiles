@@ -1,4 +1,4 @@
-#!/usr/bin/env dash
+#!/bin/sh
 
 # date '+%b %-d %-I:%M %p'
 date '+%-I:%M %p, %b %-d '

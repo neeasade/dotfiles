@@ -70,4 +70,4 @@ fi
 
 echo split_dir=$split_dir
 
-# echo state=tiled
+echo state=tiled
