@@ -15,10 +15,7 @@
        (into {})))
 
 (defn shh [cmd]
-  (->> (string/split cmd #" ")
-       (apply shell/sh)
-       (:out)
-       (string/trim)))
+  (string/trim (:out (shell/sh "sh" "-c" cmd))))
 
 (defn deep-merge [a & maps]
   (if (map? a)
@@ -455,6 +452,7 @@
    ["-h" "--help" "show the usage"]
    ["-c" "--cache" "clear the cache"]
    ["-k" "--keys" "dump the keys"]
+   ["-a" "--flatmap" "show the rendered map"]
    ["-n" "--narrow PATH" "narrow map to path"]
    ["-p" "--promote PATH" "promote path"]
    ["-q" "--query PATH" "query path"]
@@ -485,7 +483,9 @@
   (let [fresh (process-theme (get-theme))
         ;; remove fns as they are not readable from cache (#object tag)
         fresh (postwalk (fn [n] (if (fn? n) nil n)) fresh)]
-    (spit cache (pr-str fresh))
+
+    (spit cache (with-out-str (clojure.pprint/pprint fresh)))
+    ;; (spit cache (pr-str fresh))
     fresh))
 
 (let [{:keys [options errors]} (cli/parse-opts *command-line-args* cli-options)
@@ -510,6 +510,7 @@
               (condp = k
                 :help (reduced (usage))
                 :keys (->> theme flatten-map keys (map name) (string/join "\n"))
+                :flatmap (->> theme flatten-map (map (fn [[k v]] (str k " " (pr-str v)))) (string/join "\n"))
                 :narrow (narrow v theme)
                 :cache (refresh-cache cache-file)
                 :promote (promote v theme)
