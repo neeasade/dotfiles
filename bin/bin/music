@@ -60,10 +60,16 @@ place() { # print a command to take you to the current place
 }
 
 playlist_modify() { # modify the playlist but retain current song and place
-  # common modification: change to current artist playlist
   option=$(echo playlist artist | tr ' ' $'\n' | dmenu)
   where=$(place)
   music "$option"
+  eval "$where"
+}
+
+playlist_modify_same_artist() { # modify the playlist but retain current song and place, keep current artist
+  current_artist=$(mpd-mixer track-names  | awk -F- '{print $1}')
+  where=$(place)
+  music artist "$current_artist"
   eval "$where"
 }
 

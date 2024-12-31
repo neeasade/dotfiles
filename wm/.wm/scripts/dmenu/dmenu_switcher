@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# switch between 'things' with a dmenu-like or pie-menu style interface
+# my mega menu
 
 # auto export
 set -a
@@ -176,10 +176,6 @@ add_metas() {
     add_switch "meta: steam" "find_steam"
     add_switch "meta: pavucontrol" "find_pavucontrol"
 
-    find_last_irc_ping() {
-	echo todo
-    }
-
     toggle_bluetooth() {
 	if pacmd list-sinks | grep description | grep -q WH-1000XM3; then
 	    bluetoothctl disconnect 14:3F:A6:90:E2:34
@@ -196,8 +192,7 @@ add_metas() {
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
     add_switch "meta: short break" "elisp '(ns/org-pomodoro-short-break)'"
 
-    # todo: playlist_modify_same_artist
-    for o in now playlist shuffler artist del bl 'filter is_long' playlist_modify artist_append; do
+    for o in now playlist shuffler artist del bl 'filter is_long' playlist_modify artist_append playlist_modify_same_artist; do
 	add_switch "meta: music $o" "music $o"
     done
 
