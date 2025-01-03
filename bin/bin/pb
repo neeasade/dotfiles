@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# thanks mia
+
+. ~/.sh.d/environment
+
+ARG="${1:-/dev/stdin}"
+
+paste=$(curl -A "neeasade/0.1" -sF 'file=@-' https://0x0.st <"$ARG")
+
+case "$paste" in
+    https*)
+	echo "$(date +%s) | ${paste} | ${ARG}" >> "$XDG_CACHE_HOME/0x0.log"
+	echo "$paste"
+	pbcopy <<< "$paste"
+	notify-send -u low "copied to clipboard! ${paste}"
+	;;
+    *) notify-send -u low "paste failed! ${paste}" ;;
+esac

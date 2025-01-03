@@ -6,6 +6,10 @@ task() {
   fi
 }
 
+fontlist() {
+  fc-list | sed 's/[^:]*: //' | fzf
+}
+
 lein() {
   cdu project.clj
   og lein "$@"
@@ -158,7 +162,8 @@ bicc() {
 recentf() {
   # todo: make this smarter - I would also like to do: recentf -s '<2023-09-14 Thu 17:34>'
   # (files since x date)
-  ls -t "${1:-.}" | head -n "${2:-1}"
+  ls -t "${1:-.}" | head -n "${2:-1}" |
+xargs -d '\n' printf '"%s"\n'
 }
 
 sleepm() {
@@ -187,7 +192,6 @@ shot_location() {
 }
 
 shot() {
-  # eval $(slop)
   g=$(slop -p ${1:-0})
   dest=$(shot_location)
   maim -u -g ${g} "$dest"
@@ -198,7 +202,7 @@ shot() {
 shellshot() {
   # todo: esc $
   # printf '%s\n' "$(elisp '(ns/windowshot)')" | curl -F "file=@-" https://0x0.st
-  printf '%s\n' "$(elisp '(ns/windowshot)')" | pb 0x0
+  printf '%s\n' "$(elisp '(ns/windowshot)')" | pb
 }
 
 fullshot() {
@@ -219,7 +223,7 @@ viewshot() {
 
 upshot() {
   # todo: trim this, use xeros pb, import it, then paste and alert on your own
-  pb 0x0 "$(lastshot)"
+  pb "$(lastshot)"
 }
 
 settitle() {
