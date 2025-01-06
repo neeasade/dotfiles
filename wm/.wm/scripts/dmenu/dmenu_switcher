@@ -186,6 +186,18 @@ add_metas() {
 	fi
     }
 
+
+    goto_qutebrowser() {
+	if ! pgrep qutebrowser; then
+	    notify-send -u low "starting qutebrowser!"
+	    setsid qutebrowser
+	else
+	    find_class qutebrowser
+	fi
+    }
+
+    # todo: add meta: qutebrowser
+
     add_switch "meta: connect bluetooth" "bluetoothctl connect 14:3F:A6:90:E2:34; sleep 2 && check_headphones"
     add_switch "meta: disconnect bluetooth" "bluetoothctl disconnect 14:3F:A6:90:E2:34"
     add_switch "meta: toggle bluetooth" "toggle_bluetooth"
@@ -214,10 +226,10 @@ add_metas() {
     add_switch "meta: stalonetray" "bash -ic 'stalonetray'"
     add_switch "meta: dpass" "bash -ic 'dpass'"
 
-    while read -r option; do
-	add_switch "meta: sound switch $(cut -d, -f1 <<< "$option")" "$(cut -d, -f2 <<< "$option")"
-    done <<< $(paste -d, <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g') \
-		  <(pactl list short sinks | awk '{print "pa-move-sinks " $1}'))
+    while read -r id name; do
+	add_switch "meta: sound switch $name" "pa-move-sinks $id"
+    done <<< $(paste <(pactl list short sinks | awk '{print $1}') \
+	       <(pactl list sinks | awk -F\" '/device.description/{print $2}'))
 }
 
 select_action() {
