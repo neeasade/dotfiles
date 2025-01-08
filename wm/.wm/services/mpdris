@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# wait for mpd to start up
+sleep 10
+
+mpd-mpris
