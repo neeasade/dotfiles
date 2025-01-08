@@ -47,10 +47,6 @@ rec {
     src = builtins.fetchGit {url = "https://github.com/neeasade/bspwm"; ref = "master";};
   }));
 
-  pfetch-neeasade = (edge.pfetch.overrideAttrs(old: {
-    src = builtins.fetchGit {url = "https://github.com/neeasade/pfetch"; ref = "neeasade"; };
-  }));
-
   wmutils-opt-git = (pkgs.wmutils-opt.overrideAttrs(old: {
     buildInputs = old.buildInputs ++ [ pkgs.xorg.xcbutil ];
     src = builtins.fetchGit {url = "https://github.com/wmutils/opt"; ref = "master"; };

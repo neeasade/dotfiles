@@ -84,6 +84,16 @@ if ${NEEASADE_ENV:-true}; then
     done
   fi
 
+  # GDK_SCALE=1
+  # GDK_DPI_SCALE=1
+  # RES=$()
+
+  # if ((RES > 100)) ; then
+  #   GDK_SCALE=2
+  #   GDK_DPI_SCALE=0.5
+  # else
+  # fi
+
   GTK_THEME=${GTK_THEME:-adwaita}
   SXHKD_SHELL=sh
   MPDCRON_DIR="$HOME/.config/mpd"
@@ -195,9 +205,6 @@ if ${NEEASADE_ENV:-true}; then
   if ! has open; then
     alias open=' xdg-open'
   fi
-
-  [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
-    source "$EAT_SHELL_INTEGRATION_DIR/bash"
 
   set +a
 fi

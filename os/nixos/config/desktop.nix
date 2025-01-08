@@ -3,10 +3,10 @@
 {
   nixpkgs.config.allowUnfree = true;
 
-  environment.extraInit = ''
-    # SVG loader for pixbuf (needed for GTK svg icon themes)
-    export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
-    '';
+  # environment.extraInit = ''
+  #   # SVG loader for pixbuf (needed for GTK svg icon themes)
+  #   export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
+  #   '';
 
   programs.gnupg.agent.enable = true;
   programs.gnupg.agent.pinentryPackage = pkgs.pinentry-qt;
@@ -17,19 +17,12 @@
     # drivers = [ pkgs.gutenprint];
   };
 
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
-
   hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
   # hardware.bluetooth.hsphfpd.enable = true;
 
-  hardware.opengl = {
-    enable = true;
-    driSupport = true;
-    driSupport32Bit = true;
-  };
-
-  services.blueman.enable = true;
+  hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
 
   services = {
     acpid.enable = true;
@@ -37,11 +30,12 @@
   };
 
   services.displayManager.autoLogin.enable = true;
+  services.displayManager.defaultSession = "none+bspwm";
 
   services.xserver = {
     enable = true;
     autorun = true;
-    layout = "us";
+    xkb.layout = "us";
 
     displayManager.autoLogin.user = shared.user;
 
@@ -53,8 +47,6 @@
     desktopManager = {
       xterm.enable = true;
     };
-
-    displayManager.defaultSession = "none+bspwm";
 
     displayManager.lightdm = {
       enable = true;

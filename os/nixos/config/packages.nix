@@ -94,14 +94,14 @@ let
     i3blocks
     i3lock
     jgmenu
-    kitty
+    # kitty
     libreoffice
     lxappearance
     maim
     meh
     mpc_cli
     mpd
-    mpv
+    (mpv.override {scripts = [mpvScripts.mpris];})
     mumble
     networkmanager_dmenu
     networkmanagerapplet
@@ -110,7 +110,7 @@ let
     pasystray
     pavucontrol
     picom
-    pinentry_qt5
+    pinentry-qt
     plasma5Packages.networkmanager-qt
     redshift
     rofi
@@ -139,12 +139,11 @@ let
     telegram-desktop
     signal-desktop
     (lemonbar-xft.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/neeasade/bar"; ref = "thicc";};}))
-    qutebrowser
+    # qutebrowser
     # (qutebrowser-qt6.overrideAttrs(old: {src = builtins.fetchGit {url = "https://github.com/qutebrowser/qutebrowser"; ref = "main"; };}))
     (pmenu.overrideAttrs(old: { src = builtins.fetchGit {url = "https://github.com/neeasade/pmenu"; ref = "master";};}))
   ]) ++ (with expr; [
     # mpvc-git
-    pfetch-neeasade
     neeasade-opt
     wmutils-core-git
     wmutils-opt-git
@@ -156,7 +155,7 @@ let
     ### GAMES
     runelite
     nethack
-    dolphinEmu
+    dolphin-emu
     # jstest
     qjoypad
     wine
@@ -181,7 +180,8 @@ let
     automake
     gnumake
 
-    sbcl
+    # build failure <2024-12-01 Sun 16:56>
+    # sbcl
     # lispPackages.quicklisp
     guile
     ruby
@@ -195,7 +195,8 @@ let
 
     gradle
     maven
-    jdk8
+    (jdk21.override { enableJavaFX = true; })
+    # jdk8
     stack
 
     cargo
@@ -253,21 +254,19 @@ let
     filezilla
     fortune
     gimp
-    # gnome3.gedit
     gedit
-    gnome3.gnome-terminal
+    gnome-terminal
     inkscape
     jo
-    leafpad
     libtiff
     love_11
     luajit
     neovim
     # obs-studio
-    oil
+    oils-for-unix
     pinta
     rpm
-    rxvt_unicode
+    rxvt-unicode-unwrapped
     screenkey
     sqlitebrowser
     texlive.combined.scheme-full
@@ -289,9 +288,9 @@ let
     fira-code
     font-awesome
     noto-fonts
-    noto-fonts-cjk
+    noto-fonts-cjk-sans
     noto-fonts-emoji
-    powerline-fonts # includes a 'Go Mono for powerline'
+    go-font
     roboto-mono
     siji
     tewi-font

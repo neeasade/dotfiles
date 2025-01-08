@@ -7,6 +7,7 @@ let
 
   # for bleeding edge nvidia drivers
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = shared.nixcfg; };
+  unstable = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz) { config = shared.nixcfg; };
   # edge = import (fetchTarball https://github.com/neeasade/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   # edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/23.11.tar.gz) { config = shared.nixcfg; };
 
@@ -26,7 +27,8 @@ in
     [ 
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
-      (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
+      # (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
+      # (import ../../config/factorio2.nix {inherit lib hostname shared pkgs expr;})
     ];
 
   programs.noisetorch.enable = true;
@@ -34,8 +36,11 @@ in
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
 
+  # todo: look into this
+  services.adguardhome.enable = false;
+
   services.plex = {
-    enable = true;
+    enable = false;
     openFirewall = true;
     package = edge.plex;
   };
@@ -60,10 +65,16 @@ in
   # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
   networking.firewall.checkReversePath = "loose";
 
-
   environment.wordlist.enable = true;
-  environment.systemPackages = sets.fat ++ [expr.proton-ge-custom pkgs.emacs-unstable]
+  environment.systemPackages = sets.fat ++ [expr.proton-ge-custom
+                                            pkgs.emacs-unstable
+                                           ]
                                ++ (with pkgs; [
+                                 ollama
+                                 mpd-mpris
+                                 pulseaudio
+
+                                 clj-kondo
                                  netpbm
                                  udiskie
                                  lyrebird
@@ -80,11 +91,38 @@ in
 
                                  bitwarden
                                  bitwarden-cli
+
                                  obs-studio
+
+                                 godef gopls
+
+                                 farbfeld
+
+                                 # audible
+                                 babashka
+                                 vscode
+                                 yt-dlp
+                                 colort
+                                 enscript
+                                 farbfeld
+                                 mgba
+                                 slurm
+                                 vscode
+
+
+                                 html2text
+                                 atuin
+
+                                 eww
+                                 # qutebrowser
+
                                ]) ++ (with edge; [
                                  discord
                                  nodejs
                                  tailscale
+                               ]) ++ (with unstable; [
+                                 qutebrowser
+                                 kitty
                                ]);
 
 
@@ -114,9 +152,10 @@ in
     # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
   };
 
-  environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
+  # environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
 
   programs.steam.enable = true;
+  programs.steam.package = edge.steam;
 
   # programs.steam.package = (pkgs.steam.override {
   #   extraPkgs = (pkgs:  [ pkgs.openssl_1_1 ]);
@@ -142,6 +181,24 @@ in
   networking.firewall.allowedUDPPorts = [
     2456 2457 # valheim
   ];
+
+  networking.wireguard.enable = false;
+  networking.wireguard.interfaces = {
+    wg0 = {
+      privateKeyFile = "/home/neeasade/wireguard-lazr.conf";
+      ips = [ "10.1.1.9/32" ];
+      peers = [{
+          endpoint = "lazr.space:51820";
+          publicKey = "WQ1QP2aUQrR5o1cwS7lip4oRjxMCquFaMW7ZQynsGkc=";
+          persistentKeepalive = 25;
+          # route traffic on these subnets through wg0:
+          allowedIPs = ["10.1.0.0/24" # one of lazr's machines
+                        "10.1.1.0/24" # user
+                        # "0.0.0.0/0" # to route all trafic through this (lazr: "please do not do this")
+                       ];
+        }];
+    };
+  };
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -190,10 +247,14 @@ in
 
   networking.extraHosts =
     ''
-    127.0.0.1 x.com
     127.0.0.1 www.x.com
+    # 127.0.0.1 bsky.app
+
     127.0.0.1 www.youtube.com
     127.0.0.1 youtube.com
+    127.0.0.1 www.amazon.com
+
+    10.1.0.3 andromeda
   '';
 
   # Open ports in the firewall.
