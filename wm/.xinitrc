@@ -13,6 +13,9 @@ if [ "$(hostname)" = bliss ]; then
 
     if xrandr | grep -q 'DP-0 connected'; then
 	xrandr --output DP-0 --mode 3840x2160 --rate 120.00
+
+	# eric monitor
+	# xrandr --output HDMI-0 --mode 1920x1080 --rate 120.00
     fi
 
     # to prevent sleep/monitor shut off:

@@ -1,13 +1,11 @@
 # -*- mode: sh -*-
 
+_promptchar='$'
+_promptchar_err='!'
+
 if type theme >/dev/null 2>&1; then
   _promptchar=$(theme -q shell.prompt)
   _promptchar_err=$(theme -q shell.prompt_err)
-fi
-
-if [ -z "$_promptchar" ]; then
-  _promptchar='$'
-  _promptchar_err='!'
 fi
 
 if [ -z "$cur_shell" ]; then

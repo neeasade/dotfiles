@@ -6,20 +6,13 @@
 ;; todo idea: mpd-stats: generate stats for songs and artists
 ;; - print artists with n minutes of content
 
-;; (require '[babashka.pods :as pods])
-;; (pods/load-pod 'org.babashka/buddy "0.3.4")
-
 (require '[babashka.fs :as fs]
          '[clojure.java.io :as io]
          '[clojure.java.shell :as shell]
-         '[clojure.string :as string]
-         ;; '[pod.babashka.buddy.hash :as hash]
-         ;; '[pod.babashka.buddy.codecs :as c]
-         )
+         '[clojure.string :as string])
 
 (def HOME (System/getenv "HOME"))
 
-;; todo: memoize?
 (def cache-map
   (->> (string/split (slurp (str HOME "/.config/mpd/database"))
                      #"song_begin:")
@@ -58,7 +51,6 @@
        (group-by file-hash)
        (map (fn [[k v]] (first v)))
        (run! println)))
-
 
 (defn remove-pairs [s]
   (reduce

@@ -6,9 +6,10 @@ sleep 10
 
 mpc idleloop | while read -r line; do
     if [ "$line" = "player" ]; then
-	state=$(mpc)
+	state=$(mpc -f '%file%')
 	if grep '0:00/' <<< "$state"; then
-	    if grep '\- ASOT' <<< "$state"; then
+	    # todo fix by filepath
+	    if grep '/ASOT' <<< "$state"; then
 		mpc seek +45
 	    fi
 

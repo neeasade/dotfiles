@@ -30,12 +30,12 @@ fade-in-step = {{fade.in-step}};
 fade-out-step = {{fade.out-step}};
 fade-exclude = [ ];
 
-## Extras
-use-ewmh-active-win = false;
-detect-client-opacity = true;
-sw-opti = true;
 backend = "glx"
-detect-transient = true;
-detect-client-leader = true;
-shadow-ignore-shaped = false;
-detect-rounded-corners = true;
+
+## Extras
+# use-ewmh-active-win = false;
+# detect-client-opacity = true;
+# detect-transient = true;
+# detect-client-leader = true;
+# shadow-ignore-shaped = false;
+# detect-rounded-corners = true;

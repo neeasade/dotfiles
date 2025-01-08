@@ -1,6 +1,12 @@
+font_family {{font.mono.family}}
+font_size   {{font.mono.size}}
 
-font_family      {{font.mono.family}}
-font_size       {{font.mono.size}}
+# example turning on otf feats:
+# font_features FiraCode-Retina +zero +onum
+
+# these values carefully chosen for pairing with the triplicate font
+# text_composition_strategy 1.1 20
+text_composition_strategy platform
 
 confirm_os_window_close 0
 allow_remote_control yes
@@ -14,19 +20,11 @@ update_check_interval 0
 cursor_blink_interval 0
 kitty_mod ctrl+shift
 
-# todo: use x.padding if not at work
-# window_padding_width {% if condition %}yes!{% else %}no!{% endif %}
 window_padding_width 0
-
 
 bold_font        auto
 italic_font      auto
 bold_italic_font auto
-
-foreground         {{foreground}}
-background         {{background}}
-background_opacity 1.0
-cursor             {{color.cursor}}
 
 active_tab_foreground     {{color.focused.foreground}}
 active_tab_background     {{color.focused.background}}
@@ -37,7 +35,10 @@ inactive_tab_background   {{background}}
 active_border_color   {{foreground}}
 inactive_border_color {{background}}
 
-
+foreground         {{foreground}}
+background         {{background}}
+background_opacity 1.0
+cursor             {{color.cursor}}
 
 {% for color in colors %}
 color{{forloop.counter0}} {{color}}{% endfor %}
