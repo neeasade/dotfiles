@@ -32,9 +32,12 @@ read_input() {
 do_rofi() {
     eval "$(popup_window.sh -e)"
 
+    dpi=$(xrq Xft.dpi)
+
     # -yoffset $Y \
     # 	 -width $W \
     rofi -l $LINES \
+	 -dpi "${dpi:-96}" \
 	 -sorting-menu fzf \
 	 -dmenu -i -p "$prompt" -no-click-to-exit \
 	 -cache-dir "$HOME/.cache/rofi/" -no-disable-history \
