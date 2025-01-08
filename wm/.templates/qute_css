@@ -2,6 +2,20 @@
 
 * {
   scroll-behavior: auto !important;
+  font-family: "{{font.variable.family}}" !important;
+}
+
+/* this github one is not applying >:( */
+textarea[id="read-only-cursor-text-area"],
+code,
+pre,
+kbd,
+samp,
+code > *,
+pre > *,
+kbd > *,
+samp > * {
+	font-family: "{{font.mono.family}}" !important;
 }
 
 ::selection {
@@ -9,3 +23,4 @@
 	background: {{color.focused.background}};
 	color: {{color.focused.foreground}};
 }
+

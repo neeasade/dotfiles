@@ -267,10 +267,10 @@
 
          :font (fn [_]
                  (->> {:variable {:family "Droid Sans" :size 12}
+                       :variable-big {:family "{{font.variable.family}}" :size 14}
                        :mono {:family "Droid Sans Mono" :size 12}
                        :icon {:family "Font Awesome 5 Free" :size 10}
-                       :panel {:family "{{font.variable.family}}"
-                               :size "{{font.variable.size}}"}}
+                       :panel {:family "{{font.variable.family}}" :size 14}}
                       (map (fn [[k v]]
                              {k (assoc v
                                        :spec "{{family}}-{{size}}"
@@ -369,9 +369,7 @@
                         :tab.font.family "{{font.variable.family}}"
                         :tab.font.size "{{font.variable.size}}"
                         ;; will this work?
-                        :statusbar.font.size
-                        ;; "{{qutebrowser.tab.font.size}}"
-                        "{{font.panel.size}}"
+                        :statusbar.font.size "{{font.variable.size}}"
                         :tab.bold (fn [tree]
                                     (let [panel-font (get-in tree [:font :panel :spec])
                                           bold? (string/includes? panel-font "Bold")]
@@ -381,25 +379,30 @@
         home-theme (when home?
                      (unflatten-map
                       {:THEME_NAME "test"
-                       :emacs.theme "myron-room"
+                       :emacs.theme "myron-mcfay"
                        ;; todo: just make an alias to feh solid color bg later
-                       ;; :BG_COMMAND "${HOME}/.fehbg"
-                       :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
+                       :BG_COMMAND "${HOME}/.fehbg"
+                       ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
                        ;; :BG_COMMAND "bgtint"
-                       ;; :font.mono.family "Triplicate T4c"
+                       ;; :font.mono.family "Triplicate A Code"
+                       ;; :font.mono.family "Triplicate T3p"
                        :font.mono.family "Go Mono"
                        ;; :font.mono.family "Triplicate C4c"
-                       :font.variable.family "Equity Text B"
+                       :font.variable.family "Equity B"
                        ;; :font.variable.family "Charter"
-                       :font.variable.size 14
+                       :font.variable.size 12
                        ;; :font.variable.family "Equity Text A"
                        ;; :mkb.bar- "AAH"
                        ;; :mkb.bar- "|/_"
                        ;; :mkb.bar- "/-_"
                        ;; :mkb.bar- "[-]"
-                       :mkb.bar- "/\\_"
-                       ;; :mkb.bar- "██▁"
-                       :shell.prompt "%"
+                       ;; :mkb.bar- "/\\_"
+                       :mkb.bar- "██▁"
+                       ;; :shell.prompt "%"
+                       :shell.prompt "$"
+
+                       ;; :shell.prompt "😎"
+                       ;; :shell.prompt_err "😞"
                        :x.padding 14
                        ;; :bspwm.window-gap 30
                        :bspwm.window-gap 88
