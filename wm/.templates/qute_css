@@ -1,20 +1,21 @@
 /* -*- mode: css -*- */
 
 * {
-  scroll-behavior: auto !important;
+	    scroll-behavior: auto !important;
+}
+
+body * {
   font-family: "{{font.variable.family}}" !important;
 }
 
-/* this github one is not applying >:( */
-textarea[id="read-only-cursor-text-area"],
-code,
-pre,
-kbd,
-samp,
-code > *,
-pre > *,
-kbd > *,
-samp > * {
+div[class^='Box'],
+div[class^='Box'] *,
+div[class^='code'],
+div[class^='code'] *,
+code, code *,
+pre, pre *,
+kbd, kbd *,
+samp, samp * {
 	font-family: "{{font.mono.family}}" !important;
 }
 
