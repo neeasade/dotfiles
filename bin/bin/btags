@@ -11,13 +11,12 @@
          '[clojure.java.shell :as shell])
 
 (defn sh [cmd & fstrings]
-  (->> (string/split (apply format cmd fstrings) #" ")
-       (apply shell/sh)
+  (->> (apply format cmd fstrings)
+       (shell/sh "sh" "-c")
        (:out)
        (string/split-lines)))
 
 (def state-file "/tmp/bspt-state")
-
 (def state-lockfile "/tmp/bspt-state-lock")
 
 (defn load-state []

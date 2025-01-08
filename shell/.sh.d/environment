@@ -23,8 +23,9 @@ if ${NEEASADE_ENV:-true}; then
   }
 
   pathmunge () {
-    # todo later: cleanup / handling - some vals have //
     _dir=${1%/}
+    _dir=${_dir//"//"/"/"}  # probably a bashism
+
     path_remove "$_dir" # promote passed dir at time of pathmunge
     if [ -d "$_dir" ]; then
       case ":${PATH}:" in
@@ -35,6 +36,7 @@ if ${NEEASADE_ENV:-true}; then
   }
 
   XDG_CONFIG_HOME="$HOME/.config"
+  XDG_CACHE_HOME="$HOME/.cache"
 
   silent() { "$@" >/dev/null 2>&1; }
   has()    { silent type -f "$@"; }
@@ -115,13 +117,12 @@ if ${NEEASADE_ENV:-true}; then
 
   # the p is for pain
   for p in                                \
+      {$GEM_HOME,$GOPATH,$NPM_GLOBAL,$HOMEBREW_PREFIX}/bin \
       $HOME/.wm/{scripts,panel}/*/        \
       $HOME/{,.cargo,.local}/bin          \
-      {$GEM_HOME,$GOPATH,$NPM_GLOBAL,$HOMEBREW_PREFIX}/bin \
     ; do
     pathmunge "$p"
   done
-
 
   # msource "$HOME/.nix-profile/etc/profile.d/nix.sh"
   if [ -e "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
@@ -194,6 +195,9 @@ if ${NEEASADE_ENV:-true}; then
   if ! has open; then
     alias open=' xdg-open'
   fi
+
+  [ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
+    source "$EAT_SHELL_INTEGRATION_DIR/bash"
 
   set +a
 fi

@@ -3,9 +3,8 @@
 (require '[clojure.string :as string])
 
 (defn txtw [s]
-  ;; if in kitty don't mult
   (int
-   (+ (* 1.5 (count (filter #(< 255 (int %)) s)))
+   (+ (* 1 (count (filter #(< 255 (int %)) s)))
       (* 1 (count (filter #(> 255 (int %)) s))))))
 
 (defn repeat-str [s n] (apply str (repeat n s)))

@@ -8,6 +8,9 @@ if has direnv; then
   eval "$(direnv hook $cur_shell)"
 fi
 
+[ -n "$EAT_SHELL_INTEGRATION_DIR" ] && \
+  source "$EAT_SHELL_INTEGRATION_DIR/bash"
+
 # ESHELL meaning shell-mode in emacs
 ESHELL=false
 
