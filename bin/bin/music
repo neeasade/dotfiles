@@ -305,7 +305,7 @@ gather_playerctl_info() {
   # todo: port this shit to mpd-mixer
   percent=$((RANDOM%100))
 
-  IFS=^ read length name from < <(player.sh -f '{{mpris:length}}^%title%^%artist%')
+  IFS=^ read length name from < <(player.sh -f '{{mpris:length}}^{{title}}^{{artist}}')
   case "$name" in
       # bandcamp specific thingy for artists under a label:
       "▶︎ "*|*|*)
