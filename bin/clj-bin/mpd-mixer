@@ -11,7 +11,8 @@
             [clojure.java.io :as io]
             [clojure.java.shell :as shell]
             [clojure.string :as string]
-            [clojure.set :as set]))
+            [clojure.set :as set]
+            [lib.util :as util]))
 
 (def HOME (System/getenv "HOME"))
 
@@ -335,12 +336,7 @@
                             (apply +)
                             (format-length)))
                percent (second (re-find #"([0-9]+)%" (second (mpc))))
-               middle (:out (shell/sh "mkb" percent (->> (list top bottom)
-                                                         (map count)
-                                                         (sort)
-                                                         (reverse)
-                                                         (first)
-                                                         (str))))]
+               middle (:out (shell/sh "mkb" percent (str (util/longest-txtw (list top bottom)))))]
            [top middle bottom])
          (map string/trim)
          (string/join "\n")

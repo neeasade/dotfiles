@@ -3,7 +3,7 @@
 
 (ns box
   (:require [clojure.string :as string]
-            [lib/util :refer [txtw]]))
+            [lib.util :refer [longest-txtw txtw]]))
 
 (defn repeat-str [s n] (apply str (repeat n s)))
 (defn spaces [n] (repeat-str \space n))
@@ -41,10 +41,7 @@
 (let [{:keys [right left top bottom top-left bottom-left top-right bottom-right ]} border
       lines (string/split (slurp *in*) #"\n")
       lines (map (fn [line] (str " " line " ")) lines)
-      width (->> lines
-                 (map txtw)
-                 (sort)
-                 (last))
+      width (longest-txtw lines)
       top-middle (repeat (- (/ width (count top))
                             ;; (dec (count top-left))
                             (dec (count top-right)))

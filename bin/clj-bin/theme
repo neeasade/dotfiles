@@ -357,7 +357,7 @@
                  ;; :format  "mpd:title|org_task:misc|tags:clock"
 
                  ;; full
-                 :format  "pomo:tags:title|org_task:misc|running:clock:day_progress"
+                 :format  "pomo:tags:title|day_progress:org_task:misc|running:clock"
                  ;; slim
                  ;; :format  "tags:title|misc|running:clock:day_progress"
                  ;; :format  "mpd:title|misc|tags:clock"
