@@ -130,6 +130,7 @@ if ${NEEASADE_ENV:-true}; then
       {$GEM_HOME,$GOPATH,$NPM_GLOBAL,$HOMEBREW_PREFIX}/bin \
       $HOME/.wm/{scripts,panel}/*/        \
       $HOME/{,.cargo,.local}/bin          \
+      $HOME/clj-bin                       \
     ; do
     pathmunge "$p"
   done

@@ -6,10 +6,12 @@
 ;; todo idea: mpd-stats: generate stats for songs and artists
 ;; - print artists with n minutes of content
 
-(require '[babashka.fs :as fs]
-         '[clojure.java.io :as io]
-         '[clojure.java.shell :as shell]
-         '[clojure.string :as string])
+(ns mpd-mixer
+  (:require [babashka.fs :as fs]
+            [clojure.java.io :as io]
+            [clojure.java.shell :as shell]
+            [clojure.string :as string]
+            [clojure.set :as set]))
 
 (def HOME (System/getenv "HOME"))
 

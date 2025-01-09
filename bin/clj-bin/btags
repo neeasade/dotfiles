@@ -1,14 +1,14 @@
 #!/usr/bin/env bb
 ;; -*- mode: clojure -*-
-;; note: bb is https://github.com/borkdude/babashka
 
 ;; tag management for bspwm
 ;; windows may only have one tag
-(require '[clojure.core :as core]
-         '[clojure.string :as string]
-         '[clojure.set :as set]
-         '[clojure.java.io :as io]
-         '[clojure.java.shell :as shell])
+(ns btags
+  (:require [clojure.core :as core]
+            [clojure.string :as string]
+            [clojure.set :as set]
+            [clojure.java.io :as io]
+            [clojure.java.shell :as shell]))
 
 (defn sh [cmd & fstrings]
   (->> (apply format cmd fstrings)

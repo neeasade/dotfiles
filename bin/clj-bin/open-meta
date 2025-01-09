@@ -1,10 +1,11 @@
 #!/usr/bin/env bb
 ;; mimetype preferences
 
-(require '[clojure.string :as string]
-         '[babashka.fs :as fs]
-         '[clojure.java.shell :as shell]
-         '[babashka.process :as process])
+(ns open-meta
+  (:require [clojure.string :as string]
+            [babashka.fs :as fs]
+            [clojure.java.shell :as shell]
+            [babashka.process :as process]))
 
 ;; (:out (deref (process/process {:out :string} "echo" "a" ">/dev/null" "2>&1")))
 

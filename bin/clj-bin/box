@@ -1,11 +1,9 @@
 #!/usr/bin/env bb
+;; wrap things in a box!!!!1!!!!
 
-(require '[clojure.string :as string])
-
-(defn txtw [s]
-  (int
-   (+ (* 1 (count (filter #(< 255 (int %)) s)))
-      (* 1 (count (filter #(> 255 (int %)) s))))))
+(ns box
+  (:require [clojure.string :as string]
+            [lib/util :refer [txtw]]))
 
 (defn repeat-str [s n] (apply str (repeat n s)))
 (defn spaces [n] (repeat-str \space n))
@@ -44,9 +42,9 @@
       lines (string/split (slurp *in*) #"\n")
       lines (map (fn [line] (str " " line " ")) lines)
       width (->> lines
-                 (sort-by txtw)
-                 (last)
-                 txtw)
+                 (map txtw)
+                 (sort)
+                 (last))
       top-middle (repeat (- (/ width (count top))
                             ;; (dec (count top-left))
                             (dec (count top-right)))

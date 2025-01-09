@@ -12,15 +12,15 @@ fi
   source "$EAT_SHELL_INTEGRATION_DIR/bash"
 
 # ESHELL meaning shell-mode in emacs
-ESHELL=false
+export ESHELL=false
 
 if [ -n "$INSIDE_EMACS" ] && [ "$TERM" = "dumb" ]; then
-  ESHELL=true
+  export ESHELL=true
 fi
 
 if ! $ESHELL; then
   if $REMOTE && [ "$TERM" = "dumb" ]; then
-    ESHELL=true
+    export ESHELL=true
   fi
 fi
 

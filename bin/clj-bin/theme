@@ -1,13 +1,14 @@
 #!/usr/bin/env bb
 ;; -*- mode: clojure -*-
 
-(require '[babashka.fs :as fs]
-         '[cheshire.core :as json]
-         '[clojure.java.shell :as shell]
-         '[clojure.string :as string]
-         '[clojure.tools.cli :as cli]
-         '[clojure.walk :refer [postwalk prewalk]]
-         '[selmer.parser :as template])
+(ns theme
+  (:require [babashka.fs :as fs]
+            [cheshire.core :as json]
+            [clojure.java.shell :as shell]
+            [clojure.string :as string]
+            [clojure.tools.cli :as cli]
+            [clojure.walk :refer [postwalk prewalk]]
+            [selmer.parser :as template]))
 
 (defn get-env []
   (->> (System/getenv)
@@ -265,6 +266,10 @@
                            (get-in ["rectangle" "width"])))
           }
 
+         :css-fallback (->> ["Noto Color Emoji" "Noto Sans Symbols"]
+                            (map (partial format "\"%s\""))
+                            (string/join ", " ))
+
          :font (fn [_]
                  (->> {:variable {:family "Droid Sans" :size 12}
                        :variable-big {:family "{{font.variable.family}}" :size 14}
@@ -350,7 +355,11 @@
                      :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 36
                  ;; :format  "mpd:title|org_task:misc|tags:clock"
-                 :format  "day_progress:tags:title|org_task:misc|running:clock"
+
+                 ;; full
+                 :format  "pomo:tags:title|org_task:misc|running:clock:day_progress"
+                 ;; slim
+                 ;; :format  "tags:title|misc|running:clock:day_progress"
                  ;; :format  "mpd:title|misc|tags:clock"
                  :window-class (fn [tree]
                                  (if (get-in tree [:meta :shadow])
@@ -393,11 +402,11 @@
                        :font.variable.size 12
                        ;; :font.variable.family "Equity Text A"
                        ;; :mkb.bar- "AAH"
-                       ;; :mkb.bar- "|/_"
+                       :mkb.bar- "|/_"
                        ;; :mkb.bar- "/-_"
                        ;; :mkb.bar- "[-]"
                        ;; :mkb.bar- "/\\_"
-                       :mkb.bar- "██▁"
+                       ;; :mkb.bar- "██▁"
                        ;; :shell.prompt "%"
                        :shell.prompt "$"
 
