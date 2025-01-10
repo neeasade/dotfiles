@@ -5,18 +5,18 @@
 }
 
 body * {
-  font-family: "{{font.variable.family}}" !important;
+  font-family: "{{font.variable.family}}", {{css-fallback|safe}} !important;
 }
 
-div[class^='Box'],
+div[class^='Box'],  
 div[class^='Box'] *,
-div[class^='code'],
-div[class^='code'] *,
+[class*='code'],
+[class*='code'] *,
 code, code *,
 pre, pre *,
 kbd, kbd *,
 samp, samp * {
-	font-family: "{{font.mono.family}}" !important;
+	font-family: "{{font.mono.family}}", {{css-fallback|safe}} !important;
 }
 
 ::selection {
