@@ -4,7 +4,6 @@
 (ns player.sh
   (:require [clojure.string :as string]
             [clojure.java.shell :as shell]
-            [lib.util :as util]
             [lib.util :refer [sh]]))
 
 (defn get-players []
@@ -15,9 +14,10 @@
                      (partition 2)
                      (map vec)
                      (distinct))]
-    ;; ensure mpd at the end
-    (conj (vec (remove #(= :mpd (first %)) players))
-          (first (filter #(= :mpd (first %)) players)))))
+    ;; ensure mpd at the end, mpv up front
+    (vec (concat (filter #(= :mpv (first %)) players)
+                 (remove #(#{:mpd :mpv} (first %)) players)
+                 (filter #(= :mpd (first %)) players)))))
 
 (defn select-player [players]
   (let [mpd-playing? (:mpd (into {} players))]
