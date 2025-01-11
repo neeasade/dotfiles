@@ -1,10 +1,9 @@
 #!/usr/bin/env bb
 
 (ns gamelaunch
-  (:require [clojure.string :as string]
-            [lib.util :as util]
-            [cheshire.core :as json]
-            [babashka.fs :as fs]))
+  (:require [babashka.fs :as fs]
+            [clojure.string :as string]
+            [lib.util :as util]))
 
 (defn game-map []
   (->> (fs/list-dir (util/home ".steam/steam/steamapps"))
