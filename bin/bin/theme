@@ -412,7 +412,7 @@
 
                        ;; :shell.prompt "😎"
                        ;; :shell.prompt_err "😞"
-                       :x.padding 14
+                       :x.padding 6
                        ;; :bspwm.window-gap 30
                        :bspwm.window-gap 88
                        :bspwm-meta.monocle-window-percent 0.46
