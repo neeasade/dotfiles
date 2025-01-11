@@ -14,17 +14,14 @@
 (defn shh [& args]
   (first (apply sh args)))
 
-(def HOME (System/getenv "HOME"))
+(defn home [path]
+  (str (System/getenv "HOME") "/" path))
 
-
-
-;; lol
-(defmacro elisp [sexp]
-  `(shh "elisp" "-r" ~(str sexp)))
+(defn dmenu [lines]
+  (shh "dmenu" :in (string/join "\n" (map str lines))))
 
 (defn txtw [s]
   (int (if (System/getenv "ESHELL")
-         ;; string-width lies, so we do it ourselves
          (parse-long (string/trim (:out (shell/sh "elisp" (format "(ns/string-width \"%s\")" s)))))
          ;; (parse-long (elisp (/ (string-pixel-width s) (string-pixel-width "═"))))
          (+ (* 1 (count (filter #(< 255 (int %)) s)))

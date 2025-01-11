@@ -2,26 +2,23 @@
 
 (ns gamelaunch
   (:require [clojure.string :as string]
-            [clojure.java.shell :as shell]
             [lib.util :as util]
+            [cheshire.core :as json]
             [babashka.fs :as fs]))
 
 (defn game-map []
-  (->> (fs/list-dir (str util/HOME "/.steam/steam/steamapps"))
-       (filter (fn [f] (string/starts-with?
-                        (fs/file-name f)
-                        "appmanifest")))
-       (map (fn [f]
-              (let [text (string/split-lines (slurp (str f)))
-                    appid (first (re-seq #"[0-9]+" (first (filter #(string/includes? % "appid") text))))
-                    name (read-string (nth (string/split
-                                            (first (filter #(string/includes? % "name") text))
-                                            #"\t") 3))]
-                [name appid])))
+  (->> (fs/list-dir (util/home ".steam/steam/steamapps"))
+       (filter (fn [f] (string/starts-with? (fs/file-name f) "appmanifest")))
+       (keep (fn [f]
+               (let [info (read-string (format "{%s}" (slurp (str f))))
+                     appid (get-in info ["AppState" "appid"])
+                     name (get-in info ["AppState" "name"])]
+                 (when-not (or (string/starts-with? name "Steam")
+                               (string/starts-with? name "Proton"))
+                   [name appid]))))
        (into {})))
 
 (let [m (game-map)
-
-      appid (get m (util/shh "dmenu" :in (string/join "\n" (keys m))))]
+      appid (get m (util/dmenu (shuffle (keys m))))]
   (when appid
     (util/sh "steam" (str "steam://run/" appid))))
