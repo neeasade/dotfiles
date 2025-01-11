@@ -5,19 +5,18 @@
             [clojure.string :as string]
             [lib.util :as util]))
 
-(defn game-map []
+(def game-map
+  ;; build {name appid}
   (->> (fs/list-dir (util/home ".steam/steam/steamapps"))
        (filter (fn [f] (string/starts-with? (fs/file-name f) "appmanifest")))
        (keep (fn [f]
                (let [info (read-string (format "{%s}" (slurp (str f))))
                      appid (get-in info ["AppState" "appid"])
-                     name (get-in info ["AppState" "name"])]
+                     name  (get-in info ["AppState" "name"])]
                  (when-not (or (string/starts-with? name "Steam")
                                (string/starts-with? name "Proton"))
                    [name appid]))))
        (into {})))
 
-(let [m (game-map)
-      appid (get m (util/dmenu (shuffle (keys m))))]
-  (when appid
-    (util/sh "steam" (str "steam://run/" appid))))
+(when-let [appid (get game-map (util/dmenu (shuffle (keys game-map))))]
+  (util/sh "steam" (str "steam://run/" appid)))
