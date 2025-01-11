@@ -14,6 +14,9 @@
 (defn shh [& args]
   (first (apply sh args)))
 
+(def HOME (System/getenv "HOME"))
+
+
 
 ;; lol
 (defmacro elisp [sexp]
