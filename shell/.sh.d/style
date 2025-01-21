@@ -132,7 +132,17 @@ prompt() {
 
     _prompt=$_promptchar
 
-    if ! test -z "$(jobs)"; then
+    # ugh
+    jobs=$(jobs | sed '/ATUIN/d')
+    trim_string() {
+      # Usage: trim_string "   example   string    "
+      : "${1#"${1%%[![:space:]]*}"}"
+      : "${_%"${_##*[![:space:]]}"}"
+      printf '%s\n' "$_"
+    }
+    jobs=$(trim_string "$jobs")
+
+    if ! test -z "${jobs}"; then
       _prompt="${_prompt}&"
     fi
 

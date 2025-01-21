@@ -1,5 +1,15 @@
 # -*- mode: sh -*-
 
+if has atuin; then
+  if [ "$cur_shell" = "bash" ]; then
+    if [ -e "$HOME/.bash-preexec.sh" ]; then
+      . "$HOME/.bash-preexec.sh"
+      export ATUIN_NOBIND=true
+      eval "$(atuin init bash)"
+    fi
+  fi
+fi
+
 history_length=10000
 history_file="$HOME/.${cur_shell}_history"
 
@@ -9,33 +19,20 @@ case "$cur_shell" in
     export HISTFILESIZE=$history_length
     export HISTSIZE=$history_length
 
-    # note: this causes things to be ignored in interactive history as well
-    # but we circumvent that with comint/emacs shells
     export HISTIGNORE="cd*:ls*:clear:date:pwd:mpv:pfetch:mpc*:music*:ltheme"
-
-    shopt -s histappend
     export HISTCONTROL=ignoredups:erasedups:ignorespace
-
-    # store things in the history file as we go along
-    # also expand aliases
-    # export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
-    if ! echo "$PROMPT_COMMAND"  | grep -q history; then
-      export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
-    fi
-
-    # export PROMPT_COMMAND="history -a; history -c; history -r"
+    shopt -s histappend
+    shopt -s cmdhist lithist
     ;;
   zsh)
     HISTFILE=$history_file
     SAVEHIST=$history_length
     HISTSIZE=$history_length
 
-    # setopt extended_history       # record timestamp of command in HISTFILE
     setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
     setopt hist_ignore_dups       # ignore duplicated commands history list
-    setopt hist_ignore_all_dups
+    setopt hist_ignore_all_dups   # duplicates
     setopt hist_ignore_space      # ignore commands that start with space
-    # setopt hist_verify            # show command with history expansion to user before running it
     setopt inc_append_history     # add commands to HISTFILE in order of execution
     setopt share_history          # share command history data
     ;;
