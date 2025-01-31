@@ -33,8 +33,7 @@
    (* (parse-double s)
       100)))
 
-(let [
-      cmd (first *command-line-args*)
+(let [cmd (first *command-line-args*)
       args (condp = cmd
              "toggle" ["play-pause"]
              "-f" ["metadata" "-f" (second *command-line-args*)]
@@ -51,6 +50,6 @@
              success? (zero? (:exit result))]
          (if success?
            (if (= cmd "volume")
-             (percent (shh "playerctl" "-p" player "metadata" "-f" "{{volume}}"))
+             (str player " " (percent (shh "playerctl" "-p" player "metadata" "-f" "{{volume}}")))
              (:out result))
            (recur (rest players))))))))
