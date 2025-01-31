@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 # provide a way to run elisp in a running emacs-server
 # can act as a shebang (ie #!/usr/bin/env elisp) or
 # adhoc code (ie elisp '(message "uwu")')
@@ -7,6 +7,11 @@
 if [ ! -z "$CALLED_FROM_EMACS" ]; then
     exit 1
 fi
+
+set -o pipefail
+
+# todo: some way to say: with current buffer (from shell mode)
+# notify-send "$*"
 
 trim=false  # note: we always set trim in script mode
 quiet=false
@@ -65,7 +70,12 @@ quit() {
 }
 
 if [ -z "$script_name" ]; then
-    elisp_timeout=${elisp_timeout:-1}
+    if $emacs_batch_window || $emacs_batch; then
+	elisp_timeout=${elisp_timeout:-60}
+    else
+	elisp_timeout=${elisp_timeout:-1}
+    fi
+
     lisp="(progn $@)"
     if $read_stdin; then
 	add_stdin
@@ -101,39 +111,42 @@ else
     lisp="(->> ${script_name} f-read (format \"(let ((*stdin-file* ${stdin_file_lisp}) (ns-args '${args})) %s)\") read eval)"
 fi
 
+
+# notify-send "$elisp_timeout $*"
 emacs_timeout=
 if type timeout >/dev/null 2>&1; then
     emacs_timeout="timeout ${elisp_timeout}"
 fi
 
+filter_batch_lines() {
+    # remove loading junk
+    while read -r line; do
+	case "$line" in
+	    :*) ;;
+	    'Loading '*) ;;
+	    'Building '*) ;;
+	    *) printf '%s\n' "$line" ;;
+	esac
+    done
+}
+
 if $emacs_batch_window; then
-    # todo: set window class, get result, better handling
-    NS_EMACS_BATCH=$lisp emacs -f kill-emacs 2>&1
-    exit $?
-elif $emacs_batch; then
-    filter_lines() {
-	sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | \
-	while read -r line; do
-	    case "$line" in
-		# ''*) ;;
-		# *...) ;;
-		:*) ;;
-		'Loading '*) ;;
-		'Building '*) ;;
-		*) printf '%s\n' "$line" ;;
-	    esac
-	done
-    }
-
-
-    # todo: see if this gives you color
-    # result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs -nw -l "${HOME}/.emacs.d/init.el" 2>&1 | grep -v '^Loading.*\.\.\.$' | grep -v "^Package\ " | grep -v "^Starting new Ispell" | grep -v "^Building ")
-    # result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs -nw -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_lines)
-    result=$(NS_EMACS_BATCH=$lisp TERM=xterm emacs --batch -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_lines)
+    export NS_REDIR_LOG=true
+    export NS_EMACS_BATCH=$lisp
+    result=$($emacs_timeout xvfb-run emacs --debug-init 2>&1 | tee /dev/stderr | awk 'NF' | filter_batch_lines)
+    # result=$($emacs_timeout emacs --debug-init 2>&1 | tee /dev/stderr | awk 'NF' | filter_batch_lines)
+    ret=$?
 
     if $trim; then
-	result=$(printf '%s' "$result" | sed -n '/COOL_DELIMITER/,$p' | tail -n +2)
-	# result=$(printf '%s' "$result" | grep -A5000 COOL_DELIMITER)
+	result=$(printf '%s' "$result" | sed -n '/COOL_DELIMITER/{n;p}')
+    fi
+elif $emacs_batch; then
+    export NS_EMACS_BATCH=$lisp
+    result=$($emacs_timeout emacs --batch -l "${HOME}/.emacs.d/init.el" 2>&1 | filter_batch_lines)
+    ret=$?
+
+    if $trim; then
+	result=$(printf '%s' "$result" | sed -n '/COOL_DELIMITER/{n;p}')
     fi
 else
     # echo $emacs_timeout $eclient --eval "$lisp"
@@ -145,9 +158,10 @@ else
     else
 	result=$($emacs_timeout $eclient --server-file=$emacs_server_file --eval "$lisp")
     fi
+    ret=$?
 fi
 
-if [ $? -eq 1 ]; then
+if [ "$ret" -ne 0 ]; then
     # we could not reach emacs, or we timed out.
 
     # if we were running a script, try to save by defaulting to last arg
@@ -159,7 +173,7 @@ if [ $? -eq 1 ]; then
 	echo "$last"
     fi
 
-    quit 1
+    quit "$ret"
 fi
 
 if [ "$result" = "nil" ]; then
