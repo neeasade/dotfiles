@@ -7,6 +7,7 @@
             [lib.util :refer [sh shh]]))
 
 (defn get-players []
+  ;; player shape: [:name playing?]
   (let [players (->> (interleave (map (fn [p] (keyword (first (string/split p #"\."))))
                                       (sh "playerctl -l"))
                                  (map #(= "Playing" %)
@@ -14,14 +15,13 @@
                      (partition 2)
                      (map vec)
                      (distinct))]
-    ;; ensure mpd at the end, mpv up front
-    (vec (concat (filter #(= :mpv (first %)) players)
-                 (->> players
-                      (remove #(#{:mpd :mpv} (first %)))
-                      ;; prioritize playing players
-                      (sort-by second)
-                      (reverse))
-                 (filter #(= :mpd (first %)) players)))))
+    ;; mpv -> vlc -> other -> mpd
+    (->> (concat (filter #(= :mpv (first %)) players)
+                 (filter #(= :vlc (first %)) players)
+                 (remove #(#{:mpd :mpv :vlc} (first %)) players)
+                 (filter #(= :mpd (first %)) players))
+         (sort-by second #(compare %2 %1)) ; prioritize playing players
+         vec)))
 
 (defn select-player [players]
   (let [mpd-playing? (:mpd (into {} players))]
