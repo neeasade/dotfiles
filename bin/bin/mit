@@ -1,5 +1,5 @@
 #!/bin/sh
-name="$(git whoami -r)"
+name="$(whoami)"
 year="$(date +%Y)"
 cat <<EOF
 MIT License

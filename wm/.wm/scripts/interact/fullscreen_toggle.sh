@@ -2,31 +2,35 @@
 # this is sort of a layout script
 # modes: tiled, monocle, monocle_slim, fullscreen
 
+# todo: if mashing super + t and one window is open, tell us there's only one window
+
 gapped=$(iif '[ $(bspc config window_gap) -gt 0 ]')
 
 handle_bd() {
+
+
   # new thinking: floating at the side
   # should be a little column of floaters
   if ! bspc query -N -n '.floating.!hidden'; then
     return;
   fi
 
-  if ! xprop WM_CLASS -id "$(bspc query -N -n '.floating.!hidden')" | grep -q discord; then
-    return;
-  fi
+  # if ! xprop WM_CLASS -id "$(bspc query -N -n '.floating.!hidden')" | grep -q discord; then
+  #   return;
+  # fi
 
   p=$(bspc config left_padding)
   bspc config left_padding "$(( $(bspc config left_padding) + 450 ))"
 
-
-  read X Y W H <<< "20 100 390 800"
+  read X Y W H <<< "20 100 390 1000"
   wid=$(bspc query -N -n '.floating.!hidden' | head -n 1)
 
-  # if [ "$(bspc query -T -n 'any.floating.!hidden' | jq .client.floatingRectangle.width)" -lt $W ]; then
-    # notify-send "hit!"
+  # this should act for all windows oopsie
+  if [ "$(bspc query -T -n 'any.floating.!hidden' | jq .client.floatingRectangle.width)" -gt $W ]; then
+    notify-send  -u low "hit!"
     xdotool windowmove $wid $X $Y
     xdotool windowsize $wid $W $H
-  # fi
+  fi
 }
 
 do_monocle_full() {

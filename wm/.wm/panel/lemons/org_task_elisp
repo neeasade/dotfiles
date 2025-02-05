@@ -32,9 +32,9 @@
 		     (:pomodoro . ,org-pomodoro-length)))))
 		(color (-> (myron-get (if (eq org-pomodoro-state :pomodoro)
 					  :primary :strings))
+
 			   ;; (ct-pastel)
-			   (ns/make-border-color)
-			   ))
+			   (ns/make-border-color)))
 
 		(topic (or (s-clean org-clock-current-task)
 			   (-> org-pomodoro-state
@@ -43,10 +43,5 @@
 
 	    (format "%s^%s^%s"
 		    topic
-
-		    ;; progress bar/mkb:
-		    (ns/let-script-args (width) (floor (* (string-to-number (or width "100")) (/ percent 100.0))))
-		    ;; percent
-
-		    color
-		    )))
+		    percent
+		    color)))

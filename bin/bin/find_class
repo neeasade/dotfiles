@@ -25,16 +25,20 @@ if ${MAC:-false}; then
 	# NB: gui emacs on mac has a bug where the fullscreen window is unseen by yabai
     done < <(yaboi query windows | jq -r '.[] | ((.id|tostring) + " " + (.pid|tostring) + " " + (.space|tostring) + " " + .app)')
 else
-    for wid in $(bspc query -N -n .window | tac); do
+    for wid in $(bspc query -N -n .window.tiled | tac); do
 	if xprop WM_CLASS -id $wid | grep -i "$search"; then
 	    bspc node $wid -g hidden=off
+
 	    bspc node -f $wid
 
 	    # if wid is in a hidden tag, show it
 	    # TODO: consider this vs temporary popup state
-	    if status=$(btags state-plain | grep $wid | grep false); then
-		btags toggle $(echo "$status" | awk '{print $1}')
-	    fi
+	    # if status=$(btags state-plain | grep $wid | grep false); then
+	    # 	btags toggle $(echo "$status" | awk '{print $1}')
+	    # fi
+
+	    # maybe don't do this if our target is qutebrowser
+	    fullscreen_toggle.sh do_monocle_full
 
 	    exit 0
 	fi

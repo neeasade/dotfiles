@@ -1,9 +1,0 @@
-# -*- mode: sh -*-
-
-if [ -f $HOME/.nix-direnv/direnvrc ]; then
-    source $HOME/.nix-direnv/direnvrc
-fi
-
-if [ -f /run/current-system/sw/share/nix-direnv/direnvrc ]; then
-  source /run/current-system/sw/share/nix-direnv/direnvrc
-fi

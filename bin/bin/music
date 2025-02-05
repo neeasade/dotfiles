@@ -7,6 +7,8 @@
 # - add a neat display func
 # - some helpers to manage your local music
 
+# idea: "special playlists that don't reshuffle (long length)"
+
 # todo: interactive options: comma -> filter or disable shuffler options
 # eg:
 # music artist late night alumni, noshuffle
@@ -213,6 +215,7 @@ artist() { # play songs by an artist
     echo "@${artist}" > "$current_playlist"
 
     if ${SHUFFLE:-true}; then
+      # mpc shuffle
       shuffler
     fi
 

@@ -4,7 +4,9 @@ if has atuin; then
   if [ "$cur_shell" = "bash" ]; then
     if [ -e "$HOME/.bash-preexec.sh" ]; then
       . "$HOME/.bash-preexec.sh"
-      export ATUIN_NOBIND=true
+      if $ESHELL; then
+        export ATUIN_NOBIND=true
+      fi
       eval "$(atuin init bash)"
     fi
   fi

@@ -10,7 +10,7 @@ image_colors() {
     # anticipate this being really slow above smol images
 
     echo "getting colors..." >&2
-    convert "$1" -alpha off txt:- | awk '{print $3}' | rg -v pixel | sort -rn | uniq -c | awk '{print $2}'
+    magick "$1" -alpha off txt:- | awk '{print $3}' | rg -v pixel | sort -rn | uniq -c | awk '{print $2}'
     echo "getting colors... done" >&2
 }
 
@@ -25,8 +25,8 @@ rand_tile() {
 
 	# rg --files "$HOME/pngsave"
 
-	rg --files /media/sidecar/Archive/other/squid/
-	rg --files /media/sidecar/Archive/other/bgrepeat/
+	# rg --files /media/sidecar/Archive/other/squid/
+	# rg --files /media/sidecar/Archive/other/bgrepeat/
 
 	rg --files "/home/neeasade/code/sketch-subtlepatterns/SubtlePatterns"
 
@@ -34,15 +34,14 @@ rand_tile() {
 	# rg --files "/home/neeasade/code/tiles-and-such/[J] Retro Patterns/"
 
 	# rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump
-	rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump3
+	# rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump3
 	# rg --files /home/neeasade/code/neeasade.github.io/published/assets/posts/ca_dump2
-    ) | sort -R | head -n 1
-
+    ) | sort -R
 }
 
-target=$(rand_tile)
+target=$(rand_tile | tail -n 1)
 
-target=$(echo $HOME/Downloads/448298200_398413232509761_1954156540203881355_n.jpg)
+# target=$(echo $HOME/Downloads/448298200_398413232509761_1954156540203881355_n.jpg)
 
 if ! silent identify "$target"; then
     target=$(rand_tile)
@@ -75,8 +74,8 @@ EOF
 
 rm /tmp/result.png
 
-# convert "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
-# convert "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
+# magick "$target" -fuzz "0%" -fill \#$background -opaque "$(most_seen "$target")" /tmp/result.png
+# magick "/tmp/result.png" -fuzz "1%" -fill \#$foreground -opaque "$(least_seen "$target")" /tmp/result.png
 # foreground=D7CDFF
 # background=D7CDFF
 # background=$(theme getval background)
@@ -91,8 +90,8 @@ least_seen=$(echo "$colors" | tail -n 1)
 color() {
     echo "fuzz fg: $most_seen -> $foreground at ${1}%"
     echo "fuzz bg: $least_seen -> $background at ${2}%"
-    convert "/tmp/result.png" -fuzz "${1}%" -fill "$foreground" -opaque "$most_seen" /tmp/result.png
-    convert "/tmp/result.png" -fuzz "${2}%" -fill "$background" -opaque "$least_seen" /tmp/result.png
+    magick "/tmp/result.png" -fuzz "${1}%" -fill "$foreground" -opaque "$most_seen" /tmp/result.png
+    magick "/tmp/result.png" -fuzz "${2}%" -fill "$background" -opaque "$least_seen" /tmp/result.png
 }
 
 # if we see a lot of colors, up the fuzz
@@ -124,21 +123,30 @@ auto() {
 
 echo "$target"
 
+
+comment() {
+
+    magick "$(last_download)" -fuzz "30%" -fill "#006e96" -opaque "#020202"  /tmp/result.png
+}
+#     vdo magick /tmp/result.png -resize 200% /tmp/result.png
+
 # read w <<< $(mediainfo /tmp/result.png | awk '/Width/{print $3}')
 # if [[ "$w" -lt  75 ]]; then
-#     vdo convert /tmp/result.png -resize 200% /tmp/result.png
+#     vdo magick /tmp/result.png -resize 200% /tmp/result.png
 # fi
 
-    vdo convert /tmp/result.png -resize 25% /tmp/result.png
+    # vdo magick /tmp/result.png -resize 25% /tmp/result.png
 
 # if grep -q squid <<< "$target"; then
-#     vdo convert /tmp/result.png -resize 200% /tmp/result.png
+#     vdo magick /tmp/result.png -resize 200% /tmp/result.png
 # fi
 
 # if grep -q 'tiles-and-such' <<< "$target"; then
-#     vdo convert /tmp/result.png -resize 200% /tmp/result.png
+#     vdo magick /tmp/result.png -resize 200% /tmp/result.png
 # fi
 
-# vdo convert /tmp/result.png -resize 150% /tmp/result.png
+vdo magick /tmp/result.png -resize 300% /tmp/result.png
+
+# feh --bg-tile /tmp/result.png
 
 tiletilt "/tmp/result.png"

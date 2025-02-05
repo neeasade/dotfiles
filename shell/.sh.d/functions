@@ -194,7 +194,16 @@ shot_location() {
 shot() {
   g=$(slop -p ${1:-0})
   dest=$(shot_location)
-  maim -u -g ${g} "$dest"
+  maim -u -g "${g}" "$dest"
+  xclip -selection clipboard -target image/png -i "$dest"
+  echo "$dest"
+}
+
+shot_delayed() {
+  g=$(slop -p 0)
+  dest=$(shot_location)
+  sleep "$1"
+  maim -u -g "${g}" "$dest"
   xclip -selection clipboard -target image/png -i "$dest"
   echo "$dest"
 }

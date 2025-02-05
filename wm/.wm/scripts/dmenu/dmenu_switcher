@@ -142,6 +142,8 @@ add_metas() {
     add_switch "meta: exec" "dmenu_exec"
     add_switch "meta: factorio" "factorio"
 
+    add_switch "meta: resume" "pass resume_path | pbcopy"
+
     # link mark/book mark translation here would be nice
     # add_switch "meta: zulip" "find_url 'https://recurse.zulipchat.com/'"
 
@@ -167,6 +169,7 @@ add_metas() {
     add_switch "meta: theme myron-mcfay" "load_theme myron-mcfay"
     add_switch "meta: theme myron-struan" "load_theme myron-struan"
     add_switch "meta: soff" "bash -ic soff"
+    add_switch "meta: gamelaunch" "gamelaunch"
 
     find_discord() { find_class discord || Discord ;}
     find_steam() { find_class Steam || steam ;}

@@ -1,4 +1,5 @@
 [global]
+# todo: look into rules, add muting example
 font = {{font.variable.spec-space}}
 markup = full
 format = "%s%p\n%b"

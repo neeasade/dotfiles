@@ -197,6 +197,7 @@ load_services() {
     make_service dunst
     make_service picom
     make_service download_watch last_download_link
+    make_service mpdris
 
     # tray stuff
     make_service nm-applet

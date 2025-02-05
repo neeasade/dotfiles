@@ -11,14 +11,14 @@ fi
 
 topic=$(echo "$org_task_status" | awk -F \^ '{print $1}')
 percent=$(echo "$org_task_status" | awk -F \^ '{print $2}')
-color=$(echo "$org_task_status" | awk -F \^ '{print $3}')
+# color=$(echo "$org_task_status" | awk -F \^ '{print $3}')
 
 if [ -z "$percent" ]; then
     echo "${topic:-Failed to get org task!}"
 else
-    empty=$(elisp -r '(-> (myron-get :background :weak))')
+    # empty=$(elisp -r '(-> (myron-get :background :weak))')
 
     # XXX: you will need to tweak ./org_task_elisp as well
-    echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
-    # printf "%s [%s]" "$topic" "$(mkb "$percent" "$WIDTH")"
+    # echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
+    printf "%s %s\n" "$topic" "$(lemon_progress "$percent" "$WIDTH")"
 fi

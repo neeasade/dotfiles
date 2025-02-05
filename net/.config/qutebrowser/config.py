@@ -16,14 +16,12 @@ config = config  # type: ConfigAPI # noqa: F821
 c = c  # type: ConfigContainer # noqa: F821
 config.load_autoconfig(False)
 
-# todo: bind cmd-e edit
 # todo: config.load
 
 # https://github.com/noctuid/dotfiles/blob/master/browsing/.config/qutebrowser/config.py
 def nmap(key, command):
     """Bind key to command in normal mode."""
     config.bind(key, command, mode='normal')
-
 
 # is this the first time running?
 initial_start = c.tabs.background == False
@@ -236,10 +234,8 @@ def makePadding(top, bottom, left, right):
 # this doesn't work?? the value is 2small
 # font_height = {{{txth -f "$q_tab_font" -s $q_tab_fontsize ph}}}
 
-# todo:
-
-font_height = 19 # -- measured on a 'ph' qute title in pinta for test theme
-
+# variable: elisp (with-current-buffer (first (ns/buffers-by-mode 'org-mode)) (line-pixel-height))
+font_height = 27
 surround = round((theme['panel']['height'] - font_height) / 2)
 if surround < 1:
     surround = 0
@@ -307,10 +303,7 @@ interceptor.register(redirect_intercept)
 adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock.txt'
 adblock_normal_file = os.environ["HOME"] + '/.config/qutebrowser/adblock_internet.txt'
 
-if os.path.exists(adblock_normal_file):
-    adblock_normal_file = "file://" + adblock_normal_file
-else:
-    adblock_normal_file = 'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts'
+adblock_normal_file = 'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts'
 
 # todo: handle userscript location
 # '/Users/nathan/Library/Application Support/qutebrowser/userscripts',
@@ -329,4 +322,6 @@ if os.path.exists(adblock_file):
     c.content.blocking.hosts.lists = [
         adblock_normal_file,
         'file://' + adblock_file,
+        'file://' + os.environ["HOME"] + '/.config/qutebrowser/adblock_temp.txt'
+        # 'file://' + adblock_file,
         ]

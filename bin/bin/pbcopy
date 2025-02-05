@@ -7,8 +7,10 @@ if $MAC; then
     exit $?
 fi
 
+# todo: this better, file handle/tee ->>
 stdin=$(cat /dev/stdin)
 
 # :set clipboard=unnamedplus is the only way to be
 printf '%s' "$stdin" | xclip -selection clipboard -i
 printf '%s' "$stdin" | xclip -selection primary -i
+

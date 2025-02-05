@@ -6,6 +6,10 @@
 ;; todo idea: mpd-stats: generate stats for songs and artists
 ;; - print artists with n minutes of content
 
+;; idea: artist aliases
+
+;; idea: playlist place sync (cache and return to place in playlist)
+
 (ns mpd-mixer
   (:require [babashka.fs :as fs]
             [clojure.java.io :as io]
@@ -101,6 +105,7 @@
                                         "Album"
                                         #"_"
                                         #",.*$"])))
+                            ;; (string/replace "＂" "\"")
                             (string/replace "|" "-")
                             (string/replace " | " "-")
                             (string/replace "⧸" "/")
@@ -260,11 +265,6 @@
 
 (comment
   ;; wip
-
-  (reduce
-   (fn [[result all-songs] artist]
-     )
-   )
 
   (defn list-artists-long []
     (let [all (count (mpc "listall"))]

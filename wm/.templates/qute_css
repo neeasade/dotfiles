@@ -1,15 +1,12 @@
 /* -*- mode: css -*- */
 
 * {
-	    scroll-behavior: auto !important;
-}
-
-body * {
+  scroll-behavior: auto !important;
   font-family: "{{font.variable.family}}", {{css-fallback|safe}} !important;
 }
 
-div[class^='Box'],  
-div[class^='Box'] *,
+div[class^='Box-sc'],
+div[class^='Box-sc'] *,
 [class*='code'],
 [class*='code'] *,
 code, code *,

@@ -88,7 +88,7 @@ let
     gnupg
     gnutls # for circe
     go-mtpfs
-    google-chrome
+    # google-chrome
     gparted
     hsetroot
     i3blocks
@@ -153,8 +153,12 @@ let
   # anything else
   fat = ui ++ (with pkgs; [
     ### GAMES
-    runelite
+    brogue-ce
+
+    (crawl.override {tileMode = true;})
     nethack
+
+    runelite
     dolphin-emu
     # jstest
     qjoypad

@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-want=${*:-WH-1000XM3}
+want=${*:-WH-1000XM4}
 
 sink_map=$(paste -d' ' \
 		 <(pactl list short sinks) \
-		 <(pacmd list-sinks | grep device.description | awk -F= '{print $2}' | sed 's/"//g'))
+		 <(pactl list sinks | awk -F\" '/device.description/{print $2}'))
 
 stopped=$(awk "/SUSPENDED.*${want}/{print $1}" <<< "$sink_map")
 

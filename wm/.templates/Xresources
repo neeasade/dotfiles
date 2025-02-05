@@ -1,6 +1,8 @@
 
 Xft.dpi: {{meta.dpi}}
 
+Xcursor.size: 16
+
 pmenu.font: {{font.variable.spec}}
 ! pmenu.background: {{font.variable.spec}}
 pmenu.selbackground: {{color.focused.background}}

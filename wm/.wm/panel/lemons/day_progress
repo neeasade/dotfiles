@@ -11,5 +11,4 @@
       progress (+ (/ current-min 60) (- current-hour start))
       percent (Math/round (double (* 100 (/ progress total))))]
 
-  (println (:out (shell/sh "lemon_progress" (str percent) "200")))
-  )
+  (println (:out (shell/sh "lemon_progress" (str percent) "200"))))

@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
 file="$HOME/sync/main/notes/pomodoro.org"
-date=$(date +%Y-%m-%d)
+today=$(date +%Y-%m-%d)
 
-count=$(grep 'CLOCK.*=>  0:2[3-7]' "$file" | grep "$date" | wc -l)
+date=${1:-today}
+
+# pomo_minutes=$(grep "$date" "$file" | rg 'CLOCK.*=>  0:([0-9]+)' -or '$1' | jq -s 'add')
+
+count=$(grep "$date" "$file" | grep 'CLOCK.*=>  0:2[3-7]' | wc -l)
 
 for i in {1..4}; do
     if [ $i -le "$count" ]; then

@@ -1,6 +1,5 @@
 # -*- mode: conf -*-
 
-
 # TODO:
 # Say I\'m playing a game, and toggle the music, but keep running forward (W)
 #   it\'s easy to fat finger a close window command
@@ -80,16 +79,13 @@ super + slash
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
 
-super + shift + Return
-    elisp '(ns/org-capture-popup)'
-
 super + {_,shift,alt} + space
     action='{switcher,run,pass}'; \
     export GTK_THEME=$(theme -q gtk.theme); \
     dmenu_$action -p "$action"
 
-super + grave
-    player.sh toggle
+super + {_, shift} + grave
+    {player.sh, mpc} toggle
 
 # note: ensure using bluetooth if available
 # workflow: turn on headphones, bt connect, walk around, toggle
@@ -98,7 +94,7 @@ XF86Audio{Prev,Next,Play,Pause}
     check_headphones; player.sh {prev,next,toggle,toggle}
 
 XF86Audio{LowerVolume,RaiseVolume}
-    notify-send --urgency=low "Volume: $(ponymix {decrease,increase})"
+    notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 4)"
 
 super + Escape
     notify-send "reloading sxhkd!"; pkill -USR1 -x sxhkd
@@ -107,6 +103,7 @@ super + Escape
 XF86AudioMute
     ponymix toggle
 
+# todo: if ponymix at 100 update player.sh volume
 # pretend +
 super + {minus,equal}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 4)"

@@ -23,8 +23,8 @@ vanilla() {
 	fi
     else
 	# this is faster than
-	# qutebrowser "$url"
-	qb_command ":open -r -t $url"
+	qutebrowser "$url"
+	# qb_command ":open -r -t $url"
     fi
 
     find_class qutebrowser
@@ -54,19 +54,21 @@ if echo "$url" | grep -qE "bandcamp.com"; then
     exit 0
 fi
 
-# all the open urls (last in history is the current viewed thing)
-if ! qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | .url' | grep -q "$url"; then
-    vanilla
-fi
+vanilla
 
-# do the same thing as above, but compare the url, grabbing the title (we use title text to switch to tab)
-# matching_title=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | select(.url == "'"${url}"'") | .title' | head -n 1)
-matching_title=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | select(.url | startswith("'"${url}"'")) | .title' | head -n 1)
+# # all the open urls (last in history is the current viewed thing)
+# if ! qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | .url' | grep -q "$url"; then
+#     vanilla
+# fi
 
-if [ -z "$matching_title" ]; then
-    echo no found title
-    vanilla
-fi
+# # do the same thing as above, but compare the url, grabbing the title (we use title text to switch to tab)
+# # matching_title=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | select(.url == "'"${url}"'") | .title' | head -n 1)
+# matching_title=$(qb_session_dump | yq -r '.windows[0].tabs[] | .history[-1] | select(.url | startswith("'"${url}"'")) | .title' | head -n 1)
 
-qb_command ":tab-select $matching_title"
-find_class qutebrowser
+# if [ -z "$matching_title" ]; then
+#     echo no found title
+#     vanilla
+# fi
+
+# qb_command ":tab-select $matching_title"
+# find_class qutebrowser

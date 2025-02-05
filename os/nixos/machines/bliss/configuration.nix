@@ -10,6 +10,7 @@ let
   unstable = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/nixpkgs-unstable.tar.gz) { config = shared.nixcfg; };
   # edge = import (fetchTarball https://github.com/neeasade/nixpkgs/archive/master.tar.gz) { config = nixcfg; };
   # edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/23.11.tar.gz) { config = shared.nixcfg; };
+  old = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/24.05.tar.gz) { config = shared.nixcfg; };
 
   edge-packages = edge.linuxPackages_latest;
 
@@ -21,20 +22,47 @@ let
 
   expr = import ../../config/expr/default.nix {inherit pkgs edge;};
   sets = import ../../config/packages.nix {inherit pkgs edge expr;};
+
+
+  # nixmox = builtins.fetchTarball { url = "https://github.com/Sorixelle/nixmox/archive/1e9b569308efbbf61bd4f471803620715eac53cc.tar.gz"; };
 in
 {
   imports =
     [ 
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
-      # (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
+      (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
       # (import ../../config/factorio2.nix {inherit lib hostname shared pkgs expr;})
     ];
+
+  services.flatpak.enable = true;
+  xdg.portal = {
+    enable = true;
+    # config = pkgs.xdg-desktop-portal-gtk;
+    extraPortals = [pkgs.xdg-desktop-portal-gtk];
+  };
 
   programs.noisetorch.enable = true;
 
   virtualisation.docker.enable = true;
   virtualisation.docker.storageDriver = "btrfs";
+
+  services.postgresql = {
+    enable = true;
+    package = pkgs.postgresql_14;
+    enableTCPIP = true;
+    authentication = pkgs.lib.mkOverride 10 ''
+      local all all trust
+      host all all 127.0.0.1/32 trust
+      host all all ::1/128 trust
+    '';
+  };
+
+  services.pgadmin.enable = true;
+  services.pgadmin.initialEmail = "foo@bar.com";
+  services.pgadmin.initialPasswordFile = pkgs.writeText "pgadminPW" ''
+            password
+          '';
 
   # todo: look into this
   services.adguardhome.enable = false;
@@ -65,12 +93,28 @@ in
   # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
   networking.firewall.checkReversePath = "loose";
 
+  services.ollama.enable = true;
+  services.ollama.acceleration = "cuda";
+
   environment.wordlist.enable = true;
   environment.systemPackages = sets.fat ++ [expr.proton-ge-custom
                                             pkgs.emacs-unstable
+                                            # nixmox.packages.oomoxFull
+                                            # nixmox.defaultNix
                                            ]
                                ++ (with pkgs; [
-                                 ollama
+
+                                 # python lsp
+                                 pyright
+                                 ruff
+
+                                 eask-cli # emacs linting
+
+
+                                 godef gopls
+
+                                 xvfb-run
+
                                  mpd-mpris
                                  pulseaudio
 
@@ -81,8 +125,11 @@ in
                                  protontricks
                                  (sox.overrideAttrs(old: { enableLame = true;}))
                                  xcolor
+
                                  renpy
+
                                  logseq
+
 
                                  ardour
                                  sass
@@ -94,21 +141,17 @@ in
 
                                  obs-studio
 
-                                 godef gopls
-
                                  farbfeld
 
                                  # audible
                                  babashka
                                  vscode
-                                 yt-dlp
                                  colort
                                  enscript
                                  farbfeld
                                  mgba
                                  slurm
                                  vscode
-
 
                                  html2text
                                  atuin
@@ -117,6 +160,10 @@ in
                                  # qutebrowser
 
                                ]) ++ (with edge; [
+                                 yt-dlp
+                                 google-chrome
+                                 microsoft-edge
+                                 teams-for-linux
                                  discord
                                  nodejs
                                  tailscale
@@ -147,7 +194,9 @@ in
     # Use the open source version of the kernel module (only if using 515.43.04+)
     open = true;
     nvidiaSettings = true; # provide nvidia-settings gui
+
     package = config.boot.kernelPackages.nvidiaPackages.latest;
+
     # package = config.boot.kernelPackages.nvidiaPackages.production;
     # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
   };
@@ -247,11 +296,9 @@ in
 
   networking.extraHosts =
     ''
-    127.0.0.1 www.x.com
-    # 127.0.0.1 bsky.app
-
-    127.0.0.1 www.youtube.com
-    127.0.0.1 youtube.com
+    127.0.0.1 x.com
+    127.0.0.1 bsky.app
+    # 127.0.0.1 www.youtube.com
     127.0.0.1 www.amazon.com
 
     10.1.0.3 andromeda
