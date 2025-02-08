@@ -32,6 +32,9 @@
                             40 41 42 43 44 45 46 5 50 51 54 56 57 58 6 60 62 7
                             72 73 74 76 77 78 8 9 90 94))
 
+          ;; random
+          ;; (apply 'ns/str (-map (lambda (_) (mod (random) 2)) (-iota (display-pixel-width))))
+
           (llet [probs-section (ns/random-list '((50 1 1 1) (1 50 50 50)))
                                probs (--map (ns/random-list probs-section)
                                             (-iota (ns/random-range 2 10)))]
@@ -41,7 +44,8 @@
                                        (-iota (/ (display-pixel-width)
                                                  (length probs))))))
                      (s-join "")
-                     (s-pad-right (display-pixel-width) "0")))))
+                     (s-pad-right (display-pixel-width) "0")))
+          ))
 
 
 (defun ns/awp-cmd (kind colors)
@@ -86,7 +90,9 @@
          awp-file "/tmp/awp.awp"]
 
         (if (string= kind "save")
-            (f-copy awp-file (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp")) )
+            (progn
+              (f-copy awp-file (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp")) )
+              (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp")))
 
           (if (s-contains-p "|" cmd)    ; hack
               (sh cmd)
@@ -101,18 +107,15 @@
           (llet [it (-last-item (-list ,items))]
                 ,f)))
 
+
+(comment
+
+
+ )
+
 (defun ns/approach (i target percent)
   (+ i (* (/ percent 100.0)
           (- target i))))
-
-(comment
- (->> "#000000"
-      (swag (ct-edit-rgb-b it 100))
-      (swag (ct-edit-rgb-r it 100)))
-
- ("#f0f0f0" "#ffb1ea" "#ffa83c")
-
- )
 
 (defun awp-colors ()
   ;; (llet [h (mod (random) 360)
@@ -126,41 +129,54 @@
   ;;                  ;; h s (ns/approach v 100 50)
   ;;                  )
   ;;            (-partition 3)
-  ;;            (-map (-applify 'ct-make-hsv)))
+  ;;            (-map (-applify 'ct-make-hsv))
+  ;;            ;; (-map 'ns/make-border-color)
+  ;;            ;; (-map 'ct-pastel)
+  ;;            )
+
   ;;       ;; (list
   ;;       ;;  (ct-make-hsv h s v)
   ;;       ;;  (ns/make-border-color (ct-make-hsv (- 180 h) s v))
   ;;       ;;  (ct-make-hsv (- 180 h) s v))
   ;;       )
 
+  (->> (list
 
-  (->>
-   (list
-    (myron-get :background)
-    ;; ;; (myron-get :background :weak)
-    ;; (myron-get :background :focused)
-    (ct-pastel (myron-get :assumed))
+        (myron-get :background)
+        ;; ;; (myron-get :background :weak)
+        ;; (myron-get :background :focused)
+        (ct-pastel (myron-get :assumed))
 
-    ;; (ct-pastel (myron-get :primary))
-    ;; (ct-pastel (myron-get :alt))
-    ;; (myron-get :primary)
-    (myron-get :background :weak)
-    ;; (ns/make-border-color (myron-get :primary))
-    ;; (myron-get :background :focused)
-    )
+        ;; (ct-pastel (myron-get :primary))
+        ;; (ct-pastel (myron-get :alt))
+        ;; (myron-get :primary)
 
-   ;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
-   ;; (--map (ct-edit-lch-c it 60))
-   )
+        (myron-get :background :weak)
+        (ct-greaten (ct-pastel (myron-get :assumed :weak)) 10)
 
-  ;; (->>
-  ;;  ;; (myron-get :background)
-  ;;  (ct-pastel (myron-get :primary))
-  ;;  (swag (ct-edit-oklab-a-dec it 20))
-  ;;  ;; (myron-get :background)
-  ;;  (swag (ct-edit-oklab-b-dec it 20))
-  ;;  )
 
+        ;; (myron-get :background :focused)
+        ;; (ct-pastel (myron-get :alt))
+
+        ;; (ns/make-border-color (myron-get :primary))
+        ;; (myron-get :background :focused)
+        )
+
+       ;;      ;; (--map (ct-edit-rgb-r it (lambda (r) (+ r 30))))
+       ;;      ;; (--map (ct-edit-lch-c it 60))
+       ;;      )
+
+       ;; (->>
+       ;;  ;; (myron-get :background)
+       ;;  (ct-pastel (myron-get :primary))
+       ;;  (swag (ct-edit-oklab-a-dec it 20))
+       ;;  ;; (myron-get :background)
+       ;;  (swag (ct-edit-oklab-b-dec it 20))
+       ;;  )
+
+
+
+       )
 
 
   )
@@ -168,5 +184,6 @@
 ;; play here:
 (apply 'ns/awp
        (awp-colors)
+
        (when (boundp 'ns-args)
          ns-args))

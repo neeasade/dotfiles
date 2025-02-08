@@ -38,7 +38,6 @@
   (let* ((prompt (ns/let-script-args (prompt-string) prompt-string)))
     (condition-case ()
 	(ns/pick (concat prompt " ") (->> *stdin-file* f-read (s-split "\n")))
-      ;; if we quit out of the ivy-read just return nothing
       (quit nil))))
 
 (if ns/enable-home-p

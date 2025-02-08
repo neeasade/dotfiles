@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
+# todo: border
+# read full empty < <(elisp -r '(s-join " " (list (-> (myron-get :primary) (ns/make-border-color)) (myron-get :background :weak)))')
+
 percent=${1:-25}
 width=${2:-60}
+
 full=#000000
 empty=#ffffff
+
+full=#e9a4d1
+empty=#d6d7d8
+
 
 read left right < <(bb --eval "(let [[p w] [${percent} ${width}] p (/ p 100)]
     (println (Math/round (double (* p w)))

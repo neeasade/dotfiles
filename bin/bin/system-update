@@ -28,6 +28,8 @@ export NIXPKGS_ALLOW_INSECURE=1
 # sudo nixos-rebuild "${*}"
 # the same as the above:
 cd
-if vdo sudo nixos-rebuild $* --upgrade --show-trace; then
-    vdo nix-env -u
-fi
+
+vdo sudo nixos-rebuild $* --upgrade --show-trace
+
+echo "note: nix-env is fucked"
+# vdo nix-env -u
