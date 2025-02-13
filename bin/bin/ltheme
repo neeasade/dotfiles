@@ -36,6 +36,10 @@ load_zathura() { render zathura .config/zathura/zathurarc -p color.normal ;}
 load_zeal()    { render zeal .config/Zeal/Zeal.conf ;}
 load_rofi()    { render rofi .config/rofi/sometheme.rasi -p color.normal ;}
 
+if $MAC; then
+    load_mpd()     { render mpd .mpd/mpd.conf -p mpd; brew services restart mpd ; }
+fi
+
 load_xresources() {
     render Xresources .Xresources -p color.normal
     has xrdb && xrdb "$HOME/.Xresources"

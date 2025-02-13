@@ -15,7 +15,8 @@
 # music artist deadmau5, long
 
 # musicdir="$HOME/Music"
-musicdir=$(awk -F\" '/music_directory/{print $2}' "$HOME/.config/mpd/mpd.conf")
+musicdir=$(theme -q mpd.music-dir)
+
 current_playlist="${musicdir}/playlist/current"
 
 ### HELPERS/MAINT

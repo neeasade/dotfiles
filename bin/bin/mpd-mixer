@@ -21,7 +21,7 @@
 (def HOME (System/getenv "HOME"))
 
 (def cache-map
-  (->> (string/split (slurp (str HOME "/.config/mpd/database"))
+  (->> (string/split (slurp (str (util/shh "theme -q mpd.mpd-dir") "/database"))
                      #"song_begin:")
        (remove nil?)
        (remove #(= "" (string/trim %)))
@@ -47,9 +47,7 @@
     (first
      (string/split
       (:out
-       (shell/sh "sha256sum"
-                 f
-                 ))
+       (shell/sh "sha256sum" f))
       #" "))))
 
 (defn file-hashdedup []
@@ -330,7 +328,9 @@
                bottom (format
                        ;; "playlist: %s | %s"
                        "%s, %s"
-                       (string/trim (slurp (str HOME "/Music/playlist/current")))
+                       (->> (str (util/shh "theme -q mpd.music-dir") "/playlist/current")
+                            (slurp)
+                            (string/trim))
                        (->> (mpc "playlist")
                             (map #(or (get cache-map (fs/file-name %)) 0))
                             (apply +)

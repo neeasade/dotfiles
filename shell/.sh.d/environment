@@ -207,5 +207,11 @@ if ${NEEASADE_ENV:-true}; then
     alias open=' xdg-open'
   fi
 
+  if test -z "$WORDLIST"; then
+    if test -e /usr/share/dict/words; then
+      WORDLIST=/usr/share/dict/words
+    fi
+  fi
+
   set +a
 fi

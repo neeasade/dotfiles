@@ -8,6 +8,8 @@
 a=a b=b c=c d=d e=e f=f g=g h=h i=i j=j k=k l=l m=m n=n o=o p=p q=q r=r s=s t=t u=u v=v w=w x=x y=y z=z
 semicolon=0x29
 
+backtick=0x32
+
 if [ ! -z "$*" ]; then
     a=a z=b d=c s=d f=e t=f g=g k=h u=i n=j e=k i=l h=m m=n y=o
     semicolon=p
@@ -46,11 +48,14 @@ EOF
 bind {,shift+,alt+}fn-{$h,$n,$e,$l} \
     ~/.wm/scripts/interact/{focus,move,resize}_mac.sh\ {west,south,north,east}
 
+bind fn-${backtick} "mpc toggle"
+
 # bind fn-{$i,$o,$u,$y} \
 #     ~/bin/yabai-dtop-focus\ {1,2,3,4}
 
 bind fn-{$i,$o,$u,$y} \
-     ~/bin/focus_app_mac.sh\ {kitty,qutebrowser,Slack,Chrome}
+     ~/bin/focus_app_mac.sh\ {Emacs,qutebrowser,Discord,Chrome}
+
 
 bind fn-{1,2,3,4} \
     ~/bin/yabai-dtop-focus\ {1,2,3,4}

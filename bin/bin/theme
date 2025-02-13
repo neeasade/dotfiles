@@ -233,9 +233,11 @@
 ;; remove keys ending in '-' from tree
 
 (defn get-theme []
-  (let [;; home? (= "bliss" (.. java.net.InetAddress getLocalHost getHostName))
+  (let [ ;; home? (= "bliss" (.. java.net.InetAddress getLocalHost getHostName))
         home? (= "neeasade" (System/getenv "USER"))
-        work? (not home?)
+        ;; work? (not home?)
+        work? false
+        mactop? (= "macman" (System/getenv "USER"))
 
         backup-colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
                        :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
@@ -272,7 +274,7 @@
 
          :font (fn [_]
                  (->> {:variable {:family "Droid Sans" :size 12}
-                       :variable-big {:family "{{font.variable.family}}" :size 14}
+                       :variable-big {:family "{{font.variable.family}}" :size 16}
                        :mono {:family "Droid Sans Mono" :size 12}
                        :icon {:family "Font Awesome 5 Free" :size 10}
                        :panel {:family "{{font.variable.family}}" :size 14}}
@@ -345,14 +347,16 @@
                  :fade {:enabled false
                         :in-step 0.1
                         :out-step 0.1}}
-         :mpd (when home?
-                (fn [_]
-                  (if (string/includes? (shh "mount")
-                                        (format "%s/usb" (System/getenv "HOME")))
-                    {:music-dir "{{env.HOME}}/usb/Music"
-                     :mpd-dir "{{env.HOME}}/.config/mpd_portable"}
-                    {:music-dir "{{env.HOME}}/Music"
-                     :mpd-dir "{{env.HOME}}/.config/mpd"})))
+         :mpd {:music-dir "/Users/macman/sync/main/music"
+               :mpd-dir "{{env.HOME}}/.mpd"}
+         #_(when home?
+             (fn [_]
+               (if (string/includes? (shh "mount")
+                                     (format "%s/usb" (System/getenv "HOME")))
+                 {:music-dir "{{env.HOME}}/usb/Music"
+                  :mpd-dir "{{env.HOME}}/.config/mpd_portable"}
+                 {:music-dir "{{env.HOME}}/Music"
+                  :mpd-dir "{{env.HOME}}/.config/mpd"})))
          :panel {:height 36
                  ;; :format  "mpd:title|org_task:misc|tags:clock"
 
@@ -385,6 +389,19 @@
                                       (if bold? "True" "False")))
                         })
          }
+
+        mactop-theme (when mactop?
+                       (unflatten-map
+                        {:THEME_NAME "test"
+                         :emacs.theme "myron-mcfay"
+                         :font.mono.family "Go Mono"
+                         :font.mono.size 16
+                         :font.variable.family "Equity B"
+                         :font.variable.size 14
+                         :mkb.bar- "|/_"
+                         :shell.prompt "$"
+                         :x.padding 6}))
+
         home-theme (when home?
                      (unflatten-map
                       {:THEME_NAME "test"
@@ -447,9 +464,9 @@
     ;; and then stomp anything that was rendered by merging again after
     (-> base-conf
         (deep-merge colors)
-        (deep-merge home-theme work-theme)
+        (deep-merge home-theme work-theme mactop-theme)
         exec-fns exec-fns
-        (deep-merge home-theme work-theme))))
+        (deep-merge home-theme work-theme mactop-theme))))
 
 (defn process-theme [theme-tree]
   (as-> theme-tree tree
