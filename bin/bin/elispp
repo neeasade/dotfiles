@@ -15,8 +15,11 @@
 
 (def verbose? nil)
 
+(defn trunc [s n]
+  (subs s 0 (min (count s) n)))
+
 (defn vlog [& xs]
-  (and verbose? (stderr (apply pr-str xs))))
+  (and verbose? (stderr (trunc (apply pr-str xs) 200))))
 
 (defn env-export [env-map]
   (merge (into {} (System/getenv))
@@ -39,10 +42,8 @@
   (System/exit 0))
 
 (defn run-elisp [options lisp extra-args]
-  (let [stdin (when (not (System/console))
-                (string/join "\n" (line-seq (clojure.java.io/reader *in*))))
-        batch? (:batch options)
-        lisp (format "(let ((*stdin* %s)) %s)" (pr-str stdin) lisp)
+  ;; todo: (:window options) -> xvfb run
+  (let [batch? (:batch options)
         cmd (if batch?
               ["emacs" "--batch" "-l" (home ".emacs.d/init.el")]
               ["emacsclient" "--eval" (str lisp)])
@@ -78,21 +79,36 @@
       (System/exit (if (#{"nil" ""} result-raw)
                      1 0)))))
 
-(if (fs/exists? (first *command-line-args*))
-  (let [file (first *command-line-args*)
-        options (some->> (slurp file)
-                         (string/split-lines)
-                         (filter #(string/starts-with? % ";; elisp-opts:"))
-                         (first))
-        script-options {:raw true}]
-    (def verbose? (:verbose options))
-    (run-elisp (and options (merge script-options (:options (cli/parse-opts (string/split (second (string/split options #":")) #" +") cli-options))))
-               (format "(let ((ns-args %s)) (->> %s f-read read eval)" (pr-str (rest *command-line-args*)) (pr-str file))
-               []))
-  (let [{:keys [options errors arguments]} (cli/parse-opts *command-line-args* cli-options)
-        ;; todo: pass extra-args to emacsclient?
-        [lisp & extra-args] arguments]
-    (def verbose? (:verbose options))
-    (run! stderr errors)
-    (when (:help options) (usage))
-    (run-elisp options lisp extra-args)))
+(let [stdin (when (not (System/console))
+              (string/join "\n" (line-seq (clojure.java.io/reader *in*))))
+      stdin-file (cond (nil? stdin) nil
+                       (fs/exists? "/dev/shm/") (str  "/dev/shm"  (int (* (rand) 1000000)))
+                       (fs/exists? "/Volumes/RAMDisk/") (str "/Volumes/RAMDisk/" (int (* (rand) 1000000)))
+                       :else (shh "mktemp"))
+      _ (spit stdin-file stdin)
+      stdin-file-raw (pr-str stdin-file)]
+  (if (fs/exists? (first *command-line-args*))
+    (let [file (first *command-line-args*)
+          options (some->> (slurp file)
+                           (string/split-lines)
+                           (filter #(string/starts-with? % ";; elisp-opts:"))
+                           (first))
+          {:keys [options errors arguments]} (and options (cli/parse-opts (string/split (second (string/split options #":")) #"[ ]+") cli-options))
+          script-options {:raw true}]
+      (def verbose? (:verbose options))
+      (run! stderr errors)
+      (run-elisp (merge script-options options)
+                 (format "(->> %s f-read (format \"(let ((ns-args '%s) (*stdin-file* \\%s\\\")) %%s)\") read eval)"
+                         (pr-str file)
+                         (pr-str (rest *command-line-args*))
+                         (subs stdin-file-raw 0 (dec (count stdin-file-raw))))
+                 []))
+    (let [{:keys [options errors arguments]} (cli/parse-opts *command-line-args* cli-options)
+          ;; todo: pass extra-args to emacsclient?
+          [lisp & extra-args] arguments
+          lisp (format "(let ((*stdin-file* %s)) %s)" stdin-file-raw lisp)]
+      (def verbose? (:verbose options))
+      (run! stderr errors)
+      (when (:help options) (usage))
+      (run-elisp options lisp extra-args)))
+  (and stdin (fs/delete stdin-file)))
