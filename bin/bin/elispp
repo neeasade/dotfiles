@@ -115,7 +115,7 @@
     (let [{:keys [options errors arguments]} (cli/parse-opts *command-line-args* cli-options)
           ;; todo: pass extra-args to emacsclient?
           [lisp & extra-args] arguments
-          lisp (format "(let ((*stdin-file* %s) (default-directory %s) %s)" stdin-file-raw (pr-str cwd) lisp)]
+          lisp (format "(let ((*stdin-file* %s) (default-directory %s)) %s)" stdin-file-raw (pr-str cwd) lisp)]
       (def verbose? (:verbose options))
       (run! stderr errors)
       (when (:help options) (usage))
