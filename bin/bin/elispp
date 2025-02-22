@@ -47,6 +47,7 @@
         cmd (cond batch? ["emacs" "--batch" "-l" (home ".emacs.d/init.el")]
                   window? ["emacs" "--debug-init"]
                   :else ["emacsclient" "--eval" (str lisp)])
+        cmd (vec (concat cmd extra-args))
         timeout (or (:timeout options) 4)
         cmd (if-not (has? "timeout") cmd
                     (vec (apply list "timeout" (str timeout) cmd)))]
@@ -121,9 +122,8 @@
                          (pr-str (rest *command-line-args*))
                          (script-str stdin-file)
                          (script-str cwd))
-                 []))
+                 arguments))
     (let [{:keys [options errors arguments]} (cli/parse-opts *command-line-args* cli-options)
-          ;; todo: pass extra-args to emacsclient?
           [lisp & extra-args] arguments
           lisp (format "(let ((*stdin-file* %s) (default-directory %s)) %s)" stdin-file-raw (pr-str cwd) lisp)]
       (def verbose? (:verbose options))
