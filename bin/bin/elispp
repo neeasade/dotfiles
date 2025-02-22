@@ -42,11 +42,11 @@
   (System/exit 0))
 
 (defn run-elisp [options lisp extra-args]
-  ;; todo: (:window options) -> xvfb run
   (let [batch? (:batch options)
-        cmd (if batch?
-              ["emacs" "--batch" "-l" (home ".emacs.d/init.el")]
-              ["emacsclient" "--eval" (str lisp)])
+        window? (:window options)
+        cmd (cond batch? ["emacs" "--batch" "-l" (home ".emacs.d/init.el")]
+                  window? ["emacs" "--debug-init"]
+                  :else ["emacsclient" "--eval" (str lisp)])
         timeout (or (:timeout options) 4)
         cmd (if-not (has? "timeout") cmd
                     (vec (apply list "timeout" (str timeout) cmd)))]
@@ -55,12 +55,20 @@
     (let [result-cmd (eval `(shell/sh ~@cmd
                                       :env ~(env-export
                                              (merge {}
-                                                    (and batch? {"NS_EMACS_BATCH" lisp})
-                                                    (and (:window options) {"NS_REDIR_LOG" "true"})))))
+                                                    (when (or batch? window?) {"NS_EMACS_BATCH" lisp})
+                                                    (and window? {"NS_REDIR_LOG" "true"})))))
           result (if (= 124 (:exit result-cmd))
                    "TIMED_OUT"
-                   (if batch? (:err result-cmd)
-                       (:out result-cmd)))
+                   (if-not (or batch? window?)
+                     (:out result-cmd)
+                     (->> (:err result-cmd)
+                          (string/split-lines)
+                          (keep (fn [line]
+                                  (when-not (string/blank? line)
+                                    (if (string/starts-with? line "\"")
+                                      (subs line 1 (dec (count line)))
+                                      line))))
+                          (string/join "\n"))))
 
           result-raw (if-not batch? (string/trim result)
                              (->> result
@@ -68,9 +76,11 @@
                                   (drop-while (complement #{"COOL_DELIMITER"}))
                                   (rest)
                                   (string/join "\n")))
-          result-raw (if (#{\" \(} (first result-raw))
-                       (subs result-raw 1 (dec (count result-raw)))
-                       result-raw)]
+          result-raw (condp = (first result-raw)
+                       \" (read-string result)
+                       \( (subs result-raw 1 (dec (count result-raw)))
+                       result-raw)
+          ]
       (vlog "result: " result-cmd)
       (when-not (:quiet options)
         (println (if (:raw options)
