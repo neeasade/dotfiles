@@ -268,7 +268,7 @@
                            (get-in ["rectangle" "width"])))
           }
 
-         :css-fallback (->> ["Noto Color Emoji" "Noto Sans Symbols"]
+         :css-fallback (->> ["Noto Color Emoji" "Noto Sans Symbols" "Symbola"]
                             (map (partial format "\"%s\""))
                             (string/join ", " ))
 
