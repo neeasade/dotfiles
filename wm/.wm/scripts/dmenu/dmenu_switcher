@@ -179,16 +179,17 @@ add_metas() {
     add_switch "meta: steam" "find_steam"
     add_switch "meta: pavucontrol" "find_pavucontrol"
 
+    bt_ident="80:99:E7:4A:F8:23" # wh-1000xm4
+
     toggle_bluetooth() {
-	if pacmd list-sinks | grep description | grep -q WH-1000XM3; then
-	    bluetoothctl disconnect 14:3F:A6:90:E2:34
+	if pactl list short sinks | grep "$(tr : _ <<< "$bt_ident")"; then
+	    bluetoothctl disconnect "$bt_ident"
 	else
-	    bluetoothctl connect 14:3F:A6:90:E2:34 &
+	    bluetoothctl connect "$bt_ident" &
 	    sleep 2
 	    check_headphones
 	fi
     }
-
 
     goto_qutebrowser() {
 	if ! pgrep qutebrowser; then
@@ -201,8 +202,8 @@ add_metas() {
 
     # todo: add meta: qutebrowser
 
-    add_switch "meta: connect bluetooth" "bluetoothctl connect 14:3F:A6:90:E2:34; sleep 2 && check_headphones"
-    add_switch "meta: disconnect bluetooth" "bluetoothctl disconnect 14:3F:A6:90:E2:34"
+    add_switch "meta: connect bluetooth" "bluetoothctl connect $bt_ident; sleep 2 && check_headphones"
+    add_switch "meta: disconnect bluetooth" "bluetoothctl disconnect $bt_ident"
     add_switch "meta: toggle bluetooth" "toggle_bluetooth"
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
     add_switch "meta: short break" "elisp '(ns/org-pomodoro-short-break)'"
