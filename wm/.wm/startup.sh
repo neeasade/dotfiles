@@ -12,7 +12,7 @@ if ! lsusb | grep -q Keyboard; then
   systemctl --user disable panel
   systemctl --user stop panel
   # launch steam -bigpicture
-  gapt false 0
+  gapt false
 
   bash -ic 'scu-restart unclutter' &
 
