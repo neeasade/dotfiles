@@ -74,7 +74,7 @@ super + shift + slash
     panelt
 
 super + slash
-    gapt; fullscreen_toggle.sh handle_bd
+    gapt
 
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
@@ -153,8 +153,8 @@ super + d
 super + {_,shift,control} + {i,o,u,y}
     btags {focus,set-tag-on-wids,show-only} ^{1,2,3,4}
 
-super + {_,shift,control} + {1-4}
-    btags {focus,set-tag-on-wids,show-only} ^{1-4}
+super + {_,shift,control} + {1-7}
+    btags {focus,set-tag-on-wids,show-only} ^{1-7}
 
 ##############
 # workspaces #

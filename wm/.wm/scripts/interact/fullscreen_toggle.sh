@@ -7,8 +7,6 @@
 gapped=$(iif '[ $(bspc config window_gap) -gt 0 ]')
 
 handle_bd() {
-
-
   # new thinking: floating at the side
   # should be a little column of floaters
   if ! bspc query -N -n '.floating.!hidden'; then
@@ -19,15 +17,24 @@ handle_bd() {
   #   return;
   # fi
 
-  p=$(bspc config left_padding)
-  bspc config left_padding "$(( $(bspc config left_padding) + 450 ))"
+  # p=$(bspc config left_padding)
+  # bspc config left_padding "$(( $(bspc config left_padding) + 450))"
 
   read X Y W H <<< "20 100 390 1000"
-  wid=$(bspc query -N -n '.floating.!hidden' | head -n 1)
+
+  # bspc config left_padding "$(( $(bspc config left_padding) + 450))"
+
+  if $gapped; then
+    bspc config left_padding "$((W))"
+  else
+    bspc config left_padding "$((W + X + 40))"
+  fi
 
   # this should act for all windows oopsie
   if [ "$(bspc query -T -n 'any.floating.!hidden' | jq .client.floatingRectangle.width)" -gt $W ]; then
     notify-send  -u low "hit!"
+
+    wid=$(bspc query -N -n '.floating.!hidden' | head -n 1)
     xdotool windowmove $wid $X $Y
     xdotool windowsize $wid $W $H
   fi
@@ -37,34 +44,17 @@ do_monocle_full() {
   bspc query -N -n focused.fullscreen && \
     bspc node -t ~fullscreen
 
-  # what are we looking at?
-  window_class=$(xprop -id $(bspc query -N -n) | awk -F \" '/WM_CLASS/{print $4}')
-
-  pad_list='Emacs
-qutebrowser
-libreoffice
-kitty'
-
   # bspc config left_monocle_padding 0
   # bspc config right_monocle_padding 0
   # bspc desktop -l monocle
 
-  # if echo "$pad_list" | grep -q "$window_class"; then
-  if true; then
-
-    bspc config left_monocle_padding 0
-    bspc config right_monocle_padding 0
-    bspc desktop -l monocle
-
-    # gapt $gapped
-  else
-    bspc node -t fullscreen
-    # gapt false 0
-  fi
-
   if [ "$before" = "monocle_slim" ]; then
     handle_bd
   fi
+
+  bspc config left_monocle_padding 0
+  bspc config right_monocle_padding 0
+  bspc desktop -l monocle
 }
 
 do_monocle_slim() {
@@ -99,10 +89,11 @@ do_tiled() {
   bspc query -N -n focused.fullscreen \
     && bspc node -t ~fullscreen
 
-  bspc desktop -l tiled
-  gapt $gapped
-
   handle_bd
+  bspc config left_monocle_padding 0
+  bspc config right_monocle_padding 0
+  gapt $gapped
+  bspc desktop -l tiled
 }
 
 do_same() {

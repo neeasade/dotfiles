@@ -2,7 +2,6 @@
 # toggle gaps on and off
 
 want_gaps=$1
-pad_px=$2
 
 if [ -z "$want_gaps" ]; then
     # opposite of current status
@@ -14,6 +13,7 @@ if [ -z "$want_gaps" ]; then
 fi
 
 eval "$(theme -f "panel.height,x.padding,bspwm.border-width,bspwm.window-gap" -s)"
+
 c() {
     echo bspc config "$@"
     bspc config "$@" &
@@ -22,7 +22,15 @@ c() {
 padding() {
     pad=$1
 
-    c left_padding $pad
+    # doubling check
+    if [ "$(bspc config left_monocle_padding)" -gt 0 ]; then
+	c left_padding $pad
+    else
+	if ! bspc query -N -n '.floating.!hidden'; then
+	    c left_padding $pad
+	fi
+    fi
+
     c right_padding $pad
     c bottom_padding $pad
 
@@ -39,6 +47,8 @@ if $want_gaps; then
     padding 0
     c borderless_monocle false
 else
+    pad_px=0
+
     set_monocle=false
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	if [ "$(bspc config left_monocle_padding)" = 0 ]; then
