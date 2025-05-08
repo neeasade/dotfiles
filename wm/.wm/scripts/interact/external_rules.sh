@@ -70,4 +70,8 @@ fi
 
 echo split_dir=$split_dir
 
-echo state=tiled
+if echo "$class_name" | grep -i runelite; then
+  echo state=floating
+else
+  echo state=tiled
+fi
