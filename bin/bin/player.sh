@@ -4,7 +4,21 @@
 (ns player.sh
   (:require [clojure.string :as string]
             [clojure.java.shell :as shell]
-            [lib.util :refer [sh shh]]))
+            [lib.util :refer [sh shh has? stderr]]))
+
+(when (string/includes? (sh "uname -a") "Darwin")
+  ;; we're on mac, do something totally different
+  (when-not (has? "nowplaying-cli")
+    (stderr "install nowplaying-cli for mac functionality")
+    (System/exit 1))
+
+  (if (= "(null)" (shh "nowplaying-cli get-raw"))
+    (apply sh "mpc" *command-line-args*)
+    (do (shh "mpc pause")
+        (if (= "toggle" (first *command-line-args*))
+          (shh "nowplaying-cli togglePlayPause")
+          (apply sh "nowplay-cli" *command-line-args*))))
+  (System/exit 0))
 
 (defn get-players []
   ;; player shape: [:name playing?]

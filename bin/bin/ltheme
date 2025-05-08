@@ -38,6 +38,10 @@ load_rofi()    { render rofi .config/rofi/sometheme.rasi -p color.normal ;}
 
 if $MAC; then
     load_mpd()     { render mpd .mpd/mpd.conf -p mpd; brew services restart mpd ; }
+    load_kitty() {
+	render kitty .config/kitty/kitty.conf -p color.normal
+	kill -s SIGUSR1 $(pgrep -a kitty)
+    }
 fi
 
 load_xresources() {

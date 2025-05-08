@@ -6,6 +6,12 @@ task() {
   fi
 }
 
+grab() {
+  full=$(realpath "$@")
+  printf '%s' "$full" | pbcopy
+  printf '%s\n' "$full" | tee -a "$XDG_CACHE_HOME/grabs"
+}
+
 fontlist() {
   fc-list | sed 's/[^:]*: //' | fzf
 }
@@ -548,10 +554,9 @@ barstuff() {
     fi
   }
 
-  barlaunch MeetingBar
-  barlaunch xbar
-  barlaunch skhd
-  barlaunch stayon
+  for x in xbar skhd; do
+    barlaunch $x
+  done
 }
 
 aawp() {

@@ -2,6 +2,17 @@
   (:require [clojure.string :as string]
             [clojure.java.shell :as shell]))
 
+;; todo: add the time macro here used in elisp
+
+(defn stderr
+  "println to stderr"
+  [s]
+  (binding [*out* *err*]
+    (println s )))
+
+(defn home [path]
+  (str (System/getenv "HOME") "/" path))
+
 (defn sh
   ([cmd] (->> (shell/sh "bash" "-c" cmd)
               (:out)
@@ -12,13 +23,14 @@
         (string/split-lines))))
 
 (defn shh [& args]
+  ;; todo: nil pun?
   (first (apply sh args)))
-
-(defn home [path]
-  (str (System/getenv "HOME") "/" path))
 
 (defn dmenu [lines]
   (shh "dmenu" :in (string/join "\n" (map str lines))))
+
+(defn has? [executable]
+  (not (string/blank? (shh "which" executable))))
 
 (defn txtw [s]
   (int (if (System/getenv "ESHELL")

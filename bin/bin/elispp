@@ -5,6 +5,7 @@
 
 (ns elisp
   (:require [babashka.fs :as fs]
+            [babashka.process :as p]
             [clojure.string :as string]
             [clojure.tools.cli :as cli]
             [clojure.java.shell :as shell]
@@ -75,19 +76,21 @@
                           (string/join "\n"))))
           err? (string/includes? (:err result-cmd) "*ERROR*")
 
-          result-raw (if-not batch? (string/trim result)
-                             (->> result
-                                  (string/split-lines)
-                                  (drop-while (complement #{"COOL_DELIMITER"}))
-                                  (rest)
-
-                                  (string/join "\n")))
+          result-raw (if ( "nil" result)
+                       ""
+                       (if-not batch? (string/trim result)
+                               (->> result
+                                    (string/split-lines)
+                                    (drop-while (complement #{"COOL_DELIMITER"}))
+                                    (rest)
+                                    (string/join "\n"))))
           result-raw (condp = (first result-raw)
                        \" (read-string result)
                        \( (subs result-raw 1 (dec (count result-raw)))
                        result-raw)
           ]
       (vlog "result: " result-cmd)
+      ;; (println "arst" options result-raw result)
       (when-not (:quiet options)
         (println (if (:raw options)
                    result-raw
@@ -103,7 +106,18 @@
       (format "\\%s\\\"" (subs pr 0 (dec (count pr)))))
     (pr-str s)))
 
-(let [stdin (when (not (System/console))
+;; cf https://github.com/thiagokokada/babashka/blob/master/examples/is_tty.clj
+(defn- is-tty
+  [fd key]
+  (-> ["test" "-t" (str fd)]
+      (p/process {key :inherit :env {}})
+      deref
+      :exit
+      (= 0)))
+
+(defn in-is-tty? [] (is-tty 0 :in))
+
+(let [stdin (when-not (in-is-tty?)
               (string/join "\n" (line-seq (clojure.java.io/reader *in*))))
       stdin-file (cond (nil? stdin) nil
                        (fs/exists? "/dev/shm/") (str  "/dev/shm"  (int (* (rand) 1000000)))
@@ -121,6 +135,7 @@
             {:keys [options errors arguments]} (and options (cli/parse-opts (string/split (second (string/split options #":")) #"[ ]+") cli-options))
             script-options {:raw true :timeout 30}]
         (def verbose? (:verbose options))
+        (def verbose? true)
         (run! stderr errors)
         (run-elisp (merge script-options options)
                    (format "(->> %s f-read (format \"(let ((ns-args '%s) (*stdin-file* %s) (default-directory %s)) %%s)\") read eval)"

@@ -132,6 +132,10 @@ add_metas() {
 	fi
     }
 
+    grabs() {
+	dmenu < "$XDG_CACHE_HOME/grabs" | pbcopy
+    }
+
     dmenu_exec() {
 	save_file="$HOME/.dmenu_exec_history"
 	choice=$(cat "$save_file" | sort | uniq | dmenu)

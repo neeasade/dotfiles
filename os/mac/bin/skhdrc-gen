@@ -48,13 +48,18 @@ EOF
 bind {,shift+,alt+}fn-{$h,$n,$e,$l} \
     ~/.wm/scripts/interact/{focus,move,resize}_mac.sh\ {west,south,north,east}
 
-bind fn-${backtick} "mpc toggle"
+bind fn-${backtick} "player.sh toggle"
 
 # bind fn-{$i,$o,$u,$y} \
 #     ~/bin/yabai-dtop-focus\ {1,2,3,4}
 
 bind fn-{$i,$o,$u,$y} \
-     ~/bin/focus_app_mac.sh\ {Emacs,qutebrowser,Discord,Chrome}
+     ~/bin/focus_app_mac.sh\ {kitty,qutebrowser,Discord,Chrome}
+
+
+# 0x4c == return
+# bind fn-0x4C '(~/bin/elisp "(ns/spawn-terminal)" || $TERMINAL); ~/bin/yabai-ensure-focus'
+bind fn-0x4C ~/bin/focus_app_mac.sh\ Emacs
 
 
 bind fn-{1,2,3,4} \
@@ -73,7 +78,6 @@ bind fn-{0x1B,0x18} ~/bin/macos-vol\ {subtract,add}\ 5
 
 bind {,shift+}fn-$semicolon 'yabai -m space '{'--rotate 90',--balance}
 
-bind fn-0x4C '(~/bin/elisp "(ns/spawn-terminal)" || $TERMINAL); ~/bin/yabai-ensure-focus'
 
 bind fn-$f ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh
 bind fn-$t 'SLIM=t ~/.dotfiles/wm/.wm/scripts/interact/fullscreen_toggle_mac.sh'
