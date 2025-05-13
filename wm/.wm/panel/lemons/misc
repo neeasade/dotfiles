@@ -23,20 +23,19 @@ check_disk_space() {
     if ! elisp -q '(eq org-pomodoro-state :pomodoro)'; then
 	# this takes awhile b/c batch (~3 secs)
 	elisp -br "(ns/conf-core) (ns/make-lines (-filter 'stringp (list (ns/org-status-outdated) (ns/org-status-scheduled))))"
+	# . ~/.panel_extra
     else
-	elisp -br "(ns/conf-core) (ns/make-lines (-filter 'stringp (list (ns/org-status-scheduled))))"
+	elisp -br "(ns/conf-core) (ns/make-lines (-filter 'stringp (list (ns/org-status-scheduled 15))))"
     fi
 
     # elisp -r '(when-let (unread-dms (ns/circe-unread-query-buffers))
     # 	(format "DMs: %s" (length unread-dms)))'
 
-    check_disk_space
+    # check_disk_space
 
     if pgrep obs >/dev/null; then
 	echo "OBS OPEN"
     fi
-
-    . ~/.panel_extra
 
     # cache_output 30 elisp -r '(- ns/org-casual-timelimit (ns/with-notes (ns/org-check-casual-time-today)))'
 ) | awk NF | tr '\n' '^' | sed 's/.$//' | sed 's/\^/ • /g'

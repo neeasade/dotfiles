@@ -3,8 +3,9 @@
 let
   # to see latest version:
   # https://factorio.com/get-download/stable/headless/linux64
-  version = "1.1.94";
-  game = "Ilium";
+  version = "1.1.109";
+  # game = "Ilium";
+  game = "Castia"; # kings of the wyld
 in {
   services.factorio = {
     enable = true;
@@ -12,15 +13,21 @@ in {
     game-name = game;
     saveName = game; # nb: save game location is /var/lib/factorio/saves/<saveName>.zip
 
+    # minutes
+    autosave-interval = 20;
+
     # admins = lib.splitString "\n" (builtins.readFile (shared.home + "factorio.admins"));
-    admins = [ ];
-    game-password = builtins.readFile (shared.home + "factorio.pass");
+    admins = [ "colorblindm8" "neeasade" "Xpod78" ];
+    game-password = "planet";
+
+    # game-password = builtins.readFile (shared.home + "factorio.pass");
 
     mods =
       let
         inherit (pkgs) lib;
 
-        modDir = /home/neeasade/factorio-mods;
+        # modDir = /home/neeasade/factorio-mods;
+        modDir = /home/neeasade/factorio-mods2;
 
         # couldn't get this to work:
         # modDir = builtins.toPath (shared.home + "factorio-mods");
@@ -57,7 +64,7 @@ in {
       src = pkgs.fetchurl {
         url = "https://factorio.com/get-download/${version}/headless/linux64";
         name = "factorio-headless-${version}.tar.xz";
-        sha256 = "96289caf52d1c7b15eb95be54104c69d41752b345c6fdc6b984a7cdb06425a2a";
+        sha256 = "105a38533c916fe66e2fb2b9fe8f93c116568047a20c4daa74632072c077bf3f";
       };
     });
   };

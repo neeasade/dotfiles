@@ -155,6 +155,8 @@ let
     ### GAMES
     brogue-ce
 
+    dosbox-x
+
     (crawl.override {tileMode = true;})
     nethack
 

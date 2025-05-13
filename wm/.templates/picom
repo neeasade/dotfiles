@@ -31,6 +31,7 @@ fade-out-step = {{fade.out-step}};
 fade-exclude = [ ];
 
 backend = "glx"
+# backend = "xrender"
 
 ## Extras
 # use-ewmh-active-win = false;

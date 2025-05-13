@@ -6,11 +6,23 @@ if ! mount | grep -q "$kobo"; then
     exit 0
 fi
 
-library='/media/sidecar/library/'
+. ~/.sh.d/environment
+
+# bad name - more like "plato content"
+library='/media/sidecar/kobo/'
 
 notify-send -u low "Syncing kobo library"
 
-echo rsync -a -v --checksum --delete "${library}" "${kobo}/library/books/"
-rsync -a -v --size-only --delete "${library}" "${kobo}/library/books/"
+# this is like, first time setup only
+# vdo rsync -a -v --size-only "${library}" "${kobo}"
+
+# so we can move around things in the library folder on $HOME and have that reflected in the kobo
+vdo mkdir -p "${kobo}/library"
+vdo rsync -a -v --size-only --exclude=".*" --delete "${library}/library" "${kobo}/library"
+
+mkdir -p ~/.cache/plato
+vdo cp -r "${kobo}/library/.metadata.json" ~/.cache/plato/
+vdo cp -r "${kobo}/library/.reading-states" ~/.cache/plato/
+
 udiskie-umount "$kobo"
 notify-send "Finished syncing kobo library"

@@ -268,7 +268,10 @@
                            (get-in ["rectangle" "width"])))
           }
 
-         :css-fallback (->> ["Noto Color Emoji" "Noto Sans Symbols" "Symbola"]
+         :css-fallback (->> ["Noto Color Emoji"
+                             "Noto Sans Symbols"
+                             "Symbola"
+                             "Material Icons"]
                             (map (partial format "\"%s\""))
                             (string/join ", " ))
 
@@ -347,8 +350,10 @@
                  :fade {:enabled false
                         :in-step 0.1
                         :out-step 0.1}}
-         :mpd {:music-dir "/Users/macman/sync/main/music"
-               :mpd-dir "{{env.HOME}}/.mpd"}
+         :mpd {
+               :mpd-dir "{{env.HOME}}/.config/mpd"
+               :music-dir "{{env.HOME}}/Music"
+               }
          #_(when home?
              (fn [_]
                (if (string/includes? (shh "mount")
@@ -393,6 +398,7 @@
         mactop-theme (when mactop?
                        (unflatten-map
                         {:THEME_NAME "test"
+                         :mpd.music-dir "/Users/macman/sync/main/music"
                          :emacs.theme "myron-mcfay"
                          :font.mono.family "Go Mono"
                          :font.mono.size 16

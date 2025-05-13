@@ -154,7 +154,17 @@ in
                                  vscode
 
                                  html2text
+
                                  atuin
+                                 # broken
+                                 # (atuin.overrideAttrs(old: {
+                                 #   # cargoHash = lib.fakeSha256;
+                                 #   cargoHash = "sha256-a538b8975814ac51868e41e4004e583e0121aceb64800dcf402b3975f2ddbcb8";
+                                 #   src = builtins.fetchGit {
+                                 #     url = "https://github.com/atuinsh/atuin";
+                                 #     ref = "main";
+                                 #   };
+                                 # }))
 
                                  eww
                                  # qutebrowser
@@ -178,19 +188,19 @@ in
   fonts.packages = sets.fonts-all;
 
   # bleeding edge
-  # boot.kernelPackages = edge-packages;
-  # nixpkgs.config.packageOverrides = pkgs: {
-  #   # swap out all of the linux packages
-  #   linuxPackages_latest = edge-packages;
-  #   nvidia_x11 = edge.nvidia_x11;
-  # };
+  boot.kernelPackages = edge-packages;
+  nixpkgs.config.packageOverrides = pkgs: {
+    # swap out all of the linux packages
+    linuxPackages_latest = edge-packages;
+    nvidia_x11 = edge.nvidia_x11;
+  };
 
   # comment out to use nouvea
   services.xserver.videoDrivers = ["nvidia"];
 
   hardware.nvidia = {
     # Modesetting is needed for most wayland compositors
-    modesetting.enable = false;
+    modesetting.enable = true;
     # Use the open source version of the kernel module (only if using 515.43.04+)
     open = true;
     nvidiaSettings = true; # provide nvidia-settings gui
@@ -204,7 +214,8 @@ in
   # environment.sessionVariables.STEAM_EXTRA_COMPAT_TOOLS_PATHS = expr.proton-ge-custom;
 
   programs.steam.enable = true;
-  programs.steam.package = edge.steam;
+  # programs.steam.package = edge.steam;
+  programs.steam.package = pkgs.steam;
 
   # programs.steam.package = (pkgs.steam.override {
   #   extraPkgs = (pkgs:  [ pkgs.openssl_1_1 ]);
@@ -235,14 +246,17 @@ in
   networking.wireguard.interfaces = {
     wg0 = {
       privateKeyFile = "/home/neeasade/wireguard-lazr.conf";
-      ips = [ "10.1.1.9/32" ];
+      # ips = [ "10.1.1.9/32" ];
+      ips = [ "10.1.1.9/16" ];
       peers = [{
           endpoint = "lazr.space:51820";
           publicKey = "WQ1QP2aUQrR5o1cwS7lip4oRjxMCquFaMW7ZQynsGkc=";
           persistentKeepalive = 25;
           # route traffic on these subnets through wg0:
-          allowedIPs = ["10.1.0.0/24" # one of lazr's machines
-                        "10.1.1.0/24" # user
+          allowedIPs = [
+            # "10.1.0.0/24"
+            "10.1.0.1/16" # one of lazr's machines
+                        # "10.1.1.0/24" # user
                         # "0.0.0.0/0" # to route all trafic through this (lazr: "please do not do this")
                        ];
         }];
@@ -298,8 +312,9 @@ in
     ''
     127.0.0.1 x.com
     127.0.0.1 bsky.app
-    # 127.0.0.1 www.youtube.com
-    127.0.0.1 www.amazon.com
+    127.0.0.1 www.youtube.com
+    127.0.0.1 www.hulu.com
+    # 127.0.0.1 www.amazon.com
 
     10.1.0.3 andromeda
   '';

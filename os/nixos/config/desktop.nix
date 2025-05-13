@@ -17,7 +17,19 @@
     # drivers = [ pkgs.gutenprint];
   };
 
-  hardware.bluetooth.enable = true;
+  # hardware.bluetooth.enable = true;
+ hardware.bluetooth = {
+    enable = true;
+    settings = {
+      General = {
+        Experimental = "true";
+      };
+      Policy = {
+        AutoEnable = "true";
+      };
+    };
+  };
+
   services.blueman.enable = true;
   # hardware.bluetooth.hsphfpd.enable = true;
 

@@ -118,8 +118,7 @@ auto() {
 # color 18 30
 # color 6 4
 # color 2 2
-# auto
-
+auto
 
 echo "$target"
 
@@ -145,7 +144,8 @@ comment() {
 #     vdo magick /tmp/result.png -resize 200% /tmp/result.png
 # fi
 
-vdo magick /tmp/result.png -resize 300% /tmp/result.png
+# vdo magick /tmp/result.png -resize 300% /tmp/result.png
+vdo magick /tmp/result.png -resize 150% /tmp/result.png
 
 # feh --bg-tile /tmp/result.png
 

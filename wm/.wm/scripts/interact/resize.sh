@@ -2,6 +2,7 @@
 # depends on: jq, bc, bspc
 # resize windows or groups of windows in bspwm.
 # (percent of current monitor resolution to resize)
+
 percent=5
 dir=$1
 
