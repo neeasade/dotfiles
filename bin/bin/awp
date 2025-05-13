@@ -44,19 +44,19 @@
                                        (-iota (/ (display-pixel-width)
                                                  (length probs))))))
                      (s-join "")
-                     (s-pad-right (display-pixel-width) "0")))
-          ))
+                     (s-pad-right (display-pixel-width) "0")))))
 
 
 (defun ns/awp-cmd (kind colors)
   (if (and kind (f-exists-p kind))
-      ;; we got an awp file! the format is (command (colors))
-      (llet [(rcmd rcolors) (read (second (s-lines (slurp kind))))]
-            (list rcmd colors))
+      ;; we got an awp file! the format is (command (colors) pipe-command)
+      (llet [(rcmd rcolors rpipe-command) (read (s-join "\n" (drop 1 (s-lines (slurp kind)))))]
+            (list rcmd colors rpipe-command))
     ;; nominal case:
     (llet [(c1 c2 c3) colors
            kind (if (string= kind "nil") nil kind)
            kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
+           elementary? (string= kind "elementary")
            bin (format (~ "code/automata/c/%s/bin/%s") kind kind)
 
            f (ns/random-list '(10 25 50 100))
@@ -68,50 +68,41 @@
            ;; o (ns/random-list '(32 64 96 128 256))
            ;; w o h o                   ; woho!!!
            i (ns/random-range 30 550)
-           seed (floor (ts-unix (ts-now)))
-           angle (mod (random) 360)]
+           seed (floor (ts-unix (ts-now)))]
 
-          (list
-           (if (string= kind "elementary")
-               (format "%s | ffeh /tmp/awp.png" (ns/awp-elementary-cmd))
-             (s-lex-format "${bin} -w ${w} -h ${h} -i ${i} -r ${seed} | tiletilt - ${angle}")
-             ;; (s-lex-format "${bin} -w ${w} -h ${h} -i ${i} -r ${seed} | ffeh /tmp/awp.png")
-             )
-
-           colors
-           ;; (cond
-           ;;   ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
-           ;;   (t colors))
-           ))))
+          (list (if elementary? (ns/awp-elementary-cmd)
+                  (s-lex-format "${bin} -w ${w} -h ${h} -i ${i} -r ${seed}"))
+                (cond
+                  ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
+                  (t colors))
+                (if elementary? "ffeh"
+                  (if (= 1 (random 2))
+                      "ffeh"
+                    (format "tiletilt - %s" (random 360))))))))
 
 (defun ns/awp (colors-in &optional kind)
-  (llet [(cmd (c1 c2 c3)) (ns/awp-cmd kind colors-in)
+  (llet [(cmd (c1 c2 c3) bg-command) (ns/awp-cmd kind colors-in)
+         bg-command (or bg-command "ffeh")
+         _ (message cmd)
+         ;; _ (message c1 c2 c3)
          process-environment (ns/awp-color-env colors-in)
          awp-file "/tmp/awp.awp"]
 
         (if (string= kind "save")
-            (progn
-              (f-copy awp-file (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp")) )
-              (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp")))
-
-          (if (s-contains-p "|" cmd)    ; hack
-              (sh cmd)
-            (sh (concat cmd "| ffeh /tmp/awp.png")))
-          (spit awp-file (format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3)))))
-          (sh "chmod +x %s" awp-file)
-
-          (ns/make-lines (list (s-truncate 80 (s-replace (format (~ "code/automata/c/%s/bin/") kind) "" cmd)))))))
+            (llet [dest (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp"))]
+                  (f-copy awp-file dest)
+                  dest)
+          ;; ok:
+          (spit awp-file (format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3) bg-command))))
+          (sh (format "chmod +x %s" awp-file))
+          (sh (ns/str cmd "| " bg-command))
+          (ns/make-lines (list (s-truncate 80 (-last-item (s-split "/" cmd)))
+                               bg-command)))))
 
 (defmacro swag (f items)
   `(-snoc (-list ,items)
           (llet [it (-last-item (-list ,items))]
                 ,f)))
-
-
-(comment
-
-
- )
 
 (defun ns/approach (i target percent)
   (+ i (* (/ percent 100.0)
@@ -154,7 +145,6 @@
         (myron-get :background :weak)
         (ct-greaten (ct-pastel (myron-get :assumed :weak)) 10)
 
-
         ;; (myron-get :background :focused)
         ;; (ct-pastel (myron-get :alt))
 
@@ -173,17 +163,17 @@
        ;;  ;; (myron-get :background)
        ;;  (swag (ct-edit-oklab-b-dec it 20))
        ;;  )
+       ))
 
+(comment
+ (apply 'ns/awp
+        (awp-colors)
+        ;; *command-line-args*
+        (list "disease")
+        )
 
+ )
 
-       )
-
-
-  )
-
-;; play here:
 (apply 'ns/awp
        (awp-colors)
-
-       (when (boundp 'ns-args)
-         ns-args))
+       *command-line-args*)
