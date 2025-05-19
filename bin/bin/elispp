@@ -36,10 +36,6 @@
 (defn vlog [& xs]
   (and verbose? (stderr (trunc (apply pr-str xs) 200))))
 
-(defn env-export [env-map]
-  (merge (into {} (System/getenv))
-         env-map))
-
 (defn usage []
   (->> cli-options
        (map #(string/join " " (take 3 %)))
@@ -47,27 +43,26 @@
        (println))
   (System/exit 0))
 
+;; <2025-05-19 Mon 13:36> can't remember what the thought was with extra-args, it just breaks things
 (defn run-elisp [options lisp extra-args]
   (let [batch? (:batch options)
         window? (:window options)
         cmd (cond batch? ["emacs" "--batch" "-l" (home ".emacs.d/init.el")]
                   window? ["emacs" "--debug-init"]
                   :else ["emacsclient" "--eval" (str lisp)])
-        cmd (vec (concat cmd extra-args))
+        ;; cmd (vec (concat cmd extra-args))
         timeout (or (:timeout options) 4)
         cmd (if-not (has? "timeout") cmd
                     (vec (apply list "timeout" (str timeout) cmd)))]
     (vlog "options:" options)
     (vlog "cmd:" cmd)
     (vlog "lisp (next-line):")
-    (when verbose?
-      (println lisp))
+    (when verbose? (stderr lisp))
     ;; (println cmd)
     (let [result-cmd (eval `(shell/sh ~@cmd
-                                      :env ~(env-export
-                                             (merge {}
-                                                    (when (or batch? window?) {"NS_EMACS_BATCH" lisp})
-                                                    (and window? {"NS_REDIR_LOG" "true"})))))
+                                      :env ~(merge (into {} (System/getenv))
+                                                   (and (or batch? window?) {"NS_EMACS_BATCH" lisp})
+                                                   (and window? {"NS_REDIR_LOG" "true"}))))
           result (if (= 124 (:exit result-cmd))
                    "TIMED_OUT"
                    (if-not (or batch? window?)
@@ -139,7 +134,10 @@
                              (string/split-lines)
                              (filter #(string/starts-with? % ";; elisp-opts:"))
                              (first))
-            {:keys [options errors arguments]} (and options (cli/parse-opts (string/split (second (string/split options #":")) #"[ ]+") cli-options))
+            {:keys [options errors arguments]} (and options
+                                                    (cli/parse-opts (string/split (or (second (string/split options #":")) "")
+                                                                                  #"[ ]+")
+                                                                    cli-options))
             script-options {:raw true :timeout 30}]
         (def verbose? (:verbose options))
         ;; (def verbose? true)
@@ -158,7 +156,8 @@
         (run! stderr errors)
         (when (:help options) (usage))
         (run-elisp options lisp extra-args)))
-
+    (catch Exception e
+      (stderr (str "caught exception: " (.getMessage e))))
     (finally
       (and stdin (fs/delete stdin-file))
       (System/exit EXIT-CODE))))
