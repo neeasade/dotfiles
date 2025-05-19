@@ -27,9 +27,9 @@ case "$cur_shell" in
     shopt -s cmdhist lithist
     ;;
   zsh)
-    HISTFILE=$history_file
-    SAVEHIST=$history_length
-    HISTSIZE=$history_length
+    export HISTFILE=$history_file
+    export SAVEHIST=$history_length
+    export HISTSIZE=$history_length
 
     setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
     setopt hist_ignore_dups       # ignore duplicated commands history list

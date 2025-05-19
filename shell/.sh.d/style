@@ -167,7 +167,7 @@ prompt() {
       line_number=$(elisp '(with-current-buffer (window-buffer (selected-window)) (if (eq major-mode '\''shell-mode) (line-number-at-pos) 1))')
     fi
 
-    if [ "$line_number" -ne 1 ]; then
+    if [ "${line_number:-0}" -ne 1 ]; then
       printf "\n%b%s" "$_prompt "
     else
       printf "%b%s" "$_prompt "
