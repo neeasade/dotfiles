@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 # view a tiled wallpaper at an angles
 
 tile=${1:-$(find "${HOME}/tiles" -type f | shuf | head -n 1)}
@@ -6,22 +7,19 @@ angle=${2:-$((RANDOM % 360))}
 
 w=1920
 h=1080
-file=/tmp/tiletilt.png
-
-printf "tiletilt '%s' %s\n" "$tile" "$angle"
 
 type xdpyinfo >/dev/null 2>&1 && \
     read -r w h <<< "$(xdpyinfo | awk -F'[ x]+' '/dimensions/{print $3 " " $4}')"
 
-# polyfill
-if ! type ffeh >/dev/null; then
-    ffeh() {
-	tee "$1" | feh --bg-tile -
-    }
+if [[ -p /dev/stdout ]]; then
+    out=cat
+else
+    printf "tiletilt '%s' %s\n" "$tile" "$angle"
+    out="feh --bg-tile -"
 fi
 
 magick "$tile" -set option:distort:viewport "${w}x${h}" \
     -virtual-pixel tile -filter point \
     -distort SRT "$angle" \
     -gravity center -crop "${w}x${h}+0+0" +repage \
-    "PNG:-" | ffeh "$file"
+    "PNG:-" | $out

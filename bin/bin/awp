@@ -1,4 +1,4 @@
-#!/usr/bin/env elisp
+#!/usr/bin/env elispp
 ;; automata wallpapers
 ;; -*- emacs-lisp -*-
 
@@ -46,16 +46,17 @@
                      (s-join "")
                      (s-pad-right (display-pixel-width) "0")))))
 
+(setq ns/awp-kinds '("life" "rps" "disease" "pinwheels" "brain" "elementary"))
 
 (defun ns/awp-cmd (kind colors)
   (if (and kind (f-exists-p kind))
       ;; we got an awp file! the format is (command (colors) pipe-command)
-      (llet [(rcmd rcolors rpipe-command) (read (s-join "\n" (drop 1 (s-lines (slurp kind)))))]
-            (list rcmd colors rpipe-command))
+      (llet [(rcmd rcolors rbg-command) (read (s-join "\n" (drop 1 (s-lines (slurp kind)))))]
+            (list rcmd colors rbg-command))
     ;; nominal case:
     (llet [(c1 c2 c3) colors
            kind (if (string= kind "nil") nil kind)
-           kind (or kind (ns/random-list '("life" "rps" "disease" "pinwheels" "brain" "elementary")))
+           kind (or kind (ns/random-list ns/awp-kinds))
            elementary? (string= kind "elementary")
            bin (format (~ "code/automata/c/%s/bin/%s") kind kind)
 
@@ -75,29 +76,50 @@
                 (cond
                   ((string= kind "pinwheels") (list c2 c3 c1)) ; weird one
                   (t colors))
-                (if elementary? "ffeh"
-                  (if (= 1 (random 2))
-                      "ffeh"
+                (if elementary? nil
+                  (when (= 1 (random 2))
                     (format "tiletilt - %s" (random 360))))))))
 
 (defun ns/awp (colors-in &optional kind)
-  (llet [(cmd (c1 c2 c3) bg-command) (ns/awp-cmd kind colors-in)
-         bg-command (or bg-command "ffeh")
+  (llet [(cmd (c1 c2 c3) bg-edit) (ns/awp-cmd kind colors-in)
          _ (message cmd)
          ;; _ (message c1 c2 c3)
          process-environment (ns/awp-color-env colors-in)
          awp-file "/tmp/awp.awp"]
 
-        (if (string= kind "save")
-            (llet [dest (~ "walls2" (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp"))]
-                  (f-copy awp-file dest)
-                  dest)
-          ;; ok:
-          (spit awp-file (format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3) bg-command))))
-          (sh (format "chmod +x %s" awp-file))
-          (sh (ns/str cmd "| " bg-command))
-          (ns/make-lines (list (s-truncate 80 (-last-item (s-split "/" cmd)))
-                               bg-command)))))
+        (condp string= kind
+               "save" (llet [dest (~ "walls"
+                                     (--first (s-contains? it (slurp awp-file)) ns/awp-kinds)
+                                     (ns/str (secure-hash 'sha256 (slurp awp-file)) ".awp"))]
+                            (when-not (f-exists? dest)
+                                      (f-mkdir (f-dirname dest))
+                                      (f-copy awp-file dest))
+                            dest)
+               "random" (llet [f (ns/random-list (-concat (f-files (~ "walls") (cl-constantly t) t)
+                                                          (f-files (~ "tiles"))))]
+                              (if (s-contains? "tiles" f)
+                                  (sh-toss "tiletilt" f)
+                                (sh-toss f))
+                              f)
+               (progn
+                 (spit awp-file (format "#!/usr/bin/env awp\n%s" (pr-str (list cmd (list c1 c2 c3) bg-edit))))
+                 (sh (format "chmod +x %s" awp-file))
+                 (if bg-edit (sh (ns/str cmd " | " bg-edit " | ffeh"))
+                   (sh (ns/str cmd " | ffeh ")))
+
+                 ;; previous experiment (not worth it because we set colors based on current color scheme):
+                 ;; (llet [ cache-dir "/tmp/awp-cache/"
+                 ;;         cache-file (ns/path cache-dir (secure-hash 'sha256 (ns/str cmd c1 c2 c3 bg-edit)))]
+                 ;;       (f-mkdir cache-dir)
+                 ;;       (if (f-exists-p cache-file)
+                 ;;           (progn
+                 ;;             (sh (ns/str "feh --bg-tile " cache-file)))
+                 ;;         (if bg-edit (sh (ns/str cmd " | " bg-edit "| tee " cache-file "| ffeh"))
+                 ;;           (sh (ns/str cmd " | tee " cache-file "| ffeh"))))
+                 ;;       cache-file)
+
+                 (ns/make-lines (list (s-truncate 80 (-last-item (s-split "/" cmd)))
+                                      (or bg-edit "ffeh")))))))
 
 (defmacro swag (f items)
   `(-snoc (-list ,items)

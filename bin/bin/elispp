@@ -1,7 +1,8 @@
 #!/usr/bin/env bb
 ;; call emacs in various ways
 ;; coupled to my emacs.d
-;; unfortunately this is slightly slower than the sh version ("doing nothing" takes 80ms vs 35ms on this 2020 mbp)
+;; unfortunately this is slightly slower than the sh version ("doing nothing"
+;; takes 80ms vs 35ms on this 2020 mbp)
 
 (ns elisp
   (:require [babashka.fs :as fs]
@@ -12,10 +13,22 @@
             [lib.util :refer [sh shh has? home stderr]]))
 
 (when (System/getenv "CALLED_FROM_EMACS")
+  ;; todo: report something here?
+  (stderr "CALLED_FROM_EMACS set, doing nothing")
+  (sh "notify-send" "elispp: CALLED_FROM_EMACS set, doing nothing")
   (System/exit 0))
 
 (def verbose? nil)
 (def EXIT-CODE 1)
+
+(def cli-options
+  [["-t" "--timeout TIMEOUT" "set timeout"]
+   ["-r" "--raw" "trim the output string"]
+   ["-q" "--quiet" "do not print the result of sexp"]
+   ["-b" "--batch" "run lisp in batch mode"]
+   ["-w" "--window" "run lisp in batch mode with a window"]
+   ["-v" "--verbose" "verbose mode"]
+   ["-h" "--help" "print usage"]])
 
 (defn trunc [s n]
   (subs s 0 (min (count s) n)))
@@ -26,15 +39,6 @@
 (defn env-export [env-map]
   (merge (into {} (System/getenv))
          env-map))
-
-(def cli-options
-  [["-t" "--timeout TIMEOUT" "set timeout"]
-   ["-r" "--raw" "trim the output string"]
-   ["-q" "--quiet" "do not print the result of sexp"]
-   ["-b" "--batch" "run lisp in batch mode"]
-   ["-w" "--window" "run lisp in batch mode with a window"]
-   ["-v" "--verbose" "verbose mode"]
-   ["-h" "--help" "print usage"]])
 
 (defn usage []
   (->> cli-options
@@ -55,7 +59,9 @@
                     (vec (apply list "timeout" (str timeout) cmd)))]
     (vlog "options:" options)
     (vlog "cmd:" cmd)
-    ;; (println lisp)
+    (vlog "lisp (next-line):")
+    (when verbose?
+      (println lisp))
     ;; (println cmd)
     (let [result-cmd (eval `(shell/sh ~@cmd
                                       :env ~(env-export
@@ -76,7 +82,7 @@
                           (string/join "\n"))))
           err? (string/includes? (:err result-cmd) "*ERROR*")
 
-          result-raw (if ( "nil" result)
+          result-raw (if (= "nil" result)
                        ""
                        (if-not batch? (string/trim result)
                                (->> result
@@ -84,6 +90,7 @@
                                     (drop-while (complement #{"COOL_DELIMITER"}))
                                     (rest)
                                     (string/join "\n"))))
+
           result-raw (condp = (first result-raw)
                        \" (read-string result)
                        \( (subs result-raw 1 (dec (count result-raw)))
@@ -120,7 +127,7 @@
 (let [stdin (when-not (in-is-tty?)
               (string/join "\n" (line-seq (clojure.java.io/reader *in*))))
       stdin-file (cond (nil? stdin) nil
-                       (fs/exists? "/dev/shm/") (str  "/dev/shm"  (int (* (rand) 1000000)))
+                       (fs/exists? "/dev/shm/") (str "/dev/shm/elisp"  (int (* (rand) 1000000)))
                        (fs/exists? "/Volumes/RAMDisk/") (str "/Volumes/RAMDisk/" (int (* (rand) 1000000)))
                        :else (shh "mktemp"))
       _ (and stdin (spit stdin-file stdin))
@@ -135,18 +142,18 @@
             {:keys [options errors arguments]} (and options (cli/parse-opts (string/split (second (string/split options #":")) #"[ ]+") cli-options))
             script-options {:raw true :timeout 30}]
         (def verbose? (:verbose options))
-        (def verbose? true)
+        ;; (def verbose? true)
         (run! stderr errors)
         (run-elisp (merge script-options options)
-                   (format "(->> %s f-read (format \"(let ((ns-args '%s) (*stdin-file* %s) (default-directory %s)) %%s)\") read eval)"
+                   (format "(->> %s f-read (format \"(let ((*command-line-args* %s) (*stdin-file* %s) (default-directory %s)) %%s)\") read eval)"
                            (pr-str file)
-                           (pr-str (rest *command-line-args*))
+                           (format "'(%s)" (string/join " " (map script-str (rest *command-line-args*))))
                            (script-str stdin-file)
                            (script-str cwd))
                    arguments))
       (let [{:keys [options errors arguments]} (cli/parse-opts *command-line-args* cli-options)
             [lisp & extra-args] arguments
-            lisp (format "(let ((*stdin-file* %s) (default-directory %s)) %s)" (pr-str stdin-file) (pr-str cwd) lisp)]
+            lisp (format "(let ((*stdin-file* %s) (default-directory %s)) %s)" (pr-str stdin-file) (pr-str cwd) (or lisp "nil"))]
         (def verbose? (:verbose options))
         (run! stderr errors)
         (when (:help options) (usage))

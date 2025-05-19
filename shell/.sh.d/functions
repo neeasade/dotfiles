@@ -1,5 +1,10 @@
 # -*- mode: sh -*-
 
+
+bgsolid() {
+  hsetroot -solid $(theme -q color.focused.background)
+}
+
 task() {
   if cdu Taskfile.yml; then
     og task "$@"

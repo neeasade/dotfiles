@@ -108,7 +108,7 @@ else
 	stdin_file_lisp=nil
     fi
 
-    lisp="(->> ${script_name} f-read (format \"(let ((*stdin-file* ${stdin_file_lisp}) (ns-args '${args})) %s)\") read eval)"
+    lisp="(->> ${script_name} f-read (format \"(let ((*stdin-file* ${stdin_file_lisp}) (*command-line-args* '${args})) %s)\") read eval)"
 fi
 
 
