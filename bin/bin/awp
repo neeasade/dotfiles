@@ -25,12 +25,13 @@
 (defun ns/awp-elementary-cmd ()
   (format "%s %s %s" bin
           ;; from: https://en.wikipedia.org/wiki/Elementary_cellular_automaton
-          (ns/random-list '(0 1 10 104 105 106 108 11 110 12 122 126 128 13 130
-                            132 134 136 138 14 140 142 146 15 150 152 154 156
-                            160 162 164 168 170 172 178 18 184 19 2 200 204 22
-                            23 232 24 25 26 27 28 29 3 30 32 33 34 35 36 37 38 4
-                            40 41 42 43 44 45 46 5 50 51 54 56 57 58 6 60 62 7
-                            72 73 74 76 77 78 8 9 90 94))
+          (or (second *command-line-args*)
+              (ns/random-list '(0 1 10 104 105 106 108 11 110 12 122 126 128 13 130
+                                132 134 136 138 14 140 142 146 15 150 152 154 156
+                                160 162 164 168 170 172 178 18 184 19 2 200 204 22
+                                23 232 24 25 26 27 28 29 3 30 32 33 34 35 36 37 38 4
+                                40 41 42 43 44 45 46 5 50 51 54 56 57 58 6 60 62 7
+                                72 73 74 76 77 78 8 9 90 94)))
 
           ;; random
           ;; (apply 'ns/str (-map (lambda (_) (mod (random) 2)) (-iota (display-pixel-width))))
@@ -196,6 +197,4 @@
 
  )
 
-(apply 'ns/awp
-       (awp-colors)
-       *command-line-args*)
+(ns/awp (awp-colors) (first *command-line-args*))
