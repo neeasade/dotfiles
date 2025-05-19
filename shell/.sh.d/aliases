@@ -51,6 +51,9 @@ alias .....='cd ../../../..;pwd'
 
 alias ds='dirs -v | head -n 10'
 
+alias osrs-gim='flatpak run --env=EXTRA_RUNELITE_ARGS="--scale=2.0" --user com.jagex.Launcher'
+alias osrs='runelite --scale=2.0'
+
 # making this a function so EG the following can work:
 # FOO=BAR make
 make() {
