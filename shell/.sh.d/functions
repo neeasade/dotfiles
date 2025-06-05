@@ -1,9 +1,12 @@
 # -*- mode: sh -*-
 
-
-bgsolid() {
-  hsetroot -solid $(theme -q color.focused.background)
+bplain() {
+  magick -size 100x100 "xc:$(theme -q color.focused.background)" /tmp/plain.png
+  feh --bg-tile /tmp/plain.png
 }
+
+alias bsolid=bplain
+alias pgplain=bplain
 
 task() {
   if cdu Taskfile.yml; then
@@ -579,7 +582,3 @@ aawp() {
   )
 }
 
-bplain() {
-  magick -size 100x100 "xc:$(theme -q color.focused.background)" /tmp/plain.png
-  feh --bg-tile /tmp/plain.png
-}
