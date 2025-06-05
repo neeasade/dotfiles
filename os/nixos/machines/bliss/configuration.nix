@@ -31,7 +31,7 @@ in
     [ 
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
-      (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
+      # (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
       # (import ../../config/factorio2.nix {inherit lib hostname shared pkgs expr;})
     ];
 
@@ -155,26 +155,19 @@ in
 
                                  html2text
 
-                                 atuin
-                                 # broken
-                                 # (atuin.overrideAttrs(old: {
-                                 #   # cargoHash = lib.fakeSha256;
-                                 #   cargoHash = "sha256-a538b8975814ac51868e41e4004e583e0121aceb64800dcf402b3975f2ddbcb8";
-                                 #   src = builtins.fetchGit {
-                                 #     url = "https://github.com/atuinsh/atuin";
-                                 #     ref = "main";
-                                 #   };
-                                 # }))
-
                                  eww
                                  # qutebrowser
+                                 discord
 
                                ]) ++ (with edge; [
+
+                                 rbw
+                                 rofi-rbw
+                                 atuin
                                  yt-dlp
                                  google-chrome
-                                 microsoft-edge
+                                 # microsoft-edge
                                  teams-for-linux
-                                 discord
                                  nodejs
                                  tailscale
                                ]) ++ (with unstable; [
@@ -188,12 +181,12 @@ in
   fonts.packages = sets.fonts-all;
 
   # bleeding edge
-  boot.kernelPackages = edge-packages;
-  nixpkgs.config.packageOverrides = pkgs: {
-    # swap out all of the linux packages
-    linuxPackages_latest = edge-packages;
-    nvidia_x11 = edge.nvidia_x11;
-  };
+  # boot.kernelPackages = edge-packages;
+  # nixpkgs.config.packageOverrides = pkgs: {
+  #   # swap out all of the linux packages
+  #   linuxPackages_latest = edge-packages;
+  #   nvidia_x11 = edge.nvidia_x11;
+  # };
 
   # comment out to use nouvea
   services.xserver.videoDrivers = ["nvidia"];
@@ -205,9 +198,9 @@ in
     open = true;
     nvidiaSettings = true; # provide nvidia-settings gui
 
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
+    # package = config.boot.kernelPackages.nvidiaPackages.latest;
 
-    # package = config.boot.kernelPackages.nvidiaPackages.production;
+    package = config.boot.kernelPackages.nvidiaPackages.production;
     # package = config.boot.kernelPackages.nvidiaPackages.vulkan_beta;
   };
 
@@ -312,7 +305,7 @@ in
     ''
     127.0.0.1 x.com
     127.0.0.1 bsky.app
-    127.0.0.1 www.youtube.com
+    # 127.0.0.1 www.youtube.com
     127.0.0.1 www.hulu.com
     # 127.0.0.1 www.amazon.com
 

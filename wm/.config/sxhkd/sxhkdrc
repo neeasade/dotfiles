@@ -79,10 +79,13 @@ super + slash
 super + Return
     elisp '(ns/spawn-terminal)' || $TERMINAL
 
-super + {_,shift,alt} + space
-    action='{switcher,run,pass}'; \
+super + {_,shift} + space
+    action='{switcher,run}'; \
     export GTK_THEME=$(theme -q gtk.theme); \
     dmenu_$action -p "$action"
+
+super + alt + space
+    rofi-rbw -a copy
 
 super + {_, shift} + grave
     {player.sh, mpc} toggle
@@ -97,7 +100,7 @@ XF86Audio{LowerVolume,RaiseVolume}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 4)"
 
 super + Escape
-    notify-send "reloading sxhkd!"; pkill -USR1 -x sxhkd
+    notify-send "Reload sxhkd from a terminal instead"
 
 # mute toggle
 XF86AudioMute

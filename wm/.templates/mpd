@@ -20,16 +20,20 @@ audio_output {
     buffer_before_play "25%"
 }
 
-# audio_output {
-# 	type		"httpd"
-# 	name		"My HTTP Stream"
-# 	encoder		"opus"		# optional
-# 	port		"8000"
-# #	quality		"5.0"			# do not define if bitrate is defined
-# 	bitrate		"128000"			# do not define if quality is defined
-# 	format		"48000:16:1"
-# 	always_on       "yes"			# prevent MPD from disconnecting all listeners when playback is stopped.
-# 	tags            "yes"			# httpd supports sending tags to listening streams.
-# }
+audio_output {
+	type		"httpd"
+	name		"My HTTP Stream"
+	encoder		"opus"		# optional
+	port		"8000"
+#	quality		"5.0"			# do not define if bitrate is defined
+	bitrate		"128000"			# do not define if quality is defined
+	format		"48000:16:1"
+	always_on       "yes"			# prevent MPD from disconnecting all listeners when playback is stopped.
+	tags            "yes"			# httpd supports sending tags to listening streams.
+}
 
+# expose mpd protocol over network (default port 6600):
 # bind_to_address "0.0.0.0"
+
+# expose socket locally (nb: can uncomment both to do both):
+bind_to_address "/run/user/{{env.UID}}/mpd_socket"

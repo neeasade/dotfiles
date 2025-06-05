@@ -30,18 +30,13 @@ read_input() {
 }
 
 do_rofi() {
-    eval "$(popup_window.sh -e)"
-
     dpi=$(xrq Xft.dpi)
 
-    # -yoffset $Y \
-    # 	 -width $W \
-    rofi -l $LINES \
-	 -dpi "${dpi:-96}" \
+    # for height changing, check rofi template section 'listview > lines'
+    rofi -dpi "${dpi:-96}" \
 	 -sorting-menu fzf \
 	 -dmenu -i -p "$prompt" -no-click-to-exit \
-	 -cache-dir "$HOME/.cache/rofi/" -no-disable-history \
-	 -location 2 | \
+	 -cache-dir "$HOME/.cache/rofi/" -no-disable-history | \
 	while IFS=$'\n' read -r rofi_line; do
 	    echo "$rofi_line"
 	    if [ ! -z "$FEEDER_PID" ]; then

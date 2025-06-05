@@ -16,6 +16,7 @@
 
 /*****----- Configuration -----*****/
 configuration {
+    dpi: {{meta.dpi}};
     kb-move-end: "";
     kb-row-up: "Up,Control+e";
     kb-row-down: "Down,Control+n";
@@ -68,7 +69,6 @@ configuration {
 window {
     /* properties for window widget */
     transparency:                "real";
-    location:                    center;
     anchor:                      center;
     fullscreen:                  false;
     /* width:                       800px; */
@@ -169,9 +169,10 @@ case-indicator {
 
 /*****----- Listview -----*****/
 listview {
+    /* lines = height control */
+    lines: 25;
     enabled:                     true;
     columns:                     1;
-    lines:                       10;
     cycle:                       true;
     dynamic:                     true;
     scrollbar:                   true;

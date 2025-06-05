@@ -10,13 +10,17 @@
             [clojure.walk :refer [postwalk prewalk]]
             [selmer.parser :as template]))
 
-(defn get-env []
-  (->> (System/getenv)
-       (map (fn [[k v]] {(keyword k) v}))
-       (into {})))
 
 (defn shh [cmd]
   (string/trim (:out (shell/sh "sh" "-c" cmd))))
+
+(defn get-env []
+  (merge
+   (->> (System/getenv)
+        (map (fn [[k v]] {(keyword k) v}))
+        (into {}))
+   {:UID (shh "echo $UID")}))
+
 
 (defn has? [exec]
   (not (clojure.string/blank? (shh (str "which " exec)))))

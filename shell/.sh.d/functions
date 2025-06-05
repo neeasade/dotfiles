@@ -569,7 +569,7 @@ barstuff() {
 
 aawp() {
   (
-  cd ~/walls
+  cd ~/walls/elementary/
   case "$1" in
     "") echo "options: wall|list|<rule>" ;;
     wall) vdo ./$(ls *.awp | shuf | head -n 1) ;;

@@ -64,7 +64,8 @@
                                                    (and (or batch? window?) {"NS_EMACS_BATCH" lisp})
                                                    (and window? {"NS_REDIR_LOG" "true"}))))
           result (if (= 124 (:exit result-cmd))
-                   "TIMED_OUT"
+                   (do (sh "notify-send" "elispp: timed out")
+                       "TIMED_OUT")
                    (if-not (or batch? window?)
                      (:out result-cmd)
                      (->> (:err result-cmd)
@@ -119,45 +120,46 @@
 
 (defn in-is-tty? [] (is-tty 0 :in))
 
-(let [stdin (when-not (in-is-tty?)
-              (string/join "\n" (line-seq (clojure.java.io/reader *in*))))
-      stdin-file (cond (nil? stdin) nil
-                       (fs/exists? "/dev/shm/") (str "/dev/shm/elisp"  (int (* (rand) 1000000)))
-                       (fs/exists? "/Volumes/RAMDisk/") (str "/Volumes/RAMDisk/" (int (* (rand) 1000000)))
-                       :else (shh "mktemp"))
-      _ (and stdin (spit stdin-file stdin))
-      cwd (System/getProperty "user.dir")]
-  (try
-    (if (fs/exists? (first *command-line-args*))
-      (let [file (first *command-line-args*)
-            options (some->> (slurp file)
-                             (string/split-lines)
-                             (filter #(string/starts-with? % ";; elisp-opts:"))
-                             (first))
-            {:keys [options errors arguments]} (and options
-                                                    (cli/parse-opts (string/split (or (second (string/split options #":")) "")
-                                                                                  #"[ ]+")
-                                                                    cli-options))
-            script-options {:raw true :timeout 30}]
-        (def verbose? (:verbose options))
-        ;; (def verbose? true)
-        (run! stderr errors)
-        (run-elisp (merge script-options options)
-                   (format "(->> %s f-read (format \"(let ((*command-line-args* %s) (*stdin-file* %s) (default-directory %s)) %%s)\") read eval)"
-                           (pr-str file)
-                           (format "'(%s)" (string/join " " (map script-str (rest *command-line-args*))))
-                           (script-str stdin-file)
-                           (script-str cwd))
-                   arguments))
-      (let [{:keys [options errors arguments]} (cli/parse-opts *command-line-args* cli-options)
-            [lisp & extra-args] arguments
-            lisp (format "(let ((*stdin-file* %s) (default-directory %s)) %s)" (pr-str stdin-file) (pr-str cwd) (or lisp "nil"))]
-        (def verbose? (:verbose options))
-        (run! stderr errors)
-        (when (:help options) (usage))
-        (run-elisp options lisp extra-args)))
-    (catch Exception e
-      (stderr (str "caught exception: " (.getMessage e))))
-    (finally
-      (and stdin (fs/delete stdin-file))
-      (System/exit EXIT-CODE))))
+(when (= *file* (System/getProperty "babashka.file"))
+  (let [stdin (when-not (in-is-tty?)
+                (string/join "\n" (line-seq (clojure.java.io/reader *in*))))
+        stdin-file (cond (nil? stdin) nil
+                         (fs/exists? "/dev/shm/") (str "/dev/shm/elisp"  (int (* (rand) 1000000)))
+                         (fs/exists? "/Volumes/RAMDisk/") (str "/Volumes/RAMDisk/" (int (* (rand) 1000000)))
+                         :else (shh "mktemp"))
+        _ (and stdin (spit stdin-file stdin))
+        cwd (System/getProperty "user.dir")]
+    (try
+      (if (fs/exists? (first *command-line-args*))
+        (let [file (first *command-line-args*)
+              options (some->> (slurp file)
+                               (string/split-lines)
+                               (filter #(string/starts-with? % ";; elisp-opts:"))
+                               (first))
+              {:keys [options errors arguments]} (and options
+                                                      (cli/parse-opts (string/split (or (second (string/split options #":")) "")
+                                                                                    #"[ ]+")
+                                                                      cli-options))
+              script-options {:raw true :timeout 30}]
+          (def verbose? (:verbose options))
+          ;; (def verbose? true)
+          (run! stderr errors)
+          (run-elisp (merge script-options options)
+                     (format "(->> %s f-read (format \"(let ((*command-line-args* %s) (*stdin-file* %s) (default-directory %s)) %%s)\") read eval)"
+                             (pr-str file)
+                             (format "'(%s)" (string/join " " (map script-str (rest *command-line-args*))))
+                             (script-str stdin-file)
+                             (script-str cwd))
+                     arguments))
+        (let [{:keys [options errors arguments]} (cli/parse-opts *command-line-args* cli-options)
+              [lisp & extra-args] arguments
+              lisp (format "(let ((*stdin-file* %s) (default-directory %s)) %s)" (pr-str stdin-file) (pr-str cwd) (or lisp "nil"))]
+          (def verbose? (:verbose options))
+          (run! stderr errors)
+          (when (:help options) (usage))
+          (run-elisp options lisp extra-args)))
+      (catch Exception e
+        (stderr (str "caught exception: " (.getMessage e))))
+      (finally
+        (and stdin (fs/delete stdin-file))
+        (System/exit EXIT-CODE)))))

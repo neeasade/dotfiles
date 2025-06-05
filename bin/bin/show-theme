@@ -1,4 +1,4 @@
-#!/usr/bin/env elisp
+#!/usr/bin/env elispp
 ;; -*- emacs-lisp -*-
 ;; the initial incarnation of this script may be seen in a workflow demo here:
 ;; https://nixers.net/showthread.php?tid=2320

@@ -231,9 +231,9 @@ artist_append() {
 }
 
 break_cache() {
+  echo "breaking cached playlist"
   mpc clear
   loaded_cached_playlist=false
-  echo "unloaded cached playlist"
 }
 
 playlist() { # select a search term based playlist to play
