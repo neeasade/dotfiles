@@ -360,9 +360,11 @@
     (set/difference all-songs playlist-songs)))
 
 
-(let [cmd (or *command-line-args* ["shuffle-by-album"])
-      result (apply (-> cmd first symbol resolve)
-                    (rest cmd))]
-  (cond
-    (string? result) (print result)
-    (and result (seqable? result)) (run! println result)))
+
+(when (= *file* (System/getProperty "babashka.file"))
+  (let [cmd (or *command-line-args* ["shuffle-by-album"])
+        result (apply (-> cmd first symbol resolve)
+                      (rest cmd))]
+    (cond
+      (string? result) (print result)
+      (and result (seqable? result)) (run! println result))))
