@@ -9,12 +9,18 @@ date=${1:-$today}
 
 count=$(grep "$date" "$file" | grep 'CLOCK.*=>  0:[12][3-9]' | wc -l)
 
-for i in {1..4}; do
-    if [ $i -le "$count" ]; then
+if [ $count -gt 4 ]; then
+    for i in {1..$count}; do
 	printf '☒'
-    else
-	printf '☐'
-    fi
-done
+    done
+else
+    for i in {1..4}; do
+	if [ $i -le "$count" ]; then
+	    printf '☒'
+	else
+	    printf '☐'
+	fi
+    done
+fi
 
 echo
