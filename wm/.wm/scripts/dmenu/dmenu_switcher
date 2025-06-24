@@ -136,6 +136,8 @@ add_metas() {
 	dmenu < "$XDG_CACHE_HOME/grabs" | pbcopy
     }
 
+    add_switch "meta: grabs" "grabs"
+
     dmenu_exec() {
 	save_file="$HOME/.dmenu_exec_history"
 	choice=$(cat "$save_file" | sort | uniq | dmenu)

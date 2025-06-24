@@ -7,7 +7,7 @@ if has atuin; then
       if $ESHELL; then
         export ATUIN_NOBIND=true
       fi
-      eval "$(atuin init bash)"
+      eval "$(atuin init bash --disable-up-arrow)"
     fi
   fi
 fi
