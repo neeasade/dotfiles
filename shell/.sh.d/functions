@@ -6,7 +6,7 @@ bplain() {
 }
 
 alias bsolid=bplain
-alias pgplain=bplain
+alias bgplain=bplain
 
 task() {
   if cdu Taskfile.yml; then
