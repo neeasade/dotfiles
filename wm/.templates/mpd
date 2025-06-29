@@ -16,6 +16,7 @@ audio_output {
     name            "pulse audio"
 
     # https://github.com/MusicPlayerDaemon/MPD/issues/72#issuecomment-339394839
+    # <2025-06-27 Fri 14:36> still needed
     audio_buffer_size "8192"
     buffer_before_play "25%"
 }
@@ -36,4 +37,5 @@ audio_output {
 # bind_to_address "0.0.0.0"
 
 # expose socket locally (nb: can uncomment both to do both):
+# note: also exported in env for mpc ($MPD_HOST)
 bind_to_address "/run/user/{{env.UID}}/mpd_socket"
