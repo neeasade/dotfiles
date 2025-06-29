@@ -97,6 +97,7 @@ if ${NEEASADE_ENV:-true}; then
   GTK_THEME=${GTK_THEME:-adwaita}
   SXHKD_SHELL=sh
   MPDCRON_DIR="$HOME/.config/mpd"
+  MPD_HOST='/run/user/1000/mpd_socket'
   _JAVA_AWT_WM_NONREPARENTING=1
   LANG="en_US.UTF-8"
   TERMCMD=$TERMINAL
