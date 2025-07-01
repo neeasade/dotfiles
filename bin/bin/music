@@ -296,7 +296,7 @@ shuffler() { # invoke mpd-mixer
   SHUFFLE=false # prevent playlists with this in their definition from shuffling
   shuffled=$(mpd-mixer ${*:-shuffle-by-album})
 
-  if diff -q <(sort <<< "$shuffled") <(mpc playlist | sort); then
+  if diff -q <(sort <<< "$shuffled") <(mpc playlist -f '%file%' | sort) >/dev/null 2>&1; then
     log "shuffler: no changes! doing nothing"
     return 0
   fi
