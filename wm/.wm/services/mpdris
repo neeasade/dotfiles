@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-# wait for mpd to start up
-sleep 10
+# get MPD_HOST
+. "$HOME/.sh.d/environment"
 
-mpd-mpris
+
+while true; do
+    mpd-mpris -network unix
+    sleep 1
+done
