@@ -9,13 +9,13 @@ gapped=$(iif '[ $(bspc config window_gap) -gt 0 ]')
 handle_bd() {
   # new thinking: floating at the side
   # should be a little column of floaters
-  if ! bspc query -N -n '.floating.!hidden'; then
-    return;
-  fi
-
-  # if ! xprop WM_CLASS -id "$(bspc query -N -n '.floating.!hidden')" | grep -q discord; then
+  # if ! bspc query -N -n '.floating.!hidden'; then
   #   return;
   # fi
+
+  if ! xprop WM_CLASS -id "$(bspc query -N -n '.floating.!hidden' | head -n 1)" | grep -q discord; then
+    return;
+  fi
 
   # p=$(bspc config left_padding)
   # bspc config left_padding "$(( $(bspc config left_padding) + 450))"
@@ -32,7 +32,7 @@ handle_bd() {
 
   # this should act for all windows oopsie
   if [ "$(bspc query -T -n 'any.floating.!hidden' | jq .client.floatingRectangle.width)" -gt $W ]; then
-    notify-send  -u low "hit!"
+    # notify-send  -u low "hit!"
 
     wid=$(bspc query -N -n '.floating.!hidden' | head -n 1)
     xdotool windowmove $wid $X $Y
@@ -61,6 +61,8 @@ do_monocle_slim() {
   if [ "$before" = "monocle_full" ]; then
     ltheme bg &
   fi
+
+  # ltheme bg &
 
   (
     looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
