@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+
+ref="this week last monday"
+if [ "$(date +%A)" = "Monday" ]; then
+    ref="today"
+fi
+
 for i in {0..6}; do
-    read -r weekday date < <(date -d "this week last monday + $i days" '+%A %Y-%m-%d')
+    read -r weekday date < <(date -d "$ref + $i days" '+%A %Y-%m-%d')
     printf "%-10s %s %s\n" "$weekday" "$date" "$(pomo "$date")"
 done
 
