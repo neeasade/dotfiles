@@ -66,17 +66,17 @@ invert = true
 ## https://docs.rs/regex/latest/regex/#syntax
 history_filter = [
   # export HISTIGNORE="cd*:ls*:clear:date:pwd:mpv:pfetch:mpc*:music*:ltheme"
-  "^porn*",
-  "^pwd$",
-  "^mpc",
-  "^cd",
-  "^ls",
-  "^date$",
-  "^show-theme",
-  "^clear",
-  "^exit",
   "^\\.\\.$",
   "^bash$",
+  "^cd",
+  "^clear",
+  "^date$",
+  "^exit",
+  "^ls",
+  "^mpc",
+  "^porn*",
+  "^pwd$",
+  "^show-theme",
   # "^mpv",
 ]
 

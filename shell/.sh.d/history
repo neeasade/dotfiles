@@ -21,7 +21,7 @@ case "$cur_shell" in
     export HISTFILESIZE=$history_length
     export HISTSIZE=$history_length
 
-    export HISTIGNORE="cd*:ls*:clear:date:pwd:mpv:pfetch:mpc*:music*:ltheme"
+    export HISTIGNORE="cd*:ls*:clear:date:pwd:mpv:pfetch:mpc*:music*:ltheme:porn*"
     export HISTCONTROL=ignoredups:erasedups:ignorespace
     shopt -s histappend
     shopt -s cmdhist lithist
