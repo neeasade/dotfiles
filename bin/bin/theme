@@ -549,7 +549,9 @@
       theme (if-let [overrides (:extend options)]
               (->> (read-string overrides) (unflatten-map) (deep-merge theme))
               theme)]
-  (doall (map println errors))
+  (when errors
+    (doall (map println errors))
+    (System/exit 1))
   (some->> options
            (reduce
             (fn [theme [k v]]
