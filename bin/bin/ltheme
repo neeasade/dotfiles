@@ -36,6 +36,21 @@ load_zathura() { render zathura .config/zathura/zathurarc -p color.normal ;}
 load_zeal()    { render zeal .config/Zeal/Zeal.conf ;}
 load_rofi()    { render rofi .config/rofi/sometheme.rasi -p color.normal ;}
 
+load_sxhkd() {
+    conf="$HOME/.config/sxhkd/sxhkdrc"
+    export MODKEY=super
+    export MODKEY_ALT=alt
+    if grep -q "^super" "$conf"; then
+	export MODKEY=alt
+	export MODKEY_ALT=super
+    fi
+
+    notify-send "sxhkd: switching mod key to '${MODKEY}'"
+
+    render sxhkd .config/sxhkd/sxhkdrc
+    refresh sxhkd true
+}
+
 if $MAC; then
     load_mpd()     { render mpd .mpd/mpd.conf -p mpd; brew services restart mpd ; }
     load_kitty() {
@@ -204,6 +219,7 @@ load_services() {
     make_service unclutter 'unclutter -idle 1'
     make_service dunst
     make_service picom
+    make_service sxhkd
     make_service download_watch last_download_link
     make_service mpdris
 

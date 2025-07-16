@@ -318,7 +318,7 @@
                  :remove-disabled-monitors   true
                  :ignore-ewmh-struts         true
                  :merge-overlapping-monitors true
-                 :pointer-modifier "mod4"
+                 :pointer-modifier "mod1"
                  :removal-adjustment false
                  :external-rules-command (fn [_] (shh "which external_rules.sh"))
                  ;; :left-monocle-padding "{{bspwm-meta.monocle-pad-width}}"
