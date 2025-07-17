@@ -84,7 +84,7 @@ ctrl + {_,shift} + space
     export GTK_THEME=$(theme -q gtk.theme); \
     dmenu_$action -p "$action"
 
-{{env.MODKEY}} + alt + space
+{{env.MODKEY}} + {{env.MODKEY_ALT}} + space
     rofi-rbw -a copy
 
 {{env.MODKEY}} + {_, shift} + grave
@@ -99,7 +99,8 @@ XF86Audio{Prev,Next,Play,Pause}
 XF86Audio{LowerVolume,RaiseVolume}
     notify-send --urgency=low "Volume: $(ponymix {decrease,increase} 4)"
 
-{{env.MODKEY}} + Escape
+# this one should always be alt on purpose
+alt + Escape
     ltheme sxhkd
 
 # mute toggle
