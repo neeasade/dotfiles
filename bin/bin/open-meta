@@ -2,28 +2,22 @@
 ;; mimetype preferences
 
 (ns open-meta
-  (:require [clojure.string :as string]
-            [babashka.fs :as fs]
+  (:require [babashka.fs :as fs]
+            [babashka.process :as process]
             [clojure.java.shell :as shell]
-            [babashka.process :as process]))
+            [clojure.string :as string]
+            [lib.util :refer [sh shh has? home stderr]]))
 
-;; (:out (deref (process/process {:out :string} "echo" "a" ">/dev/null" "2>&1")))
-
-;; ugh. this will not work on macos, need to find a generic "fork off" method
-;; nohup process holds. why?
-(defn exec [opener & args]
-  (apply process/shell "setsid" "--fork"
-         (concat (string/split opener #" ")
-                 args)))
-
-(defn act [opener file]
-  (if (fn? opener)
-    (opener file)
-    (let [opener (str (or opener
-                          (last (fs/which-all "open"))
-                          (last (fs/which-all "xdg-open"))))]
-      (println opener file)
-      (exec opener file))))
+(defn act
+  ([file] (act (or (last (fs/which-all "open"))
+                   (last (fs/which-all "xdg-open")))
+               file))
+  ([opener file]
+   (if (fn? opener)
+     (opener file)
+     (do
+       (println opener file)
+       (sh opener file)))))
 
 ;; todo: archives, folders - dired/unzip tempdir
 ;; todo: if it's youtube, open in chrome? sponsorblock
@@ -32,6 +26,7 @@
 
 (defn open-archive []
   (println "archive: not implemented")
+  (sh "notify-send"  "archive: not implemented")
   ;; todo
   )
 
@@ -45,27 +40,26 @@
   {"html" BROWSER
    "directory" ["thunar"]
    "rfc822" BROWSER                     ; mhtml
-   ;; todo: make fn open-jar so we don't need to string split elsewhere
-   "java-archive" "java -jar"
+   "java-archive" (partial sh "java" "-jar")
+   "vnd.microsoft.portable-executable" (partial sh "steam-run" "wine")
    "pdf" ["okular" "zathura" "preview" BROWSER]
-
    "zip" open-archive
    "x-7z-compressed" open-archive
    "gzip" open-archive
+   "rar" open-archive
    })
 
 (defn open-file [file]
-  ;; todo: check file exists first, complain
-  (let [mimetype (string/trim-newline (:out (shell/sh "file" "--mime-type" "-b" (str (fs/real-path file)))))
+  (let [mimetype (shh "file" "--mime-type" "-b" (str (fs/real-path file)))
+        ;; (string/trim-newline (:out (shell/sh "file" "--mime-type" "-b" (str (fs/real-path file)))))
         [part1 part2] (string/split mimetype #"/")
         opener (some->> (list (part2_rules part2) (part1_rules part1))
                         (remove nil?)
                         (flatten)
                         (filter (fn [exec]
                                   (or (fn? exec)
-                                      (fs/which (first (string/split exec #" "))))))
-                        first
-                        str)]
+                                      (fs/which exec))))
+                        first)]
     (act opener file)))
 
 (defn open-scheme [arg]
@@ -73,12 +67,12 @@
     (println "scheme: " scheme)
     (condp = scheme
       "file" (open-file value)
-      "https" (exec BROWSER value)
-      "http" (exec BROWSER value)
-      (act nil value))))
+      "https" (sh BROWSER value)
+      "http" (sh BROWSER value)
+      (act value))))
 
 (let [arg (string/join " " *command-line-args*)]
   (cond
     (fs/exists? arg) (open-file arg)
     (re-seq #"([a-zA-Z]+)://(.*)" arg) (open-scheme arg)
-    :else (act nil arg)))
+    :else (act arg)))
