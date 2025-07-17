@@ -6,18 +6,22 @@
             [babashka.process :as process]
             [clojure.java.shell :as shell]
             [clojure.string :as string]
-            [lib.util :refer [sh shh has? home stderr]]))
+            [lib.util :as lib]))
 
-(defn act
-  ([file] (act (or (last (fs/which-all "open"))
-                   (last (fs/which-all "xdg-open")))
-               file))
-  ([opener file]
-   (if (fn? opener)
-     (opener file)
-     (do
-       (println opener file)
-       (sh opener file)))))
+(defn sh [& args]
+  (apply println args)
+  (try
+    (apply process/shell args)
+    (catch Throwable e
+      (lib/stderr "open: something went wrong"))))
+
+(defn act [opener file]
+  (if (fn? opener)
+    (opener file)
+    (sh (or opener
+            (last (fs/which-all "open"))
+            (last (fs/which-all "xdg-open")))
+        file)))
 
 ;; todo: archives, folders - dired/unzip tempdir
 ;; todo: if it's youtube, open in chrome? sponsorblock
@@ -25,10 +29,8 @@
 (def EDITOR (System/getenv "EDITOR"))
 
 (defn open-archive []
-  (println "archive: not implemented")
-  (sh "notify-send"  "archive: not implemented")
-  ;; todo
-  )
+  (lib/stderr "archive: not implemented")
+  (sh "notify-send"  "archive: not implemented"))
 
 (def part1_rules
   {"image" "feh"
@@ -50,8 +52,7 @@
    })
 
 (defn open-file [file]
-  (let [mimetype (shh "file" "--mime-type" "-b" (str (fs/real-path file)))
-        ;; (string/trim-newline (:out (shell/sh "file" "--mime-type" "-b" (str (fs/real-path file)))))
+  (let [mimetype (lib/shh "file" "--mime-type" "-b" (str (fs/real-path file)))
         [part1 part2] (string/split mimetype #"/")
         opener (some->> (list (part2_rules part2) (part1_rules part1))
                         (remove nil?)
@@ -69,10 +70,10 @@
       "file" (open-file value)
       "https" (sh BROWSER value)
       "http" (sh BROWSER value)
-      (act value))))
+      (act nil value))))
 
 (let [arg (string/join " " *command-line-args*)]
   (cond
     (fs/exists? arg) (open-file arg)
     (re-seq #"([a-zA-Z]+)://(.*)" arg) (open-scheme arg)
-    :else (act arg)))
+    :else (act nil arg)))
