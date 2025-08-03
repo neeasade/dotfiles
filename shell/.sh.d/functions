@@ -216,8 +216,12 @@ shot() {
 shot_delayed() {
   g=$(slop -p 0)
   dest=$(shot_location)
-  sleep "$1"
+  for i in {4..1}; do
+    notify-send "screenshot in $i..."
+    sleep 1
+  done
   maim -u -g "${g}" "$dest"
+  notify-send "screenshot taken!"
   xclip -selection clipboard -target image/png -i "$dest"
   echo "$dest"
 }

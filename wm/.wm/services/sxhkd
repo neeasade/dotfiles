@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source "/home/neeasade/.sh.d/environment"
+
 pkill sxhkd
 
 sxhkd

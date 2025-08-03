@@ -10,7 +10,7 @@ date=${1:-$today}
 count=$(grep "$date" "$file" | grep 'CLOCK.*=>  0:[12][3-9]' | wc -l)
 
 if [ $count -gt 4 ]; then
-    for i in {1..$count}; do
+    for i in $(seq $count); do
 	printf '☒'
     done
 else
