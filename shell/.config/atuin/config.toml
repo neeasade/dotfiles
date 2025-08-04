@@ -74,6 +74,7 @@ history_filter = [
   "^exit",
   "^ls",
   "^mpc",
+  "^mpv",
   "^porn*",
   "^pwd$",
   "^show-theme",
