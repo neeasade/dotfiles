@@ -244,6 +244,10 @@ lastshot() {
   echo "$HOME/Last_Shot/shot.png"
 }
 
+editshot() {
+  pinta "$(lastshot)"
+}
+
 viewshot() {
   meh "$(lastshot)"
 }

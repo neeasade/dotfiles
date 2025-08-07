@@ -56,8 +56,14 @@ ctrl + {_,shift} + space
     {bspc node -i,for win in $(bspc query -N -d -n .leaf.!window); do bspc node $win -k; done}
 
 # rotate, balance
-{{env.MODKEY}} + {_,shift} + semicolon
-    bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
+# {{env.MODKEY}} + {_,shift} + semicolon
+#     bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
+
+# rotate
+{{env.MODKEY}} + semicolon
+    bspc node $(bspc query -N -n -n .!leaf || echo @/) -R 90
+
+# rotate
 
 # focus the node for the given path jump
 # idea: after @parent, check if bspwindows has changed, and if it hasn\'t, keep going
@@ -143,6 +149,8 @@ button9
     bash -ic ". $HOME/.profile; shot"
     # notify-send "you pressed mouse9"
 
+shift + button9
+    bash -ic ". $HOME/.profile; delayed_shot"
 
 {{env.MODKEY}} + 9
     SWITCH='meta: twitter' dmenu_switcher

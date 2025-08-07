@@ -2,4 +2,4 @@
 
 . ~/.sh.d/environment
 
-eval "$(dmenu_path | dmenu "$@")"
+setsid nohup "$(dmenu_path | dmenu "$@")"

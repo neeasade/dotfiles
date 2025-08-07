@@ -63,7 +63,8 @@
                                       :env ~(merge (into {} (System/getenv))
                                                    (and (or batch? window?) {"NS_EMACS_BATCH" lisp})
                                                    (and window? {"NS_REDIR_LOG" "true"}))))
-          result (if (= 124 (:exit result-cmd))
+          timed-out? (= 124 (:exit result-cmd))
+          result (if timed-out?
                    (do (sh "notify-send" "elispp: timed out")
                        "TIMED_OUT")
                    (if-not (or batch? window?)
@@ -99,7 +100,7 @@
                    result-raw
                    result)))
       (and err? (println (:err result-cmd)))
-      (def EXIT-CODE (if (#{"nil" ""} result-raw)
+      (def EXIT-CODE (if (or timed-out? (#{"nil" ""} result-raw))
                        1 0)))))
 
 (defn script-str [s]

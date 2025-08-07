@@ -48,7 +48,7 @@ load_sxhkd() {
     notify-send "sxhkd: switching mod key to '${MODKEY}'"
 
     render sxhkd .config/sxhkd/sxhkdrc
-    refresh sxhkd true
+    pkill -USR1 sxhkd
 }
 
 if $MAC; then
@@ -174,7 +174,9 @@ load_services() {
 
 	render systemd_service .config/systemd/user/${service_name}.service
 
-	made_services="${made_services} $service_name"
+	if [ "$service_name" != "sxhkd" ]; then
+	    made_services="${made_services} $service_name"
+	fi
     }
 
     make_periodic_service() {
