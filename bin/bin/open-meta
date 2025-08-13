@@ -41,9 +41,13 @@
 (def part2_rules
   {"html" BROWSER
    "directory" ["thunar"]
+
+   "x-bittorrent" ["deluge"]
    "rfc822" BROWSER                     ; mhtml
    "java-archive" (partial sh "java" "-jar")
-   "vnd.microsoft.portable-executable" (partial sh "steam-run" "wine")
+   "vnd.microsoft.portable-executable" (fn [f]
+                                         (let [w64? (string/includes? (lib/shh "file" f) "x86-64")]
+                                           (sh "steam-run" (if w64? "wine64" "wine") f)))
    "pdf" ["okular" "zathura" "preview" BROWSER]
    "zip" open-archive
    "x-7z-compressed" open-archive
@@ -67,10 +71,12 @@
   (let [[_ scheme value] (first (re-seq #"([a-zA-Z]+)://(.*)" arg))]
     (println "scheme: " scheme)
     (condp = scheme
-      "file" (open-file value)
+      "file" (open-file (lib/url-decode value))
       "https" (sh BROWSER value)
       "http" (sh BROWSER value)
       (act nil value))))
+
+(lib/sh "notify-send" (format "open: %s" (first *command-line-args*)))
 
 (let [arg (string/join " " *command-line-args*)]
   (cond

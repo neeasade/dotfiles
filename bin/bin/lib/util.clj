@@ -4,6 +4,13 @@
 
 ;; todo: add the time macro here used in elisp
 
+(defn url-decode [s]
+  (-> s
+      (string/replace "+" " ")
+      (string/replace #"%([0-9A-Fa-f]{2})"
+                      (fn [[_ hex]]
+                        (str (char (Integer/parseInt hex 16)))))))
+
 (defn stderr
   "println to stderr"
   [s]
