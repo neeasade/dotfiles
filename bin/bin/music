@@ -286,7 +286,6 @@ playlist() { # select a search term based playlist to play
   fi
   mpc -q save "$target"
 
-  # nb: racy
   echo
   info
 }

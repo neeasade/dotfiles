@@ -160,7 +160,7 @@
                  (map-indexed
                   (fn [i t]
                     (if (= i tag-index)
-                      (assoc t :wids (into wids (:wids t)))
+                      (assoc t :wids (vec (set (concat wids (:wids t)))))
                       (assoc t :wids (into [] (remove (set wids) (:wids t))))
                       ;; (assoc t :wids (set (remove (set wids) (:wids t))))
                       ))
@@ -209,13 +209,13 @@
 (defn action-state-plain "get a plaintext representation of tags" []
   (->> (conj
         (:tags state)
-        {:color "000000" :name "untagged"
+        {:color "000000" :name "none"
          ;; active value doesn't matter for untagged tags
          :active? true
          :wids (get-state-untagged)})
 
        (map (juxt :name :active? :color (fn [tag] (string/join " " (:wids tag)))))
-       (map (partial apply format "%s %s %s %s"))
+       (map (partial apply format "%s\t%s\t%s\t%s"))
        (run! println)))
 
 (defn usage

@@ -9,7 +9,7 @@ Environment=PATH={{env.PATH}}
 Environment=NODE_PATH={{env.NODE_PATH}}
 Environment=DISPLAY="{{env.DISPLAY}}"
 Environment=XAUTHORITY="{{env.XAUTHORITY}}"
-Environment=WAYLAND_DISPLAY="{{env.WAYLAND_DISPLAY}}"
+# Environment=WAYLAND_DISPLAY="{{env.WAYLAND_DISPLAY}}"
 
 [Install]
 WantedBy=default.target

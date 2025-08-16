@@ -50,7 +50,7 @@ render_smol() {
 	    continue
 	elif [ "$tname" = "hole" ]; then
 	    continue
-	elif [ "$tname" = "untagged" ]; then
+	elif [ "$tname" = "none" ]; then
 	    continue
 	fi
 
@@ -98,7 +98,7 @@ render_supersmol() {
 	    continue
 	elif [ "$tname" = "hole" ]; then
 	    continue
-	elif [ "$tname" = "untagged" ]; then
+	elif [ "$tname" = "none" ]; then
 	    continue
 	fi
 

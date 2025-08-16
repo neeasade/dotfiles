@@ -1,4 +1,4 @@
-{hostname, ...}:
+{hostname, unstable, ...}:
 
 rec {
   nixcfg = {
@@ -61,6 +61,7 @@ rec {
 
   # set services.syncthing to enable
   syncthingConfig = {
+    package = unstable.syncthing;
     enable = true;
     openDefaultPorts = true;
     guiAddress = "127.0.0.1:8385";

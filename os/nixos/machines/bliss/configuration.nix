@@ -3,7 +3,7 @@
 
 let
   hostname = "bliss";
-  shared = import ../../config/shared.nix {inherit hostname; };
+  shared = import ../../config/shared.nix {inherit hostname unstable; };
 
   # for bleeding edge nvidia drivers
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = shared.nixcfg; };
@@ -36,9 +36,10 @@ in
     ];
 
   services.flatpak.enable = true;
-  xdg.portal = {
+
+  xdg.portal = { # needed for flatpak
     enable = true;
-    # config = pkgs.xdg-desktop-portal-gtk;
+    config.common.default = "*";
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
   };
 
@@ -67,12 +68,6 @@ in
   # todo: look into this
   services.adguardhome.enable = false;
 
-  services.plex = {
-    enable = false;
-    openFirewall = true;
-    package = edge.plex;
-  };
-
   # https://github.com/NixOS/nixpkgs/issues/180175
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
 
@@ -94,6 +89,7 @@ in
   networking.firewall.checkReversePath = "loose";
 
   services.ollama.enable = true;
+  services.ollama.package = unstable.ollama;
   services.ollama.acceleration = "cuda";
 
   environment.wordlist.enable = true;
@@ -103,6 +99,8 @@ in
                                             # nixmox.defaultNix
                                            ]
                                ++ (with pkgs; [
+                                 alttab
+                                 toot
 
                                  # python lsp
                                  pyright
@@ -135,6 +133,7 @@ in
                                  sass
                                  simplescreenrecorder
                                  anki-bin
+                                 anki-sync-server
 
                                  bitwarden
                                  bitwarden-cli
@@ -156,10 +155,13 @@ in
                                  html2text
 
                                  eww
+                                 dconf
                                  # qutebrowser
                                  discord
 
                                ]) ++ (with edge; [
+                                 gemini-cli
+                                 aider-chat
 
                                  rbw
                                  rofi-rbw
@@ -169,11 +171,18 @@ in
                                  # microsoft-edge
                                  teams-for-linux
                                  nodejs
+                                 qutebrowser
                                  tailscale
                                ]) ++ (with unstable; [
-                                 qutebrowser
+                                 whisper-cpp
+                                 # qutebrowser
                                  kitty
                                ]);
+
+  services.jellyfin = {
+    enable = true;
+    openFirewall = true;
+  };
 
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -227,8 +236,8 @@ in
   networking.networkmanager.enable = true;
 
   networking.firewall.allowedTCPPorts = [
-    # mpd
-    8000 6600
+    8000 # mpd playing
+    # 6600 # mpd protocol
   ];
 
   networking.firewall.allowedUDPPorts = [

@@ -36,7 +36,9 @@ let
     entr
     expect
     fd
+
     ffmpeg
+
     fzf
     graphviz
     imagemagick
@@ -106,7 +108,7 @@ let
     networkmanager_dmenu
     networkmanagerapplet
     # nodejs # see repo:debounce.js
-    okular
+    kdePackages.okular
     pasystray
     pavucontrol
     picom
@@ -122,7 +124,7 @@ let
     vlc
     wesnoth
     wmname
-    x11idle
+    xprintidle
     xclip
     xdotool
     xfce.thunar
@@ -164,7 +166,9 @@ let
     dolphin-emu
     # jstest
     qjoypad
-    wine
+
+    wineWowPackages.stable
+    # wine
     # minecraft
     openmw
 

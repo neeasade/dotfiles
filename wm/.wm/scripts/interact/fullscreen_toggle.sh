@@ -55,6 +55,7 @@ do_monocle_full() {
   bspc config left_monocle_padding 0
   bspc config right_monocle_padding 0
   bspc desktop -l monocle
+  gapt "$gapped"
 }
 
 do_monocle_slim() {
@@ -80,7 +81,6 @@ do_monocle_slim() {
 
   bspc config borderless_monocle false
   bspc desktop -l monocle
-  gapt $gapped
 }
 
 do_fullscreen() {

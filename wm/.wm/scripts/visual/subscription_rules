@@ -35,6 +35,7 @@ bspc subscribe node_add | while read -r event m d i wid; do
 	fi
     fi
 
+    # todo: if current tag is not shown, don't copy over (because then double hidden flash)
     current_tag=$(btags get-tag "$(bspc query -N -n last)")
     if [ ! -z "$current_tag" ]; then
 	btags set-tag-on-wids "$current_tag" $wid

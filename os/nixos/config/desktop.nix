@@ -42,6 +42,7 @@
   };
 
   services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = shared.user;
   services.displayManager.defaultSession = "none+bspwm";
 
   services.xserver = {
@@ -49,7 +50,7 @@
     autorun = true;
     xkb.layout = "us";
 
-    displayManager.autoLogin.user = shared.user;
+    # displayManager.autoLogin.user = shared.user;
 
     windowManager.bspwm = {
       enable = true;

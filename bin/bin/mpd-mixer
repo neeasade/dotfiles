@@ -2,12 +2,10 @@
 ;; do things with mpd
 ;; a companion script to `music`
 ;; todo: better cue file support
-
 ;; todo idea: mpd-stats: generate stats for songs and artists
 ;; - print artists with n minutes of content
 
 ;; idea: artist aliases
-
 ;; idea: playlist place sync (cache and return to place in playlist)
 
 (ns mpd-mixer
@@ -352,14 +350,13 @@
 (defn unused-songs []
   (let [playlist-songs (->> (fs/list-dir (str HOME "/.config/mpd/playlists") "*.m3u")
                             (map str)
+                            (remove (partial = (str HOME "/.config/mpd/playlists/unused.m3u")) )
                             (map slurp)
                             (string/join "\n")
                             string/split-lines
                             set)
         all-songs (set (mpc "listall"))]
     (set/difference all-songs playlist-songs)))
-
-
 
 (when (= *file* (System/getProperty "babashka.file"))
   (let [cmd (or *command-line-args* ["shuffle-by-album"])

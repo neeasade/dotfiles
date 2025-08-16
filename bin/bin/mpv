@@ -20,6 +20,7 @@ done
 set -- "${args[@]}"
 
 og mpv \
+   --force-window \
    --write-filename-in-watch-later-config \
    --save-position-on-quit \
    --screenshot-directory="$HOME/Screenshots_mpv" \

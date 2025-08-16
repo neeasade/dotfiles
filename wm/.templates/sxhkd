@@ -138,6 +138,17 @@ F8
 # F9
 #     factorio
 
+# keycode for kp_insert is 90
+# xset -r 90
+
+# down:
+KP_Insert
+    elisp '(ns/whisper-llm-chat)'
+
+# up:
+@KP_Insert
+    elisp '(ns/whisper-llm-chat)'
+
 # idea for these: screenshot buttons - or a popup menu
 @button8
     pmenu_switcher
@@ -150,7 +161,7 @@ button9
     # notify-send "you pressed mouse9"
 
 shift + button9
-    bash -ic ". $HOME/.profile; delayed_shot"
+    bash -ic ". $HOME/.profile; shot_delayed"
 
 {{env.MODKEY}} + 9
     SWITCH='meta: twitter' dmenu_switcher

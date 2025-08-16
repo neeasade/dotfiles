@@ -5,7 +5,7 @@ wid=$(bspc query -N -n)
 
 read tag active color wids < <(btags state-plain | grep "$wid")
 
-if [ "$tag" = "untagged" ]; then
+if [ "$tag" = "none" ]; then
   # it's untagged, send it to the hole
   btags set-tag-on-wids hole $wid
   exit 0
