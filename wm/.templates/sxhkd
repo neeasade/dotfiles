@@ -56,12 +56,12 @@ ctrl + {_,shift} + space
     {bspc node -i,for win in $(bspc query -N -d -n .leaf.!window); do bspc node $win -k; done}
 
 # rotate, balance
-# {{env.MODKEY}} + {_,shift} + semicolon
-#     bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
+~{{env.MODKEY}} + {_,shift} + semicolon
+    bspc node $(bspc query -N -n -n .!leaf || echo @/) {-R 90,-B}
 
 # rotate
-{{env.MODKEY}} + semicolon
-    bspc node $(bspc query -N -n -n .!leaf || echo @/) -R 90
+# {{env.MODKEY}} + semicolon
+#     bspc node $(bspc query -N -n -n .!leaf || echo @/) -R 90
 
 # rotate
 
