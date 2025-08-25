@@ -14,6 +14,9 @@
 {{env.MODKEY}} + w
     bspc node -c
 
+{{env.MODKEY}} + a
+    toggle_trackpad
+
 {{env.MODKEY}} + f
     fullscreen_toggle.sh
 
@@ -122,6 +125,9 @@ XF86AudioMute
     notify-send --urgency=low "Volume: $(player.sh volume 0.04{-,+})"
 
 XF86MonBrightness{Down,Up}
+    xbright {down,up}
+
+{{env.MODKEY}} + {{env.MODKEY_ALT}} + {minus,equal}
     xbright {down,up}
 
 # you are already using comma and period for window children lol
