@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# pass any arg to build all files
+
+set -e
+set -u
+set -o pipefail
+set -x
+
+# cd $(mktemp -d)
+rm -rf /tmp/blog-build
+mkdir /tmp/blog-build
+cd /tmp/blog-build
+
+pwd
+
+local="${HOME}/code/neeasade.github.io"
+
+if [ -d "$local" ]; then
+    git clone "file://$local" ./blag
+else
+    git clone "https://github.com/neeasade/neeasade.github.io" ./blag
+fi
+
+export NS_BLOG_PATH="$(realpath ./blag)/"
+
+cd ./blag
+
+git worktree add published origin/master
+cd published
+git checkout master
+git pull "https://github.com/neeasade/neeasade.github.io" master
+
+if [ -z "$*" ]; then
+    code="(ns/summon '(resources evil buffers-and-windows org blog style))
+(ns/load-theme 'myron-mcfay)
+(ns/blog-generate-changed-files)"
+else
+    code="(ns/summon '(resources evil buffers-and-windows org blog style))
+(ns/load-theme 'myron-mcfay)
+(ns/blog-generate-all-files)"
+fi
+
+# FIXME: if we don't see the blog finished message in stdout, abort
+elispp -t 60 -w "$code"
+
+cd "${NS_BLOG_PATH}/published"
+
+if git diff --quiet; then
+    echo "no changes found" >&2
+    exit 1
+fi
+
+git add .
+git commit -m "automated build $(date +%s)"
+git push "https://github.com/neeasade/neeasade.github.io" master

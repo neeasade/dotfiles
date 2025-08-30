@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+tags() {
+    # cat "$1" | sed 's/#+title://' | sed -E '/^#\+begin_src/,/^#\+end_src/d' | grep -Ev "^#" | grep -Ev "^:" |  \
+    cat "$1" | sed 's/#+title://' | grep -Ev "^#" | grep -Ev "^:" |  \
+	ollama run 'ns/tagger' "tag this text: \n $" 2>/dev/null | head -n 1
+}
+
+tag_files() {
+    cd "$1"
+
+    tagfile="../extra/generated-tags.txt"
+
+    if [ -z "$*" ]; then
+	echo "generating missing tags"
+    else
+	echo "regenerating all tags"
+	rm "$tagfile"
+	touch "$tagfile"
+    fi
+
+    (
+    for file in *.org; do
+	if test -f "$file" && ! grep -q "$file" "$tagfile"; then
+	    printf '%s@%s\n' "$(basename "$file")"  "$(tags "$file")"
+	fi
+    done
+    ) | tee -a "$tagfile"
+    # debug:
+    # ) | tee -a /dev/stdout
+}
+
+tag_files "$HOME/code/neeasade.github.io/posts"
+tag_files "$HOME/code/neeasade.github.io/notes"
