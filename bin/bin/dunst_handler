@@ -1,0 +1,64 @@
+#!/usr/bin/env bb
+
+(ns dunst_handler
+  (:require [babashka.fs :as fs]
+            [cheshire.core :as json]
+            [clojure.java.shell :as shell]
+            [clojure.string :as string]
+            [clojure.tools.cli :as cli]
+            [lib.util :as util]))
+
+;;  DUNST_APP_NAME       DUNST_SUMMARY   DUNST_BODY
+;;  DUNST_ICON_PATH      DUNST_URGENCY   DUNST_ID
+;;  DUNST_PROGRESS       DUNST_CATEGORY  DUNST_STACK_TAG
+;;  DUNST_URLS           DUNST_TIMEOUT   DUNST_TIMESTAMP
+;;  DUNST_DESKTOP_ENTRY  DUNST_STACK_TAG
+(defn dunst-val [n]
+  (System/getenv
+   (str "DUNST_"
+        (-> (name n)
+            (string/replace "-" "_")
+            (string/upper-case)))))
+
+(defn log []
+  (spit "/home/neeasade/dunst_log"
+        (format "\n%s,%s,%s"
+                (dunst-val :timestamp)
+                (dunst-val :summary)
+                (dunst-val :body))
+        :append true))
+
+(defn beep []
+  ;; todo: up vol when through monitor instead of headphones
+  (let [vol (parse-long (or (util/shh "ponymix get-volume") 20))
+        ;; alter -1                         ; volume alter
+        alter 40
+        vol (+ vol alter)
+
+        ;; override/percentage
+        vol 60
+
+        ;; --volume=VOLUME
+        ;; Specify the initial (linear) volume in range 0...65536
+        vol (int (* (/ vol 100)
+                    65536))
+
+        ]
+    (shell/sh "paplay"
+              (str "--volume=" vol)
+              ;; https://github.com/akx/Notifications
+              "/home/neeasade/code/Notifications/WAV/Chord.wav")
+    vol
+    ))
+
+(when-not (string/includes? (dunst-val :summary) "Volume:")
+  (log))
+
+(let [osrs? (= (dunst-val :app-name) "RuneLite")
+      idle? (or (string/includes? (dunst-val :body) "idle")
+                (string/includes? (dunst-val :body) "out of combat!"))]
+  (when (and osrs? idle?)
+    (beep)))
+
+
+;; env | grep DUNST > $HOME/dunst_env
