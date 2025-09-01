@@ -7,6 +7,11 @@ usage() {
     exit 1
 }
 
+if silent pgrep nixos-rebuild; then
+    echo "rebuild is already running! exiting"
+    exit 1
+fi
+
 sudo echo yeet >/dev/null # so we and all our subshells get it
 
 if ${MAC:-false}; then

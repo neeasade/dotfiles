@@ -77,13 +77,36 @@ in
     }))
   ];
 
-  services.udisks2.enable = true;
 
+  # give jellyfin access to my external media drive
+  # (not working)
+# security.polkit.extraConfig = ''
+#   polkit.addRule(function(action, subject) {
+#     if ((action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+#          action.id == "org.freedesktop.udisks2.filesystem-mount" ||
+#          action.id == "org.freedesktop.udisks2.filesystem-mount-other-seat" ||
+#          action.id == "org.freedesktop.udisks2.filesystem-unmount-others" ||
+#          action.id == "org.freedesktop.udisks2.encrypted-unlock" ||
+#          action.id == "org.freedesktop.udisks2.eject-media" ||
+#          action.id == "org.freedesktop.udisks2.power-off-drive") &&
+#         subject.user == "jellyfin" &&
+#         device && action.lookup("id") == "by-uuid/84894ed7-8e80-49a5-8951-ac61c23a6564") {
+#       return polkit.Result.YES;
+#     }
+#   });
+# '';
+
+  services.udisks2.enable = true;
   services.tailscale = {
     enable = true;
     useRoutingFeatures = "server";
     package = edge.tailscale;
   };
+
+  # services.audiobookshelf = {
+  #   enable = true;
+  #   openFirewall = true;
+  # }
 
   # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
   networking.firewall.checkReversePath = "loose";
@@ -93,13 +116,14 @@ in
   services.ollama.acceleration = "cuda";
 
   environment.wordlist.enable = true;
-  environment.systemPackages = sets.fat ++ [expr.proton-ge-custom
-                                            pkgs.emacs-unstable
+  environment.systemPackages = sets.fat ++ [pkgs.emacs-unstable
                                             # nixmox.packages.oomoxFull
                                             # nixmox.defaultNix
                                            ]
                                ++ (with pkgs; [
-                                 alttab
+                                 restic
+                                 audiobookshelf
+                                 tesseract4
                                  toot
 
                                  # python lsp
@@ -109,16 +133,11 @@ in
                                  eask-cli # emacs linting
 
 
-                                 godef gopls
-
                                  xvfb-run
 
-                                 mpd-mpris
                                  pulseaudio
 
-                                 clj-kondo
                                  netpbm
-                                 udiskie
                                  lyrebird
                                  protontricks
                                  (sox.overrideAttrs(old: { enableLame = true;}))
@@ -128,29 +147,24 @@ in
 
                                  logseq
 
-
                                  ardour
                                  sass
                                  simplescreenrecorder
+
                                  anki-bin
                                  anki-sync-server
 
                                  bitwarden
                                  bitwarden-cli
 
-                                 obs-studio
-
                                  farbfeld
 
                                  # audible
-                                 babashka
-                                 vscode
                                  colort
                                  enscript
                                  farbfeld
                                  mgba
                                  slurm
-                                 vscode
 
                                  html2text
 
@@ -158,6 +172,7 @@ in
                                  dconf
                                  # qutebrowser
                                  discord
+                                 piper-tts
 
                                ]) ++ (with edge; [
                                  gemini-cli
@@ -168,11 +183,8 @@ in
                                  atuin
                                  yt-dlp
                                  google-chrome
-                                 # microsoft-edge
-                                 teams-for-linux
                                  nodejs
                                  qutebrowser
-                                 tailscale
                                ]) ++ (with unstable; [
                                  whisper-cpp
                                  # qutebrowser
@@ -237,6 +249,7 @@ in
 
   networking.firewall.allowedTCPPorts = [
     8000 # mpd playing
+    8001 # audiobookshelf
     # 6600 # mpd protocol
   ];
 
@@ -244,26 +257,26 @@ in
     2456 2457 # valheim
   ];
 
-  networking.wireguard.enable = false;
-  networking.wireguard.interfaces = {
-    wg0 = {
-      privateKeyFile = "/home/neeasade/wireguard-lazr.conf";
-      # ips = [ "10.1.1.9/32" ];
-      ips = [ "10.1.1.9/16" ];
-      peers = [{
-          endpoint = "lazr.space:51820";
-          publicKey = "WQ1QP2aUQrR5o1cwS7lip4oRjxMCquFaMW7ZQynsGkc=";
-          persistentKeepalive = 25;
-          # route traffic on these subnets through wg0:
-          allowedIPs = [
-            # "10.1.0.0/24"
-            "10.1.0.1/16" # one of lazr's machines
-                        # "10.1.1.0/24" # user
-                        # "0.0.0.0/0" # to route all trafic through this (lazr: "please do not do this")
-                       ];
-        }];
-    };
-  };
+  # networking.wireguard.enable = false;
+  # networking.wireguard.interfaces = {
+  #   wg0 = {
+  #     privateKeyFile = "/home/neeasade/wireguard-lazr.conf";
+  #     # ips = [ "10.1.1.9/32" ];
+  #     ips = [ "10.1.1.9/16" ];
+  #     peers = [{
+  #         endpoint = "lazr.space:51820";
+  #         publicKey = "WQ1QP2aUQrR5o1cwS7lip4oRjxMCquFaMW7ZQynsGkc=";
+  #         persistentKeepalive = 25;
+  #         # route traffic on these subnets through wg0:
+  #         allowedIPs = [
+  #           # "10.1.0.0/24"
+  #           "10.1.0.1/16" # one of lazr's machines
+  #                       # "10.1.1.0/24" # user
+  #                       # "0.0.0.0/0" # to route all trafic through this (lazr: "please do not do this")
+  #                      ];
+  #       }];
+  #   };
+  # };
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -312,13 +325,13 @@ in
 
   networking.extraHosts =
     ''
-    127.0.0.1 x.com
-    127.0.0.1 bsky.app
-    # 127.0.0.1 www.youtube.com
-    127.0.0.1 www.hulu.com
-    # 127.0.0.1 www.amazon.com
+    # 127.0.0.1 x.com
+    # 127.0.0.1 bsky.app
+    127.0.0.1 www.youtube.com
+    # 127.0.0.1 www.hulu.com
+    127.0.0.1 www.amazon.com
 
-    10.1.0.3 andromeda
+    # 10.1.0.3 andromeda
   '';
 
   # Open ports in the firewall.

@@ -1,5 +1,10 @@
 { pkgs, edge, expr, ...}:
 
+# exports:
+# bare -> cli -> ui -> fat
+# fonts-all
+# fonts-core
+
 let
   # eg a vps
   bare = (with pkgs; [
@@ -25,7 +30,7 @@ let
   ]);
 
   # stuff I would be annoyed at missing when I reached for it
-  cli = bare ++ (with pkgs; [
+  cli = (with pkgs; [
     babashka
     bfg-repo-cleaner
     cron
@@ -73,7 +78,7 @@ let
   ]);
 
   # Desktop setup
-  ui = cli ++ (with pkgs; [
+  ui = (with pkgs; [
     arandr
     (aspellWithDicts (ds: with ds; [ en en-science en-computers ]))
     # aspell
@@ -99,6 +104,11 @@ let
     # kitty
     libreoffice
     lxappearance
+
+
+    alttab
+    udiskie
+    mpd-mpris
     maim
     meh
     mpc_cli
@@ -153,7 +163,7 @@ let
   ]);
 
   # anything else
-  fat = ui ++ (with pkgs; [
+  fat = (with pkgs; [
     ### GAMES
     brogue-ce
 
@@ -190,6 +200,11 @@ let
     automake
     gnumake
 
+    vscode
+
+    godef gopls
+    clj-kondo
+
     # build failure <2024-12-01 Sun 16:56>
     # sbcl
     # lispPackages.quicklisp
@@ -208,6 +223,8 @@ let
     (jdk21.override { enableJavaFX = true; })
     # jdk8
     stack
+
+    vscode
 
     cargo
     rustc
@@ -272,7 +289,7 @@ let
     love_11
     luajit
     neovim
-    # obs-studio
+    obs-studio
     oils-for-unix
     pinta
     rpm
@@ -291,7 +308,7 @@ let
     zoom-us
   ]) ++ ([edge.pegasus-frontend pkgs.gamemode]);
 
-  fonts-core = (with pkgs; [dejavu_fonts corefonts symbola]);
+  fonts-core = (with pkgs; [dejavu_fonts corefonts symbola go-font charis-sil]);
 
   fonts-all = fonts-core ++ (with pkgs; [
     fira
@@ -300,7 +317,6 @@ let
     noto-fonts
     noto-fonts-cjk-sans
     noto-fonts-emoji
-    go-font
     roboto-mono
     siji
     tewi-font
@@ -315,9 +331,9 @@ let
 in
 {
   bare       = bare;
-  ui         = ui;
-  cli        = cli;
-  fat        = fat;
+  cli        = cli ++ bare;
+  ui         = ui  ++ cli;
+  fat        = fat ++ ui;
   fonts-all  = fonts-all;
   fonts-core = fonts-core;
 }
