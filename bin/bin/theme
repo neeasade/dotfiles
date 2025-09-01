@@ -10,7 +10,6 @@
             [clojure.walk :refer [postwalk prewalk]]
             [selmer.parser :as template]))
 
-
 (defn shh [cmd]
   (string/trim (:out (shell/sh "sh" "-c" cmd))))
 
@@ -20,7 +19,6 @@
         (map (fn [[k v]] {(keyword k) v}))
         (into {}))
    {:UID (shh "echo $UID")}))
-
 
 (defn has? [exec]
   (not (clojure.string/blank? (shh (str "which " exec)))))
@@ -271,7 +269,9 @@
                            (json/parse-string)
                            (get-in ["rectangle" "width"])))
           }
-
+         :emacs {:theme (or (and (fs/exists? (str (System/getenv "HOME") "/.cache/rice/emacs-theme-name"))
+                                 (slurp (str (System/getenv "HOME") "/.cache/rice/emacs-theme-name")))
+                            "myron-mcfay")}
          :css-fallback (->> ["Noto Color Emoji"
                              "Noto Sans Symbols"
                              "Symbola"

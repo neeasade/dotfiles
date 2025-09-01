@@ -6,6 +6,17 @@ launch() {
     vdo setsid nohup "$@" &
 }
 
+wait_for_internet() {
+  tries=10
+  while [ $tries -gt 0 ]; do
+    if silent ping -c 1 google.com; then
+      break
+    fi
+    sleep 1
+    tries=$((tries - 1))
+  done
+}
+
 if ! lsusb | grep -q Keyboard; then
   systemctl --user disable dunst
   systemctl --user stop dunst
@@ -20,21 +31,20 @@ if ! lsusb | grep -q Keyboard; then
   exit 0
 fi
 
-panelt true
 ltheme bg
-launch emacs
+panelt true
 
-# wait for internet
-tries=10
-while [ $tries -gt 0 ]; do
-  if silent ping -c 1 google.com; then
-    launch "$BROWSER"
-    break
-  fi
-  sleep 1
-  tries=$((tries - 1))
-done
+if [ "$(hostname)" = guthix ]; then
+  colemak
+  xbright 60
 
-# launch $TERMINAL
-# colemak
+  toggle_trackpad
+  launch emacs
 
+  bash -ic turn_off_turbo
+
+elif [ "$(hostname)" = bliss ]; then
+  launch emacs
+  wait_for_internet
+  launch "$BROWSER"
+fi

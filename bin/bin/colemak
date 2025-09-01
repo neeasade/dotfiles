@@ -2,14 +2,15 @@
 
 # ensure
 gittarget="https://github.com/neeasade/BigBagKbdTrixXKB"
-gitdir="$HOME/git"
+gitdir="$HOME/code"
 [ ! -d "$gitdir" ] && mkdir -p "$gitdir"
 gitdest="$gitdir/$(basename "$gittarget")"
 [ ! -d "$gitdest" ] && git clone "$gittarget" "$gitdest"
 
+
 # setup
 xkbdir="$HOME/.xkb"
-mkdir "$xkbdir"
+mkdir -p "$xkbdir"
 
 cd "$gitdest"
 

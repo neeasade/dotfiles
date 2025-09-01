@@ -2,10 +2,6 @@
 
 . $HOME/.sh.d/environment
 
-if [ "$(hostname)" = trouw ]; then
-    xbright
-fi
-
 if [ "$(hostname)" = bliss ]; then
     # fix screen tearing
     # https://wiki.archlinux.org/title/NVIDIA/Troubleshooting#Avoid_screen_tearing

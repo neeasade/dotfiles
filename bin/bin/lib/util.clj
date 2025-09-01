@@ -36,9 +36,6 @@
 (defn has? [exec]
   (not (clojure.string/blank? (shh (str "which " exec)))))
 
-(defn home [path]
-  (str (System/getenv "HOME") "/" path))
-
 (defn dmenu [lines]
   (shh "dmenu" :in (string/join "\n" (map str lines))))
 
