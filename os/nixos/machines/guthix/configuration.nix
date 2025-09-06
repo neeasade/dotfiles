@@ -26,7 +26,6 @@ let
   expr = import ../../config/expr/default.nix {inherit pkgs edge;};
   sets = import ../../config/packages.nix {inherit pkgs edge expr;};
 
-
   # nixmox = builtins.fetchTarball { url = "https://github.com/Sorixelle/nixmox/archive/1e9b569308efbbf61bd4f471803620715eac53cc.tar.gz"; };
 in
 
@@ -34,10 +33,19 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      "${builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git"; }}/apple/t2"
+
+      # "${builtins.fetchGit { url = "https://github.com/NixOS/nixos-hardware.git";
+      #                        rev = "3dac8a872557e0ca8c083cdcfc2f218d18e113b0";
+      #                      }}/apple/t2"
+      # update with: `sudo nix-channel --update`
+      <nixos-hardware/apple/t2>
 
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
     ];
+
+
+  hardware.apple-t2.kernelChannel = "stable";
+
   hardware.firmware = [ 
     (pkgs.stdenvNoCC.mkDerivation ( final: { 
                                     name = "brcm-firmware";
@@ -61,6 +69,8 @@ in
 
 
   systemd.services.NetworkManager-wait-online.enable = lib.mkForce false;
+
+  services.logind.settings.Login.HandleLidSwitch = "poweroff";
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -117,13 +127,13 @@ in
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   environment.systemPackages = sets.ui ++ [
-                                            pkgs.emacs-unstable
+                                            pkgs.emacs
                                             # nixmox.packages.oomoxFull
                                             # nixmox.defaultNix
                                            ]
                                ++ (with pkgs; [
-                                 alttab
-                                 toot
+                                 # alttab
+                                 # toot
 
                                  # python lsp
                                  pyright
@@ -160,8 +170,6 @@ in
                                  bitwarden
                                  bitwarden-cli
 
-                                 obs-studio
-
                                  farbfeld
 
                                  # audible
@@ -191,7 +199,6 @@ in
                                  yt-dlp
                                  google-chrome
                                  # microsoft-edge
-                                 teams-for-linux
                                  nodejs
                                  qutebrowser
                                  tailscale
@@ -200,6 +207,14 @@ in
                                  # qutebrowser
                                  kitty
                                ]);
+
+
+  services.tailscale = {
+    enable = true;
+    useRoutingFeatures = "server";
+    package = edge.tailscale;
+  };
+
 
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -263,8 +278,4 @@ in
     randomizedDelaySec = "14m";
     options = "--delete-older-than 30d";
   };
-
-
-
 }
-
