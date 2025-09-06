@@ -2,6 +2,9 @@
 
 lap_screen='LVDS-1 connected primary 1600x900+0+0'
 
+# guthix
+lap_screen='eDP-1 connected primary 2560x1600+0+0'
+
 if ! xrandr | grep -q "$lap_screen";  then
     notify-send --urgency=low "Not updating brightness"
     exit 1
@@ -14,10 +17,11 @@ current=${current:-60}
 case $1 in
     down) current=$(( current - 5 )) ;;
     up) current=$(( current + 5 )) ;;
+    *) current=$1 ;;
 esac
 
-echo xrandr --output LVDS-1 --brightness 0$(echo "$current / 100" | bc -l | cut -c -3)
-xrandr --output LVDS-1 --brightness 0$(echo "$current / 100" | bc -l | cut -c -3)
+echo xrandr --output eDP-1 --brightness 0$(echo "$current / 100" | bc -l | cut -c -3)
+xrandr --output eDP-1 --brightness 0$(echo "$current / 100" | bc -l | cut -c -3)
 
 echo $current >/tmp/xbrightness
 notify-send --urgency=low "Brightness: $current"
