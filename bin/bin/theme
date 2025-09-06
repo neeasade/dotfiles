@@ -385,8 +385,7 @@
         hostname-theme (let [hostname (.. java.net.InetAddress getLocalHost getHostName)
                              f (str (System/getenv "HOME") "/.dotfiles/bin/bin/themes/" hostname)]
                          (when (fs/exists? f)
-                           (unflatten-map (read-string f))))
-        ]
+                           (unflatten-map (read-string (slurp f)))))]
 
     ;; gross
     ;; ok so deep-merge won't merge over keys that are fns
