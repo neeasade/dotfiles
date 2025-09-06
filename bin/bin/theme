@@ -235,12 +235,7 @@
 ;; remove keys ending in '-' from tree
 
 (defn get-theme []
-  (let [ ;; home? (= "bliss" (.. java.net.InetAddress getLocalHost getHostName))
-        home? (= "neeasade" (System/getenv "USER"))
-        ;; work? (not home?)
-        work? false
-        mactop? (= "macman" (System/getenv "USER"))
-
+  (let [
         backup-colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
                        :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
 
@@ -254,21 +249,20 @@
                            (constantly backup-colors)))
 
         base-conf
-        {:meta
-         ;; for panel and compositor
-         {:shadow false
-          :dpi (if (has? "xdpyinfo")
-                 (shh "xdpyinfo | awk -F'[x ]+' '/resolution/{print $4}'")
-                 "96")
-
-          :mon-width (if-not (has? "bspc")
-                       "1920"
-                       (-> (shh "bspc query -T -m")
-                           ;; https://github.com/baskerville/bspwm/issues/941
-                           (string/replace ":-nan," ":0.5,")
-                           (json/parse-string)
-                           (get-in ["rectangle" "width"])))
-          }
+        {:THEME_NAME "rain"
+         :BG_COMMAND "${HOME}/.fehbg"
+         :meta {:shadow false
+                :dpi (if (has? "xdpyinfo")
+                       (shh "xdpyinfo | awk -F'[x ]+' '/resolution/{print $4}'")
+                       "96")
+                :mon-width (if-not (has? "bspc")
+                             "1920"
+                             (-> (shh "bspc query -T -m")
+                                 ;; https://github.com/baskerville/bspwm/issues/941
+                                 (string/replace ":-nan," ":0.5,")
+                                 (json/parse-string)
+                                 (get-in ["rectangle" "width"])))
+                }
          :emacs {:theme (or (and (fs/exists? (str (System/getenv "HOME") "/.cache/rice/emacs-theme-name"))
                                  (slurp (str (System/getenv "HOME") "/.cache/rice/emacs-theme-name")))
                             "myron-mcfay")}
@@ -280,9 +274,9 @@
                             (string/join ", " ))
 
          :font (fn [_]
-                 (->> {:variable {:family "Droid Sans" :size 12}
+                 (->> {:variable {:family "Equity B" :size 12}
                        :variable-big {:family "{{font.variable.family}}" :size 16}
-                       :mono {:family "Droid Sans Mono" :size 12}
+                       :mono {:family "Go Mono" :size 12}
                        :icon {:family "Font Awesome 5 Free" :size 10}
                        :panel {:family "{{font.variable.family}}" :size 14}}
                       (map (fn [[k v]]
@@ -299,7 +293,8 @@
                                                  window-width (* percent mon-width)
                                                  side (int (/ (- mon-width window-width) 2))]
                                              side))
-                      :bspwmrc-extend ""}
+                      :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
+                      }
          :bspwm {:border-width 3
                  :split-ratio 0.5
                  :normal-border-color "{{color.normal.faded}}"
@@ -344,7 +339,7 @@
          :x {:padding 4}
          :picom {:frame {:opacity 1.0}
                  :shadow {:opacity 0.4
-                          :enabled false
+                          :enabled "{{meta.shadow}}"
                           :radius 1
                           :offset-x 1
                           :offset-y 1
@@ -354,23 +349,14 @@
                  :fade {:enabled false
                         :in-step 0.1
                         :out-step 0.1}}
-         :mpd {
-               :mpd-dir "{{env.HOME}}/.config/mpd"
-               :music-dir "{{env.HOME}}/Music"
-               }
-         #_(when home?
-             (fn [_]
-               (if (string/includes? (shh "mount")
-                                     (format "%s/usb" (System/getenv "HOME")))
-                 {:music-dir "{{env.HOME}}/usb/Music"
-                  :mpd-dir "{{env.HOME}}/.config/mpd_portable"}
-                 {:music-dir "{{env.HOME}}/Music"
-                  :mpd-dir "{{env.HOME}}/.config/mpd"})))
+         :mpd {:mpd-dir "{{env.HOME}}/.config/mpd"
+               :music-dir "{{env.HOME}}/Music"}
+
          :panel {:height 36
                  ;; :format  "mpd:title|org_task:misc|tags:clock"
 
                  ;; full
-                 :format  "pomo:tags:title|day_progress:org_task:misc|running:clock"
+                 :format  "tags:title|misc|battery:clock"
                  ;; slim
                  ;; :format  "tags:title|misc|running:clock:day_progress"
                  ;; :format  "mpd:title|misc|tags:clock"
@@ -379,104 +365,38 @@
                                    "lemonbar" "noshadow"))
                  :gap 0
                  :top true
-                 :lemons (when home?
-                           (fn [tree]
-                             (->> (get-in tree [:panel :format])
-                                  (panel-format-to-lemons)
-                                  (panel-color-lemons tree)
-                                  (panel-lemons-to-i3blocks))))
+                 :lemons (fn [tree]
+                           (->> (get-in tree [:panel :format])
+                                (panel-format-to-lemons)
+                                (panel-color-lemons tree)
+                                (panel-lemons-to-i3blocks)))
                  }
-         :qutebrowser (unflatten-map
-                       {:statusbar nil
-                        :tab.font.family "{{font.variable.family}}"
-                        :tab.font.size "{{font.variable.size}}"
-                        ;; will this work?
-                        :statusbar.font.size "{{font.variable.size}}"
-                        :tab.bold (fn [tree]
-                                    (let [panel-font (get-in tree [:font :panel :spec])
-                                          bold? (string/includes? panel-font "Bold")]
-                                      (if bold? "True" "False")))
-                        })
+         :qutebrowser {:statusbar nil
+                       :tab.font.family "{{font.variable.family}}"
+                       :tab.font.size "{{font.variable.size}}"
+                       ;; will this work?
+                       :statusbar.font.size "{{font.variable.size}}"
+                       :tab.bold (fn [tree]
+                                   (let [panel-font (get-in tree [:font :panel :spec])
+                                         bold? (string/includes? panel-font "Bold")]
+                                     (if bold? "True" "False")))}
          }
 
-        mactop-theme (when mactop?
-                       (unflatten-map
-                        {:THEME_NAME "test"
-                         :mpd.music-dir "/Users/macman/sync/main/music"
-                         :emacs.theme "myron-mcfay"
-                         :font.mono.family "Go Mono"
-                         :font.mono.size 16
-                         :font.variable.family "Equity B"
-                         :font.variable.size 14
-                         :mkb.bar- "|/_"
-                         :shell.prompt "$"
-                         :x.padding 6}))
-
-        home-theme (when home?
-                     (unflatten-map
-                      {:THEME_NAME "test"
-                       :emacs.theme "myron-mcfay"
-                       ;; todo: just make an alias to feh solid color bg later
-                       :BG_COMMAND "${HOME}/.fehbg"
-                       ;; :BG_COMMAND "hsetroot -solid '{{color.focused.background}}'"
-                       ;; :BG_COMMAND "bgtint"
-                       ;; :font.mono.family "Triplicate A Code"
-                       ;; :font.mono.family "Triplicate T3p"
-                       :font.mono.family "Go Mono"
-                       ;; :font.mono.family "Triplicate C4c"
-                       :font.variable.family "Equity B"
-                       ;; :font.variable.family "Charter"
-                       :font.variable.size 12
-                       ;; :font.variable.family "Equity Text A"
-                       ;; :mkb.bar- "AAH"
-                       :mkb.bar- "|/_"
-                       ;; :mkb.bar- "/-_"
-                       ;; :mkb.bar- "[-]"
-                       ;; :mkb.bar- "/\\_"
-                       ;; :mkb.bar- "██▁"
-                       ;; :shell.prompt "%"
-                       :shell.prompt "$"
-
-                       ;; :shell.prompt "😎"
-                       ;; :shell.prompt_err "😞"
-                       :x.padding 6
-                       ;; :bspwm.window-gap 30
-                       :bspwm.window-gap 88
-                       :bspwm-meta.monocle-window-percent 0.46
-                       :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
-                       :font.mono.size 12
-                       :picom.shadow.enabled "{{meta.shadow}}"}))
-
-        work-theme (when work?
-                     (unflatten-map
-                      {:THEME_NAME "test"
-                       :emacs.theme "myron-mcfay"
-                       :BG_COMMAND "wallmac solid '{{color.focused.background}}'"
-
-                       :font.mono.family "Go Mono"
-                       ;; :font.variable.family "Go Mono"
-
-                       :font.variable.family "Charter"
-                       ;; :font.variable.family "Georgia"
-                       :font.mono.size 22
-                       :font.variable.size 24
-                       :mkb.bar- "##_"
-                       ;; :mkb.bar- "AHH"
-                       :shell.prompt "🌳"
-                       :shell.prompt_err "😞"
-                       :bspwm.window-gap 0
-                       :x.padding 5
-                       :bspwm.monocle-window-percent 0.55}))]
+        hostname-theme (let [hostname (.. java.net.InetAddress getLocalHost getHostName)
+                             f (str (System/getenv "HOME") "/.dotfiles/bin/bin/themes/" hostname)]
+                         (when (fs/exists? f)
+                           (unflatten-map (read-string f))))
+        ]
 
     ;; gross
     ;; ok so deep-merge won't merge over keys that are fns
     ;; this allows us to merge theme things that are USED in fns first
     ;; and then stomp anything that was rendered by merging again after
-    (-> base-conf
+    (-> (unflatten-map base-conf)
         (deep-merge colors)
-        (deep-merge home-theme work-theme mactop-theme)
+        (deep-merge hostname-theme)
         exec-fns exec-fns
-        (deep-merge home-theme work-theme mactop-theme))))
+        (deep-merge hostname-theme))))
 
 (defn process-theme [theme-tree]
   (as-> theme-tree tree

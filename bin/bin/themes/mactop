@@ -1,0 +1,12 @@
+;; -*- mode: clojure -*-
+;; todo: rename this file to hostname of macos
+{
+ :mpd.music-dir "/Users/macman/sync/main/music"
+ :font.mono.family "Go Mono"
+ :font.mono.size 16
+ :font.variable.family "Equity B"
+ :font.variable.size 14
+ :mkb.bar- "|/_"
+ :shell.prompt "$"
+ :x.padding 6
+ }

@@ -1,0 +1,10 @@
+;; -*- mode: clojure -*-
+{
+ ;; spec says dpi is super high, trying this
+ :meta.dpi "120"
+ :bspwm-meta.monocle-window-percent 0.60
+ :bspwm.window-gap 30
+ :mkb.bar- "|/_"
+ :shell.prompt "$"
+ :x.padding 6
+ }

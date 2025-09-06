@@ -214,6 +214,8 @@ add_metas() {
     add_switch "meta: org capture" "elisp '(ns/org-capture-popup)'"
     add_switch "meta: short break" "elisp '(ns/org-pomodoro-short-break)'"
 
+    add_switch "meta: trackpad" "toggle_trackpad"
+
     for o in now playlist shuffler artist del bl 'filter is_long' playlist_modify artist_append playlist_modify_same_artist; do
 	add_switch "meta: music $o" "music $o"
     done

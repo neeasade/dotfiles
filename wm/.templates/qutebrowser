@@ -6,6 +6,7 @@ theme = {
     },
 
     'fonts': {
+        # nb: https://github.com/qutebrowser/qutebrowser/issues/5576
         'tabbar': '{{tab.font.family|replace:" ":"\\ "}}',
         'completion': '{{tab.font.family|replace:" ":"\\ "}}',
         'completion_size': {{statusbar.font.size}},
