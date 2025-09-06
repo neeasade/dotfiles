@@ -293,7 +293,7 @@
                                                  window-width (* percent mon-width)
                                                  side (int (/ (- mon-width window-width) 2))]
                                              side))
-                      :bspwm-meta.bspwmrc-extend "tag_borders &\n subscription_rules &"
+                      :bspwmrc-extend "tag_borders &\n subscription_rules &"
                       }
          :bspwm {:border-width 3
                  :split-ratio 0.5
