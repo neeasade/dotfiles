@@ -30,7 +30,7 @@ let
   ]);
 
   # stuff I would be annoyed at missing when I reached for it
-  cli = (with pkgs; [
+  cli = bare ++ (with pkgs; [
     babashka
     bfg-repo-cleaner
     cron
@@ -78,7 +78,7 @@ let
   ]);
 
   # Desktop setup
-  ui = (with pkgs; [
+  ui = cli ++ (with pkgs; [
     arandr
     (aspellWithDicts (ds: with ds; [ en en-science en-computers ]))
     # aspell
@@ -163,7 +163,7 @@ let
   ]);
 
   # anything else
-  fat = (with pkgs; [
+  fat = ui ++ (with pkgs; [
     ### GAMES
     brogue-ce
 
@@ -331,9 +331,9 @@ let
 in
 {
   bare       = bare;
-  cli        = cli ++ bare;
-  ui         = ui  ++ cli;
-  fat        = fat ++ ui;
+  cli        = cli;
+  ui         = ui;
+  fat        = fat;
   fonts-all  = fonts-all;
   fonts-core = fonts-core;
 }
