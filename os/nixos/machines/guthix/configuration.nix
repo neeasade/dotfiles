@@ -43,6 +43,16 @@ in
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
     ];
 
+  services.flatpak.enable = true;
+
+  xdg.portal = { # needed for flatpak
+    enable = true;
+    config.common.default = "*";
+    extraPortals = [pkgs.xdg-desktop-portal-gtk];
+  };
+
+
+
 
   hardware.apple-t2.kernelChannel = "stable";
 
@@ -77,7 +87,7 @@ in
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
-  networking.hostName = "guthix"; # Define your hostname.
+  networking.hostName = hostname; #
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
@@ -99,9 +109,6 @@ in
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
-
-
-  
 
   # Configure keymap in X11
   # services.xserver.xkb.layout = "us";
@@ -132,6 +139,8 @@ in
                                             # nixmox.defaultNix
                                            ]
                                ++ (with pkgs; [
+
+                                 qutebrowser
                                  # alttab
                                  # toot
 
@@ -144,7 +153,7 @@ in
 
                                  godef gopls
 
-                                 xvfb-run
+                                 # xvfb-run
 
                                  mpd-mpris
                                  pulseaudio
@@ -200,27 +209,22 @@ in
                                  google-chrome
                                  # microsoft-edge
                                  nodejs
-                                 qutebrowser
-                                 tailscale
                                ]) ++ (with unstable; [
                                  # whisper-cpp
                                  # qutebrowser
                                  kitty
                                ]);
 
-
+  # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
+  networking.firewall.checkReversePath = "loose";
   services.tailscale = {
     enable = true;
     useRoutingFeatures = "server";
     package = edge.tailscale;
   };
 
-
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-
   users.users.neeasade = shared.defaultUser;
-    # programs.firefox.enable = true;
+  # programs.firefox.enable = true;
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).

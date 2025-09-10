@@ -97,6 +97,9 @@ in
 # '';
 
   services.udisks2.enable = true;
+
+  # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
+  networking.firewall.checkReversePath = "loose";
   services.tailscale = {
     enable = true;
     useRoutingFeatures = "server";
@@ -107,9 +110,6 @@ in
   #   enable = true;
   #   openFirewall = true;
   # }
-
-  # https://github.com/tailscale/tailscale/issues/4432#issuecomment-1112819111
-  networking.firewall.checkReversePath = "loose";
 
   services.ollama.enable = true;
   services.ollama.package = unstable.ollama;
