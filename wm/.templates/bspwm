@@ -16,7 +16,7 @@ bspwm_kill_visual
 # extensions may be defined in themes here:
 {{bspwm-meta.bspwmrc-extend|safe}}
 
-alttab &
+alttab -w 1 &
 
 fullscreen_toggle.sh do_same
 

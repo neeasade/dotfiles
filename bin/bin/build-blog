@@ -25,10 +25,11 @@ export NS_BLOG_PATH="$(realpath ./blag)/"
 
 cd ./blag
 
+git remote set-url origin "https://github.com/neeasade/neeasade.github.io"
 git worktree add published origin/master
 cd published
 git checkout master
-git pull "https://github.com/neeasade/neeasade.github.io" master
+git reset --hard origin/master
 
 if [ -z "$*" ]; then
     code="(ns/summon '(resources evil buffers-and-windows org blog style))

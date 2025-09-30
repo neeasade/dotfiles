@@ -308,7 +308,7 @@
 
                  ;; other
                  :focus-follows-pointer      true
-                 :ignore-ewmh-focus          true
+                 :ignore-ewmh-focus          false
                  :remove-unplugged-monitors  true
                  :remove-disabled-monitors   true
                  :ignore-ewmh-struts         true
@@ -371,15 +371,16 @@
                                 (panel-color-lemons tree)
                                 (panel-lemons-to-i3blocks)))
                  }
-         :qutebrowser {:statusbar nil
-                       :tab.font.family "{{font.variable.family}}"
-                       :tab.font.size "{{font.variable.size}}"
-                       ;; will this work?
-                       :statusbar.font.size "{{font.variable.size}}"
-                       :tab.bold (fn [tree]
-                                   (let [panel-font (get-in tree [:font :panel :spec])
-                                         bold? (string/includes? panel-font "Bold")]
-                                     (if bold? "True" "False")))}
+         :qutebrowser (unflatten-map
+                       {:statusbar nil
+                        :tab.font.family "{{font.variable.family}}"
+                        :tab.font.size "{{font.variable.size}}"
+                        ;; will this work?
+                        :statusbar.font.size "{{font.variable.size}}"
+                        :tab.bold (fn [tree]
+                                    (let [panel-font (get-in tree [:font :panel :spec])
+                                          bold? (string/includes? panel-font "Bold")]
+                                      (if bold? "True" "False")))})
          }
 
         hostname-theme (let [hostname (.. java.net.InetAddress getLocalHost getHostName)

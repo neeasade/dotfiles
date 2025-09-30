@@ -6,5 +6,7 @@
  :bspwm.window-gap 30
  :mkb.bar- "|/_"
  :shell.prompt "$"
+
+ :panel.format  "tags:title|misc|battery:clock"
  :x.padding 6
  }

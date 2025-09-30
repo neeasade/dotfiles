@@ -1,3 +1,26 @@
 ;; -*- mode: clojure -*-
 {
-}
+
+ ;; :emacs.theme "myron-mcfay"
+
+ :font.mono.family "Go Mono"
+ ;; :font.mono.family "Triplicate C4c"
+ :font.variable.family "Equity B"
+ ;; :font.variable.family "Charter"
+ :font.variable.size 12
+ ;; :font.variable.family "Equity Text A"
+ ;; :mkb.bar- "AAH"
+ :mkb.bar- "|/_"
+ ;; :mkb.bar- "/-_"
+ ;; :mkb.bar- "[-]"
+ ;; :mkb.bar- "/\\_"
+ ;; :mkb.bar- "██▁"
+ ;; :shell.prompt "%"
+
+ :x.padding 6
+ ;; :bspwm.window-gap 30
+ :bspwm.window-gap 50
+ ;; :bspwm.window-gap 88
+ :bspwm-meta.monocle-window-percent 0.46
+ :font.mono.size 12
+ }
