@@ -9,16 +9,11 @@ nst() {
   elisp -r "(ns/t $1)"
 }
 
-# macos
-ps() { # wonder if I'll regret this one later
-  if [ -z "$*" ]; then
-    ps -T
-  else
-    og ps "$@"
-  fi
-}
-
 alias mimetype='file --mime-type -b'
+
+alias capslock='xdotool key Caps_Lock'
+alias CAPSLOCK=capslock
+alias CAPS=capslock
 
 soff() { # screen off
   pkill steam
@@ -60,7 +55,6 @@ make() {
   clear
   og make "$@"
 }
-
 
 man() {
   # manpages with colors

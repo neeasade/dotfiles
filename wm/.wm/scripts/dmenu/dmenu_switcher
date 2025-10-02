@@ -215,6 +215,10 @@ add_metas() {
     add_switch "meta: short break" "elisp '(ns/org-pomodoro-short-break)'"
 
     add_switch "meta: trackpad" "toggle_trackpad"
+    add_switch "meta: toggle capslock" "bash -ic capslock"
+
+    add_switch "meta: qwerty->colemak" "colemak"
+    add_switch "meta: qwerty layout -- setxkbmap us" "setxkbmap us"
 
     for o in now playlist shuffler artist del bl 'filter is_long' playlist_modify artist_append playlist_modify_same_artist; do
 	add_switch "meta: music $o" "music $o"
