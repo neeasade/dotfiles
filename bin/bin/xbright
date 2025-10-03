@@ -17,7 +17,7 @@ current=${current:-60}
 case $1 in
     down) current=$(( current - 5 )) ;;
     up) current=$(( current + 5 )) ;;
-    *) current=$1 ;;
+    *) current=${1:-$current} ;;
 esac
 
 echo xrandr --output eDP-1 --brightness 0$(echo "$current / 100" | bc -l | cut -c -3)

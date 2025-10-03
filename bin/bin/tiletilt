@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-
 # view a tiled wallpaper at an angles
 
-tile=${1:-$(find "${HOME}/tiles" -type f | shuf | head -n 1)}
+tiledir="${HOME}/tiles"
+
+tile=${1:-$(find "$tiledir/" -type f | shuf | head -n 1)}
 angle=${2:-$((RANDOM % 360))}
 
 w=1920

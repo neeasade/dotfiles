@@ -20,6 +20,7 @@ c() {
 }
 
 padding() {
+    echo "padding: $1"
     pad=$1
 
     # doubling check
@@ -47,8 +48,6 @@ if $want_gaps; then
     padding 0
     c borderless_monocle false
 else
-    pad_px=0
-
     set_monocle=false
     if jget layout "$(bspc query -T -d)" | grep -q monocle; then
 	if [ "$(bspc config left_monocle_padding)" = 0 ]; then

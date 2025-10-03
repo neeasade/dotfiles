@@ -1,4 +1,6 @@
 #!/bin/sh
+# nb: you can switch back with:
+# setxkbmap us
 
 # ensure
 gittarget="https://github.com/neeasade/BigBagKbdTrixXKB"

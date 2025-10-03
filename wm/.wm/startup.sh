@@ -36,7 +36,7 @@ panelt true
 
 if [ "$(hostname)" = guthix ]; then
   colemak
-  xbright 60
+  xbright 90
 
   toggle_trackpad
   launch emacs
