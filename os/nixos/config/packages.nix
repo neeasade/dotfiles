@@ -35,7 +35,7 @@ let
     bfg-repo-cleaner
     cron
     dash
-    # direnv
+    direnv
     # nix-direnv
     dos2unix
     entr
@@ -123,7 +123,7 @@ let
     pavucontrol
     picom
     pinentry-qt
-    plasma5Packages.networkmanager-qt
+    kdePackages.networkmanager-qt
     redshift
     rofi
     slop
