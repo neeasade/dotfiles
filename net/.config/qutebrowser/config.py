@@ -76,19 +76,8 @@ nmap('E', 'tab-prev')
 nmap('k', 'search-next')
 nmap('K', 'search-prev')
 
-# keep autosave session in sync when tabs are closed as well as opened
-# total hack
-# todo: include this hack in the undo action/keybind
-
-# todo: this on undo, maybe url change? could be smoother for sure
-d_sync = ';;'.join([
-    'tab-close',
-    'set messages.timeout 1',
-    'session-save --force _autosave',
-    'set messages.timeout 2000',
-    ])
-
-nmap('d', d_sync)
+nmap('d', 'tab-close;; session-save --force _autosave')
+nmap('u', 'undo;;      session-save --force _autosave')
 
 # default theme:
 theme = {
