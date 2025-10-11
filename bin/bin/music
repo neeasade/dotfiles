@@ -89,13 +89,12 @@ add() { # add a url to library, fallback on clipboard content
     curl "$url" | pup a attr{href} | awk "/\/album/" | sed -e "s#^#music add '$(echo "$url" | sed 's/music//')#" -e "s/$/'/"
   }
 
-  # todo: this should handle unknown sources better
-  # known one: soundcloud (eminence)
   if [[ $url =~ youtube.com ]]; then
     format="$musicdir/import/%(uploader)s/%(title)s.%(ext)s"
-  else
-    # usually bandcamp -- we want track_number for album song order sorting
+  elif [[ $url =~ bandcamp.com ]]; then
     format="$musicdir/import/bandcamp/%(uploader)s/%(album)s/%(track_number)02d. %(title)s.%(ext)s"
+  else
+    format="$musicdir/import/_other/%(uploader)s/%(album)s/%(track_number)02d. %(title)s.%(ext)s"
   fi
 
   # when adding youtube album playlists:

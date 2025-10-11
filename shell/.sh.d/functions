@@ -29,14 +29,6 @@ lein() {
   og lein "$@"
 }
 
-remind() {
-  sleepm "$1"
-  shift
-  # todo: there should be a sound with this
-  notify-send "$*"
-  boop
-}
-
 lint() {
   # dwim please
   if task | grep -q '* lint:'; then

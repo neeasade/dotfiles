@@ -42,9 +42,12 @@ if [ "$(hostname)" = guthix ]; then
   launch emacs
 
   bash -ic turn_off_turbo
-
 elif [ "$(hostname)" = bliss ]; then
   launch emacs
   wait_for_internet
   launch "$BROWSER"
 fi
+
+
+# for some reason dunst dpi is off on startup, resetting like this fixes it
+ltheme dunst

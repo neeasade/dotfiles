@@ -29,7 +29,7 @@ theme = {
             'strong': '{{color.strong.foreground}}',
             'focused': '{{color.focused.foreground}}',
 
-            'match': '{{color.normal.alt}}', # completion and hints
+            'match': '{{color.normal.alt}}',   # completion and hints
             'faded': '{{color.normal.faded}}', # unfocused tabs
         },
     }
