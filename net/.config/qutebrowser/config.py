@@ -1,30 +1,25 @@
-# note: this will be run with python 3
-
-# todo unblock rollbar
+# https://qutebrowser.org/
+# :)
 
 import os
 import socket
 import operator
 import subprocess
+import time
+from pathlib import Path
 from shutil import which
 from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
-from qutebrowser.config.config import ConfigContainer  # noqa: F401
-
+from qutebrowser.config.config import ConfigContainer # noqa: F401
 from qutebrowser.api import interceptor, message
 
 config = config  # type: ConfigAPI # noqa: F821
-c = c  # type: ConfigContainer # noqa: F821
+c = c            # type: ConfigContainer # noqa: F821
 config.load_autoconfig(False)
 
-# todo: config.load
-
-# https://github.com/noctuid/dotfiles/blob/master/browsing/.config/qutebrowser/config.py
+# stolen from https://github.com/noctuid/dotfiles/blob/master/browsing/.config/qutebrowser/config.py
 def nmap(key, command):
     """Bind key to command in normal mode."""
     config.bind(key, command, mode='normal')
-
-# is this the first time running?
-initial_start = c.tabs.background == False
 
 # ui
 c.completion.scrollbar.width = 10
@@ -53,21 +48,20 @@ if which("qutebrowser-edit"):
 
 c.auto_save.session = True
 
-# nmap('b', 'set-cmd-text --space :tab-select')
 nmap('b', 'cmd-set-text --space :tab-select')
 
 # trying to match to 's' avy hinting in emacs
+# todo: what did we lose here
 config.unbind('sf');
 config.unbind('sk');
 config.unbind('sl');
 config.unbind('ss');
 nmap('s', 'hint')
 
-
 # kill the old habit:
 config.unbind('f');
 
-# colemak
+# colemak, and sync session
 c.hints.chars = 'arstgkneio'
 nmap('n', 'scroll-page 0 0.2')
 nmap('e', 'scroll-page 0 -0.2')
@@ -76,15 +70,20 @@ nmap('E', 'tab-prev')
 nmap('k', 'search-next')
 nmap('K', 'search-prev')
 
-nmap('d', 'tab-close;; session-save --force _autosave')
-nmap('u', 'undo;;      session-save --force _autosave')
+nmap('d', 'tab-close')
+nmap('u', 'undo')
+
+# this is nice, but the message is annoying - can we not?
+# nmap('N', 'tab-next  ;; session-save --force _autosave')
+# nmap('E', 'tab-prev  ;; session-save --force _autosave')
+# nmap('d', 'tab-close ;; session-save --force _autosave')
+# nmap('u', 'undo      ;; session-save --force _autosave')
 
 # default theme:
 theme = {
     'panel': {
         'height': 22,
     },
-
     'fonts': {
         'tabbar': 'monospace',
         'completion': 'monospace',
@@ -93,7 +92,6 @@ theme = {
         'tab_size': 14,
         'status_size': 13,
     },
-
     'colors': {
         'bg': {
             'normal': '#f2e9e3',
@@ -101,24 +99,21 @@ theme = {
             'strong': '#d1c8cd',
             'focused': '#e0c4bf',
         },
-
         'fg': {
             'normal': '#544b45',
             'weak': '#473e3d',
             'strong': '#3f363b',
             'focused': '#544b45',
-
             'match': '#916156', # completion and hints (rename this alt?)
             'faded': '#67625f', # unfocused tabs
         },
     }
-
 }
 
 # import templated theme when file exists
 themefile = os.environ["HOME"] + '/.config/qutebrowser/colors.py'
 if os.path.exists(themefile):
-    exec(open(themefile).read())
+    exec(Path(themefile).read_text())
 
 cssfile = os.environ["HOME"] + '/.config/qutebrowser/settings.css'
 if os.path.exists(cssfile):
@@ -201,12 +196,9 @@ targets = {
     'faded': [
         'tabs.even.fg',
         'tabs.odd.fg',
+        'contextmenu.disabled.fg'
     ]
 }
-
-# todo: fade these:
-# 'contextmenu.disabled.bg'
-# 'contextmenu.disabled.fg'
 
 for colortype in targets:
     for target in targets[colortype]:
@@ -269,8 +261,8 @@ REDIRECT_MAP = {
     # "i.reddit.com": operator.methodcaller('setHost', 'i.reddit.com'),
     # "preview.reddit.com": operator.methodcaller('setHost', 'reddit.com'),
 
-    # "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
-    # "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
+    "reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
+    "www.reddit.com": operator.methodcaller('setHost', 'old.reddit.com'),
 }
 
 def redirect_intercept(info):
@@ -286,31 +278,46 @@ def redirect_intercept(info):
         message.info("Redirecting to " + url.toString())
         info.redirect(url)
 
-# idea here: you could have an interceptor that does the url note check for emacs
 interceptor.register(redirect_intercept)
 
-adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock.txt'
-adblock_normal_file = os.environ["HOME"] + '/.config/qutebrowser/adblock_internet.txt'
+def pull_adblock(f):
+    try:
+        req = urllib.request.urlopen('https://raw.githubusercontent.com/stevenblack/hosts/master/hosts')
+        with open(f, "w") as file:
+            file.write(req.read())
+    except:
+        # we failed to pull (probably no internet), do nothing
+        None
 
-adblock_normal_file = 'https://raw.githubusercontent.com/stevenblack/hosts/master/hosts'
+adblock_file = os.environ["HOME"] + '/.config/qutebrowser/adblock_internet.txt'
 
-# todo: handle userscript location
-# '/Users/nathan/Library/Application Support/qutebrowser/userscripts',
-# '/Users/nathan/.qutebrowser/userscripts'
+if os.path.exists(adblock_file):
+    if (time.time() - os.path.getmtime(adblock_file)) > (60 * 60 * 24):
+        pull_adblock(adblock_file)
+else:
+    pull_adblock(adblock_file)
 
-# if os.path.exists(adblock_file):
-#     c.blocking.hosts.lists = [
-#         adblock_normal_file,
-#         'file://' + adblock_file,
-#         ]
+blockfiles = [adblock_file,                                                 # internet block list
+              os.environ["HOME"] + '/.config/qutebrowser/adblock.txt',      # distracting sites
+              os.environ["HOME"] + '/.config/qutebrowser/adblock_temp.txt'] # local adhoc blocks
+
+for f in blockfiles:
+    if not os.path.exists(f):
+        Path(f).touch()
 
 # both = both host blocking and brave abp-style blocker
 c.content.blocking.method = "both"
 
-if os.path.exists(adblock_file):
-    c.content.blocking.hosts.lists = [
-        adblock_normal_file,
-        'file://' + adblock_file,
-        'file://' + os.environ["HOME"] + '/.config/qutebrowser/adblock_temp.txt'
-        # 'file://' + adblock_file,
-        ]
+# c.content.blocking.hosts.lists = [
+#     'file://' + adblock_file,
+#     'file://' + os.environ["HOME"] + '/.config/qutebrowser/adblock_temp.txt'
+#     ]
+
+c.content.blocking.hosts.lists = ['file://' + f for f in blockfiles]
+
+# if os.path.exists(adblock_file):
+#     c.content.blocking.hosts.lists = [
+#         adblock_normal_file,
+#         'file://' + adblock_file,
+#         'file://' + os.environ["HOME"] + '/.config/qutebrowser/adblock_temp.txt'
+#         ]
