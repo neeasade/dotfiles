@@ -51,25 +51,17 @@ in
     extraPortals = [pkgs.xdg-desktop-portal-gtk];
   };
 
-
-
-
   hardware.apple-t2.kernelChannel = "stable";
 
   hardware.firmware = [ 
     (pkgs.stdenvNoCC.mkDerivation ( final: { 
-                                    name = "brcm-firmware";
-                                    src = /etc/nixos/firmware/brcm;
-                                    installPhase = ''
-                                    mkdir -p $out/lib/firmware/brcm
-                                    cp ${final.src}/* "$out/lib/firmware/brcm"
-                                                      '';
-                                                      }))
-                                                      ];
-
-
-
-  environment.wordlist.enable = true;
+      name = "brcm-firmware";
+      src = /etc/nixos/firmware/brcm;
+      installPhase = ''
+        mkdir -p $out/lib/firmware/brcm
+        cp ${final.src}/* "$out/lib/firmware/brcm"
+        '';
+    }))];
 
   nixpkgs.overlays = [
     (import (builtins.fetchTarball {
@@ -224,14 +216,6 @@ in
   };
 
   users.users.neeasade = shared.defaultUser;
-  # programs.firefox.enable = true;
-
-  # List packages installed in system profile.
-  # You can use https://search.nixos.org/ to find more packages (and options).
-  # environment.systemPackages = with pkgs; [
-  #   vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #   wget
-  # ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -252,11 +236,6 @@ in
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
-  # Copy the NixOS configuration file and link it from the resulting system
-  # (/run/current-system/configuration.nix). This is useful in case you
-  # accidentally delete configuration.nix.
-  # system.copySystemConfiguration = true;
-
   # This option defines the first version of NixOS you have installed on this particular machine,
   # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
   #
@@ -275,7 +254,6 @@ in
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?
-
 
   nix.gc = {
     automatic = true;
