@@ -6,6 +6,7 @@ import socket
 import operator
 import subprocess
 import time
+import urllib.request
 from pathlib import Path
 from shutil import which
 from qutebrowser.config.configfiles import ConfigAPI  # noqa: F401
@@ -73,11 +74,13 @@ nmap('K', 'search-prev')
 nmap('d', 'tab-close')
 nmap('u', 'undo')
 
+# save_session = 'set messages.timeout 0;; session-save --force _autosave'
+
 # this is nice, but the message is annoying - can we not?
-# nmap('N', 'tab-next  ;; session-save --force _autosave')
-# nmap('E', 'tab-prev  ;; session-save --force _autosave')
-# nmap('d', 'tab-close ;; session-save --force _autosave')
-# nmap('u', 'undo      ;; session-save --force _autosave')
+nmap('N', 'tab-next  ;; session-save --force _autosave')
+nmap('E', 'tab-prev  ;; session-save --force _autosave')
+nmap('d', 'tab-close ;; session-save --force _autosave')
+nmap('u', 'undo      ;; session-save --force _autosave')
 
 # default theme:
 theme = {
@@ -284,7 +287,7 @@ def pull_adblock(f):
     try:
         req = urllib.request.urlopen('https://raw.githubusercontent.com/stevenblack/hosts/master/hosts')
         with open(f, "w") as file:
-            file.write(req.read())
+            file.write(req.read().decode("utf-8"))
     except:
         # we failed to pull (probably no internet), do nothing
         None
@@ -307,17 +310,4 @@ for f in blockfiles:
 
 # both = both host blocking and brave abp-style blocker
 c.content.blocking.method = "both"
-
-# c.content.blocking.hosts.lists = [
-#     'file://' + adblock_file,
-#     'file://' + os.environ["HOME"] + '/.config/qutebrowser/adblock_temp.txt'
-#     ]
-
 c.content.blocking.hosts.lists = ['file://' + f for f in blockfiles]
-
-# if os.path.exists(adblock_file):
-#     c.content.blocking.hosts.lists = [
-#         adblock_normal_file,
-#         'file://' + adblock_file,
-#         'file://' + os.environ["HOME"] + '/.config/qutebrowser/adblock_temp.txt'
-#         ]
