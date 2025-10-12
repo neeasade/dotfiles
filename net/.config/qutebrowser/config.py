@@ -1,4 +1,5 @@
 # https://qutebrowser.org/
+# https://raw.githubusercontent.com/qutebrowser/qutebrowser/main/doc/img/cheatsheet-big.png
 # :)
 
 import os
@@ -51,12 +52,12 @@ c.auto_save.session = True
 
 nmap('b', 'cmd-set-text --space :tab-select')
 
-# trying to match to 's' avy hinting in emacs
-# todo: what did we lose here
+# match 's' avy hinting in emacs
 config.unbind('sf');
 config.unbind('sk');
 config.unbind('sl');
 config.unbind('ss');
+
 nmap('s', 'hint')
 
 # kill the old habit:
