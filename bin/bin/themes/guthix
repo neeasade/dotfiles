@@ -9,5 +9,5 @@
  :shell.prompt "$"
 
  :panel.format  "tags:title|misc|battery:clock"
- :x.padding 0
+ :x.padding 8
  }

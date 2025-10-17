@@ -35,6 +35,7 @@ ltheme bg
 panelt true
 
 if [ "$(hostname)" = guthix ]; then
+  gapt false
   colemak
   xbright 90
 

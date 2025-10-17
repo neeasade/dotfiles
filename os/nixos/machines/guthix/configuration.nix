@@ -136,6 +136,8 @@ in
                                  # alttab
                                  # toot
 
+                                 steam
+
                                  # python lsp
                                  pyright
                                  ruff

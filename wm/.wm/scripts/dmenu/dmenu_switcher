@@ -241,6 +241,7 @@ add_metas() {
     add_switch "meta: hulu" "hulu"
     add_switch "meta: stalonetray" "bash -ic 'stalonetray'"
     add_switch "meta: dpass" "bash -ic 'dpass'"
+    add_switch "meta: screenshot" "bash -ic 'shot'"
 
     while read -r id name; do
 	add_switch "meta: sound switch $name" "pa-move-sinks $id"
