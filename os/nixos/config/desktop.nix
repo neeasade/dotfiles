@@ -3,6 +3,8 @@
 {
   nixpkgs.config.allowUnfree = true;
 
+  environment.wordlist.enable = true;
+
   # environment.extraInit = ''
   #   # SVG loader for pixbuf (needed for GTK svg icon themes)
   #   export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
