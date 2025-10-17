@@ -153,6 +153,7 @@ targets = {
         'statusbar.url.success.https.fg',
         'hints',
         'downloads.bar.bg',
+        'webpage.bg',
         'completion.category',
 
         'tabs.even.bg',
