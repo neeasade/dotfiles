@@ -5,6 +5,12 @@
   font-family: "{{font.variable.family}}", {{css-fallback|safe}} !important;
 }
 
+/* torn on this. looks janky, but more cohesive */
+/* body { */
+/* 	    background-color: {{color.normal.background}}; */
+/* 	    color: {{color.normal.foreground}}; */
+/* } */
+
 div[class^='Box-sc'],
 div[class^='Box-sc'] *,
 [class*='code'],

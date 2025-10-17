@@ -21,17 +21,19 @@
             (string/upper-case)))))
 
 (defn log []
-  (spit "/home/neeasade/dunst_log"
-        (format "\n%s,%s,%s"
-                (dunst-val :timestamp)
-                (dunst-val :summary)
-                (dunst-val :body))
-        :append true))
+  (let [log-line (if (string/blank? (dunst-val :body))
+                   (dunst-val :summary)
+                   (str (dunst-val :summary) ": " (dunst-val :body)))]
+    ;; (util/sh "elispp" (format "(ns/log-buffer \"*dunst-notifications*\" \"%s\")"
+    ;;                           ;; todo: escaping of any kind, or elispp -f
+    ;;                           log-line))
+    (spit "/tmp/dunst_log" (str "\n" (dunst-val :timestamp) "," log-line)
+          :append true)))
 
 (defn beep []
   ;; todo: up vol when through monitor instead of headphones
   (let [vol (parse-long (or (util/shh "ponymix get-volume") 20))
-        ;; alter -1                         ; volume alter
+
         alter 40
         vol (+ vol alter)
 

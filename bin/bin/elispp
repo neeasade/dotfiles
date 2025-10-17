@@ -25,6 +25,8 @@
   [["-t" "--timeout TIMEOUT" "set timeout"]
    ["-r" "--raw" "trim the output string"]
    ["-q" "--quiet" "do not print the result of sexp"]
+   ;; todo
+   ["-f" "--function" "call a function with script args as function args"]
    ["-b" "--batch" "run lisp in batch mode"]
    ["-w" "--window" "run lisp in batch mode with a window"]
    ["-v" "--verbose" "verbose mode"]
