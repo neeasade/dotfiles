@@ -1,4 +1,5 @@
 #!/usr/bin/env bb
+;; interesting quirk: if duplicate notifications happen, dunst doesn't call this
 
 (ns dunst_handler
   (:require [babashka.fs :as fs]
@@ -24,9 +25,9 @@
   (let [log-line (if (string/blank? (dunst-val :body))
                    (dunst-val :summary)
                    (str (dunst-val :summary) ": " (dunst-val :body)))]
-    ;; (util/sh "elispp" (format "(ns/log-buffer \"*dunst-notifications*\" \"%s\")"
-    ;;                           ;; todo: escaping of any kind, or elispp -f
-    ;;                           log-line))
+    (util/sh "elispp" (format "(ns/message-buffer \"*dunst-notifications*\" \"%s\")"
+                              ;; todo: escaping of any kind, or elispp -f
+                              log-line))
     (spit "/tmp/dunst_log" (str "\n" (dunst-val :timestamp) "," log-line)
           :append true)))
 
@@ -63,4 +64,3 @@
     (beep)))
 
 
-;; env | grep DUNST > $HOME/dunst_env
