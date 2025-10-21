@@ -1,6 +1,6 @@
 /* -*- mode: css -*- */
 
-* {
+*:not([class^='material']) {
   scroll-behavior: auto !important;
   font-family: "{{font.variable.family}}", {{css-fallback|safe}} !important;
 }
