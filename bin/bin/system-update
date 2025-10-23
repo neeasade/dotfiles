@@ -29,12 +29,11 @@ echo "channel: $channel"
 
 export NIXPKGS_ALLOW_INSECURE=1
 
-# sudo nix-channel --update
-# sudo nixos-rebuild "${*}"
-# the same as the above:
+# cd is so we don't accidentally litter 'result' symlinks everywhere
 cd
 
-vdo sudo nixos-rebuild $* --upgrade --show-trace
+vdo sudo nix-channel --update nixos
+vdo sudo nixos-rebuild
 
 echo "note: nix-env is fucked"
 # vdo nix-env -u
