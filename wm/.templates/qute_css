@@ -2,7 +2,7 @@
 
 *:not([class^='material']) {
   scroll-behavior: auto !important;
-  font-family: "{{font.variable.family}}", {{css-fallback|safe}} !important;
+  font-family: "{{font.variable.family}}", {{css-fallback|safe}};
 }
 
 /* torn on this. looks janky, but more cohesive */
@@ -19,7 +19,7 @@ code, code *,
 pre, pre *,
 kbd, kbd *,
 samp, samp * {
-	font-family: "{{font.mono.family}}", {{css-fallback|safe}} !important;
+	font-family: "{{font.mono.family}}", {{css-fallback|safe}};
 }
 
 ::selection {

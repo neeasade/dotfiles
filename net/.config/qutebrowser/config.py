@@ -123,6 +123,9 @@ cssfile = os.environ["HOME"] + '/.config/qutebrowser/settings.css'
 if os.path.exists(cssfile):
     c.content.user_stylesheets = [cssfile]
 
+# this option doesn't support url patterns
+# config.set('content.user_stylesheets', [], 'web.telegram.org')
+
 colors = theme['colors']
 
 # apply the theme:
