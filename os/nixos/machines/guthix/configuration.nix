@@ -52,6 +52,7 @@ in
   };
 
   hardware.apple-t2.kernelChannel = "stable";
+  hardware.facetimehd.enable = true;
 
   hardware.firmware = [ 
     (pkgs.stdenvNoCC.mkDerivation ( final: { 
