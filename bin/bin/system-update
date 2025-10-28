@@ -33,7 +33,7 @@ export NIXPKGS_ALLOW_INSECURE=1
 cd
 
 vdo sudo nix-channel --update nixos
-vdo sudo nixos-rebuild
+vdo sudo nixos-rebuild "$@"
 
 echo "note: nix-env is fucked"
 # vdo nix-env -u
