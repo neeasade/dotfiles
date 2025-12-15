@@ -1,0 +1,11 @@
+;; -*- mode: clojure -*-
+{
+ ;; these sizes vary with resolution and such
+
+ ;; nb: variable width stuff is variable-big? check
+ :font.variable.size 16
+ :font.variable.family "Charter"
+
+ :font.mono.size 18
+ :font.mono.family "Go Mono"
+ }
