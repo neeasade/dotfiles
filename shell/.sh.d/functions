@@ -400,6 +400,16 @@ passadd() {
   (echo "$2"; echo "$2") | pass add "$1"
 }
 
+ginfo() {
+  if [ -z "$*" ]; then
+    set -- user.name user.email
+  fi
+
+  for i in "$@"; do
+    printf '%s:\t%s\n' "$i" "$(git config "$i")"
+  done
+}
+
 gset() {
   g_conf() {
     echo git config user.name "$1"
@@ -416,6 +426,7 @@ gset() {
   # todo: add a 'none'/'anon' option
   case $1 in
     pass) g_conf "$(pass git/name)" "$(pass git/email)" ;;
+    work) g_conf "$WORK_GIT_NAME" "$WORK_EMAIL" ;;
     github) g_conf "neeasade" "neeasade@users.noreply.github.com" ;;
     manual)
       echo name:; read name
