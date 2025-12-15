@@ -1,0 +1,10 @@
+# -*- mode: conf -*-
+
+{{env.MODKEY}} + {h,n,e,l}
+    elisp -t 0.2 "(ns/try-window-move '{west,south,north,east})"
+
+{{env.MODKEY}} + {Left,Down,Up,Right}
+    elisp -t 0.2 "(ns/try-window-move '{west,south,north,east})"
+
+{{env.MODKEY}} + {1,2,3,4}
+    elisp '(tab-bar-select-tab {1,2,3,4})'

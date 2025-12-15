@@ -46,6 +46,7 @@ if ${NEEASADE_ENV:-true}; then
     MAC=false
     WINDOWS=false
     LINUX=false
+    WSL=false
 
     export $*=true
   }
@@ -56,6 +57,10 @@ if ${NEEASADE_ENV:-true}; then
     *Darwin*) set_system MAC ;;
     *) set_system LINUX;;
   esac
+
+  if [ ! -z "$WSL_DISTRO_NAME" ]; then
+    set_system WSL
+  fi
 
   set_editor() {
     export EDITOR="$@"
@@ -109,8 +114,9 @@ if ${NEEASADE_ENV:-true}; then
   GEM_HOME="$HOME/.gem"
   BUNDLE_PATH="$HOME/.gem"
   GOPATH="$HOME/.go"
-  CODEHOME="$HOME/git"
+  CODEHOME="$HOME/code"
 
+  DOTNET_CLI_TELEMETRY_OPTOUT=1
   HOMEBREW_PREFIX='/opt/homebrew/'
 
   NVM_DIR="$HOME/.nvm"
@@ -175,6 +181,10 @@ if ${NEEASADE_ENV:-true}; then
     if has yq && has socat; then
       BROWSER=qb_meta_open
     fi
+  fi
+
+  if $WSL; then
+    BROWSER=explorer.exe
   fi
 
   # why did I do this

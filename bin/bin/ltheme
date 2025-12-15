@@ -53,6 +53,15 @@ load_sxhkd() {
     pkill -USR1 sxhkd
 }
 
+# wsl
+if $WSL; then
+    load_sxhkd() {
+	conf="$HOME/.config/sxhkd/sxhkdrc"
+	export MODKEY=alt
+	render sxhkd_windows .config/sxhkd/sxhkdrc
+    }
+fi
+
 if $MAC; then
     load_mpd()     { render mpd .mpd/mpd.conf -p mpd; brew services restart mpd ; }
     load_kitty() {
