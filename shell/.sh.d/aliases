@@ -5,6 +5,17 @@
 # let's see if this is too generic
 # alias open='xdg-open'
 
+cope() {
+  while true; do
+    if ping -c 1 bliss; then
+      break;
+    fi
+    sleep 0.5
+  done
+
+  ssh -t bliss emacsclient -nw /tmp/emacsclient-lock
+}
+
 nst() {
   elisp -r "(ns/t $1)"
 }
