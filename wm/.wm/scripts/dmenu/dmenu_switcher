@@ -163,7 +163,7 @@ add_metas() {
     add_switch "meta: musashi" "google-chrome-stable 'https://www.audible.com/webplayer?asin=B07FXR22SY&contentDeliveryType=MultiPartBook&ref_=a_libraryItem_cloudplayer_B07FXR22SY&overrideLph=false&initialCPLaunch=true'"
     add_switch "meta: ambergris" "google-chrome-stable 'https://www.audible.com/pd/Ambergris-Audiobook/1982699469?ref_pageloadid=not_applicable&pf_rd_p=80765e81-b10a-4f33-b1d3-ffb87793d047&pf_rd_r=J0ZSVECH61R5BEZ7EKRF&pageLoadId=6s0LLI6uCiw7oy85&creativeId=4ee810cf-ac8e-4eeb-8b79-40e176d0a225&ref=a_library_t_c5_libItem_1982699469_0'"
 
-
+    add_switch "meta: balance" 'bspc node $(bspc query -N -n -n .!leaf || echo @/) -B'
 
     add_switch "meta: dismiss" "dismiss.sh"
 
@@ -206,7 +206,9 @@ add_metas() {
 	fi
     }
 
-    # todo: add meta: qutebrowser
+    add_switch "meta: osrs" 'bash -ic osrs'
+    add_switch "meta: bspc kill node" 'sleep 1; bspc node -k'
+    add_switch "meta: osrs-gim" 'bash -ic osrs-gim'
 
     add_switch "meta: connect bluetooth" "bluetoothctl connect $bt_ident; sleep 2 && check_headphones"
     add_switch "meta: disconnect bluetooth" "bluetoothctl disconnect $bt_ident"

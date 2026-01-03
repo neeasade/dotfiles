@@ -18,5 +18,11 @@
                    [name appid]))))
        (into {})))
 
-(when-let [appid (get game-map (util/dmenu (shuffle (keys game-map))))]
+(when (string/blank? (util/shh "pgrep steam"))
+  (util/shh "nohup steam"))
+
+(when-let [appid (get game-map (util/dmenu (shuffle (keys game-map))))
+           ;; random game
+           ;; appid (get game-map (first (shuffle (keys game-map))))
+           ]
   (util/sh "steam" (str "steam://run/" appid)))

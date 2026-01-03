@@ -11,7 +11,7 @@ let
     bc
     curl
     file
-    gitAndTools.gitFull
+    gitFull
     hfsprogs
     htop
     irssi
@@ -91,7 +91,7 @@ let
     dzen2
     feh
     firefox
-    glxinfo
+    mesa-demos
     gnupg
     gnutls # for circe
     go-mtpfs
@@ -111,7 +111,7 @@ let
     mpd-mpris
     maim
     meh
-    mpc_cli
+    mpc
     mpd
     (mpv.override {scripts = [mpvScripts.mpris];})
     mumble
@@ -180,7 +180,7 @@ let
     wineWowPackages.stable
     # wine
     # minecraft
-    openmw
+    # openmw
 
     ### DEV
 
@@ -316,7 +316,7 @@ let
     font-awesome
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     roboto-mono
     siji
     tewi-font

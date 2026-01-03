@@ -6,7 +6,7 @@
 
 let
   hostname = "guthix";
-  shared = import ../../config/shared.nix {inherit hostname unstable; };
+  shared = import ../../config/shared.nix {inherit hostname unstable pkgs; };
 
   # for bleeding edge nvidia drivers
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = shared.nixcfg; };

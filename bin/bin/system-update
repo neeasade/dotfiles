@@ -27,12 +27,12 @@ fi
 channel=$(sudo nix-channel --list | sed 's#https://nixos.org/channels/nixos-##')
 echo "channel: $channel"
 
-export NIXPKGS_ALLOW_INSECURE=1
 
 # cd is so we don't accidentally litter 'result' symlinks everywhere
 cd
 
 vdo sudo nix-channel --update nixos
+# vdo sudo NIXPKGS_ALLOW_INSECURE=1 nixos-rebuild "$@"
 vdo sudo nixos-rebuild "$@"
 
 echo "note: nix-env is fucked"

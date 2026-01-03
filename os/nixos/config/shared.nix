@@ -1,4 +1,4 @@
-{hostname, unstable, ...}:
+{hostname, unstable, pkgs, ...}:
 
 rec {
   nixcfg = {

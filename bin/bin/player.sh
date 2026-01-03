@@ -25,7 +25,7 @@
   (let [players (->> (interleave (map (fn [p] (keyword (first (string/split p #"\."))))
                                       (sh "playerctl -l"))
                                  (map #(= "Playing" %)
-                                      (sh "playerctl -a status")))
+                                      (sh "timeout 1 playerctl -a status")))
                      (partition 2)
                      (map vec)
                      (distinct))]
@@ -47,23 +47,26 @@
    (* (parse-double s)
       100)))
 
-(let [cmd (first *command-line-args*)
-      args (condp = cmd
-             "toggle" ["play-pause"]
-             "-f" ["metadata" "-f" (second *command-line-args*)]
-             "volume" ["volume" (second *command-line-args*)]
-             *command-line-args*
-             ;; ["play-pause"]
-             )]
-  (println
-   (loop [players (get-players)]
-     (if (empty? players)
-       "No players found!"
-       (let [player (select-player players)
-             result (apply shell/sh "playerctl" "-p" player args)
-             success? (zero? (:exit result))]
-         (if success?
-           (if (= cmd "volume")
-             (str player " " (percent (shh "playerctl" "-p" player "metadata" "-f" "{{volume}}")))
-             (:out result))
-           (recur (rest players))))))))
+;; (percent (shh "playerctl" "-p" "mpd" "metadata" "-f" "{{volume}}"))
+
+(when (= *file* (System/getProperty "babashka.file"))
+  (let [cmd (first *command-line-args*)
+        args (condp = cmd
+               "toggle" ["play-pause"]
+               "-f" ["metadata" "-f" (second *command-line-args*)]
+               "volume" ["volume" (second *command-line-args*)]
+               *command-line-args*
+               ;; ["play-pause"]
+               )]
+    (println
+     (loop [players (get-players)]
+       (if (empty? players)
+         "No players found!"
+         (let [player (select-player players)
+               result (apply shell/sh "playerctl" "-p" player args)
+               success? (zero? (:exit result))]
+           (if success?
+             (if (= cmd "volume")
+               (str player " " (percent (shh "playerctl" "-p" player "metadata" "-f" "{{volume}}")))
+               (:out result))
+             (recur (rest players)))))))))

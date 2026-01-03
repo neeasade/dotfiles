@@ -3,7 +3,7 @@
 
 let
   hostname = "bliss";
-  shared = import ../../config/shared.nix {inherit hostname unstable; };
+  shared = import ../../config/shared.nix {inherit hostname unstable pkgs; };
 
   # for bleeding edge nvidia drivers
   edge = import (fetchTarball https://github.com/NixOS/nixpkgs/archive/master.tar.gz) { config = shared.nixcfg; };
@@ -32,6 +32,7 @@ in
       ./hardware-configuration.nix
       (import ../../config/desktop.nix {inherit hostname shared pkgs expr;})
       # (import ../../config/factorio.nix {inherit lib hostname shared pkgs expr;})
+      (import ../../config/factorio_vanilla.nix {inherit lib hostname shared pkgs expr;})
       # (import ../../config/factorio2.nix {inherit lib hostname shared pkgs expr;})
     ];
 
@@ -121,6 +122,11 @@ in
                                             # nixmox.defaultNix
                                            ]
                                ++ (with pkgs; [
+
+                                 babashka
+                                 jq
+
+
                                  restic
                                  audiobookshelf
                                  tesseract4
@@ -143,9 +149,10 @@ in
                                  (sox.overrideAttrs(old: { enableLame = true;}))
                                  xcolor
 
-                                 renpy
+                                 # renpy
 
                                  logseq
+                                 shpool
 
                                  ardour
                                  sass
@@ -154,7 +161,7 @@ in
                                  anki-bin
                                  anki-sync-server
 
-                                 bitwarden
+                                 bitwarden-desktop
                                  bitwarden-cli
 
                                  farbfeld
@@ -174,9 +181,12 @@ in
                                  discord
                                  piper-tts
 
+                                 kitty
+
                                ]) ++ (with edge; [
-                                 gemini-cli
-                                 aider-chat
+                                 openmw
+                                 # gemini-cli
+                                 # aider-chat
 
                                  rbw
                                  rofi-rbw
@@ -188,7 +198,6 @@ in
                                ]) ++ (with unstable; [
                                  whisper-cpp
                                  # qutebrowser
-                                 kitty
                                ]);
 
   services.jellyfin = {
@@ -327,9 +336,9 @@ in
     ''
     # 127.0.0.1 x.com
     # 127.0.0.1 bsky.app
-    127.0.0.1 www.youtube.com
+    # 127.0.0.1 www.youtube.com
     # 127.0.0.1 www.hulu.com
-    127.0.0.1 www.amazon.com
+    # 127.0.0.1 www.amazon.com
 
     # 10.1.0.3 andromeda
   '';

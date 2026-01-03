@@ -1,5 +1,6 @@
 #!/usr/bin/env bb
 ;; mimetype preferences
+;; todo: feature idea: access log/recent files
 
 (ns open-meta
   (:require [babashka.fs :as fs]
@@ -13,9 +14,13 @@
   (try
     (apply process/shell args)
     (catch Throwable e
-      (lib/stderr "open: something went wrong"))))
+      ;; todo: this should only proc if happened on launch
+      (lib/sh "notify-send" "open: something went wrong"))))
 
 (defn act [opener file]
+  ;; (when (string? opener)
+  ;;   (sh "notify-send" (str opener file)))
+
   (if (fn? opener)
     (opener file)
     (sh (or opener
@@ -30,7 +35,7 @@
 
 (defn open-archive []
   (lib/stderr "archive: not implemented")
-  (sh "notify-send"  "archive: not implemented"))
+  (sh "notify-send" "archive: not implemented"))
 
 (def part1_rules
   {"image" "feh"
@@ -76,7 +81,7 @@
       "http" (sh BROWSER value)
       (act nil value))))
 
-(lib/sh "notify-send" (format "open: %s" (first *command-line-args*)))
+;; (lib/sh "notify-send" (format "open: %s" (first *command-line-args*)))
 
 (let [arg (string/join " " *command-line-args*)]
   (cond
