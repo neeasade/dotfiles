@@ -1,0 +1,37 @@
+
+[font]
+normal.family = "{{font.mono.family}}"
+size = {{font.mono.size}}
+
+[window]
+padding.x = 4
+padding.y = 4
+opacity = 1.0
+
+[colors.primary]
+
+foreground = '{{foreground}}'
+background = '{{background}}'
+
+[colors.normal]
+
+black   = '{{colors.0}}'
+red     = '{{colors.1}}'
+green   = '{{colors.2}}'
+yellow  = '{{colors.3}}'
+blue    = '{{colors.4}}'
+magenta = '{{colors.5}}'
+cyan    = '{{colors.6}}'
+white   = '{{colors.7}}'
+
+[colors.bright]
+black   = '{{colors.8}}'
+red     = '{{colors.9}}'
+green   = '{{colors.10}}'
+yellow  = '{{colors.11}}'
+blue    = '{{colors.12}}'
+magenta = '{{colors.13}}'
+cyan    = '{{colors.14}}'
+white   = '{{colors.15}}'
+
+# todo: there's a workaround for windows kkp, should we import here? kkp just works on linux

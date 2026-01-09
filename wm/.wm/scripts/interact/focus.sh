@@ -25,6 +25,7 @@ looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
 case "$looking_at" in
   Emacs*) try_emacs_dir ;;
   kitty) try_emacs_dir ;;
+  Alacritty) try_emacs_dir ;;
 esac
 
 # if xprop WM_CLASS -id "$node" | grep -E "^WM_CLASS.*Emacs"; then

@@ -182,6 +182,7 @@ in
                                  piper-tts
 
                                  kitty
+                                 alacritty
 
                                ]) ++ (with edge; [
                                  openmw

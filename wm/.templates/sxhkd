@@ -182,8 +182,9 @@ shift + button9
 {{env.MODKEY}} + {_,shift,control} + {i,o,u,y}
     btags {focus,set-tag-on-wids,show-only} ^{1,2,3,4}
 
-{{env.MODKEY}} + {_,shift,control} + {1-7}
-    btags {focus,set-tag-on-wids,show-only} ^{1-7}
+# using these as emacs keys for now
+# {{env.MODKEY}} + {_,shift,control} + {1-7}
+#     btags {focus,set-tag-on-wids,show-only} ^{1-7}
 
 ##############
 # workspaces #
