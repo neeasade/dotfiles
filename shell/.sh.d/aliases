@@ -20,6 +20,14 @@ nst() {
   elisp -r "(ns/t $1)"
 }
 
+djoin() {
+  name=$1
+  shift
+  dtach -A /tmp/dtach-${name} -r winch "$@"
+}
+
+alias eemacs='djoin emacs bash -c "emacs -nw"'
+
 alias mimetype='file --mime-type -b'
 
 alias capslock='xdotool key Caps_Lock'
