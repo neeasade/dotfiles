@@ -1,0 +1,26 @@
+# -*- mode: conf -*-
+
+[colors]
+background="{{background}}ff"
+selection="{{color.focused.background}}ff"
+text="{{foreground}}ff"
+
+[main]
+
+font="{{font.mono.spec}}"
+
+anchor=top
+
+width=100
+y-margin=400
+
+horizontal-pad=10
+
+[border]
+radius={{meta.radius}}
+width=0
+
+[key-bindings]
+
+cursor-end=None
+prev=Control+e

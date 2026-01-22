@@ -252,6 +252,7 @@
         {:THEME_NAME "rain"
          :BG_COMMAND "${HOME}/.fehbg"
          :meta {:shadow false
+                :radius 12
                 :dpi (if (has? "xdpyinfo")
                        (shh "xdpyinfo | awk -F'[x ]+' '/resolution/{print $4}'")
                        "96")
@@ -340,7 +341,7 @@
          :picom {:frame {:opacity 1.0}
                  :shadow {:opacity 0.4
                           :enabled "{{meta.shadow}}"
-                          :radius 1
+                          :radius "{{meta.radius}}"
                           :offset-x 1
                           :offset-y 1
                           :red 0.0
