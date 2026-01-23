@@ -106,7 +106,7 @@ tell_emacs_shell_location() {
   if ${REMOTE:-false}; then
     if [ ! -z "$TRAMP_INFO" ]; then
       _shell_location="$TRAMP_INFO$PWD"
-    else
+    elif [ ! -z "$SSH_CONNECTION" ]; then
       ssh_ip=$(echo $SSH_CONNECTION | awk '{print $3}' | sed 's/::1/localhost/')
 
       ssh_port=$(echo $SSH_CONNECTION | awk '{print $4}')
@@ -116,6 +116,8 @@ tell_emacs_shell_location() {
         ssh_port="#${ssh_port}"
       fi
     _shell_location="/ssh:${USER}@${ssh_ip}${ssh_port}:$PWD"
+    else
+      return
     fi
   fi
 
