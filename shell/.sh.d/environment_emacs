@@ -24,7 +24,7 @@ if ! $ESHELL; then
   fi
 fi
 
-if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
+if $ESHELL && has elisp && silent elisp t; then
   pathmunge "$HOME/.emacs.d/scripts"
   eclient="emacsclient"
 
@@ -60,11 +60,11 @@ if $ESHELL && has elisp && ! $REMOTE && silent elisp t; then
   }
 
   # npm interfaces like to use cursor movement sometimes
-  for yeet in vim htop nethack cava npm iotop; do
-    if has $yeet; then
-      reval '%1() { term %1 "$@"; }' "$yeet"
-    fi
-  done
+  # for yeet in vim htop nethack cava npm iotop; do
+  #   if has $yeet; then
+  #     reval '%1() { term %1 "$@"; }' "$yeet"
+  #   fi
+  # done
 
   sxhkd() {
     pgrep sxhkd >/dev/null && pkill sxhkd

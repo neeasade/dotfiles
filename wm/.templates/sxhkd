@@ -36,11 +36,11 @@
     bspc node -f; \
     bspc config pointer_follows_focus false
 
-alt + {_,shift} + Tab
-    bspc node -f {next,prev}.local.normal.!hidden.tiled
+# alt + {_,shift} + Tab
+#     bspc node -f {next,prev}.local.normal.!hidden.tiled
 
-{{env.MODKEY}} + {_,shift} + Tab
-    bspc node -f {next,prev}.local.normal.!hidden.tiled
+# {{env.MODKEY}} + {_,shift} + Tab
+#     bspc node -f {next,prev}.local.normal.!hidden.tiled
 
 {{env.MODKEY}} + {_,shift,{{env.MODKEY_ALT}},ctrl} + {h,n,e,l}
     {focus,move,resize,presel}.sh {west,south,north,east}
@@ -86,7 +86,7 @@ ctrl + {_,shift} + space
     gapt
 
 {{env.MODKEY}} + Return
-    elisp '(ns/spawn-terminal)' || $TERMINAL
+    $TERMINAL
 
 {{env.MODKEY}} + {_,shift} + space
     action='{switcher,run}'; \

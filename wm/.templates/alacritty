@@ -3,9 +3,17 @@
 normal.family = "{{font.mono.family}}"
 size = {{font.mono.size}}
 
+[cursor]
+
+style.blinking = "Never"
+
+[terminal]
+
+osc52 = "CopyPaste"
+
 [window]
-padding.x = 4
-padding.y = 4
+padding.x = {{x.padding}}
+padding.y = {{x.padding}}
 opacity = 1.0
 
 [colors.primary]

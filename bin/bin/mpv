@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # always run mpv w/ socket, args as config
 
-mpc pause >/dev/null
+# mpc pause >/dev/null
 
 # todo maybe - maintain a cache of youtube dl to title names,
 # then mpv_resume could resume by youtube channel/title
@@ -19,8 +19,10 @@ done
 
 set -- "${args[@]}"
 
+# todo: only force window if not being piped too
+# --force-window \
+
 og mpv \
-   --force-window \
    --write-filename-in-watch-later-config \
    --save-position-on-quit \
    --screenshot-directory="$HOME/Screenshots_mpv" \

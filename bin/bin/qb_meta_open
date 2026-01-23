@@ -23,8 +23,8 @@ vanilla() {
 	fi
     else
 	# this is faster than
-	qutebrowser "$url"
-	# qb_command ":open -r -t $url"
+	# qutebrowser "$url"
+	qb_command ":open -r -t $url"
     fi
 
     find_class qutebrowser
@@ -47,12 +47,6 @@ fi
 #     mpv "$url"
 #     exit 0
 # fi
-
-if echo "$url" | grep -qE "bandcamp.com"; then
-    # if qutebrowser gets mpris support this can go away
-    google-chrome-stable "$url"
-    exit 0
-fi
 
 vanilla
 
