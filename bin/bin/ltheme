@@ -27,10 +27,12 @@ load_bg_plain() {
 load_alacritty() { render alacritty .config/alacritty/alacritty.toml -p color.normal ;}
 load_bg()        { eval "$(theme -q BG_COMMAND)" ;}
 load_emacs()     { elisp -t 5 "(ns/load-theme '$(theme -q emacs.theme))" ;}
+load_fuzzel()    { render fuzzel .config/fuzzel/fuzzel.ini -p color.normal ;}
 load_jgmenu()    { render jgmenu .config/jgmenu/jgmenurc -p color.weak ;}
 load_kitty()     { render kitty .config/kitty/kitty.conf -p color.normal; pkill -USR1 kitty ;}
 load_mintty()    { render mintty .minttyrc ;}
 load_mpd()       { render mpd .config/mpd/mpd.conf -p mpd; refresh mpd ;}
+load_niri()      { render niri .config/niri/config.kdl -p color.normal ;}
 load_panel()     { render i3blocks .config/i3blocks/config; refresh panel ;}
 load_picom()     { render picom .config/picom.conf -p picom; refresh picom ;}
 load_pywal()     { render pywal .cache/wal/theme.json; }

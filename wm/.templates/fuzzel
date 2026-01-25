@@ -1,0 +1,27 @@
+// -*- mode: conf -*-
+
+[colors]
+background="{{background}}ff"
+selection="{{color.focused.background}}ff"
+text="{{foreground}}ff"
+match="{{alt}}ff"
+selection-text="{{color.focused.foreground}}ff"
+selection-match="{{color.focused.alt}}ff"
+
+[main]
+
+anchor=top
+width=100
+y-margin=400
+
+font="{{font.mono.spec}}"
+horizontal-pad={{x.padding}}
+
+[border]
+radius={{meta.radius}}
+width=0
+
+[key-bindings]
+
+cursor-end=None
+prev=Control+e
