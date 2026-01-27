@@ -52,7 +52,7 @@
         wids (concat wids [(first wids)])
         next-wid (if ((set wids) active-wid)
                    (let [i (.indexOf wids active-wid)]
-                     (nth (inc i wids)))
+                     (nth wids (inc i)))
                    (first wids))]
     (action :focus-window "--id" next-wid)))
 
