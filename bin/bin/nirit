@@ -50,12 +50,10 @@
                        (:id w)))
                    data)
         wids (concat wids [(first wids)])
-        next-wid (if-not ((set wids) active-wid)
-                   (first wids)
-                   (->> (partition 2 1 wids )
-                        (filter (fn ([[w1 w2]] (= w1 active-wid))))
-                        (first)
-                        (second)))]
+        next-wid (if ((set wids) active-wid)
+                   (let [i (.indexOf wids active-wid)]
+                     (nth (inc i wids)))
+                   (first wids))]
     (action :focus-window "--id" next-wid)))
 
 (defn find-class-current []
