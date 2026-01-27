@@ -7,6 +7,7 @@
             [babashka.process :as process]
             [clojure.java.shell :as shell]
             [clojure.string :as string]
+            [clojure.java.io :as io]
             [cheshire.core :as json]
             [lib.util :as lib]))
 
@@ -32,14 +33,20 @@
 ;; switch-preset-window-height           switch-preset-window-height-back switch-preset-window-width      switch-preset-window-width-back          toggle-column-tabbed-display  toggle-debug-tint                toggle-keyboard-shortcuts-inhibit
 ;; toggle-overview                       toggle-window-floating           toggle-window-rule-opacity      toggle-window-urgent                     toggle-windowed-fullscreen    unset-window-urgent              unset-workspace-name
 (defn action [command & args]
-  (apply lib/sh "niri" "msg" "action" (name command) (map str args)))
+  (apply lib/shh "niri" "msg" "action" (name command) (map str args))
+  ;; (string/join " " (concat ["niri" "msg" "action" (name command)] (map str args)))
+  )
 
 (defn find-class [class]
-  ;; find or rotate windows by class
+  ;; find or rotate windows by class/"App id"
   (let [data (msg :windows)
-        active-wid (->> data (filter :is_focused) first :id)
+        active-window (->> data (filter :is_focused) first)
+        active-wid (:id active-window)
         wids (keep (fn [w]
-                     (when (= class (last (string/split (:app_id w) #"\.")))
+                     (when (and
+                            (= class (last (string/split (:app_id w) #"\.")))
+                            ;; scope to current workspace
+                            (= (:workspace_id active-window) (:workspace_id w)))
                        (:id w)))
                    data)
         wids (concat wids [(first wids)])
@@ -53,6 +60,15 @@
 
 (defn find-class-current []
   (find-class (:app_id (msg :focused-window))))
+
+(comment
+  (keys (msg :focused-window))
+
+  (:workspace_id :layout :is_floating :app_id :title :pid :is_focused :id :focus_timestamp :is_urgent)
+  (do
+    (action :switch-preset-window-width)
+    (Thread/sleep 50)
+    (action :center-window)))
 
 (when (= *file* (System/getProperty "babashka.file"))
   (let [cmd *command-line-args*
