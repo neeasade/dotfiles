@@ -252,6 +252,7 @@
         {:THEME_NAME "rain"
          :BG_COMMAND "${HOME}/.fehbg"
          :meta {:shadow false
+                :radius 12
                 :dpi (if (has? "xdpyinfo")
                        (shh "xdpyinfo | awk -F'[x ]+' '/resolution/{print $4}'")
                        "96")

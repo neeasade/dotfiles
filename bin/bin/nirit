@@ -1,0 +1,63 @@
+#!/usr/bin/env bb
+;; niri things
+;; https://github.com/YaLTeR/niri/
+
+(ns irit
+  (:require [babashka.fs :as fs]
+            [babashka.process :as process]
+            [clojure.java.shell :as shell]
+            [clojure.string :as string]
+            [cheshire.core :as json]
+            [lib.util :as lib]))
+
+;; niri msg *
+;; outputs windows keyboard-layouts focused-window pick-color output version overview-state
+;; workspaces layers focused-output pick-window action event-stream request-error help
+(defn msg [kind]
+  (json/parse-string (lib/shh (str "niri msg --json " (name kind))) true))
+
+;; center-column                         center-visible-columns           center-window                   clear-dynamic-cast-target                close-overview                close-window                     consume-or-expel-window-left
+;; consume-or-expel-window-right         consume-window-into-column       debug-toggle-damage             debug-toggle-opaque-regions              do-screen-transition          expand-column-to-available-width expel-window-from-column
+;; focus-column                          focus-column-first               focus-column-last               focus-column-left                        focus-column-left-or-last     focus-column-right               focus-column-right-or-first
+;; focus-floating                        focus-tiling                     focus-window                    focus-window-bottom                      focus-window-down             focus-window-down-or-column-left focus-window-down-or-column-right
+;; focus-window-down-or-top              focus-window-in-column           focus-window-or-workspace-down  focus-window-or-workspace-up             focus-window-previous         focus-window-top                 focus-window-up
+;; focus-window-up-or-bottom             focus-window-up-or-column-left   focus-window-up-or-column-right focus-workspace                          focus-workspace-down          focus-workspace-previous         focus-workspace-up
+;; fullscreen-window                     load-config-file                 maximize-column                 maximize-window-to-edges                 move-column-left              move-column-right                move-column-to-first
+;; move-column-to-index                  move-column-to-last              move-column-to-workspace        move-column-to-workspace-down            move-column-to-workspace-up   move-floating-window             move-window-down
+;; move-window-down-or-to-workspace-down move-window-to-floating          move-window-to-tiling           move-window-to-workspace                 move-window-to-workspace-down move-window-to-workspace-up      move-window-up
+;; move-window-up-or-to-workspace-up     move-workspace-down              move-workspace-to-index         move-workspace-up                        open-overview                 power-off-monitors               power-on-monitors
+;; reset-window-height                   screenshot                       screenshot-screen               screenshot-window                        set-column-display            set-column-width                 set-dynamic-cast-monitor
+;; set-dynamic-cast-window               set-window-height                set-window-urgent               set-window-width                         set-workspace-name            show-hotkey-overlay              spawn
+;; spawn-sh                              swap-window-left                 swap-window-right               switch-focus-between-floating-and-tiling switch-layout                 switch-preset-column-width       switch-preset-column-width-back
+;; switch-preset-window-height           switch-preset-window-height-back switch-preset-window-width      switch-preset-window-width-back          toggle-column-tabbed-display  toggle-debug-tint                toggle-keyboard-shortcuts-inhibit
+;; toggle-overview                       toggle-window-floating           toggle-window-rule-opacity      toggle-window-urgent                     toggle-windowed-fullscreen    unset-window-urgent              unset-workspace-name
+(defn action [command & args]
+  (apply lib/sh "niri" "msg" "action" (name command) (map str args)))
+
+(defn find-class [class]
+  ;; find or rotate windows by class
+  (let [data (msg :windows)
+        active-wid (->> data (filter :is_focused) first :id)
+        wids (keep (fn [w]
+                     (when (= class (last (string/split (:app_id w) #"\.")))
+                       (:id w)))
+                   data)
+        wids (concat wids [(first wids)])
+        next-wid (if-not ((set wids) active-wid)
+                   (first wids)
+                   (->> (partition 2 1 wids )
+                        (filter (fn ([[w1 w2]] (= w1 active-wid))))
+                        (first)
+                        (second)))]
+    (action :focus-window "--id" next-wid)))
+
+(defn find-class-current []
+  (find-class (:app_id (msg :focused-window))))
+
+(when (= *file* (System/getProperty "babashka.file"))
+  (let [cmd *command-line-args*
+        result (apply (-> cmd first symbol resolve)
+                      (rest cmd))]
+    (cond
+      (string? result) (print result)
+      (and result (seqable? result)) (run! println result))))
