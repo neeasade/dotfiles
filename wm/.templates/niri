@@ -18,6 +18,14 @@ layer-rule {
   geometry-corner-radius {{meta.radius}}
 }
 
+cursor {
+    xcursor-theme "breeze_cursors"
+    xcursor-size 48
+
+    hide-when-typing
+    hide-after-inactive-ms 1000
+}
+
 window-rule {
   match is-active=true
   shadow {
@@ -113,6 +121,29 @@ include "gaps.kdl"
 layout {
   background-color "transparent"
   empty-workspace-above-first
+
+
+  tab-indicator {
+    on
+    // hide-when-single-tab
+    // ?
+    // place-within-column
+    gap 12
+    width 14
+    length total-proportion=0.3
+    position "top"
+    gaps-between-tabs 14
+
+    corner-radius 2
+    active-color "{{color.normal.alt}}"
+    // active-color "{{color.focused.primary}}"
+    inactive-color "{{color.normal.background}}"
+    urgent-color "blue"
+    // active-gradient from="#80c8ff" to="#bbddff" angle=45
+    // inactive-gradient from="#505050" to="#808080" angle=45 relative-to="workspace-view"
+    // urgent-gradient from="#800" to="#a33" angle=45
+  }
+
 
   // Set gaps around windows in logical pixels.
   // gaps 30

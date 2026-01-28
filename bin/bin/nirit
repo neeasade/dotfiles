@@ -86,7 +86,6 @@
 (defn maximized?
   ([] (maximized? (msg :focused-window)))
   ([window]
-   ;; approximation for large
    (let [[mon-w mon-h] ((juxt :width :height) (:logical (second (first (msg :outputs)))))
          [win-w win-h] (:tile_size (:layout window))]
      (and
@@ -96,15 +95,39 @@
 (defn switch-preset-width-and-center []
   (action :switch-preset-window-width)
   (Thread/sleep 50)
-  (action :center-window))
+
+  ;; todo: diffent action for this
+  ;; (when-not (maximized?)
+  ;;   (action :focus-column-left)
+  ;;   (action :focus-column-right))
+
+  (action :center-window)
+  )
 
 (defn maximize-column []
-  ;; when going out of maximized, center it
   (if (maximized?)
-    (do (action :maximize-column)
-        (Thread/sleep 50)
-        (action :center-window))
-    (action :maximize-column)))
+    (do
+      (action :maximize-column)
+      ;; (action :maximize-window-to-edges)
+      (Thread/sleep 50)
+
+      ;; if the left column will fit, scroll
+      (action :focus-column-left)
+      (action :focus-column-right)
+      ;; (action :center-window)
+      )
+
+    ;; (action :maximize-window-to-edges)
+    (action :maximize-column)
+    ))
+
+(defn toggle-monospace-mode []
+  ;; todo: absorb all windows in workspace into one tabbed view, or expel all tabs out
+  )
+
+(defn force-kill-window []
+  ;; todo: absorb all windows in workspace into one tabbed view, or expel out
+  (shell/sh "kill" "-9" (str (:pid (msg :focused-window)))))
 
 (comment
   (keys (msg :focused-window))
