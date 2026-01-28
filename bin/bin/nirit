@@ -17,6 +17,10 @@
 (defn msg [kind]
   (json/parse-string (lib/shh (str "niri msg --json " (name kind))) true))
 
+(comment
+  (msg "windows"))
+
+
 ;; center-column                         center-visible-columns           center-window                   clear-dynamic-cast-target                close-overview                close-window                     consume-or-expel-window-left
 ;; consume-or-expel-window-right         consume-window-into-column       debug-toggle-damage             debug-toggle-opaque-regions              do-screen-transition          expand-column-to-available-width expel-window-from-column
 ;; focus-column                          focus-column-first               focus-column-last               focus-column-left                        focus-column-left-or-last     focus-column-right               focus-column-right-or-first
@@ -35,6 +39,12 @@
 (defn action [command & args]
   (apply lib/shh "niri" "msg" "action" (name command) (map str args))
   ;; (string/join " " (concat ["niri" "msg" "action" (name command)] (map str args)))
+  )
+
+(comment
+  ;; (action "set-column-width" 50)
+  (action :consume-or-expel-window-right)
+
   )
 
 (defn find-class [class]
@@ -59,14 +69,54 @@
 (defn find-class-current []
   (find-class (:app_id (msg :focused-window))))
 
+(defn go-dir [dir]
+  (let [term? (= "Alacritty" (:app_id (msg :focused-window)))
+        elisp (format "(when-let (win (and (frame-focus-state) (window-in-direction '%s))) (select-window win))" dir)
+        niri-move (condp = dir
+                    "left" "focus-column-left"
+                    "right" "focus-column-right"
+                    ;; todo: consider tabs with these commands
+                    "up" "focus-window-or-workspace-up"
+                    "down" "focus-window-or-workspace-down")]
+    (if term?
+      (when (= 1 (:exit (shell/sh "elisp" "-t" "1" elisp)))
+        (action niri-move))
+      (action niri-move))))
+
+(defn maximized?
+  ([] (maximized? (msg :focused-window)))
+  ([window]
+   ;; approximation for large
+   (let [[mon-w mon-h] ((juxt :width :height) (:logical (second (first (msg :outputs)))))
+         [win-w win-h] (:tile_size (:layout window))]
+     (and
+      (> win-w (* 0.8 mon-w))
+      (> win-h (* 0.8 mon-h))))))
+
+(defn switch-preset-width-and-center []
+  (action :switch-preset-window-width)
+  (Thread/sleep 50)
+  (action :center-window))
+
+(defn maximize-column []
+  ;; when going out of maximized, center it
+  (if (maximized?)
+    (do (action :maximize-column)
+        (Thread/sleep 50)
+        (action :center-window))
+    (action :maximize-column)))
+
 (comment
   (keys (msg :focused-window))
 
+  (:layout (msg :focused-window))
+
+  {:pos_in_scrolling_layout [2 1], :tile_size [2395.2 1572.8], :window_size [2395 1573], :tile_pos_in_workspace_view nil, :window_offset_in_tile [0.0 0.0]}
+  {:pos_in_scrolling_layout [2 1], :tile_size [2947.2 1572.8], :window_size [2947 1573], :tile_pos_in_workspace_view nil, :window_offset_in_tile [0.0 0.0]}
+
   (:workspace_id :layout :is_floating :app_id :title :pid :is_focused :id :focus_timestamp :is_urgent)
-  (do
-    (action :switch-preset-window-width)
-    (Thread/sleep 50)
-    (action :center-window)))
+
+  )
 
 (when (= *file* (System/getProperty "babashka.file"))
   (let [cmd *command-line-args*
