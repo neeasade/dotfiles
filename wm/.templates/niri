@@ -531,7 +531,8 @@ binds {
   Mod+Ctrl+F { expand-column-to-available-width; }
 
   // Mod+C { center-column; }
-  Mod+T { spawn-sh "nirit switch-preset-width-and-center"; }
+  // Mod+T { spawn-sh "nirit switch-preset-width-and-center"; }
+  Mod+T { spawn-sh "nirit toggle-monocle-mode '49%'"; }
 
   // Center all fully visible columns on screen.
   Mod+Ctrl+T { center-visible-columns; }

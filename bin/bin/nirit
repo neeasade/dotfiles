@@ -37,6 +37,9 @@
 ;; switch-preset-window-height           switch-preset-window-height-back switch-preset-window-width      switch-preset-window-width-back          toggle-column-tabbed-display  toggle-debug-tint                toggle-keyboard-shortcuts-inhibit
 ;; toggle-overview                       toggle-window-floating           toggle-window-rule-opacity      toggle-window-urgent                     toggle-windowed-fullscreen    unset-window-urgent              unset-workspace-name
 (defn action [command & args]
+  ;; debug
+  ;; (prn action command)
+
   (apply lib/shh "niri" "msg" "action" (name command) (map str args))
   ;; (string/join " " (concat ["niri" "msg" "action" (name command)] (map str args)))
   )
@@ -69,20 +72,6 @@
 (defn find-class-current []
   (find-class (:app_id (msg :focused-window))))
 
-(defn go-dir [dir]
-  (let [term? (= "Alacritty" (:app_id (msg :focused-window)))
-        elisp (format "(when-let (win (and (frame-focus-state) (window-in-direction '%s))) (select-window win))" dir)
-        niri-move (condp = dir
-                    "left" "focus-window-up-or-column-left"
-                    "right" "focus-window-down-or-column-right"
-                    ;; todo: consider tabs with these commands
-                    "up" "focus-window-or-workspace-up"
-                    "down" "focus-window-or-workspace-down")]
-    (if term?
-      (when (= 1 (:exit (shell/sh "elisp" "-t" "1" elisp)))
-        (action niri-move))
-      (action niri-move))))
-
 (defn maximized?
   ([] (maximized? (msg :focused-window)))
   ([window]
@@ -91,6 +80,39 @@
      (and
       (> win-w (* 0.8 mon-w))
       (> win-h (* 0.8 mon-h))))))
+
+(defn tabbed? [window-id]
+  ;; Check if a window is in a tabbed layout by comparing window sizes in the same column
+  (let [windows (msg :windows)
+        target-window (first (filter #(= window-id (:id %)) windows))]
+    (when target-window
+      (let [target-pos (first (get-in target-window [:layout :pos_in_scrolling_layout]))
+            target-workspace (:workspace_id target-window)
+            same-column-windows (filter #(and (= target-workspace (:workspace_id %))
+                                              (= target-pos (first (get-in % [:layout :pos_in_scrolling_layout]))))
+                                        windows)
+            window-sizes (map #(get-in % [:layout :window_size]) same-column-windows)]
+        ;; Windows are tabbed if there's more than one window and they all have the same size
+        (and (> (count same-column-windows) 1)
+             (apply = window-sizes))))))
+
+(defn go-dir [dir]
+  (let [win (msg :focused-window)
+        term? (= "Alacritty" (:app_id win))
+        elisp (format "(when-let (win (and (frame-focus-state) (window-in-direction '%s))) (select-window win))" dir)
+        niri-move (condp = dir
+                    "left" (fn [] (action "focus-window-up-or-column-left"))
+                    "right" (fn [] (action "focus-window-down-or-column-right"))
+                    "up" (fn [] (if (tabbed? (:id win))
+                                  (action "focus-workspace-up")
+                                  (action "focus-window-or-workspace-up")))
+                    "down" (fn [] (if (tabbed? (:id win))
+                                    (action "focus-workspace-down")
+                                    (action "focus-window-or-workspace-down"))))]
+    (if term?
+      (when (= 1 (:exit (shell/sh "elisp" "-t" "1" elisp)))
+        (niri-move))
+      (niri-move))))
 
 (defn switch-preset-width-and-center []
   (action :switch-preset-window-width)
