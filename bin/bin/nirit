@@ -18,8 +18,8 @@
   (json/parse-string (lib/shh (str "niri msg --json " (name kind))) true))
 
 (comment
-  (msg "windows"))
-
+  (msg "windows")
+  )
 
 ;; center-column                         center-visible-columns           center-window                   clear-dynamic-cast-target                close-overview                close-window                     consume-or-expel-window-left
 ;; consume-or-expel-window-right         consume-window-into-column       debug-toggle-damage             debug-toggle-opaque-regions              do-screen-transition          expand-column-to-available-width expel-window-from-column
@@ -73,8 +73,8 @@
   (let [term? (= "Alacritty" (:app_id (msg :focused-window)))
         elisp (format "(when-let (win (and (frame-focus-state) (window-in-direction '%s))) (select-window win))" dir)
         niri-move (condp = dir
-                    "left" "focus-column-left"
-                    "right" "focus-column-right"
+                    "left" "focus-window-up-or-column-left"
+                    "right" "focus-window-down-or-column-right"
                     ;; todo: consider tabs with these commands
                     "up" "focus-window-or-workspace-up"
                     "down" "focus-window-or-workspace-down")]
@@ -121,8 +121,52 @@
     (action :maximize-column)
     ))
 
-(defn toggle-monospace-mode []
-  ;; todo: absorb all windows in workspace into one tabbed view, or expel all tabs out
+(defn toggle-monocle-mode [width]
+  ;; Toggle between tabbed single column and multiple columns
+  (let [windows (msg :windows)
+        current-window (msg :focused-window)
+        current-id (:id current-window)
+        workspace-id (:workspace_id current-window)
+        workspace-windows (filter #(= workspace-id (:workspace_id %)) windows)]
+    
+    (when (> (count workspace-windows) 1)
+      (let [column-positions (map #(first (get-in % [:layout :pos_in_scrolling_layout])) 
+                                  workspace-windows)
+            unique-columns (count (distinct column-positions))
+            all-tabbed? (= 1 unique-columns)]
+        
+        (if all-tabbed?
+          ;; Expel all windows from the tabbed column
+          (do
+            (action :toggle-column-tabbed-display)
+            (action :focus-window-top)
+            (dotimes [_ (dec (count workspace-windows))]
+              (action :expel-window-from-column)))
+          
+          ;; Consume all columns into one tabbed column
+          (do
+            (action :focus-column-first)
+            (action :set-column-width width)
+            (action :toggle-column-tabbed-display)
+            (dotimes [_ (dec unique-columns)]
+              (action :consume-window-into-column))))
+        
+        ;; Restore focus to original window
+        (action :focus-window "--id" current-id)))))
+
+(comment
+  (#'irit/toggle-monocle-mode "49%")
+
+  (->>
+   (filter
+    #(= (:workspace_id %) 1)
+    (msg :windows)
+
+    )
+   (map :layout)
+   (map :window_size)
+   )
+
   )
 
 (defn force-kill-window []
