@@ -50,24 +50,30 @@
 
   )
 
-(defn find-class [class]
-  ;; find or rotate windows by class/"App id"
-  (let [data (msg :windows)
-        active-window (->> data (filter :is_focused) first)
-        active-wid (:id active-window)
-        wids (keep (fn [w]
-                     (when (and
-                            (= class (last (string/split (:app_id w) #"\.")))
-                            ;; scope to current workspace
-                            (= (:workspace_id active-window) (:workspace_id w)))
-                       (:id w)))
-                   data)
-        wids (concat wids [(first wids)])
-        next-wid (if ((set wids) active-wid)
-                   (let [i (.indexOf wids active-wid)]
-                     (nth wids (inc i)))
-                   (first wids))]
-    (action :focus-window "--id" next-wid)))
+(defn find-class
+  ([class] (find-class class false))
+  ([class reverse?]
+   ;; find or rotate windows by class/"App id"
+   (let [data (msg :windows)
+         active-window (->> data (filter :is_focused) first)
+         active-wid (:id active-window)
+         wids (keep (fn [w]
+                      (when (and
+                             (re-matches (re-pattern class) (last (string/split (:app_id w) #"\.")))
+                             ;; scope to current workspace
+                             (= (:workspace_id active-window) (:workspace_id w)))
+                        (:id w)))
+                    data)
+         wids (concat wids [(first wids)])
+         wids (if reverse? (reverse wids) wids)
+         next-wid (if ((set wids) active-wid)
+                    (let [i (.indexOf wids active-wid)]
+                      (nth wids (inc i)))
+                    (first wids))]
+     (action :focus-window "--id" next-wid))))
+
+(defn find-class-reverse [class]
+  (find-class class true))
 
 (defn find-class-current []
   (find-class (:app_id (msg :focused-window))))
@@ -143,11 +149,24 @@
     (action :maximize-column)
     ))
 
+(comment
+  (:pid (msg :focused-window))
+
+  ;; 1930477
+
+  )
+
 (defn toggle-monocle-mode [width]
   ;; Toggle between tabbed single column and multiple columns
   (let [windows (msg :windows)
+
         current-window (msg :focused-window)
-        current-id (:id current-window)
+        term? (= "Alacritty" (:app_id current-window))
+        mon-width (:width (:logical (second (first (msg :outputs)))))
+        mon-width (- mon-width 60)      ; gaps
+        current-width (* 100 (double (/ (-> current-window :layout :window_size first) mon-width)))
+        widthed? (> 3 (abs (- (read-string width) current-width)))
+        slim? (> 60 (read-string width))
         workspace-id (:workspace_id current-window)
         workspace-windows (filter #(= workspace-id (:workspace_id %)) windows)]
     
@@ -156,17 +175,22 @@
                                   workspace-windows)
             unique-columns (count (distinct column-positions))
             all-tabbed? (= 1 unique-columns)]
-        
+
         (if all-tabbed?
           ;; Expel all windows from the tabbed column
-          (do
-            (action :toggle-column-tabbed-display)
-            (action :focus-window-top)
-            (dotimes [_ (dec (count workspace-windows))]
-              (action :expel-window-from-column)))
+          (if-not widthed?
+            (action :set-column-width width)
+            (do
+              (action :set-column-width "49%") ; sane?
+              (action :toggle-column-tabbed-display)
+              (action :focus-window-top)
+              (dotimes [_ (dec (count workspace-windows))]
+                (action :expel-window-from-column))))
           
           ;; Consume all columns into one tabbed column
           (do
+            (when (and term? slim?)
+              (lib/shh "elisp '(delete-other-windows)'"))
             (action :focus-column-first)
             (action :set-column-width width)
             (action :toggle-column-tabbed-display)
@@ -174,7 +198,7 @@
               (action :consume-window-into-column))))
         
         ;; Restore focus to original window
-        (action :focus-window "--id" current-id)))))
+        (action :focus-window "--id" (:id current-window))))))
 
 (comment
   (#'irit/toggle-monocle-mode "49%")
@@ -194,6 +218,10 @@
 (defn force-kill-window []
   ;; todo: absorb all windows in workspace into one tabbed view, or expel out
   (shell/sh "kill" "-9" (str (:pid (msg :focused-window)))))
+
+(defn dismiss []
+  (action "move-window-to-workspace-down")
+  (action "focus-workspace-up"))
 
 (comment
   (keys (msg :focused-window))
