@@ -443,8 +443,10 @@
   (format "{{%s}}" (:tag-value tag)))
 
 (defn render [template theme]
-  (selmer.util/set-missing-value-formatter! complain-value-fn)
-  (template/render template (assoc theme :env (get-env))))
+  (template/render
+   ;; strip local variables hack - :
+   (string/replace template #"(?s)Local Variables.*End:" "")
+   (assoc theme :env (get-env))))
 
 (defn refresh-cache [cache]
   (let [fresh (process-theme (get-theme))

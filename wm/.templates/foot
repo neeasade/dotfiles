@@ -1,0 +1,6 @@
+# -*- mode: conf -*-
+
+
+[main]
+
+# font="{{font.mono.spec}}"
