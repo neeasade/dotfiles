@@ -1,14 +1,57 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bb
 
-(xtitle -s & bspc subscribe desktop_layout) | \
-while read -r trigger; do
-  title=$(xtitle -t 25)
-  if [ "$(bspc query -T -d | jq -r .layout)" = "monocle" ]; then
-    count=$(wc -l < <(bspc query -N -n '.leaf.!hidden'))
-    if [ "$count" -gt 1 ]; then
-      title=${title}\*
-    fi
-  fi
-  printf '%s\n' "$title"
-done
+(ns lemon.title
+  (:require [babashka.process :as process]
+            [clojure.string :as string]
+            [cheshire.core :as json]
+            [clojure.java.io :as io]))
 
+(def state (atom {:last-printed-title nil}))
+
+(let [proc (process/process ["niri" "msg" "--json" "event-stream"]
+                            {:out :stream})
+      reader (io/reader (:out proc))]
+  (loop []
+    (when-let [line (.readLine reader)]
+      (let [event-map (json/parse-string line true)
+            event-type (first (keys event-map))
+            event-data (get event-map event-type)]
+
+        (swap! state
+               (fn [s]
+                 (case event-type
+                   :WorkspacesChanged
+                   (let [new-state (assoc s :workspaces (:workspaces event-data))]
+                     ;; Find the focused window from the workspaces data
+                     (if-let [focused-window-id (->> (:workspaces event-data)
+                                                     (some (fn [ws]
+                                                             (when (:is_focused ws)
+                                                               (:active_window_id ws)))))]
+                       (assoc new-state :focused-window-id focused-window-id)
+                       new-state))
+
+                   :WindowsChanged
+                   (assoc s :windows (into {} (map (juxt :id identity) (:windows event-data))))
+
+                   :WindowFocusChanged
+                   (assoc s :focused-window-id (:id event-data))
+
+                   :WindowOpenedOrChanged
+                   (assoc-in s [:windows (:id (:window event-data))] (:window event-data))
+
+                   :WorkspaceActiveWindowChanged
+                   (assoc-in s [:workspace-active-windows (:workspace_id event-data)] (:active_window_id event-data))
+
+                   ;; Keep state unchanged for unhandled events
+                   s)))
+
+        ;; Output the title of the currently focused window if it changed
+        (when-let [focused-id (:focused-window-id @state)]
+          (when-let [window (get-in @state [:windows focused-id])]
+            (let [current-title (:title window)
+                  last-title (:last-printed-title @state)]
+              (when (not= current-title last-title)
+                (println current-title)
+                (flush)
+                (swap! state assoc :last-printed-title current-title))))))
+      (recur))))
