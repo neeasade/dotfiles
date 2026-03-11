@@ -27,6 +27,7 @@ load_bg_plain() {
 load_alacritty() { render alacritty .config/alacritty/alacritty.toml -p color.normal ;}
 load_bg()        { eval "$(theme -q BG_COMMAND)" ;}
 load_emacs()     { elisp -t 5 "(ns/load-theme '$(theme -q emacs.theme))" ;}
+load_foot()      { render foot .config/foot/foot.ini -p color.normal ;}
 load_fuzzel()    { render fuzzel .config/fuzzel/fuzzel.ini -p color.normal ;}
 load_jgmenu()    { render jgmenu .config/jgmenu/jgmenurc -p color.weak ;}
 load_kitty()     { render kitty .config/kitty/kitty.conf -p color.normal; pkill -USR1 kitty ;}
@@ -39,6 +40,10 @@ load_pywal()     { render pywal .cache/wal/theme.json; }
 load_rofi()      { render rofi .config/rofi/sometheme.rasi -p color.normal ;}
 load_zathura()   { render zathura .config/zathura/zathurarc -p color.normal ;}
 load_zeal()      { render zeal .config/Zeal/Zeal.conf ;}
+
+load_eww() {
+    render eww .config/eww/eww.scss -p color.normal
+}
 
 load_sxhkd() {
     conf="$HOME/.config/sxhkd/sxhkdrc"
@@ -54,15 +59,6 @@ load_sxhkd() {
     render sxhkd .config/sxhkd/sxhkdrc
     pkill -USR1 sxhkd
 }
-
-# wsl
-if $WSL; then
-    load_sxhkd() {
-	conf="$HOME/.config/sxhkd/sxhkdrc"
-	export MODKEY=alt
-	render sxhkd_windows .config/sxhkd/sxhkdrc
-    }
-fi
 
 if $MAC; then
     load_mpd()     { render mpd .mpd/mpd.conf -p mpd; brew services restart mpd ; }
@@ -211,13 +207,6 @@ load_services() {
 
     # make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
     make_periodic_service 30 memory_check "sensor_alert memory" "Notify when the memory pressure is high"
-    make_periodic_service $((60 * 60 * 24)) update_adblock update_adblock
-
-    if [ "$(hostname)" = "geloof" ]; then
-	make_periodic_service 10 refresh_mpd refresh_mpd
-	make_periodic_service 10 display_sync "laptop_monitor_sync" "Update displays on connection changes"
-	make_periodic_service 90 battery_check "sensor_alert battery" "Notify when the battery is low"
-    fi
 
     if [ "$(hostname)" = "bliss" ]; then
 	make_periodic_service 5 kobo_sync kobo_sync
@@ -231,10 +220,11 @@ load_services() {
     # 	make_periodic_service 120 sync_org_schedule sync_org_schedule
     # fi
 
-    make_service unclutter 'unclutter -idle 1'
     make_service dunst
-    make_service picom
-    make_service sxhkd
+    # make_service unclutter 'unclutter -idle 1'
+    # make_service picom
+    # make_service sxhkd
+    make_service waycorner
     make_service download_watch last_download_link
     make_service mpdris
 
@@ -245,9 +235,10 @@ load_services() {
     make_service blueman-applet
     make_service udiskie
 
-    make_service panel "$HOME/.wm/panel/lemonade"
 
     make_service mpd "og mpd --no-daemon"
+    make_service eww "eww daemon --no-daemonize"
+    # make_service panel "$HOME/.wm/panel/lemonade"
     make_service clubskip
 
     # reload units
@@ -260,7 +251,8 @@ load_services() {
     done
 
     # just kidding
-    systemctl --user disable panel
+    # systemctl --user disable panel
+    # todo: systray -> eww?
     systemctl --user disable stalonetray
 }
 
@@ -278,7 +270,7 @@ if [ -z "$*" ]; then
 	# (which unminimizes windows)
 	set -- xresources qutebrowser kitty
     elif $LINUX; then
-	set -- wm xresources picom bg gtk qutebrowser zathura jgmenu zeal btag_borders kitty rofi
+	set -- xresources niri bg gtk qutebrowser zathura zeal
     elif $WINDOWS; then
 	set -- mintty
     fi

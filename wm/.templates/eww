@@ -3,7 +3,8 @@
 /* todo: would be nice to have tailwind here */
 
 * {
-  all: unset; // Unsets everything so you can style everything from scratch
+  all: unset;
+  /* // Unsets everything so you can style everything from scratch */
 }
 
 * {
@@ -18,16 +19,48 @@
 /* } */
 
 .bar {
-  /* background-color: "{{background}}"; */
+  /* background-color: {{background}}; */
   background-color: transparent;
-  color: "{{foreground}}";
+  color: {{foreground}};
   /* padding: 10px; */
+}
+
+.left, .right, .center {
+  background-color: {{background}};
+}
+
+.slice {
   padding: 4px;
 }
 
-.right, .center, .left {
-  background-color: "{{background}}";
+.left {
+  border-radius: 0px 0px {{meta.radius}}px 0px;
+  border-bottom : 2px solid {{meta.panel-border}};
+  border-right : 1px solid {{meta.panel-border}};
 }
+
+.right {
+  border-radius: 0px 0px 0px {{meta.radius}}px;
+  border-bottom : 2px solid {{meta.panel-border}};
+  border-left : 1px solid {{meta.panel-border}};
+}
+
+.center {
+  border-radius: 0px 0px {{meta.radius}}px {{meta.radius}}px;
+  border-bottom : 2px solid {{meta.panel-border}};
+  border-left : 1px solid {{meta.panel-border}};
+  border-right : 1px solid {{meta.panel-border}};
+}
+
+.left .slice:not(:first-child) {
+  border-left: 1px solid {{meta.panel-border}};
+}
+
+.right .slice:not(:last-child) {
+  border-left: 1px solid {{meta.panel-border}};
+}
+
+
 
 /*  Styles on classes (see eww.yuck for more information) */
 .sidestuff slider {

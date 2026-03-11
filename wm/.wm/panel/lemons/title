@@ -8,6 +8,11 @@
 
 (def state (atom {:last-printed-title nil}))
 
+(defn truncate [s n]
+  (if (> (count s) n)
+    (str (subs s 0 (- n 1)) "…")
+    s))
+
 (let [proc (process/process ["niri" "msg" "--json" "event-stream"]
                             {:out :stream})
       reader (io/reader (:out proc))]
@@ -51,7 +56,7 @@
             (let [current-title (:title window)
                   last-title (:last-printed-title @state)]
               (when (not= current-title last-title)
-                (println current-title)
+                (println (truncate current-title 45))
                 (flush)
                 (swap! state assoc :last-printed-title current-title))))))
       (recur))))

@@ -1,15 +1,32 @@
 #!/bin/sh
 # Toggle the panel on/off
 
-want=${1:-start}
+want=${1:-open}
+
+# ensure eww running
+if ! systemctl --user status eww >/dev/null; then
+    if pgrep eww >/dev/null; then
+	pkill eww
+    fi
+
+    systemctl --user start eww
+    sleep 0.5
+fi
 
 if [ -z "$*" ]; then
     if systemctl --user status panel >/dev/null; then
-	want=stop
+	want=close
     fi
 fi
 
-systemctl --user $want panel
+if [ -z "$(eww active-windows)" ]; then
+    eww open bar
+else
+    eww close bar
+fi
+
+# eww $want bar
+# systemctl --user $want panel
 
 # reseting dunst clears the notification queue
 # theme refresh dunst

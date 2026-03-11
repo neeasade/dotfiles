@@ -715,7 +715,8 @@ get_heart() {
 }
 
 get_wm() {
-    log wm "𝔟𝔰𝔭𝔴𝔪" >&6
+    # log wm "𝔟𝔰𝔭𝔴𝔪" >&6
+    log wm "niri" >&6
     return 0
     case $os in
         # Don't display window manager on macOS.

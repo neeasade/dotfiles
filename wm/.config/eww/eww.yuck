@@ -1,48 +1,52 @@
 
+;; keeping this simple, for now, just writing it
+
+;; todo: checkout EWW_TEMPS, EWW_BATTERY
+
+;; :format  "mpd:title|org_task:misc|tags:clock"
+
+;; :format  "tags:title|misc|running:clock:day_progress"
+;; :format  "mpd:title|misc|tags:clock"
+
+(defwidget s [value]
+  ;; idea is can css this by index later
+  (box :class "slice"
+       :visible {value != ""}
+       value))
+
+(defpoll org_task :interval "5s"  "lemons/org_task")
+(defpoll clock    :interval "5s"  "date '+%-I:%M %p, %b %-d '")
+(defpoll misc     :interval "30s" "lemons/misc")
+
+(deflisten title "lemons/title")
+
+(defpoll music-l :interval "5s" "lemons/mpd")
+;; (deflisten music-l "lemons/mpd")
+
+(defwidget music []
+  (eventbox
+   :class "slicee"
+   :onclick "player.sh toggle"
+   :onrightclick "player.sh next"
+   ;; music-l
+   (s :value music-l)
+   ))
+
+;; (defwidget left (box (misc)))
+;; (defwidget center (box (misc)))
+
 (defwidget bar []
-  (centerbox
-   :orientation "h"
-   (left)
-   (center)
-   (right)))
-
-(defwidget right []
-  (box
-   ;; :class "right"
-   :orientation "h" :space-evenly false :halign "end"
-   (metric :label "🔊"
-           :value volume
-           :onchange "amixer -D pulse sset Master {}%")
-   (metric :label ""
-           :value {EWW_RAM.used_mem_perc}
-           :onchange "")
-   (metric :label "💾"
-           :value {round((1 - (EWW_DISK["/"].free / EWW_DISK["/"].total)) * 100, 0)}
-           :onchange "")
-   time))
-
-(defwidget left []
-  (box
-   :orientation "h"
-   :space-evenly true
-   :halign "start"
-   ;; :spacing 10
-   (button :onclick "wmctrl -s 0" 1)
-   (button :onclick "wmctrl -s 1" 2)
-   (button :onclick "wmctrl -s 2" 3)
-   (button :onclick "wmctrl -s 3" 4)
-   (button :onclick "wmctrl -s 4" 5)
-   (button :onclick "wmctrl -s 5" 6)
-   (button :onclick "wmctrl -s 6" 7)
-   (button :onclick "wmctrl -s 7" 8)
-   (button :onclick "wmctrl -s 8" 9)))
-
-(defwidget center []
-  (box :orientation "h"
-       :space-evenly false
-       :halign "center"
-    {music != "" ? "🎵${music}" : ""}))
-
+  (centerbox :orientation "h"
+             (box :class "left" :orientation "h" :space-evenly false :halign "start"
+                  (music)
+                  (s :value title))
+             (box :class "center" :orientation "h" :space-evenly false :halign "center"
+                  :visible {misc != "" || org_task != ""}
+                  (s :value misc)
+                  (s :value org_task))
+             (box :class "right" :orientation "h" :space-evenly false :halign "end"
+                  (music)
+                  (s :value clock))))
 
 (defwidget metric [label value onchange]
   (box :orientation "h"
@@ -55,23 +59,21 @@
            :value value
            :onchange onchange)))
 
-(deflisten music :initial ""
-  "playerctl --follow metadata --format '{{ artist }} - {{ title }}' || true")
-
-(defpoll volume :interval "1s"
-  "lemons/cpu")
-
-(defpoll time :interval "10s"
-  "date '+%H:%M %b %d, %Y'")
-
 (defwindow bar
   :monitor 0
-  :exclusive true
+  ;; :exclusive true
   :windowtype "dock"
   :geometry (geometry :x "0%"
                       :y "0%"
                       :width "100%"
-                      :height "10px"
+                      :height "1px"
                       :anchor "top center")
-  :reserve (struts :side "top" :distance "4%")
+  :reserve (struts :side "top"
+                   :distance "1%"
+                   )
   (bar))
+
+
+  ;; Local Variables:
+  ;; eval: (ns/on-save "ltheme eww")
+  ;; End:

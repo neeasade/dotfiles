@@ -203,7 +203,7 @@ if ${NEEASADE_ENV:-true}; then
     eval "$template"
   }
 
-  for service in picom stalonetray; do
+  for service in picom stalonetray waycorner; do
   reval \
     '%1() {
     if silent pgrep %1; then
