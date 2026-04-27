@@ -101,6 +101,13 @@ envv_all() {
 
 # tell emacs about my shell location, including any tramp info
 tell_emacs_shell_location() {
+
+  # comint can support this via:
+  # (add-hook 'comint-output-filter-functions #'comint-osc-process-output)
+  # hmmmm - todo: handle tramp here - $TRAMP_INFO
+  printf "\\e]7;file://%s%s\\e\\\\" "$HOSTNAME" "$PWD"
+  return 0
+
   _shell_location=$PWD
 
   if ${REMOTE:-false}; then
