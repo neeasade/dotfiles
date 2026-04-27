@@ -1,5 +1,10 @@
 # -*- mode: sh -*-
 
+d() {
+  dir=$(elisp -r '(s-join "\n" (ns/atuin-list-dirs nil))' | fzf)
+  cd "$(echo "$dir" | sed "s#~#$HOME##")"
+}
+
 bplain() {
   magick -size 100x100 "xc:$(theme -q color.focused.background)" /tmp/plain.png
   feh --bg-tile /tmp/plain.png
@@ -168,8 +173,7 @@ bicc() {
 recentf() {
   # todo: make this smarter - I would also like to do: recentf -s '<2023-09-14 Thu 17:34>'
   # (files since x date)
-  ls -t "${1:-.}" | head -n "${2:-1}" |
-xargs -d '\n' printf '"%s"\n'
+  ls -t "${1:-.}" | head -n "${2:-1}" | xargs -d '\n' printf '"%s"\n'
 }
 
 sleepm() {
@@ -349,6 +353,14 @@ nq() {
     }
 }
 
+json2edn() {
+  if [ -z "$1"]; then
+      bb '(require (quote [cheshire.core :as json])) (-> (json/parse-string (slurp *in*) true) pr-str println)'
+  else
+      bb '(require (quote [cheshire.core :as json])) (-> (json/parse-string (slurp *in*) true) pr-str println)' < "$1"
+  fi
+}
+
 dec2hex() {
   printf "%X\n" $1
 }
@@ -439,7 +451,7 @@ gset() {
       ;;
     *)
       echo "gset <name> <email>"
-      echo "or: gset manual|adhoc|pass|github"
+      echo "or: gset manual|adhoc|pass|github|work"
       ;;
   esac
 }
@@ -617,4 +629,8 @@ Display contents of FILE as mime TYPE."
         [ -n "$type" ] || type=$(file -b --mime "$file")
         printf '\033]5151;{"type":"%s"}\nfile://%s%s\033\\\n' "$type" "$(uname -n)" "$file"
     fi
+}
+
+tldr() {
+  curl -s "https://cheat.sh/$*" | strip-color
 }
