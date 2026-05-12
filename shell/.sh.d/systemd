@@ -25,3 +25,5 @@ alias scu-disable-now="scu-disable --now"
 alias scu-mask-now="scu-mask --now"
 
 alias jc-f='journalctl -fu'
+alias jcu-f='journalctl --user -f -u'
+alias jcu-fc='journalctl --user -f -o cat -u'
