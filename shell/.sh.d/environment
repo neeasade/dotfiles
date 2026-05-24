@@ -62,6 +62,10 @@ if ${NEEASADE_ENV:-true}; then
     set_system WSL
   fi
 
+  # temp workaround for qutebrowser:
+  QTWEBENGINE_FORCE_USE_GBM=0
+
+
   set_editor() {
     export EDITOR="$@"
     export GIT_EDITOR="$@"

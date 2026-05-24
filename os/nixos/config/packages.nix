@@ -105,8 +105,19 @@ let
     libreoffice
     lxappearance
 
+    # a foray into wayland
+    foot
+    fuzzel
+    grim
+    slurp
+    swaybg
+    swayidle
+    waybar
+    waycorner
+    wl-clipboard
+    wtype
 
-    alttab
+    # alttab
     udiskie
     mpd-mpris
     maim

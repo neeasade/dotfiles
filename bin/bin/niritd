@@ -1,0 +1,106 @@
+#!/usr/bin/env bb
+
+(ns iritd
+  (:require [babashka.fs :as fs]
+            [babashka.process :as process]
+            [clojure.java.shell :as shell]
+            [clojure.string :as string]
+            [clojure.java.io :as io]
+            [cheshire.core :as json]
+            [lib.util :as lib]))
+
+(def SOCKET "/tmp/niritd.sock")
+
+(when (fs/exists? SOCKET)
+  (fs/delete SOCKET))
+
+(defn action [command & args]
+  ;; debug
+  ;; (prn action command)
+
+  (apply lib/shh "niri" "msg" "action" (name command) (map str args))
+  ;; (string/join " " (concat ["niri" "msg" "action" (name command)] (map str args)))
+  )
+
+;; niri msg *
+;; outputs windows keyboard-layouts focused-window pick-color output version overview-state
+;; workspaces layers focused-output pick-window action event-stream request-error help
+(defn msg [kind]
+  (json/parse-string (lib/shh (str "niri msg --json " (name kind))) true))
+
+(def state
+  {:mon-height (:height (:logical (second (first (msg :outputs)))))}
+  )
+
+(defn tabbed? [window-id]
+  ;; Check if a window is in a tabbed layout by comparing window sizes in the same column
+  (let [windows (msg :windows)
+        target-window (first (filter #(= window-id (:id %)) windows))]
+    (when target-window
+      (let [target-pos (first (get-in target-window [:layout :pos_in_scrolling_layout]))
+            target-workspace (:workspace_id target-window)
+            same-column-windows (filter #(and (= target-workspace (:workspace_id %))
+                                              (= target-pos (first (get-in % [:layout :pos_in_scrolling_layout]))))
+                                        windows)
+            window-sizes (map #(get-in % [:layout :window_size]) same-column-windows)]
+        ;; Windows are tabbed if there's more than one window and they all have the same size
+        (and (> (count same-column-windows) 1)
+             (apply = window-sizes)
+             ;; broken:
+             ;; false
+             (> (second (first window-sizes))
+                (* 0.7 (:mon-height state))))))))
+
+(defn go-dir [dir]
+  (let [win (msg :focused-window)
+        term? (#{"Alacritty" "foot" "kitty"} (:app_id win))
+        elisp (format "(when-let (win (and (frame-focus-state) (window-in-direction '%s))) (select-window win))" dir)
+        niri-move (condp = dir
+                    ;; "left" (fn [] (action "focus-window-up-or-column-left"))
+                    ;; "right" (fn [] (action "focus-window-down-or-column-right"))
+
+                    "left" (fn [] (action "focus-column-left"))
+                    "right" (fn [] (action "focus-column-right"))
+
+                    "up" (fn [] (if (tabbed? (:id win))
+                                  (action "focus-workspace-up")
+                                  (action "focus-window-or-workspace-up")))
+                    "down" (fn [] (if (tabbed? (:id win))
+                                    (action "focus-workspace-down")
+                                    (action "focus-window-or-workspace-down"))))]
+    (if term?
+      (when-not
+          (= 0 (:exit (shell/sh "elisp" "-t" "1" elisp)))
+        (niri-move))
+      (niri-move))))
+
+(let [proc (process/process ["socat" "-u" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "STDOUT"])]
+  (with-open [rdr (io/reader (:out proc))]
+    (comment
+
+      (string/split "")
+      )
+    (loop [line "nop"]
+      (let [cmd (string/split line #"\^")]
+        (cond
+          (= line "quit") nil
+          (= line "nop") nil
+          (= line "hello") (lib/shh "notify-send hello")
+
+          ;; known commands
+          (-> cmd first symbol resolve)
+          (apply (-> cmd first symbol resolve)
+                 (rest cmd))
+
+          :else
+          (println "unknown command!: " line)))
+
+      (if (= line "quit")
+        (and (process/destroy proc) true)
+        (recur (first (line-seq rdr)))))))
+
+;; old
+#_(let [proc (p/process ["socat" "-u" "UNIX-LISTEN:/tmp/my.sock,fork" "STDOUT"])]
+    (with-open [rdr (io/reader (:out proc))]
+      (doseq [line (line-seq rdr)]
+        (println "got:" line))))

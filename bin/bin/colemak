@@ -20,5 +20,8 @@ echo "$gitdest/install-dreymar-xmod.sh" -i "$xkbdir" -x 4c us us
 "$gitdest/install-dreymar-xmod.sh" -i "$xkbdir" -n -x 4c us us
 
 cd
-pgrep sxhkd && pkill sxhkd
-setsid nohup sxhkd  &
+
+if pgrep sxhkd; then
+    pkill sxhkd
+    setsid nohup sxhkd  &
+fi

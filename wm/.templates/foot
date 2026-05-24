@@ -3,4 +3,42 @@
 
 [main]
 
-# font="{{font.mono.spec}}"
+font={{font.mono.family}}:size={{font.mono.size}}
+
+pad = {{x.padding}}x{{x.padding}} center
+
+# horizontal-letter-offset = -1px
+# vertical-letter-offset = -2px
+
+# these two properties need to change together
+# line-height will change dynamically if you use keybinds
+letter-spacing = -1px
+line-height = 15
+
+[scrollback]
+
+lines = 5
+
+[mouse]
+hide-when-typing = yes
+
+[colors]
+
+cursor= {{background|p}} {{color.cursor|p}}
+
+foreground = {{foreground|p}}
+background = {{background|p}}
+
+{% for color in term_normal %}
+regular{{forloop.counter0}} = {{color|p}}{% endfor %}
+{% for color in term_bright %}
+bright{{forloop.counter0}} = {{color|p}}{% endfor %}
+
+[tweak]
+
+# better for emacs:
+grapheme-width-method = wcswidth
+
+# Local Variables:
+# eval: (ns/on-save "ltheme foot")
+# End:

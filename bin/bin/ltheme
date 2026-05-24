@@ -228,6 +228,9 @@ load_services() {
     make_service download_watch last_download_link
     make_service mpdris
 
+    # will be renamed to awww-daemon one day
+    make_service swww-daemon
+
     # tray stuff
     make_service nm-applet
     make_service pasystray

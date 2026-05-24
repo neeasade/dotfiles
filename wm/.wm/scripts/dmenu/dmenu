@@ -60,7 +60,14 @@ do_rofi() {
 #     result=$(read_input | og dmenu -p "$prompt")
 # fi
 
-result=$(read_input | do_rofi)
+# result=$(read_input | do_rofi)
+
+if [ -z "$DISPLAY" ]; then
+    result=$(read_input | fzf)
+else
+    result=$(read_input | fuzzel --dmenu)
+fi
+
 
 if [ -z "$result" ]; then
     echo

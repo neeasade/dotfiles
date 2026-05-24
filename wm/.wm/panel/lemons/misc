@@ -2,8 +2,7 @@
 # this lemon is meant to have temporary things that may popup, show front and center
 
 check_disk_space() {
-    # 10G
-    # arbitrary
+    # 10G, arbitrary
     concern=$((1000 * 1000 * 10))
 
     df | grep \^/dev | awk '{printf "%s", $4; $1=$2=$3=$4=$5=""; print $0}' | \
@@ -31,7 +30,7 @@ check_disk_space() {
     # elisp -r '(when-let (unread-dms (ns/circe-unread-query-buffers))
     # 	(format "DMs: %s" (length unread-dms)))'
 
-    # check_disk_space
+    check_disk_space
 
     if pgrep obs >/dev/null; then
 	echo "OBS OPEN"

@@ -5,7 +5,7 @@ background="{{background}}ff"
 selection="{{color.focused.background}}ff"
 text="{{foreground}}ff"
 selection-text="{{color.focused.foreground}}ff"
-selection-match="{{color.focused.alt}}ff"
+selection-match="{{alt}}ff"
 match="{{alt}}ff"
 
 [main]
@@ -24,3 +24,7 @@ width=1
 [key-bindings]
 cursor-end=None
 prev=Control+e
+
+# Local Variables:
+# eval: (ns/on-save "ltheme fuzzel")
+# End:

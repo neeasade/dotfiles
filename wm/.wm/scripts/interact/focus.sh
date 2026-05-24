@@ -20,7 +20,9 @@ try_emacs_dir() {
   fi
 }
 
-looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
+# looking_at=$(xprop -id "$(bspc query -N -n)" WM_CLASS | awk -F'"' '{print $4}')
+# waow...
+looking_at=Alacritty
 
 case "$looking_at" in
   Emacs*) try_emacs_dir ;;

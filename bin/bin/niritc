@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+socket="/tmp/niritd.sock"
+
+args="$1"
+shift
+for arg in "$@"; do
+    args="${args}^${arg}"
+done
+
+echo "sending $args"
+
+socat - UNIX-CONNECT:"${socket}" <<< "$args"
