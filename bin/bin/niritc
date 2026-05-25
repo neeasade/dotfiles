@@ -9,5 +9,4 @@ for arg in "$@"; do
 done
 
 echo "sending $args"
-
 socat - UNIX-CONNECT:"${socket}" <<< "$args"

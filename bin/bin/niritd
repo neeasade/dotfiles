@@ -7,9 +7,13 @@
             [clojure.string :as string]
             [clojure.java.io :as io]
             [cheshire.core :as json]
-            [lib.util :as lib]))
+            [lib.util :as lib]
+            [clojure.core.async :as async :refer [go-loop <! timeout alts! chan close!]]
+            ))
 
 (def SOCKET "/tmp/niritd.sock")
+(def niri-state (atom {}))              ; niri-state-loop
+(def niri-state-channel nil)
 
 (when (fs/exists? SOCKET)
   (fs/delete SOCKET))
@@ -17,7 +21,6 @@
 (defn action [command & args]
   ;; debug
   ;; (prn action command)
-
   (apply lib/shh "niri" "msg" "action" (name command) (map str args))
   ;; (string/join " " (concat ["niri" "msg" "action" (name command)] (map str args)))
   )
@@ -74,33 +77,126 @@
         (niri-move))
       (niri-move))))
 
-(let [proc (process/process ["socat" "-u" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "STDOUT"])]
-  (with-open [rdr (io/reader (:out proc))]
-    (comment
+(defn find-class
+  ([class] (find-class class false false))
+  ([class reverse? global?]
+   ;; find or rotate windows by class/"App id"
+   (let [data (:windows @niri-state)
+         data (map (fn [[id w]]
+                     (assoc w :id id))
+                   data)
+         active-window (->> data (filter :is_focused) first)
+         active-wid (:id active-window)
+         data (sort-by #(-> % :layouts :pos_in_scrolling_layout first) data)
+         wids (keep (fn [w]
+                      (when (and
+                             (re-matches (re-pattern class) (last (string/split (:app_id w) #"\.")))
+                             ;; scope to current workspace
+                             (or global? (= (:workspace_id active-window) (:workspace_id w))))
+                        (:id w)))
+                    data)
+         wids (concat wids [(first wids)])
+         wids (if reverse? (reverse wids) wids)
+         next-wid (if ((set wids) active-wid)
+                    (let [i (.indexOf wids active-wid)]
+                      (nth wids (inc i)))
+                    (first wids))]
+     (action :focus-window "--id" next-wid))))
 
-      (string/split "")
-      )
-    (loop [line "nop"]
-      (let [cmd (string/split line #"\^")]
-        (cond
-          (= line "quit") nil
-          (= line "nop") nil
-          (= line "hello") (lib/shh "notify-send hello")
+(defn niri-state-loop []
+  ;; return channel that can be closed, track state here
+  (let [proc (process/process ["niri" "msg" "--json" "event-stream"]
+                              {:out :stream})
+        reader (io/reader (:out proc))
+        stop-ch (chan)]
+    (go-loop []
+      (when-let [line (.readLine reader)]
 
-          ;; known commands
-          (-> cmd first symbol resolve)
-          (apply (-> cmd first symbol resolve)
-                 (rest cmd))
+        (let [[val port] (alts! [stop-ch (timeout 1)])] ; ms, so ~instant
+          (if (= port stop-ch)
+            (println "niri-state-loop stopping...")
+            (do
+              (let [event-map (json/parse-string line true)
+                    event-type (first (keys event-map))
+                    event-data (get event-map event-type)]
 
-          :else
-          (println "unknown command!: " line)))
+                (swap! niri-state
+                       (fn [s]
+                         (case event-type
+                           :WorkspacesChanged
+                           (let [new-state (assoc s :workspaces (:workspaces event-data))]
+                             ;; Find the focused window from the workspaces data
+                             (if-let [focused-window-id (->> (:workspaces event-data)
+                                                             (some (fn [ws]
+                                                                     (when (:is_focused ws)
+                                                                       (:active_window_id ws)))))]
+                               (assoc new-state :focused-window-id focused-window-id)
+                               new-state))
 
-      (if (= line "quit")
-        (and (process/destroy proc) true)
-        (recur (first (line-seq rdr)))))))
+                           :WindowsChanged
+                           (assoc s :windows (into {} (map (juxt :id identity) (:windows event-data))))
 
-;; old
-#_(let [proc (p/process ["socat" "-u" "UNIX-LISTEN:/tmp/my.sock,fork" "STDOUT"])]
+                           :WindowFocusChanged
+                           (assoc s :focused-window-id (:id event-data))
+
+                           :WindowOpenedOrChanged
+                           (assoc-in s [:windows (:id (:window event-data))] (:window event-data))
+
+                           :WorkspaceActiveWindowChanged
+                           (assoc-in s [:workspace-active-windows (:workspace_id event-data)] (:active_window_id event-data))
+
+                           ;; Keep state unchanged for unhandled events
+                           s)))
+
+                ;; Output the title of the currently focused window if it changed
+                ;; old
+                #_(when-let [focused-id (:focused-window-id @state)]
+                    (when-let [window (get-in @state [:windows focused-id])]
+                      (let [current-title (:title window)
+                            last-title (:last-printed-title @state)]
+                        (when (not= current-title last-title)
+                          (println (truncate current-title 45))
+                          (flush)
+                          (swap! state assoc :last-printed-title current-title))))))
+              (recur))))))
+    stop-ch))
+
+(when-not niri-state-channel
+  (def niri-state-channel (niri-state-loop)))
+
+(defn main-loop []
+  (let [proc (process/process ["socat" "-u" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "STDOUT"])]
     (with-open [rdr (io/reader (:out proc))]
-      (doseq [line (line-seq rdr)]
-        (println "got:" line))))
+      (loop [line "nop"]
+        (let [cmd (string/split line #"\^")]
+          (cond
+            (= line "quit") nil
+            (= line "nop") nil
+            (= line "hello") (lib/shh "notify-send hello")
+
+            ;; known commands
+            ;; todo: error handling
+
+
+            (-> cmd first symbol resolve)
+            (try
+              (apply (-> cmd first symbol resolve)
+                     (rest cmd))
+              ;; not great at printing..
+              (catch Exception e
+                (lib/sh "notify-send" (str "nirit failure: " (string/replace line "^" " ")) )
+                (prn (ex-data e))
+                (println (str e))
+                ))
+
+
+            :else
+            (println "unknown command!: " line)))
+
+        (if (= line "quit")
+          (and (process/destroy proc) true)
+          (recur (first (line-seq rdr))))))))
+
+(when (= *file* (System/getProperty "babashka.file"))
+  (main-loop))
+
