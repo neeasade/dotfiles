@@ -1,5 +1,9 @@
 #!/usr/bin/env bb
 
+;; idea: summon window to right of current window, find and place/focus
+;; OR: just a back motion in general, maybe fullscope alt-tab
+;;  note: focus-column-last?
+
 (ns iritd
   (:require [babashka.fs :as fs]
             [babashka.process :as process]
@@ -43,9 +47,6 @@
 ;; niri-state-loop
 (def niri-state (atom {:output (msg :focused-output)}))
 (def niri-state-channel nil)
-
-(when (fs/exists? SOCKET)
-  (fs/delete SOCKET))
 
 (defn tabbed? [window-id]
   ;; Check if a window is in a tabbed layout by comparing window sizes in the same column
@@ -123,6 +124,7 @@
 (defn find-class-all-workspaces [class]
   (find-class class false true))
 
+;; maybe this should be named "big?"
 (defn maximized?
   ([] (maximized? (:focused @niri-state)))
   ([window]
@@ -132,8 +134,34 @@
       (> win-w (* 0.8 mon-w))
       (> win-h (* 0.8 mon-h))))))
 
+(defn layout-toggle [slim-toggle]
+  (let [fullscreen? (= (-> @niri-state :focused :layout :tile_size)
+                       (map double ((juxt :width :height) (:logical (:output @niri-state)))))
+        maxed? (maximized?)
+        tiled? (and (not maxed?) (not fullscreen?))
+        slim? (> 50                     ; percent
+                 (/ (-> @niri-state :focused :layout :tile_size first)
+                    (:width (:logical (:output @niri-state)))))]
+
+    ;; (second (:workspaces @niri-state))
+    ;; (:logical (:output @niri-state))
+
+    ))
+
 (defn switch-preset-width-and-center []
+  ;; are we fullscreen? take us out of that
+  (if (= (-> @niri-state :focused :layout :tile_size)
+         (map double ((juxt :width :height) (:logical (:output @niri-state)))))
+
+    (do
+      (action :fullscreen-window)
+
+      (action :set-window-width "50%")
+      )
+    )
+
   (action :switch-preset-window-width)
+
   (Thread/sleep 50)
 
   ;; todo: diffent action for this
@@ -233,48 +261,75 @@
                 ;; {"WindowClosed":{"id":131}}
 
 
+                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[3072.0,1728.0],"window_size":[3072,1728],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.8,0.8]}]]}}
+                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[3072.0,1728.0],"window_size":[3072,1728],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.0,0.0]}]]}}
+
+                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[2304.7999999999997,1604.0],"window_size":[2303,1602],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.0,0.0]}]]}}
+                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[2304.7999999999997,1604.0],"window_size":[2303,1602],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.8,0.8]}]]}}
+
                 (swap! niri-state
                        (fn [s]
                          (case event-type
                            :WorkspacesChanged (assoc s :workspaces (:workspaces event-data))
                            :WindowsChanged (assoc s :windows (into {} (map (juxt :id identity) (:windows event-data))))
                            :WindowClosed (update s :windows #(dissoc % (:id event-data)))
-                           :WindowFocusChanged (assoc s :focused (get (:windows s) (:id event-data)))
+                           :WindowFocusChanged
+                           (update s :windows
+                                   #(update-vals % (fn [window]
+                                                     (assoc window :is_focused
+                                                            (= (:id window) (:id event-data))))))
+                           ;; (assoc s :focused (get (:windows s) (:id event-data)))
                            :WindowOpenedOrChanged (assoc-in s [:windows (:id (:window event-data))] (:window event-data))
-                           :WorkspaceActiveWindowChanged
+
+                           :WindowLayoutsChanged
+                           (update s :windows
+                                   (fn [old-wins]
+                                     (reduce (fn [current [id changes]]
+                                               (update-in current [id :layout] #(merge % changes)))
+                                             old-wins
+                                             (:changes event-data))))
+
                            ;; ?
-                           (assoc-in s [:workspace-active-windows (:workspace_id event-data)] (:active_window_id event-data))
+                           ;; :WorkspaceActiveWindowChanged
+                           ;; (assoc-in s [:workspace-active-windows (:workspace_id event-data)] (:active_window_id event-data))
 
                            ;; Keep state unchanged for unhandled events
-                           s)))
+                           ;; log....
+                           (do (println "unhandled event: %s" event-type)
+                               s))))
 
-                #_(swap! niri-state
-                         (fn [s]
-                           (assoc s :focused (->> (:windows s)
-                                                  (filter :is_focused)
-                                                  (first)))))
-
-                ;; Output the title of the currently focused window if it changed
-                ;; old
-                #_(when-let [focused-id (:focused-window-id @state)]
-                    (when-let [window (get-in @state [:windows focused-id])]
-                      (let [current-title (:title window)
-                            last-title (:last-printed-title @state)]
-                        (when (not= current-title last-title)
-                          (println (truncate current-title 45))
-                          (flush)
-                          (swap! state assoc :last-printed-title current-title))))))
+                (swap! niri-state
+                       (fn [s]
+                         (assoc s :focused (->> (vals (:windows s))
+                                                (filter :is_focused)
+                                                (first))))))
               (recur))))))
     stop-ch))
+;; reset on reload
+
+(do
+  (and niri-state-channel (close! niri-state-channel))
+  (def niri-state-channel nil)
+  (def niri-state (atom {:output (msg :focused-output)}))
+  )
 
 (when-not niri-state-channel
   (def niri-state-channel (niri-state-loop)))
 
 (comment
-  (close! niri-state-channel)
+
+
+  (second (vals (:windows @niri-state)))
+
+  (:app_id (:focused @niri-state))
+
+
   )
 
 (defn main-loop []
+  (when (fs/exists? SOCKET)
+    (fs/delete SOCKET))
+
   (let [proc (process/process ["socat" "-u" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "STDOUT"])]
     (with-open [rdr (io/reader (:out proc))]
       (loop [line "nop"]
@@ -311,7 +366,15 @@
 
   ;; (:workspaces :focused-window-id :windows :workspace-active-windows)
 
-  (:workspaces @niri-state)
+  (keys
+   (first
+    (:workspaces @niri-state)))
+
+  (keys @niri-state)
+
+
+  (:windows @niri-state)
+
 
   (:workspace-active-windows
    @niri-state)
