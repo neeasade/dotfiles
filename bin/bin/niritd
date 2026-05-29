@@ -4,6 +4,9 @@
 ;; OR: just a back motion in general, maybe fullscope alt-tab
 ;;  note: focus-column-last?
 
+;; idea for action: expel window left/right, but focus back (scoop along)
+
+
 (ns iritd
   (:require [babashka.fs :as fs]
             [babashka.process :as process]
@@ -48,7 +51,51 @@
 (def niri-state (atom {:output (msg :focused-output)}))
 (def niri-state-channel nil)
 
+(defn edge?
+  ([dir] (edge? (:focused @niri-state)))
+  ([win dir]
+   (let [win-column (-> win :layout :pos_in_scrolling_layout first)
+         columns (->> (:windows @niri-state)
+                      (vals)
+                      (filter #(= (:workspace_id %) (:workspace_id win)))
+                      (map #(-> % :layout :pos_in_scrolling_layout first))
+                      (distinct)
+                      (sort))]
+     (condp = dir
+       "left" (= (first columns) win-column)
+       "right" (= (last columns) win-column)
+       (println "edge? what")))))
+
+(defn siblings
+  ;; "siblings" are windows in the same column as you
+  ([] (siblings (:focused @niri-state)))
+  ([win]
+   (let [win-column (-> win :layout :pos_in_scrolling_layout first)
+         siblings (->> (:windows @niri-state)
+                       (vals)
+                       (remove #(= (:id %) (:id win)))
+                       (filter #(= (:workspace_id %) (:workspace_id win)))
+                       (filter #(= (-> % :layout :pos_in_scrolling_layout first) win-column)))]
+     (if (empty? siblings) nil
+         siblings))))
+
+(defn swap-or-move [dir]
+  (if (edge? (:focused @niri-state) dir)
+    (action (str "consume-or-expel-window-" dir))
+    (action (str "swap-window-" dir) )))
+
+;; this really depends on if you're focused right or left
+(defn rotate []
+  (action :move-column-left)
+  (action :focus-column-right))
+
+(defn rotate-reverse []
+  (action :move-column-right)
+  (action :focus-column-left))
+
+
 (defn tabbed? [window-id]
+  ;; todo: have this use siblings
   ;; Check if a window is in a tabbed layout by comparing window sizes in the same column
   (let [windows (vals (:windows @niri-state))
         target-window (get (:windows @niri-state) window-id)]
@@ -69,6 +116,7 @@
                 (* 0.7 mon-height)))))))
 
 (defn go-dir [dir]
+  ;; todo: go-dir should center if you can't go dir
   (let [win (:focused @niri-state)
         term? (#{"Alacritty" "foot" "kitty"} (:app_id win))
         elisp (format "(when-let (win (and (frame-focus-state) (window-in-direction '%s))) (select-window win))" dir)
@@ -165,6 +213,7 @@
   (Thread/sleep 50)
 
   ;; todo: diffent action for this
+
   ;; (when-not (maximized?)
   ;;   (action :focus-column-left)
   ;;   (action :focus-column-right))
@@ -260,26 +309,55 @@
                 ;; {"WindowFocusChanged":{"id":175}}
                 ;; {"WindowClosed":{"id":131}}
 
+                ;; todo!:
+                ;; {"WorkspaceActivated":{"id":9,"focused":true}}
+                ;; {"WindowFocusTimestampChanged":{"id":176,"focus_timestamp":{"secs":532737,"nanos":594656257}}}
+                ;; {"WorkspaceActiveWindowChanged":{"workspace_id":9,"active_window_id":269}}
+                (comment
 
-                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[3072.0,1728.0],"window_size":[3072,1728],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.8,0.8]}]]}}
-                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[3072.0,1728.0],"window_size":[3072,1728],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.0,0.0]}]]}}
+                  (first
+                   (:workspaces
+                    @niri-state))
 
-                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[2304.7999999999997,1604.0],"window_size":[2303,1602],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.0,0.0]}]]}}
-                ;; {"WindowLayoutsChanged":{"changes":[[196,{"pos_in_scrolling_layout":[3,1],"tile_size":[2304.7999999999997,1604.0],"window_size":[2303,1602],"tile_pos_in_workspace_view":null,"window_offset_in_tile":[0.8,0.8]}]]}}
+                  )
 
                 (swap! niri-state
                        (fn [s]
                          (case event-type
+
+                           :WindowFocusTimestampChanged (assoc-in s [:windows (:id event-data) :focus_timestamp]
+                                                                  (:focus_timestamp event-data))
+
+                           :WorkspaceActiveWindowChanged
+                           (assoc-in s [:windows (:id event-data) :focus_timestamp]
+                                     (:focus_timestamp event-data))
+
+
+
                            :WorkspacesChanged (assoc s :workspaces (:workspaces event-data))
                            :WindowsChanged (assoc s :windows (into {} (map (juxt :id identity) (:windows event-data))))
                            :WindowClosed (update s :windows #(dissoc % (:id event-data)))
-                           :WindowFocusChanged
-                           (update s :windows
-                                   #(update-vals % (fn [window]
-                                                     (assoc window :is_focused
-                                                            (= (:id window) (:id event-data))))))
-                           ;; (assoc s :focused (get (:windows s) (:id event-data)))
-                           :WindowOpenedOrChanged (assoc-in s [:windows (:id (:window event-data))] (:window event-data))
+                           :WindowFocusChanged (update s :windows
+                                                       #(update-vals % (fn [window]
+                                                                         (assoc window :is_focused
+                                                                                (= (:id window) (:id event-data))))))
+
+                           ;; idea: here, if it's window opened, we can do window rules
+                           :WindowOpenedOrChanged
+                           (let [wid (:id (:window event-data))
+                                 open? (not (get-in s [:windows wid]))]
+                             (when open?
+                               (let [[w h] (-> s :focused :layout :tile_size)
+                                     ;; tile? (> h w)
+                                     tile? (<=
+                                            (- (max h w) (min h w))
+                                            (* 0.90 (min h w)))]
+                                 (when tile? ; consume
+                                   (action :consume-window-into-column)
+                                   ;; (action :consume-or-expel-window-left)
+                                   )))
+
+                             (assoc-in s [:windows wid] (:window event-data)))
 
                            :WindowLayoutsChanged
                            (update s :windows
@@ -298,6 +376,7 @@
                            (do (println "unhandled event: %s" event-type)
                                s))))
 
+                ;; todo: somehow a nil key is ending up in our :windows map
                 (swap! niri-state
                        (fn [s]
                          (assoc s :focused (->> (vals (:windows s))
@@ -305,8 +384,8 @@
                                                 (first))))))
               (recur))))))
     stop-ch))
-;; reset on reload
 
+;; reset on reload
 (do
   (and niri-state-channel (close! niri-state-channel))
   (def niri-state-channel nil)
@@ -315,16 +394,6 @@
 
 (when-not niri-state-channel
   (def niri-state-channel (niri-state-loop)))
-
-(comment
-
-
-  (second (vals (:windows @niri-state)))
-
-  (:app_id (:focused @niri-state))
-
-
-  )
 
 (defn main-loop []
   (when (fs/exists? SOCKET)
@@ -376,7 +445,6 @@
   (:windows @niri-state)
 
 
-  (:workspace-active-windows
-   @niri-state)
+  (:workspace-active-windows @niri-state)
 
   )
