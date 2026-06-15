@@ -236,8 +236,7 @@
 
 (defn get-theme []
   (let [
-        backup-colors {:colors ["#E8EBEC" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748" "#6A6D6E" "#006E96" "#007C00" "#C38418" "#0065C8" "#407EE7" "#C6007F" "#444748"],
-                       :color {:focused {:background "#a4cfed", :foreground "#093553", :faded "#305b79", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :normal {:background "#e8ebec", :foreground "#444748", :faded "#6a6d6e", :primary "#c6007f", :assumed "#0065c8", :alt "#006e96", :strings "#007c00"}, :weak {:background "#d5d6d7", :foreground "#393a3b", :faded "#5f6061", :primary "#ba0073", :assumed "#005dc0", :alt "#00668e", :strings "#007400"}, :strong {:background "#ccc9ca", :foreground "#343132", :faded "#5a5758", :primary "#ac0065", :assumed "#0053b6", :alt "#005e86", :strings "#006c00"}, :cursor "#0065c8"}}
+        backup-colors {:color {:strong {:strings "#636363", :alt "#767676", :assumed "#545454", :primary "#636363", :faded "#767676", :foreground "#494949", :background "#d3d3d3"}, :weak {:strings "#6b6b6b", :alt "#7f7f7f", :assumed "#5c5c5c", :primary "#6b6b6b", :faded "#7f7f7f", :foreground "#515151", :background "#e0e0e0"}, :focused {:strings "#6e6e6e", :alt "#828282", :assumed "#5f5f5f", :primary "#6e6e6e", :faded "#828282", :foreground "#535353", :background "#e4e4e4"}, :normal {:strings "#777777", :alt "#8c8c8c", :assumed "#686868", :primary "#777777", :faded "#8c8c8c", :foreground "#5c5c5c", :background "#f3f3f3"}, :meta {:subtle "#eaeaea", :diff-remove-highlight "#f2cbd1", :diff-add-highlight "#abf68d", :diff-remove "#f6dce0", :diff-add "#d8face"}, :cursor "#777777"}, :term_bright ["#5c5c5c" "#e4e4e4" "#e4e4e4" "#8c8c8c" "#8c8c8c" "#8c8c8c" "#f3f3f3"], :term_normal ["#f3f3f3" "#8c8c8c" "#777777" "#8c8c8c" "#777777" "#686868" "#686868"], :colors ["#f3f3f3" "#8c8c8c" "#777777" "#8c8c8c" "#777777" "#686868" "#686868" "#5c5c5c" "#8c8c8c" "#5c5c5c" "#e4e4e4" "#e4e4e4" "#8c8c8c" "#8c8c8c" "#8c8c8c" "#f3f3f3"]}
 
         colors (some #(%) (list         ; lol. lmao
                            #(let [result (shell/sh "elisp" "-r" "(ns/emacs-to-theme)")]
@@ -256,6 +255,7 @@
                 :dpi (if (has? "xdpyinfo")
                        (shh "xdpyinfo | awk -F'[x ]+' '/resolution/{print $4}'")
                        "96")
+                :panel-border "#777777"
                 :mon-width (if-not (has? "bspc")
                              "1920"
                              (-> (shh "bspc query -T -m")
@@ -413,6 +413,17 @@
          (apply dissoc n (filter (fn [k] (string/ends-with? (pr-str k) "-"))
                                  (keys n)))
          n)) tree)))
+
+;; add a filter
+(comment
+  (template/render "{{shout|p}}" {:shout "hello"})
+
+  )
+
+;; p = "plain?" intent: stripping # from colors
+(filters/add-filter! :p (fn [s] (subs s 1)))
+
+
 
 (def cli-options
   [["-e" "--extend STRING" "override base-theme with edn -- pass a flat map {:a.b.c \"value\"}"]
