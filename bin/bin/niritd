@@ -6,10 +6,10 @@
 
 ;; idea for action: expel window left/right, but focus back (scoop along)
 
-
 (ns iritd
   (:require [babashka.fs :as fs]
             [babashka.process :as process]
+            [babashka.nrepl.server :as nrepl]
             [clojure.core.async :as async :refer [go-loop <! timeout alts! chan close!]]
             [clojure.java.shell :as shell]
             [clojure.string :as string]
@@ -52,7 +52,7 @@
 (def niri-state-channel nil)
 
 (defn edge?
-  ([dir] (edge? (:focused @niri-state)))
+  ([dir] (edge? (:focused @niri-state) dir))
   ([win dir]
    (let [win-column (-> win :layout :pos_in_scrolling_layout first)
          columns (->> (:windows @niri-state)
@@ -124,8 +124,14 @@
                     ;; "left" (fn [] (action "focus-window-up-or-column-left"))
                     ;; "right" (fn [] (action "focus-window-down-or-column-right"))
 
-                    "left" (fn [] (action "focus-column-left"))
-                    "right" (fn [] (action "focus-column-right"))
+                    "left" (fn []
+                             (if (edge? "left")
+                               (action :center-window)
+                               (action "focus-column-left")))
+                    "right" (fn []
+                              (if (edge? "right")
+                                (action :center-window)
+                                (action "focus-column-right")))
 
                     "up" (fn [] (if (tabbed? (:id win))
                                   (action "focus-workspace-up")
@@ -145,22 +151,40 @@
    ;; find or rotate windows by class/"App id"
    (let [data (vals (:windows @niri-state))
          active-window (:focused @niri-state)
+         last-active-window (:focused-last @niri-state)
+
          active-wid (:id active-window)
          data (sort-by #(-> % :layouts :pos_in_scrolling_layout first) data)
          wids (keep (fn [w]
                       (when (and
+                             ;; comping for a bug where a nil window id is present
+                             ;; todo: track down state bug
+                             (not (nil? (:id w)))
                              (re-matches (re-pattern class) (last (string/split (:app_id w) #"\.")))
                              ;; scope to current workspace
                              (or global? (= (:workspace_id active-window) (:workspace_id w))))
                         (:id w)))
                     data)
+
+         ;; (:focused @niri-state)
+
          wids (concat wids [(first wids)])
          wids (if reverse? (reverse wids) wids)
-         next-wid (if ((set wids) active-wid)
-                    (let [i (.indexOf wids active-wid)]
-                      (nth wids (inc i)))
-                    (first wids))]
-     (action :focus-window "--id" next-wid))))
+         next-wid
+         (cond
+           ((set wids) active-wid) (let [i (.indexOf wids active-wid)]
+                                     (nth wids (inc i)))
+           (= (:app_id last-active-window)
+
+              class) (:id last-active-window)
+           :else  (first wids)
+           )
+         ]
+     (action :focus-window "--id" next-wid)
+     ;; torn, should this be only on global?
+     (action :center-window)
+     )))
+
 
 ;; ...
 (defn find-class-reverse [class]
@@ -347,15 +371,16 @@
                            (let [wid (:id (:window event-data))
                                  open? (not (get-in s [:windows wid]))]
                              (when open?
-                               (let [[w h] (-> s :focused :layout :tile_size)
-                                     ;; tile? (> h w)
-                                     tile? (<=
-                                            (- (max h w) (min h w))
-                                            (* 0.90 (min h w)))]
-                                 (when tile? ; consume
-                                   (action :consume-window-into-column)
-                                   ;; (action :consume-or-expel-window-left)
-                                   )))
+                               #_(let [[w h] (-> s :focused :layout :tile_size)
+                                       ;; tile? (> h w)
+                                       ;; null exception if h w bad
+                                       tile? (<=
+                                              (- (max h w) (min h w))
+                                              (* 0.90 (min h w)))]
+                                   (when tile? ; consume
+                                     ;; (action :consume-window-into-column)
+                                     ;; (action :consume-or-expel-window-left)
+                                     )))
 
                              (assoc-in s [:windows wid] (:window event-data)))
 
@@ -379,17 +404,25 @@
                 ;; todo: somehow a nil key is ending up in our :windows map
                 (swap! niri-state
                        (fn [s]
-                         (assoc s :focused (->> (vals (:windows s))
-                                                (filter :is_focused)
-                                                (first))))))
+                         (-> s
+                             (assoc :focused-last (:focused s))
+                             (assoc :focused (->> (vals (:windows s))
+                                                  (filter :is_focused)
+                                                  (first))))
+                         )))
               (recur))))))
     stop-ch))
 
 ;; reset on reload
 (do
+  (:windows @niri-state)
+
   (and niri-state-channel (close! niri-state-channel))
+
   (def niri-state-channel nil)
+
   (def niri-state (atom {:output (msg :focused-output)}))
+
   )
 
 (when-not niri-state-channel
@@ -398,6 +431,8 @@
 (defn main-loop []
   (when (fs/exists? SOCKET)
     (fs/delete SOCKET))
+
+  (nrepl/start-server! {:port 6767 :host "localhost"})
 
   (let [proc (process/process ["socat" "-u" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "STDOUT"])]
     (with-open [rdr (io/reader (:out proc))]
