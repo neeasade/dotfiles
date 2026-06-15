@@ -2,6 +2,8 @@
 
 socket="/tmp/niritd.sock"
 
+# todo: if niritd not running, start it + wait a sec
+
 args="$1"
 shift
 for arg in "$@"; do
@@ -10,3 +12,6 @@ done
 
 echo "sending $args"
 socat - UNIX-CONNECT:"${socket}" <<< "$args"
+
+# idea: if we are sending "quit"
+# emit an event so that niritd can exit right away

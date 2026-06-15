@@ -153,7 +153,8 @@ now() { # search for a song, play it now
   fi
 
   pos=$(mpc -f '%position%' | head -n 1)
-  if [ $pos -eq 1 ]; then
+  # todo: check pos default here
+  if [ ${pos:-0} -eq 1 ]; then
     mpc --wait -q insert "$(mpc | head -n 1)"
     mpc --wait -q insert "$song"
     mpc del <<< 1
