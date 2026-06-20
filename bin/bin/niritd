@@ -54,17 +54,19 @@
 (defn edge?
   ([dir] (edge? (:focused @niri-state) dir))
   ([win dir]
-   (let [win-column (-> win :layout :pos_in_scrolling_layout first)
-         columns (->> (:windows @niri-state)
-                      (vals)
-                      (filter #(= (:workspace_id %) (:workspace_id win)))
-                      (map #(-> % :layout :pos_in_scrolling_layout first))
-                      (distinct)
-                      (sort))]
-     (condp = dir
-       "left" (= (first columns) win-column)
-       "right" (= (last columns) win-column)
-       (println "edge? what")))))
+   (if (-> @niri-state :focused :is_floating)
+     false
+     (let [win-column (-> win :layout :pos_in_scrolling_layout first)
+           columns (->> (:windows @niri-state)
+                        (vals)
+                        (filter #(= (:workspace_id %) (:workspace_id win)))
+                        (map #(-> % :layout :pos_in_scrolling_layout first))
+                        (distinct)
+                        (sort))]
+       (condp = dir
+         "left" (= (first columns) win-column)
+         "right" (= (last columns) win-column)
+         (println "edge? what"))))))
 
 (defn siblings
   ;; "siblings" are windows in the same column as you
@@ -127,23 +129,28 @@
                     "left" (fn []
                              (if (edge? "left")
                                (action :center-window)
-                               (action "focus-column-left")))
+                               (action :focus-column-left)))
                     "right" (fn []
                               (if (edge? "right")
                                 (action :center-window)
-                                (action "focus-column-right")))
+                                (action :focus-column-right)))
 
                     "up" (fn [] (if (tabbed? (:id win))
-                                  (action "focus-workspace-up")
-                                  (action "focus-window-or-workspace-up")))
+                                  (action :focus-workspace-up)
+                                  (action :focus-window-or-workspace-up)))
                     "down" (fn [] (if (tabbed? (:id win))
-                                    (action "focus-workspace-down")
-                                    (action "focus-window-or-workspace-down"))))]
+                                    (action :focus-workspace-down)
+                                    (action :focus-window-or-workspace-down))))]
     (if term?
       (when-not
           (= 0 (:exit (shell/sh "elisp" "-t" "1" elisp)))
         (niri-move))
       (niri-move))))
+
+(comment
+  (edge? "left")
+
+  )
 
 (defn find-class
   ([class] (find-class class false false))

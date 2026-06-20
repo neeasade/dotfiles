@@ -8,6 +8,7 @@
             [clojure.string :as string]
             [clojure.tools.cli :as cli]
             [clojure.walk :refer [postwalk prewalk]]
+            [selmer.filters :as filters]
             [selmer.parser :as template]))
 
 (defn shh [cmd]
@@ -354,10 +355,9 @@
                :music-dir "{{env.HOME}}/Music"}
 
          :panel {:height 36
-                 ;; :format  "mpd:title|org_task:misc|tags:clock"
+                 :format  "mpd:title|org_task:misc|tags:clock"
 
                  ;; full
-                 :format  "tags:title|misc|battery:clock"
                  ;; slim
                  ;; :format  "tags:title|misc|running:clock:day_progress"
                  ;; :format  "mpd:title|misc|tags:clock"
