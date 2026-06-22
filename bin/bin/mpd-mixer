@@ -329,7 +329,7 @@
                        (->> (str (util/shh "theme -q mpd.music-dir") "/playlist/current")
                             (slurp)
                             (string/trim))
-                       (->> (mpc "playlist")
+                       (->> (mpc "playlist" "-f" "%file%")
                             (map #(or (get cache-map (fs/file-name %)) 0))
                             (apply +)
                             (format-length)))
