@@ -224,5 +224,8 @@ if ${NEEASADE_ENV:-true}; then
     fi
   fi
 
+  # <2026-06-24 Wed 14:20> enjoying this world for now
+  NO_COLOR=1
+
   set +a
 fi

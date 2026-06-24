@@ -1,6 +1,6 @@
 # -*- mode: sh -*-
 
-if has atuin; then
+if has atuin && ! ${NS_SANDBOX:-false}; then
   if [ "$cur_shell" = "bash" ]; then
     if [ -e "$HOME/.bash-preexec.sh" ]; then
       . "$HOME/.bash-preexec.sh"
