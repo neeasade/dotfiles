@@ -3,6 +3,8 @@
 
 [main]
 
+initial-color-theme=light
+
 font={{font.mono.family}}:size={{font.mono.size}}
 
 pad = {{x.padding}}x{{x.padding}} center
@@ -22,7 +24,7 @@ lines = 5
 [mouse]
 hide-when-typing = yes
 
-[colors]
+[colors-light]
 
 cursor= {{background|p}} {{color.cursor|p}}
 

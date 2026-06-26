@@ -21,7 +21,10 @@ refresh() {
 }
 
 load_bg_plain() {
-  $(iif 'pgrep picom' h x)setroot -solid "$(theme -q color.normal.background)"
+  # $(iif 'pgrep picom' h x)setroot -solid "$(theme -q color.normal.background)"
+  color=$(theme -q color.focused.background)
+  vdo magick -size 100x100 "xc:$color" "/tmp/solid.png"
+  tiletilt /tmp/solid.png 0
 }
 
 load_alacritty() { render alacritty .config/alacritty/alacritty.toml -p color.normal ;}
@@ -40,6 +43,7 @@ load_pywal()     { render pywal .cache/wal/theme.json; }
 load_rofi()      { render rofi .config/rofi/sometheme.rasi -p color.normal ;}
 load_zathura()   { render zathura .config/zathura/zathurarc -p color.normal ;}
 load_zeal()      { render zeal .config/Zeal/Zeal.conf ;}
+load_nop()      { echo nop ;}
 
 load_eww() {
     render eww .config/eww/eww.scss -p color.normal
@@ -229,7 +233,7 @@ load_services() {
     make_service mpdris
 
     # will be renamed to awww-daemon one day
-    make_service swww-daemon
+    make_service awww-daemon
 
     # tray stuff
     make_service nm-applet

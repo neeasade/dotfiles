@@ -1,16 +1,34 @@
 ;; -*- mode: clojure -*-
-{
 
+;; ┅┅━┅┅╸┅┅┅ ╸
+;; ┃┃│
+;; ─ ━ ┃│ ┄ ┅ ┆ ┇ ┈ ┉ ┊ ┋ ┌ ┍ ┎ ┏
+;; U+251x ┐ ┑ ┒ ┓ └ ┕ ┖ ┗ ┘ ┙ ┚ ┛ ├ ┝ ┞ ┟
+;; U+252x ┠ ┡ ┢ ┣ ┤ ┥ ┦ ┧ ┨ ┩ ┪ ┫ ┬ ┭ ┮ ┯
+;; U+253x ┰ ┱ ┲ ┳ ┴ ┵ ┶ ┷ ┸ ┹ ┺ ┻ ┼ ┽ ┾ ┿
+;; U+254x ╀ ╁ ╂ ╃ ╄ ╅ ╆ ╇ ╈ ╉ ╊ ╋ ╌ ╍ ╎ ╏
+;; U+255x ═ ║ ╒ ╓ ╔ ╕ ╖ ╗ ╘ ╙ ╚ ╛ ╜ ╝ ╞ ╟
+;; U+256x ╠ ╡ ╢ ╣ ╤ ╥ ╦ ╧ ╨ ╩ ╪ ╫ ╬ ╭ ╮ ╯
+;; U+257x ╰ ╱ ╲ ╳ ╴ ╵ ╶ ╷ ╸ ╹ ╺ ╻ ╼ ╽ ╾ ╿
+
+{
  ;; :emacs.theme "myron-mcfay"
 
- :font.mono.family "Go Mono"
+ ;; :font.mono.family "Go Mono"
+ ;; :font.mono.size 14
  ;; :font.mono.family "Triplicate C4c"
  :font.variable.family "Equity B"
+ :meta.radius 0
  ;; :font.variable.family "Charter"
- :font.variable.size 12
+ :font.variable.size 14
  ;; :font.variable.family "Equity Text A"
  ;; :mkb.bar- "AAH"
- :mkb.bar- "|/_"
+ ;; :mkb.bar- "|/_"
+ :mkb.bar-
+ ;; "━╸┅"
+ "━━─"
+ ;; vertical?
+ ;; ┃┃│
  ;; :mkb.bar- "/-_"
  ;; :mkb.bar- "[-]"
  ;; :mkb.bar- "/\\_"
@@ -22,5 +40,5 @@
  :bspwm.window-gap 50
  ;; :bspwm.window-gap 88
  :bspwm-meta.monocle-window-percent 0.46
- :font.mono.size 12
+ :font.mono.size 13
  }

@@ -5,12 +5,20 @@ want_gaps=$1
 
 if [ -z "$want_gaps" ]; then
     # opposite of current status
-    if [ $(bspc config window_gap) -le 0 ]; then
+    if [ $(niritc config layout.gaps) -eq 0 ]; then
 	want_gaps=true
     else
 	want_gaps=false
     fi
 fi
+
+if $want_gaps; then
+    niritc config layout.gaps $(theme -q bspwm.window-gap)
+else
+    niritc config layout.gaps 0
+fi
+
+exit 0
 
 eval "$(theme -f "panel.height,x.padding,bspwm.border-width,bspwm.window-gap" -s)"
 

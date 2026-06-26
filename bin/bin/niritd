@@ -479,7 +479,7 @@
                              (and (string? v) (string/blank? v)) ""
                              (nil? request) ""
                              (string? v) v
-                             :else (str (pr-str request) "\n")))]
+                             :else (str (pr-str v) "\n")))]
 
             ;; Write back to client instantly
             (.write client-channel (ByteBuffer/wrap (.getBytes response)))

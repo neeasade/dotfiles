@@ -4,7 +4,13 @@
 tiledir="${HOME}/tiles"
 
 tile=${1:-$(find "$tiledir/" -type f | shuf | head -n 1)}
-angle=${2:-$((RANDOM % 360))}
+
+angle=$2
+
+if [ -z "$angle" ]; then
+    # angle=$(elisp '(ns/random-list (range 0 360 15))')
+    angle=$((RANDOM % 360))
+fi
 
 w=1920
 h=1080
@@ -15,8 +21,8 @@ type xdpyinfo >/dev/null 2>&1 && \
 if [[ -p /dev/stdout ]]; then
     out=cat
 else
-    printf "tiletilt '%s' %s\n" "$tile" "$angle"
     out="feh --bg-tile -"
+    out="awww img -t none -"
 fi
 
 magick "$tile" -set option:distort:viewport "${w}x${h}" \
@@ -24,3 +30,7 @@ magick "$tile" -set option:distort:viewport "${w}x${h}" \
     -distort SRT "$angle" \
     -gravity center -crop "${w}x${h}+0+0" +repage \
     "PNG:-" | $out
+    # /tmp/background.png
+
+printf "tiletilt '%s' %s\n" "$tile" "$angle"
+# awww img -t none /tmp/background.png

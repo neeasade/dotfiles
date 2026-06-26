@@ -150,13 +150,15 @@ let
     xdotool
     xfce.thunar
     xfontsel
-    xorg.xdpyinfo
-    xorg.xev
-    xorg.xkbcomp
-    xorg.xkbcomp
-    xorg.xmodmap
-    xorg.xprop
-    xorg.xwininfo
+
+    xdpyinfo
+    xev
+    xkbcomp
+    xkbcomp
+    xmodmap
+    xprop
+    xwininfo
+
     xdo
     xtitle
     telegram-desktop
@@ -188,7 +190,7 @@ let
     # jstest
     qjoypad
 
-    wineWowPackages.stable
+    wineWow64Packages.stable
     # wine
     # minecraft
     # openmw
@@ -317,9 +319,11 @@ let
     zeal
     zlib
     zoom-us
-  ]) ++ ([edge.pegasus-frontend pkgs.gamemode]);
+  ]) ++ ([edge.pegasus-frontend pkgs.gamemode
 
-  fonts-core = (with pkgs; [dejavu_fonts corefonts symbola go-font charis-sil]);
+         ]);
+
+  fonts-core = (with pkgs; [dejavu_fonts corefonts symbola go-font charis]);
 
   fonts-all = fonts-core ++ (with pkgs; [
     fira
@@ -330,7 +334,6 @@ let
     noto-fonts-color-emoji
     roboto-mono
     siji
-    tewi-font
     twemoji-color-font
     roboto
   ]);

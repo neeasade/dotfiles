@@ -1,15 +1,19 @@
 #!/bin/sh
-
-# cat - > /dev/null
-# exit 0
+# this was "fast feh"
+# but now it's ... whatever
 
 name=${1:-/tmp/ffeh.png}
 
 tmp=/dev/shm/ffeh.tmp
 
-tee "$tmp" | feh --bg-tile -
+# tee "$tmp" | feh --bg-tile -
+tee "$tmp" | awww img -t none -
 
 magick "$tmp" "$name"
 rm "$tmp"
 
-feh --bg-tile "$name"
+# magick "$name" -rotate 270 /tmp/fffeh.png
+# awww img -t none /tmp/fffeh.png
+
+awww img -t none "$name"
+# feh --bg-tile "$name"
