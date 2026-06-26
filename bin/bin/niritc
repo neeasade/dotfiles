@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 socket="/tmp/niritd.sock"
+# socket="/tmp/socket.sock"
 
 # todo: if niritd not running, start it + wait a sec
 
@@ -10,8 +11,16 @@ for arg in "$@"; do
     args="${args}^${arg}"
 done
 
-echo "sending $args"
-socat - UNIX-CONNECT:"${socket}" <<< "$args"
+wrap() {
+    read -r first_line;
+    if [[ $first_line == EXITCODE* ]]; then
+	eval "$first_line"
+    else
+	echo "$first_line"
+    fi
 
-# idea: if we are sending "quit"
-# emit an event so that niritd can exit right away
+    cat -
+    exit ${EXITCODE:-0}
+}
+
+socat - UNIX-CONNECT:"${socket}" <<< "$args" | wrap

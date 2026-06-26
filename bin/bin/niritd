@@ -180,26 +180,24 @@
                              (or global? (= (:workspace_id active-window) (:workspace_id w))))
                         (:id w)))
                     data)
-
          ;; (:focused @niri-state)
-
          wids (concat wids [(first wids)])
          wids (if reverse? (reverse wids) wids)
-         next-wid
-         (cond
-           ((set wids) active-wid) (let [i (.indexOf wids active-wid)]
-                                     (nth wids (inc i)))
-           (= (:app_id last-active-window)
-
-              class) (:id last-active-window)
-           :else  (first wids)
-           )
-         ]
-     (action :focus-window "--id" next-wid)
-     ;; torn, should this be only on global?
-     (action :center-window)
-     )))
-
+         next-wid (cond
+                    ((set wids) active-wid) (let [i (.indexOf wids active-wid)]
+                                              (nth wids (inc i)))
+                    (= (:app_id last-active-window) class) (:id last-active-window)
+                    :else (first wids))]
+     ;; ...lol
+     (if-not next-wid
+       "EXITCODE=1"
+       (do
+         (println next-wid)
+         (action :focus-window "--id" next-wid)
+         ;; torn, should this be only on global?
+         (action :center-window)
+         "EXITCODE=0"
+         )))))
 
 ;; ...
 (defn find-class-reverse [class]
@@ -352,14 +350,6 @@
                 ;; {"WorkspaceActivated":{"id":9,"focused":true}}
                 ;; {"WindowFocusTimestampChanged":{"id":176,"focus_timestamp":{"secs":532737,"nanos":594656257}}}
                 ;; {"WorkspaceActiveWindowChanged":{"workspace_id":9,"active_window_id":269}}
-                (comment
-
-                  (first
-                   (:workspaces
-                    @niri-state))
-
-                  )
-
                 (swap! niri-state
                        (fn [s]
                          (case event-type
@@ -367,16 +357,11 @@
                            :WindowFocusTimestampChanged (assoc-in s [:windows (:id event-data) :focus_timestamp]
                                                                   (:focus_timestamp event-data))
 
-                           :WorkspaceActiveWindowChanged
-                           (assoc-in s [:windows (:id event-data) :focus_timestamp]
-                                     (:focus_timestamp event-data))
-
-
+                           :WorkspaceActiveWindowChanged (assoc-in s [:windows (:id event-data) :focus_timestamp]
+                                                                   (:focus_timestamp event-data))
 
                            :WorkspacesChanged (assoc s :workspaces (:workspaces event-data))
-
                            :WindowsChanged (assoc s :windows (into {} (map (juxt :id identity) (:windows event-data))))
-
                            :WindowClosed (update s :windows #(dissoc % (:id event-data)))
                            :WindowFocusChanged (update s :windows
                                                        #(update-vals % (fn [window]
@@ -425,8 +410,7 @@
                              (assoc :focused-last (:focused s))
                              (assoc :focused (->> (vals (:windows s))
                                                   (filter :is_focused)
-                                                  (first))))
-                         )))
+                                                  (first)))))))
               (recur))))))
     stop-ch))
 
@@ -438,13 +422,10 @@
 
   (def niri-state-channel nil)
 
-  (def niri-state (atom {:output (msg :focused-output)}))
-
-  )
+  (def niri-state (atom {:output (msg :focused-output)})))
 
 (when-not niri-state-channel
   (def niri-state-channel (niri-state-loop)))
-
 
 (defn- act [line]
   (let [line (string/trim line)
@@ -459,9 +440,8 @@
       (-> cmd first symbol resolve) ; defined function
       (try
         (apply println ":" cmd)
-        (pr-str
-         (apply (-> cmd first symbol resolve)
-                (rest cmd)))
+        (apply (-> cmd first symbol resolve)
+               (rest cmd))
         ;; not great at printing..
         (catch Exception e
           (lib/sh "notify-send" (str "nirit failure: " (string/replace line "^" " ")) )
@@ -471,16 +451,12 @@
       :else (str "unknown command!: " line))))
 
 (defn main-loop [socket-path-str]
-  ;; 1. Use Path/of and convert to a standard String path for the file check
   (let [path-obj (Path/of socket-path-str (into-array String []))
         socket-file (io/file socket-path-str)
 
-        ;; 2. Clear old file lock cleanly
         _ (when (.exists socket-file) (.delete socket-file))
-
         _ (nrepl/start-server! {:port 6767 :host "localhost"})
 
-        ;; 3. Pass the explicit Path object to UnixDomainSocketAddress/of
         address (UnixDomainSocketAddress/of path-obj)
         server-channel (ServerSocketChannel/open StandardProtocolFamily/UNIX)]
 
@@ -497,39 +473,20 @@
                 ;; Convert incoming client stream to string
                 request (String. (.array buffer) 0 (.position buffer))
 
-                ;; todo: quit
-                response (str (or (act request) "") "\n")
-                ]
+                ;; todo: handle quit
+                response (let [v (act request)]
+                           (cond
+                             (and (string? v) (string/blank? v)) ""
+                             (nil? request) ""
+                             (string? v) v
+                             :else (str (pr-str request) "\n")))]
 
             ;; Write back to client instantly
             (.write client-channel (ByteBuffer/wrap (.getBytes response)))
 
-            ;; Explicitly close client connection to send EOF immediately
-            (.close client-channel))
+            (.close client-channel))    ; eof
           (catch Exception e
             (println "Socket connection error:" (.getMessage e))))))))
-
-
-#_(defn main-loop []
-    (when (fs/exists? SOCKET)
-      (fs/delete SOCKET))
-
-
-    (let [proc (process/process ["socat" "-u" "-b" "1" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "-"])]
-      (with-open [rdr (io/reader (:out proc))
-                  wtr (io/writer (:in proc))]
-        (loop [line "nop"]
-
-
-          (when-not (= line "nop")
-            (.write wtr "\n"))
-
-          (.flush wtr)
-          ;; (.close wtr)
-
-          (if (= line "quit")
-            (and (process/destroy proc) true)
-            (recur (first (line-seq rdr))))))))
 
 (defn kdl->edn [kdl]
   (->> kdl
@@ -570,33 +527,15 @@
 
 (defn config
   ([path] (let [m (kdl->edn (slurp (lib/home ".config/niri/gaps.kdl")))]
-            (get-in m (map keyword (string/split path #"-")) "not-found")))
-  ([path v]
-   (kdl-assoc-in (lib/home ".config/niri/gaps.kdl")
-                 ;; layout-struts-top -> [:layout :struts :top]
-                 (map keyword (string/split path #"-"))
-                 v)))
-
-(comment
-  (wow)
-  (parse-long "rast")
-  (parse-long "4")
-
-  (pr-str
-   (kdl-get "layout-struts-top"))
-
-  (kdl->edn
-   (slurp "/home/neeasade/.config/niri/gaps.kdl"))
-
-
-
-
-  )
+            (get-in m (map keyword (string/split path #"\.")) "not-found")))
+  ([path v] (kdl-assoc-in (lib/home ".config/niri/gaps.kdl")
+                          ;; layout-struts-top -> [:layout :struts :top]
+                          (map keyword (string/split path #"\."))
+                          v)))
 
 (when (= *file* (System/getProperty "babashka.file"))
   (main-loop SOCKET)
-  @(promise)
-  )
+  @(promise))
 
 (comment
   (keys @niri-state)
