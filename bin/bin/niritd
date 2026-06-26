@@ -17,6 +17,14 @@
             [cheshire.core :as json]
             [lib.util :as lib]))
 
+(import '(java.nio.channels ServerSocketChannel SocketChannel)
+        '(java.nio.file Path)
+        '(java.net UnixDomainSocketAddress StandardProtocolFamily)
+        '(java.nio ByteBuffer))
+;; (require '[clojure.java.io :as io])
+
+
+
 ;; center-column                         center-visible-columns           center-window                   clear-dynamic-cast-target                close-overview                close-window                     consume-or-expel-window-left
 ;; consume-or-expel-window-right         consume-window-into-column       debug-toggle-damage             debug-toggle-opaque-regions              do-screen-transition          expand-column-to-available-width expel-window-from-column
 ;; focus-column                          focus-column-first               focus-column-last               focus-column-left                        focus-column-left-or-last     focus-column-right               focus-column-right-or-first
@@ -366,7 +374,9 @@
 
 
                            :WorkspacesChanged (assoc s :workspaces (:workspaces event-data))
+
                            :WindowsChanged (assoc s :windows (into {} (map (juxt :id identity) (:windows event-data))))
+
                            :WindowClosed (update s :windows #(dissoc % (:id event-data)))
                            :WindowFocusChanged (update s :windows
                                                        #(update-vals % (fn [window]
@@ -435,42 +445,158 @@
 (when-not niri-state-channel
   (def niri-state-channel (niri-state-loop)))
 
-(defn main-loop []
-  (when (fs/exists? SOCKET)
-    (fs/delete SOCKET))
 
-  (nrepl/start-server! {:port 6767 :host "localhost"})
+(defn- act [line]
+  (let [line (string/trim line)
+        cmd (string/split line #"\^")]
+    (cond
+      (= line "quit") nil
+      (= line "nop") nil
+      (= line "hello") (lib/shh "notify-send hello")
+      (= line "ping") "pong"
 
-  (let [proc (process/process ["socat" "-u" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "STDOUT"])]
-    (with-open [rdr (io/reader (:out proc))]
-      (loop [line "nop"]
-        (let [cmd (string/split line #"\^")]
-          (cond
-            (= line "quit") nil
-            (= line "nop") nil
-            (= line "hello") (lib/shh "notify-send hello")
+      ;; todo: error handling
+      (-> cmd first symbol resolve) ; defined function
+      (try
+        (apply println ":" cmd)
+        (pr-str
+         (apply (-> cmd first symbol resolve)
+                (rest cmd)))
+        ;; not great at printing..
+        (catch Exception e
+          (lib/sh "notify-send" (str "nirit failure: " (string/replace line "^" " ")) )
+          (prn (ex-data e))
+          (println (str e))))
 
-            ;; todo: error handling
-            (-> cmd first symbol resolve) ; defined function
-            (try
-              (apply println ":" cmd)
-              (apply (-> cmd first symbol resolve)
-                     (rest cmd))
-              ;; not great at printing..
-              (catch Exception e
-                (lib/sh "notify-send" (str "nirit failure: " (string/replace line "^" " ")) )
-                (prn (ex-data e))
-                (println (str e))))
+      :else (str "unknown command!: " line))))
 
-            :else
-            (println "unknown command!: " line)))
+(defn main-loop [socket-path-str]
+  ;; 1. Use Path/of and convert to a standard String path for the file check
+  (let [path-obj (Path/of socket-path-str (into-array String []))
+        socket-file (io/file socket-path-str)
 
-        (if (= line "quit")
-          (and (process/destroy proc) true)
-          (recur (first (line-seq rdr))))))))
+        ;; 2. Clear old file lock cleanly
+        _ (when (.exists socket-file) (.delete socket-file))
+
+        _ (nrepl/start-server! {:port 6767 :host "localhost"})
+
+        ;; 3. Pass the explicit Path object to UnixDomainSocketAddress/of
+        address (UnixDomainSocketAddress/of path-obj)
+        server-channel (ServerSocketChannel/open StandardProtocolFamily/UNIX)]
+
+    (.bind server-channel address)
+    (println "Server listening on native Unix Socket:" socket-path-str)
+
+    (future
+      (while true
+        (try
+          (let [client-channel (.accept server-channel)
+                buffer (ByteBuffer/allocate 1024)
+                _ (.read client-channel buffer)
+
+                ;; Convert incoming client stream to string
+                request (String. (.array buffer) 0 (.position buffer))
+
+                ;; todo: quit
+                response (str (or (act request) "") "\n")
+                ]
+
+            ;; Write back to client instantly
+            (.write client-channel (ByteBuffer/wrap (.getBytes response)))
+
+            ;; Explicitly close client connection to send EOF immediately
+            (.close client-channel))
+          (catch Exception e
+            (println "Socket connection error:" (.getMessage e))))))))
+
+
+#_(defn main-loop []
+    (when (fs/exists? SOCKET)
+      (fs/delete SOCKET))
+
+
+    (let [proc (process/process ["socat" "-u" "-b" "1" (format "UNIX-LISTEN:%s,fork,reuseaddr" SOCKET) "-"])]
+      (with-open [rdr (io/reader (:out proc))
+                  wtr (io/writer (:in proc))]
+        (loop [line "nop"]
+
+
+          (when-not (= line "nop")
+            (.write wtr "\n"))
+
+          (.flush wtr)
+          ;; (.close wtr)
+
+          (if (= line "quit")
+            (and (process/destroy proc) true)
+            (recur (first (line-seq rdr))))))))
+
+(defn kdl->edn [kdl]
+  (->> kdl
+       (clojure.string/split-lines)
+       (map clojure.string/trim)
+       (remove #(clojure.string/starts-with? % "//"))
+       (remove clojure.string/blank?)
+       (map (fn [s]
+              (if (#{\{ \}} (first s))
+                s
+                (str ":" s))))
+       (clojure.string/join " ")
+       (format "{%s}")
+       (read-string)))
+
+;; slop
+(defn map->kdl [data]
+  (letfn [(emit-val [v]
+            ;; (prn "what " v)
+            (cond
+              (string? v) (if (parse-long v)
+                            (str " " (parse-long v))
+                            (str " " (pr-str v)))
+              (keyword? v) (name v)
+              (map? v) (str " {\n" (apply str (map (fn [[k v2]] (str "  " (name k) (emit-val v2) "\n")) v)) "}")
+              :else (str " " v)))
+          (emit [m]
+            (apply str (map (fn [[k v]] (str (name k) (emit-val v) "\n")) m)))]
+    (emit data)))
+
+(defn kdl-assoc-in [file ks v]
+  (let [m (kdl->edn (slurp file))]
+    (spit file (map->kdl (assoc-in m ks v)))))
+
+(defn kdl-update-in [file ks f]
+  (let [m (kdl->edn (slurp file))]
+    (spit file (map->kdl (update-in m ks f)))))
+
+(defn config
+  ([path] (let [m (kdl->edn (slurp (lib/home ".config/niri/gaps.kdl")))]
+            (get-in m (map keyword (string/split path #"-")) "not-found")))
+  ([path v]
+   (kdl-assoc-in (lib/home ".config/niri/gaps.kdl")
+                 ;; layout-struts-top -> [:layout :struts :top]
+                 (map keyword (string/split path #"-"))
+                 v)))
+
+(comment
+  (wow)
+  (parse-long "rast")
+  (parse-long "4")
+
+  (pr-str
+   (kdl-get "layout-struts-top"))
+
+  (kdl->edn
+   (slurp "/home/neeasade/.config/niri/gaps.kdl"))
+
+
+
+
+  )
 
 (when (= *file* (System/getProperty "babashka.file"))
-  (main-loop))
+  (main-loop SOCKET)
+  @(promise)
+  )
 
 (comment
   (keys @niri-state)
@@ -483,8 +609,9 @@
 
   (keys @niri-state)
 
+  (vals (:windows @niri-state))
 
-  (:windows @niri-state)
+  (siblings)
 
 
   (:workspace-active-windows @niri-state)
