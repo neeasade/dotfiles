@@ -62,6 +62,8 @@
 (defn edge?
   ([dir] (edge? (:focused @niri-state) dir))
   ([win dir]
+
+   (prn "what")
    (if (-> @niri-state :focused :is_floating)
      false
      (let [win-column (-> win :layout :pos_in_scrolling_layout first)
@@ -70,11 +72,32 @@
                         (filter #(= (:workspace_id %) (:workspace_id win)))
                         (map #(-> % :layout :pos_in_scrolling_layout first))
                         (distinct)
-                        (sort))]
+                        (sort)
+                        )]
+       (prn "yeah" columns win-column)
        (condp = dir
          "left" (= (first columns) win-column)
          "right" (= (last columns) win-column)
          (println "edge? what"))))))
+(comment
+
+  (map :workspace_id
+       (vals (:windows @niri-state)))
+
+
+  (:workspace_id (:focused @niri-state))
+
+  (let [win (:focused @niri-state)]
+    (count
+     (->> (:windows @niri-state)
+          (vals)
+          (filter #(= (:workspace_id %) (:workspace_id win)))
+          ;; (map #(-> % :layout :pos_in_scrolling_layout first))
+          ;; (distinct)
+          (sort)
+          )))
+
+  )
 
 (defn siblings
   ;; "siblings" are windows in the same column as you
@@ -107,26 +130,63 @@
 (defn tabbed? [window-id]
   ;; todo: have this use siblings
   ;; Check if a window is in a tabbed layout by comparing window sizes in the same column
-  (let [windows (vals (:windows @niri-state))
-        target-window (get (:windows @niri-state) window-id)]
-    (when target-window
-      (let [target-pos (first (get-in target-window [:layout :pos_in_scrolling_layout]))
-            target-workspace (:workspace_id target-window)
-            mon-height (-> @niri-state :output :logical :height)
-            same-column-windows (filter #(and (= target-workspace (:workspace_id %))
-                                              (= target-pos (first (get-in % [:layout :pos_in_scrolling_layout]))))
-                                        windows)
-            window-sizes (map #(get-in % [:layout :window_size]) same-column-windows)]
-        ;; Windows are tabbed if there's more than one window and they all have the same size
-        (and (> (count same-column-windows) 1)
-             (apply = window-sizes)
-             ;; broken:
-             ;; false
-             (> (second (first window-sizes))
-                (* 0.7 mon-height)))))))
+
+
+  #_(let [windows (vals (:windows @niri-state))
+          target-window (get (:windows @niri-state) window-id)]
+      (when target-window
+        (let [target-pos (first (get-in target-window [:layout :pos_in_scrolling_layout]))
+              target-workspace (:workspace_id target-window)
+              mon-height (-> @niri-state :output :logical :height)
+              same-column-windows (filter #(and (= target-workspace (:workspace_id %))
+                                                (= target-pos (first (get-in % [:layout :pos_in_scrolling_layout]))))
+                                          windows)
+              window-sizes (map #(get-in % [:layout :window_size]) same-column-windows)]
+          ;; Windows are tabbed if there's more than one window and they all have the same size
+          (and (> (count same-column-windows) 1)
+               (apply = window-sizes)
+               ;; broken:
+               ;; false
+               (> (second (first window-sizes))
+                  (* 0.7 mon-height)))))))
+
+(comment
+
+  (defn tabbed? [w]
+    (if )
+
+
+    )
+
+  (:focused @niri-state)
+
+
+  (count
+   (siblings)
+
+   )
+
+  (tabbed?
+
+   (count (siblings
+           (-> @niri-state :focused)
+
+           )
+          )
+
+   )
+
+  (defn ->wh [w]
+    (-> )
+    )
+
+  (:window_size (:layout (-> @niri-state :focused)))
+
+  (count (siblings ))
+
+  )
 
 (defn go-dir [dir]
-  ;; todo: go-dir should center if you can't go dir
   (let [win (:focused @niri-state)
         term? (#{"Alacritty" "foot" "kitty"} (:app_id win))
         elisp (format "(when-let (win (and (frame-focus-state) (window-in-direction '%s))) (select-window win))" dir)
@@ -233,6 +293,8 @@
 
     ))
 
+;; (alter-var-root #'clojure.main/caught (constantly print-stack-trace))
+
 (defn switch-preset-width-and-center []
   ;; are we fullscreen? take us out of that
   (if (= (-> @niri-state :focused :layout :tile_size)
@@ -240,23 +302,25 @@
 
     (do
       (action :fullscreen-window)
-
       (action :set-window-width "50%")
       )
-    )
 
-  (action :switch-preset-window-width)
+    (do
 
-  (Thread/sleep 50)
 
-  ;; todo: diffent action for this
+      (action :switch-preset-window-width)
 
-  ;; (when-not (maximized?)
-  ;;   (action :focus-column-left)
-  ;;   (action :focus-column-right))
+      (Thread/sleep 50)
 
-  (action :center-window)
+      ;; todo: diffent action for this
+
+      ;; (when-not (maximized?)
+      ;;   (action :focus-column-left)
+      ;;   (action :focus-column-right))
+
+      (action :center-window)))
   )
+(#'iritd/switch-preset-width-and-center)
 
 (defn maximize-column []
   (if (maximized?)
@@ -272,8 +336,7 @@
       )
 
     ;; (action :maximize-window-to-edges)
-    (action :maximize-column)
-    ))
+    (action :maximize-column)))
 
 (defn force-kill-window []
   (shell/sh "kill" "-9" (-> @niri-state :focused :pid str)))
@@ -319,6 +382,14 @@
 
         ;; Restore focus to original window
         (action :focus-window "--id" (:id current-window))))))
+
+(comment
+  (defn update-windows
+
+
+
+    )
+  )
 
 ;; ---------------
 (defn niri-state-loop []
@@ -371,8 +442,8 @@
                            ;; idea: here, if it's window opened, we can do window rules
                            :WindowOpenedOrChanged
                            (let [wid (:id (:window event-data))
-                                 open? (not (get-in s [:windows wid]))]
-                             (when open?
+                                 new-window? (not (get-in s [:windows wid]))]
+                             (when new-window?
                                #_(let [[w h] (-> s :focused :layout :tile_size)
                                        ;; tile? (> h w)
                                        ;; null exception if h w bad
@@ -384,7 +455,14 @@
                                      ;; (action :consume-or-expel-window-left)
                                      )))
 
-                             (assoc-in s [:windows wid] (:window event-data)))
+                             (let [s (if new-window?
+                                       (if (:is-focused (:window event-data))
+                                         ;; wipe old focus
+                                         (->> (:windows @niri-state)
+                                              (map (fn [[k v]] [k (assoc v :is_focused false)]))
+                                              (into {})))
+                                       s)]
+                               (assoc-in s [:windows wid] (:window event-data))))
 
                            :WindowLayoutsChanged
                            (update s :windows
@@ -408,7 +486,10 @@
                        (fn [s]
                          (-> s
                              (assoc :focused-last (:focused s))
-                             (assoc :focused (->> (vals (:windows s))
+                             (assoc :focused (->> (:windows s)
+                                                  ;; this keep is just comping for the nil key thing
+                                                  (keep (fn [[k v]] (when k v)))
+                                                  ;; (vals (:windows s))
                                                   (filter :is_focused)
                                                   (first)))))))
               (recur))))))
@@ -444,7 +525,7 @@
                (rest cmd))
         ;; not great at printing..
         (catch Exception e
-          (lib/sh "notify-send" (str "nirit failure: " (string/replace line "^" " ")) )
+          (lib/sh "notify-send" (str "niritd failure: " (string/replace line "^" " ")) )
           (prn (ex-data e))
           (println (str e))))
 
@@ -552,6 +633,11 @@
 
   (siblings)
 
+  (:focused @niri-state)
+
+  (edge? )
+
+  (edge? "left")
 
   (:workspace-active-windows @niri-state)
 
