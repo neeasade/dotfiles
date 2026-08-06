@@ -17,6 +17,12 @@ fi
 
 # todo here: timeout if we take too long (remote FS)
 git_prompt() {
+  if ${WSL:-false}; then
+    if realpath . | grep -q /mnt/c/; then
+      return
+    fi
+  fi
+
   if ! git rev-parse --is-inside-work-tree &>/dev/null; then
     return
   fi
