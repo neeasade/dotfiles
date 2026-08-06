@@ -369,6 +369,10 @@ hex2dec() {
   printf "%d\n" 0x$1
 }
 
+hex2bin() {
+  echo "obase=2; ibase=16; $*" | bc
+}
+
 extract() {      # Handy Extract Program
   if [ -f "$1" ]; then
     case "$1" in
