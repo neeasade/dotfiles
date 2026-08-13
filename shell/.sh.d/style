@@ -15,7 +15,6 @@ fi
 
 [ "$cur_shell" = "zsh" ] && [ $_promptchar = "%" ] && _promptchar="%%"
 
-# todo here: timeout if we take too long (remote FS)
 git_prompt() {
   if ${WSL:-false}; then
     if realpath . | grep -q /mnt/c/; then
@@ -39,6 +38,10 @@ git_prompt() {
   g_append() {
     g_status="${g_status}${1}"
   }
+
+  if git config core.sshCommand | grep -q neea; then
+    g_append "S"
+  fi
 
   git var GIT_AUTHOR_IDENT 2>/dev/null >&2 || g_append '@'      # is there a commit author set?
   git diff --quiet --ignore-submodules --cached || g_append '+' # Check for uncommitted changes in the index.
