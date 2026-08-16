@@ -54,8 +54,8 @@ silent theme -c
 foreground=$(theme -q color.focused.background)
 background=$(theme -q color.normal.alt)
 
-# foreground=$(theme -q color.normal.background)
-# background=$(elisp -r "(ns/make-border-color (myron-get :focused))")
+foreground=$(theme -q color.normal.background)
+background=$(elisp -r "(ns/make-border-color (myron-get :focused))")
 
 # background=$(theme -q color.normal.assumed)
 

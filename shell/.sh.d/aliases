@@ -16,8 +16,6 @@ cope() {
   ssh -t bliss emacsclient -nw /tmp/emacsclient-lock
 }
 
-alias ec='emacsclient -t'
-
 djoin() {
   name=$1
   shift
@@ -26,11 +24,15 @@ djoin() {
   dtach -A /tmp/dtach-${name} -z -E "$@"
 }
 
-
+alias ec='emacsclient -t'
 alias eemacs='djoin emacs bash -c "emacs -nw"'
 
-alias mimetype='file --mime-type -b'
+if [ "$TERM" = alacritty ]; then
+  alias ec='TERM=alacritty-direct emacsclient -t'
+  alias eemacs='djoin emacs bash -c "TERM=alacritty-direct emacs -nw"'
+fi
 
+alias mimetype='file --mime-type -b'
 alias capslock='xdotool key Caps_Lock'
 alias CAPSLOCK=capslock
 alias CAPS=capslock

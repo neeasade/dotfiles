@@ -140,12 +140,15 @@ load_dunst() {
 
     p_height=0
 
-    if silent pgrep lemonbar; then
+    if silent pgrep eww; then
 	p_height=$(theme -q panel.height)
     fi
     export d_offset=$((b_window_gap + p_height))
 
-    mon_width=$(bspc query -T -m | jq .rectangle.width)
+    # mon_width=$(bspc query -T -m | jq .rectangle.width)
+    # mon_width=$(nirit query-monitor-width)
+    mon_width=$(niri msg --json focused-output  | jq -r .logical.width)
+
     export d_width=$(echo .22 \* $mon_width | bc | sed 's/\..*//')
 
     render dunstrc .config/dunst/dunstrc

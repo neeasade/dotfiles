@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-socket="/tmp/niritd.sock"
+socket="${NIRITD_SOCK:-/tmp/niritd.sock}"
 # socket="/tmp/socket.sock"
 
 # todo: if niritd not running, start it + wait a sec

@@ -12,9 +12,10 @@ empty=#ffffff
 full=#e9a4d1
 empty=#d6d7d8
 
+mkb "$percent" "$width"
 
-read left right < <(bb --eval "(let [[p w] [${percent} ${width}] p (/ p 100)]
-    (println (Math/round (double (* p w)))
-             (Math/round (double (- w (* p w))))))")
+# read left right < <(bb --eval "(let [[p w] [${percent} ${width}] p (/ p 100)]
+#     (println (Math/round (double (* p w)))
+#              (Math/round (double (- w (* p w))))))")
 
-printf '%s%s' "$(bs B$full O$left)" "$(bs B$empty O$right)"
+# printf '%s%s' "$(bs B$full O$left)" "$(bs B$empty O$right)"

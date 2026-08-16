@@ -20,5 +20,6 @@ else
 
     # XXX: you will need to tweak ./org_task_elisp as well
     # echo "$topic $(bs "B$color" O$(( percent )))$(bs B$empty O$(($WIDTH - percent)) )"
-    printf "%s %s\n" "$topic" "$(lemon_progress "$percent" "$WIDTH")"
+    # printf "%s %s\n" "$topic" "$(lemon_progress "$percent" "$WIDTH")"
+    printf "%s %s\n" "$topic" "$(lemon_progress "$percent" "16")"
 fi

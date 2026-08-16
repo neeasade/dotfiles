@@ -2,16 +2,22 @@
 # player by player.sh
 # planned: left click is toggle pause, right click is next, scroll is mpd volume.
 
-maxWinNameLen=${maxWinNameLen:-31}
+
+# playerctl --follow status | while read -r line; do
 
 title=$(playerctl -p mpd status)
 if [ "$title" = "Playing" ]; then
   title=$(mpd-mixer display-status)
 else
-  title=$(player.sh -f "{{title}}")
+  title=$(playerctl status)
+  if [ "$title" = "Playing" ]; then
+    title=$(playerctl metadata -f "{{title}}")
+  else
+    title=$(mpd-mixer track-names | head -n 1)
+  fi
 fi
 
-title=$(echo "$title" | cut -c 1-$maxWinNameLen)
+# title=$(echo "$title" | cut -c 1-31)
 echo "$title"
 
 # WIDTH=30
@@ -20,3 +26,5 @@ echo "$title"
 # second=$((WIDTH - first))
 
 # echo $(bs 'A1player.sh toggle; pkill -SIGRTMIN+10 i3blocks' ":$title $(bs "B$(colort -70 "$bg")" O${first} +o)$(bs Beef0f3 +o O${second})")
+
+# done
