@@ -58,7 +58,8 @@ if ${NEEASADE_ENV:-true}; then
     *) set_system LINUX;;
   esac
 
-  if [ ! -z "$WSL_DISTRO_NAME" ]; then
+  # ughhhhhhhhhh
+  if uname -a | grep -q microsoft; then
     set_system WSL
   fi
 
@@ -184,7 +185,7 @@ if ${NEEASADE_ENV:-true}; then
   fi
 
   if $WSL; then
-    BROWSER=explorer.exe
+    BROWSER=edge.exe
   fi
 
   # why did I do this

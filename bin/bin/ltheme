@@ -164,9 +164,9 @@ load_services() {
     not_found_services=$(systemctl --user list-units  | grep ' not-found ' | awk '{print $2}')
 
     # stop the in-memory services that have no service files associated
-    for s in $not_found_services; do
-	vdo timeout 2 systemctl --user stop $s
-    done
+    # for s in $not_found_services; do
+    # 	vdo timeout 2 systemctl --user stop $s
+    # done
 
     made_services=
     # note: service PATH is set to whatever PATH is when you call this script
@@ -178,6 +178,7 @@ load_services() {
 
 	export REALKILL=$(which kill)
 	export WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-}
+	export DISPLAY=${DISPLAY:-}
 
 	# fully qualify executable:
 	args=$(awk '{$1=""; print $0}' <<< "$ExecStart")
@@ -207,6 +208,9 @@ load_services() {
 	shift
 	make_service "$1" "periodically $interval $2" "$3"
     }
+
+    make_service dunst
+    return 0
 
     # make_periodic_service 60 temp_check "sensor_alert cpu_temp" "Notify when the cpu temp is high"
     make_periodic_service 30 memory_check "sensor_alert memory" "Notify when the memory pressure is high"
