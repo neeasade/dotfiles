@@ -19,6 +19,15 @@ task() {
   fi
 }
 
+map() {
+  # replaces "mapitem" argument with the iterated line if present in the args
+  local l a arg
+  while IFS= read -r l || [ -n "$l" ]; do
+    a=(); for arg in "$@"; do a+=("${arg/#mapitem/$l}"); done
+    [[ " $* " =~ " mapitem " ]] && "${a[@]}" || "${a[@]}" "$l"
+  done
+}
+
 grab() {
   full=$(realpath "$@")
   printf '%s' "$full" | pbcopy
@@ -370,7 +379,7 @@ hex2dec() {
 }
 
 hex2bin() {
-  echo "obase=2; ibase=16; $*" | bc
+  echo "obase=2; ibase=16; ${*^^}" | bc
 }
 
 extract() {      # Handy Extract Program
